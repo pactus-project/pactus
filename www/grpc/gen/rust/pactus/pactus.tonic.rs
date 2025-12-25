@@ -3266,30 +3266,6 @@ pub mod wallet_client {
                 .insert(GrpcMethod::new("pactus.Wallet", "GetNewAddress"));
             self.inner.unary(req, path, codec).await
         }
-        pub async fn get_address_history(
-            &mut self,
-            request: impl tonic::IntoRequest<super::GetAddressHistoryRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetAddressHistoryResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
-            let codec = tonic_prost::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Wallet/GetAddressHistory",
-            );
-            let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Wallet", "GetAddressHistory"));
-            self.inner.unary(req, path, codec).await
-        }
         pub async fn sign_message(
             &mut self,
             request: impl tonic::IntoRequest<super::SignMessageRequest>,
@@ -3573,13 +3549,6 @@ pub mod wallet_server {
             request: tonic::Request<super::GetNewAddressRequest>,
         ) -> std::result::Result<
             tonic::Response<super::GetNewAddressResponse>,
-            tonic::Status,
-        >;
-        async fn get_address_history(
-            &self,
-            request: tonic::Request<super::GetAddressHistoryRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetAddressHistoryResponse>,
             tonic::Status,
         >;
         async fn sign_message(
@@ -4065,51 +4034,6 @@ pub mod wallet_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = GetNewAddressSvc(inner);
-                        let codec = tonic_prost::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec)
-                            .apply_compression_config(
-                                accept_compression_encodings,
-                                send_compression_encodings,
-                            )
-                            .apply_max_message_size_config(
-                                max_decoding_message_size,
-                                max_encoding_message_size,
-                            );
-                        let res = grpc.unary(method, req).await;
-                        Ok(res)
-                    };
-                    Box::pin(fut)
-                }
-                "/pactus.Wallet/GetAddressHistory" => {
-                    #[allow(non_camel_case_types)]
-                    struct GetAddressHistorySvc<T: Wallet>(pub Arc<T>);
-                    impl<
-                        T: Wallet,
-                    > tonic::server::UnaryService<super::GetAddressHistoryRequest>
-                    for GetAddressHistorySvc<T> {
-                        type Response = super::GetAddressHistoryResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<super::GetAddressHistoryRequest>,
-                        ) -> Self::Future {
-                            let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                <T as Wallet>::get_address_history(&inner, request).await
-                            };
-                            Box::pin(fut)
-                        }
-                    }
-                    let accept_compression_encodings = self.accept_compression_encodings;
-                    let send_compression_encodings = self.send_compression_encodings;
-                    let max_decoding_message_size = self.max_decoding_message_size;
-                    let max_encoding_message_size = self.max_encoding_message_size;
-                    let inner = self.inner.clone();
-                    let fut = async move {
-                        let method = GetAddressHistorySvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

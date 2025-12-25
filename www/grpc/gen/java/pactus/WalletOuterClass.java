@@ -1444,2711 +1444,6 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
 
   }
 
-  public interface HistoryInfoOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:pactus.HistoryInfo)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <pre>
-     * The transaction ID in hexadecimal format.
-     * </pre>
-     *
-     * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
-     * @return The transactionId.
-     */
-    java.lang.String getTransactionId();
-    /**
-     * <pre>
-     * The transaction ID in hexadecimal format.
-     * </pre>
-     *
-     * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
-     * @return The bytes for transactionId.
-     */
-    com.google.protobuf.ByteString
-        getTransactionIdBytes();
-
-    /**
-     * <pre>
-     * Unix timestamp of when the transaction was confirmed.
-     * </pre>
-     *
-     * <code>uint32 time = 2 [json_name = "time"];</code>
-     * @return The time.
-     */
-    int getTime();
-
-    /**
-     * <pre>
-     * The type of transaction payload.
-     * </pre>
-     *
-     * <code>string payload_type = 3 [json_name = "payloadType"];</code>
-     * @return The payloadType.
-     */
-    java.lang.String getPayloadType();
-    /**
-     * <pre>
-     * The type of transaction payload.
-     * </pre>
-     *
-     * <code>string payload_type = 3 [json_name = "payloadType"];</code>
-     * @return The bytes for payloadType.
-     */
-    com.google.protobuf.ByteString
-        getPayloadTypeBytes();
-
-    /**
-     * <pre>
-     * Human-readable description of the transaction.
-     * </pre>
-     *
-     * <code>string description = 4 [json_name = "description"];</code>
-     * @return The description.
-     */
-    java.lang.String getDescription();
-    /**
-     * <pre>
-     * Human-readable description of the transaction.
-     * </pre>
-     *
-     * <code>string description = 4 [json_name = "description"];</code>
-     * @return The bytes for description.
-     */
-    com.google.protobuf.ByteString
-        getDescriptionBytes();
-
-    /**
-     * <pre>
-     * The transaction amount in NanoPAC.
-     * </pre>
-     *
-     * <code>int64 amount = 5 [json_name = "amount"];</code>
-     * @return The amount.
-     */
-    long getAmount();
-  }
-  /**
-   * <pre>
-   * HistoryInfo contains transaction history details for an address.
-   * </pre>
-   *
-   * Protobuf type {@code pactus.HistoryInfo}
-   */
-  public static final class HistoryInfo extends
-      com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:pactus.HistoryInfo)
-      HistoryInfoOrBuilder {
-  private static final long serialVersionUID = 0L;
-    static {
-      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-        /* major= */ 4,
-        /* minor= */ 33,
-        /* patch= */ 2,
-        /* suffix= */ "",
-        "HistoryInfo");
-    }
-    // Use HistoryInfo.newBuilder() to construct.
-    private HistoryInfo(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-      super(builder);
-    }
-    private HistoryInfo() {
-      transactionId_ = "";
-      payloadType_ = "";
-      description_ = "";
-    }
-
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return pactus.WalletOuterClass.internal_static_pactus_HistoryInfo_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return pactus.WalletOuterClass.internal_static_pactus_HistoryInfo_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              pactus.WalletOuterClass.HistoryInfo.class, pactus.WalletOuterClass.HistoryInfo.Builder.class);
-    }
-
-    public static final int TRANSACTION_ID_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object transactionId_ = "";
-    /**
-     * <pre>
-     * The transaction ID in hexadecimal format.
-     * </pre>
-     *
-     * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
-     * @return The transactionId.
-     */
-    @java.lang.Override
-    public java.lang.String getTransactionId() {
-      java.lang.Object ref = transactionId_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        transactionId_ = s;
-        return s;
-      }
-    }
-    /**
-     * <pre>
-     * The transaction ID in hexadecimal format.
-     * </pre>
-     *
-     * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
-     * @return The bytes for transactionId.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getTransactionIdBytes() {
-      java.lang.Object ref = transactionId_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        transactionId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int TIME_FIELD_NUMBER = 2;
-    private int time_ = 0;
-    /**
-     * <pre>
-     * Unix timestamp of when the transaction was confirmed.
-     * </pre>
-     *
-     * <code>uint32 time = 2 [json_name = "time"];</code>
-     * @return The time.
-     */
-    @java.lang.Override
-    public int getTime() {
-      return time_;
-    }
-
-    public static final int PAYLOAD_TYPE_FIELD_NUMBER = 3;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object payloadType_ = "";
-    /**
-     * <pre>
-     * The type of transaction payload.
-     * </pre>
-     *
-     * <code>string payload_type = 3 [json_name = "payloadType"];</code>
-     * @return The payloadType.
-     */
-    @java.lang.Override
-    public java.lang.String getPayloadType() {
-      java.lang.Object ref = payloadType_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        payloadType_ = s;
-        return s;
-      }
-    }
-    /**
-     * <pre>
-     * The type of transaction payload.
-     * </pre>
-     *
-     * <code>string payload_type = 3 [json_name = "payloadType"];</code>
-     * @return The bytes for payloadType.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getPayloadTypeBytes() {
-      java.lang.Object ref = payloadType_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        payloadType_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int DESCRIPTION_FIELD_NUMBER = 4;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object description_ = "";
-    /**
-     * <pre>
-     * Human-readable description of the transaction.
-     * </pre>
-     *
-     * <code>string description = 4 [json_name = "description"];</code>
-     * @return The description.
-     */
-    @java.lang.Override
-    public java.lang.String getDescription() {
-      java.lang.Object ref = description_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        description_ = s;
-        return s;
-      }
-    }
-    /**
-     * <pre>
-     * Human-readable description of the transaction.
-     * </pre>
-     *
-     * <code>string description = 4 [json_name = "description"];</code>
-     * @return The bytes for description.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getDescriptionBytes() {
-      java.lang.Object ref = description_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        description_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int AMOUNT_FIELD_NUMBER = 5;
-    private long amount_ = 0L;
-    /**
-     * <pre>
-     * The transaction amount in NanoPAC.
-     * </pre>
-     *
-     * <code>int64 amount = 5 [json_name = "amount"];</code>
-     * @return The amount.
-     */
-    @java.lang.Override
-    public long getAmount() {
-      return amount_;
-    }
-
-    private byte memoizedIsInitialized = -1;
-    @java.lang.Override
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    @java.lang.Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(transactionId_)) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 1, transactionId_);
-      }
-      if (time_ != 0) {
-        output.writeUInt32(2, time_);
-      }
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(payloadType_)) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 3, payloadType_);
-      }
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(description_)) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 4, description_);
-      }
-      if (amount_ != 0L) {
-        output.writeInt64(5, amount_);
-      }
-      getUnknownFields().writeTo(output);
-    }
-
-    @java.lang.Override
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(transactionId_)) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(1, transactionId_);
-      }
-      if (time_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeUInt32Size(2, time_);
-      }
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(payloadType_)) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(3, payloadType_);
-      }
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(description_)) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(4, description_);
-      }
-      if (amount_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(5, amount_);
-      }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof pactus.WalletOuterClass.HistoryInfo)) {
-        return super.equals(obj);
-      }
-      pactus.WalletOuterClass.HistoryInfo other = (pactus.WalletOuterClass.HistoryInfo) obj;
-
-      if (!getTransactionId()
-          .equals(other.getTransactionId())) return false;
-      if (getTime()
-          != other.getTime()) return false;
-      if (!getPayloadType()
-          .equals(other.getPayloadType())) return false;
-      if (!getDescription()
-          .equals(other.getDescription())) return false;
-      if (getAmount()
-          != other.getAmount()) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-      return true;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + TRANSACTION_ID_FIELD_NUMBER;
-      hash = (53 * hash) + getTransactionId().hashCode();
-      hash = (37 * hash) + TIME_FIELD_NUMBER;
-      hash = (53 * hash) + getTime();
-      hash = (37 * hash) + PAYLOAD_TYPE_FIELD_NUMBER;
-      hash = (53 * hash) + getPayloadType().hashCode();
-      hash = (37 * hash) + DESCRIPTION_FIELD_NUMBER;
-      hash = (53 * hash) + getDescription().hashCode();
-      hash = (37 * hash) + AMOUNT_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getAmount());
-      hash = (29 * hash) + getUnknownFields().hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static pactus.WalletOuterClass.HistoryInfo parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static pactus.WalletOuterClass.HistoryInfo parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static pactus.WalletOuterClass.HistoryInfo parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static pactus.WalletOuterClass.HistoryInfo parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static pactus.WalletOuterClass.HistoryInfo parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static pactus.WalletOuterClass.HistoryInfo parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static pactus.WalletOuterClass.HistoryInfo parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input);
-    }
-    public static pactus.WalletOuterClass.HistoryInfo parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    public static pactus.WalletOuterClass.HistoryInfo parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-
-    public static pactus.WalletOuterClass.HistoryInfo parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static pactus.WalletOuterClass.HistoryInfo parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input);
-    }
-    public static pactus.WalletOuterClass.HistoryInfo parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    @java.lang.Override
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(pactus.WalletOuterClass.HistoryInfo prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    @java.lang.Override
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * <pre>
-     * HistoryInfo contains transaction history details for an address.
-     * </pre>
-     *
-     * Protobuf type {@code pactus.HistoryInfo}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:pactus.HistoryInfo)
-        pactus.WalletOuterClass.HistoryInfoOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return pactus.WalletOuterClass.internal_static_pactus_HistoryInfo_descriptor;
-      }
-
-      @java.lang.Override
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return pactus.WalletOuterClass.internal_static_pactus_HistoryInfo_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                pactus.WalletOuterClass.HistoryInfo.class, pactus.WalletOuterClass.HistoryInfo.Builder.class);
-      }
-
-      // Construct using pactus.WalletOuterClass.HistoryInfo.newBuilder()
-      private Builder() {
-
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-        super(parent);
-
-      }
-      @java.lang.Override
-      public Builder clear() {
-        super.clear();
-        bitField0_ = 0;
-        transactionId_ = "";
-        time_ = 0;
-        payloadType_ = "";
-        description_ = "";
-        amount_ = 0L;
-        return this;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return pactus.WalletOuterClass.internal_static_pactus_HistoryInfo_descriptor;
-      }
-
-      @java.lang.Override
-      public pactus.WalletOuterClass.HistoryInfo getDefaultInstanceForType() {
-        return pactus.WalletOuterClass.HistoryInfo.getDefaultInstance();
-      }
-
-      @java.lang.Override
-      public pactus.WalletOuterClass.HistoryInfo build() {
-        pactus.WalletOuterClass.HistoryInfo result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      @java.lang.Override
-      public pactus.WalletOuterClass.HistoryInfo buildPartial() {
-        pactus.WalletOuterClass.HistoryInfo result = new pactus.WalletOuterClass.HistoryInfo(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
-        onBuilt();
-        return result;
-      }
-
-      private void buildPartial0(pactus.WalletOuterClass.HistoryInfo result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.transactionId_ = transactionId_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.time_ = time_;
-        }
-        if (((from_bitField0_ & 0x00000004) != 0)) {
-          result.payloadType_ = payloadType_;
-        }
-        if (((from_bitField0_ & 0x00000008) != 0)) {
-          result.description_ = description_;
-        }
-        if (((from_bitField0_ & 0x00000010) != 0)) {
-          result.amount_ = amount_;
-        }
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.WalletOuterClass.HistoryInfo) {
-          return mergeFrom((pactus.WalletOuterClass.HistoryInfo)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(pactus.WalletOuterClass.HistoryInfo other) {
-        if (other == pactus.WalletOuterClass.HistoryInfo.getDefaultInstance()) return this;
-        if (!other.getTransactionId().isEmpty()) {
-          transactionId_ = other.transactionId_;
-          bitField0_ |= 0x00000001;
-          onChanged();
-        }
-        if (other.getTime() != 0) {
-          setTime(other.getTime());
-        }
-        if (!other.getPayloadType().isEmpty()) {
-          payloadType_ = other.payloadType_;
-          bitField0_ |= 0x00000004;
-          onChanged();
-        }
-        if (!other.getDescription().isEmpty()) {
-          description_ = other.description_;
-          bitField0_ |= 0x00000008;
-          onChanged();
-        }
-        if (other.getAmount() != 0L) {
-          setAmount(other.getAmount());
-        }
-        this.mergeUnknownFields(other.getUnknownFields());
-        onChanged();
-        return this;
-      }
-
-      @java.lang.Override
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                transactionId_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 10
-              case 16: {
-                time_ = input.readUInt32();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 16
-              case 26: {
-                payloadType_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000004;
-                break;
-              } // case 26
-              case 34: {
-                description_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000008;
-                break;
-              } // case 34
-              case 40: {
-                amount_ = input.readInt64();
-                bitField0_ |= 0x00000010;
-                break;
-              } // case 40
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.unwrapIOException();
-        } finally {
-          onChanged();
-        } // finally
-        return this;
-      }
-      private int bitField0_;
-
-      private java.lang.Object transactionId_ = "";
-      /**
-       * <pre>
-       * The transaction ID in hexadecimal format.
-       * </pre>
-       *
-       * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
-       * @return The transactionId.
-       */
-      public java.lang.String getTransactionId() {
-        java.lang.Object ref = transactionId_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          transactionId_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <pre>
-       * The transaction ID in hexadecimal format.
-       * </pre>
-       *
-       * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
-       * @return The bytes for transactionId.
-       */
-      public com.google.protobuf.ByteString
-          getTransactionIdBytes() {
-        java.lang.Object ref = transactionId_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          transactionId_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <pre>
-       * The transaction ID in hexadecimal format.
-       * </pre>
-       *
-       * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
-       * @param value The transactionId to set.
-       * @return This builder for chaining.
-       */
-      public Builder setTransactionId(
-          java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
-        transactionId_ = value;
-        bitField0_ |= 0x00000001;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * The transaction ID in hexadecimal format.
-       * </pre>
-       *
-       * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearTransactionId() {
-        transactionId_ = getDefaultInstance().getTransactionId();
-        bitField0_ = (bitField0_ & ~0x00000001);
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * The transaction ID in hexadecimal format.
-       * </pre>
-       *
-       * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
-       * @param value The bytes for transactionId to set.
-       * @return This builder for chaining.
-       */
-      public Builder setTransactionIdBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
-        transactionId_ = value;
-        bitField0_ |= 0x00000001;
-        onChanged();
-        return this;
-      }
-
-      private int time_ ;
-      /**
-       * <pre>
-       * Unix timestamp of when the transaction was confirmed.
-       * </pre>
-       *
-       * <code>uint32 time = 2 [json_name = "time"];</code>
-       * @return The time.
-       */
-      @java.lang.Override
-      public int getTime() {
-        return time_;
-      }
-      /**
-       * <pre>
-       * Unix timestamp of when the transaction was confirmed.
-       * </pre>
-       *
-       * <code>uint32 time = 2 [json_name = "time"];</code>
-       * @param value The time to set.
-       * @return This builder for chaining.
-       */
-      public Builder setTime(int value) {
-
-        time_ = value;
-        bitField0_ |= 0x00000002;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Unix timestamp of when the transaction was confirmed.
-       * </pre>
-       *
-       * <code>uint32 time = 2 [json_name = "time"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearTime() {
-        bitField0_ = (bitField0_ & ~0x00000002);
-        time_ = 0;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object payloadType_ = "";
-      /**
-       * <pre>
-       * The type of transaction payload.
-       * </pre>
-       *
-       * <code>string payload_type = 3 [json_name = "payloadType"];</code>
-       * @return The payloadType.
-       */
-      public java.lang.String getPayloadType() {
-        java.lang.Object ref = payloadType_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          payloadType_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <pre>
-       * The type of transaction payload.
-       * </pre>
-       *
-       * <code>string payload_type = 3 [json_name = "payloadType"];</code>
-       * @return The bytes for payloadType.
-       */
-      public com.google.protobuf.ByteString
-          getPayloadTypeBytes() {
-        java.lang.Object ref = payloadType_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          payloadType_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <pre>
-       * The type of transaction payload.
-       * </pre>
-       *
-       * <code>string payload_type = 3 [json_name = "payloadType"];</code>
-       * @param value The payloadType to set.
-       * @return This builder for chaining.
-       */
-      public Builder setPayloadType(
-          java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
-        payloadType_ = value;
-        bitField0_ |= 0x00000004;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * The type of transaction payload.
-       * </pre>
-       *
-       * <code>string payload_type = 3 [json_name = "payloadType"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearPayloadType() {
-        payloadType_ = getDefaultInstance().getPayloadType();
-        bitField0_ = (bitField0_ & ~0x00000004);
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * The type of transaction payload.
-       * </pre>
-       *
-       * <code>string payload_type = 3 [json_name = "payloadType"];</code>
-       * @param value The bytes for payloadType to set.
-       * @return This builder for chaining.
-       */
-      public Builder setPayloadTypeBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
-        payloadType_ = value;
-        bitField0_ |= 0x00000004;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object description_ = "";
-      /**
-       * <pre>
-       * Human-readable description of the transaction.
-       * </pre>
-       *
-       * <code>string description = 4 [json_name = "description"];</code>
-       * @return The description.
-       */
-      public java.lang.String getDescription() {
-        java.lang.Object ref = description_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          description_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <pre>
-       * Human-readable description of the transaction.
-       * </pre>
-       *
-       * <code>string description = 4 [json_name = "description"];</code>
-       * @return The bytes for description.
-       */
-      public com.google.protobuf.ByteString
-          getDescriptionBytes() {
-        java.lang.Object ref = description_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          description_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <pre>
-       * Human-readable description of the transaction.
-       * </pre>
-       *
-       * <code>string description = 4 [json_name = "description"];</code>
-       * @param value The description to set.
-       * @return This builder for chaining.
-       */
-      public Builder setDescription(
-          java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
-        description_ = value;
-        bitField0_ |= 0x00000008;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Human-readable description of the transaction.
-       * </pre>
-       *
-       * <code>string description = 4 [json_name = "description"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearDescription() {
-        description_ = getDefaultInstance().getDescription();
-        bitField0_ = (bitField0_ & ~0x00000008);
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Human-readable description of the transaction.
-       * </pre>
-       *
-       * <code>string description = 4 [json_name = "description"];</code>
-       * @param value The bytes for description to set.
-       * @return This builder for chaining.
-       */
-      public Builder setDescriptionBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
-        description_ = value;
-        bitField0_ |= 0x00000008;
-        onChanged();
-        return this;
-      }
-
-      private long amount_ ;
-      /**
-       * <pre>
-       * The transaction amount in NanoPAC.
-       * </pre>
-       *
-       * <code>int64 amount = 5 [json_name = "amount"];</code>
-       * @return The amount.
-       */
-      @java.lang.Override
-      public long getAmount() {
-        return amount_;
-      }
-      /**
-       * <pre>
-       * The transaction amount in NanoPAC.
-       * </pre>
-       *
-       * <code>int64 amount = 5 [json_name = "amount"];</code>
-       * @param value The amount to set.
-       * @return This builder for chaining.
-       */
-      public Builder setAmount(long value) {
-
-        amount_ = value;
-        bitField0_ |= 0x00000010;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * The transaction amount in NanoPAC.
-       * </pre>
-       *
-       * <code>int64 amount = 5 [json_name = "amount"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearAmount() {
-        bitField0_ = (bitField0_ & ~0x00000010);
-        amount_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      // @@protoc_insertion_point(builder_scope:pactus.HistoryInfo)
-    }
-
-    // @@protoc_insertion_point(class_scope:pactus.HistoryInfo)
-    private static final pactus.WalletOuterClass.HistoryInfo DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new pactus.WalletOuterClass.HistoryInfo();
-    }
-
-    public static pactus.WalletOuterClass.HistoryInfo getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<HistoryInfo>
-        PARSER = new com.google.protobuf.AbstractParser<HistoryInfo>() {
-      @java.lang.Override
-      public HistoryInfo parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
-      }
-    };
-
-    public static com.google.protobuf.Parser<HistoryInfo> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<HistoryInfo> getParserForType() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public pactus.WalletOuterClass.HistoryInfo getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
-  public interface GetAddressHistoryRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:pactus.GetAddressHistoryRequest)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <pre>
-     * The name of the wallet containing the address.
-     * </pre>
-     *
-     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-     * @return The walletName.
-     */
-    java.lang.String getWalletName();
-    /**
-     * <pre>
-     * The name of the wallet containing the address.
-     * </pre>
-     *
-     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-     * @return The bytes for walletName.
-     */
-    com.google.protobuf.ByteString
-        getWalletNameBytes();
-
-    /**
-     * <pre>
-     * The address to retrieve history for.
-     * </pre>
-     *
-     * <code>string address = 2 [json_name = "address"];</code>
-     * @return The address.
-     */
-    java.lang.String getAddress();
-    /**
-     * <pre>
-     * The address to retrieve history for.
-     * </pre>
-     *
-     * <code>string address = 2 [json_name = "address"];</code>
-     * @return The bytes for address.
-     */
-    com.google.protobuf.ByteString
-        getAddressBytes();
-  }
-  /**
-   * <pre>
-   * Request message for retrieving address transaction history.
-   * </pre>
-   *
-   * Protobuf type {@code pactus.GetAddressHistoryRequest}
-   */
-  public static final class GetAddressHistoryRequest extends
-      com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:pactus.GetAddressHistoryRequest)
-      GetAddressHistoryRequestOrBuilder {
-  private static final long serialVersionUID = 0L;
-    static {
-      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-        /* major= */ 4,
-        /* minor= */ 33,
-        /* patch= */ 2,
-        /* suffix= */ "",
-        "GetAddressHistoryRequest");
-    }
-    // Use GetAddressHistoryRequest.newBuilder() to construct.
-    private GetAddressHistoryRequest(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-      super(builder);
-    }
-    private GetAddressHistoryRequest() {
-      walletName_ = "";
-      address_ = "";
-    }
-
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return pactus.WalletOuterClass.internal_static_pactus_GetAddressHistoryRequest_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return pactus.WalletOuterClass.internal_static_pactus_GetAddressHistoryRequest_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              pactus.WalletOuterClass.GetAddressHistoryRequest.class, pactus.WalletOuterClass.GetAddressHistoryRequest.Builder.class);
-    }
-
-    public static final int WALLET_NAME_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object walletName_ = "";
-    /**
-     * <pre>
-     * The name of the wallet containing the address.
-     * </pre>
-     *
-     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-     * @return The walletName.
-     */
-    @java.lang.Override
-    public java.lang.String getWalletName() {
-      java.lang.Object ref = walletName_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        walletName_ = s;
-        return s;
-      }
-    }
-    /**
-     * <pre>
-     * The name of the wallet containing the address.
-     * </pre>
-     *
-     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-     * @return The bytes for walletName.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getWalletNameBytes() {
-      java.lang.Object ref = walletName_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        walletName_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int ADDRESS_FIELD_NUMBER = 2;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object address_ = "";
-    /**
-     * <pre>
-     * The address to retrieve history for.
-     * </pre>
-     *
-     * <code>string address = 2 [json_name = "address"];</code>
-     * @return The address.
-     */
-    @java.lang.Override
-    public java.lang.String getAddress() {
-      java.lang.Object ref = address_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        address_ = s;
-        return s;
-      }
-    }
-    /**
-     * <pre>
-     * The address to retrieve history for.
-     * </pre>
-     *
-     * <code>string address = 2 [json_name = "address"];</code>
-     * @return The bytes for address.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getAddressBytes() {
-      java.lang.Object ref = address_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        address_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    private byte memoizedIsInitialized = -1;
-    @java.lang.Override
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    @java.lang.Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(walletName_)) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 1, walletName_);
-      }
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(address_)) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 2, address_);
-      }
-      getUnknownFields().writeTo(output);
-    }
-
-    @java.lang.Override
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(walletName_)) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(1, walletName_);
-      }
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(address_)) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(2, address_);
-      }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof pactus.WalletOuterClass.GetAddressHistoryRequest)) {
-        return super.equals(obj);
-      }
-      pactus.WalletOuterClass.GetAddressHistoryRequest other = (pactus.WalletOuterClass.GetAddressHistoryRequest) obj;
-
-      if (!getWalletName()
-          .equals(other.getWalletName())) return false;
-      if (!getAddress()
-          .equals(other.getAddress())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-      return true;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + WALLET_NAME_FIELD_NUMBER;
-      hash = (53 * hash) + getWalletName().hashCode();
-      hash = (37 * hash) + ADDRESS_FIELD_NUMBER;
-      hash = (53 * hash) + getAddress().hashCode();
-      hash = (29 * hash) + getUnknownFields().hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static pactus.WalletOuterClass.GetAddressHistoryRequest parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static pactus.WalletOuterClass.GetAddressHistoryRequest parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static pactus.WalletOuterClass.GetAddressHistoryRequest parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static pactus.WalletOuterClass.GetAddressHistoryRequest parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static pactus.WalletOuterClass.GetAddressHistoryRequest parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static pactus.WalletOuterClass.GetAddressHistoryRequest parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static pactus.WalletOuterClass.GetAddressHistoryRequest parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input);
-    }
-    public static pactus.WalletOuterClass.GetAddressHistoryRequest parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    public static pactus.WalletOuterClass.GetAddressHistoryRequest parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-
-    public static pactus.WalletOuterClass.GetAddressHistoryRequest parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static pactus.WalletOuterClass.GetAddressHistoryRequest parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input);
-    }
-    public static pactus.WalletOuterClass.GetAddressHistoryRequest parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    @java.lang.Override
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(pactus.WalletOuterClass.GetAddressHistoryRequest prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    @java.lang.Override
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * <pre>
-     * Request message for retrieving address transaction history.
-     * </pre>
-     *
-     * Protobuf type {@code pactus.GetAddressHistoryRequest}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:pactus.GetAddressHistoryRequest)
-        pactus.WalletOuterClass.GetAddressHistoryRequestOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return pactus.WalletOuterClass.internal_static_pactus_GetAddressHistoryRequest_descriptor;
-      }
-
-      @java.lang.Override
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return pactus.WalletOuterClass.internal_static_pactus_GetAddressHistoryRequest_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                pactus.WalletOuterClass.GetAddressHistoryRequest.class, pactus.WalletOuterClass.GetAddressHistoryRequest.Builder.class);
-      }
-
-      // Construct using pactus.WalletOuterClass.GetAddressHistoryRequest.newBuilder()
-      private Builder() {
-
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-        super(parent);
-
-      }
-      @java.lang.Override
-      public Builder clear() {
-        super.clear();
-        bitField0_ = 0;
-        walletName_ = "";
-        address_ = "";
-        return this;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return pactus.WalletOuterClass.internal_static_pactus_GetAddressHistoryRequest_descriptor;
-      }
-
-      @java.lang.Override
-      public pactus.WalletOuterClass.GetAddressHistoryRequest getDefaultInstanceForType() {
-        return pactus.WalletOuterClass.GetAddressHistoryRequest.getDefaultInstance();
-      }
-
-      @java.lang.Override
-      public pactus.WalletOuterClass.GetAddressHistoryRequest build() {
-        pactus.WalletOuterClass.GetAddressHistoryRequest result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      @java.lang.Override
-      public pactus.WalletOuterClass.GetAddressHistoryRequest buildPartial() {
-        pactus.WalletOuterClass.GetAddressHistoryRequest result = new pactus.WalletOuterClass.GetAddressHistoryRequest(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
-        onBuilt();
-        return result;
-      }
-
-      private void buildPartial0(pactus.WalletOuterClass.GetAddressHistoryRequest result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.walletName_ = walletName_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.address_ = address_;
-        }
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.WalletOuterClass.GetAddressHistoryRequest) {
-          return mergeFrom((pactus.WalletOuterClass.GetAddressHistoryRequest)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(pactus.WalletOuterClass.GetAddressHistoryRequest other) {
-        if (other == pactus.WalletOuterClass.GetAddressHistoryRequest.getDefaultInstance()) return this;
-        if (!other.getWalletName().isEmpty()) {
-          walletName_ = other.walletName_;
-          bitField0_ |= 0x00000001;
-          onChanged();
-        }
-        if (!other.getAddress().isEmpty()) {
-          address_ = other.address_;
-          bitField0_ |= 0x00000002;
-          onChanged();
-        }
-        this.mergeUnknownFields(other.getUnknownFields());
-        onChanged();
-        return this;
-      }
-
-      @java.lang.Override
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                walletName_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 10
-              case 18: {
-                address_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 18
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.unwrapIOException();
-        } finally {
-          onChanged();
-        } // finally
-        return this;
-      }
-      private int bitField0_;
-
-      private java.lang.Object walletName_ = "";
-      /**
-       * <pre>
-       * The name of the wallet containing the address.
-       * </pre>
-       *
-       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-       * @return The walletName.
-       */
-      public java.lang.String getWalletName() {
-        java.lang.Object ref = walletName_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          walletName_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <pre>
-       * The name of the wallet containing the address.
-       * </pre>
-       *
-       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-       * @return The bytes for walletName.
-       */
-      public com.google.protobuf.ByteString
-          getWalletNameBytes() {
-        java.lang.Object ref = walletName_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          walletName_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <pre>
-       * The name of the wallet containing the address.
-       * </pre>
-       *
-       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-       * @param value The walletName to set.
-       * @return This builder for chaining.
-       */
-      public Builder setWalletName(
-          java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
-        walletName_ = value;
-        bitField0_ |= 0x00000001;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * The name of the wallet containing the address.
-       * </pre>
-       *
-       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearWalletName() {
-        walletName_ = getDefaultInstance().getWalletName();
-        bitField0_ = (bitField0_ & ~0x00000001);
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * The name of the wallet containing the address.
-       * </pre>
-       *
-       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-       * @param value The bytes for walletName to set.
-       * @return This builder for chaining.
-       */
-      public Builder setWalletNameBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
-        walletName_ = value;
-        bitField0_ |= 0x00000001;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object address_ = "";
-      /**
-       * <pre>
-       * The address to retrieve history for.
-       * </pre>
-       *
-       * <code>string address = 2 [json_name = "address"];</code>
-       * @return The address.
-       */
-      public java.lang.String getAddress() {
-        java.lang.Object ref = address_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          address_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <pre>
-       * The address to retrieve history for.
-       * </pre>
-       *
-       * <code>string address = 2 [json_name = "address"];</code>
-       * @return The bytes for address.
-       */
-      public com.google.protobuf.ByteString
-          getAddressBytes() {
-        java.lang.Object ref = address_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          address_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <pre>
-       * The address to retrieve history for.
-       * </pre>
-       *
-       * <code>string address = 2 [json_name = "address"];</code>
-       * @param value The address to set.
-       * @return This builder for chaining.
-       */
-      public Builder setAddress(
-          java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
-        address_ = value;
-        bitField0_ |= 0x00000002;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * The address to retrieve history for.
-       * </pre>
-       *
-       * <code>string address = 2 [json_name = "address"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearAddress() {
-        address_ = getDefaultInstance().getAddress();
-        bitField0_ = (bitField0_ & ~0x00000002);
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * The address to retrieve history for.
-       * </pre>
-       *
-       * <code>string address = 2 [json_name = "address"];</code>
-       * @param value The bytes for address to set.
-       * @return This builder for chaining.
-       */
-      public Builder setAddressBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
-        address_ = value;
-        bitField0_ |= 0x00000002;
-        onChanged();
-        return this;
-      }
-
-      // @@protoc_insertion_point(builder_scope:pactus.GetAddressHistoryRequest)
-    }
-
-    // @@protoc_insertion_point(class_scope:pactus.GetAddressHistoryRequest)
-    private static final pactus.WalletOuterClass.GetAddressHistoryRequest DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new pactus.WalletOuterClass.GetAddressHistoryRequest();
-    }
-
-    public static pactus.WalletOuterClass.GetAddressHistoryRequest getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<GetAddressHistoryRequest>
-        PARSER = new com.google.protobuf.AbstractParser<GetAddressHistoryRequest>() {
-      @java.lang.Override
-      public GetAddressHistoryRequest parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
-      }
-    };
-
-    public static com.google.protobuf.Parser<GetAddressHistoryRequest> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<GetAddressHistoryRequest> getParserForType() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public pactus.WalletOuterClass.GetAddressHistoryRequest getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
-  public interface GetAddressHistoryResponseOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:pactus.GetAddressHistoryResponse)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <pre>
-     * List of all historical transactions associated with the address.
-     * </pre>
-     *
-     * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-     */
-    java.util.List<pactus.WalletOuterClass.HistoryInfo> 
-        getHistoryInfoList();
-    /**
-     * <pre>
-     * List of all historical transactions associated with the address.
-     * </pre>
-     *
-     * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-     */
-    pactus.WalletOuterClass.HistoryInfo getHistoryInfo(int index);
-    /**
-     * <pre>
-     * List of all historical transactions associated with the address.
-     * </pre>
-     *
-     * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-     */
-    int getHistoryInfoCount();
-    /**
-     * <pre>
-     * List of all historical transactions associated with the address.
-     * </pre>
-     *
-     * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-     */
-    java.util.List<? extends pactus.WalletOuterClass.HistoryInfoOrBuilder> 
-        getHistoryInfoOrBuilderList();
-    /**
-     * <pre>
-     * List of all historical transactions associated with the address.
-     * </pre>
-     *
-     * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-     */
-    pactus.WalletOuterClass.HistoryInfoOrBuilder getHistoryInfoOrBuilder(
-        int index);
-  }
-  /**
-   * <pre>
-   * Response message contains address transaction history.
-   * </pre>
-   *
-   * Protobuf type {@code pactus.GetAddressHistoryResponse}
-   */
-  public static final class GetAddressHistoryResponse extends
-      com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:pactus.GetAddressHistoryResponse)
-      GetAddressHistoryResponseOrBuilder {
-  private static final long serialVersionUID = 0L;
-    static {
-      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-        /* major= */ 4,
-        /* minor= */ 33,
-        /* patch= */ 2,
-        /* suffix= */ "",
-        "GetAddressHistoryResponse");
-    }
-    // Use GetAddressHistoryResponse.newBuilder() to construct.
-    private GetAddressHistoryResponse(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-      super(builder);
-    }
-    private GetAddressHistoryResponse() {
-      historyInfo_ = java.util.Collections.emptyList();
-    }
-
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return pactus.WalletOuterClass.internal_static_pactus_GetAddressHistoryResponse_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return pactus.WalletOuterClass.internal_static_pactus_GetAddressHistoryResponse_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              pactus.WalletOuterClass.GetAddressHistoryResponse.class, pactus.WalletOuterClass.GetAddressHistoryResponse.Builder.class);
-    }
-
-    public static final int HISTORY_INFO_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
-    private java.util.List<pactus.WalletOuterClass.HistoryInfo> historyInfo_;
-    /**
-     * <pre>
-     * List of all historical transactions associated with the address.
-     * </pre>
-     *
-     * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-     */
-    @java.lang.Override
-    public java.util.List<pactus.WalletOuterClass.HistoryInfo> getHistoryInfoList() {
-      return historyInfo_;
-    }
-    /**
-     * <pre>
-     * List of all historical transactions associated with the address.
-     * </pre>
-     *
-     * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-     */
-    @java.lang.Override
-    public java.util.List<? extends pactus.WalletOuterClass.HistoryInfoOrBuilder> 
-        getHistoryInfoOrBuilderList() {
-      return historyInfo_;
-    }
-    /**
-     * <pre>
-     * List of all historical transactions associated with the address.
-     * </pre>
-     *
-     * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-     */
-    @java.lang.Override
-    public int getHistoryInfoCount() {
-      return historyInfo_.size();
-    }
-    /**
-     * <pre>
-     * List of all historical transactions associated with the address.
-     * </pre>
-     *
-     * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-     */
-    @java.lang.Override
-    public pactus.WalletOuterClass.HistoryInfo getHistoryInfo(int index) {
-      return historyInfo_.get(index);
-    }
-    /**
-     * <pre>
-     * List of all historical transactions associated with the address.
-     * </pre>
-     *
-     * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-     */
-    @java.lang.Override
-    public pactus.WalletOuterClass.HistoryInfoOrBuilder getHistoryInfoOrBuilder(
-        int index) {
-      return historyInfo_.get(index);
-    }
-
-    private byte memoizedIsInitialized = -1;
-    @java.lang.Override
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    @java.lang.Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      for (int i = 0; i < historyInfo_.size(); i++) {
-        output.writeMessage(1, historyInfo_.get(i));
-      }
-      getUnknownFields().writeTo(output);
-    }
-
-    @java.lang.Override
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      for (int i = 0; i < historyInfo_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(1, historyInfo_.get(i));
-      }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof pactus.WalletOuterClass.GetAddressHistoryResponse)) {
-        return super.equals(obj);
-      }
-      pactus.WalletOuterClass.GetAddressHistoryResponse other = (pactus.WalletOuterClass.GetAddressHistoryResponse) obj;
-
-      if (!getHistoryInfoList()
-          .equals(other.getHistoryInfoList())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-      return true;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      if (getHistoryInfoCount() > 0) {
-        hash = (37 * hash) + HISTORY_INFO_FIELD_NUMBER;
-        hash = (53 * hash) + getHistoryInfoList().hashCode();
-      }
-      hash = (29 * hash) + getUnknownFields().hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static pactus.WalletOuterClass.GetAddressHistoryResponse parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static pactus.WalletOuterClass.GetAddressHistoryResponse parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static pactus.WalletOuterClass.GetAddressHistoryResponse parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static pactus.WalletOuterClass.GetAddressHistoryResponse parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static pactus.WalletOuterClass.GetAddressHistoryResponse parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static pactus.WalletOuterClass.GetAddressHistoryResponse parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static pactus.WalletOuterClass.GetAddressHistoryResponse parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input);
-    }
-    public static pactus.WalletOuterClass.GetAddressHistoryResponse parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    public static pactus.WalletOuterClass.GetAddressHistoryResponse parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-
-    public static pactus.WalletOuterClass.GetAddressHistoryResponse parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static pactus.WalletOuterClass.GetAddressHistoryResponse parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input);
-    }
-    public static pactus.WalletOuterClass.GetAddressHistoryResponse parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    @java.lang.Override
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(pactus.WalletOuterClass.GetAddressHistoryResponse prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    @java.lang.Override
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * <pre>
-     * Response message contains address transaction history.
-     * </pre>
-     *
-     * Protobuf type {@code pactus.GetAddressHistoryResponse}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:pactus.GetAddressHistoryResponse)
-        pactus.WalletOuterClass.GetAddressHistoryResponseOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return pactus.WalletOuterClass.internal_static_pactus_GetAddressHistoryResponse_descriptor;
-      }
-
-      @java.lang.Override
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return pactus.WalletOuterClass.internal_static_pactus_GetAddressHistoryResponse_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                pactus.WalletOuterClass.GetAddressHistoryResponse.class, pactus.WalletOuterClass.GetAddressHistoryResponse.Builder.class);
-      }
-
-      // Construct using pactus.WalletOuterClass.GetAddressHistoryResponse.newBuilder()
-      private Builder() {
-
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-        super(parent);
-
-      }
-      @java.lang.Override
-      public Builder clear() {
-        super.clear();
-        bitField0_ = 0;
-        if (historyInfoBuilder_ == null) {
-          historyInfo_ = java.util.Collections.emptyList();
-        } else {
-          historyInfo_ = null;
-          historyInfoBuilder_.clear();
-        }
-        bitField0_ = (bitField0_ & ~0x00000001);
-        return this;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return pactus.WalletOuterClass.internal_static_pactus_GetAddressHistoryResponse_descriptor;
-      }
-
-      @java.lang.Override
-      public pactus.WalletOuterClass.GetAddressHistoryResponse getDefaultInstanceForType() {
-        return pactus.WalletOuterClass.GetAddressHistoryResponse.getDefaultInstance();
-      }
-
-      @java.lang.Override
-      public pactus.WalletOuterClass.GetAddressHistoryResponse build() {
-        pactus.WalletOuterClass.GetAddressHistoryResponse result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      @java.lang.Override
-      public pactus.WalletOuterClass.GetAddressHistoryResponse buildPartial() {
-        pactus.WalletOuterClass.GetAddressHistoryResponse result = new pactus.WalletOuterClass.GetAddressHistoryResponse(this);
-        buildPartialRepeatedFields(result);
-        if (bitField0_ != 0) { buildPartial0(result); }
-        onBuilt();
-        return result;
-      }
-
-      private void buildPartialRepeatedFields(pactus.WalletOuterClass.GetAddressHistoryResponse result) {
-        if (historyInfoBuilder_ == null) {
-          if (((bitField0_ & 0x00000001) != 0)) {
-            historyInfo_ = java.util.Collections.unmodifiableList(historyInfo_);
-            bitField0_ = (bitField0_ & ~0x00000001);
-          }
-          result.historyInfo_ = historyInfo_;
-        } else {
-          result.historyInfo_ = historyInfoBuilder_.build();
-        }
-      }
-
-      private void buildPartial0(pactus.WalletOuterClass.GetAddressHistoryResponse result) {
-        int from_bitField0_ = bitField0_;
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.WalletOuterClass.GetAddressHistoryResponse) {
-          return mergeFrom((pactus.WalletOuterClass.GetAddressHistoryResponse)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(pactus.WalletOuterClass.GetAddressHistoryResponse other) {
-        if (other == pactus.WalletOuterClass.GetAddressHistoryResponse.getDefaultInstance()) return this;
-        if (historyInfoBuilder_ == null) {
-          if (!other.historyInfo_.isEmpty()) {
-            if (historyInfo_.isEmpty()) {
-              historyInfo_ = other.historyInfo_;
-              bitField0_ = (bitField0_ & ~0x00000001);
-            } else {
-              ensureHistoryInfoIsMutable();
-              historyInfo_.addAll(other.historyInfo_);
-            }
-            onChanged();
-          }
-        } else {
-          if (!other.historyInfo_.isEmpty()) {
-            if (historyInfoBuilder_.isEmpty()) {
-              historyInfoBuilder_.dispose();
-              historyInfoBuilder_ = null;
-              historyInfo_ = other.historyInfo_;
-              bitField0_ = (bitField0_ & ~0x00000001);
-              historyInfoBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
-                   internalGetHistoryInfoFieldBuilder() : null;
-            } else {
-              historyInfoBuilder_.addAllMessages(other.historyInfo_);
-            }
-          }
-        }
-        this.mergeUnknownFields(other.getUnknownFields());
-        onChanged();
-        return this;
-      }
-
-      @java.lang.Override
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                pactus.WalletOuterClass.HistoryInfo m =
-                    input.readMessage(
-                        pactus.WalletOuterClass.HistoryInfo.parser(),
-                        extensionRegistry);
-                if (historyInfoBuilder_ == null) {
-                  ensureHistoryInfoIsMutable();
-                  historyInfo_.add(m);
-                } else {
-                  historyInfoBuilder_.addMessage(m);
-                }
-                break;
-              } // case 10
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.unwrapIOException();
-        } finally {
-          onChanged();
-        } // finally
-        return this;
-      }
-      private int bitField0_;
-
-      private java.util.List<pactus.WalletOuterClass.HistoryInfo> historyInfo_ =
-        java.util.Collections.emptyList();
-      private void ensureHistoryInfoIsMutable() {
-        if (!((bitField0_ & 0x00000001) != 0)) {
-          historyInfo_ = new java.util.ArrayList<pactus.WalletOuterClass.HistoryInfo>(historyInfo_);
-          bitField0_ |= 0x00000001;
-         }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilder<
-          pactus.WalletOuterClass.HistoryInfo, pactus.WalletOuterClass.HistoryInfo.Builder, pactus.WalletOuterClass.HistoryInfoOrBuilder> historyInfoBuilder_;
-
-      /**
-       * <pre>
-       * List of all historical transactions associated with the address.
-       * </pre>
-       *
-       * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-       */
-      public java.util.List<pactus.WalletOuterClass.HistoryInfo> getHistoryInfoList() {
-        if (historyInfoBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(historyInfo_);
-        } else {
-          return historyInfoBuilder_.getMessageList();
-        }
-      }
-      /**
-       * <pre>
-       * List of all historical transactions associated with the address.
-       * </pre>
-       *
-       * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-       */
-      public int getHistoryInfoCount() {
-        if (historyInfoBuilder_ == null) {
-          return historyInfo_.size();
-        } else {
-          return historyInfoBuilder_.getCount();
-        }
-      }
-      /**
-       * <pre>
-       * List of all historical transactions associated with the address.
-       * </pre>
-       *
-       * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-       */
-      public pactus.WalletOuterClass.HistoryInfo getHistoryInfo(int index) {
-        if (historyInfoBuilder_ == null) {
-          return historyInfo_.get(index);
-        } else {
-          return historyInfoBuilder_.getMessage(index);
-        }
-      }
-      /**
-       * <pre>
-       * List of all historical transactions associated with the address.
-       * </pre>
-       *
-       * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-       */
-      public Builder setHistoryInfo(
-          int index, pactus.WalletOuterClass.HistoryInfo value) {
-        if (historyInfoBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureHistoryInfoIsMutable();
-          historyInfo_.set(index, value);
-          onChanged();
-        } else {
-          historyInfoBuilder_.setMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of all historical transactions associated with the address.
-       * </pre>
-       *
-       * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-       */
-      public Builder setHistoryInfo(
-          int index, pactus.WalletOuterClass.HistoryInfo.Builder builderForValue) {
-        if (historyInfoBuilder_ == null) {
-          ensureHistoryInfoIsMutable();
-          historyInfo_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          historyInfoBuilder_.setMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of all historical transactions associated with the address.
-       * </pre>
-       *
-       * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-       */
-      public Builder addHistoryInfo(pactus.WalletOuterClass.HistoryInfo value) {
-        if (historyInfoBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureHistoryInfoIsMutable();
-          historyInfo_.add(value);
-          onChanged();
-        } else {
-          historyInfoBuilder_.addMessage(value);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of all historical transactions associated with the address.
-       * </pre>
-       *
-       * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-       */
-      public Builder addHistoryInfo(
-          int index, pactus.WalletOuterClass.HistoryInfo value) {
-        if (historyInfoBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureHistoryInfoIsMutable();
-          historyInfo_.add(index, value);
-          onChanged();
-        } else {
-          historyInfoBuilder_.addMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of all historical transactions associated with the address.
-       * </pre>
-       *
-       * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-       */
-      public Builder addHistoryInfo(
-          pactus.WalletOuterClass.HistoryInfo.Builder builderForValue) {
-        if (historyInfoBuilder_ == null) {
-          ensureHistoryInfoIsMutable();
-          historyInfo_.add(builderForValue.build());
-          onChanged();
-        } else {
-          historyInfoBuilder_.addMessage(builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of all historical transactions associated with the address.
-       * </pre>
-       *
-       * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-       */
-      public Builder addHistoryInfo(
-          int index, pactus.WalletOuterClass.HistoryInfo.Builder builderForValue) {
-        if (historyInfoBuilder_ == null) {
-          ensureHistoryInfoIsMutable();
-          historyInfo_.add(index, builderForValue.build());
-          onChanged();
-        } else {
-          historyInfoBuilder_.addMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of all historical transactions associated with the address.
-       * </pre>
-       *
-       * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-       */
-      public Builder addAllHistoryInfo(
-          java.lang.Iterable<? extends pactus.WalletOuterClass.HistoryInfo> values) {
-        if (historyInfoBuilder_ == null) {
-          ensureHistoryInfoIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(
-              values, historyInfo_);
-          onChanged();
-        } else {
-          historyInfoBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of all historical transactions associated with the address.
-       * </pre>
-       *
-       * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-       */
-      public Builder clearHistoryInfo() {
-        if (historyInfoBuilder_ == null) {
-          historyInfo_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000001);
-          onChanged();
-        } else {
-          historyInfoBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of all historical transactions associated with the address.
-       * </pre>
-       *
-       * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-       */
-      public Builder removeHistoryInfo(int index) {
-        if (historyInfoBuilder_ == null) {
-          ensureHistoryInfoIsMutable();
-          historyInfo_.remove(index);
-          onChanged();
-        } else {
-          historyInfoBuilder_.remove(index);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of all historical transactions associated with the address.
-       * </pre>
-       *
-       * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-       */
-      public pactus.WalletOuterClass.HistoryInfo.Builder getHistoryInfoBuilder(
-          int index) {
-        return internalGetHistoryInfoFieldBuilder().getBuilder(index);
-      }
-      /**
-       * <pre>
-       * List of all historical transactions associated with the address.
-       * </pre>
-       *
-       * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-       */
-      public pactus.WalletOuterClass.HistoryInfoOrBuilder getHistoryInfoOrBuilder(
-          int index) {
-        if (historyInfoBuilder_ == null) {
-          return historyInfo_.get(index);  } else {
-          return historyInfoBuilder_.getMessageOrBuilder(index);
-        }
-      }
-      /**
-       * <pre>
-       * List of all historical transactions associated with the address.
-       * </pre>
-       *
-       * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-       */
-      public java.util.List<? extends pactus.WalletOuterClass.HistoryInfoOrBuilder> 
-           getHistoryInfoOrBuilderList() {
-        if (historyInfoBuilder_ != null) {
-          return historyInfoBuilder_.getMessageOrBuilderList();
-        } else {
-          return java.util.Collections.unmodifiableList(historyInfo_);
-        }
-      }
-      /**
-       * <pre>
-       * List of all historical transactions associated with the address.
-       * </pre>
-       *
-       * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-       */
-      public pactus.WalletOuterClass.HistoryInfo.Builder addHistoryInfoBuilder() {
-        return internalGetHistoryInfoFieldBuilder().addBuilder(
-            pactus.WalletOuterClass.HistoryInfo.getDefaultInstance());
-      }
-      /**
-       * <pre>
-       * List of all historical transactions associated with the address.
-       * </pre>
-       *
-       * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-       */
-      public pactus.WalletOuterClass.HistoryInfo.Builder addHistoryInfoBuilder(
-          int index) {
-        return internalGetHistoryInfoFieldBuilder().addBuilder(
-            index, pactus.WalletOuterClass.HistoryInfo.getDefaultInstance());
-      }
-      /**
-       * <pre>
-       * List of all historical transactions associated with the address.
-       * </pre>
-       *
-       * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
-       */
-      public java.util.List<pactus.WalletOuterClass.HistoryInfo.Builder> 
-           getHistoryInfoBuilderList() {
-        return internalGetHistoryInfoFieldBuilder().getBuilderList();
-      }
-      private com.google.protobuf.RepeatedFieldBuilder<
-          pactus.WalletOuterClass.HistoryInfo, pactus.WalletOuterClass.HistoryInfo.Builder, pactus.WalletOuterClass.HistoryInfoOrBuilder> 
-          internalGetHistoryInfoFieldBuilder() {
-        if (historyInfoBuilder_ == null) {
-          historyInfoBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              pactus.WalletOuterClass.HistoryInfo, pactus.WalletOuterClass.HistoryInfo.Builder, pactus.WalletOuterClass.HistoryInfoOrBuilder>(
-                  historyInfo_,
-                  ((bitField0_ & 0x00000001) != 0),
-                  getParentForChildren(),
-                  isClean());
-          historyInfo_ = null;
-        }
-        return historyInfoBuilder_;
-      }
-
-      // @@protoc_insertion_point(builder_scope:pactus.GetAddressHistoryResponse)
-    }
-
-    // @@protoc_insertion_point(class_scope:pactus.GetAddressHistoryResponse)
-    private static final pactus.WalletOuterClass.GetAddressHistoryResponse DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new pactus.WalletOuterClass.GetAddressHistoryResponse();
-    }
-
-    public static pactus.WalletOuterClass.GetAddressHistoryResponse getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<GetAddressHistoryResponse>
-        PARSER = new com.google.protobuf.AbstractParser<GetAddressHistoryResponse>() {
-      @java.lang.Override
-      public GetAddressHistoryResponse parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
-      }
-    };
-
-    public static com.google.protobuf.Parser<GetAddressHistoryResponse> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<GetAddressHistoryResponse> getParserForType() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public pactus.WalletOuterClass.GetAddressHistoryResponse getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
   public interface GetNewAddressRequestOrBuilder extends
       // @@protoc_insertion_point(interface_extends:pactus.GetNewAddressRequest)
       com.google.protobuf.MessageOrBuilder {
@@ -30063,21 +27358,6 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_pactus_AddressInfo_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_pactus_HistoryInfo_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_pactus_HistoryInfo_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_pactus_GetAddressHistoryRequest_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_pactus_GetAddressHistoryRequest_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_pactus_GetAddressHistoryResponse_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_pactus_GetAddressHistoryResponse_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_GetNewAddressRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -30259,139 +27539,128 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       "\n\014wallet.proto\022\006pactus\032\021transaction.prot" +
       "o\"p\n\013AddressInfo\022\030\n\007address\030\001 \001(\tR\007addre" +
       "ss\022\035\n\npublic_key\030\002 \001(\tR\tpublicKey\022\024\n\005lab" +
-      "el\030\003 \001(\tR\005label\022\022\n\004path\030\004 \001(\tR\004path\"\245\001\n\013" +
-      "HistoryInfo\022%\n\016transaction_id\030\001 \001(\tR\rtra" +
-      "nsactionId\022\022\n\004time\030\002 \001(\rR\004time\022!\n\014payloa" +
-      "d_type\030\003 \001(\tR\013payloadType\022 \n\013description" +
-      "\030\004 \001(\tR\013description\022\026\n\006amount\030\005 \001(\003R\006amo" +
-      "unt\"U\n\030GetAddressHistoryRequest\022\037\n\013walle" +
-      "t_name\030\001 \001(\tR\nwalletName\022\030\n\007address\030\002 \001(" +
-      "\tR\007address\"S\n\031GetAddressHistoryResponse\022" +
-      "6\n\014history_info\030\001 \003(\0132\023.pactus.HistoryIn" +
-      "foR\013historyInfo\"\241\001\n\024GetNewAddressRequest" +
-      "\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\0226\n\014add" +
-      "ress_type\030\002 \001(\0162\023.pactus.AddressTypeR\013ad" +
-      "dressType\022\024\n\005label\030\003 \001(\tR\005label\022\032\n\010passw" +
-      "ord\030\004 \001(\tR\010password\"p\n\025GetNewAddressResp" +
-      "onse\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\0226\n" +
-      "\014address_info\030\002 \001(\0132\023.pactus.AddressInfo" +
-      "R\013addressInfo\"o\n\024RestoreWalletRequest\022\037\n" +
-      "\013wallet_name\030\001 \001(\tR\nwalletName\022\032\n\010mnemon" +
-      "ic\030\002 \001(\tR\010mnemonic\022\032\n\010password\030\003 \001(\tR\010pa" +
-      "ssword\"8\n\025RestoreWalletResponse\022\037\n\013walle" +
-      "t_name\030\001 \001(\tR\nwalletName\"R\n\023CreateWallet" +
-      "Request\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName" +
-      "\022\032\n\010password\030\002 \001(\tR\010password\"S\n\024CreateWa" +
-      "lletResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwalle" +
-      "tName\022\032\n\010mnemonic\030\002 \001(\tR\010mnemonic\"4\n\021Loa" +
-      "dWalletRequest\022\037\n\013wallet_name\030\001 \001(\tR\nwal" +
-      "letName\"5\n\022LoadWalletResponse\022\037\n\013wallet_" +
-      "name\030\001 \001(\tR\nwalletName\"6\n\023UnloadWalletRe" +
-      "quest\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\"7" +
-      "\n\024UnloadWalletResponse\022\037\n\013wallet_name\030\001 " +
-      "\001(\tR\nwalletName\";\n\032GetValidatorAddressRe" +
-      "quest\022\035\n\npublic_key\030\001 \001(\tR\tpublicKey\"7\n\033" +
-      "GetValidatorAddressResponse\022\030\n\007address\030\001" +
-      " \001(\tR\007address\"\201\001\n\031SignRawTransactionRequ" +
-      "est\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\022\'\n\017" +
-      "raw_transaction\030\002 \001(\tR\016rawTransaction\022\032\n" +
-      "\010password\030\003 \001(\tR\010password\"y\n\032SignRawTran" +
-      "sactionResponse\022%\n\016transaction_id\030\001 \001(\tR" +
-      "\rtransactionId\0224\n\026signed_raw_transaction" +
-      "\030\002 \001(\tR\024signedRawTransaction\"9\n\026GetTotal" +
-      "BalanceRequest\022\037\n\013wallet_name\030\001 \001(\tR\nwal" +
-      "letName\"_\n\027GetTotalBalanceResponse\022\037\n\013wa" +
-      "llet_name\030\001 \001(\tR\nwalletName\022#\n\rtotal_bal" +
-      "ance\030\002 \001(\003R\014totalBalance\"\205\001\n\022SignMessage" +
+      "el\030\003 \001(\tR\005label\022\022\n\004path\030\004 \001(\tR\004path\"\241\001\n\024" +
+      "GetNewAddressRequest\022\037\n\013wallet_name\030\001 \001(" +
+      "\tR\nwalletName\0226\n\014address_type\030\002 \001(\0162\023.pa" +
+      "ctus.AddressTypeR\013addressType\022\024\n\005label\030\003" +
+      " \001(\tR\005label\022\032\n\010password\030\004 \001(\tR\010password\"" +
+      "p\n\025GetNewAddressResponse\022\037\n\013wallet_name\030" +
+      "\001 \001(\tR\nwalletName\0226\n\014address_info\030\002 \001(\0132" +
+      "\023.pactus.AddressInfoR\013addressInfo\"o\n\024Res" +
+      "toreWalletRequest\022\037\n\013wallet_name\030\001 \001(\tR\n" +
+      "walletName\022\032\n\010mnemonic\030\002 \001(\tR\010mnemonic\022\032" +
+      "\n\010password\030\003 \001(\tR\010password\"8\n\025RestoreWal" +
+      "letResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwallet" +
+      "Name\"R\n\023CreateWalletRequest\022\037\n\013wallet_na" +
+      "me\030\001 \001(\tR\nwalletName\022\032\n\010password\030\002 \001(\tR\010" +
+      "password\"S\n\024CreateWalletResponse\022\037\n\013wall" +
+      "et_name\030\001 \001(\tR\nwalletName\022\032\n\010mnemonic\030\002 " +
+      "\001(\tR\010mnemonic\"4\n\021LoadWalletRequest\022\037\n\013wa" +
+      "llet_name\030\001 \001(\tR\nwalletName\"5\n\022LoadWalle" +
+      "tResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwalletNa" +
+      "me\"6\n\023UnloadWalletRequest\022\037\n\013wallet_name" +
+      "\030\001 \001(\tR\nwalletName\"7\n\024UnloadWalletRespon" +
+      "se\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\";\n\032G" +
+      "etValidatorAddressRequest\022\035\n\npublic_key\030" +
+      "\001 \001(\tR\tpublicKey\"7\n\033GetValidatorAddressR" +
+      "esponse\022\030\n\007address\030\001 \001(\tR\007address\"\201\001\n\031Si" +
+      "gnRawTransactionRequest\022\037\n\013wallet_name\030\001" +
+      " \001(\tR\nwalletName\022\'\n\017raw_transaction\030\002 \001(" +
+      "\tR\016rawTransaction\022\032\n\010password\030\003 \001(\tR\010pas" +
+      "sword\"y\n\032SignRawTransactionResponse\022%\n\016t" +
+      "ransaction_id\030\001 \001(\tR\rtransactionId\0224\n\026si" +
+      "gned_raw_transaction\030\002 \001(\tR\024signedRawTra" +
+      "nsaction\"9\n\026GetTotalBalanceRequest\022\037\n\013wa" +
+      "llet_name\030\001 \001(\tR\nwalletName\"_\n\027GetTotalB" +
+      "alanceResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwal" +
+      "letName\022#\n\rtotal_balance\030\002 \001(\003R\014totalBal" +
+      "ance\"\205\001\n\022SignMessageRequest\022\037\n\013wallet_na" +
+      "me\030\001 \001(\tR\nwalletName\022\032\n\010password\030\002 \001(\tR\010" +
+      "password\022\030\n\007address\030\003 \001(\tR\007address\022\030\n\007me" +
+      "ssage\030\004 \001(\tR\007message\"3\n\023SignMessageRespo" +
+      "nse\022\034\n\tsignature\030\001 \001(\tR\tsignature\"7\n\024Get" +
+      "TotalStakeRequest\022\037\n\013wallet_name\030\001 \001(\tR\n" +
+      "walletName\"Y\n\025GetTotalStakeResponse\022\037\n\013w" +
+      "allet_name\030\001 \001(\tR\nwalletName\022\037\n\013total_st" +
+      "ake\030\002 \001(\003R\ntotalStake\"R\n\025GetAddressInfoR" +
+      "equest\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\022" +
+      "\030\n\007address\030\002 \001(\tR\007address\"q\n\026GetAddressI" +
+      "nfoResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwallet" +
+      "Name\0226\n\014address_info\030\002 \001(\0132\023.pactus.Addr" +
+      "essInfoR\013addressInfo\"\205\001\n\026SetAddressLabel" +
       "Request\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName" +
       "\022\032\n\010password\030\002 \001(\tR\010password\022\030\n\007address\030" +
-      "\003 \001(\tR\007address\022\030\n\007message\030\004 \001(\tR\007message" +
-      "\"3\n\023SignMessageResponse\022\034\n\tsignature\030\001 \001" +
-      "(\tR\tsignature\"7\n\024GetTotalStakeRequest\022\037\n" +
-      "\013wallet_name\030\001 \001(\tR\nwalletName\"Y\n\025GetTot" +
-      "alStakeResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwa" +
-      "lletName\022\037\n\013total_stake\030\002 \001(\003R\ntotalStak" +
-      "e\"R\n\025GetAddressInfoRequest\022\037\n\013wallet_nam" +
-      "e\030\001 \001(\tR\nwalletName\022\030\n\007address\030\002 \001(\tR\007ad" +
-      "dress\"q\n\026GetAddressInfoResponse\022\037\n\013walle" +
-      "t_name\030\001 \001(\tR\nwalletName\0226\n\014address_info" +
-      "\030\002 \001(\0132\023.pactus.AddressInfoR\013addressInfo" +
-      "\"\205\001\n\026SetAddressLabelRequest\022\037\n\013wallet_na" +
-      "me\030\001 \001(\tR\nwalletName\022\032\n\010password\030\002 \001(\tR\010" +
-      "password\022\030\n\007address\030\003 \001(\tR\007address\022\024\n\005la" +
-      "bel\030\004 \001(\tR\005label\"j\n\027SetAddressLabelRespo" +
-      "nse\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\022\030\n\007" +
-      "address\030\002 \001(\tR\007address\022\024\n\005label\030\003 \001(\tR\005l" +
-      "abel\"\024\n\022ListWalletsRequest\"/\n\023ListWallet" +
-      "sResponse\022\030\n\007wallets\030\001 \003(\tR\007wallets\"7\n\024G" +
-      "etWalletInfoRequest\022\037\n\013wallet_name\030\001 \001(\t" +
-      "R\nwalletName\"\336\001\n\025GetWalletInfoResponse\022\037" +
-      "\n\013wallet_name\030\001 \001(\tR\nwalletName\022\030\n\007versi" +
-      "on\030\002 \001(\005R\007version\022\030\n\007network\030\003 \001(\tR\007netw" +
-      "ork\022\034\n\tencrypted\030\004 \001(\010R\tencrypted\022\022\n\004uui" +
-      "d\030\005 \001(\tR\004uuid\022\035\n\ncreated_at\030\006 \001(\003R\tcreat" +
-      "edAt\022\037\n\013default_fee\030\007 \001(\003R\ndefaultFee\"q\n" +
-      "\024ListAddressesRequest\022\037\n\013wallet_name\030\001 \001" +
-      "(\tR\nwalletName\0228\n\raddress_types\030\002 \003(\0162\023." +
-      "pactus.AddressTypeR\014addressTypes\"a\n\025List" +
-      "AddressesResponse\022\037\n\013wallet_name\030\001 \001(\tR\n" +
-      "walletName\022\'\n\004data\030\002 \003(\0132\023.pactus.Addres" +
-      "sInfoR\004data\"~\n\025UpdatePasswordRequest\022\037\n\013" +
-      "wallet_name\030\001 \001(\tR\nwalletName\022!\n\014old_pas" +
-      "sword\030\002 \001(\tR\013oldPassword\022!\n\014new_password" +
-      "\030\003 \001(\tR\013newPassword\"9\n\026UpdatePasswordRes" +
-      "ponse\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\"\261" +
-      "\001\n\027ListTransactionsRequest\022\037\n\013wallet_nam" +
-      "e\030\001 \001(\tR\nwalletName\0221\n\tdirection\030\002 \001(\0162\023" +
-      ".pactus.TxDirectionR\tdirection\022\030\n\007addres" +
-      "s\030\003 \001(\tR\007address\022\024\n\005count\030\004 \001(\005R\005count\022\022" +
-      "\n\004skip\030\005 \001(\005R\004skip\"f\n\030ListTransactionsRe" +
-      "sponse\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\022" +
-      ")\n\003txs\030\002 \003(\0132\027.pactus.TransactionInfoR\003t" +
-      "xs*\204\001\n\013AddressType\022\031\n\025ADDRESS_TYPE_TREAS" +
-      "URY\020\000\022\032\n\026ADDRESS_TYPE_VALIDATOR\020\001\022\034\n\030ADD" +
-      "RESS_TYPE_BLS_ACCOUNT\020\002\022 \n\034ADDRESS_TYPE_" +
-      "ED25519_ACCOUNT\020\003*C\n\013TxDirection\022\031\n\025TX_D" +
-      "IRECTION_INCOMING\020\000\022\031\n\025TX_DIRECTION_OUTG" +
-      "OING\020\0012\261\013\n\006Wallet\022I\n\014CreateWallet\022\033.pact" +
-      "us.CreateWalletRequest\032\034.pactus.CreateWa" +
-      "lletResponse\022L\n\rRestoreWallet\022\034.pactus.R" +
-      "estoreWalletRequest\032\035.pactus.RestoreWall" +
-      "etResponse\022C\n\nLoadWallet\022\031.pactus.LoadWa" +
-      "lletRequest\032\032.pactus.LoadWalletResponse\022" +
-      "I\n\014UnloadWallet\022\033.pactus.UnloadWalletReq" +
-      "uest\032\034.pactus.UnloadWalletResponse\022R\n\017Ge" +
-      "tTotalBalance\022\036.pactus.GetTotalBalanceRe" +
-      "quest\032\037.pactus.GetTotalBalanceResponse\022[" +
-      "\n\022SignRawTransaction\022!.pactus.SignRawTra" +
-      "nsactionRequest\032\".pactus.SignRawTransact" +
-      "ionResponse\022^\n\023GetValidatorAddress\022\".pac" +
-      "tus.GetValidatorAddressRequest\032#.pactus." +
-      "GetValidatorAddressResponse\022L\n\rGetNewAdd" +
-      "ress\022\034.pactus.GetNewAddressRequest\032\035.pac" +
-      "tus.GetNewAddressResponse\022X\n\021GetAddressH" +
-      "istory\022 .pactus.GetAddressHistoryRequest" +
-      "\032!.pactus.GetAddressHistoryResponse\022F\n\013S" +
-      "ignMessage\022\032.pactus.SignMessageRequest\032\033" +
-      ".pactus.SignMessageResponse\022L\n\rGetTotalS" +
-      "take\022\034.pactus.GetTotalStakeRequest\032\035.pac" +
-      "tus.GetTotalStakeResponse\022O\n\016GetAddressI" +
-      "nfo\022\035.pactus.GetAddressInfoRequest\032\036.pac" +
-      "tus.GetAddressInfoResponse\022R\n\017SetAddress" +
-      "Label\022\036.pactus.SetAddressLabelRequest\032\037." +
-      "pactus.SetAddressLabelResponse\022F\n\013ListWa" +
-      "llets\022\032.pactus.ListWalletsRequest\032\033.pact" +
-      "us.ListWalletsResponse\022L\n\rGetWalletInfo\022" +
-      "\034.pactus.GetWalletInfoRequest\032\035.pactus.G" +
-      "etWalletInfoResponse\022L\n\rListAddresses\022\034." +
-      "pactus.ListAddressesRequest\032\035.pactus.Lis" +
-      "tAddressesResponse\022O\n\016UpdatePassword\022\035.p" +
-      "actus.UpdatePasswordRequest\032\036.pactus.Upd" +
-      "atePasswordResponse\022U\n\020ListTransactions\022" +
-      "\037.pactus.ListTransactionsRequest\032 .pactu" +
-      "s.ListTransactionsResponseB:\n\006pactusZ0gi" +
-      "thub.com/pactus-project/pactus/www/grpc/" +
-      "pactusb\006proto3"
+      "\003 \001(\tR\007address\022\024\n\005label\030\004 \001(\tR\005label\"j\n\027" +
+      "SetAddressLabelResponse\022\037\n\013wallet_name\030\001" +
+      " \001(\tR\nwalletName\022\030\n\007address\030\002 \001(\tR\007addre" +
+      "ss\022\024\n\005label\030\003 \001(\tR\005label\"\024\n\022ListWalletsR" +
+      "equest\"/\n\023ListWalletsResponse\022\030\n\007wallets" +
+      "\030\001 \003(\tR\007wallets\"7\n\024GetWalletInfoRequest\022" +
+      "\037\n\013wallet_name\030\001 \001(\tR\nwalletName\"\336\001\n\025Get" +
+      "WalletInfoResponse\022\037\n\013wallet_name\030\001 \001(\tR" +
+      "\nwalletName\022\030\n\007version\030\002 \001(\005R\007version\022\030\n" +
+      "\007network\030\003 \001(\tR\007network\022\034\n\tencrypted\030\004 \001" +
+      "(\010R\tencrypted\022\022\n\004uuid\030\005 \001(\tR\004uuid\022\035\n\ncre" +
+      "ated_at\030\006 \001(\003R\tcreatedAt\022\037\n\013default_fee\030" +
+      "\007 \001(\003R\ndefaultFee\"q\n\024ListAddressesReques" +
+      "t\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\0228\n\rad" +
+      "dress_types\030\002 \003(\0162\023.pactus.AddressTypeR\014" +
+      "addressTypes\"a\n\025ListAddressesResponse\022\037\n" +
+      "\013wallet_name\030\001 \001(\tR\nwalletName\022\'\n\004data\030\002" +
+      " \003(\0132\023.pactus.AddressInfoR\004data\"~\n\025Updat" +
+      "ePasswordRequest\022\037\n\013wallet_name\030\001 \001(\tR\nw" +
+      "alletName\022!\n\014old_password\030\002 \001(\tR\013oldPass" +
+      "word\022!\n\014new_password\030\003 \001(\tR\013newPassword\"" +
+      "9\n\026UpdatePasswordResponse\022\037\n\013wallet_name" +
+      "\030\001 \001(\tR\nwalletName\"\261\001\n\027ListTransactionsR" +
+      "equest\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\022" +
+      "1\n\tdirection\030\002 \001(\0162\023.pactus.TxDirectionR" +
+      "\tdirection\022\030\n\007address\030\003 \001(\tR\007address\022\024\n\005" +
+      "count\030\004 \001(\005R\005count\022\022\n\004skip\030\005 \001(\005R\004skip\"f" +
+      "\n\030ListTransactionsResponse\022\037\n\013wallet_nam" +
+      "e\030\001 \001(\tR\nwalletName\022)\n\003txs\030\002 \003(\0132\027.pactu" +
+      "s.TransactionInfoR\003txs*\204\001\n\013AddressType\022\031" +
+      "\n\025ADDRESS_TYPE_TREASURY\020\000\022\032\n\026ADDRESS_TYP" +
+      "E_VALIDATOR\020\001\022\034\n\030ADDRESS_TYPE_BLS_ACCOUN" +
+      "T\020\002\022 \n\034ADDRESS_TYPE_ED25519_ACCOUNT\020\003*C\n" +
+      "\013TxDirection\022\031\n\025TX_DIRECTION_INCOMING\020\000\022" +
+      "\031\n\025TX_DIRECTION_OUTGOING\020\0012\327\n\n\006Wallet\022I\n" +
+      "\014CreateWallet\022\033.pactus.CreateWalletReque" +
+      "st\032\034.pactus.CreateWalletResponse\022L\n\rRest" +
+      "oreWallet\022\034.pactus.RestoreWalletRequest\032" +
+      "\035.pactus.RestoreWalletResponse\022C\n\nLoadWa" +
+      "llet\022\031.pactus.LoadWalletRequest\032\032.pactus" +
+      ".LoadWalletResponse\022I\n\014UnloadWallet\022\033.pa" +
+      "ctus.UnloadWalletRequest\032\034.pactus.Unload" +
+      "WalletResponse\022R\n\017GetTotalBalance\022\036.pact" +
+      "us.GetTotalBalanceRequest\032\037.pactus.GetTo" +
+      "talBalanceResponse\022[\n\022SignRawTransaction" +
+      "\022!.pactus.SignRawTransactionRequest\032\".pa" +
+      "ctus.SignRawTransactionResponse\022^\n\023GetVa" +
+      "lidatorAddress\022\".pactus.GetValidatorAddr" +
+      "essRequest\032#.pactus.GetValidatorAddressR" +
+      "esponse\022L\n\rGetNewAddress\022\034.pactus.GetNew" +
+      "AddressRequest\032\035.pactus.GetNewAddressRes" +
+      "ponse\022F\n\013SignMessage\022\032.pactus.SignMessag" +
+      "eRequest\032\033.pactus.SignMessageResponse\022L\n" +
+      "\rGetTotalStake\022\034.pactus.GetTotalStakeReq" +
+      "uest\032\035.pactus.GetTotalStakeResponse\022O\n\016G" +
+      "etAddressInfo\022\035.pactus.GetAddressInfoReq" +
+      "uest\032\036.pactus.GetAddressInfoResponse\022R\n\017" +
+      "SetAddressLabel\022\036.pactus.SetAddressLabel" +
+      "Request\032\037.pactus.SetAddressLabelResponse" +
+      "\022F\n\013ListWallets\022\032.pactus.ListWalletsRequ" +
+      "est\032\033.pactus.ListWalletsResponse\022L\n\rGetW" +
+      "alletInfo\022\034.pactus.GetWalletInfoRequest\032" +
+      "\035.pactus.GetWalletInfoResponse\022L\n\rListAd" +
+      "dresses\022\034.pactus.ListAddressesRequest\032\035." +
+      "pactus.ListAddressesResponse\022O\n\016UpdatePa" +
+      "ssword\022\035.pactus.UpdatePasswordRequest\032\036." +
+      "pactus.UpdatePasswordResponse\022U\n\020ListTra" +
+      "nsactions\022\037.pactus.ListTransactionsReque" +
+      "st\032 .pactus.ListTransactionsResponseB:\n\006" +
+      "pactusZ0github.com/pactus-project/pactus" +
+      "/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -30404,224 +27673,206 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_AddressInfo_descriptor,
         new java.lang.String[] { "Address", "PublicKey", "Label", "Path", });
-    internal_static_pactus_HistoryInfo_descriptor =
-      getDescriptor().getMessageType(1);
-    internal_static_pactus_HistoryInfo_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_pactus_HistoryInfo_descriptor,
-        new java.lang.String[] { "TransactionId", "Time", "PayloadType", "Description", "Amount", });
-    internal_static_pactus_GetAddressHistoryRequest_descriptor =
-      getDescriptor().getMessageType(2);
-    internal_static_pactus_GetAddressHistoryRequest_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_pactus_GetAddressHistoryRequest_descriptor,
-        new java.lang.String[] { "WalletName", "Address", });
-    internal_static_pactus_GetAddressHistoryResponse_descriptor =
-      getDescriptor().getMessageType(3);
-    internal_static_pactus_GetAddressHistoryResponse_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_pactus_GetAddressHistoryResponse_descriptor,
-        new java.lang.String[] { "HistoryInfo", });
     internal_static_pactus_GetNewAddressRequest_descriptor =
-      getDescriptor().getMessageType(4);
+      getDescriptor().getMessageType(1);
     internal_static_pactus_GetNewAddressRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetNewAddressRequest_descriptor,
         new java.lang.String[] { "WalletName", "AddressType", "Label", "Password", });
     internal_static_pactus_GetNewAddressResponse_descriptor =
-      getDescriptor().getMessageType(5);
+      getDescriptor().getMessageType(2);
     internal_static_pactus_GetNewAddressResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetNewAddressResponse_descriptor,
         new java.lang.String[] { "WalletName", "AddressInfo", });
     internal_static_pactus_RestoreWalletRequest_descriptor =
-      getDescriptor().getMessageType(6);
+      getDescriptor().getMessageType(3);
     internal_static_pactus_RestoreWalletRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_RestoreWalletRequest_descriptor,
         new java.lang.String[] { "WalletName", "Mnemonic", "Password", });
     internal_static_pactus_RestoreWalletResponse_descriptor =
-      getDescriptor().getMessageType(7);
+      getDescriptor().getMessageType(4);
     internal_static_pactus_RestoreWalletResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_RestoreWalletResponse_descriptor,
         new java.lang.String[] { "WalletName", });
     internal_static_pactus_CreateWalletRequest_descriptor =
-      getDescriptor().getMessageType(8);
+      getDescriptor().getMessageType(5);
     internal_static_pactus_CreateWalletRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_CreateWalletRequest_descriptor,
         new java.lang.String[] { "WalletName", "Password", });
     internal_static_pactus_CreateWalletResponse_descriptor =
-      getDescriptor().getMessageType(9);
+      getDescriptor().getMessageType(6);
     internal_static_pactus_CreateWalletResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_CreateWalletResponse_descriptor,
         new java.lang.String[] { "WalletName", "Mnemonic", });
     internal_static_pactus_LoadWalletRequest_descriptor =
-      getDescriptor().getMessageType(10);
+      getDescriptor().getMessageType(7);
     internal_static_pactus_LoadWalletRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_LoadWalletRequest_descriptor,
         new java.lang.String[] { "WalletName", });
     internal_static_pactus_LoadWalletResponse_descriptor =
-      getDescriptor().getMessageType(11);
+      getDescriptor().getMessageType(8);
     internal_static_pactus_LoadWalletResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_LoadWalletResponse_descriptor,
         new java.lang.String[] { "WalletName", });
     internal_static_pactus_UnloadWalletRequest_descriptor =
-      getDescriptor().getMessageType(12);
+      getDescriptor().getMessageType(9);
     internal_static_pactus_UnloadWalletRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_UnloadWalletRequest_descriptor,
         new java.lang.String[] { "WalletName", });
     internal_static_pactus_UnloadWalletResponse_descriptor =
-      getDescriptor().getMessageType(13);
+      getDescriptor().getMessageType(10);
     internal_static_pactus_UnloadWalletResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_UnloadWalletResponse_descriptor,
         new java.lang.String[] { "WalletName", });
     internal_static_pactus_GetValidatorAddressRequest_descriptor =
-      getDescriptor().getMessageType(14);
+      getDescriptor().getMessageType(11);
     internal_static_pactus_GetValidatorAddressRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetValidatorAddressRequest_descriptor,
         new java.lang.String[] { "PublicKey", });
     internal_static_pactus_GetValidatorAddressResponse_descriptor =
-      getDescriptor().getMessageType(15);
+      getDescriptor().getMessageType(12);
     internal_static_pactus_GetValidatorAddressResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetValidatorAddressResponse_descriptor,
         new java.lang.String[] { "Address", });
     internal_static_pactus_SignRawTransactionRequest_descriptor =
-      getDescriptor().getMessageType(16);
+      getDescriptor().getMessageType(13);
     internal_static_pactus_SignRawTransactionRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_SignRawTransactionRequest_descriptor,
         new java.lang.String[] { "WalletName", "RawTransaction", "Password", });
     internal_static_pactus_SignRawTransactionResponse_descriptor =
-      getDescriptor().getMessageType(17);
+      getDescriptor().getMessageType(14);
     internal_static_pactus_SignRawTransactionResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_SignRawTransactionResponse_descriptor,
         new java.lang.String[] { "TransactionId", "SignedRawTransaction", });
     internal_static_pactus_GetTotalBalanceRequest_descriptor =
-      getDescriptor().getMessageType(18);
+      getDescriptor().getMessageType(15);
     internal_static_pactus_GetTotalBalanceRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetTotalBalanceRequest_descriptor,
         new java.lang.String[] { "WalletName", });
     internal_static_pactus_GetTotalBalanceResponse_descriptor =
-      getDescriptor().getMessageType(19);
+      getDescriptor().getMessageType(16);
     internal_static_pactus_GetTotalBalanceResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetTotalBalanceResponse_descriptor,
         new java.lang.String[] { "WalletName", "TotalBalance", });
     internal_static_pactus_SignMessageRequest_descriptor =
-      getDescriptor().getMessageType(20);
+      getDescriptor().getMessageType(17);
     internal_static_pactus_SignMessageRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_SignMessageRequest_descriptor,
         new java.lang.String[] { "WalletName", "Password", "Address", "Message", });
     internal_static_pactus_SignMessageResponse_descriptor =
-      getDescriptor().getMessageType(21);
+      getDescriptor().getMessageType(18);
     internal_static_pactus_SignMessageResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_SignMessageResponse_descriptor,
         new java.lang.String[] { "Signature", });
     internal_static_pactus_GetTotalStakeRequest_descriptor =
-      getDescriptor().getMessageType(22);
+      getDescriptor().getMessageType(19);
     internal_static_pactus_GetTotalStakeRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetTotalStakeRequest_descriptor,
         new java.lang.String[] { "WalletName", });
     internal_static_pactus_GetTotalStakeResponse_descriptor =
-      getDescriptor().getMessageType(23);
+      getDescriptor().getMessageType(20);
     internal_static_pactus_GetTotalStakeResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetTotalStakeResponse_descriptor,
         new java.lang.String[] { "WalletName", "TotalStake", });
     internal_static_pactus_GetAddressInfoRequest_descriptor =
-      getDescriptor().getMessageType(24);
+      getDescriptor().getMessageType(21);
     internal_static_pactus_GetAddressInfoRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetAddressInfoRequest_descriptor,
         new java.lang.String[] { "WalletName", "Address", });
     internal_static_pactus_GetAddressInfoResponse_descriptor =
-      getDescriptor().getMessageType(25);
+      getDescriptor().getMessageType(22);
     internal_static_pactus_GetAddressInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetAddressInfoResponse_descriptor,
         new java.lang.String[] { "WalletName", "AddressInfo", });
     internal_static_pactus_SetAddressLabelRequest_descriptor =
-      getDescriptor().getMessageType(26);
+      getDescriptor().getMessageType(23);
     internal_static_pactus_SetAddressLabelRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_SetAddressLabelRequest_descriptor,
         new java.lang.String[] { "WalletName", "Password", "Address", "Label", });
     internal_static_pactus_SetAddressLabelResponse_descriptor =
-      getDescriptor().getMessageType(27);
+      getDescriptor().getMessageType(24);
     internal_static_pactus_SetAddressLabelResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_SetAddressLabelResponse_descriptor,
         new java.lang.String[] { "WalletName", "Address", "Label", });
     internal_static_pactus_ListWalletsRequest_descriptor =
-      getDescriptor().getMessageType(28);
+      getDescriptor().getMessageType(25);
     internal_static_pactus_ListWalletsRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_ListWalletsRequest_descriptor,
         new java.lang.String[] { });
     internal_static_pactus_ListWalletsResponse_descriptor =
-      getDescriptor().getMessageType(29);
+      getDescriptor().getMessageType(26);
     internal_static_pactus_ListWalletsResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_ListWalletsResponse_descriptor,
         new java.lang.String[] { "Wallets", });
     internal_static_pactus_GetWalletInfoRequest_descriptor =
-      getDescriptor().getMessageType(30);
+      getDescriptor().getMessageType(27);
     internal_static_pactus_GetWalletInfoRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetWalletInfoRequest_descriptor,
         new java.lang.String[] { "WalletName", });
     internal_static_pactus_GetWalletInfoResponse_descriptor =
-      getDescriptor().getMessageType(31);
+      getDescriptor().getMessageType(28);
     internal_static_pactus_GetWalletInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetWalletInfoResponse_descriptor,
         new java.lang.String[] { "WalletName", "Version", "Network", "Encrypted", "Uuid", "CreatedAt", "DefaultFee", });
     internal_static_pactus_ListAddressesRequest_descriptor =
-      getDescriptor().getMessageType(32);
+      getDescriptor().getMessageType(29);
     internal_static_pactus_ListAddressesRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_ListAddressesRequest_descriptor,
         new java.lang.String[] { "WalletName", "AddressTypes", });
     internal_static_pactus_ListAddressesResponse_descriptor =
-      getDescriptor().getMessageType(33);
+      getDescriptor().getMessageType(30);
     internal_static_pactus_ListAddressesResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_ListAddressesResponse_descriptor,
         new java.lang.String[] { "WalletName", "Data", });
     internal_static_pactus_UpdatePasswordRequest_descriptor =
-      getDescriptor().getMessageType(34);
+      getDescriptor().getMessageType(31);
     internal_static_pactus_UpdatePasswordRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_UpdatePasswordRequest_descriptor,
         new java.lang.String[] { "WalletName", "OldPassword", "NewPassword", });
     internal_static_pactus_UpdatePasswordResponse_descriptor =
-      getDescriptor().getMessageType(35);
+      getDescriptor().getMessageType(32);
     internal_static_pactus_UpdatePasswordResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_UpdatePasswordResponse_descriptor,
         new java.lang.String[] { "WalletName", });
     internal_static_pactus_ListTransactionsRequest_descriptor =
-      getDescriptor().getMessageType(36);
+      getDescriptor().getMessageType(33);
     internal_static_pactus_ListTransactionsRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_ListTransactionsRequest_descriptor,
         new java.lang.String[] { "WalletName", "Direction", "Address", "Count", "Skip", });
     internal_static_pactus_ListTransactionsResponse_descriptor =
-      getDescriptor().getMessageType(37);
+      getDescriptor().getMessageType(34);
     internal_static_pactus_ListTransactionsResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_ListTransactionsResponse_descriptor,

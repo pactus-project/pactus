@@ -37,8 +37,6 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
       $pb.ServerContext ctx, $1.GetValidatorAddressRequest request);
   $async.Future<$1.GetNewAddressResponse> getNewAddress(
       $pb.ServerContext ctx, $1.GetNewAddressRequest request);
-  $async.Future<$1.GetAddressHistoryResponse> getAddressHistory(
-      $pb.ServerContext ctx, $1.GetAddressHistoryRequest request);
   $async.Future<$1.SignMessageResponse> signMessage(
       $pb.ServerContext ctx, $1.SignMessageRequest request);
   $async.Future<$1.GetTotalStakeResponse> getTotalStake(
@@ -76,8 +74,6 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
         return $1.GetValidatorAddressRequest();
       case 'GetNewAddress':
         return $1.GetNewAddressRequest();
-      case 'GetAddressHistory':
-        return $1.GetAddressHistoryRequest();
       case 'SignMessage':
         return $1.SignMessageRequest();
       case 'GetTotalStake':
@@ -121,8 +117,6 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
             ctx, request as $1.GetValidatorAddressRequest);
       case 'GetNewAddress':
         return getNewAddress(ctx, request as $1.GetNewAddressRequest);
-      case 'GetAddressHistory':
-        return getAddressHistory(ctx, request as $1.GetAddressHistoryRequest);
       case 'SignMessage':
         return signMessage(ctx, request as $1.SignMessageRequest);
       case 'GetTotalStake':

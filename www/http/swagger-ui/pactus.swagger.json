@@ -939,45 +939,6 @@
         ]
       }
     },
-    "/pactus/wallet/get_address_history": {
-      "get": {
-        "summary": "GetAddressHistory retrieves the transaction history of an address.",
-        "operationId": "Wallet_GetAddressHistory",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pactusGetAddressHistoryResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "walletName",
-            "description": "The name of the wallet containing the address.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "address",
-            "description": "The address to retrieve history for.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "Wallet"
-        ]
-      }
-    },
     "/pactus/wallet/get_address_info": {
       "get": {
         "summary": "GetAddressInfo returns detailed information about a specific address.",
@@ -1965,20 +1926,6 @@
       },
       "description": "Response message contains account information."
     },
-    "pactusGetAddressHistoryResponse": {
-      "type": "object",
-      "properties": {
-        "historyInfo": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/pactusHistoryInfo"
-          },
-          "description": "List of all historical transactions associated with the address."
-        }
-      },
-      "description": "Response message contains address transaction history."
-    },
     "pactusGetAddressInfoResponse": {
       "type": "object",
       "properties": {
@@ -2566,34 +2513,6 @@
         }
       },
       "description": "Response message contains wallet details."
-    },
-    "pactusHistoryInfo": {
-      "type": "object",
-      "properties": {
-        "transactionId": {
-          "type": "string",
-          "description": "The transaction ID in hexadecimal format."
-        },
-        "time": {
-          "type": "integer",
-          "format": "int64",
-          "description": "Unix timestamp of when the transaction was confirmed."
-        },
-        "payloadType": {
-          "type": "string",
-          "description": "The type of transaction payload."
-        },
-        "description": {
-          "type": "string",
-          "description": "Human-readable description of the transaction."
-        },
-        "amount": {
-          "type": "string",
-          "format": "int64",
-          "description": "The transaction amount in NanoPAC."
-        }
-      },
-      "description": "HistoryInfo contains transaction history details for an address."
     },
     "pactusListAddressesResponse": {
       "type": "object",

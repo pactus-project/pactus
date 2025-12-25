@@ -11,7 +11,7 @@ import (
 func buildInfoCmd(parentCmd *cobra.Command) {
 	infoCmd := &cobra.Command{
 		Use:   "info",
-		Short: "retrieving the wallet information.",
+		Short: "retrieving the wallet information",
 	}
 
 	parentCmd.AddCommand(infoCmd)

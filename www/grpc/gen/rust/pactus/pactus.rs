@@ -1153,42 +1153,6 @@ pub struct AddressInfo {
     #[prost(string, tag="4")]
     pub path: ::prost::alloc::string::String,
 }
-/// HistoryInfo contains transaction history details for an address.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct HistoryInfo {
-    /// The transaction ID in hexadecimal format.
-    #[prost(string, tag="1")]
-    pub transaction_id: ::prost::alloc::string::String,
-    /// Unix timestamp of when the transaction was confirmed.
-    #[prost(uint32, tag="2")]
-    pub time: u32,
-    /// The type of transaction payload.
-    #[prost(string, tag="3")]
-    pub payload_type: ::prost::alloc::string::String,
-    /// Human-readable description of the transaction.
-    #[prost(string, tag="4")]
-    pub description: ::prost::alloc::string::String,
-    /// The transaction amount in NanoPAC.
-    #[prost(int64, tag="5")]
-    pub amount: i64,
-}
-/// Request message for retrieving address transaction history.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct GetAddressHistoryRequest {
-    /// The name of the wallet containing the address.
-    #[prost(string, tag="1")]
-    pub wallet_name: ::prost::alloc::string::String,
-    /// The address to retrieve history for.
-    #[prost(string, tag="2")]
-    pub address: ::prost::alloc::string::String,
-}
-/// Response message contains address transaction history.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct GetAddressHistoryResponse {
-    /// List of all historical transactions associated with the address.
-    #[prost(message, repeated, tag="1")]
-    pub history_info: ::prost::alloc::vec::Vec<HistoryInfo>,
-}
 /// Request message for generating a new wallet address.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct GetNewAddressRequest {

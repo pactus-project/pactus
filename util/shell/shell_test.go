@@ -156,7 +156,7 @@ func TestNew_CommandProperties(t *testing.T) {
 	interactiveCmd := New(root, nil)
 
 	require.Equal(t, "interactive", interactiveCmd.Use)
-	require.Equal(t, "Start pactus-shell in interactive mode.", interactiveCmd.Short)
+	require.Equal(t, "Start pactus-shell in interactive mode", interactiveCmd.Short)
 	require.NotNil(t, interactiveCmd.Run)
 }
 
@@ -192,12 +192,12 @@ func TestNew_InteractiveCommandCreation(t *testing.T) {
 
 	// Verify the specific changed lines
 	require.Equal(t, "interactive", interactiveCmd.Use)
-	require.Equal(t, "Start pactus-shell in interactive mode.", interactiveCmd.Short)
+	require.Equal(t, "Start pactus-shell in interactive mode", interactiveCmd.Short)
 	require.NotNil(t, interactiveCmd.Run)
 
 	// Test that it's not the old values
 	require.NotEqual(t, "shell", interactiveCmd.Use)
-	require.NotEqual(t, "Start an interactive shell.", interactiveCmd.Short)
+	require.NotEqual(t, "Start an interactive shell", interactiveCmd.Short)
 }
 
 func TestNew_WithAllOptions(t *testing.T) {
@@ -213,7 +213,7 @@ func TestNew_WithAllOptions(t *testing.T) {
 
 	// Verify the changed properties are correct
 	require.Equal(t, "interactive", interactiveCmd.Use)
-	require.Equal(t, "Start pactus-shell in interactive mode.", interactiveCmd.Short)
+	require.Equal(t, "Start pactus-shell in interactive mode", interactiveCmd.Short)
 	require.NotNil(t, interactiveCmd.Run)
 }
 
@@ -235,8 +235,8 @@ func TestChangedLinesExecution(t *testing.T) {
 
 	// Verify the exact changes
 	require.Equal(t, "interactive", cmd.Use)
-	require.Equal(t, "Start pactus-shell in interactive mode.", cmd.Short)
+	require.Equal(t, "Start pactus-shell in interactive mode", cmd.Short)
 
 	require.NotEqual(t, "shell", cmd.Use)
-	require.NotEqual(t, "Start an interactive shell.", cmd.Short)
+	require.NotEqual(t, "Start an interactive shell", cmd.Short)
 }

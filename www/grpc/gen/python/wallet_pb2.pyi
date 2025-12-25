@@ -38,34 +38,6 @@ class AddressInfo(_message.Message):
     path: str
     def __init__(self, address: _Optional[str] = ..., public_key: _Optional[str] = ..., label: _Optional[str] = ..., path: _Optional[str] = ...) -> None: ...
 
-class HistoryInfo(_message.Message):
-    __slots__ = ()
-    TRANSACTION_ID_FIELD_NUMBER: _ClassVar[int]
-    TIME_FIELD_NUMBER: _ClassVar[int]
-    PAYLOAD_TYPE_FIELD_NUMBER: _ClassVar[int]
-    DESCRIPTION_FIELD_NUMBER: _ClassVar[int]
-    AMOUNT_FIELD_NUMBER: _ClassVar[int]
-    transaction_id: str
-    time: int
-    payload_type: str
-    description: str
-    amount: int
-    def __init__(self, transaction_id: _Optional[str] = ..., time: _Optional[int] = ..., payload_type: _Optional[str] = ..., description: _Optional[str] = ..., amount: _Optional[int] = ...) -> None: ...
-
-class GetAddressHistoryRequest(_message.Message):
-    __slots__ = ()
-    WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
-    ADDRESS_FIELD_NUMBER: _ClassVar[int]
-    wallet_name: str
-    address: str
-    def __init__(self, wallet_name: _Optional[str] = ..., address: _Optional[str] = ...) -> None: ...
-
-class GetAddressHistoryResponse(_message.Message):
-    __slots__ = ()
-    HISTORY_INFO_FIELD_NUMBER: _ClassVar[int]
-    history_info: _containers.RepeatedCompositeFieldContainer[HistoryInfo]
-    def __init__(self, history_info: _Optional[_Iterable[_Union[HistoryInfo, _Mapping]]] = ...) -> None: ...
-
 class GetNewAddressRequest(_message.Message):
     __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]

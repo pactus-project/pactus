@@ -9,22 +9,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// buildAllTransactionCmd builds all sub-commands related to the transactions.
-func buildAllTransactionCmd(parentCmd *cobra.Command) {
+// buildSendCmd builds all sub-commands related to the transactions.
+func buildSendCmd(parentCmd *cobra.Command) {
 	txCmd := &cobra.Command{
-		Use:   "tx",
-		Short: "create, sign and publish a transaction",
+		Use:   "send",
+		Short: "create, sign and send a transaction",
 	}
 
 	parentCmd.AddCommand(txCmd)
-	buildTransferTxCmd(txCmd)
-	buildBondTxCmd(txCmd)
-	buildUnbondTxCmd(txCmd)
-	buildWithdrawTxCmd(txCmd)
+	buildSendTransferCmd(txCmd)
+	buildSendBondCmd(txCmd)
+	buildSendUnbondCmd(txCmd)
+	buildSendWithdrawCmd(txCmd)
 }
 
-// buildTransferTxCmd builds a command for create, sign and publish a `Transfer` transaction.
-func buildTransferTxCmd(parentCmd *cobra.Command) {
+// buildSendTransferCmd builds a command for create, sign and publish a `Transfer` transaction.
+func buildSendTransferCmd(parentCmd *cobra.Command) {
 	transferCmd := &cobra.Command{
 		Use:   "transfer [flags] <FROM> <TO> <AMOUNT>",
 		Short: "create, sign and publish a `Transfer` transaction",
@@ -66,8 +66,8 @@ func buildTransferTxCmd(parentCmd *cobra.Command) {
 	}
 }
 
-// buildBondTxCmd builds a command for create, sign and publish a `Bond` transaction.
-func buildBondTxCmd(parentCmd *cobra.Command) {
+// buildSendBondCmd builds a command for create, sign and publish a `Bond` transaction.
+func buildSendBondCmd(parentCmd *cobra.Command) {
 	bondCmd := &cobra.Command{
 		Use:   "bond [flags] <ACCOUNT> <VALIDATOR> <STAKE>",
 		Short: "create, sign and publish a `Bond` transaction",
@@ -110,8 +110,8 @@ func buildBondTxCmd(parentCmd *cobra.Command) {
 	}
 }
 
-// buildUnbondTxCmd builds a command for create, sign and publish a `Unbond` transaction.
-func buildUnbondTxCmd(parentCmd *cobra.Command) {
+// buildSendUnbondCmd builds a command for create, sign and publish a `Unbond` transaction.
+func buildSendUnbondCmd(parentCmd *cobra.Command) {
 	unbondCmd := &cobra.Command{
 		Use:   "unbond [flags] <ADDRESS>",
 		Short: "create, sign and publish an `Unbond` transaction",
@@ -148,8 +148,8 @@ func buildUnbondTxCmd(parentCmd *cobra.Command) {
 	}
 }
 
-// buildWithdrawTxCmd builds a command for create, sign and publish a `Withdraw` transaction.
-func buildWithdrawTxCmd(parentCmd *cobra.Command) {
+// buildSendWithdrawCmd builds a command for create, sign and publish a `Withdraw` transaction.
+func buildSendWithdrawCmd(parentCmd *cobra.Command) {
 	withdrawCmd := &cobra.Command{
 		Use:   "withdraw [flags] <VALIDATOR> <ACCOUNT> <STAKE>",
 		Short: "create, sign and publish a `Withdraw` transaction",

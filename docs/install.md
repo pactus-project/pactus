@@ -100,11 +100,11 @@ To obtain the public key of an address, run this command:
 ./pactus-wallet --path ~/pactus/wallets/wallet_1 address pub <ADDRESS>
 ```
 
-To publish a transaction, use the tx subcommand.
-For example, to publish a bond transaction:
+To send a transaction, use the `send` subcommand.
+For example, to send a bond transaction:
 
 ```bash
-./pactus-wallet --path ~/pactus/wallets/wallet_1 tx bond <FROM> <TO> <AMOUNT>
+./pactus-wallet --path ~/pactus/wallets/wallet_1 send bond <FROM> <TO> <AMOUNT>
 ```
 
 You can recover a wallet if you have the seed phrase.

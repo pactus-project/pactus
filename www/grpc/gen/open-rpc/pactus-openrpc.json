@@ -966,33 +966,6 @@
           }
         }
       },{
-      "name": "pactus.wallet.get_address_history",
-      "description": "GetAddressHistory retrieves the transaction history of an address.",
-      "tags": [{ "name": "wallet"}],
-      "paramStructure": "by-name",
-      "params": [{
-          "name": "wallet_name",
-          "description": "The name of the wallet containing the address.",
-          "schema": { "type": "string" }
-        },{
-          "name": "address",
-          "description": "The address to retrieve history for.",
-          "schema": { "type": "string" }
-        }],
-      "result": {
-        "name": "fields",
-        "schema": {
-          "type": "object","required": ["history_info"],
-          "properties": {"history_info": {
-  "type": "array",
-  "items": {
-  "type": "object","required": ["transaction_id","time","payload_type","description","amount"],
-  "properties": {"transaction_id": { "type": "string" },"time": { "type": "integer" },"payload_type": { "type": "string" },"description": { "type": "string" },"amount": { "type": "integer" }}
-}
-}}
-          }
-        }
-      },{
       "name": "pactus.wallet.sign_message",
       "description": "SignMessage signs an arbitrary message using a wallet's private key.",
       "tags": [{ "name": "wallet"}],

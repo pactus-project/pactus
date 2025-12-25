@@ -111,9 +111,6 @@ http:
     - selector: pactus.Wallet.GetAddressInfo
       get: "/pactus/wallet/get_address_info"
 
-    - selector: pactus.Wallet.GetAddressHistory
-      get: "/pactus/wallet/get_address_history"
-
     - selector: pactus.Wallet.SetAddressLabel
       patch: "/pactus/wallet/set_address_label"
 
