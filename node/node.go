@@ -118,7 +118,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		curConsMgr = consV2Mgr
 	}
 
-	walletMgr, err := wltmgr.NewManager(ctx, conf.WalletManager)
+	walletMgr, err := wltmgr.NewManager(ctx, conf.WalletManager, eventPipe)
 	if err != nil {
 		cancel()
 

@@ -132,7 +132,7 @@ func TestTransactionOperations(t *testing.T) {
 	td := setup(t)
 
 	trx := td.GenerateTestTransferTx()
-	txInfos, err := types.MakeTransactionInfos(trx)
+	txInfos, err := types.MakeTransactionInfos(trx, types.TransactionStatusPending, 0)
 	require.NoError(t, err)
 
 	txInfo := txInfos[0]
@@ -162,7 +162,7 @@ func TestTransactionOperations(t *testing.T) {
 	assert.ErrorIs(t, err, storage.ErrNotFound)
 
 	// Test UpdateTransactionStatus
-	err = td.storage.UpdateTransactionStatus(txInfo.ID, types.TransactionStatusConfirmed)
+	err = td.storage.UpdateTransactionStatus(txInfo.ID, types.TransactionStatusConfirmed, 1)
 	require.NoError(t, err)
 
 	retrieved, err = td.storage.GetTransaction(txInfo.ID)
@@ -174,7 +174,7 @@ func TestTransactionCompositeKey(t *testing.T) {
 	td := setup(t)
 
 	trx := td.GenerateTestBatchTransferTx()
-	txInfos, err := types.MakeTransactionInfos(trx)
+	txInfos, err := types.MakeTransactionInfos(trx, types.TransactionStatusPending, 0)
 	require.NoError(t, err)
 
 	// Insert same transaction ID with different receivers (batch transfer scenario)
@@ -206,7 +206,7 @@ func TestListTransactions(t *testing.T) {
 	receiver := td.RandAccAddress()
 	for i := 0; i < 5; i++ {
 		trx := td.GenerateTestTransferTx(testsuite.TransactionWithReceiver(receiver))
-		txInfo, err := types.MakeTransactionInfos(trx)
+		txInfo, err := types.MakeTransactionInfos(trx, types.TransactionStatusPending, 0)
 		require.NoError(t, err)
 
 		err = td.storage.InsertTransaction(txInfo[0])

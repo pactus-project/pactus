@@ -114,6 +114,21 @@ func (mr *MockIStorageMockRecorder) Close() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockIStorage)(nil).Close))
 }
 
+// GetPendingTransactions mocks base method.
+func (m *MockIStorage) GetPendingTransactions() (map[string]*types.TransactionInfo, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetPendingTransactions")
+	ret0, _ := ret[0].(map[string]*types.TransactionInfo)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetPendingTransactions indicates an expected call of GetPendingTransactions.
+func (mr *MockIStorageMockRecorder) GetPendingTransactions() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPendingTransactions", reflect.TypeOf((*MockIStorage)(nil).GetPendingTransactions))
+}
+
 // GetTransaction mocks base method.
 func (m *MockIStorage) GetTransaction(id string) (*types.TransactionInfo, error) {
 	m.ctrl.T.Helper()
@@ -185,6 +200,20 @@ func (mr *MockIStorageMockRecorder) InsertTransaction(info any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertTransaction", reflect.TypeOf((*MockIStorage)(nil).InsertTransaction), info)
 }
 
+// IsLegacy mocks base method.
+func (m *MockIStorage) IsLegacy() bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsLegacy")
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// IsLegacy indicates an expected call of IsLegacy.
+func (mr *MockIStorageMockRecorder) IsLegacy() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsLegacy", reflect.TypeOf((*MockIStorage)(nil).IsLegacy))
+}
+
 // ListTransactions mocks base method.
 func (m *MockIStorage) ListTransactions(receiver string, count, skip int) ([]*types.TransactionInfo, error) {
 	m.ctrl.T.Helper()
@@ -229,17 +258,17 @@ func (mr *MockIStorageMockRecorder) UpdateAddress(info any) *gomock.Call {
 }
 
 // UpdateTransactionStatus mocks base method.
-func (m *MockIStorage) UpdateTransactionStatus(id string, status types.TransactionStatus) error {
+func (m *MockIStorage) UpdateTransactionStatus(id string, status types.TransactionStatus, blockHeight uint32) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateTransactionStatus", id, status)
+	ret := m.ctrl.Call(m, "UpdateTransactionStatus", id, status, blockHeight)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // UpdateTransactionStatus indicates an expected call of UpdateTransactionStatus.
-func (mr *MockIStorageMockRecorder) UpdateTransactionStatus(id, status any) *gomock.Call {
+func (mr *MockIStorageMockRecorder) UpdateTransactionStatus(id, status, blockHeight any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTransactionStatus", reflect.TypeOf((*MockIStorage)(nil).UpdateTransactionStatus), id, status)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTransactionStatus", reflect.TypeOf((*MockIStorage)(nil).UpdateTransactionStatus), id, status, blockHeight)
 }
 
 // UpdateVault mocks base method.

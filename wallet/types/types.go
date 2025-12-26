@@ -60,7 +60,7 @@ type TransactionInfo struct {
 // MakeTransactionInfos builds TransactionInfo from trx.
 // Returns might contains more than one entry per recipient, this covers the batch transfer transaction.s
 // Data should be the serialized tx, otherwise it reurn error.
-func MakeTransactionInfos(trx *tx.Tx) ([]*TransactionInfo, error) {
+func MakeTransactionInfos(trx *tx.Tx, status TransactionStatus, blockHeight uint32) ([]*TransactionInfo, error) {
 	data, err := trx.Bytes()
 	if err != nil {
 		return nil, fmt.Errorf("failed to serialize tx: %w", err)
@@ -93,8 +93,8 @@ func MakeTransactionInfos(trx *tx.Tx) ([]*TransactionInfo, error) {
 			Amount:      trx.Payload().Value(),
 			Fee:         trx.Fee(),
 			Memo:        trx.Memo(),
-			Status:      TransactionStatusPending,
-			BlockHeight: 0,
+			Status:      status,
+			BlockHeight: blockHeight,
 			PayloadType: trx.Payload().Type(),
 			Data:        data,
 		}
