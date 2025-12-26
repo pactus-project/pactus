@@ -234,6 +234,10 @@ func TestListFilesInDir(t *testing.T) {
 	err = Mkdir(file3Path)
 	require.NoError(t, err)
 
+	file4Path := filepath.Join(file3Path, "file_in_directory")
+	err = Mkdir(file4Path)
+	require.NoError(t, err)
+
 	t.Run("Exclude Directories", func(t *testing.T) {
 		files, err := ListFilesInDir(tmpDir, ExcludeDirectories())
 		require.NoError(t, err)
