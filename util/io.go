@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -312,26 +311,18 @@ func ListFilesInDir(dir string, opts ...ListFilesOption) ([]string, error) {
 	}
 
 	files := make([]string, 0)
-
-	err := filepath.WalkDir(dir, func(path string, entry fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if entry.Name() == filepath.Base(dir) {
-			return nil
-		}
-
-		if cfg.excludeDirs && entry.IsDir() {
-			return nil
-		}
-
-		files = append(files, path)
-
-		return nil
-	})
+	entries, err := os.ReadDir(dir)
 	if err != nil {
 		return nil, err
+	}
+
+	for _, entry := range entries {
+		if cfg.excludeDirs && entry.IsDir() {
+			continue
+		}
+
+		fulPath := filepath.Join(dir, entry.Name())
+		files = append(files, fulPath)
 	}
 
 	return files, nil
