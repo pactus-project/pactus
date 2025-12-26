@@ -211,8 +211,6 @@ func (a *Amount) Scan(src any) error {
 	default:
 		return ErrInvalidSQLType
 	}
-
-	return nil
 }
 
 // Value implements the driver.Valuer interface for SQL database operations.
