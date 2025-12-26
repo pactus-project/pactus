@@ -3,6 +3,7 @@ package tests
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -19,6 +20,7 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/wallet"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -100,6 +102,12 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Network.PeerStorePath = util.TempFilePath()
 		tConfigs[i].HTML.Enable = false
 		tConfigs[i].GRPC.Enable = false
+		tConfigs[i].WalletManager.WalletsDir = util.TempDirPath()
+		tConfigs[i].WalletManager.DefaultWalletName = "default_wallet"
+
+		walletPath := filepath.Join(tConfigs[i].WalletManager.WalletsDir, "default_wallet")
+		mnemonic, _ := wallet.GenerateMnemonic(128)
+		_, _ = wallet.Create(context.Background(), walletPath, mnemonic, "", genesis.Mainnet)
 
 		if i == 0 {
 			tConfigs[i].GRPC.Enable = true

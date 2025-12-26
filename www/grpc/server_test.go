@@ -36,7 +36,6 @@ type testData struct {
 
 func testConfig() *Config {
 	conf := DefaultConfig()
-	conf.WalletsDir = util.TempDirPath()
 
 	return conf
 }

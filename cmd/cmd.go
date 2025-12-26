@@ -262,9 +262,6 @@ func MakeConfig(workingDir string) (*config.Config, *genesis.Genesis, error) {
 	conf.Store.AccountCacheSize = 1024
 	conf.Store.PublicKeyCacheSize = 1024
 
-	conf.GRPC.DefaultWalletName = DefaultWalletName
-	conf.GRPC.WalletsDir = walletsDir
-
 	conf.WalletManager.ChainType = chainType
 	conf.WalletManager.WalletsDir = walletsDir
 	conf.WalletManager.DefaultWalletName = DefaultWalletName
