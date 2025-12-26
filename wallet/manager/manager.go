@@ -12,6 +12,7 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/types"
 )
@@ -25,9 +26,10 @@ type Manager struct {
 	walletDirectory   string
 	GRPCAddress       string
 	DefaultWalletName string
+	eventPipe         pipeline.Pipeline[any]
 }
 
-func NewManager(ctx context.Context, conf *Config) (IManager, error) {
+func NewManager(ctx context.Context, conf *Config, eventPipe pipeline.Pipeline[any]) (IManager, error) {
 	mgr := &Manager{
 		ctx:               ctx,
 		wallets:           make(map[string]*wallet.Wallet),
@@ -35,6 +37,7 @@ func NewManager(ctx context.Context, conf *Config) (IManager, error) {
 		walletDirectory:   conf.WalletsDir,
 		GRPCAddress:       conf.GRPCAddress,
 		DefaultWalletName: conf.DefaultWalletName,
+		eventPipe:         eventPipe,
 	}
 
 	if err := mgr.LoadWallet(conf.DefaultWalletName); err != nil {
@@ -111,7 +114,9 @@ func (wm *Manager) LoadWallet(walletName string) error {
 	}
 
 	walletPath := wm.getWalletPath(walletName)
-	opts := []wallet.OpenWalletOption{}
+	opts := []wallet.OpenWalletOption{
+		wallet.WithEventPipe(wm.eventPipe),
+	}
 	if wm.GRPCAddress != "" {
 		opts = append(opts, wallet.WithCustomServers([]string{wm.GRPCAddress}))
 	}

@@ -20,11 +20,13 @@ type IStorage interface {
 	UpdateAddress(info *types.AddressInfo) error
 
 	InsertTransaction(info *types.TransactionInfo) error
-	UpdateTransactionStatus(id string, status types.TransactionStatus) error
+	GetPendingTransactions() (map[string]*types.TransactionInfo, error)
+	UpdateTransactionStatus(id string, status types.TransactionStatus, blockHeight uint32) error
 	HasTransaction(id string) bool
 	GetTransaction(id string) (*types.TransactionInfo, error)
 	ListTransactions(receiver string, count int, skip int) ([]*types.TransactionInfo, error)
 
 	Close() error
 	Clone(path string) (IStorage, error)
+	IsLegacy() bool
 }

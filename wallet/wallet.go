@@ -12,6 +12,7 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/pactus-project/pactus/wallet/storage"
@@ -107,15 +108,17 @@ func Open(ctx context.Context, walletPath string, opts ...OpenWalletOption) (*Wa
 }
 
 type openWalletConfig struct {
-	timeout time.Duration
-	servers []string
-	offline bool
+	timeout   time.Duration
+	servers   []string
+	offline   bool
+	eventPipe pipeline.Pipeline[any]
 }
 
 var defaultOpenWalletConfig = openWalletConfig{
-	timeout: 5 * time.Second,
-	servers: make([]string, 0),
-	offline: false,
+	timeout:   5 * time.Second,
+	servers:   make([]string, 0),
+	offline:   false,
+	eventPipe: nil,
 }
 
 type OpenWalletOption func(*openWalletConfig)
@@ -135,6 +138,12 @@ func WithCustomServers(servers []string) OpenWalletOption {
 func WithOfflineMode() OpenWalletOption {
 	return func(cfg *openWalletConfig) {
 		cfg.offline = true
+	}
+}
+
+func WithEventPipe(eventPipe pipeline.Pipeline[any]) OpenWalletOption {
+	return func(cfg *openWalletConfig) {
+		cfg.eventPipe = eventPipe
 	}
 }
 
@@ -187,6 +196,10 @@ func openWallet(storage storage.IStorage, opts ...OpenWalletOption) (*Wallet, er
 		if client.servers == nil {
 			client.servers = netServers
 		}
+	}
+
+	if cfg.eventPipe != nil {
+		cfg.eventPipe.RegisterReceiver(wlt.transactions.processEvent)
 	}
 
 	return wlt, nil
@@ -429,7 +442,7 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 		return "", err
 	}
 
-	txInfos, _ := types.MakeTransactionInfos(trx)
+	txInfos, _ := types.MakeTransactionInfos(trx, types.TransactionStatusPending, 0)
 	for _, info := range txInfos {
 		_ = w.storage.InsertTransaction(info)
 	}

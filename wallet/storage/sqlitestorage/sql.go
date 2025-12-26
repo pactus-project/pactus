@@ -35,6 +35,7 @@ const (
 			comment 		TEXT NOT NULL DEFAULT '',
 			created_at 		DATETIME DEFAULT CURRENT_TIMESTAMP,
 			updated_at 		DATETIME DEFAULT CURRENT_TIMESTAMP,
+
 			PRIMARY KEY (id, receiver)
 		)`
 
@@ -67,7 +68,7 @@ const (
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 
 	updateTransactionStatusSQL = `
-		UPDATE transactions SET status = ?
+		UPDATE transactions SET status = ?, block_height = ?
 		WHERE id = ?`
 
 	selectTransactionByIDSQL = `
@@ -88,4 +89,11 @@ const (
 
 	countTransactionByIDSQL = `
 		SELECT COUNT(*) FROM transactions WHERE id = ?`
+
+	selectPendingTransactionsSQL = `
+		SELECT
+			id, sender, receiver, amount, fee, memo, status, block_height, payload_type,
+			data, comment, created_at, updated_at
+		FROM transactions WHERE status = ?
+		ORDER BY created_at DESC`
 )

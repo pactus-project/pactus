@@ -98,7 +98,7 @@ func Create(ctx context.Context, path string, network genesis.ChainType, vlt *va
 		{Key: keyVersion, Value: fmt.Sprintf("%d", VersionLatest)},
 		{Key: keyUUID, Value: uuid.New().String()},
 		{Key: keyCreatedAt, Value: fmt.Sprintf("%d", util.RoundNow(1).Unix())},
-		{Key: keyNetwork, Value: network.String()},
+		{Key: keyNetwork, Value: fmt.Sprintf("%d", network)},
 		{Key: keyDefaultFee, Value: fmt.Sprintf("%d", amount.Amount(10_000_000))},
 		{Key: keyVault, Value: string(vaultJSON)},
 	}
@@ -200,6 +200,12 @@ func (s *Storage) loadWalletInfo() error {
 	}
 	createdAt := time.Unix(createdAtUnix, 0)
 
+	// Parse network type
+	var network genesis.ChainType
+	if _, err := fmt.Sscanf(entries[keyNetwork], "%d", &network); err != nil {
+		return fmt.Errorf("failed to parse network: %w", err)
+	}
+
 	var vlt vault.Vault
 	if vaultJSON, ok := entries[keyVault]; ok {
 		if err := json.Unmarshal([]byte(vaultJSON), &vlt); err != nil {
@@ -207,17 +213,6 @@ func (s *Storage) loadWalletInfo() error {
 		}
 	}
 	s.vlt = &vlt
-
-	// Parse network type
-	var network genesis.ChainType
-	switch entries[keyNetwork] {
-	case genesis.Mainnet.String():
-		network = genesis.Mainnet
-	case genesis.Testnet.String():
-		network = genesis.Testnet
-	case genesis.Localnet.String():
-		network = genesis.Localnet
-	}
 
 	s.info = &types.WalletInfo{
 		Path:       s.path,
@@ -359,9 +354,9 @@ func (s *Storage) InsertTransaction(info *types.TransactionInfo) error {
 	return err
 }
 
-// UpdateTransactionStatus updates the status of all transactions with the given ID.
-func (s *Storage) UpdateTransactionStatus(id string, status types.TransactionStatus) error {
-	_, err := s.db.ExecContext(s.ctx, updateTransactionStatusSQL, int(status), id)
+// UpdateTransactionStatus updates the status and block height for all transactions with the given ID.
+func (s *Storage) UpdateTransactionStatus(id string, status types.TransactionStatus, blockHeight uint32) error {
+	_, err := s.db.ExecContext(s.ctx, updateTransactionStatusSQL, int(status), blockHeight, id)
 
 	return err
 }
@@ -447,6 +442,27 @@ func (s *Storage) ListTransactions(receiver string, count, skip int) ([]*types.T
 	return transactions, rows.Err()
 }
 
+// GetPendingTransactions returns pending transactions keyed by transaction ID.
+func (s *Storage) GetPendingTransactions() (map[string]*types.TransactionInfo, error) {
+	rows, err := s.db.QueryContext(s.ctx, selectPendingTransactionsSQL, int(types.TransactionStatusPending))
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = rows.Close() }()
+
+	pending := make(map[string]*types.TransactionInfo)
+	for rows.Next() {
+		info, err := scanTransaction(rows)
+		if err != nil {
+			return nil, err
+		}
+
+		pending[info.ID] = info
+	}
+
+	return pending, rows.Err()
+}
+
 // Clone creates a copy of the storage at a new path.
 func (s *Storage) Clone(path string) (storage.IStorage, error) {
 	if err := util.Mkdir(path); err != nil {
@@ -499,4 +515,8 @@ func (s *Storage) saveVault(vlt *vault.Vault) error {
 	}
 
 	return s.updateWalletEntry(keyVault, string(vaultJSON))
+}
+
+func (*Storage) IsLegacy() bool {
+	return false
 }

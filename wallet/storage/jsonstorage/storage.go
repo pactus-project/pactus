@@ -138,7 +138,7 @@ func (*Storage) InsertTransaction(_ *types.TransactionInfo) error {
 	return ErrUnsupported
 }
 
-func (*Storage) UpdateTransactionStatus(_ string, _ types.TransactionStatus) error {
+func (*Storage) UpdateTransactionStatus(_ string, _ types.TransactionStatus, _ uint32) error {
 	return ErrUnsupported
 }
 
@@ -151,6 +151,10 @@ func (*Storage) GetTransaction(_ string) (*types.TransactionInfo, error) {
 }
 
 func (*Storage) ListTransactions(_ string, _, _ int) ([]*types.TransactionInfo, error) {
+	return nil, ErrUnsupported
+}
+
+func (*Storage) GetPendingTransactions() (map[string]*types.TransactionInfo, error) {
 	return nil, ErrUnsupported
 }
 
@@ -176,4 +180,8 @@ func (s *Storage) Clone(path string) (storage.IStorage, error) {
 	}
 
 	return strg, nil
+}
+
+func (*Storage) IsLegacy() bool {
+	return true
 }
