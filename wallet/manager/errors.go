@@ -13,4 +13,7 @@ var (
 
 	// ErrWalletNotLoaded indicates a wallet is not loaded in memory.
 	ErrWalletNotLoaded = errors.New("wallet is not loaded")
+
+	// ErrCannotUnloadDefaultWallet indicates an attempt to unload the default wallet.
+	ErrCannotUnloadDefaultWallet = errors.New("cannot unload default wallet")
 )

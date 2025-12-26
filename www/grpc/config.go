@@ -8,10 +8,6 @@ type Config struct {
 	EnableWallet bool   `toml:"enable_wallet"`
 	Listen       string `toml:"listen"`
 	BasicAuth    string `toml:"basic_auth"`
-
-	// Private config
-	WalletsDir        string `toml:"-"`
-	DefaultWalletName string `toml:"-"`
 }
 
 func DefaultConfig() *Config {

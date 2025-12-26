@@ -258,6 +258,10 @@ curl --location 'http://localhost:8545/' \
           <span class="rpc-badge"></span> pactus.wallet.get_wallet_info</a>
         </li>
         <li>
+          <a href="#pactus.wallet.is_wallet_loaded">
+          <span class="rpc-badge"></span> pactus.wallet.is_wallet_loaded</a>
+        </li>
+        <li>
           <a href="#pactus.wallet.list_addresses">
           <span class="rpc-badge"></span> pactus.wallet.list_addresses</a>
         </li>
@@ -4152,11 +4156,25 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
 
 #### pactus.wallet.list_wallets <span id="pactus.wallet.list_wallets" class="rpc-badge"></span>
 
-<p>ListWallets returns a list of all available wallets.</p>
+<p>ListWallets returns a list of all available wallets.
+If `include_unloaded` is set, it returns both loaded and unloaded wallets.</p>
 
 <h4>Parameters</h4>
 
-Parameters has no fields.
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">include_unloaded</td>
+    <td> boolean</td>
+    <td>
+    Whether to include wallets that exist on disk but are not currently loaded.
+    </td>
+  </tr>
+  </tbody>
+</table>
   <h4>Result</h4>
 
 <table class="table table-bordered table-responsive table-sm">
@@ -4248,6 +4266,50 @@ Parameters has no fields.
     <td> numeric</td>
     <td>
     The default fee of the wallet.
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+#### pactus.wallet.is_wallet_loaded <span id="pactus.wallet.is_wallet_loaded" class="rpc-badge"></span>
+
+<p>IsWalletLoaded checks whether the specified wallet is currently loaded.</p>
+
+<h4>Parameters</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    Name of the wallet to check.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>Result</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    Name of the wallet.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">loaded</td>
+    <td> boolean</td>
+    <td>
+    True if the wallet is currently loaded.
     </td>
   </tr>
      </tbody>

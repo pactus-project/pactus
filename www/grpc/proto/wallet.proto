@@ -46,10 +46,14 @@ service Wallet {
   rpc SetAddressLabel(SetAddressLabelRequest) returns (SetAddressLabelResponse);
 
   // ListWallets returns a list of all available wallets.
+  // If `include_unloaded` is set, it returns both loaded and unloaded wallets.
   rpc ListWallets(ListWalletsRequest) returns (ListWalletsResponse);
 
   // GetWalletInfo returns detailed information about a specific wallet.
   rpc GetWalletInfo(GetWalletInfoRequest) returns (GetWalletInfoResponse);
+
+  // IsWalletLoaded checks whether the specified wallet is currently loaded.
+  rpc IsWalletLoaded(IsWalletLoadedRequest) returns (IsWalletLoadedResponse);
 
   // ListAddresses returns all addresses in the specified wallet.
   rpc ListAddresses(ListAddressesRequest) returns (ListAddressesResponse);
@@ -278,13 +282,31 @@ message SetAddressLabelResponse {
   string label = 3;
 }
 
-// Request message for listing all wallets.
-message ListWalletsRequest {}
+// Request message for listing wallets.
+message ListWalletsRequest {
+  // Whether to include wallets that exist on disk but are not currently loaded.
+  bool include_unloaded = 1;
+}
 
 // Response message contains wallet names.
 message ListWalletsResponse {
   // Array of wallet names.
   repeated string wallets = 1;
+}
+
+// Request message for checking wallet load status.
+message IsWalletLoadedRequest {
+  // Name of the wallet to check.
+  string wallet_name = 1;
+}
+
+// Response message indicating wallet load status.
+message IsWalletLoadedResponse {
+  // Name of the wallet.
+  string wallet_name = 1;
+
+  // True if the wallet is currently loaded.
+  bool loaded = 2;
 }
 
 // Request message for getting wallet information.

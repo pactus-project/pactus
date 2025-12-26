@@ -1786,9 +1786,15 @@ class SetAddressLabelResponse extends $pb.GeneratedMessage {
   void clearLabel() => $_clearField(3);
 }
 
-/// Request message for listing all wallets.
+/// Request message for listing wallets.
 class ListWalletsRequest extends $pb.GeneratedMessage {
-  factory ListWalletsRequest() => create();
+  factory ListWalletsRequest({
+    $core.bool? includeUnloaded,
+  }) {
+    final result = create();
+    if (includeUnloaded != null) result.includeUnloaded = includeUnloaded;
+    return result;
+  }
 
   ListWalletsRequest._();
 
@@ -1803,6 +1809,7 @@ class ListWalletsRequest extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'ListWalletsRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
+    ..aOB(1, _omitFieldNames ? '' : 'includeUnloaded')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1823,6 +1830,16 @@ class ListWalletsRequest extends $pb.GeneratedMessage {
   static ListWalletsRequest getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<ListWalletsRequest>(create);
   static ListWalletsRequest? _defaultInstance;
+
+  /// Whether to include wallets that exist on disk but are not currently loaded.
+  @$pb.TagNumber(1)
+  $core.bool get includeUnloaded => $_getBF(0);
+  @$pb.TagNumber(1)
+  set includeUnloaded($core.bool value) => $_setBool(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasIncludeUnloaded() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearIncludeUnloaded() => $_clearField(1);
 }
 
 /// Response message contains wallet names.
@@ -1873,6 +1890,133 @@ class ListWalletsResponse extends $pb.GeneratedMessage {
   /// Array of wallet names.
   @$pb.TagNumber(1)
   $pb.PbList<$core.String> get wallets => $_getList(0);
+}
+
+/// Request message for checking wallet load status.
+class IsWalletLoadedRequest extends $pb.GeneratedMessage {
+  factory IsWalletLoadedRequest({
+    $core.String? walletName,
+  }) {
+    final result = create();
+    if (walletName != null) result.walletName = walletName;
+    return result;
+  }
+
+  IsWalletLoadedRequest._();
+
+  factory IsWalletLoadedRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory IsWalletLoadedRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'IsWalletLoadedRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'walletName')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  IsWalletLoadedRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  IsWalletLoadedRequest copyWith(
+          void Function(IsWalletLoadedRequest) updates) =>
+      super.copyWith((message) => updates(message as IsWalletLoadedRequest))
+          as IsWalletLoadedRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static IsWalletLoadedRequest create() => IsWalletLoadedRequest._();
+  @$core.override
+  IsWalletLoadedRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static IsWalletLoadedRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<IsWalletLoadedRequest>(create);
+  static IsWalletLoadedRequest? _defaultInstance;
+
+  /// Name of the wallet to check.
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => $_clearField(1);
+}
+
+/// Response message indicating wallet load status.
+class IsWalletLoadedResponse extends $pb.GeneratedMessage {
+  factory IsWalletLoadedResponse({
+    $core.String? walletName,
+    $core.bool? loaded,
+  }) {
+    final result = create();
+    if (walletName != null) result.walletName = walletName;
+    if (loaded != null) result.loaded = loaded;
+    return result;
+  }
+
+  IsWalletLoadedResponse._();
+
+  factory IsWalletLoadedResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory IsWalletLoadedResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'IsWalletLoadedResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'walletName')
+    ..aOB(2, _omitFieldNames ? '' : 'loaded')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  IsWalletLoadedResponse clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  IsWalletLoadedResponse copyWith(
+          void Function(IsWalletLoadedResponse) updates) =>
+      super.copyWith((message) => updates(message as IsWalletLoadedResponse))
+          as IsWalletLoadedResponse;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static IsWalletLoadedResponse create() => IsWalletLoadedResponse._();
+  @$core.override
+  IsWalletLoadedResponse createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static IsWalletLoadedResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<IsWalletLoadedResponse>(create);
+  static IsWalletLoadedResponse? _defaultInstance;
+
+  /// Name of the wallet.
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => $_clearField(1);
+
+  /// True if the wallet is currently loaded.
+  @$pb.TagNumber(2)
+  $core.bool get loaded => $_getBF(1);
+  @$pb.TagNumber(2)
+  set loaded($core.bool value) => $_setBool(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasLoaded() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearLoaded() => $_clearField(2);
 }
 
 /// Request message for getting wallet information.
@@ -2597,6 +2741,7 @@ class WalletApi {
           ctx, 'Wallet', 'SetAddressLabel', request, SetAddressLabelResponse());
 
   /// ListWallets returns a list of all available wallets.
+  /// If `include_unloaded` is set, it returns both loaded and unloaded wallets.
   $async.Future<ListWalletsResponse> listWallets(
           $pb.ClientContext? ctx, ListWalletsRequest request) =>
       _client.invoke<ListWalletsResponse>(
@@ -2607,6 +2752,12 @@ class WalletApi {
           $pb.ClientContext? ctx, GetWalletInfoRequest request) =>
       _client.invoke<GetWalletInfoResponse>(
           ctx, 'Wallet', 'GetWalletInfo', request, GetWalletInfoResponse());
+
+  /// IsWalletLoaded checks whether the specified wallet is currently loaded.
+  $async.Future<IsWalletLoadedResponse> isWalletLoaded(
+          $pb.ClientContext? ctx, IsWalletLoadedRequest request) =>
+      _client.invoke<IsWalletLoadedResponse>(
+          ctx, 'Wallet', 'IsWalletLoaded', request, IsWalletLoadedResponse());
 
   /// ListAddresses returns all addresses in the specified wallet.
   $async.Future<ListAddressesResponse> listAddresses(

@@ -1,6 +1,7 @@
 package node
 
 import (
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -14,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/testsuite"
+	"github.com/pactus-project/pactus/wallet"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -43,14 +45,21 @@ func TestRunningNode(t *testing.T) {
 	conf.Network.EnableRelay = false
 	conf.Network.NetworkKey = util.TempFilePath()
 	conf.Network.PeerStorePath = util.TempFilePath()
+	conf.WalletManager.WalletsDir = util.TempDirPath()
+	conf.WalletManager.DefaultWalletName = "default_wallet"
+
+	walletPath := filepath.Join(conf.WalletManager.WalletsDir, "default_wallet")
+	mnemonic, _ := wallet.GenerateMnemonic(128)
+	_, err := wallet.Create(t.Context(), walletPath, mnemonic, "", genesis.Mainnet)
+	require.NoError(t, err)
 
 	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
 	rewardAddrs := []crypto.Address{ts.RandAccAddress(), ts.RandAccAddress()}
 	node, err := NewNode(gen, conf, valKeys, rewardAddrs)
+	require.NoError(t, err)
+
 	assert.True(t, conf.Sync.Services.IsFullNode())
 	assert.True(t, conf.Sync.Services.IsPrunedNode())
-
-	require.NoError(t, err)
 	assert.Equal(t, hash.UndefHash, node.state.LastBlockHash())
 
 	err = node.Start()
@@ -67,6 +76,8 @@ func TestRunningNode(t *testing.T) {
 	assert.Equal(t, syncSelfID, netSelfID)
 
 	assert.NotEmpty(t, node.GRPC().Address())
+
+	assert.True(t, node.WalletManager().IsWalletLoaded("default_wallet"))
 
 	node.Stop()
 }

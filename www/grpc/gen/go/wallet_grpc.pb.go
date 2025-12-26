@@ -33,6 +33,7 @@ const (
 	Wallet_SetAddressLabel_FullMethodName     = "/pactus.Wallet/SetAddressLabel"
 	Wallet_ListWallets_FullMethodName         = "/pactus.Wallet/ListWallets"
 	Wallet_GetWalletInfo_FullMethodName       = "/pactus.Wallet/GetWalletInfo"
+	Wallet_IsWalletLoaded_FullMethodName      = "/pactus.Wallet/IsWalletLoaded"
 	Wallet_ListAddresses_FullMethodName       = "/pactus.Wallet/ListAddresses"
 	Wallet_UpdatePassword_FullMethodName      = "/pactus.Wallet/UpdatePassword"
 	Wallet_ListTransactions_FullMethodName    = "/pactus.Wallet/ListTransactions"
@@ -70,9 +71,12 @@ type WalletClient interface {
 	// SetAddressLabel sets or updates the label for a given address.
 	SetAddressLabel(ctx context.Context, in *SetAddressLabelRequest, opts ...grpc.CallOption) (*SetAddressLabelResponse, error)
 	// ListWallets returns a list of all available wallets.
+	// If `include_unloaded` is set, it returns both loaded and unloaded wallets.
 	ListWallets(ctx context.Context, in *ListWalletsRequest, opts ...grpc.CallOption) (*ListWalletsResponse, error)
 	// GetWalletInfo returns detailed information about a specific wallet.
 	GetWalletInfo(ctx context.Context, in *GetWalletInfoRequest, opts ...grpc.CallOption) (*GetWalletInfoResponse, error)
+	// IsWalletLoaded checks whether the specified wallet is currently loaded.
+	IsWalletLoaded(ctx context.Context, in *IsWalletLoadedRequest, opts ...grpc.CallOption) (*IsWalletLoadedResponse, error)
 	// ListAddresses returns all addresses in the specified wallet.
 	ListAddresses(ctx context.Context, in *ListAddressesRequest, opts ...grpc.CallOption) (*ListAddressesResponse, error)
 	// UpdatePassword updates the password of an existing wallet.
@@ -230,6 +234,16 @@ func (c *walletClient) GetWalletInfo(ctx context.Context, in *GetWalletInfoReque
 	return out, nil
 }
 
+func (c *walletClient) IsWalletLoaded(ctx context.Context, in *IsWalletLoadedRequest, opts ...grpc.CallOption) (*IsWalletLoadedResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IsWalletLoadedResponse)
+	err := c.cc.Invoke(ctx, Wallet_IsWalletLoaded_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *walletClient) ListAddresses(ctx context.Context, in *ListAddressesRequest, opts ...grpc.CallOption) (*ListAddressesResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListAddressesResponse)
@@ -292,9 +306,12 @@ type WalletServer interface {
 	// SetAddressLabel sets or updates the label for a given address.
 	SetAddressLabel(context.Context, *SetAddressLabelRequest) (*SetAddressLabelResponse, error)
 	// ListWallets returns a list of all available wallets.
+	// If `include_unloaded` is set, it returns both loaded and unloaded wallets.
 	ListWallets(context.Context, *ListWalletsRequest) (*ListWalletsResponse, error)
 	// GetWalletInfo returns detailed information about a specific wallet.
 	GetWalletInfo(context.Context, *GetWalletInfoRequest) (*GetWalletInfoResponse, error)
+	// IsWalletLoaded checks whether the specified wallet is currently loaded.
+	IsWalletLoaded(context.Context, *IsWalletLoadedRequest) (*IsWalletLoadedResponse, error)
 	// ListAddresses returns all addresses in the specified wallet.
 	ListAddresses(context.Context, *ListAddressesRequest) (*ListAddressesResponse, error)
 	// UpdatePassword updates the password of an existing wallet.
@@ -352,6 +369,9 @@ func (UnimplementedWalletServer) ListWallets(context.Context, *ListWalletsReques
 }
 func (UnimplementedWalletServer) GetWalletInfo(context.Context, *GetWalletInfoRequest) (*GetWalletInfoResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetWalletInfo not implemented")
+}
+func (UnimplementedWalletServer) IsWalletLoaded(context.Context, *IsWalletLoadedRequest) (*IsWalletLoadedResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method IsWalletLoaded not implemented")
 }
 func (UnimplementedWalletServer) ListAddresses(context.Context, *ListAddressesRequest) (*ListAddressesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListAddresses not implemented")
@@ -634,6 +654,24 @@ func _Wallet_GetWalletInfo_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Wallet_IsWalletLoaded_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsWalletLoadedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).IsWalletLoaded(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Wallet_IsWalletLoaded_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).IsWalletLoaded(ctx, req.(*IsWalletLoadedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Wallet_ListAddresses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListAddressesRequest)
 	if err := dec(in); err != nil {
@@ -750,6 +788,10 @@ var Wallet_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetWalletInfo",
 			Handler:    _Wallet_GetWalletInfo_Handler,
+		},
+		{
+			MethodName: "IsWalletLoaded",
+			Handler:    _Wallet_IsWalletLoaded_Handler,
 		},
 		{
 			MethodName: "ListAddresses",

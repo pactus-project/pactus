@@ -34,6 +34,7 @@ func WalletClientCommand(options ...client.Option) *cobra.Command {
 		_WalletSetAddressLabelCommand(cfg),
 		_WalletListWalletsCommand(cfg),
 		_WalletGetWalletInfoCommand(cfg),
+		_WalletIsWalletLoadedCommand(cfg),
 		_WalletListAddressesCommand(cfg),
 		_WalletUpdatePasswordCommand(cfg),
 		_WalletListTransactionsCommand(cfg),
@@ -566,7 +567,7 @@ func _WalletListWalletsCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("ListWallets"),
 		Short: "ListWallets RPC client",
-		Long:  "ListWallets returns a list of all available wallets.",
+		Long:  "ListWallets returns a list of all available wallets.\n If `include_unloaded` is set, it returns both loaded and unloaded wallets.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
@@ -596,6 +597,8 @@ func _WalletListWalletsCommand(cfg *client.Config) *cobra.Command {
 			})
 		},
 	}
+
+	cmd.PersistentFlags().BoolVar(&req.IncludeUnloaded, cfg.FlagNamer("IncludeUnloaded"), false, "Whether to include wallets that exist on disk but are not currently loaded.")
 
 	return cmd
 }
@@ -638,6 +641,48 @@ func _WalletGetWalletInfoCommand(cfg *client.Config) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "The name of the wallet to query.")
+
+	return cmd
+}
+
+func _WalletIsWalletLoadedCommand(cfg *client.Config) *cobra.Command {
+	req := &IsWalletLoadedRequest{}
+
+	cmd := &cobra.Command{
+		Use:   cfg.CommandNamer("IsWalletLoaded"),
+		Short: "IsWalletLoaded RPC client",
+		Long:  "IsWalletLoaded checks whether the specified wallet is currently loaded.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "IsWalletLoaded"); err != nil {
+					return err
+				}
+			}
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+				cli := NewWalletClient(cc)
+				v := &IsWalletLoadedRequest{}
+
+				if err := in(v); err != nil {
+					return err
+				}
+				proto.Merge(v, req)
+
+				res, err := cli.IsWalletLoaded(cmd.Context(), v)
+
+				if err != nil {
+					return err
+				}
+
+				return out(res)
+
+			})
+		},
+	}
+
+	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "Name of the wallet to check.")
 
 	return cmd
 }

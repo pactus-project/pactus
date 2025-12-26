@@ -275,6 +275,23 @@ func (s *WalletJsonRPC) Methods() map[string]func(ctx context.Context, message j
 			return s.client.GetWalletInfo(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
+		"pactus.wallet.is_wallet_loaded": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(IsWalletLoadedRequest)
+
+			var jrpcData paramsAndHeadersWallet
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.IsWalletLoaded(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
+
 		"pactus.wallet.list_addresses": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(ListAddressesRequest)
 
