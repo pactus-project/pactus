@@ -1431,7 +1431,7 @@ pub struct GetWalletInfoRequest {
 /// Response message contains wallet details.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct GetWalletInfoResponse {
-    /// The name of the wallet to query.
+    /// The name of the wallet.
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,
     /// The wallet format version.
@@ -1452,6 +1452,12 @@ pub struct GetWalletInfoResponse {
     /// The default fee of the wallet.
     #[prost(int64, tag="7")]
     pub default_fee: i64,
+    /// The storage driver used by the wallet (e.g., SQLite, Legacy JSON ).
+    #[prost(string, tag="8")]
+    pub driver: ::prost::alloc::string::String,
+    /// Path to the wallet file or storage location.
+    #[prost(string, tag="9")]
+    pub path: ::prost::alloc::string::String,
 }
 /// Request message for listing wallet addresses.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]

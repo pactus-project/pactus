@@ -2085,6 +2085,8 @@ class GetWalletInfoResponse extends $pb.GeneratedMessage {
     $core.String? uuid,
     $fixnum.Int64? createdAt,
     $fixnum.Int64? defaultFee,
+    $core.String? driver,
+    $core.String? path,
   }) {
     final result = create();
     if (walletName != null) result.walletName = walletName;
@@ -2094,6 +2096,8 @@ class GetWalletInfoResponse extends $pb.GeneratedMessage {
     if (uuid != null) result.uuid = uuid;
     if (createdAt != null) result.createdAt = createdAt;
     if (defaultFee != null) result.defaultFee = defaultFee;
+    if (driver != null) result.driver = driver;
+    if (path != null) result.path = path;
     return result;
   }
 
@@ -2117,6 +2121,8 @@ class GetWalletInfoResponse extends $pb.GeneratedMessage {
     ..aOS(5, _omitFieldNames ? '' : 'uuid')
     ..aInt64(6, _omitFieldNames ? '' : 'createdAt')
     ..aInt64(7, _omitFieldNames ? '' : 'defaultFee')
+    ..aOS(8, _omitFieldNames ? '' : 'driver')
+    ..aOS(9, _omitFieldNames ? '' : 'path')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -2139,7 +2145,7 @@ class GetWalletInfoResponse extends $pb.GeneratedMessage {
       $pb.GeneratedMessage.$_defaultFor<GetWalletInfoResponse>(create);
   static GetWalletInfoResponse? _defaultInstance;
 
-  /// The name of the wallet to query.
+  /// The name of the wallet.
   @$pb.TagNumber(1)
   $core.String get walletName => $_getSZ(0);
   @$pb.TagNumber(1)
@@ -2208,6 +2214,26 @@ class GetWalletInfoResponse extends $pb.GeneratedMessage {
   $core.bool hasDefaultFee() => $_has(6);
   @$pb.TagNumber(7)
   void clearDefaultFee() => $_clearField(7);
+
+  /// The storage driver used by the wallet (e.g., SQLite, Legacy JSON ).
+  @$pb.TagNumber(8)
+  $core.String get driver => $_getSZ(7);
+  @$pb.TagNumber(8)
+  set driver($core.String value) => $_setString(7, value);
+  @$pb.TagNumber(8)
+  $core.bool hasDriver() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearDriver() => $_clearField(8);
+
+  /// Path to the wallet file or storage location.
+  @$pb.TagNumber(9)
+  $core.String get path => $_getSZ(8);
+  @$pb.TagNumber(9)
+  set path($core.String value) => $_setString(8, value);
+  @$pb.TagNumber(9)
+  $core.bool hasPath() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearPath() => $_clearField(9);
 }
 
 /// Request message for listing wallet addresses.

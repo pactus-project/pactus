@@ -269,6 +269,8 @@ class GetWalletInfoResponse(_message.Message):
     UUID_FIELD_NUMBER: _ClassVar[int]
     CREATED_AT_FIELD_NUMBER: _ClassVar[int]
     DEFAULT_FEE_FIELD_NUMBER: _ClassVar[int]
+    DRIVER_FIELD_NUMBER: _ClassVar[int]
+    PATH_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
     version: int
     network: str
@@ -276,7 +278,9 @@ class GetWalletInfoResponse(_message.Message):
     uuid: str
     created_at: int
     default_fee: int
-    def __init__(self, wallet_name: _Optional[str] = ..., version: _Optional[int] = ..., network: _Optional[str] = ..., encrypted: _Optional[bool] = ..., uuid: _Optional[str] = ..., created_at: _Optional[int] = ..., default_fee: _Optional[int] = ...) -> None: ...
+    driver: str
+    path: str
+    def __init__(self, wallet_name: _Optional[str] = ..., version: _Optional[int] = ..., network: _Optional[str] = ..., encrypted: _Optional[bool] = ..., uuid: _Optional[str] = ..., created_at: _Optional[int] = ..., default_fee: _Optional[int] = ..., driver: _Optional[str] = ..., path: _Optional[str] = ...) -> None: ...
 
 class ListAddressesRequest(_message.Message):
     __slots__ = ()

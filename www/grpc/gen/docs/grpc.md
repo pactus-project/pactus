@@ -4173,7 +4173,7 @@ If `include_unloaded` is set, it returns both loaded and unloaded wallets.</p>
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    The name of the wallet to query.
+    The name of the wallet.
     </td>
   </tr>
      <tr>
@@ -4216,6 +4216,20 @@ If `include_unloaded` is set, it returns both loaded and unloaded wallets.</p>
     <td> int64</td>
     <td>
     The default fee of the wallet.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">driver</td>
+    <td> string</td>
+    <td>
+    The storage driver used by the wallet (e.g., SQLite, Legacy JSON ).
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">path</td>
+    <td> string</td>
+    <td>
+    Path to the wallet file or storage location.
     </td>
   </tr>
      </tbody>

@@ -1097,8 +1097,8 @@
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object","required": ["wallet_name","version","network","encrypted","uuid","created_at","default_fee"],
-          "properties": {"wallet_name": { "type": "string" },"version": { "type": "integer" },"network": { "type": "string" },"encrypted": { "type": "boolean" },"uuid": { "type": "string" },"created_at": { "type": "integer" },"default_fee": { "type": "integer" }}
+          "type": "object","required": ["wallet_name","version","network","encrypted","uuid","created_at","default_fee","driver","path"],
+          "properties": {"wallet_name": { "type": "string" },"version": { "type": "integer" },"network": { "type": "string" },"encrypted": { "type": "boolean" },"uuid": { "type": "string" },"created_at": { "type": "integer" },"default_fee": { "type": "integer" },"driver": { "type": "string" },"path": { "type": "string" }}
           }
         }
       },{

@@ -1755,7 +1755,7 @@ func (x *GetWalletInfoRequest) GetWalletName() string {
 // Response message contains wallet details.
 type GetWalletInfoResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The name of the wallet to query.
+	// The name of the wallet.
 	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
 	// The wallet format version.
 	Version int32 `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
@@ -1768,7 +1768,11 @@ type GetWalletInfoResponse struct {
 	// Unix timestamp of wallet creation.
 	CreatedAt int64 `protobuf:"varint,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// The default fee of the wallet.
-	DefaultFee    int64 `protobuf:"varint,7,opt,name=default_fee,json=defaultFee,proto3" json:"default_fee,omitempty"`
+	DefaultFee int64 `protobuf:"varint,7,opt,name=default_fee,json=defaultFee,proto3" json:"default_fee,omitempty"`
+	// The storage driver used by the wallet (e.g., SQLite, Legacy JSON ).
+	Driver string `protobuf:"bytes,8,opt,name=driver,proto3" json:"driver,omitempty"`
+	// Path to the wallet file or storage location.
+	Path          string `protobuf:"bytes,9,opt,name=path,proto3" json:"path,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1850,6 +1854,20 @@ func (x *GetWalletInfoResponse) GetDefaultFee() int64 {
 		return x.DefaultFee
 	}
 	return 0
+}
+
+func (x *GetWalletInfoResponse) GetDriver() string {
+	if x != nil {
+		return x.Driver
+	}
+	return ""
+}
+
+func (x *GetWalletInfoResponse) GetPath() string {
+	if x != nil {
+		return x.Path
+	}
+	return ""
 }
 
 // Request message for listing wallet addresses.
@@ -2330,7 +2348,7 @@ const file_wallet_proto_rawDesc = "" +
 	"\x06loaded\x18\x02 \x01(\bR\x06loaded\"7\n" +
 	"\x14GetWalletInfoRequest\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
-	"walletName\"\xde\x01\n" +
+	"walletName\"\x8a\x02\n" +
 	"\x15GetWalletInfoResponse\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
 	"walletName\x12\x18\n" +
@@ -2341,7 +2359,9 @@ const file_wallet_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x06 \x01(\x03R\tcreatedAt\x12\x1f\n" +
 	"\vdefault_fee\x18\a \x01(\x03R\n" +
-	"defaultFee\"q\n" +
+	"defaultFee\x12\x16\n" +
+	"\x06driver\x18\b \x01(\tR\x06driver\x12\x12\n" +
+	"\x04path\x18\t \x01(\tR\x04path\"q\n" +
 	"\x14ListAddressesRequest\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
 	"walletName\x128\n" +

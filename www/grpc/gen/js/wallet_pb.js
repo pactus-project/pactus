@@ -5649,7 +5649,9 @@ network: jspb.Message.getFieldWithDefault(msg, 3, ""),
 encrypted: jspb.Message.getBooleanFieldWithDefault(msg, 4, false),
 uuid: jspb.Message.getFieldWithDefault(msg, 5, ""),
 createdAt: jspb.Message.getFieldWithDefault(msg, 6, 0),
-defaultFee: jspb.Message.getFieldWithDefault(msg, 7, 0)
+defaultFee: jspb.Message.getFieldWithDefault(msg, 7, 0),
+driver: jspb.Message.getFieldWithDefault(msg, 8, ""),
+path: jspb.Message.getFieldWithDefault(msg, 9, "")
   };
 
   if (includeInstance) {
@@ -5713,6 +5715,14 @@ proto.pactus.GetWalletInfoResponse.deserializeBinaryFromReader = function(msg, r
     case 7:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setDefaultFee(value);
+      break;
+    case 8:
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      msg.setDriver(value);
+      break;
+    case 9:
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      msg.setPath(value);
       break;
     default:
       reader.skipField();
@@ -5789,6 +5799,20 @@ proto.pactus.GetWalletInfoResponse.serializeBinaryToWriter = function(message, w
   if (f !== 0) {
     writer.writeInt64(
       7,
+      f
+    );
+  }
+  f = message.getDriver();
+  if (f.length > 0) {
+    writer.writeString(
+      8,
+      f
+    );
+  }
+  f = message.getPath();
+  if (f.length > 0) {
+    writer.writeString(
+      9,
       f
     );
   }
@@ -5918,6 +5942,42 @@ proto.pactus.GetWalletInfoResponse.prototype.getDefaultFee = function() {
  */
 proto.pactus.GetWalletInfoResponse.prototype.setDefaultFee = function(value) {
   return jspb.Message.setProto3IntField(this, 7, value);
+};
+
+
+/**
+ * optional string driver = 8;
+ * @return {string}
+ */
+proto.pactus.GetWalletInfoResponse.prototype.getDriver = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.pactus.GetWalletInfoResponse} returns this
+ */
+proto.pactus.GetWalletInfoResponse.prototype.setDriver = function(value) {
+  return jspb.Message.setProto3StringField(this, 8, value);
+};
+
+
+/**
+ * optional string path = 9;
+ * @return {string}
+ */
+proto.pactus.GetWalletInfoResponse.prototype.getPath = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.pactus.GetWalletInfoResponse} returns this
+ */
+proto.pactus.GetWalletInfoResponse.prototype.setPath = function(value) {
+  return jspb.Message.setProto3StringField(this, 9, value);
 };
 
 
