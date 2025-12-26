@@ -178,8 +178,6 @@ func DefaultConfigTestnet() *Config {
 		"/ip4/103.27.206.208/tcp/21777/p2p/12D3KooWMTDwDTBMaf2Sem5tWRe1dB6PFY8LeqkZ2e5drrbbPTDn", // andrut.pactus.testnet
 		"/ip4/65.108.142.81/tcp/21777/p2p/12D3KooWAdRga2NCbaPfVgSEzAAZW2psfJmPi3PFJzF81qbccJsR",  // CherryValidator
 		"/ip4/95.217.89.202/tcp/21777/p2p/12D3KooWH3S9gMYybr1pd4K5o3CBLbZLQ1REKBsPWt6NWPi4bgPn",  // CodeBlockLab
-		"/ip4/65.109.234.125/tcp/21777/p2p/12D3KooWPWE8QwZxd32ui9DL115vmdcFo3cudGfVgHTX9Bo4HFEB", // Sensifai
-		"/ip4/77.37.122.54/tcp/22194/p2p/12D3KooWKwbdkwfCFdrucHir69U7E9P2BbHctmsBj8Hcms5jP64h",   // Javad
 		"/ip4/188.213.198.83/tcp/21777/p2p/12D3KooWJ5kSyD3VQb1ewhgRcmAPPg2zus1rYPbgnBMMGBtC9pr5",
 	}
 	conf.Network.MaxConns = 64
