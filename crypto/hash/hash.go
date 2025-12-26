@@ -1,6 +1,7 @@
 package hash
 
 import (
+	"database/sql/driver"
 	"encoding/hex"
 	"fmt"
 
@@ -82,4 +83,22 @@ func (h Hash) LogString() string {
 
 func (h Hash) IsUndef() bool {
 	return h == UndefHash
+}
+
+// Value implements driver.Valuer to store the hash as raw bytes.
+func (h Hash) Value() (driver.Value, error) {
+	return h[:], nil
+}
+
+// Scan implements sql.Scanner to read the hash from raw bytes.
+func (h *Hash) Scan(value any) error {
+	switch v := value.(type) {
+	case []byte:
+		copy(h[:], v)
+
+		return nil
+
+	default:
+		return ErrInvalidSQLType
+	}
 }

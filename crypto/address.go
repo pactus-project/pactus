@@ -1,6 +1,7 @@
 package crypto
 
 import (
+	"database/sql/driver"
 	"io"
 	"slices"
 
@@ -158,4 +159,21 @@ func (addr Address) IsAccountAddress() bool {
 
 func (addr Address) IsValidatorAddress() bool {
 	return addr.Type() == AddressTypeValidator
+}
+
+// Value implements driver.Valuer to store the address as raw bytes.
+func (addr Address) Value() (driver.Value, error) {
+	return addr[:], nil
+}
+
+// Scan implements sql.Scanner to read the address from raw bytes.
+func (addr *Address) Scan(value any) error {
+	switch v := value.(type) {
+	case []byte:
+		copy(addr[:], v)
+
+		return nil
+	default:
+		return ErrInvalidSQLType
+	}
 }

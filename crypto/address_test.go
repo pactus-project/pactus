@@ -236,3 +236,45 @@ func TestAddressDecoding(t *testing.T) {
 		}
 	}
 }
+
+func TestSQLDriver(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	t.Run("Value returns address as raw bytes", func(t *testing.T) {
+		addr := ts.RandAccAddress()
+		val, err := addr.Value()
+		assert.NoError(t, err)
+		assert.IsType(t, []byte{}, val)
+		assert.Equal(t, addr.Bytes(), val.([]byte))
+	})
+
+	t.Run("Scan from []byte succeeds", func(t *testing.T) {
+		addr := ts.RandAccAddress()
+		var scanned crypto.Address
+		err := scanned.Scan(addr.Bytes())
+		assert.NoError(t, err)
+		assert.Equal(t, addr, scanned)
+	})
+
+	t.Run("Scan from nil fails", func(t *testing.T) {
+		var addr crypto.Address
+		err := addr.Scan(nil)
+		assert.ErrorIs(t, err, crypto.ErrInvalidSQLType)
+	})
+
+	t.Run("Scan from string fails", func(t *testing.T) {
+		var addr crypto.Address
+		err := addr.Scan(ts.RandAccAddress().String())
+		assert.ErrorIs(t, err, crypto.ErrInvalidSQLType)
+	})
+
+	t.Run("Round trip Value and Scan", func(t *testing.T) {
+		original := ts.RandAccAddress()
+		val, err := original.Value()
+		assert.NoError(t, err)
+		var scanned crypto.Address
+		err = scanned.Scan(val)
+		assert.NoError(t, err)
+		assert.Equal(t, original, scanned)
+	})
+}

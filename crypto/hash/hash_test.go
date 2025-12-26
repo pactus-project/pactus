@@ -57,3 +57,45 @@ func TestHashBasicCheck(t *testing.T) {
 	assert.True(t, h.IsUndef())
 	assert.Equal(t, hash.UndefHash.Bytes(), h.Bytes())
 }
+
+func TestSQLDriver(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	t.Run("Value returns hash as raw bytes", func(t *testing.T) {
+		h := ts.RandHash()
+		val, err := h.Value()
+		assert.NoError(t, err)
+		assert.IsType(t, []byte{}, val)
+		assert.Equal(t, h.Bytes(), val.([]byte))
+	})
+
+	t.Run("Scan from []byte succeeds", func(t *testing.T) {
+		h := ts.RandHash()
+		var scanned hash.Hash
+		err := scanned.Scan(h.Bytes())
+		assert.NoError(t, err)
+		assert.Equal(t, h, scanned)
+	})
+
+	t.Run("Scan from nil fails", func(t *testing.T) {
+		var scanned hash.Hash
+		err := scanned.Scan(nil)
+		assert.ErrorIs(t, err, hash.ErrInvalidSQLType)
+	})
+
+	t.Run("Scan from string fails", func(t *testing.T) {
+		var scanned hash.Hash
+		err := scanned.Scan(ts.RandHash().String())
+		assert.ErrorIs(t, err, hash.ErrInvalidSQLType)
+	})
+
+	t.Run("Round trip Value and Scan", func(t *testing.T) {
+		original := ts.RandHash()
+		val, err := original.Value()
+		assert.NoError(t, err)
+		var scanned hash.Hash
+		err = scanned.Scan(val)
+		assert.NoError(t, err)
+		assert.Equal(t, original, scanned)
+	})
+}

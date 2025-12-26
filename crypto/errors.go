@@ -11,6 +11,10 @@ var ErrInvalidSignature = errors.New("invalid signature")
 // ErrInvalidPublicKey is returned when a public key is invalid.
 var ErrInvalidPublicKey = errors.New("invalid public key")
 
+// ErrInvalidSQLType is returned when the type of the data
+// is not supported for SQL database operations.
+var ErrInvalidSQLType = errors.New("invalid SQL type")
+
 // InvalidLengthError is returned when the length of the data
 // does not match the expected length.
 type InvalidLengthError int

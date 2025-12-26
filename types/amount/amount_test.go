@@ -415,15 +415,13 @@ func TestSQLDriver(t *testing.T) {
 	t.Run("Scan from nil fails", func(t *testing.T) {
 		var amt amount.Amount
 		err := amt.Scan(nil)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "not valid amount data")
+		assert.ErrorIs(t, err, amount.ErrInvalidSQLType)
 	})
 
 	t.Run("Scan from float64 fails", func(t *testing.T) {
 		var amt amount.Amount
 		err := amt.Scan(123.456)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "not valid amount data")
+		assert.ErrorIs(t, err, amount.ErrInvalidSQLType)
 	})
 
 	t.Run("Round trip Value and Scan", func(t *testing.T) {
