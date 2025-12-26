@@ -1166,6 +1166,38 @@
         ]
       }
     },
+    "/pactus/wallet/is_wallet_loaded": {
+      "get": {
+        "summary": "IsWalletLoaded checks whether the specified wallet is currently loaded.",
+        "operationId": "Wallet_IsWalletLoaded",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusIsWalletLoadedResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "Name of the wallet to check.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
     "/pactus/wallet/list_addresses": {
       "get": {
         "summary": "ListAddresses returns all addresses in the specified wallet.",
@@ -1284,7 +1316,7 @@
     },
     "/pactus/wallet/list_wallets": {
       "get": {
-        "summary": "ListWallets returns a list of all available wallets.",
+        "summary": "ListWallets returns a list of all available wallets.\nIf `include_unloaded` is set, it returns both loaded and unloaded wallets.",
         "operationId": "Wallet_ListWallets",
         "responses": {
           "200": {
@@ -1300,6 +1332,15 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "includeUnloaded",
+            "description": "Whether to include wallets that exist on disk but are not currently loaded.",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
         "tags": [
           "Wallet"
         ]
@@ -2513,6 +2554,20 @@
         }
       },
       "description": "Response message contains wallet details."
+    },
+    "pactusIsWalletLoadedResponse": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "Name of the wallet."
+        },
+        "loaded": {
+          "type": "boolean",
+          "description": "True if the wallet is currently loaded."
+        }
+      },
+      "description": "Response message indicating wallet load status."
     },
     "pactusListAddressesResponse": {
       "type": "object",

@@ -269,6 +269,10 @@ func MakeConfig(workingDir string) (*config.Config, *genesis.Genesis, error) {
 	conf.WalletManager.WalletsDir = walletsDir
 	conf.WalletManager.DefaultWalletName = DefaultWalletName
 
+	if conf.GRPC.Enable {
+		conf.WalletManager.GRPCAddress = conf.GRPC.Listen
+	}
+
 	if err := conf.BasicCheck(); err != nil {
 		return nil, nil, err
 	}

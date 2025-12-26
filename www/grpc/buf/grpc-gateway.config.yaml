@@ -93,6 +93,18 @@ http:
     - selector: pactus.Wallet.UnloadWallet
       get: "/pactus/wallet/unload_wallet"
 
+    - selector: pactus.Wallet.ListWallets
+      get: "/pactus/wallet/list_wallets"
+
+    - selector: pactus.Wallet.IsWalletLoaded
+      get: "/pactus/wallet/is_wallet_loaded"
+
+    - selector: pactus.Wallet.GetWalletInfo
+      get: "/pactus/wallet/get_wallet_info"
+
+    - selector: pactus.Wallet.UpdatePassword
+      get: "/pactus/wallet/update_password"
+
     - selector: pactus.Wallet.SignRawTransaction
       get: "/pactus/wallet/sign_raw_transaction"
 
@@ -114,20 +126,11 @@ http:
     - selector: pactus.Wallet.SetAddressLabel
       patch: "/pactus/wallet/set_address_label"
 
-    - selector: pactus.Wallet.ListWallets
-      get: "/pactus/wallet/list_wallets"
-
-    - selector: pactus.Wallet.GetWalletInfo
-      get: "/pactus/wallet/get_wallet_info"
-
     - selector: pactus.Wallet.ListAddresses
       get: "/pactus/wallet/list_addresses"
 
     - selector: pactus.Wallet.ListTransactions
       get: "/pactus/wallet/list_transactions"
-
-    - selector: pactus.Wallet.UpdatePassword
-      get: "/pactus/wallet/update_password"
 
       # Util APIs
     - selector: pactus.Utils.SignMessageWithPrivateKey

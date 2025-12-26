@@ -94,7 +94,6 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 
 	consV1Mgr := consmgr.NewManagerV1(conf.Consensus, state, valKeys, rewardAddrs, broadcastPipe)
 	consV2Mgr := consmgr.NewManagerV2(conf.ConsensusV2, state, valKeys, rewardAddrs, broadcastPipe)
-	walletMgr := wltmgr.NewManager(ctx, conf.WalletManager)
 
 	if !store.IsPruned() {
 		conf.Sync.Services.Append(service.FullNode)
@@ -117,6 +116,13 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	curConsMgr := consV1Mgr
 	if consV1Mgr.IsDeprecated() {
 		curConsMgr = consV2Mgr
+	}
+
+	walletMgr, err := wltmgr.NewManager(ctx, conf.WalletManager)
+	if err != nil {
+		cancel()
+
+		return nil, err
 	}
 
 	grpcServer := grpc.NewServer(ctx, conf.GRPC, state, sync, net, curConsMgr, walletMgr, zeromqServer.Publishers())

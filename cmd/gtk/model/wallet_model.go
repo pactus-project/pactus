@@ -17,6 +17,7 @@ import (
 type WalletModel struct {
 	// TODO: we need node for Availability score.
 	// Any better way?
+	// Define ValidatorsModel and separate view for validators.
 	node       *node.Node
 	manager    wltmgr.IManager
 	walletName string
@@ -37,8 +38,7 @@ type AddressRow struct {
 
 func NewWalletModel(node *node.Node, walletName string) (*WalletModel, error) {
 	manager := node.WalletManager()
-	if err := manager.LoadWallet(walletName,
-		wallet.WithCustomServers([]string{node.GRPC().Address()})); err != nil &&
+	if err := manager.LoadWallet(walletName); err != nil &&
 		!errors.Is(err, wltmgr.ErrWalletAlreadyLoaded) {
 		return nil, err
 	}

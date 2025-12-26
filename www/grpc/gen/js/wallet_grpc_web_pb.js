@@ -933,6 +933,67 @@ proto.pactus.WalletPromiseClient.prototype.getWalletInfo =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.IsWalletLoadedRequest,
+ *   !proto.pactus.IsWalletLoadedResponse>}
+ */
+const methodDescriptor_Wallet_IsWalletLoaded = new grpc.web.MethodDescriptor(
+  '/pactus.Wallet/IsWalletLoaded',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.IsWalletLoadedRequest,
+  proto.pactus.IsWalletLoadedResponse,
+  /**
+   * @param {!proto.pactus.IsWalletLoadedRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.IsWalletLoadedResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.IsWalletLoadedRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.IsWalletLoadedResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.IsWalletLoadedResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.WalletClient.prototype.isWalletLoaded =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Wallet/IsWalletLoaded',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_IsWalletLoaded,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.IsWalletLoadedRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.IsWalletLoadedResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.WalletPromiseClient.prototype.isWalletLoaded =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Wallet/IsWalletLoaded',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_IsWalletLoaded);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.pactus.ListAddressesRequest,
  *   !proto.pactus.ListAddressesResponse>}
  */

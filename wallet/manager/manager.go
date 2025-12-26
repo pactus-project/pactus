@@ -19,19 +19,29 @@ import (
 var _ IManager = (*Manager)(nil)
 
 type Manager struct {
-	ctx             context.Context
-	wallets         map[string]*wallet.Wallet
-	chainType       genesis.ChainType
-	walletDirectory string
+	ctx               context.Context
+	wallets           map[string]*wallet.Wallet
+	chainType         genesis.ChainType
+	walletDirectory   string
+	GRPCAddress       string
+	DefaultWalletName string
 }
 
-func NewManager(ctx context.Context, conf *Config) IManager {
-	return &Manager{
-		ctx:             ctx,
-		wallets:         make(map[string]*wallet.Wallet),
-		chainType:       conf.ChainType,
-		walletDirectory: conf.WalletsDir,
+func NewManager(ctx context.Context, conf *Config) (IManager, error) {
+	mgr := &Manager{
+		ctx:               ctx,
+		wallets:           make(map[string]*wallet.Wallet),
+		chainType:         conf.ChainType,
+		walletDirectory:   conf.WalletsDir,
+		GRPCAddress:       conf.GRPCAddress,
+		DefaultWalletName: conf.DefaultWalletName,
 	}
+
+	if err := mgr.LoadWallet(conf.DefaultWalletName); err != nil {
+		return nil, err
+	}
+
+	return mgr, nil
 }
 
 func (*Manager) Start() error {
@@ -95,12 +105,16 @@ func (wm *Manager) RestoreWallet(walletName, mnemonic, password string) error {
 	return wm.createWalletWithMnemonic(walletName, mnemonic, password)
 }
 
-func (wm *Manager) LoadWallet(walletName string, opts ...wallet.OpenWalletOption) error {
+func (wm *Manager) LoadWallet(walletName string) error {
 	if _, ok := wm.wallets[walletName]; ok {
 		return ErrWalletAlreadyLoaded
 	}
 
 	walletPath := wm.getWalletPath(walletName)
+	opts := []wallet.OpenWalletOption{}
+	if wm.GRPCAddress != "" {
+		opts = append(opts, wallet.WithCustomServers([]string{wm.GRPCAddress}))
+	}
 	wlt, err := wallet.Open(wm.ctx, walletPath, opts...)
 	if err != nil {
 		return err
@@ -258,6 +272,10 @@ func (wm *Manager) UnloadWallet(
 		return ErrWalletNotLoaded
 	}
 
+	if walletName == wm.DefaultWalletName {
+		return ErrCannotUnloadDefaultWallet
+	}
+
 	delete(wm.wallets, walletName)
 
 	return nil
@@ -333,26 +351,38 @@ func (wm *Manager) WalletInfo(walletName string) (*types.WalletInfo, error) {
 	return wlt.Info(), nil
 }
 
-func (wm *Manager) ListWallets() ([]string, error) {
+func (wm *Manager) ListWallets(includeUnloaded bool) ([]string, error) {
 	wallets := make([]string, 0)
 
-	files, err := util.ListFilesInDir(wm.walletDirectory)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, file := range files {
-		_, err = wallet.Open(wm.ctx, file, wallet.WithOfflineMode())
+	if includeUnloaded {
+		files, err := util.ListFilesInDir(wm.walletDirectory)
 		if err != nil {
-			logger.Warn(fmt.Sprintf("file %s is not wallet", file))
-
-			continue
+			return nil, err
 		}
 
-		wallets = append(wallets, filepath.Base(file))
+		for _, file := range files {
+			_, err = wallet.Open(wm.ctx, file, wallet.WithOfflineMode())
+			if err != nil {
+				logger.Warn(fmt.Sprintf("file %s is not wallet", file))
+
+				continue
+			}
+
+			wallets = append(wallets, filepath.Base(file))
+		}
+	} else {
+		for name := range wm.wallets {
+			wallets = append(wallets, name)
+		}
 	}
 
 	return wallets, nil
+}
+
+func (wm *Manager) IsWalletLoaded(walletName string) bool {
+	_, loaded := wm.wallets[walletName]
+
+	return loaded
 }
 
 func (wm *Manager) ListAddresses(walletName string, opts ...wallet.ListAddressOption) ([]types.AddressInfo, error) {

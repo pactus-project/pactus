@@ -150,7 +150,7 @@ func TestLoadWallet(t *testing.T) {
 
 	t.Run("Error on loading wallet", func(t *testing.T) {
 		td.mockWalletMgr.EXPECT().
-			LoadWallet("test", gomock.Any()).
+			LoadWallet("test").
 			Return(errors.New("error on loading wallet"))
 
 		res, err := client.LoadWallet(t.Context(),
@@ -163,7 +163,7 @@ func TestLoadWallet(t *testing.T) {
 
 	t.Run("Load wallet successfully", func(t *testing.T) {
 		td.mockWalletMgr.EXPECT().
-			LoadWallet("test", gomock.Any()).
+			LoadWallet("test").
 			Return(nil)
 
 		res, err := client.LoadWallet(t.Context(),
@@ -552,20 +552,24 @@ func TestListWallet(t *testing.T) {
 
 	t.Run("Error on listing wallets", func(t *testing.T) {
 		td.mockWalletMgr.EXPECT().
-			ListWallets().
+			ListWallets(true).
 			Return(nil, errors.New("error on listing wallets"))
 
-		res, err := client.ListWallets(t.Context(), &pactus.ListWalletsRequest{})
+		res, err := client.ListWallets(t.Context(), &pactus.ListWalletsRequest{
+			IncludeUnloaded: true,
+		})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("List wallets successfully", func(t *testing.T) {
 		td.mockWalletMgr.EXPECT().
-			ListWallets().
+			ListWallets(true).
 			Return([]string{"w1", "w2"}, nil)
 
-		res, err := client.ListWallets(t.Context(), &pactus.ListWalletsRequest{})
+		res, err := client.ListWallets(t.Context(), &pactus.ListWalletsRequest{
+			IncludeUnloaded: true,
+		})
 		require.NoError(t, err)
 		require.NotNil(t, res)
 		assert.Equal(t, []string{"w1", "w2"}, res.Wallets)

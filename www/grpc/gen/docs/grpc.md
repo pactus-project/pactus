@@ -208,6 +208,10 @@ For seamless integration with Pactus, you can use these client libraries:
           <span class="rpc-badge"></span> GetWalletInfo</a>
         </li>
         <li>
+          <a href="#pactus.Wallet.IsWalletLoaded">
+          <span class="rpc-badge"></span> IsWalletLoaded</a>
+        </li>
+        <li>
           <a href="#pactus.Wallet.ListAddresses">
           <span class="rpc-badge"></span> ListAddresses</a>
         </li>
@@ -4102,11 +4106,25 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
 
 #### ListWallets <span id="pactus.Wallet.ListWallets" class="rpc-badge"></span>
 
-<p>ListWallets returns a list of all available wallets.</p>
+<p>ListWallets returns a list of all available wallets.
+If `include_unloaded` is set, it returns both loaded and unloaded wallets.</p>
 
 <h4>ListWalletsRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
-Message has no fields.
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">include_unloaded</td>
+    <td> bool</td>
+    <td>
+    Whether to include wallets that exist on disk but are not currently loaded.
+    </td>
+  </tr>
+  </tbody>
+</table>
   <h4>ListWalletsResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
 
 <table class="table table-bordered table-responsive table-sm">
@@ -4198,6 +4216,50 @@ Message has no fields.
     <td> int64</td>
     <td>
     The default fee of the wallet.
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+#### IsWalletLoaded <span id="pactus.Wallet.IsWalletLoaded" class="rpc-badge"></span>
+
+<p>IsWalletLoaded checks whether the specified wallet is currently loaded.</p>
+
+<h4>IsWalletLoadedRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    Name of the wallet to check.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>IsWalletLoadedResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    Name of the wallet.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">loaded</td>
+    <td> bool</td>
+    <td>
+    True if the wallet is currently loaded.
     </td>
   </tr>
      </tbody>

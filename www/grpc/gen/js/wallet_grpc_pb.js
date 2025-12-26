@@ -159,6 +159,28 @@ function deserialize_pactus_GetWalletInfoResponse(buffer_arg) {
   return wallet_pb.GetWalletInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_IsWalletLoadedRequest(arg) {
+  if (!(arg instanceof wallet_pb.IsWalletLoadedRequest)) {
+    throw new Error('Expected argument of type pactus.IsWalletLoadedRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_IsWalletLoadedRequest(buffer_arg) {
+  return wallet_pb.IsWalletLoadedRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_IsWalletLoadedResponse(arg) {
+  if (!(arg instanceof wallet_pb.IsWalletLoadedResponse)) {
+    throw new Error('Expected argument of type pactus.IsWalletLoadedResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_IsWalletLoadedResponse(buffer_arg) {
+  return wallet_pb.IsWalletLoadedResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_ListAddressesRequest(arg) {
   if (!(arg instanceof wallet_pb.ListAddressesRequest)) {
     throw new Error('Expected argument of type pactus.ListAddressesRequest');
@@ -528,6 +550,7 @@ setAddressLabel: {
     responseDeserialize: deserialize_pactus_SetAddressLabelResponse,
   },
   // ListWallets returns a list of all available wallets.
+// If `include_unloaded` is set, it returns both loaded and unloaded wallets.
 listWallets: {
     path: '/pactus.Wallet/ListWallets',
     requestStream: false,
@@ -550,6 +573,18 @@ getWalletInfo: {
     requestDeserialize: deserialize_pactus_GetWalletInfoRequest,
     responseSerialize: serialize_pactus_GetWalletInfoResponse,
     responseDeserialize: deserialize_pactus_GetWalletInfoResponse,
+  },
+  // IsWalletLoaded checks whether the specified wallet is currently loaded.
+isWalletLoaded: {
+    path: '/pactus.Wallet/IsWalletLoaded',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.IsWalletLoadedRequest,
+    responseType: wallet_pb.IsWalletLoadedResponse,
+    requestSerialize: serialize_pactus_IsWalletLoadedRequest,
+    requestDeserialize: deserialize_pactus_IsWalletLoadedRequest,
+    responseSerialize: serialize_pactus_IsWalletLoadedResponse,
+    responseDeserialize: deserialize_pactus_IsWalletLoadedResponse,
   },
   // ListAddresses returns all addresses in the specified wallet.
 listAddresses: {
