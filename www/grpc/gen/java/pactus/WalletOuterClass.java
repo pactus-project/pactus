@@ -21789,7 +21789,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
 
     /**
      * <pre>
-     * The name of the wallet to query.
+     * The name of the wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -21798,7 +21798,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     java.lang.String getWalletName();
     /**
      * <pre>
-     * The name of the wallet to query.
+     * The name of the wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -21886,6 +21886,46 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
      * @return The defaultFee.
      */
     long getDefaultFee();
+
+    /**
+     * <pre>
+     * The storage driver used by the wallet (e.g., SQLite, Legacy JSON ).
+     * </pre>
+     *
+     * <code>string driver = 8 [json_name = "driver"];</code>
+     * @return The driver.
+     */
+    java.lang.String getDriver();
+    /**
+     * <pre>
+     * The storage driver used by the wallet (e.g., SQLite, Legacy JSON ).
+     * </pre>
+     *
+     * <code>string driver = 8 [json_name = "driver"];</code>
+     * @return The bytes for driver.
+     */
+    com.google.protobuf.ByteString
+        getDriverBytes();
+
+    /**
+     * <pre>
+     * Path to the wallet file or storage location.
+     * </pre>
+     *
+     * <code>string path = 9 [json_name = "path"];</code>
+     * @return The path.
+     */
+    java.lang.String getPath();
+    /**
+     * <pre>
+     * Path to the wallet file or storage location.
+     * </pre>
+     *
+     * <code>string path = 9 [json_name = "path"];</code>
+     * @return The bytes for path.
+     */
+    com.google.protobuf.ByteString
+        getPathBytes();
   }
   /**
    * <pre>
@@ -21916,6 +21956,8 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       walletName_ = "";
       network_ = "";
       uuid_ = "";
+      driver_ = "";
+      path_ = "";
     }
 
     public static final com.google.protobuf.Descriptors.Descriptor
@@ -21936,7 +21978,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     private volatile java.lang.Object walletName_ = "";
     /**
      * <pre>
-     * The name of the wallet to query.
+     * The name of the wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -21957,7 +21999,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     }
     /**
      * <pre>
-     * The name of the wallet to query.
+     * The name of the wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -22132,6 +22174,100 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       return defaultFee_;
     }
 
+    public static final int DRIVER_FIELD_NUMBER = 8;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object driver_ = "";
+    /**
+     * <pre>
+     * The storage driver used by the wallet (e.g., SQLite, Legacy JSON ).
+     * </pre>
+     *
+     * <code>string driver = 8 [json_name = "driver"];</code>
+     * @return The driver.
+     */
+    @java.lang.Override
+    public java.lang.String getDriver() {
+      java.lang.Object ref = driver_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        driver_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The storage driver used by the wallet (e.g., SQLite, Legacy JSON ).
+     * </pre>
+     *
+     * <code>string driver = 8 [json_name = "driver"];</code>
+     * @return The bytes for driver.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getDriverBytes() {
+      java.lang.Object ref = driver_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        driver_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PATH_FIELD_NUMBER = 9;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object path_ = "";
+    /**
+     * <pre>
+     * Path to the wallet file or storage location.
+     * </pre>
+     *
+     * <code>string path = 9 [json_name = "path"];</code>
+     * @return The path.
+     */
+    @java.lang.Override
+    public java.lang.String getPath() {
+      java.lang.Object ref = path_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        path_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Path to the wallet file or storage location.
+     * </pre>
+     *
+     * <code>string path = 9 [json_name = "path"];</code>
+     * @return The bytes for path.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getPathBytes() {
+      java.lang.Object ref = path_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        path_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -22167,6 +22303,12 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       if (defaultFee_ != 0L) {
         output.writeInt64(7, defaultFee_);
       }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(driver_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 8, driver_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(path_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 9, path_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -22201,6 +22343,12 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(7, defaultFee_);
       }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(driver_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(8, driver_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(path_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(9, path_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -22230,6 +22378,10 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
           != other.getCreatedAt()) return false;
       if (getDefaultFee()
           != other.getDefaultFee()) return false;
+      if (!getDriver()
+          .equals(other.getDriver())) return false;
+      if (!getPath()
+          .equals(other.getPath())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -22258,6 +22410,10 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       hash = (37 * hash) + DEFAULT_FEE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getDefaultFee());
+      hash = (37 * hash) + DRIVER_FIELD_NUMBER;
+      hash = (53 * hash) + getDriver().hashCode();
+      hash = (37 * hash) + PATH_FIELD_NUMBER;
+      hash = (53 * hash) + getPath().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -22400,6 +22556,8 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
         uuid_ = "";
         createdAt_ = 0L;
         defaultFee_ = 0L;
+        driver_ = "";
+        path_ = "";
         return this;
       }
 
@@ -22454,6 +22612,12 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
         if (((from_bitField0_ & 0x00000040) != 0)) {
           result.defaultFee_ = defaultFee_;
         }
+        if (((from_bitField0_ & 0x00000080) != 0)) {
+          result.driver_ = driver_;
+        }
+        if (((from_bitField0_ & 0x00000100) != 0)) {
+          result.path_ = path_;
+        }
       }
 
       @java.lang.Override
@@ -22494,6 +22658,16 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
         }
         if (other.getDefaultFee() != 0L) {
           setDefaultFee(other.getDefaultFee());
+        }
+        if (!other.getDriver().isEmpty()) {
+          driver_ = other.driver_;
+          bitField0_ |= 0x00000080;
+          onChanged();
+        }
+        if (!other.getPath().isEmpty()) {
+          path_ = other.path_;
+          bitField0_ |= 0x00000100;
+          onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -22556,6 +22730,16 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
                 bitField0_ |= 0x00000040;
                 break;
               } // case 56
+              case 66: {
+                driver_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000080;
+                break;
+              } // case 66
+              case 74: {
+                path_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000100;
+                break;
+              } // case 74
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -22576,7 +22760,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       private java.lang.Object walletName_ = "";
       /**
        * <pre>
-       * The name of the wallet to query.
+       * The name of the wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -22596,7 +22780,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       }
       /**
        * <pre>
-       * The name of the wallet to query.
+       * The name of the wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -22617,7 +22801,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       }
       /**
        * <pre>
-       * The name of the wallet to query.
+       * The name of the wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -22634,7 +22818,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       }
       /**
        * <pre>
-       * The name of the wallet to query.
+       * The name of the wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -22648,7 +22832,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       }
       /**
        * <pre>
-       * The name of the wallet to query.
+       * The name of the wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -23021,6 +23205,190 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       public Builder clearDefaultFee() {
         bitField0_ = (bitField0_ & ~0x00000040);
         defaultFee_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object driver_ = "";
+      /**
+       * <pre>
+       * The storage driver used by the wallet (e.g., SQLite, Legacy JSON ).
+       * </pre>
+       *
+       * <code>string driver = 8 [json_name = "driver"];</code>
+       * @return The driver.
+       */
+      public java.lang.String getDriver() {
+        java.lang.Object ref = driver_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          driver_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The storage driver used by the wallet (e.g., SQLite, Legacy JSON ).
+       * </pre>
+       *
+       * <code>string driver = 8 [json_name = "driver"];</code>
+       * @return The bytes for driver.
+       */
+      public com.google.protobuf.ByteString
+          getDriverBytes() {
+        java.lang.Object ref = driver_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          driver_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The storage driver used by the wallet (e.g., SQLite, Legacy JSON ).
+       * </pre>
+       *
+       * <code>string driver = 8 [json_name = "driver"];</code>
+       * @param value The driver to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDriver(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        driver_ = value;
+        bitField0_ |= 0x00000080;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The storage driver used by the wallet (e.g., SQLite, Legacy JSON ).
+       * </pre>
+       *
+       * <code>string driver = 8 [json_name = "driver"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDriver() {
+        driver_ = getDefaultInstance().getDriver();
+        bitField0_ = (bitField0_ & ~0x00000080);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The storage driver used by the wallet (e.g., SQLite, Legacy JSON ).
+       * </pre>
+       *
+       * <code>string driver = 8 [json_name = "driver"];</code>
+       * @param value The bytes for driver to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDriverBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        driver_ = value;
+        bitField0_ |= 0x00000080;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object path_ = "";
+      /**
+       * <pre>
+       * Path to the wallet file or storage location.
+       * </pre>
+       *
+       * <code>string path = 9 [json_name = "path"];</code>
+       * @return The path.
+       */
+      public java.lang.String getPath() {
+        java.lang.Object ref = path_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          path_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Path to the wallet file or storage location.
+       * </pre>
+       *
+       * <code>string path = 9 [json_name = "path"];</code>
+       * @return The bytes for path.
+       */
+      public com.google.protobuf.ByteString
+          getPathBytes() {
+        java.lang.Object ref = path_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          path_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Path to the wallet file or storage location.
+       * </pre>
+       *
+       * <code>string path = 9 [json_name = "path"];</code>
+       * @param value The path to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPath(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        path_ = value;
+        bitField0_ |= 0x00000100;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Path to the wallet file or storage location.
+       * </pre>
+       *
+       * <code>string path = 9 [json_name = "path"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPath() {
+        path_ = getDefaultInstance().getPath();
+        bitField0_ = (bitField0_ & ~0x00000100);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Path to the wallet file or storage location.
+       * </pre>
+       *
+       * <code>string path = 9 [json_name = "path"];</code>
+       * @param value The bytes for path to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPathBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        path_ = value;
+        bitField0_ |= 0x00000100;
         onChanged();
         return this;
       }
@@ -28912,73 +29280,74 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       "IsWalletLoadedResponse\022\037\n\013wallet_name\030\001 " +
       "\001(\tR\nwalletName\022\026\n\006loaded\030\002 \001(\010R\006loaded\"" +
       "7\n\024GetWalletInfoRequest\022\037\n\013wallet_name\030\001" +
-      " \001(\tR\nwalletName\"\336\001\n\025GetWalletInfoRespon" +
+      " \001(\tR\nwalletName\"\212\002\n\025GetWalletInfoRespon" +
       "se\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\022\030\n\007v" +
       "ersion\030\002 \001(\005R\007version\022\030\n\007network\030\003 \001(\tR\007" +
       "network\022\034\n\tencrypted\030\004 \001(\010R\tencrypted\022\022\n" +
       "\004uuid\030\005 \001(\tR\004uuid\022\035\n\ncreated_at\030\006 \001(\003R\tc" +
       "reatedAt\022\037\n\013default_fee\030\007 \001(\003R\ndefaultFe" +
-      "e\"q\n\024ListAddressesRequest\022\037\n\013wallet_name" +
-      "\030\001 \001(\tR\nwalletName\0228\n\raddress_types\030\002 \003(" +
-      "\0162\023.pactus.AddressTypeR\014addressTypes\"a\n\025" +
-      "ListAddressesResponse\022\037\n\013wallet_name\030\001 \001" +
-      "(\tR\nwalletName\022\'\n\004data\030\002 \003(\0132\023.pactus.Ad" +
-      "dressInfoR\004data\"~\n\025UpdatePasswordRequest" +
-      "\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\022!\n\014old" +
-      "_password\030\002 \001(\tR\013oldPassword\022!\n\014new_pass" +
-      "word\030\003 \001(\tR\013newPassword\"9\n\026UpdatePasswor" +
-      "dResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwalletNa" +
-      "me\"\261\001\n\027ListTransactionsRequest\022\037\n\013wallet" +
-      "_name\030\001 \001(\tR\nwalletName\0221\n\tdirection\030\002 \001" +
-      "(\0162\023.pactus.TxDirectionR\tdirection\022\030\n\007ad" +
-      "dress\030\003 \001(\tR\007address\022\024\n\005count\030\004 \001(\005R\005cou" +
-      "nt\022\022\n\004skip\030\005 \001(\005R\004skip\"f\n\030ListTransactio" +
-      "nsResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwalletN" +
-      "ame\022)\n\003txs\030\002 \003(\0132\027.pactus.TransactionInf" +
-      "oR\003txs*\204\001\n\013AddressType\022\031\n\025ADDRESS_TYPE_T" +
-      "REASURY\020\000\022\032\n\026ADDRESS_TYPE_VALIDATOR\020\001\022\034\n" +
-      "\030ADDRESS_TYPE_BLS_ACCOUNT\020\002\022 \n\034ADDRESS_T" +
-      "YPE_ED25519_ACCOUNT\020\003*C\n\013TxDirection\022\031\n\025" +
-      "TX_DIRECTION_INCOMING\020\000\022\031\n\025TX_DIRECTION_" +
-      "OUTGOING\020\0012\250\013\n\006Wallet\022I\n\014CreateWallet\022\033." +
-      "pactus.CreateWalletRequest\032\034.pactus.Crea" +
-      "teWalletResponse\022L\n\rRestoreWallet\022\034.pact" +
-      "us.RestoreWalletRequest\032\035.pactus.Restore" +
-      "WalletResponse\022C\n\nLoadWallet\022\031.pactus.Lo" +
-      "adWalletRequest\032\032.pactus.LoadWalletRespo" +
-      "nse\022I\n\014UnloadWallet\022\033.pactus.UnloadWalle" +
-      "tRequest\032\034.pactus.UnloadWalletResponse\022R" +
-      "\n\017GetTotalBalance\022\036.pactus.GetTotalBalan" +
-      "ceRequest\032\037.pactus.GetTotalBalanceRespon" +
-      "se\022[\n\022SignRawTransaction\022!.pactus.SignRa" +
-      "wTransactionRequest\032\".pactus.SignRawTran" +
-      "sactionResponse\022^\n\023GetValidatorAddress\022\"" +
-      ".pactus.GetValidatorAddressRequest\032#.pac" +
-      "tus.GetValidatorAddressResponse\022L\n\rGetNe" +
-      "wAddress\022\034.pactus.GetNewAddressRequest\032\035" +
-      ".pactus.GetNewAddressResponse\022F\n\013SignMes" +
-      "sage\022\032.pactus.SignMessageRequest\032\033.pactu" +
-      "s.SignMessageResponse\022L\n\rGetTotalStake\022\034" +
-      ".pactus.GetTotalStakeRequest\032\035.pactus.Ge" +
-      "tTotalStakeResponse\022O\n\016GetAddressInfo\022\035." +
-      "pactus.GetAddressInfoRequest\032\036.pactus.Ge" +
-      "tAddressInfoResponse\022R\n\017SetAddressLabel\022" +
-      "\036.pactus.SetAddressLabelRequest\032\037.pactus" +
-      ".SetAddressLabelResponse\022F\n\013ListWallets\022" +
-      "\032.pactus.ListWalletsRequest\032\033.pactus.Lis" +
-      "tWalletsResponse\022L\n\rGetWalletInfo\022\034.pact" +
-      "us.GetWalletInfoRequest\032\035.pactus.GetWall" +
-      "etInfoResponse\022O\n\016IsWalletLoaded\022\035.pactu" +
-      "s.IsWalletLoadedRequest\032\036.pactus.IsWalle" +
-      "tLoadedResponse\022L\n\rListAddresses\022\034.pactu" +
-      "s.ListAddressesRequest\032\035.pactus.ListAddr" +
-      "essesResponse\022O\n\016UpdatePassword\022\035.pactus" +
-      ".UpdatePasswordRequest\032\036.pactus.UpdatePa" +
-      "sswordResponse\022U\n\020ListTransactions\022\037.pac" +
-      "tus.ListTransactionsRequest\032 .pactus.Lis" +
-      "tTransactionsResponseB:\n\006pactusZ0github." +
-      "com/pactus-project/pactus/www/grpc/pactu" +
-      "sb\006proto3"
+      "e\022\026\n\006driver\030\010 \001(\tR\006driver\022\022\n\004path\030\t \001(\tR" +
+      "\004path\"q\n\024ListAddressesRequest\022\037\n\013wallet_" +
+      "name\030\001 \001(\tR\nwalletName\0228\n\raddress_types\030" +
+      "\002 \003(\0162\023.pactus.AddressTypeR\014addressTypes" +
+      "\"a\n\025ListAddressesResponse\022\037\n\013wallet_name" +
+      "\030\001 \001(\tR\nwalletName\022\'\n\004data\030\002 \003(\0132\023.pactu" +
+      "s.AddressInfoR\004data\"~\n\025UpdatePasswordReq" +
+      "uest\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\022!\n" +
+      "\014old_password\030\002 \001(\tR\013oldPassword\022!\n\014new_" +
+      "password\030\003 \001(\tR\013newPassword\"9\n\026UpdatePas" +
+      "swordResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwall" +
+      "etName\"\261\001\n\027ListTransactionsRequest\022\037\n\013wa" +
+      "llet_name\030\001 \001(\tR\nwalletName\0221\n\tdirection" +
+      "\030\002 \001(\0162\023.pactus.TxDirectionR\tdirection\022\030" +
+      "\n\007address\030\003 \001(\tR\007address\022\024\n\005count\030\004 \001(\005R" +
+      "\005count\022\022\n\004skip\030\005 \001(\005R\004skip\"f\n\030ListTransa" +
+      "ctionsResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwal" +
+      "letName\022)\n\003txs\030\002 \003(\0132\027.pactus.Transactio" +
+      "nInfoR\003txs*\204\001\n\013AddressType\022\031\n\025ADDRESS_TY" +
+      "PE_TREASURY\020\000\022\032\n\026ADDRESS_TYPE_VALIDATOR\020" +
+      "\001\022\034\n\030ADDRESS_TYPE_BLS_ACCOUNT\020\002\022 \n\034ADDRE" +
+      "SS_TYPE_ED25519_ACCOUNT\020\003*C\n\013TxDirection" +
+      "\022\031\n\025TX_DIRECTION_INCOMING\020\000\022\031\n\025TX_DIRECT" +
+      "ION_OUTGOING\020\0012\250\013\n\006Wallet\022I\n\014CreateWalle" +
+      "t\022\033.pactus.CreateWalletRequest\032\034.pactus." +
+      "CreateWalletResponse\022L\n\rRestoreWallet\022\034." +
+      "pactus.RestoreWalletRequest\032\035.pactus.Res" +
+      "toreWalletResponse\022C\n\nLoadWallet\022\031.pactu" +
+      "s.LoadWalletRequest\032\032.pactus.LoadWalletR" +
+      "esponse\022I\n\014UnloadWallet\022\033.pactus.UnloadW" +
+      "alletRequest\032\034.pactus.UnloadWalletRespon" +
+      "se\022R\n\017GetTotalBalance\022\036.pactus.GetTotalB" +
+      "alanceRequest\032\037.pactus.GetTotalBalanceRe" +
+      "sponse\022[\n\022SignRawTransaction\022!.pactus.Si" +
+      "gnRawTransactionRequest\032\".pactus.SignRaw" +
+      "TransactionResponse\022^\n\023GetValidatorAddre" +
+      "ss\022\".pactus.GetValidatorAddressRequest\032#" +
+      ".pactus.GetValidatorAddressResponse\022L\n\rG" +
+      "etNewAddress\022\034.pactus.GetNewAddressReque" +
+      "st\032\035.pactus.GetNewAddressResponse\022F\n\013Sig" +
+      "nMessage\022\032.pactus.SignMessageRequest\032\033.p" +
+      "actus.SignMessageResponse\022L\n\rGetTotalSta" +
+      "ke\022\034.pactus.GetTotalStakeRequest\032\035.pactu" +
+      "s.GetTotalStakeResponse\022O\n\016GetAddressInf" +
+      "o\022\035.pactus.GetAddressInfoRequest\032\036.pactu" +
+      "s.GetAddressInfoResponse\022R\n\017SetAddressLa" +
+      "bel\022\036.pactus.SetAddressLabelRequest\032\037.pa" +
+      "ctus.SetAddressLabelResponse\022F\n\013ListWall" +
+      "ets\022\032.pactus.ListWalletsRequest\032\033.pactus" +
+      ".ListWalletsResponse\022L\n\rGetWalletInfo\022\034." +
+      "pactus.GetWalletInfoRequest\032\035.pactus.Get" +
+      "WalletInfoResponse\022O\n\016IsWalletLoaded\022\035.p" +
+      "actus.IsWalletLoadedRequest\032\036.pactus.IsW" +
+      "alletLoadedResponse\022L\n\rListAddresses\022\034.p" +
+      "actus.ListAddressesRequest\032\035.pactus.List" +
+      "AddressesResponse\022O\n\016UpdatePassword\022\035.pa" +
+      "ctus.UpdatePasswordRequest\032\036.pactus.Upda" +
+      "tePasswordResponse\022U\n\020ListTransactions\022\037" +
+      ".pactus.ListTransactionsRequest\032 .pactus" +
+      ".ListTransactionsResponseB:\n\006pactusZ0git" +
+      "hub.com/pactus-project/pactus/www/grpc/p" +
+      "actusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -29170,7 +29539,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     internal_static_pactus_GetWalletInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetWalletInfoResponse_descriptor,
-        new java.lang.String[] { "WalletName", "Version", "Network", "Encrypted", "Uuid", "CreatedAt", "DefaultFee", });
+        new java.lang.String[] { "WalletName", "Version", "Network", "Encrypted", "Uuid", "CreatedAt", "DefaultFee", "Driver", "Path", });
     internal_static_pactus_ListAddressesRequest_descriptor =
       getDescriptor().getMessageType(31);
     internal_static_pactus_ListAddressesRequest_fieldAccessorTable = new

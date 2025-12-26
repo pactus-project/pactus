@@ -317,20 +317,32 @@ message GetWalletInfoRequest {
 
 // Response message contains wallet details.
 message GetWalletInfoResponse {
-  // The name of the wallet to query.
+  // The name of the wallet.
   string wallet_name = 1;
+
   // The wallet format version.
   int32 version = 2;
+
   // The network the wallet is connected to (e.g., mainnet, testnet).
   string network = 3;
+
   // Indicates if the wallet is encrypted.
   bool encrypted = 4;
+
   // A unique identifier of the wallet.
   string uuid = 5;
+
   // Unix timestamp of wallet creation.
   int64 created_at = 6;
+
   // The default fee of the wallet.
   int64 default_fee = 7;
+
+  // The storage driver used by the wallet (e.g., SQLite, Legacy JSON ).
+  string driver = 8;
+
+  // Path to the wallet file or storage location.
+  string path = 9;
 }
 
 // Request message for listing wallet addresses.

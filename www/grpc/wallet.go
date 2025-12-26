@@ -262,6 +262,8 @@ func (s *walletServer) GetWalletInfo(_ context.Context,
 		Uuid:       info.UUID,
 		CreatedAt:  info.CreatedAt.Unix(),
 		DefaultFee: info.DefaultFee.ToNanoPAC(),
+		Driver:     info.Driver,
+		Path:       info.Path,
 	}, nil
 }
 
