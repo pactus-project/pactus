@@ -5,21 +5,22 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/wallet/provider"
 	"github.com/pactus-project/pactus/wallet/storage"
 	"github.com/pactus-project/pactus/wallet/types"
 )
 
 type transactions struct {
-	storage    storage.IStorage
-	grpcClient *grpcClient
+	storage  storage.IStorage
+	provider provider.IBlockchainProvider
 }
 
 func newTransactions(storage storage.IStorage,
-	grpcClient *grpcClient,
+	provider provider.IBlockchainProvider,
 ) transactions {
 	return transactions{
-		storage:    storage,
-		grpcClient: grpcClient,
+		storage:  storage,
+		provider: provider,
 	}
 }
 
@@ -33,20 +34,15 @@ func (t *transactions) AddTransaction(txID tx.ID) error {
 		return ErrTransactionExists
 	}
 
-	res, err := t.grpcClient.getTransaction(txID)
+	trx, height, err := t.provider.GetTransaction(idStr)
 	if err != nil {
 		return err
 	}
 
-	trx, err := tx.FromString(res.Transaction.Data)
-	if err != nil {
-		return err
-	}
-
-	return t.addTransactionWithStatus(trx, types.TransactionStatusConfirmed, res.BlockHeight)
+	return t.addTransactionWithStatus(trx, types.TransactionStatusConfirmed, height)
 }
 
-func (t *transactions) addTransactionWithStatus(trx *tx.Tx, status types.TransactionStatus, blockHeight uint32) error {
+func (t *transactions) addTransactionWithStatus(trx *tx.Tx, status types.TransactionStatus, blockHeight block.Height) error {
 	txInfos, err := types.MakeTransactionInfos(trx, status, blockHeight)
 	if err != nil {
 		return err
@@ -172,7 +168,7 @@ func collectReceivers(trx *tx.Tx) []string {
 	}
 }
 
-func (t *transactions) addIncomingIfWallet(trx *tx.Tx, receivers []string, blockHeight uint32) bool {
+func (t *transactions) addIncomingIfWallet(trx *tx.Tx, receivers []string, blockHeight block.Height) bool {
 	for _, receiver := range receivers {
 		if !t.storage.HasAddress(receiver) {
 			continue
@@ -192,7 +188,7 @@ func (t *transactions) addIncomingIfWallet(trx *tx.Tx, receivers []string, block
 	return false
 }
 
-func (t *transactions) processBlock(block *block.Block) {
+func (t *transactions) processBlock(blk *block.Block) {
 	pendingTxs, err := t.storage.GetPendingTransactions()
 	if err != nil {
 		logger.Warn("failed to get pending transactions", "error", err)
@@ -200,11 +196,11 @@ func (t *transactions) processBlock(block *block.Block) {
 		return
 	}
 
-	for _, trx := range block.Transactions() {
+	for _, trx := range blk.Transactions() {
 		txID := trx.ID().String()
 
 		if _, ok := pendingTxs[txID]; ok {
-			if err := t.storage.UpdateTransactionStatus(txID, types.TransactionStatusConfirmed, block.Height()); err != nil {
+			if err := t.storage.UpdateTransactionStatus(txID, types.TransactionStatusConfirmed, blk.Height()); err != nil {
 				logger.Warn("failed to update transaction status", "error", err, "id", txID)
 			}
 
@@ -213,7 +209,7 @@ func (t *transactions) processBlock(block *block.Block) {
 			continue
 		}
 
-		if t.addIncomingIfWallet(trx, collectReceivers(trx), block.Height()) {
+		if t.addIncomingIfWallet(trx, collectReceivers(trx), block.Height(blk.Height())) {
 			continue
 		}
 
@@ -226,7 +222,7 @@ func (t *transactions) processBlock(block *block.Block) {
 			continue
 		}
 
-		if err := t.addTransactionWithStatus(trx, types.TransactionStatusConfirmed, block.Height()); err != nil {
+		if err := t.addTransactionWithStatus(trx, types.TransactionStatusConfirmed, block.Height(blk.Height())); err != nil {
 			logger.Warn("failed to add outgoing transaction to wallet", "error", err, "id", txID)
 
 			continue

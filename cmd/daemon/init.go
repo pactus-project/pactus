@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"path/filepath"
 
 	"github.com/pactus-project/pactus/cmd"
@@ -107,7 +108,8 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			chain = genesis.Localnet
 		}
 
-		wlt, rewardAddrs, err := cmd.CreateNode(valNum, chain, workingDir, mnemonic, password)
+		wlt, rewardAddrs, err := cmd.CreateNode(context.Background(),
+			valNum, chain, workingDir, mnemonic, password)
 		terminal.FatalErrorCheck(err)
 
 		// Recovering addresses

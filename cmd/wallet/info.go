@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"time"
 
 	"github.com/pactus-project/pactus/util/terminal"
@@ -17,7 +18,7 @@ func buildInfoCmd(parentCmd *cobra.Command) {
 	parentCmd.AddCommand(infoCmd)
 
 	infoCmd.Run = func(_ *cobra.Command, _ []string) {
-		wlt, err := openWallet()
+		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
 
 		info := wlt.Info()

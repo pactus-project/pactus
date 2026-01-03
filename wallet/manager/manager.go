@@ -14,30 +14,34 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/wallet/provider"
 	"github.com/pactus-project/pactus/wallet/types"
 )
 
 var _ IManager = (*Manager)(nil)
 
 type Manager struct {
-	ctx               context.Context
-	wallets           map[string]*wallet.Wallet
-	chainType         genesis.ChainType
-	walletDirectory   string
-	GRPCAddress       string
-	DefaultWalletName string
-	eventPipe         pipeline.Pipeline[any]
+	ctx                context.Context
+	wallets            map[string]*wallet.Wallet
+	chainType          genesis.ChainType
+	walletDirectory    string
+	DefaultWalletName  string
+	blockchainProvider provider.IBlockchainProvider
+	eventPipe          pipeline.Pipeline[any]
 }
 
-func NewManager(ctx context.Context, conf *Config, eventPipe pipeline.Pipeline[any]) (IManager, error) {
+func NewManager(ctx context.Context, conf *Config,
+	blockchainProvider provider.IBlockchainProvider,
+	eventPipe pipeline.Pipeline[any],
+) (IManager, error) {
 	mgr := &Manager{
-		ctx:               ctx,
-		wallets:           make(map[string]*wallet.Wallet),
-		chainType:         conf.ChainType,
-		walletDirectory:   conf.WalletsDir,
-		GRPCAddress:       conf.GRPCAddress,
-		DefaultWalletName: conf.DefaultWalletName,
-		eventPipe:         eventPipe,
+		ctx:                ctx,
+		wallets:            make(map[string]*wallet.Wallet),
+		chainType:          conf.ChainType,
+		walletDirectory:    conf.WalletsDir,
+		DefaultWalletName:  conf.DefaultWalletName,
+		blockchainProvider: blockchainProvider,
+		eventPipe:          eventPipe,
 	}
 
 	if err := mgr.LoadWallet(conf.DefaultWalletName); err != nil {
@@ -116,10 +120,9 @@ func (wm *Manager) LoadWallet(walletName string) error {
 	walletPath := wm.getWalletPath(walletName)
 	opts := []wallet.OpenWalletOption{
 		wallet.WithEventPipe(wm.eventPipe),
+		wallet.WithBlockchainProvider(wm.blockchainProvider),
 	}
-	if wm.GRPCAddress != "" {
-		opts = append(opts, wallet.WithCustomServers([]string{wm.GRPCAddress}))
-	}
+
 	wlt, err := wallet.Open(wm.ctx, walletPath, opts...)
 	if err != nil {
 		return err
@@ -366,7 +369,7 @@ func (wm *Manager) ListWallets(includeUnloaded bool) ([]string, error) {
 		}
 
 		for _, file := range files {
-			_, err = wallet.Open(wm.ctx, file, wallet.WithOfflineMode())
+			_, err = wallet.Open(wm.ctx, file)
 			if err != nil {
 				logger.Warn(fmt.Sprintf("file %s is not wallet", file))
 

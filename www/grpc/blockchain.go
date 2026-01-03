@@ -138,8 +138,8 @@ func (s *blockchainServer) GetBlock(_ context.Context,
 	req *pactus.GetBlockRequest,
 ) (*pactus.GetBlockResponse, error) {
 	height := req.GetHeight()
-	cBlk := s.state.CommittedBlock(height)
-	if cBlk == nil {
+	cBlk, err := s.state.CommittedBlock(height)
+	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "block not found")
 	}
 	res := &pactus.GetBlockResponse{
@@ -218,8 +218,8 @@ func (s *blockchainServer) GetAccount(_ context.Context,
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid address: %v", err)
 	}
-	acc := s.state.AccountByAddress(addr)
-	if acc == nil {
+	acc, err := s.state.AccountByAddress(addr)
+	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "account not found")
 	}
 	res := &pactus.GetAccountResponse{
@@ -232,8 +232,8 @@ func (s *blockchainServer) GetAccount(_ context.Context,
 func (s *blockchainServer) GetValidatorByNumber(_ context.Context,
 	req *pactus.GetValidatorByNumberRequest,
 ) (*pactus.GetValidatorResponse, error) {
-	val := s.state.ValidatorByNumber(req.Number)
-	if val == nil {
+	val, err := s.state.ValidatorByNumber(req.Number)
+	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "validator not found")
 	}
 
@@ -249,8 +249,8 @@ func (s *blockchainServer) GetValidator(_ context.Context,
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid validator address: %v", err.Error())
 	}
-	val := s.state.ValidatorByAddress(addr)
-	if val == nil {
+	val, err := s.state.ValidatorByAddress(addr)
+	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "validator not found")
 	}
 

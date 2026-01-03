@@ -204,7 +204,7 @@ func TestCommitSandbox(t *testing.T) {
 		sb.UpdateAccount(addr, newAcc)
 		td.state.commitSandbox(sb, 0)
 
-		stateAcc := td.state.AccountByAddress(addr)
+		stateAcc, _ := td.state.AccountByAddress(addr)
 		assert.Equal(t, stateAcc, newAcc)
 	})
 
@@ -218,8 +218,8 @@ func TestCommitSandbox(t *testing.T) {
 		sb.UpdateValidator(newVal)
 		td.state.commitSandbox(sb, 0)
 
-		stateValByNumber := td.state.ValidatorByAddress(pub.ValidatorAddress())
-		stateValByAddr := td.state.ValidatorByAddress(pub.ValidatorAddress())
+		stateValByNumber, _ := td.state.ValidatorByAddress(pub.ValidatorAddress())
+		stateValByAddr, _ := td.state.ValidatorByAddress(pub.ValidatorAddress())
 		assert.Equal(t, stateValByNumber, newVal)
 		assert.Equal(t, stateValByAddr, newVal)
 	})
@@ -236,7 +236,7 @@ func TestCommitSandbox(t *testing.T) {
 		sbx.UpdateAccount(addr, acc)
 		td.state.commitSandbox(sbx, 0)
 
-		stateAcc := td.state.AccountByAddress(addr)
+		stateAcc, _ := td.state.AccountByAddress(addr)
 		assert.Equal(t, bal-amt, stateAcc.Balance())
 	})
 
@@ -252,7 +252,7 @@ func TestCommitSandbox(t *testing.T) {
 		sbx.UpdateValidator(val)
 		td.state.commitSandbox(sbx, 0)
 
-		stateVal := td.state.ValidatorByAddress(addr)
+		stateVal, _ := td.state.ValidatorByAddress(addr)
 		assert.Equal(t, stake+amt, stateVal.Stake(), val.Stake())
 	})
 
@@ -483,26 +483,26 @@ func TestValidateBlockTime(t *testing.T) {
 func TestValidatorHelpers(t *testing.T) {
 	td := setup(t)
 
-	t.Run("Should return nil for non-existing Validator Address", func(t *testing.T) {
-		nonExistenceValidator := td.state.ValidatorByAddress(td.RandValAddress())
-		assert.Nil(t, nonExistenceValidator, "State 1 returned non-nil For non-existing validator")
+	t.Run("Should return error non-existing validator by address", func(t *testing.T) {
+		_, err := td.state.ValidatorByAddress(td.RandValAddress())
+		require.Error(t, err)
 	})
 
-	t.Run("Should return validator for valid committee Validator Address", func(t *testing.T) {
-		existingValidator := td.state.ValidatorByAddress(td.genValKeys[0].Address())
-		assert.NotNil(t, existingValidator)
+	t.Run("Should return error for non-existing validator by number", func(t *testing.T) {
+		_, err := td.state.ValidatorByNumber(10)
+		require.Error(t, err)
+	})
+
+	t.Run("Should return validator for existing validator by address", func(t *testing.T) {
+		existingValidator, err := td.state.ValidatorByAddress(td.genValKeys[0].Address())
+		require.NoError(t, err)
 		assert.Zero(t, existingValidator.Number())
 	})
 
-	t.Run("Should return validator for corresponding Validator number", func(t *testing.T) {
-		existingValidator := td.state.ValidatorByNumber(0)
-		assert.NotNil(t, existingValidator)
+	t.Run("Should return validator for existing validator by number", func(t *testing.T) {
+		existingValidator, err := td.state.ValidatorByNumber(0)
+		require.NoError(t, err)
 		assert.Zero(t, existingValidator.Number())
-	})
-
-	t.Run("Should return nil for invalid Validator number", func(t *testing.T) {
-		nonExistenceValidator := td.state.ValidatorByNumber(10)
-		assert.Nil(t, nonExistenceValidator)
 	})
 }
 
@@ -583,14 +583,17 @@ func TestCheckMaximumTransactionPerBlock(t *testing.T) {
 func TestCommittedBlock(t *testing.T) {
 	td := setup(t)
 
-	t.Run("Genesis block", func(t *testing.T) {
-		assert.Nil(t, td.state.CommittedBlock(0))
+	t.Run("Block at 0", func(t *testing.T) {
+		cBlkZero, err := td.state.CommittedBlock(0)
+		assert.Error(t, err)
+		assert.Nil(t, cBlkZero)
 		assert.Equal(t, hash.UndefHash, td.state.BlockHash(0))
 		assert.Equal(t, uint32(0), td.state.BlockHeight(hash.UndefHash))
 	})
 
-	t.Run("First block", func(t *testing.T) {
-		cBlkOne := td.state.CommittedBlock(1)
+	t.Run("First block (Genesis)", func(t *testing.T) {
+		cBlkOne, err := td.state.CommittedBlock(1)
+		require.NoError(t, err)
 		blkOne, err := cBlkOne.ToBlock()
 		assert.NoError(t, err)
 		assert.Nil(t, blkOne.PrevCertificate())
@@ -598,7 +601,8 @@ func TestCommittedBlock(t *testing.T) {
 	})
 
 	t.Run("Last block", func(t *testing.T) {
-		cBlkLast := td.state.CommittedBlock(td.state.LastBlockHeight())
+		cBlkLast, err := td.state.CommittedBlock(td.state.LastBlockHeight())
+		require.NoError(t, err)
 		blkLast, err := cBlkLast.ToBlock()
 		assert.NoError(t, err)
 		assert.Equal(t, blkLast.Hash(), td.state.LastBlockHash())
@@ -608,6 +612,7 @@ func TestCommittedBlock(t *testing.T) {
 func TestUpdateProptocolVersion(t *testing.T) {
 	td := setup(t)
 
-	val := td.state.ValidatorByAddress(td.state.valKeys[0].Address())
+	val, err := td.state.ValidatorByAddress(td.state.valKeys[0].Address())
+	require.NoError(t, err)
 	assert.Equal(t, protocol.ProtocolVersionLatest, val.ProtocolVersion())
 }

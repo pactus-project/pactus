@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet"
+	remoteprovider "github.com/pactus-project/pactus/wallet/provider/remote"
 	"github.com/spf13/cobra"
 )
 
@@ -22,22 +23,27 @@ func addPasswordOption(c *cobra.Command) *string {
 		"", "the wallet password")
 }
 
-func openWallet() (*wallet.Wallet, error) {
-	opts := make([]wallet.OpenWalletOption, 0)
-
+func openWallet(ctx context.Context) (*wallet.Wallet, error) {
+	var opts []remoteprovider.RemoteProviderOption
 	if *serverAddrsOpt != nil {
-		opts = append(opts, wallet.WithCustomServers(*serverAddrsOpt))
+		opts = append(opts, remoteprovider.WithCustomServers(*serverAddrsOpt))
 	}
 
 	if *timeoutOpt > 0 {
-		opts = append(opts, wallet.WithTimeout(time.Duration(*timeoutOpt)*time.Second))
+		opts = append(opts, remoteprovider.WithTimeout(time.Duration(*timeoutOpt)*time.Second))
 	}
 
 	if *offlineOpt {
-		opts = append(opts, wallet.WithOfflineMode())
+		opts = append(opts, remoteprovider.WithOfflineMode())
 	}
 
-	wlt, err := wallet.Open(context.Background(), *pathOpt, opts...)
+	provider, err := remoteprovider.NewRemoteBlockchainProvider(ctx, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	wlt, err := wallet.Open(context.Background(), *pathOpt,
+		[]wallet.OpenWalletOption{wallet.WithBlockchainProvider(provider)}...)
 	if err != nil {
 		return nil, err
 	}

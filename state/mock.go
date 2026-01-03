@@ -145,22 +145,18 @@ func (m *MockState) IsValidator(addr crypto.Address) bool {
 	return m.TestStore.HasValidator(addr)
 }
 
-func (m *MockState) CommittedBlock(height uint32) *store.CommittedBlock {
+func (m *MockState) CommittedBlock(height uint32) (*store.CommittedBlock, error) {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 
-	b, _ := m.TestStore.Block(height)
-
-	return b
+	return m.TestStore.Block(height)
 }
 
-func (m *MockState) CommittedTx(txID tx.ID) *store.CommittedTx {
+func (m *MockState) CommittedTx(txID tx.ID) (*store.CommittedTx, error) {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 
-	trx, _ := m.TestStore.Transaction(txID)
-
-	return trx
+	return m.TestStore.Transaction(txID)
 }
 
 func (m *MockState) BlockHash(height uint32) hash.Hash {
@@ -177,32 +173,26 @@ func (m *MockState) BlockHeight(h hash.Hash) uint32 {
 	return m.TestStore.BlockHeight(h)
 }
 
-func (m *MockState) AccountByAddress(addr crypto.Address) *account.Account {
+func (m *MockState) AccountByAddress(addr crypto.Address) (*account.Account, error) {
 	a, _ := m.TestStore.Account(addr)
 
-	return a
-}
-
-func (m *MockState) AccountByNumber(number int32) *account.Account {
-	a, _ := m.TestStore.AccountByNumber(number)
-
-	return a
+	return a, nil
 }
 
 func (m *MockState) ValidatorAddresses() []crypto.Address {
 	return m.TestStore.ValidatorAddresses()
 }
 
-func (m *MockState) ValidatorByAddress(addr crypto.Address) *validator.Validator {
+func (m *MockState) ValidatorByAddress(addr crypto.Address) (*validator.Validator, error) {
 	v, _ := m.TestStore.Validator(addr)
 
-	return v
+	return v, nil
 }
 
-func (m *MockState) ValidatorByNumber(n int32) *validator.Validator {
+func (m *MockState) ValidatorByNumber(n int32) (*validator.Validator, error) {
 	v, _ := m.TestStore.ValidatorByNumber(n)
 
-	return v
+	return v, nil
 }
 
 func (m *MockState) PendingTx(txID tx.ID) *tx.Tx {

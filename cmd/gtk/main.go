@@ -3,6 +3,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"log"
 	"os"
@@ -80,7 +81,7 @@ func main() {
 		if *testnetOpt {
 			network = genesis.Testnet
 		}
-		if !startupAssistant(workingDir, network) {
+		if !startupAssistant(context.Background(), workingDir, network) {
 			return
 		}
 	}

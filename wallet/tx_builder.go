@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/wallet/provider"
 )
 
 // TxOption defines a function type used to apply options to a txBuilder.
@@ -50,7 +51,7 @@ func OptionMemo(memo string) func(builder *txBuilder) error {
 
 // txBuilder helps build and configure a transaction before submitting it.
 type txBuilder struct {
-	client   *grpcClient
+	provider provider.IBlockchainProvider
 	sender   *crypto.Address
 	receiver *crypto.Address
 	pub      *bls.PublicKey
@@ -95,8 +96,8 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 		trx = tx.NewTransferTx(m.lockTime, *m.sender, *m.receiver, m.amount, m.fee, tx.WithMemo(m.memo))
 	case payload.TypeBond:
 		pub := m.pub
-		val, _ := m.client.getValidator(m.receiver.String())
-		if val != nil {
+		_, err := m.provider.GetValidator(m.receiver.String())
+		if err != nil {
 			// validator exists
 			pub = nil
 		}
@@ -122,15 +123,11 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 // If not provided, it retrieves the last block height and increments it.
 func (m *txBuilder) setLockTime() error {
 	if m.lockTime == 0 {
-		if m.client == nil {
-			return ErrOffline
-		}
-
-		info, err := m.client.getBlockchainInfo()
+		height, err := m.provider.LastBlockHeight()
 		if err != nil {
 			return err
 		}
-		m.lockTime = info.LastBlockHeight + 1
+		m.lockTime = uint32(height + 1)
 	}
 
 	return nil

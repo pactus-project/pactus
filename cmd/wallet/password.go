@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/spf13/cobra"
@@ -16,7 +18,7 @@ func buildPasswordCmd(parentCmd *cobra.Command) {
 	passOpt := addPasswordOption(passwordCmd)
 
 	passwordCmd.Run = func(_ *cobra.Command, _ []string) {
-		wlt, err := openWallet()
+		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
 
 		oldPassword := getPassword(wlt, *passOpt)

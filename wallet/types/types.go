@@ -6,6 +6,7 @@ import (
 
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 )
@@ -49,7 +50,7 @@ type TransactionInfo struct {
 	Fee         amount.Amount
 	Memo        string
 	Status      TransactionStatus
-	BlockHeight uint32
+	BlockHeight block.Height
 	PayloadType payload.Type
 	Data        []byte
 	Comment     string
@@ -60,7 +61,7 @@ type TransactionInfo struct {
 // MakeTransactionInfos builds TransactionInfo from trx.
 // Returns might contains more than one entry per recipient, this covers the batch transfer transaction.s
 // Data should be the serialized tx, otherwise it reurn error.
-func MakeTransactionInfos(trx *tx.Tx, status TransactionStatus, blockHeight uint32) ([]*TransactionInfo, error) {
+func MakeTransactionInfos(trx *tx.Tx, status TransactionStatus, blockHeight block.Height) ([]*TransactionInfo, error) {
 	data, err := trx.Bytes()
 	if err != nil {
 		return nil, fmt.Errorf("failed to serialize tx: %w", err)

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -46,7 +47,7 @@ func buildAddressAllCmd(parentCmd *cobra.Command) {
 		false, "displays the validator stake for each address")
 
 	allCmd.Run = func(_ *cobra.Command, _ []string) {
-		wlt, err := openWallet()
+		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
 
 		terminal.PrintLine()
@@ -90,7 +91,7 @@ func buildAddressNewCmd(parentCmd *cobra.Command) {
 			labelIn := prompt.PromptInput("Label")
 			label = &labelIn
 		}
-		wlt, err := openWallet()
+		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
 
 		switch *addressType {
@@ -128,7 +129,7 @@ func buildAddressBalanceCmd(parentCmd *cobra.Command) {
 	balanceCmd.Run = func(_ *cobra.Command, args []string) {
 		addr := args[0]
 
-		wlt, err := openWallet()
+		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
 
 		terminal.PrintLine()
@@ -155,7 +156,7 @@ func buildAddressPrivCmd(parentCmd *cobra.Command) {
 	privCmd.Run = func(_ *cobra.Command, args []string) {
 		addr := args[0]
 
-		wlt, err := openWallet()
+		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
 
 		password := getPassword(wlt, *passOpt)
@@ -180,7 +181,7 @@ func buildAddressPubCmd(parentCmd *cobra.Command) {
 	pubCmd.Run = func(_ *cobra.Command, args []string) {
 		addr := args[0]
 
-		wlt, err := openWallet()
+		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
 
 		info, err := wlt.AddressInfo(addr)
@@ -211,7 +212,7 @@ func buildAddressImportCmd(parentCmd *cobra.Command) {
 	importCmd.Run = func(_ *cobra.Command, _ []string) {
 		prvStr := prompt.PromptInput("Private Key")
 
-		wlt, err := openWallet()
+		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
 
 		password := getPassword(wlt, *passOpt)
@@ -265,7 +266,7 @@ func buildAddressLabelCmd(parentCmd *cobra.Command) {
 	labelCmd.Run = func(_ *cobra.Command, args []string) {
 		addr := args[0]
 
-		wlt, err := openWallet()
+		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
 
 		oldLabel := wlt.AddressLabel(addr)

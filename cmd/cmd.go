@@ -22,6 +22,7 @@ import (
 	"github.com/pactus-project/pactus/util/signal"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet"
+	remoteprovider "github.com/pactus-project/pactus/wallet/provider/remote"
 	"github.com/pactus-project/pactus/wallet/types"
 )
 
@@ -71,22 +72,32 @@ func PactusDaemonName() string {
 	return "./pactus-daemon"
 }
 
-func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
+func CreateNode(ctx context.Context, numValidators int, chain genesis.ChainType, workingDir string,
 	mnemonic string, walletPassword string,
 ) (*wallet.Wallet, string, error) {
-	// To make process faster, we update the password after creating the addresses
 	walletPath := PactusDefaultWalletPath(workingDir)
-	wlt, err := wallet.Create(context.Background(),
-		walletPath, mnemonic, "", chain, wallet.WithOfflineMode())
+	provider, err := remoteprovider.NewRemoteBlockchainProvider(ctx)
+	if err != nil {
+		return nil, "", err
+	}
+
+	wlt, err := wallet.Create(context.Background(), walletPath, mnemonic, walletPassword, chain,
+		[]wallet.OpenWalletOption{wallet.WithBlockchainProvider(provider)}...)
 	if err != nil {
 		return nil, "", err
 	}
 
 	for i := 0; i < numValidators; i++ {
-		_, _ = wlt.NewAddress(crypto.AddressTypeValidator, fmt.Sprintf("Validator address %v", i+1))
+		_, err := wlt.NewAddress(crypto.AddressTypeValidator, fmt.Sprintf("Validator address %v", i+1))
+		if err != nil {
+			return nil, "", err
+		}
 	}
-	rewardAddrInfo, _ := wlt.NewAddress(crypto.AddressTypeEd25519Account, "Reward address",
+	rewardAddrInfo, err := wlt.NewAddress(crypto.AddressTypeEd25519Account, "Reward address",
 		wallet.WithPassword(walletPassword))
+	if err != nil {
+		return nil, "", err
+	}
 
 	confPath := PactusConfigPath(workingDir)
 	genPath := PactusGenesisPath(workingDir)
@@ -126,10 +137,6 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 		}
 	}
 
-	if err := wlt.UpdatePassword("", walletPassword); err != nil {
-		return nil, "", err
-	}
-
 	return wlt, rewardAddrInfo.Address, nil
 }
 
@@ -150,7 +157,7 @@ func StartNode(workingDir string, passwordFetcher func() (string, bool),
 	}
 
 	defaultWalletPath := PactusDefaultWalletPath(workingDir)
-	wlt, err := wallet.Open(context.Background(), defaultWalletPath, wallet.WithOfflineMode())
+	wlt, err := wallet.Open(context.Background(), defaultWalletPath)
 	if err != nil {
 		return nil, err
 	}
@@ -265,10 +272,6 @@ func MakeConfig(workingDir string) (*config.Config, *genesis.Genesis, error) {
 	conf.WalletManager.ChainType = chainType
 	conf.WalletManager.WalletsDir = walletsDir
 	conf.WalletManager.DefaultWalletName = DefaultWalletName
-
-	if conf.GRPC.Enable {
-		conf.WalletManager.GRPCAddress = conf.GRPC.Listen
-	}
 
 	if err := conf.BasicCheck(); err != nil {
 		return nil, nil, err

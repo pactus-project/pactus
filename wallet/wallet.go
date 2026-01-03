@@ -2,8 +2,6 @@ package wallet
 
 import (
 	"context"
-	"encoding/json"
-	"time"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -15,6 +13,8 @@ import (
 	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/encrypter"
+	"github.com/pactus-project/pactus/wallet/provider"
+	offlineprovider "github.com/pactus-project/pactus/wallet/provider/offline"
 	"github.com/pactus-project/pactus/wallet/storage"
 	"github.com/pactus-project/pactus/wallet/storage/jsonstorage"
 	"github.com/pactus-project/pactus/wallet/storage/sqlitestorage"
@@ -80,7 +80,7 @@ func Create(ctx context.Context, walletPath, mnemonic, password string,
 		return nil, err
 	}
 
-	return openWallet(storage, opts...)
+	return openWallet(ctx, storage, opts...)
 }
 
 // Open tries to open a wallet at the given path.
@@ -91,7 +91,7 @@ func Create(ctx context.Context, walletPath, mnemonic, password string,
 func Open(ctx context.Context, walletPath string, opts ...OpenWalletOption) (*Wallet, error) {
 	sqliteStrg, err := sqlitestorage.Open(ctx, walletPath)
 	if err == nil {
-		return openWallet(sqliteStrg, opts...)
+		return openWallet(ctx, sqliteStrg, opts...)
 	}
 
 	// Fallback to JSON storage for legacy wallets
@@ -104,42 +104,20 @@ func Open(ctx context.Context, walletPath string, opts ...OpenWalletOption) (*Wa
 		return nil, err
 	}
 
-	return openWallet(jsonStrg, opts...)
+	return openWallet(ctx, jsonStrg, opts...)
 }
 
 type openWalletConfig struct {
-	timeout   time.Duration
-	servers   []string
-	offline   bool
 	eventPipe pipeline.Pipeline[any]
+	provider  provider.IBlockchainProvider
 }
 
 var defaultOpenWalletConfig = openWalletConfig{
-	timeout:   5 * time.Second,
-	servers:   make([]string, 0),
-	offline:   false,
 	eventPipe: nil,
+	provider:  offlineprovider.NewOfflineBlockchainProvider(),
 }
 
 type OpenWalletOption func(*openWalletConfig)
-
-func WithTimeout(timeout time.Duration) OpenWalletOption {
-	return func(cfg *openWalletConfig) {
-		cfg.timeout = timeout
-	}
-}
-
-func WithCustomServers(servers []string) OpenWalletOption {
-	return func(cfg *openWalletConfig) {
-		cfg.servers = servers
-	}
-}
-
-func WithOfflineMode() OpenWalletOption {
-	return func(cfg *openWalletConfig) {
-		cfg.offline = true
-	}
-}
 
 func WithEventPipe(eventPipe pipeline.Pipeline[any]) OpenWalletOption {
 	return func(cfg *openWalletConfig) {
@@ -147,55 +125,22 @@ func WithEventPipe(eventPipe pipeline.Pipeline[any]) OpenWalletOption {
 	}
 }
 
-func openWallet(storage storage.IStorage, opts ...OpenWalletOption) (*Wallet, error) {
+func WithBlockchainProvider(provider provider.IBlockchainProvider) OpenWalletOption {
+	return func(cfg *openWalletConfig) {
+		cfg.provider = provider
+	}
+}
+
+func openWallet(ctx context.Context, storage storage.IStorage, opts ...OpenWalletOption) (*Wallet, error) {
 	cfg := defaultOpenWalletConfig
 	for _, opt := range opts {
 		opt(&cfg)
 	}
 
-	client := newGrpcClient(cfg.timeout, cfg.servers)
-
 	wlt := &Wallet{
 		addresses:    newAddresses(storage),
-		transactions: newTransactions(storage, client),
+		transactions: newTransactions(storage, cfg.provider),
 		storage:      storage,
-	}
-
-	if !cfg.offline {
-		serversData := map[string][]ServerInfo{}
-		err := json.Unmarshal(serversJSON, &serversData)
-		if err != nil {
-			return nil, err
-		}
-
-		var netServers []string
-		switch wlt.storage.WalletInfo().Network {
-		case genesis.Mainnet:
-			for _, srv := range serversData["mainnet"] {
-				netServers = append(netServers, srv.Address)
-			}
-
-		case genesis.Testnet:
-			crypto.ToTestnetHRP()
-
-			for _, srv := range serversData["testnet"] {
-				netServers = append(netServers, srv.Address)
-			}
-
-		case genesis.Localnet:
-			crypto.ToTestnetHRP()
-
-			netServers = []string{"localhost:50052"}
-
-		default:
-			return nil, ErrInvalidNetwork
-		}
-
-		util.Shuffle(netServers)
-
-		if client.servers == nil {
-			client.servers = netServers
-		}
 	}
 
 	if cfg.eventPipe != nil {
@@ -206,11 +151,21 @@ func openWallet(storage storage.IStorage, opts ...OpenWalletOption) (*Wallet, er
 }
 
 func (w *Wallet) Close() error {
-	return w.storage.Close()
+	var retErr error
+
+	if err := w.provider.Close(); err != nil {
+		retErr = err
+	}
+
+	if err := w.storage.Close(); err != nil && retErr == nil {
+		retErr = err
+	}
+
+	return retErr
 }
 
 func (w *Wallet) IsOffline() bool {
-	return len(w.grpcClient.servers) == 0
+	return w.provider == nil
 }
 
 func (w *Wallet) Version() int {
@@ -249,7 +204,7 @@ func (w *Wallet) RecoveryAddresses(ctx context.Context, password string,
 	vault := w.storage.Vault()
 	//nolint:contextcheck // client manages timeout internally, external context would interfere
 	recovered, err := vault.RecoverAddresses(ctx, password, func(addr string) (bool, error) {
-		_, err := w.grpcClient.getAccount(addr)
+		_, err := w.provider.GetAccount(addr)
 		if err != nil {
 			s, ok := status.FromError(err)
 			if ok && s.Code() == codes.NotFound {
@@ -281,51 +236,53 @@ func (w *Wallet) RecoveryAddresses(ctx context.Context, password string,
 
 // Balance returns balance of the account associated with the address..
 func (w *Wallet) Balance(addrStr string) (amount.Amount, error) {
-	res, err := w.grpcClient.getAccount(addrStr)
+	acc, err := w.provider.GetAccount(addrStr)
 	if err != nil {
 		return 0, err
 	}
 
-	return amount.Amount(res.Account.Balance), nil
+	return acc.Balance(), nil
 }
 
 // Stake returns stake of the validator associated with the address..
 func (w *Wallet) Stake(addrStr string) (amount.Amount, error) {
-	res, err := w.grpcClient.getValidator(addrStr)
+	val, err := w.provider.GetValidator(addrStr)
 	if err != nil {
 		return 0, err
 	}
 
-	return amount.Amount(res.Validator.Stake), nil
+	return val.Stake(), nil
 }
 
 // TotalBalance return the total available balance of the wallet.
 func (w *Wallet) TotalBalance() (amount.Amount, error) {
-	totalBalance := int64(0)
+	totalBalance := amount.Amount(0)
 	infos := w.ListAddresses(OnlyAccountAddresses())
 	for _, info := range infos {
-		res, _ := w.grpcClient.getAccount(info.Address)
-		if res != nil {
-			totalBalance += res.Account.Balance
+		acc, err := w.provider.GetAccount(info.Address)
+		if err != nil {
+			return 0, err
 		}
+		totalBalance += acc.Balance()
 	}
 
-	return amount.Amount(totalBalance), nil
+	return totalBalance, nil
 }
 
 // TotalStake return total available stake of the wallet.
 func (w *Wallet) TotalStake() (amount.Amount, error) {
-	totalStake := int64(0)
+	totalStake := amount.Amount(0)
 
 	infos := w.ListAddresses(OnlyValidatorAddresses())
 	for _, info := range infos {
-		res, _ := w.grpcClient.getValidator(info.Address)
-		if res != nil {
-			totalStake += res.Validator.Stake
+		val, err := w.provider.GetValidator(info.Address)
+		if err != nil {
+			return 0, err
 		}
+		totalStake += val.Stake()
 	}
 
-	return amount.Amount(totalStake), nil
+	return totalStake, nil
 }
 
 // MakeTransferTx creates a new transfer transaction based on the given parameters.
@@ -437,7 +394,7 @@ func (w *Wallet) SignTransaction(password string, trx *tx.Tx) error {
 }
 
 func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
-	res, err := w.grpcClient.sendTx(trx)
+	hash, err := w.provider.SendTx(trx)
 	if err != nil {
 		return "", err
 	}
@@ -447,7 +404,7 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 		_ = w.storage.InsertTransaction(info)
 	}
 
-	return res.Id, nil
+	return hash, nil
 }
 
 func (w *Wallet) UpdatePassword(oldPassword, newPassword string, opts ...encrypter.Option) error {
@@ -476,8 +433,8 @@ func (w *Wallet) SignMessage(password, addr, msg string) (string, error) {
 // makeTxBuilder initializes a txBuilder with provided options, allowing for flexible configuration of the transaction.
 func (w *Wallet) makeTxBuilder(options ...TxOption) (*txBuilder, error) {
 	builder := &txBuilder{
-		client: w.grpcClient,
-		fee:    w.storage.WalletInfo().DefaultFee,
+		provider: w.provider,
+		fee:      w.storage.WalletInfo().DefaultFee,
 	}
 	for _, op := range options {
 		err := op(builder)
@@ -491,24 +448,4 @@ func (w *Wallet) makeTxBuilder(options ...TxOption) (*txBuilder, error) {
 
 func (w *Wallet) SetDefaultFee(fee amount.Amount) error {
 	return w.storage.SetDefaultFee(fee)
-}
-
-func GetServerList(network string) ([]ServerInfo, error) {
-	// Default to mainnet if network is empty
-	if network == "" {
-		network = "mainnet"
-	}
-
-	serversData := map[string][]ServerInfo{}
-	err := json.Unmarshal(serversJSON, &serversData)
-	if err != nil {
-		return nil, err
-	}
-
-	servers, exists := serversData[network]
-	if !exists {
-		return []ServerInfo{}, nil
-	}
-
-	return servers, nil
 }

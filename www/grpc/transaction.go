@@ -34,8 +34,8 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "invalid transaction ID: %v", err.Error())
 	}
 
-	committedTx := s.state.CommittedTx(id)
-	if committedTx == nil {
+	committedTx, err := s.state.CommittedTx(id)
+	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transaction not found")
 	}
 

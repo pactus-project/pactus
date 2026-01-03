@@ -1,4 +1,4 @@
-package wallet
+package remoteprovider
 
 import _ "embed"
 

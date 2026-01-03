@@ -1,9 +1,7 @@
 package wallet_test
 
 import (
-	"strings"
 	"testing"
-	"time"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -15,8 +13,8 @@ import (
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/encrypter"
+	"github.com/pactus-project/pactus/wallet/provider"
 	"github.com/pactus-project/pactus/wallet/storage"
-	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -24,10 +22,10 @@ import (
 type testData struct {
 	*testsuite.TestSuite
 
-	server    *grpc.Server
-	wallet    *wallet.Wallet
-	mockState *state.MockState
-	password  string
+	wallet       *wallet.Wallet
+	password     string
+	mockState    *state.MockState
+	mockProvider *provider.MockIBlockchainProvider
 }
 
 func setup(t *testing.T) *testData {
@@ -39,34 +37,30 @@ func setup(t *testing.T) *testData {
 	walletPath := util.TempFilePath()
 	mnemonic, _ := wallet.GenerateMnemonic(128)
 
-	grpcConf := &grpc.Config{
-		Enable: true,
-		Listen: "[::]:0",
-	}
-
 	mockState := state.MockingState(ts)
-	gRPCServer := grpc.NewServer(t.Context(),
-		grpcConf, mockState,
-		nil, nil, nil, nil, nil)
+	mockProvider := provider.NewMockIBlockchainProvider(ts.Ctrl)
 
-	assert.NoError(t, gRPCServer.StartServer())
+	var wlt *wallet.Wallet
 
 	t.Cleanup(func() {
-		gRPCServer.StopServer()
+		mockProvider.EXPECT().Close().Times(1)
+		if wlt != nil {
+			_ = wlt.Close()
+		}
 	})
 
 	wlt, err := wallet.Create(t.Context(), walletPath, mnemonic, password, genesis.Mainnet,
-		wallet.WithCustomServers([]string{gRPCServer.Address()}))
+		wallet.WithBlockchainProvider(mockProvider))
 	assert.NoError(t, err)
 	assert.False(t, wlt.IsEncrypted())
 	assert.Equal(t, walletPath, wlt.Path())
 
 	return &testData{
-		TestSuite: ts,
-		mockState: mockState,
-		server:    gRPCServer,
-		wallet:    wlt,
-		password:  password,
+		TestSuite:    ts,
+		mockState:    mockState,
+		mockProvider: mockProvider,
+		wallet:       wlt,
+		password:     password,
 	}
 }
 
@@ -78,8 +72,6 @@ func TestCheckMnemonic(t *testing.T) {
 }
 
 func TestOpenWallet(t *testing.T) {
-	td := setup(t)
-
 	t.Run("Invalid wallet path", func(t *testing.T) {
 		_, err := wallet.Open(t.Context(), util.TempFilePath())
 		assert.Error(t, err)
@@ -91,15 +83,6 @@ func TestOpenWallet(t *testing.T) {
 
 		_, err := wallet.Open(t.Context(), path)
 		assert.Error(t, err)
-	})
-
-	t.Run("Open custom wallet", func(t *testing.T) {
-		wlt, err := wallet.Open(t.Context(), td.wallet.Path(),
-			wallet.WithTimeout(time.Second),
-			wallet.WithOfflineMode())
-		assert.NoError(t, err)
-
-		assert.True(t, wlt.IsOffline())
 	})
 }
 
@@ -307,7 +290,7 @@ func TestMakeTransferTx(t *testing.T) {
 	})
 
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
-		td.server.StopServer()
+		// td.server.StopServer()
 
 		_, err := td.wallet.MakeTransferTx(td.RandAccAddress().String(), receiverInfo.String(), amt)
 		assert.Error(t, err)
@@ -428,7 +411,7 @@ func TestMakeBondTx(t *testing.T) {
 	})
 
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
-		td.server.StopServer()
+		// td.server.StopServer()
 
 		_, err := td.wallet.MakeBondTx(td.RandAccAddress().String(), receiver.Address().String(), "", amt)
 		assert.Error(t, err)
@@ -471,7 +454,7 @@ func TestMakeUnbondTx(t *testing.T) {
 	})
 
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
-		td.server.StopServer()
+		// td.server.StopServer()
 
 		_, err := td.wallet.MakeUnbondTx(td.RandAccAddress().String())
 		assert.Error(t, err)
@@ -517,7 +500,7 @@ func TestMakeWithdrawTx(t *testing.T) {
 	})
 
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
-		td.server.StopServer()
+		// td.server.StopServer()
 
 		_, err := td.wallet.MakeWithdrawTx(td.RandAccAddress().String(), receiverInfo.Address, amt)
 		assert.Error(t, err)
@@ -564,54 +547,6 @@ func TestTotalStake(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, stake, val1.Stake()+val2.Stake())
-}
-
-func TestGetServerList(t *testing.T) {
-	t.Run("Get mainnet servers", func(t *testing.T) {
-		servers, err := wallet.GetServerList("mainnet")
-		require.NoError(t, err)
-		assert.NotEmpty(t, servers)
-
-		// Verify structure
-		for _, srv := range servers {
-			assert.NotEmpty(t, srv.Address, "Server address should not be empty")
-			// Name, Email, Website can be empty for some servers
-		}
-
-		// Check that at least official Pactus bootstrap servers exist
-		foundBootstrap := false
-		for _, srv := range servers {
-			if strings.Contains(srv.Address, "bootstrap") && strings.Contains(srv.Address, "pactus.org") {
-				foundBootstrap = true
-
-				break
-			}
-		}
-		assert.True(t, foundBootstrap, "Should contain at least one official bootstrap server")
-	})
-
-	t.Run("Get testnet servers", func(t *testing.T) {
-		servers, err := wallet.GetServerList("testnet")
-		require.NoError(t, err)
-		assert.NotEmpty(t, servers)
-
-		// Verify structure
-		for _, srv := range servers {
-			assert.NotEmpty(t, srv.Address, "Server address should not be empty")
-		}
-	})
-
-	t.Run("Get servers for non-existent network", func(t *testing.T) {
-		servers, err := wallet.GetServerList("nonexistent")
-		require.NoError(t, err)
-		assert.Empty(t, servers, "Should return empty list for unknown network")
-	})
-
-	t.Run("Get servers for localnet", func(t *testing.T) {
-		servers, err := wallet.GetServerList("localnet")
-		require.NoError(t, err)
-		assert.Empty(t, servers, "Should return empty list for localnet")
-	})
 }
 
 func TestPrivateKey(t *testing.T) {

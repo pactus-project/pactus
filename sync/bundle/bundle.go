@@ -48,6 +48,7 @@ func NewBundle(msg message.Message) *Bundle {
 	}
 }
 
+// BasicCheck performs basic validation checks on the bundle and its message.
 func (b *Bundle) BasicCheck() error {
 	return b.Message.BasicCheck()
 }

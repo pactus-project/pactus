@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/prompt"
@@ -41,7 +43,7 @@ func buildSendTransferCmd(parentCmd *cobra.Command) {
 		amt, err := amount.FromString(args[2])
 		terminal.FatalErrorCheck(err)
 
-		wlt, err := openWallet()
+		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
@@ -85,7 +87,7 @@ func buildSendBondCmd(parentCmd *cobra.Command) {
 		amt, err := amount.FromString(args[2])
 		terminal.FatalErrorCheck(err)
 
-		wlt, err := openWallet()
+		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
@@ -125,7 +127,7 @@ func buildSendUnbondCmd(parentCmd *cobra.Command) {
 	unbondCmd.Run = func(_ *cobra.Command, args []string) {
 		from := args[0]
 
-		wlt, err := openWallet()
+		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
@@ -166,7 +168,7 @@ func buildSendWithdrawCmd(parentCmd *cobra.Command) {
 		amt, err := amount.FromString(args[2])
 		terminal.FatalErrorCheck(err)
 
-		wlt, err := openWallet()
+		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{

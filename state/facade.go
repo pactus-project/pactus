@@ -55,13 +55,13 @@ type Facade interface {
 	PendingTx(txID tx.ID) *tx.Tx
 	AddPendingTx(trx *tx.Tx) error
 	AddPendingTxAndBroadcast(trx *tx.Tx) error
-	CommittedBlock(height uint32) *store.CommittedBlock
-	CommittedTx(txID tx.ID) *store.CommittedTx
+	CommittedBlock(height uint32) (*store.CommittedBlock, error)
+	CommittedTx(txID tx.ID) (*store.CommittedTx, error)
 	BlockHash(height uint32) hash.Hash
 	BlockHeight(h hash.Hash) uint32
-	AccountByAddress(addr crypto.Address) *account.Account
-	ValidatorByAddress(addr crypto.Address) *validator.Validator
-	ValidatorByNumber(number int32) *validator.Validator
+	AccountByAddress(addr crypto.Address) (*account.Account, error)
+	ValidatorByAddress(addr crypto.Address) (*validator.Validator, error)
+	ValidatorByNumber(number int32) (*validator.Validator, error)
 	ValidatorAddresses() []crypto.Address
 	UpdateValidatorProtocolVersion(addr crypto.Address, ver protocol.Version)
 	CalculateFee(amt amount.Amount, payloadType payload.Type) amount.Amount

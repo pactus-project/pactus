@@ -33,7 +33,6 @@ func TestHandlerProposalParsingMessages(t *testing.T) {
 
 		td.receivingNewMessage(td.sync, msg, pid)
 
-		assert.Equal(t, protocol.ProtocolVersionLatest,
-			td.state.ValidatorByAddress(valKey.Address()).ProtocolVersion())
+		assert.Equal(t, protocol.ProtocolVersionLatest, val.ProtocolVersion())
 	})
 }
