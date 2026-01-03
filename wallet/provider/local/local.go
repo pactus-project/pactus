@@ -51,7 +51,7 @@ func (p *LocalBlockchainProvider) GetTransaction(txID string) (*tx.Tx, block.Hei
 		return nil, 0, err
 	}
 
-	cTrx, err := p.state.CommittedTx(tx.ID(idHash))
+	cTrx, err := p.state.CommittedTx(idHash)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -72,6 +72,6 @@ func (p *LocalBlockchainProvider) SendTx(trx *tx.Tx) (string, error) {
 	return trx.ID().String(), nil
 }
 
-func (p *LocalBlockchainProvider) Close() error {
+func (*LocalBlockchainProvider) Close() error {
 	return nil
 }

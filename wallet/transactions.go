@@ -42,7 +42,9 @@ func (t *transactions) AddTransaction(txID tx.ID) error {
 	return t.addTransactionWithStatus(trx, types.TransactionStatusConfirmed, height)
 }
 
-func (t *transactions) addTransactionWithStatus(trx *tx.Tx, status types.TransactionStatus, blockHeight block.Height) error {
+func (t *transactions) addTransactionWithStatus(trx *tx.Tx, status types.TransactionStatus,
+	blockHeight block.Height,
+) error {
 	txInfos, err := types.MakeTransactionInfos(trx, status, blockHeight)
 	if err != nil {
 		return err

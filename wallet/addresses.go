@@ -26,7 +26,7 @@ func (a *addresses) AddressInfo(addr string) (*types.AddressInfo, error) {
 	return a.storage.AddressInfo(addr)
 }
 
-// listAddressConfig contains options for filtering addressea.
+// listAddressConfig contains options for filtering addresses.
 type listAddressConfig struct {
 	addressTypes []crypto.AddressType
 }
@@ -35,7 +35,7 @@ var defaultListAddressConfig = listAddressConfig{
 	addressTypes: []crypto.AddressType{},
 }
 
-// ListAddressOption is a functional option for ListAddressea.
+// ListAddressOption is a functional option for ListAddresses.
 type ListAddressOption func(*listAddressConfig)
 
 // WithAddressTypes filters addresses by the specified type.
@@ -52,7 +52,7 @@ func WithAddressType(addressType crypto.AddressType) ListAddressOption {
 	}
 }
 
-// OnlyValidatorAddresses filters to show only validator addressea.
+// OnlyValidatorAddresses filters to show only validator addresses.
 func OnlyValidatorAddresses() ListAddressOption {
 	return func(cfg *listAddressConfig) {
 		cfg.addressTypes = []crypto.AddressType{crypto.AddressTypeValidator}
@@ -212,7 +212,7 @@ func (a *addresses) PrivateKeys(password string, addrs []string) ([]crypto.Priva
 	return a.storage.Vault().PrivateKeys(password, paths)
 }
 
-// newAddressConfig contains options for creating new addressea.
+// newAddressConfig contains options for creating new addresses.
 type newAddressConfig struct {
 	password string
 }

@@ -42,8 +42,8 @@ func openWallet(ctx context.Context) (*wallet.Wallet, error) {
 		return nil, err
 	}
 
-	wlt, err := wallet.Open(context.Background(), *pathOpt,
-		[]wallet.OpenWalletOption{wallet.WithBlockchainProvider(provider)}...)
+	wlt, err := wallet.Open(ctx, *pathOpt,
+		wallet.WithBlockchainProvider(provider))
 	if err != nil {
 		return nil, err
 	}

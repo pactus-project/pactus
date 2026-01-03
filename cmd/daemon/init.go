@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/prompt"
@@ -102,9 +103,11 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		chain := genesis.Mainnet
 		// The order of checking the network (chain type) matters here.
 		if *testnetOpt {
+			crypto.ToTestnetHRP()
 			chain = genesis.Testnet
 		}
 		if *localnetOpt {
+			crypto.ToTestnetHRP()
 			chain = genesis.Localnet
 		}
 

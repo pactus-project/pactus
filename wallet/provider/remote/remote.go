@@ -118,16 +118,16 @@ func NewRemoteBlockchainProvider(ctx context.Context, opts ...RemoteProviderOpti
 	}, nil
 }
 
-func (c *RemoteBlockchainProvider) connect() error {
-	if c.conn != nil {
+func (p *RemoteBlockchainProvider) connect() error {
+	if p.conn != nil {
 		return nil
 	}
 
-	for _, server := range c.servers {
+	for _, server := range p.servers {
 		conn, err := grpc.NewClient(server,
 			grpc.WithTransportCredentials(insecure.NewCredentials()),
 			grpc.WithContextDialer(func(ctx context.Context, address string) (net.Conn, error) {
-				return util.NetworkDialTimeout(ctx, "tcp", address, c.timeout)
+				return util.NetworkDialTimeout(ctx, "tcp", address, p.timeout)
 			}))
 		if err != nil {
 			continue
@@ -138,7 +138,7 @@ func (c *RemoteBlockchainProvider) connect() error {
 
 		// Check if client is responding
 		// TODO: Use Ping API in version 1.11.0
-		_, err = blockchainClient.GetBlockchainInfo(c.ctx,
+		_, err = blockchainClient.GetBlockchainInfo(p.ctx,
 			&pactus.GetBlockchainInfoRequest{})
 		if err != nil {
 			_ = conn.Close()
@@ -146,9 +146,9 @@ func (c *RemoteBlockchainProvider) connect() error {
 			continue
 		}
 
-		c.conn = conn
-		c.blockchainClient = blockchainClient
-		c.transactionClient = transactionClient
+		p.conn = conn
+		p.blockchainClient = blockchainClient
+		p.transactionClient = transactionClient
 
 		return nil
 	}

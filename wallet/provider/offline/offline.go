@@ -21,26 +21,26 @@ func NewOfflineBlockchainProvider() *OfflineBlockchainProvider {
 	return &OfflineBlockchainProvider{}
 }
 
-func (p *OfflineBlockchainProvider) LastBlockHeight() (block.Height, error) {
+func (*OfflineBlockchainProvider) LastBlockHeight() (block.Height, error) {
 	return 0, ErrOffline
 }
 
-func (p *OfflineBlockchainProvider) GetAccount(addrStr string) (*account.Account, error) {
+func (*OfflineBlockchainProvider) GetAccount(string) (*account.Account, error) {
 	return nil, ErrOffline
 }
 
-func (p *OfflineBlockchainProvider) GetValidator(addrStr string) (*validator.Validator, error) {
+func (*OfflineBlockchainProvider) GetValidator(string) (*validator.Validator, error) {
 	return nil, ErrOffline
 }
 
-func (p *OfflineBlockchainProvider) GetTransaction(txID string) (*tx.Tx, block.Height, error) {
+func (*OfflineBlockchainProvider) GetTransaction(string) (*tx.Tx, block.Height, error) {
 	return nil, 0, ErrOffline
 }
 
-func (p *OfflineBlockchainProvider) SendTx(trx *tx.Tx) (string, error) {
+func (*OfflineBlockchainProvider) SendTx(*tx.Tx) (string, error) {
 	return "", ErrOffline
 }
 
-func (p *OfflineBlockchainProvider) Close() error {
+func (*OfflineBlockchainProvider) Close() error {
 	return nil
 }

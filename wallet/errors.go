@@ -6,9 +6,6 @@ import (
 )
 
 var (
-	// ErrInvalidNetwork describes an error in which the network is invalid.
-	ErrInvalidNetwork = errors.New("invalid network")
-
 	// ErrInvalidAddressType describes an error in which the address type is invalid.
 	ErrInvalidAddressType = errors.New("invalid address type")
 

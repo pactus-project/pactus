@@ -76,13 +76,14 @@ func CreateNode(ctx context.Context, numValidators int, chain genesis.ChainType,
 	mnemonic string, walletPassword string,
 ) (*wallet.Wallet, string, error) {
 	walletPath := PactusDefaultWalletPath(workingDir)
-	provider, err := remoteprovider.NewRemoteBlockchainProvider(ctx)
+	provider, err := remoteprovider.NewRemoteBlockchainProvider(ctx,
+		remoteprovider.WithNetwork(chain))
 	if err != nil {
 		return nil, "", err
 	}
 
-	wlt, err := wallet.Create(context.Background(), walletPath, mnemonic, walletPassword, chain,
-		[]wallet.OpenWalletOption{wallet.WithBlockchainProvider(provider)}...)
+	wlt, err := wallet.Create(ctx, walletPath, mnemonic, walletPassword, chain,
+		wallet.WithBlockchainProvider(provider))
 	if err != nil {
 		return nil, "", err
 	}
@@ -126,7 +127,7 @@ func CreateNode(ctx context.Context, numValidators int, chain genesis.ChainType,
 		if numValidators < 4 {
 			return nil, "", errors.New("localnet needs at least 4 validators")
 		}
-		genDoc := makeLocalGenesis(*wlt)
+		genDoc := makeLocalGenesis(wlt)
 		if err := genDoc.SaveToFile(genPath); err != nil {
 			return nil, "", err
 		}
@@ -196,7 +197,7 @@ func StartNode(workingDir string, passwordFetcher func() (string, bool),
 }
 
 // makeLocalGenesis makes genesis file for the local network.
-func makeLocalGenesis(wlt wallet.Wallet) *genesis.Genesis {
+func makeLocalGenesis(wlt *wallet.Wallet) *genesis.Genesis {
 	// Treasury account
 	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)

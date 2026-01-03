@@ -3,7 +3,6 @@ package wallet
 import (
 	"context"
 
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
@@ -28,7 +27,8 @@ type Wallet struct {
 	addresses
 	transactions
 
-	storage storage.IStorage
+	provider provider.IBlockchainProvider
+	storage  storage.IStorage
 }
 
 // GenerateMnemonic is a wrapper for `vault.GenerateMnemonic`.
@@ -53,16 +53,10 @@ func Create(ctx context.Context, walletPath, mnemonic, password string,
 		}
 	}
 
-	var coinType addresspath.CoinType
-	switch chain {
-	case genesis.Mainnet:
-		coinType = addresspath.CoinTypePactusMainnet
-	case genesis.Testnet, genesis.Localnet:
-		crypto.ToTestnetHRP()
-
+	coinType := addresspath.CoinTypePactusMainnet
+	if chain == genesis.Testnet ||
+		chain == genesis.Localnet {
 		coinType = addresspath.CoinTypePactusTestnet
-	default:
-		return nil, ErrInvalidNetwork
 	}
 
 	vlt, err := vault.CreateVaultFromMnemonic(mnemonic, coinType)
@@ -80,7 +74,7 @@ func Create(ctx context.Context, walletPath, mnemonic, password string,
 		return nil, err
 	}
 
-	return openWallet(ctx, storage, opts...)
+	return New(storage, opts...)
 }
 
 // Open tries to open a wallet at the given path.
@@ -91,7 +85,7 @@ func Create(ctx context.Context, walletPath, mnemonic, password string,
 func Open(ctx context.Context, walletPath string, opts ...OpenWalletOption) (*Wallet, error) {
 	sqliteStrg, err := sqlitestorage.Open(ctx, walletPath)
 	if err == nil {
-		return openWallet(ctx, sqliteStrg, opts...)
+		return New(sqliteStrg, opts...)
 	}
 
 	// Fallback to JSON storage for legacy wallets
@@ -104,7 +98,7 @@ func Open(ctx context.Context, walletPath string, opts ...OpenWalletOption) (*Wa
 		return nil, err
 	}
 
-	return openWallet(ctx, jsonStrg, opts...)
+	return New(jsonStrg, opts...)
 }
 
 type openWalletConfig struct {
@@ -131,7 +125,7 @@ func WithBlockchainProvider(provider provider.IBlockchainProvider) OpenWalletOpt
 	}
 }
 
-func openWallet(ctx context.Context, storage storage.IStorage, opts ...OpenWalletOption) (*Wallet, error) {
+func New(storage storage.IStorage, opts ...OpenWalletOption) (*Wallet, error) {
 	cfg := defaultOpenWalletConfig
 	for _, opt := range opts {
 		opt(&cfg)
@@ -140,6 +134,7 @@ func openWallet(ctx context.Context, storage storage.IStorage, opts ...OpenWalle
 	wlt := &Wallet{
 		addresses:    newAddresses(storage),
 		transactions: newTransactions(storage, cfg.provider),
+		provider:     cfg.provider,
 		storage:      storage,
 	}
 
@@ -202,7 +197,6 @@ func (w *Wallet) RecoveryAddresses(ctx context.Context, password string,
 	eventFunc func(addr string),
 ) error {
 	vault := w.storage.Vault()
-	//nolint:contextcheck // client manages timeout internally, external context would interfere
 	recovered, err := vault.RecoverAddresses(ctx, password, func(addr string) (bool, error) {
 		_, err := w.provider.GetAccount(addr)
 		if err != nil {
