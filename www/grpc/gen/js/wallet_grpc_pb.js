@@ -452,103 +452,6 @@ unloadWallet: {
     responseSerialize: serialize_pactus_UnloadWalletResponse,
     responseDeserialize: deserialize_pactus_UnloadWalletResponse,
   },
-  // GetTotalBalance returns the total available balance of the wallet.
-getTotalBalance: {
-    path: '/pactus.Wallet/GetTotalBalance',
-    requestStream: false,
-    responseStream: false,
-    requestType: wallet_pb.GetTotalBalanceRequest,
-    responseType: wallet_pb.GetTotalBalanceResponse,
-    requestSerialize: serialize_pactus_GetTotalBalanceRequest,
-    requestDeserialize: deserialize_pactus_GetTotalBalanceRequest,
-    responseSerialize: serialize_pactus_GetTotalBalanceResponse,
-    responseDeserialize: deserialize_pactus_GetTotalBalanceResponse,
-  },
-  // SignRawTransaction signs a raw transaction for a specified wallet.
-signRawTransaction: {
-    path: '/pactus.Wallet/SignRawTransaction',
-    requestStream: false,
-    responseStream: false,
-    requestType: wallet_pb.SignRawTransactionRequest,
-    responseType: wallet_pb.SignRawTransactionResponse,
-    requestSerialize: serialize_pactus_SignRawTransactionRequest,
-    requestDeserialize: deserialize_pactus_SignRawTransactionRequest,
-    responseSerialize: serialize_pactus_SignRawTransactionResponse,
-    responseDeserialize: deserialize_pactus_SignRawTransactionResponse,
-  },
-  // GetValidatorAddress retrieves the validator address associated with a public key.
-// Deprecated: Will move into utils.
-getValidatorAddress: {
-    path: '/pactus.Wallet/GetValidatorAddress',
-    requestStream: false,
-    responseStream: false,
-    requestType: wallet_pb.GetValidatorAddressRequest,
-    responseType: wallet_pb.GetValidatorAddressResponse,
-    requestSerialize: serialize_pactus_GetValidatorAddressRequest,
-    requestDeserialize: deserialize_pactus_GetValidatorAddressRequest,
-    responseSerialize: serialize_pactus_GetValidatorAddressResponse,
-    responseDeserialize: deserialize_pactus_GetValidatorAddressResponse,
-  },
-  // GetNewAddress generates a new address for the specified wallet.
-getNewAddress: {
-    path: '/pactus.Wallet/GetNewAddress',
-    requestStream: false,
-    responseStream: false,
-    requestType: wallet_pb.GetNewAddressRequest,
-    responseType: wallet_pb.GetNewAddressResponse,
-    requestSerialize: serialize_pactus_GetNewAddressRequest,
-    requestDeserialize: deserialize_pactus_GetNewAddressRequest,
-    responseSerialize: serialize_pactus_GetNewAddressResponse,
-    responseDeserialize: deserialize_pactus_GetNewAddressResponse,
-  },
-  // SignMessage signs an arbitrary message using a wallet's private key.
-signMessage: {
-    path: '/pactus.Wallet/SignMessage',
-    requestStream: false,
-    responseStream: false,
-    requestType: wallet_pb.SignMessageRequest,
-    responseType: wallet_pb.SignMessageResponse,
-    requestSerialize: serialize_pactus_SignMessageRequest,
-    requestDeserialize: deserialize_pactus_SignMessageRequest,
-    responseSerialize: serialize_pactus_SignMessageResponse,
-    responseDeserialize: deserialize_pactus_SignMessageResponse,
-  },
-  // GetTotalStake returns the total stake amount in the wallet.
-getTotalStake: {
-    path: '/pactus.Wallet/GetTotalStake',
-    requestStream: false,
-    responseStream: false,
-    requestType: wallet_pb.GetTotalStakeRequest,
-    responseType: wallet_pb.GetTotalStakeResponse,
-    requestSerialize: serialize_pactus_GetTotalStakeRequest,
-    requestDeserialize: deserialize_pactus_GetTotalStakeRequest,
-    responseSerialize: serialize_pactus_GetTotalStakeResponse,
-    responseDeserialize: deserialize_pactus_GetTotalStakeResponse,
-  },
-  // GetAddressInfo returns detailed information about a specific address.
-getAddressInfo: {
-    path: '/pactus.Wallet/GetAddressInfo',
-    requestStream: false,
-    responseStream: false,
-    requestType: wallet_pb.GetAddressInfoRequest,
-    responseType: wallet_pb.GetAddressInfoResponse,
-    requestSerialize: serialize_pactus_GetAddressInfoRequest,
-    requestDeserialize: deserialize_pactus_GetAddressInfoRequest,
-    responseSerialize: serialize_pactus_GetAddressInfoResponse,
-    responseDeserialize: deserialize_pactus_GetAddressInfoResponse,
-  },
-  // SetAddressLabel sets or updates the label for a given address.
-setAddressLabel: {
-    path: '/pactus.Wallet/SetAddressLabel',
-    requestStream: false,
-    responseStream: false,
-    requestType: wallet_pb.SetAddressLabelRequest,
-    responseType: wallet_pb.SetAddressLabelResponse,
-    requestSerialize: serialize_pactus_SetAddressLabelRequest,
-    requestDeserialize: deserialize_pactus_SetAddressLabelRequest,
-    responseSerialize: serialize_pactus_SetAddressLabelResponse,
-    responseDeserialize: deserialize_pactus_SetAddressLabelResponse,
-  },
   // ListWallets returns a list of all available wallets.
 // If `include_unloaded` is set, it returns both loaded and unloaded wallets.
 listWallets: {
@@ -586,6 +489,91 @@ isWalletLoaded: {
     responseSerialize: serialize_pactus_IsWalletLoadedResponse,
     responseDeserialize: deserialize_pactus_IsWalletLoadedResponse,
   },
+  // UpdatePassword updates the password of an existing wallet.
+updatePassword: {
+    path: '/pactus.Wallet/UpdatePassword',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.UpdatePasswordRequest,
+    responseType: wallet_pb.UpdatePasswordResponse,
+    requestSerialize: serialize_pactus_UpdatePasswordRequest,
+    requestDeserialize: deserialize_pactus_UpdatePasswordRequest,
+    responseSerialize: serialize_pactus_UpdatePasswordResponse,
+    responseDeserialize: deserialize_pactus_UpdatePasswordResponse,
+  },
+  // GetTotalBalance returns the total available balance of the wallet.
+getTotalBalance: {
+    path: '/pactus.Wallet/GetTotalBalance',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.GetTotalBalanceRequest,
+    responseType: wallet_pb.GetTotalBalanceResponse,
+    requestSerialize: serialize_pactus_GetTotalBalanceRequest,
+    requestDeserialize: deserialize_pactus_GetTotalBalanceRequest,
+    responseSerialize: serialize_pactus_GetTotalBalanceResponse,
+    responseDeserialize: deserialize_pactus_GetTotalBalanceResponse,
+  },
+  // GetTotalStake returns the total stake amount in the wallet.
+getTotalStake: {
+    path: '/pactus.Wallet/GetTotalStake',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.GetTotalStakeRequest,
+    responseType: wallet_pb.GetTotalStakeResponse,
+    requestSerialize: serialize_pactus_GetTotalStakeRequest,
+    requestDeserialize: deserialize_pactus_GetTotalStakeRequest,
+    responseSerialize: serialize_pactus_GetTotalStakeResponse,
+    responseDeserialize: deserialize_pactus_GetTotalStakeResponse,
+  },
+  // GetValidatorAddress retrieves the validator address associated with a public key.
+// Deprecated: Will move into utils.
+getValidatorAddress: {
+    path: '/pactus.Wallet/GetValidatorAddress',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.GetValidatorAddressRequest,
+    responseType: wallet_pb.GetValidatorAddressResponse,
+    requestSerialize: serialize_pactus_GetValidatorAddressRequest,
+    requestDeserialize: deserialize_pactus_GetValidatorAddressRequest,
+    responseSerialize: serialize_pactus_GetValidatorAddressResponse,
+    responseDeserialize: deserialize_pactus_GetValidatorAddressResponse,
+  },
+  // GetAddressInfo returns detailed information about a specific address.
+getAddressInfo: {
+    path: '/pactus.Wallet/GetAddressInfo',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.GetAddressInfoRequest,
+    responseType: wallet_pb.GetAddressInfoResponse,
+    requestSerialize: serialize_pactus_GetAddressInfoRequest,
+    requestDeserialize: deserialize_pactus_GetAddressInfoRequest,
+    responseSerialize: serialize_pactus_GetAddressInfoResponse,
+    responseDeserialize: deserialize_pactus_GetAddressInfoResponse,
+  },
+  // SetAddressLabel sets or updates the label for a given address.
+setAddressLabel: {
+    path: '/pactus.Wallet/SetAddressLabel',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.SetAddressLabelRequest,
+    responseType: wallet_pb.SetAddressLabelResponse,
+    requestSerialize: serialize_pactus_SetAddressLabelRequest,
+    requestDeserialize: deserialize_pactus_SetAddressLabelRequest,
+    responseSerialize: serialize_pactus_SetAddressLabelResponse,
+    responseDeserialize: deserialize_pactus_SetAddressLabelResponse,
+  },
+  // GetNewAddress generates a new address for the specified wallet.
+getNewAddress: {
+    path: '/pactus.Wallet/GetNewAddress',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.GetNewAddressRequest,
+    responseType: wallet_pb.GetNewAddressResponse,
+    requestSerialize: serialize_pactus_GetNewAddressRequest,
+    requestDeserialize: deserialize_pactus_GetNewAddressRequest,
+    responseSerialize: serialize_pactus_GetNewAddressResponse,
+    responseDeserialize: deserialize_pactus_GetNewAddressResponse,
+  },
   // ListAddresses returns all addresses in the specified wallet.
 listAddresses: {
     path: '/pactus.Wallet/ListAddresses',
@@ -598,17 +586,29 @@ listAddresses: {
     responseSerialize: serialize_pactus_ListAddressesResponse,
     responseDeserialize: deserialize_pactus_ListAddressesResponse,
   },
-  // UpdatePassword updates the password of an existing wallet.
-updatePassword: {
-    path: '/pactus.Wallet/UpdatePassword',
+  // SignMessage signs an arbitrary message using a wallet's private key.
+signMessage: {
+    path: '/pactus.Wallet/SignMessage',
     requestStream: false,
     responseStream: false,
-    requestType: wallet_pb.UpdatePasswordRequest,
-    responseType: wallet_pb.UpdatePasswordResponse,
-    requestSerialize: serialize_pactus_UpdatePasswordRequest,
-    requestDeserialize: deserialize_pactus_UpdatePasswordRequest,
-    responseSerialize: serialize_pactus_UpdatePasswordResponse,
-    responseDeserialize: deserialize_pactus_UpdatePasswordResponse,
+    requestType: wallet_pb.SignMessageRequest,
+    responseType: wallet_pb.SignMessageResponse,
+    requestSerialize: serialize_pactus_SignMessageRequest,
+    requestDeserialize: deserialize_pactus_SignMessageRequest,
+    responseSerialize: serialize_pactus_SignMessageResponse,
+    responseDeserialize: deserialize_pactus_SignMessageResponse,
+  },
+  // SignRawTransaction signs a raw transaction for a specified wallet.
+signRawTransaction: {
+    path: '/pactus.Wallet/SignRawTransaction',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.SignRawTransactionRequest,
+    responseType: wallet_pb.SignRawTransactionResponse,
+    requestSerialize: serialize_pactus_SignRawTransactionRequest,
+    requestDeserialize: deserialize_pactus_SignRawTransactionRequest,
+    responseSerialize: serialize_pactus_SignRawTransactionResponse,
+    responseDeserialize: deserialize_pactus_SignRawTransactionResponse,
   },
   // ListTransactions returns a list of transactions for a wallet,
 // optionally filtered by a specific address, with pagination support.

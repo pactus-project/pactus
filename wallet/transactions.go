@@ -66,10 +66,12 @@ func (t *transactions) addTransactionWithStatus(trx *tx.Tx, status types.Transac
 type TxDirection int
 
 const (
-	// TxDirectionIncoming includes only transactions where the wallet receives funds.
-	TxDirectionIncoming = 0
-	// TxDirectionOutgoing includes only transactions where the wallet sends funds.
-	TxDirectionOutgoing = 1
+	// TxDirectionAny Include both incoming and outgoing transactions.
+	TxDirectionAny TxDirection = 0
+	// TxDirectionIncoming includes only incoming transactions where the wallet receives funds.
+	TxDirectionIncoming = 1
+	// TxDirectionOutgoing includes only outgoing transactions where the wallet sends funds.
+	TxDirectionOutgoing = 2
 )
 
 // listTransactionsConfig contains options for listing transactions.
@@ -81,8 +83,8 @@ type listTransactionsConfig struct {
 }
 
 var defaultListTransactionsConfig = listTransactionsConfig{
-	direction: TxDirectionIncoming,
-	address:   "",
+	direction: TxDirectionAny,
+	address:   "*",
 	count:     10,
 	skip:      0,
 }
@@ -118,7 +120,7 @@ func WithSkip(skip int) ListTransactionsOption {
 	}
 }
 
-func (t *transactions) ListTransactions(addr string, opts ...ListTransactionsOption) []*types.TransactionInfo {
+func (t *transactions) ListTransactions(opts ...ListTransactionsOption) []*types.TransactionInfo {
 	if t.storage.IsLegacy() {
 		return nil
 	}
@@ -128,7 +130,26 @@ func (t *transactions) ListTransactions(addr string, opts ...ListTransactionsOpt
 		opt(&cfg)
 	}
 
-	txs, _ := t.storage.ListTransactions(addr, cfg.count, cfg.skip)
+	params := storage.QueryParams{
+		Count: cfg.count,
+		Skip:  cfg.skip,
+	}
+
+	switch cfg.direction {
+	case TxDirectionAny:
+		params.Sender = cfg.address
+		params.Receiver = cfg.address
+
+	case TxDirectionIncoming:
+		params.Sender = "*"
+		params.Receiver = cfg.address
+
+	case TxDirectionOutgoing:
+		params.Sender = cfg.address
+		params.Receiver = "*"
+	}
+
+	txs, _ := t.storage.QueryTransactions(params)
 
 	return txs
 }

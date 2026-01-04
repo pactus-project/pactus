@@ -168,38 +168,6 @@ For seamless integration with Pactus, you can use these client libraries:
           <span class="rpc-badge"></span> UnloadWallet</a>
         </li>
         <li>
-          <a href="#pactus.Wallet.GetTotalBalance">
-          <span class="rpc-badge"></span> GetTotalBalance</a>
-        </li>
-        <li>
-          <a href="#pactus.Wallet.SignRawTransaction">
-          <span class="rpc-badge"></span> SignRawTransaction</a>
-        </li>
-        <li>
-          <a href="#pactus.Wallet.GetValidatorAddress">
-          <span class="rpc-badge"></span> GetValidatorAddress</a>
-        </li>
-        <li>
-          <a href="#pactus.Wallet.GetNewAddress">
-          <span class="rpc-badge"></span> GetNewAddress</a>
-        </li>
-        <li>
-          <a href="#pactus.Wallet.SignMessage">
-          <span class="rpc-badge"></span> SignMessage</a>
-        </li>
-        <li>
-          <a href="#pactus.Wallet.GetTotalStake">
-          <span class="rpc-badge"></span> GetTotalStake</a>
-        </li>
-        <li>
-          <a href="#pactus.Wallet.GetAddressInfo">
-          <span class="rpc-badge"></span> GetAddressInfo</a>
-        </li>
-        <li>
-          <a href="#pactus.Wallet.SetAddressLabel">
-          <span class="rpc-badge"></span> SetAddressLabel</a>
-        </li>
-        <li>
           <a href="#pactus.Wallet.ListWallets">
           <span class="rpc-badge"></span> ListWallets</a>
         </li>
@@ -212,12 +180,44 @@ For seamless integration with Pactus, you can use these client libraries:
           <span class="rpc-badge"></span> IsWalletLoaded</a>
         </li>
         <li>
+          <a href="#pactus.Wallet.UpdatePassword">
+          <span class="rpc-badge"></span> UpdatePassword</a>
+        </li>
+        <li>
+          <a href="#pactus.Wallet.GetTotalBalance">
+          <span class="rpc-badge"></span> GetTotalBalance</a>
+        </li>
+        <li>
+          <a href="#pactus.Wallet.GetTotalStake">
+          <span class="rpc-badge"></span> GetTotalStake</a>
+        </li>
+        <li>
+          <a href="#pactus.Wallet.GetValidatorAddress">
+          <span class="rpc-badge"></span> GetValidatorAddress</a>
+        </li>
+        <li>
+          <a href="#pactus.Wallet.GetAddressInfo">
+          <span class="rpc-badge"></span> GetAddressInfo</a>
+        </li>
+        <li>
+          <a href="#pactus.Wallet.SetAddressLabel">
+          <span class="rpc-badge"></span> SetAddressLabel</a>
+        </li>
+        <li>
+          <a href="#pactus.Wallet.GetNewAddress">
+          <span class="rpc-badge"></span> GetNewAddress</a>
+        </li>
+        <li>
           <a href="#pactus.Wallet.ListAddresses">
           <span class="rpc-badge"></span> ListAddresses</a>
         </li>
         <li>
-          <a href="#pactus.Wallet.UpdatePassword">
-          <span class="rpc-badge"></span> UpdatePassword</a>
+          <a href="#pactus.Wallet.SignMessage">
+          <span class="rpc-badge"></span> SignMessage</a>
+        </li>
+        <li>
+          <a href="#pactus.Wallet.SignRawTransaction">
+          <span class="rpc-badge"></span> SignRawTransaction</a>
         </li>
         <li>
           <a href="#pactus.Wallet.ListTransactions">
@@ -3610,500 +3610,6 @@ signing, verification, and other cryptographic operations.</p>
      </tbody>
 </table>
 
-#### GetTotalBalance <span id="pactus.Wallet.GetTotalBalance" class="rpc-badge"></span>
-
-<p>GetTotalBalance returns the total available balance of the wallet.</p>
-
-<h4>GetTotalBalanceRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">wallet_name</td>
-    <td> string</td>
-    <td>
-    The name of the wallet to get the total balance.
-    </td>
-  </tr>
-  </tbody>
-</table>
-  <h4>GetTotalBalanceResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">wallet_name</td>
-    <td> string</td>
-    <td>
-    The name of the queried wallet.
-    </td>
-  </tr>
-     <tr>
-    <td class="fw-bold">total_balance</td>
-    <td> int64</td>
-    <td>
-    The total balance of the wallet in NanoPAC.
-    </td>
-  </tr>
-     </tbody>
-</table>
-
-#### SignRawTransaction <span id="pactus.Wallet.SignRawTransaction" class="rpc-badge"></span>
-
-<p>SignRawTransaction signs a raw transaction for a specified wallet.</p>
-
-<h4>SignRawTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">wallet_name</td>
-    <td> string</td>
-    <td>
-    The name of the wallet used for signing.
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">raw_transaction</td>
-    <td> string</td>
-    <td>
-    The raw transaction data to be signed.
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">password</td>
-    <td> string</td>
-    <td>
-    Wallet password required for signing.
-    </td>
-  </tr>
-  </tbody>
-</table>
-  <h4>SignRawTransactionResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">transaction_id</td>
-    <td> string</td>
-    <td>
-    The ID of the signed transaction.
-    </td>
-  </tr>
-     <tr>
-    <td class="fw-bold">signed_raw_transaction</td>
-    <td> string</td>
-    <td>
-    The signed raw transaction data.
-    </td>
-  </tr>
-     </tbody>
-</table>
-
-#### GetValidatorAddress <span id="pactus.Wallet.GetValidatorAddress" class="rpc-badge"></span>
-
-<p>GetValidatorAddress retrieves the validator address associated with a public key.
-Deprecated: Will move into utils.</p>
-
-<h4>GetValidatorAddressRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">public_key</td>
-    <td> string</td>
-    <td>
-    The public key of the validator.
-    </td>
-  </tr>
-  </tbody>
-</table>
-  <h4>GetValidatorAddressResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">address</td>
-    <td> string</td>
-    <td>
-    The validator address associated with the public key.
-    </td>
-  </tr>
-     </tbody>
-</table>
-
-#### GetNewAddress <span id="pactus.Wallet.GetNewAddress" class="rpc-badge"></span>
-
-<p>GetNewAddress generates a new address for the specified wallet.</p>
-
-<h4>GetNewAddressRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">wallet_name</td>
-    <td> string</td>
-    <td>
-    The name of the wallet to generate a new address.
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">address_type</td>
-    <td> AddressType</td>
-    <td>
-    (Enum)The type of address to generate.
-    <br>Available values:<ul>
-      <li>ADDRESS_TYPE_TREASURY = 0 (Treasury address type.
-Should not be used to generate new addresses.)</li>
-      <li>ADDRESS_TYPE_VALIDATOR = 1 (Validator address type used for validator nodes.)</li>
-      <li>ADDRESS_TYPE_BLS_ACCOUNT = 2 (Account address type with BLS signature scheme.)</li>
-      <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.
-Note: Generating a new Ed25519 address requires the wallet password.)</li>
-      </ul>
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">label</td>
-    <td> string</td>
-    <td>
-    A label for the new address.
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">password</td>
-    <td> string</td>
-    <td>
-    Password for the new address. It's required when address_type is Ed25519 type.
-    </td>
-  </tr>
-  </tbody>
-</table>
-  <h4>GetNewAddressResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">wallet_name</td>
-    <td> string</td>
-    <td>
-    The name of the wallet where address was generated.
-    </td>
-  </tr>
-     <tr>
-    <td class="fw-bold">address_info</td>
-    <td> AddressInfo</td>
-    <td>
-    Detailed information about the new address.
-    </td>
-  </tr>
-     <tr>
-        <td class="fw-bold">address_info.address</td>
-        <td> string</td>
-        <td>
-        The address string.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">address_info.public_key</td>
-        <td> string</td>
-        <td>
-        The public key associated with the address.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">address_info.label</td>
-        <td> string</td>
-        <td>
-        A human-readable label associated with the address.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">address_info.path</td>
-        <td> string</td>
-        <td>
-        The Hierarchical Deterministic (HD) path of the address within the wallet.
-        </td>
-      </tr>
-         </tbody>
-</table>
-
-#### SignMessage <span id="pactus.Wallet.SignMessage" class="rpc-badge"></span>
-
-<p>SignMessage signs an arbitrary message using a wallet's private key.</p>
-
-<h4>SignMessageRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">wallet_name</td>
-    <td> string</td>
-    <td>
-    The name of the wallet to sign with.
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">password</td>
-    <td> string</td>
-    <td>
-    Wallet password required for signing.
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">address</td>
-    <td> string</td>
-    <td>
-    The address whose private key should be used for signing the message.
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">message</td>
-    <td> string</td>
-    <td>
-    The arbitrary message to be signed.
-    </td>
-  </tr>
-  </tbody>
-</table>
-  <h4>SignMessageResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">signature</td>
-    <td> string</td>
-    <td>
-    The signature in hexadecimal format.
-    </td>
-  </tr>
-     </tbody>
-</table>
-
-#### GetTotalStake <span id="pactus.Wallet.GetTotalStake" class="rpc-badge"></span>
-
-<p>GetTotalStake returns the total stake amount in the wallet.</p>
-
-<h4>GetTotalStakeRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">wallet_name</td>
-    <td> string</td>
-    <td>
-    The name of the wallet to get the total stake.
-    </td>
-  </tr>
-  </tbody>
-</table>
-  <h4>GetTotalStakeResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">wallet_name</td>
-    <td> string</td>
-    <td>
-    The name of the queried wallet.
-    </td>
-  </tr>
-     <tr>
-    <td class="fw-bold">total_stake</td>
-    <td> int64</td>
-    <td>
-    The total stake amount in NanoPAC.
-    </td>
-  </tr>
-     </tbody>
-</table>
-
-#### GetAddressInfo <span id="pactus.Wallet.GetAddressInfo" class="rpc-badge"></span>
-
-<p>GetAddressInfo returns detailed information about a specific address.</p>
-
-<h4>GetAddressInfoRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">wallet_name</td>
-    <td> string</td>
-    <td>
-    The name of the wallet containing the address.
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">address</td>
-    <td> string</td>
-    <td>
-    The address to query.
-    </td>
-  </tr>
-  </tbody>
-</table>
-  <h4>GetAddressInfoResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">wallet_name</td>
-    <td> string</td>
-    <td>
-    The name of the wallet containing the address.
-    </td>
-  </tr>
-     <tr>
-    <td class="fw-bold">address_info</td>
-    <td> AddressInfo</td>
-    <td>
-    Detailed information about the address.
-    </td>
-  </tr>
-     <tr>
-        <td class="fw-bold">address_info.address</td>
-        <td> string</td>
-        <td>
-        The address string.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">address_info.public_key</td>
-        <td> string</td>
-        <td>
-        The public key associated with the address.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">address_info.label</td>
-        <td> string</td>
-        <td>
-        A human-readable label associated with the address.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">address_info.path</td>
-        <td> string</td>
-        <td>
-        The Hierarchical Deterministic (HD) path of the address within the wallet.
-        </td>
-      </tr>
-         </tbody>
-</table>
-
-#### SetAddressLabel <span id="pactus.Wallet.SetAddressLabel" class="rpc-badge"></span>
-
-<p>SetAddressLabel sets or updates the label for a given address.</p>
-
-<h4>SetAddressLabelRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">wallet_name</td>
-    <td> string</td>
-    <td>
-    The name of the wallet containing the address.
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">password</td>
-    <td> string</td>
-    <td>
-    Wallet password required for modification.
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">address</td>
-    <td> string</td>
-    <td>
-    The address to label.
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">label</td>
-    <td> string</td>
-    <td>
-    The new label for the address.
-    </td>
-  </tr>
-  </tbody>
-</table>
-  <h4>SetAddressLabelResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">wallet_name</td>
-    <td> string</td>
-    <td>
-    The name of the wallet where the address label was updated.
-    </td>
-  </tr>
-     <tr>
-    <td class="fw-bold">address</td>
-    <td> string</td>
-    <td>
-    The address where the label was updated.
-    </td>
-  </tr>
-     <tr>
-    <td class="fw-bold">label</td>
-    <td> string</td>
-    <td>
-    The new label for the address.
-    </td>
-  </tr>
-     </tbody>
-</table>
-
 #### ListWallets <span id="pactus.Wallet.ListWallets" class="rpc-badge"></span>
 
 <p>ListWallets returns a list of all available wallets.
@@ -4279,6 +3785,435 @@ If `include_unloaded` is set, it returns both loaded and unloaded wallets.</p>
      </tbody>
 </table>
 
+#### UpdatePassword <span id="pactus.Wallet.UpdatePassword" class="rpc-badge"></span>
+
+<p>UpdatePassword updates the password of an existing wallet.</p>
+
+<h4>UpdatePasswordRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet whose password will be updated.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">old_password</td>
+    <td> string</td>
+    <td>
+    The current wallet password.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">new_password</td>
+    <td> string</td>
+    <td>
+    The new wallet password.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>UpdatePasswordResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet whose password was updated.
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+#### GetTotalBalance <span id="pactus.Wallet.GetTotalBalance" class="rpc-badge"></span>
+
+<p>GetTotalBalance returns the total available balance of the wallet.</p>
+
+<h4>GetTotalBalanceRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet to get the total balance.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>GetTotalBalanceResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the queried wallet.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">total_balance</td>
+    <td> int64</td>
+    <td>
+    The total balance of the wallet in NanoPAC.
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+#### GetTotalStake <span id="pactus.Wallet.GetTotalStake" class="rpc-badge"></span>
+
+<p>GetTotalStake returns the total stake amount in the wallet.</p>
+
+<h4>GetTotalStakeRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet to get the total stake.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>GetTotalStakeResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the queried wallet.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">total_stake</td>
+    <td> int64</td>
+    <td>
+    The total stake amount in NanoPAC.
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+#### GetValidatorAddress <span id="pactus.Wallet.GetValidatorAddress" class="rpc-badge"></span>
+
+<p>GetValidatorAddress retrieves the validator address associated with a public key.
+Deprecated: Will move into utils.</p>
+
+<h4>GetValidatorAddressRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">public_key</td>
+    <td> string</td>
+    <td>
+    The public key of the validator.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>GetValidatorAddressResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">address</td>
+    <td> string</td>
+    <td>
+    The validator address associated with the public key.
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+#### GetAddressInfo <span id="pactus.Wallet.GetAddressInfo" class="rpc-badge"></span>
+
+<p>GetAddressInfo returns detailed information about a specific address.</p>
+
+<h4>GetAddressInfoRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet containing the address.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">address</td>
+    <td> string</td>
+    <td>
+    The address to query.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>GetAddressInfoResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet containing the address.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">address_info</td>
+    <td> AddressInfo</td>
+    <td>
+    Detailed information about the address.
+    </td>
+  </tr>
+     <tr>
+        <td class="fw-bold">address_info.address</td>
+        <td> string</td>
+        <td>
+        The address string.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">address_info.public_key</td>
+        <td> string</td>
+        <td>
+        The public key associated with the address.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">address_info.label</td>
+        <td> string</td>
+        <td>
+        A human-readable label associated with the address.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">address_info.path</td>
+        <td> string</td>
+        <td>
+        The Hierarchical Deterministic (HD) path of the address within the wallet.
+        </td>
+      </tr>
+         </tbody>
+</table>
+
+#### SetAddressLabel <span id="pactus.Wallet.SetAddressLabel" class="rpc-badge"></span>
+
+<p>SetAddressLabel sets or updates the label for a given address.</p>
+
+<h4>SetAddressLabelRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet containing the address.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">password</td>
+    <td> string</td>
+    <td>
+    Wallet password required for modification.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">address</td>
+    <td> string</td>
+    <td>
+    The address to label.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">label</td>
+    <td> string</td>
+    <td>
+    The new label for the address.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>SetAddressLabelResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet where the address label was updated.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">address</td>
+    <td> string</td>
+    <td>
+    The address where the label was updated.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">label</td>
+    <td> string</td>
+    <td>
+    The new label for the address.
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+#### GetNewAddress <span id="pactus.Wallet.GetNewAddress" class="rpc-badge"></span>
+
+<p>GetNewAddress generates a new address for the specified wallet.</p>
+
+<h4>GetNewAddressRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet to generate a new address.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">address_type</td>
+    <td> AddressType</td>
+    <td>
+    (Enum)The type of address to generate.
+    <br>Available values:<ul>
+      <li>ADDRESS_TYPE_TREASURY = 0 (Treasury address type.
+Should not be used to generate new addresses.)</li>
+      <li>ADDRESS_TYPE_VALIDATOR = 1 (Validator address type used for validator nodes.)</li>
+      <li>ADDRESS_TYPE_BLS_ACCOUNT = 2 (Account address type with BLS signature scheme.)</li>
+      <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.
+Note: Generating a new Ed25519 address requires the wallet password.)</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">label</td>
+    <td> string</td>
+    <td>
+    A label for the new address.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">password</td>
+    <td> string</td>
+    <td>
+    Password for the new address. It's required when address_type is Ed25519 type.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>GetNewAddressResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet where address was generated.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">address_info</td>
+    <td> AddressInfo</td>
+    <td>
+    Detailed information about the new address.
+    </td>
+  </tr>
+     <tr>
+        <td class="fw-bold">address_info.address</td>
+        <td> string</td>
+        <td>
+        The address string.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">address_info.public_key</td>
+        <td> string</td>
+        <td>
+        The public key associated with the address.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">address_info.label</td>
+        <td> string</td>
+        <td>
+        A human-readable label associated with the address.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">address_info.path</td>
+        <td> string</td>
+        <td>
+        The Hierarchical Deterministic (HD) path of the address within the wallet.
+        </td>
+      </tr>
+         </tbody>
+</table>
+
 #### ListAddresses <span id="pactus.Wallet.ListAddresses" class="rpc-badge"></span>
 
 <p>ListAddresses returns all addresses in the specified wallet.</p>
@@ -4366,11 +4301,11 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
          </tbody>
 </table>
 
-#### UpdatePassword <span id="pactus.Wallet.UpdatePassword" class="rpc-badge"></span>
+#### SignMessage <span id="pactus.Wallet.SignMessage" class="rpc-badge"></span>
 
-<p>UpdatePassword updates the password of an existing wallet.</p>
+<p>SignMessage signs an arbitrary message using a wallet's private key.</p>
 
-<h4>UpdatePasswordRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+<h4>SignMessageRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
 <table class="table table-bordered table-responsive table-sm">
   <thead>
@@ -4381,26 +4316,54 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    The name of the wallet whose password will be updated.
+    The name of the wallet to sign with.
     </td>
   </tr>
   <tr>
-    <td class="fw-bold">old_password</td>
+    <td class="fw-bold">password</td>
     <td> string</td>
     <td>
-    The current wallet password.
+    Wallet password required for signing.
     </td>
   </tr>
   <tr>
-    <td class="fw-bold">new_password</td>
+    <td class="fw-bold">address</td>
     <td> string</td>
     <td>
-    The new wallet password.
+    The address whose private key should be used for signing the message.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">message</td>
+    <td> string</td>
+    <td>
+    The arbitrary message to be signed.
     </td>
   </tr>
   </tbody>
 </table>
-  <h4>UpdatePasswordResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+  <h4>SignMessageResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">signature</td>
+    <td> string</td>
+    <td>
+    The signature in hexadecimal format.
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+#### SignRawTransaction <span id="pactus.Wallet.SignRawTransaction" class="rpc-badge"></span>
+
+<p>SignRawTransaction signs a raw transaction for a specified wallet.</p>
+
+<h4>SignRawTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
 <table class="table table-bordered table-responsive table-sm">
   <thead>
@@ -4411,7 +4374,44 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    The name of the wallet whose password was updated.
+    The name of the wallet used for signing.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">raw_transaction</td>
+    <td> string</td>
+    <td>
+    The raw transaction data to be signed.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">password</td>
+    <td> string</td>
+    <td>
+    Wallet password required for signing.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>SignRawTransactionResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">transaction_id</td>
+    <td> string</td>
+    <td>
+    The ID of the signed transaction.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">signed_raw_transaction</td>
+    <td> string</td>
+    <td>
+    The signed raw transaction data.
     </td>
   </tr>
      </tbody>
@@ -4443,8 +4443,9 @@ optionally filtered by a specific address, with pagination support.</p>
     (Enum)Filter transactions by direction relative to the wallet.
 Defaults to incoming if not set.
     <br>Available values:<ul>
-      <li>TX_DIRECTION_INCOMING = 0 (Include only transactions where the wallet receives funds.)</li>
-      <li>TX_DIRECTION_OUTGOING = 1 (Include only transactions where the wallet sends funds.)</li>
+      <li>TX_DIRECTION_ANY = 0 (include both incoming and outgoing transactions.)</li>
+      <li>TX_DIRECTION_INCOMING = 1 (Include only incoming transactions where the wallet receives funds.)</li>
+      <li>TX_DIRECTION_OUTGOING = 2 (Include only outgoing transactions where the wallet sends funds.)</li>
       </ul>
     </td>
   </tr>

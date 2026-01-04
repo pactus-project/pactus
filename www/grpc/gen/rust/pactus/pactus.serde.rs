@@ -12471,6 +12471,7 @@ impl serde::Serialize for TxDirection {
         S: serde::Serializer,
     {
         let variant = match self {
+            Self::Any => "TX_DIRECTION_ANY",
             Self::Incoming => "TX_DIRECTION_INCOMING",
             Self::Outgoing => "TX_DIRECTION_OUTGOING",
         };
@@ -12484,6 +12485,7 @@ impl<'de> serde::Deserialize<'de> for TxDirection {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
+            "TX_DIRECTION_ANY",
             "TX_DIRECTION_INCOMING",
             "TX_DIRECTION_OUTGOING",
         ];
@@ -12526,6 +12528,7 @@ impl<'de> serde::Deserialize<'de> for TxDirection {
                 E: serde::de::Error,
             {
                 match value {
+                    "TX_DIRECTION_ANY" => Ok(TxDirection::Any),
                     "TX_DIRECTION_INCOMING" => Ok(TxDirection::Incoming),
                     "TX_DIRECTION_OUTGOING" => Ok(TxDirection::Outgoing),
                     _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),

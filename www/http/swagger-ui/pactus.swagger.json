@@ -1275,15 +1275,16 @@
           },
           {
             "name": "direction",
-            "description": "Filter transactions by direction relative to the wallet.\nDefaults to incoming if not set.\n\n - TX_DIRECTION_INCOMING: Include only transactions where the wallet receives funds.\n - TX_DIRECTION_OUTGOING: Include only transactions where the wallet sends funds.",
+            "description": "Filter transactions by direction relative to the wallet.\nDefaults to incoming if not set.\n\n - TX_DIRECTION_ANY: include both incoming and outgoing transactions.\n - TX_DIRECTION_INCOMING: Include only incoming transactions where the wallet receives funds.\n - TX_DIRECTION_OUTGOING: Include only outgoing transactions where the wallet sends funds.",
             "in": "query",
             "required": false,
             "type": "string",
             "enum": [
+              "TX_DIRECTION_ANY",
               "TX_DIRECTION_INCOMING",
               "TX_DIRECTION_OUTGOING"
             ],
-            "default": "TX_DIRECTION_INCOMING"
+            "default": "TX_DIRECTION_ANY"
           },
           {
             "name": "address",
@@ -3148,11 +3149,12 @@
     "pactusTxDirection": {
       "type": "string",
       "enum": [
+        "TX_DIRECTION_ANY",
         "TX_DIRECTION_INCOMING",
         "TX_DIRECTION_OUTGOING"
       ],
-      "default": "TX_DIRECTION_INCOMING",
-      "description": "TxDirection indicates the direction of a transaction relative to the wallet.\n\n - TX_DIRECTION_INCOMING: Include only transactions where the wallet receives funds.\n - TX_DIRECTION_OUTGOING: Include only transactions where the wallet sends funds."
+      "default": "TX_DIRECTION_ANY",
+      "description": "TxDirection indicates the direction of a transaction relative to the wallet.\n\n - TX_DIRECTION_ANY: include both incoming and outgoing transactions.\n - TX_DIRECTION_INCOMING: Include only incoming transactions where the wallet receives funds.\n - TX_DIRECTION_OUTGOING: Include only outgoing transactions where the wallet sends funds."
     },
     "pactusUnloadWalletResponse": {
       "type": "object",

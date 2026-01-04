@@ -2717,55 +2717,6 @@ class WalletApi {
       _client.invoke<UnloadWalletResponse>(
           ctx, 'Wallet', 'UnloadWallet', request, UnloadWalletResponse());
 
-  /// GetTotalBalance returns the total available balance of the wallet.
-  $async.Future<GetTotalBalanceResponse> getTotalBalance(
-          $pb.ClientContext? ctx, GetTotalBalanceRequest request) =>
-      _client.invoke<GetTotalBalanceResponse>(
-          ctx, 'Wallet', 'GetTotalBalance', request, GetTotalBalanceResponse());
-
-  /// SignRawTransaction signs a raw transaction for a specified wallet.
-  $async.Future<SignRawTransactionResponse> signRawTransaction(
-          $pb.ClientContext? ctx, SignRawTransactionRequest request) =>
-      _client.invoke<SignRawTransactionResponse>(ctx, 'Wallet',
-          'SignRawTransaction', request, SignRawTransactionResponse());
-
-  /// GetValidatorAddress retrieves the validator address associated with a public key.
-  /// Deprecated: Will move into utils.
-  $async.Future<GetValidatorAddressResponse> getValidatorAddress(
-          $pb.ClientContext? ctx, GetValidatorAddressRequest request) =>
-      _client.invoke<GetValidatorAddressResponse>(ctx, 'Wallet',
-          'GetValidatorAddress', request, GetValidatorAddressResponse());
-
-  /// GetNewAddress generates a new address for the specified wallet.
-  $async.Future<GetNewAddressResponse> getNewAddress(
-          $pb.ClientContext? ctx, GetNewAddressRequest request) =>
-      _client.invoke<GetNewAddressResponse>(
-          ctx, 'Wallet', 'GetNewAddress', request, GetNewAddressResponse());
-
-  /// SignMessage signs an arbitrary message using a wallet's private key.
-  $async.Future<SignMessageResponse> signMessage(
-          $pb.ClientContext? ctx, SignMessageRequest request) =>
-      _client.invoke<SignMessageResponse>(
-          ctx, 'Wallet', 'SignMessage', request, SignMessageResponse());
-
-  /// GetTotalStake returns the total stake amount in the wallet.
-  $async.Future<GetTotalStakeResponse> getTotalStake(
-          $pb.ClientContext? ctx, GetTotalStakeRequest request) =>
-      _client.invoke<GetTotalStakeResponse>(
-          ctx, 'Wallet', 'GetTotalStake', request, GetTotalStakeResponse());
-
-  /// GetAddressInfo returns detailed information about a specific address.
-  $async.Future<GetAddressInfoResponse> getAddressInfo(
-          $pb.ClientContext? ctx, GetAddressInfoRequest request) =>
-      _client.invoke<GetAddressInfoResponse>(
-          ctx, 'Wallet', 'GetAddressInfo', request, GetAddressInfoResponse());
-
-  /// SetAddressLabel sets or updates the label for a given address.
-  $async.Future<SetAddressLabelResponse> setAddressLabel(
-          $pb.ClientContext? ctx, SetAddressLabelRequest request) =>
-      _client.invoke<SetAddressLabelResponse>(
-          ctx, 'Wallet', 'SetAddressLabel', request, SetAddressLabelResponse());
-
   /// ListWallets returns a list of all available wallets.
   /// If `include_unloaded` is set, it returns both loaded and unloaded wallets.
   $async.Future<ListWalletsResponse> listWallets(
@@ -2785,17 +2736,66 @@ class WalletApi {
       _client.invoke<IsWalletLoadedResponse>(
           ctx, 'Wallet', 'IsWalletLoaded', request, IsWalletLoadedResponse());
 
+  /// UpdatePassword updates the password of an existing wallet.
+  $async.Future<UpdatePasswordResponse> updatePassword(
+          $pb.ClientContext? ctx, UpdatePasswordRequest request) =>
+      _client.invoke<UpdatePasswordResponse>(
+          ctx, 'Wallet', 'UpdatePassword', request, UpdatePasswordResponse());
+
+  /// GetTotalBalance returns the total available balance of the wallet.
+  $async.Future<GetTotalBalanceResponse> getTotalBalance(
+          $pb.ClientContext? ctx, GetTotalBalanceRequest request) =>
+      _client.invoke<GetTotalBalanceResponse>(
+          ctx, 'Wallet', 'GetTotalBalance', request, GetTotalBalanceResponse());
+
+  /// GetTotalStake returns the total stake amount in the wallet.
+  $async.Future<GetTotalStakeResponse> getTotalStake(
+          $pb.ClientContext? ctx, GetTotalStakeRequest request) =>
+      _client.invoke<GetTotalStakeResponse>(
+          ctx, 'Wallet', 'GetTotalStake', request, GetTotalStakeResponse());
+
+  /// GetValidatorAddress retrieves the validator address associated with a public key.
+  /// Deprecated: Will move into utils.
+  $async.Future<GetValidatorAddressResponse> getValidatorAddress(
+          $pb.ClientContext? ctx, GetValidatorAddressRequest request) =>
+      _client.invoke<GetValidatorAddressResponse>(ctx, 'Wallet',
+          'GetValidatorAddress', request, GetValidatorAddressResponse());
+
+  /// GetAddressInfo returns detailed information about a specific address.
+  $async.Future<GetAddressInfoResponse> getAddressInfo(
+          $pb.ClientContext? ctx, GetAddressInfoRequest request) =>
+      _client.invoke<GetAddressInfoResponse>(
+          ctx, 'Wallet', 'GetAddressInfo', request, GetAddressInfoResponse());
+
+  /// SetAddressLabel sets or updates the label for a given address.
+  $async.Future<SetAddressLabelResponse> setAddressLabel(
+          $pb.ClientContext? ctx, SetAddressLabelRequest request) =>
+      _client.invoke<SetAddressLabelResponse>(
+          ctx, 'Wallet', 'SetAddressLabel', request, SetAddressLabelResponse());
+
+  /// GetNewAddress generates a new address for the specified wallet.
+  $async.Future<GetNewAddressResponse> getNewAddress(
+          $pb.ClientContext? ctx, GetNewAddressRequest request) =>
+      _client.invoke<GetNewAddressResponse>(
+          ctx, 'Wallet', 'GetNewAddress', request, GetNewAddressResponse());
+
   /// ListAddresses returns all addresses in the specified wallet.
   $async.Future<ListAddressesResponse> listAddresses(
           $pb.ClientContext? ctx, ListAddressesRequest request) =>
       _client.invoke<ListAddressesResponse>(
           ctx, 'Wallet', 'ListAddresses', request, ListAddressesResponse());
 
-  /// UpdatePassword updates the password of an existing wallet.
-  $async.Future<UpdatePasswordResponse> updatePassword(
-          $pb.ClientContext? ctx, UpdatePasswordRequest request) =>
-      _client.invoke<UpdatePasswordResponse>(
-          ctx, 'Wallet', 'UpdatePassword', request, UpdatePasswordResponse());
+  /// SignMessage signs an arbitrary message using a wallet's private key.
+  $async.Future<SignMessageResponse> signMessage(
+          $pb.ClientContext? ctx, SignMessageRequest request) =>
+      _client.invoke<SignMessageResponse>(
+          ctx, 'Wallet', 'SignMessage', request, SignMessageResponse());
+
+  /// SignRawTransaction signs a raw transaction for a specified wallet.
+  $async.Future<SignRawTransactionResponse> signRawTransaction(
+          $pb.ClientContext? ctx, SignRawTransactionRequest request) =>
+      _client.invoke<SignRawTransactionResponse>(ctx, 'Wallet',
+          'SignRawTransaction', request, SignRawTransactionResponse());
 
   /// ListTransactions returns a list of transactions for a wallet,
   /// optionally filtered by a specific address, with pagination support.

@@ -29,32 +29,32 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
       $pb.ServerContext ctx, $1.LoadWalletRequest request);
   $async.Future<$1.UnloadWalletResponse> unloadWallet(
       $pb.ServerContext ctx, $1.UnloadWalletRequest request);
-  $async.Future<$1.GetTotalBalanceResponse> getTotalBalance(
-      $pb.ServerContext ctx, $1.GetTotalBalanceRequest request);
-  $async.Future<$1.SignRawTransactionResponse> signRawTransaction(
-      $pb.ServerContext ctx, $1.SignRawTransactionRequest request);
-  $async.Future<$1.GetValidatorAddressResponse> getValidatorAddress(
-      $pb.ServerContext ctx, $1.GetValidatorAddressRequest request);
-  $async.Future<$1.GetNewAddressResponse> getNewAddress(
-      $pb.ServerContext ctx, $1.GetNewAddressRequest request);
-  $async.Future<$1.SignMessageResponse> signMessage(
-      $pb.ServerContext ctx, $1.SignMessageRequest request);
-  $async.Future<$1.GetTotalStakeResponse> getTotalStake(
-      $pb.ServerContext ctx, $1.GetTotalStakeRequest request);
-  $async.Future<$1.GetAddressInfoResponse> getAddressInfo(
-      $pb.ServerContext ctx, $1.GetAddressInfoRequest request);
-  $async.Future<$1.SetAddressLabelResponse> setAddressLabel(
-      $pb.ServerContext ctx, $1.SetAddressLabelRequest request);
   $async.Future<$1.ListWalletsResponse> listWallets(
       $pb.ServerContext ctx, $1.ListWalletsRequest request);
   $async.Future<$1.GetWalletInfoResponse> getWalletInfo(
       $pb.ServerContext ctx, $1.GetWalletInfoRequest request);
   $async.Future<$1.IsWalletLoadedResponse> isWalletLoaded(
       $pb.ServerContext ctx, $1.IsWalletLoadedRequest request);
-  $async.Future<$1.ListAddressesResponse> listAddresses(
-      $pb.ServerContext ctx, $1.ListAddressesRequest request);
   $async.Future<$1.UpdatePasswordResponse> updatePassword(
       $pb.ServerContext ctx, $1.UpdatePasswordRequest request);
+  $async.Future<$1.GetTotalBalanceResponse> getTotalBalance(
+      $pb.ServerContext ctx, $1.GetTotalBalanceRequest request);
+  $async.Future<$1.GetTotalStakeResponse> getTotalStake(
+      $pb.ServerContext ctx, $1.GetTotalStakeRequest request);
+  $async.Future<$1.GetValidatorAddressResponse> getValidatorAddress(
+      $pb.ServerContext ctx, $1.GetValidatorAddressRequest request);
+  $async.Future<$1.GetAddressInfoResponse> getAddressInfo(
+      $pb.ServerContext ctx, $1.GetAddressInfoRequest request);
+  $async.Future<$1.SetAddressLabelResponse> setAddressLabel(
+      $pb.ServerContext ctx, $1.SetAddressLabelRequest request);
+  $async.Future<$1.GetNewAddressResponse> getNewAddress(
+      $pb.ServerContext ctx, $1.GetNewAddressRequest request);
+  $async.Future<$1.ListAddressesResponse> listAddresses(
+      $pb.ServerContext ctx, $1.ListAddressesRequest request);
+  $async.Future<$1.SignMessageResponse> signMessage(
+      $pb.ServerContext ctx, $1.SignMessageRequest request);
+  $async.Future<$1.SignRawTransactionResponse> signRawTransaction(
+      $pb.ServerContext ctx, $1.SignRawTransactionRequest request);
   $async.Future<$1.ListTransactionsResponse> listTransactions(
       $pb.ServerContext ctx, $1.ListTransactionsRequest request);
 
@@ -68,32 +68,32 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
         return $1.LoadWalletRequest();
       case 'UnloadWallet':
         return $1.UnloadWalletRequest();
-      case 'GetTotalBalance':
-        return $1.GetTotalBalanceRequest();
-      case 'SignRawTransaction':
-        return $1.SignRawTransactionRequest();
-      case 'GetValidatorAddress':
-        return $1.GetValidatorAddressRequest();
-      case 'GetNewAddress':
-        return $1.GetNewAddressRequest();
-      case 'SignMessage':
-        return $1.SignMessageRequest();
-      case 'GetTotalStake':
-        return $1.GetTotalStakeRequest();
-      case 'GetAddressInfo':
-        return $1.GetAddressInfoRequest();
-      case 'SetAddressLabel':
-        return $1.SetAddressLabelRequest();
       case 'ListWallets':
         return $1.ListWalletsRequest();
       case 'GetWalletInfo':
         return $1.GetWalletInfoRequest();
       case 'IsWalletLoaded':
         return $1.IsWalletLoadedRequest();
-      case 'ListAddresses':
-        return $1.ListAddressesRequest();
       case 'UpdatePassword':
         return $1.UpdatePasswordRequest();
+      case 'GetTotalBalance':
+        return $1.GetTotalBalanceRequest();
+      case 'GetTotalStake':
+        return $1.GetTotalStakeRequest();
+      case 'GetValidatorAddress':
+        return $1.GetValidatorAddressRequest();
+      case 'GetAddressInfo':
+        return $1.GetAddressInfoRequest();
+      case 'SetAddressLabel':
+        return $1.SetAddressLabelRequest();
+      case 'GetNewAddress':
+        return $1.GetNewAddressRequest();
+      case 'ListAddresses':
+        return $1.ListAddressesRequest();
+      case 'SignMessage':
+        return $1.SignMessageRequest();
+      case 'SignRawTransaction':
+        return $1.SignRawTransactionRequest();
       case 'ListTransactions':
         return $1.ListTransactionsRequest();
       default:
@@ -112,33 +112,33 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
         return loadWallet(ctx, request as $1.LoadWalletRequest);
       case 'UnloadWallet':
         return unloadWallet(ctx, request as $1.UnloadWalletRequest);
-      case 'GetTotalBalance':
-        return getTotalBalance(ctx, request as $1.GetTotalBalanceRequest);
-      case 'SignRawTransaction':
-        return signRawTransaction(ctx, request as $1.SignRawTransactionRequest);
-      case 'GetValidatorAddress':
-        return getValidatorAddress(
-            ctx, request as $1.GetValidatorAddressRequest);
-      case 'GetNewAddress':
-        return getNewAddress(ctx, request as $1.GetNewAddressRequest);
-      case 'SignMessage':
-        return signMessage(ctx, request as $1.SignMessageRequest);
-      case 'GetTotalStake':
-        return getTotalStake(ctx, request as $1.GetTotalStakeRequest);
-      case 'GetAddressInfo':
-        return getAddressInfo(ctx, request as $1.GetAddressInfoRequest);
-      case 'SetAddressLabel':
-        return setAddressLabel(ctx, request as $1.SetAddressLabelRequest);
       case 'ListWallets':
         return listWallets(ctx, request as $1.ListWalletsRequest);
       case 'GetWalletInfo':
         return getWalletInfo(ctx, request as $1.GetWalletInfoRequest);
       case 'IsWalletLoaded':
         return isWalletLoaded(ctx, request as $1.IsWalletLoadedRequest);
-      case 'ListAddresses':
-        return listAddresses(ctx, request as $1.ListAddressesRequest);
       case 'UpdatePassword':
         return updatePassword(ctx, request as $1.UpdatePasswordRequest);
+      case 'GetTotalBalance':
+        return getTotalBalance(ctx, request as $1.GetTotalBalanceRequest);
+      case 'GetTotalStake':
+        return getTotalStake(ctx, request as $1.GetTotalStakeRequest);
+      case 'GetValidatorAddress':
+        return getValidatorAddress(
+            ctx, request as $1.GetValidatorAddressRequest);
+      case 'GetAddressInfo':
+        return getAddressInfo(ctx, request as $1.GetAddressInfoRequest);
+      case 'SetAddressLabel':
+        return setAddressLabel(ctx, request as $1.SetAddressLabelRequest);
+      case 'GetNewAddress':
+        return getNewAddress(ctx, request as $1.GetNewAddressRequest);
+      case 'ListAddresses':
+        return listAddresses(ctx, request as $1.ListAddressesRequest);
+      case 'SignMessage':
+        return signMessage(ctx, request as $1.SignMessageRequest);
+      case 'SignRawTransaction':
+        return signRawTransaction(ctx, request as $1.SignRawTransactionRequest);
       case 'ListTransactions':
         return listTransactions(ctx, request as $1.ListTransactionsRequest);
       default:

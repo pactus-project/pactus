@@ -84,21 +84,25 @@ func (AddressType) EnumDescriptor() ([]byte, []int) {
 type TxDirection int32
 
 const (
-	// Include only transactions where the wallet receives funds.
-	TxDirection_TX_DIRECTION_INCOMING TxDirection = 0
-	// Include only transactions where the wallet sends funds.
-	TxDirection_TX_DIRECTION_OUTGOING TxDirection = 1
+	// include both incoming and outgoing transactions.
+	TxDirection_TX_DIRECTION_ANY TxDirection = 0
+	// Include only incoming transactions where the wallet receives funds.
+	TxDirection_TX_DIRECTION_INCOMING TxDirection = 1
+	// Include only outgoing transactions where the wallet sends funds.
+	TxDirection_TX_DIRECTION_OUTGOING TxDirection = 2
 )
 
 // Enum value maps for TxDirection.
 var (
 	TxDirection_name = map[int32]string{
-		0: "TX_DIRECTION_INCOMING",
-		1: "TX_DIRECTION_OUTGOING",
+		0: "TX_DIRECTION_ANY",
+		1: "TX_DIRECTION_INCOMING",
+		2: "TX_DIRECTION_OUTGOING",
 	}
 	TxDirection_value = map[string]int32{
-		"TX_DIRECTION_INCOMING": 0,
-		"TX_DIRECTION_OUTGOING": 1,
+		"TX_DIRECTION_ANY":      0,
+		"TX_DIRECTION_INCOMING": 1,
+		"TX_DIRECTION_OUTGOING": 2,
 	}
 )
 
@@ -2152,7 +2156,7 @@ func (x *ListTransactionsRequest) GetDirection() TxDirection {
 	if x != nil {
 		return x.Direction
 	}
-	return TxDirection_TX_DIRECTION_INCOMING
+	return TxDirection_TX_DIRECTION_ANY
 }
 
 func (x *ListTransactionsRequest) GetAddress() string {
@@ -2393,29 +2397,30 @@ const file_wallet_proto_rawDesc = "" +
 	"\x15ADDRESS_TYPE_TREASURY\x10\x00\x12\x1a\n" +
 	"\x16ADDRESS_TYPE_VALIDATOR\x10\x01\x12\x1c\n" +
 	"\x18ADDRESS_TYPE_BLS_ACCOUNT\x10\x02\x12 \n" +
-	"\x1cADDRESS_TYPE_ED25519_ACCOUNT\x10\x03*C\n" +
-	"\vTxDirection\x12\x19\n" +
-	"\x15TX_DIRECTION_INCOMING\x10\x00\x12\x19\n" +
-	"\x15TX_DIRECTION_OUTGOING\x10\x012\xa8\v\n" +
+	"\x1cADDRESS_TYPE_ED25519_ACCOUNT\x10\x03*Y\n" +
+	"\vTxDirection\x12\x14\n" +
+	"\x10TX_DIRECTION_ANY\x10\x00\x12\x19\n" +
+	"\x15TX_DIRECTION_INCOMING\x10\x01\x12\x19\n" +
+	"\x15TX_DIRECTION_OUTGOING\x10\x022\xa8\v\n" +
 	"\x06Wallet\x12I\n" +
 	"\fCreateWallet\x12\x1b.pactus.CreateWalletRequest\x1a\x1c.pactus.CreateWalletResponse\x12L\n" +
 	"\rRestoreWallet\x12\x1c.pactus.RestoreWalletRequest\x1a\x1d.pactus.RestoreWalletResponse\x12C\n" +
 	"\n" +
 	"LoadWallet\x12\x19.pactus.LoadWalletRequest\x1a\x1a.pactus.LoadWalletResponse\x12I\n" +
-	"\fUnloadWallet\x12\x1b.pactus.UnloadWalletRequest\x1a\x1c.pactus.UnloadWalletResponse\x12R\n" +
-	"\x0fGetTotalBalance\x12\x1e.pactus.GetTotalBalanceRequest\x1a\x1f.pactus.GetTotalBalanceResponse\x12[\n" +
-	"\x12SignRawTransaction\x12!.pactus.SignRawTransactionRequest\x1a\".pactus.SignRawTransactionResponse\x12^\n" +
-	"\x13GetValidatorAddress\x12\".pactus.GetValidatorAddressRequest\x1a#.pactus.GetValidatorAddressResponse\x12L\n" +
-	"\rGetNewAddress\x12\x1c.pactus.GetNewAddressRequest\x1a\x1d.pactus.GetNewAddressResponse\x12F\n" +
-	"\vSignMessage\x12\x1a.pactus.SignMessageRequest\x1a\x1b.pactus.SignMessageResponse\x12L\n" +
-	"\rGetTotalStake\x12\x1c.pactus.GetTotalStakeRequest\x1a\x1d.pactus.GetTotalStakeResponse\x12O\n" +
-	"\x0eGetAddressInfo\x12\x1d.pactus.GetAddressInfoRequest\x1a\x1e.pactus.GetAddressInfoResponse\x12R\n" +
-	"\x0fSetAddressLabel\x12\x1e.pactus.SetAddressLabelRequest\x1a\x1f.pactus.SetAddressLabelResponse\x12F\n" +
+	"\fUnloadWallet\x12\x1b.pactus.UnloadWalletRequest\x1a\x1c.pactus.UnloadWalletResponse\x12F\n" +
 	"\vListWallets\x12\x1a.pactus.ListWalletsRequest\x1a\x1b.pactus.ListWalletsResponse\x12L\n" +
 	"\rGetWalletInfo\x12\x1c.pactus.GetWalletInfoRequest\x1a\x1d.pactus.GetWalletInfoResponse\x12O\n" +
-	"\x0eIsWalletLoaded\x12\x1d.pactus.IsWalletLoadedRequest\x1a\x1e.pactus.IsWalletLoadedResponse\x12L\n" +
-	"\rListAddresses\x12\x1c.pactus.ListAddressesRequest\x1a\x1d.pactus.ListAddressesResponse\x12O\n" +
-	"\x0eUpdatePassword\x12\x1d.pactus.UpdatePasswordRequest\x1a\x1e.pactus.UpdatePasswordResponse\x12U\n" +
+	"\x0eIsWalletLoaded\x12\x1d.pactus.IsWalletLoadedRequest\x1a\x1e.pactus.IsWalletLoadedResponse\x12O\n" +
+	"\x0eUpdatePassword\x12\x1d.pactus.UpdatePasswordRequest\x1a\x1e.pactus.UpdatePasswordResponse\x12R\n" +
+	"\x0fGetTotalBalance\x12\x1e.pactus.GetTotalBalanceRequest\x1a\x1f.pactus.GetTotalBalanceResponse\x12L\n" +
+	"\rGetTotalStake\x12\x1c.pactus.GetTotalStakeRequest\x1a\x1d.pactus.GetTotalStakeResponse\x12^\n" +
+	"\x13GetValidatorAddress\x12\".pactus.GetValidatorAddressRequest\x1a#.pactus.GetValidatorAddressResponse\x12O\n" +
+	"\x0eGetAddressInfo\x12\x1d.pactus.GetAddressInfoRequest\x1a\x1e.pactus.GetAddressInfoResponse\x12R\n" +
+	"\x0fSetAddressLabel\x12\x1e.pactus.SetAddressLabelRequest\x1a\x1f.pactus.SetAddressLabelResponse\x12L\n" +
+	"\rGetNewAddress\x12\x1c.pactus.GetNewAddressRequest\x1a\x1d.pactus.GetNewAddressResponse\x12L\n" +
+	"\rListAddresses\x12\x1c.pactus.ListAddressesRequest\x1a\x1d.pactus.ListAddressesResponse\x12F\n" +
+	"\vSignMessage\x12\x1a.pactus.SignMessageRequest\x1a\x1b.pactus.SignMessageResponse\x12[\n" +
+	"\x12SignRawTransaction\x12!.pactus.SignRawTransactionRequest\x1a\".pactus.SignRawTransactionResponse\x12U\n" +
 	"\x10ListTransactions\x12\x1f.pactus.ListTransactionsRequest\x1a .pactus.ListTransactionsResponseB:\n" +
 	"\x06pactusZ0github.com/pactus-project/pactus/www/grpc/pactusb\x06proto3"
 
@@ -2487,37 +2492,37 @@ var file_wallet_proto_depIdxs = []int32{
 	5,  // 8: pactus.Wallet.RestoreWallet:input_type -> pactus.RestoreWalletRequest
 	9,  // 9: pactus.Wallet.LoadWallet:input_type -> pactus.LoadWalletRequest
 	11, // 10: pactus.Wallet.UnloadWallet:input_type -> pactus.UnloadWalletRequest
-	17, // 11: pactus.Wallet.GetTotalBalance:input_type -> pactus.GetTotalBalanceRequest
-	15, // 12: pactus.Wallet.SignRawTransaction:input_type -> pactus.SignRawTransactionRequest
-	13, // 13: pactus.Wallet.GetValidatorAddress:input_type -> pactus.GetValidatorAddressRequest
-	3,  // 14: pactus.Wallet.GetNewAddress:input_type -> pactus.GetNewAddressRequest
-	19, // 15: pactus.Wallet.SignMessage:input_type -> pactus.SignMessageRequest
+	27, // 11: pactus.Wallet.ListWallets:input_type -> pactus.ListWalletsRequest
+	31, // 12: pactus.Wallet.GetWalletInfo:input_type -> pactus.GetWalletInfoRequest
+	29, // 13: pactus.Wallet.IsWalletLoaded:input_type -> pactus.IsWalletLoadedRequest
+	35, // 14: pactus.Wallet.UpdatePassword:input_type -> pactus.UpdatePasswordRequest
+	17, // 15: pactus.Wallet.GetTotalBalance:input_type -> pactus.GetTotalBalanceRequest
 	21, // 16: pactus.Wallet.GetTotalStake:input_type -> pactus.GetTotalStakeRequest
-	23, // 17: pactus.Wallet.GetAddressInfo:input_type -> pactus.GetAddressInfoRequest
-	25, // 18: pactus.Wallet.SetAddressLabel:input_type -> pactus.SetAddressLabelRequest
-	27, // 19: pactus.Wallet.ListWallets:input_type -> pactus.ListWalletsRequest
-	31, // 20: pactus.Wallet.GetWalletInfo:input_type -> pactus.GetWalletInfoRequest
-	29, // 21: pactus.Wallet.IsWalletLoaded:input_type -> pactus.IsWalletLoadedRequest
-	33, // 22: pactus.Wallet.ListAddresses:input_type -> pactus.ListAddressesRequest
-	35, // 23: pactus.Wallet.UpdatePassword:input_type -> pactus.UpdatePasswordRequest
+	13, // 17: pactus.Wallet.GetValidatorAddress:input_type -> pactus.GetValidatorAddressRequest
+	23, // 18: pactus.Wallet.GetAddressInfo:input_type -> pactus.GetAddressInfoRequest
+	25, // 19: pactus.Wallet.SetAddressLabel:input_type -> pactus.SetAddressLabelRequest
+	3,  // 20: pactus.Wallet.GetNewAddress:input_type -> pactus.GetNewAddressRequest
+	33, // 21: pactus.Wallet.ListAddresses:input_type -> pactus.ListAddressesRequest
+	19, // 22: pactus.Wallet.SignMessage:input_type -> pactus.SignMessageRequest
+	15, // 23: pactus.Wallet.SignRawTransaction:input_type -> pactus.SignRawTransactionRequest
 	37, // 24: pactus.Wallet.ListTransactions:input_type -> pactus.ListTransactionsRequest
 	8,  // 25: pactus.Wallet.CreateWallet:output_type -> pactus.CreateWalletResponse
 	6,  // 26: pactus.Wallet.RestoreWallet:output_type -> pactus.RestoreWalletResponse
 	10, // 27: pactus.Wallet.LoadWallet:output_type -> pactus.LoadWalletResponse
 	12, // 28: pactus.Wallet.UnloadWallet:output_type -> pactus.UnloadWalletResponse
-	18, // 29: pactus.Wallet.GetTotalBalance:output_type -> pactus.GetTotalBalanceResponse
-	16, // 30: pactus.Wallet.SignRawTransaction:output_type -> pactus.SignRawTransactionResponse
-	14, // 31: pactus.Wallet.GetValidatorAddress:output_type -> pactus.GetValidatorAddressResponse
-	4,  // 32: pactus.Wallet.GetNewAddress:output_type -> pactus.GetNewAddressResponse
-	20, // 33: pactus.Wallet.SignMessage:output_type -> pactus.SignMessageResponse
+	28, // 29: pactus.Wallet.ListWallets:output_type -> pactus.ListWalletsResponse
+	32, // 30: pactus.Wallet.GetWalletInfo:output_type -> pactus.GetWalletInfoResponse
+	30, // 31: pactus.Wallet.IsWalletLoaded:output_type -> pactus.IsWalletLoadedResponse
+	36, // 32: pactus.Wallet.UpdatePassword:output_type -> pactus.UpdatePasswordResponse
+	18, // 33: pactus.Wallet.GetTotalBalance:output_type -> pactus.GetTotalBalanceResponse
 	22, // 34: pactus.Wallet.GetTotalStake:output_type -> pactus.GetTotalStakeResponse
-	24, // 35: pactus.Wallet.GetAddressInfo:output_type -> pactus.GetAddressInfoResponse
-	26, // 36: pactus.Wallet.SetAddressLabel:output_type -> pactus.SetAddressLabelResponse
-	28, // 37: pactus.Wallet.ListWallets:output_type -> pactus.ListWalletsResponse
-	32, // 38: pactus.Wallet.GetWalletInfo:output_type -> pactus.GetWalletInfoResponse
-	30, // 39: pactus.Wallet.IsWalletLoaded:output_type -> pactus.IsWalletLoadedResponse
-	34, // 40: pactus.Wallet.ListAddresses:output_type -> pactus.ListAddressesResponse
-	36, // 41: pactus.Wallet.UpdatePassword:output_type -> pactus.UpdatePasswordResponse
+	14, // 35: pactus.Wallet.GetValidatorAddress:output_type -> pactus.GetValidatorAddressResponse
+	24, // 36: pactus.Wallet.GetAddressInfo:output_type -> pactus.GetAddressInfoResponse
+	26, // 37: pactus.Wallet.SetAddressLabel:output_type -> pactus.SetAddressLabelResponse
+	4,  // 38: pactus.Wallet.GetNewAddress:output_type -> pactus.GetNewAddressResponse
+	34, // 39: pactus.Wallet.ListAddresses:output_type -> pactus.ListAddressesResponse
+	20, // 40: pactus.Wallet.SignMessage:output_type -> pactus.SignMessageResponse
+	16, // 41: pactus.Wallet.SignRawTransaction:output_type -> pactus.SignRawTransactionResponse
 	38, // 42: pactus.Wallet.ListTransactions:output_type -> pactus.ListTransactionsResponse
 	25, // [25:43] is the sub-list for method output_type
 	7,  // [7:25] is the sub-list for method input_type

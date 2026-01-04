@@ -79,14 +79,6 @@ const (
 		WHERE id = ?
 		LIMIT 1`
 
-	selectTransactionsByReceiverSQL = `
-		SELECT
-			id, sender, receiver, amount, fee, memo, status, block_height, payload_type,
-			data, comment, created_at, updated_at
-		FROM transactions WHERE receiver = ?
-		ORDER BY created_at DESC
-		LIMIT ? OFFSET ?`
-
 	countTransactionByIDSQL = `
 		SELECT COUNT(*) FROM transactions WHERE id = ?`
 

@@ -323,494 +323,6 @@ proto.pactus.WalletPromiseClient.prototype.unloadWallet =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.pactus.GetTotalBalanceRequest,
- *   !proto.pactus.GetTotalBalanceResponse>}
- */
-const methodDescriptor_Wallet_GetTotalBalance = new grpc.web.MethodDescriptor(
-  '/pactus.Wallet/GetTotalBalance',
-  grpc.web.MethodType.UNARY,
-  proto.pactus.GetTotalBalanceRequest,
-  proto.pactus.GetTotalBalanceResponse,
-  /**
-   * @param {!proto.pactus.GetTotalBalanceRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.pactus.GetTotalBalanceResponse.deserializeBinary
-);
-
-
-/**
- * @param {!proto.pactus.GetTotalBalanceRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.pactus.GetTotalBalanceResponse)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.pactus.GetTotalBalanceResponse>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.pactus.WalletClient.prototype.getTotalBalance =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/pactus.Wallet/GetTotalBalance',
-      request,
-      metadata || {},
-      methodDescriptor_Wallet_GetTotalBalance,
-      callback);
-};
-
-
-/**
- * @param {!proto.pactus.GetTotalBalanceRequest} request The
- *     request proto
- * @param {?Object<string, string>=} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.pactus.GetTotalBalanceResponse>}
- *     Promise that resolves to the response
- */
-proto.pactus.WalletPromiseClient.prototype.getTotalBalance =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/pactus.Wallet/GetTotalBalance',
-      request,
-      metadata || {},
-      methodDescriptor_Wallet_GetTotalBalance);
-};
-
-
-/**
- * @const
- * @type {!grpc.web.MethodDescriptor<
- *   !proto.pactus.SignRawTransactionRequest,
- *   !proto.pactus.SignRawTransactionResponse>}
- */
-const methodDescriptor_Wallet_SignRawTransaction = new grpc.web.MethodDescriptor(
-  '/pactus.Wallet/SignRawTransaction',
-  grpc.web.MethodType.UNARY,
-  proto.pactus.SignRawTransactionRequest,
-  proto.pactus.SignRawTransactionResponse,
-  /**
-   * @param {!proto.pactus.SignRawTransactionRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.pactus.SignRawTransactionResponse.deserializeBinary
-);
-
-
-/**
- * @param {!proto.pactus.SignRawTransactionRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.pactus.SignRawTransactionResponse)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.pactus.SignRawTransactionResponse>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.pactus.WalletClient.prototype.signRawTransaction =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/pactus.Wallet/SignRawTransaction',
-      request,
-      metadata || {},
-      methodDescriptor_Wallet_SignRawTransaction,
-      callback);
-};
-
-
-/**
- * @param {!proto.pactus.SignRawTransactionRequest} request The
- *     request proto
- * @param {?Object<string, string>=} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.pactus.SignRawTransactionResponse>}
- *     Promise that resolves to the response
- */
-proto.pactus.WalletPromiseClient.prototype.signRawTransaction =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/pactus.Wallet/SignRawTransaction',
-      request,
-      metadata || {},
-      methodDescriptor_Wallet_SignRawTransaction);
-};
-
-
-/**
- * @const
- * @type {!grpc.web.MethodDescriptor<
- *   !proto.pactus.GetValidatorAddressRequest,
- *   !proto.pactus.GetValidatorAddressResponse>}
- */
-const methodDescriptor_Wallet_GetValidatorAddress = new grpc.web.MethodDescriptor(
-  '/pactus.Wallet/GetValidatorAddress',
-  grpc.web.MethodType.UNARY,
-  proto.pactus.GetValidatorAddressRequest,
-  proto.pactus.GetValidatorAddressResponse,
-  /**
-   * @param {!proto.pactus.GetValidatorAddressRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.pactus.GetValidatorAddressResponse.deserializeBinary
-);
-
-
-/**
- * @param {!proto.pactus.GetValidatorAddressRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.pactus.GetValidatorAddressResponse)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.pactus.GetValidatorAddressResponse>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.pactus.WalletClient.prototype.getValidatorAddress =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/pactus.Wallet/GetValidatorAddress',
-      request,
-      metadata || {},
-      methodDescriptor_Wallet_GetValidatorAddress,
-      callback);
-};
-
-
-/**
- * @param {!proto.pactus.GetValidatorAddressRequest} request The
- *     request proto
- * @param {?Object<string, string>=} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.pactus.GetValidatorAddressResponse>}
- *     Promise that resolves to the response
- */
-proto.pactus.WalletPromiseClient.prototype.getValidatorAddress =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/pactus.Wallet/GetValidatorAddress',
-      request,
-      metadata || {},
-      methodDescriptor_Wallet_GetValidatorAddress);
-};
-
-
-/**
- * @const
- * @type {!grpc.web.MethodDescriptor<
- *   !proto.pactus.GetNewAddressRequest,
- *   !proto.pactus.GetNewAddressResponse>}
- */
-const methodDescriptor_Wallet_GetNewAddress = new grpc.web.MethodDescriptor(
-  '/pactus.Wallet/GetNewAddress',
-  grpc.web.MethodType.UNARY,
-  proto.pactus.GetNewAddressRequest,
-  proto.pactus.GetNewAddressResponse,
-  /**
-   * @param {!proto.pactus.GetNewAddressRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.pactus.GetNewAddressResponse.deserializeBinary
-);
-
-
-/**
- * @param {!proto.pactus.GetNewAddressRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.pactus.GetNewAddressResponse)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.pactus.GetNewAddressResponse>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.pactus.WalletClient.prototype.getNewAddress =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/pactus.Wallet/GetNewAddress',
-      request,
-      metadata || {},
-      methodDescriptor_Wallet_GetNewAddress,
-      callback);
-};
-
-
-/**
- * @param {!proto.pactus.GetNewAddressRequest} request The
- *     request proto
- * @param {?Object<string, string>=} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.pactus.GetNewAddressResponse>}
- *     Promise that resolves to the response
- */
-proto.pactus.WalletPromiseClient.prototype.getNewAddress =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/pactus.Wallet/GetNewAddress',
-      request,
-      metadata || {},
-      methodDescriptor_Wallet_GetNewAddress);
-};
-
-
-/**
- * @const
- * @type {!grpc.web.MethodDescriptor<
- *   !proto.pactus.SignMessageRequest,
- *   !proto.pactus.SignMessageResponse>}
- */
-const methodDescriptor_Wallet_SignMessage = new grpc.web.MethodDescriptor(
-  '/pactus.Wallet/SignMessage',
-  grpc.web.MethodType.UNARY,
-  proto.pactus.SignMessageRequest,
-  proto.pactus.SignMessageResponse,
-  /**
-   * @param {!proto.pactus.SignMessageRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.pactus.SignMessageResponse.deserializeBinary
-);
-
-
-/**
- * @param {!proto.pactus.SignMessageRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.pactus.SignMessageResponse)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.pactus.SignMessageResponse>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.pactus.WalletClient.prototype.signMessage =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/pactus.Wallet/SignMessage',
-      request,
-      metadata || {},
-      methodDescriptor_Wallet_SignMessage,
-      callback);
-};
-
-
-/**
- * @param {!proto.pactus.SignMessageRequest} request The
- *     request proto
- * @param {?Object<string, string>=} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.pactus.SignMessageResponse>}
- *     Promise that resolves to the response
- */
-proto.pactus.WalletPromiseClient.prototype.signMessage =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/pactus.Wallet/SignMessage',
-      request,
-      metadata || {},
-      methodDescriptor_Wallet_SignMessage);
-};
-
-
-/**
- * @const
- * @type {!grpc.web.MethodDescriptor<
- *   !proto.pactus.GetTotalStakeRequest,
- *   !proto.pactus.GetTotalStakeResponse>}
- */
-const methodDescriptor_Wallet_GetTotalStake = new grpc.web.MethodDescriptor(
-  '/pactus.Wallet/GetTotalStake',
-  grpc.web.MethodType.UNARY,
-  proto.pactus.GetTotalStakeRequest,
-  proto.pactus.GetTotalStakeResponse,
-  /**
-   * @param {!proto.pactus.GetTotalStakeRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.pactus.GetTotalStakeResponse.deserializeBinary
-);
-
-
-/**
- * @param {!proto.pactus.GetTotalStakeRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.pactus.GetTotalStakeResponse)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.pactus.GetTotalStakeResponse>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.pactus.WalletClient.prototype.getTotalStake =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/pactus.Wallet/GetTotalStake',
-      request,
-      metadata || {},
-      methodDescriptor_Wallet_GetTotalStake,
-      callback);
-};
-
-
-/**
- * @param {!proto.pactus.GetTotalStakeRequest} request The
- *     request proto
- * @param {?Object<string, string>=} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.pactus.GetTotalStakeResponse>}
- *     Promise that resolves to the response
- */
-proto.pactus.WalletPromiseClient.prototype.getTotalStake =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/pactus.Wallet/GetTotalStake',
-      request,
-      metadata || {},
-      methodDescriptor_Wallet_GetTotalStake);
-};
-
-
-/**
- * @const
- * @type {!grpc.web.MethodDescriptor<
- *   !proto.pactus.GetAddressInfoRequest,
- *   !proto.pactus.GetAddressInfoResponse>}
- */
-const methodDescriptor_Wallet_GetAddressInfo = new grpc.web.MethodDescriptor(
-  '/pactus.Wallet/GetAddressInfo',
-  grpc.web.MethodType.UNARY,
-  proto.pactus.GetAddressInfoRequest,
-  proto.pactus.GetAddressInfoResponse,
-  /**
-   * @param {!proto.pactus.GetAddressInfoRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.pactus.GetAddressInfoResponse.deserializeBinary
-);
-
-
-/**
- * @param {!proto.pactus.GetAddressInfoRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.pactus.GetAddressInfoResponse)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.pactus.GetAddressInfoResponse>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.pactus.WalletClient.prototype.getAddressInfo =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/pactus.Wallet/GetAddressInfo',
-      request,
-      metadata || {},
-      methodDescriptor_Wallet_GetAddressInfo,
-      callback);
-};
-
-
-/**
- * @param {!proto.pactus.GetAddressInfoRequest} request The
- *     request proto
- * @param {?Object<string, string>=} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.pactus.GetAddressInfoResponse>}
- *     Promise that resolves to the response
- */
-proto.pactus.WalletPromiseClient.prototype.getAddressInfo =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/pactus.Wallet/GetAddressInfo',
-      request,
-      metadata || {},
-      methodDescriptor_Wallet_GetAddressInfo);
-};
-
-
-/**
- * @const
- * @type {!grpc.web.MethodDescriptor<
- *   !proto.pactus.SetAddressLabelRequest,
- *   !proto.pactus.SetAddressLabelResponse>}
- */
-const methodDescriptor_Wallet_SetAddressLabel = new grpc.web.MethodDescriptor(
-  '/pactus.Wallet/SetAddressLabel',
-  grpc.web.MethodType.UNARY,
-  proto.pactus.SetAddressLabelRequest,
-  proto.pactus.SetAddressLabelResponse,
-  /**
-   * @param {!proto.pactus.SetAddressLabelRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.pactus.SetAddressLabelResponse.deserializeBinary
-);
-
-
-/**
- * @param {!proto.pactus.SetAddressLabelRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.pactus.SetAddressLabelResponse)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.pactus.SetAddressLabelResponse>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.pactus.WalletClient.prototype.setAddressLabel =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/pactus.Wallet/SetAddressLabel',
-      request,
-      metadata || {},
-      methodDescriptor_Wallet_SetAddressLabel,
-      callback);
-};
-
-
-/**
- * @param {!proto.pactus.SetAddressLabelRequest} request The
- *     request proto
- * @param {?Object<string, string>=} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.pactus.SetAddressLabelResponse>}
- *     Promise that resolves to the response
- */
-proto.pactus.WalletPromiseClient.prototype.setAddressLabel =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/pactus.Wallet/SetAddressLabel',
-      request,
-      metadata || {},
-      methodDescriptor_Wallet_SetAddressLabel);
-};
-
-
-/**
- * @const
- * @type {!grpc.web.MethodDescriptor<
  *   !proto.pactus.ListWalletsRequest,
  *   !proto.pactus.ListWalletsResponse>}
  */
@@ -994,6 +506,433 @@ proto.pactus.WalletPromiseClient.prototype.isWalletLoaded =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.UpdatePasswordRequest,
+ *   !proto.pactus.UpdatePasswordResponse>}
+ */
+const methodDescriptor_Wallet_UpdatePassword = new grpc.web.MethodDescriptor(
+  '/pactus.Wallet/UpdatePassword',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.UpdatePasswordRequest,
+  proto.pactus.UpdatePasswordResponse,
+  /**
+   * @param {!proto.pactus.UpdatePasswordRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.UpdatePasswordResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.UpdatePasswordRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.UpdatePasswordResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.UpdatePasswordResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.WalletClient.prototype.updatePassword =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Wallet/UpdatePassword',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_UpdatePassword,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.UpdatePasswordRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.UpdatePasswordResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.WalletPromiseClient.prototype.updatePassword =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Wallet/UpdatePassword',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_UpdatePassword);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.GetTotalBalanceRequest,
+ *   !proto.pactus.GetTotalBalanceResponse>}
+ */
+const methodDescriptor_Wallet_GetTotalBalance = new grpc.web.MethodDescriptor(
+  '/pactus.Wallet/GetTotalBalance',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.GetTotalBalanceRequest,
+  proto.pactus.GetTotalBalanceResponse,
+  /**
+   * @param {!proto.pactus.GetTotalBalanceRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.GetTotalBalanceResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.GetTotalBalanceRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.GetTotalBalanceResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.GetTotalBalanceResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.WalletClient.prototype.getTotalBalance =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Wallet/GetTotalBalance',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_GetTotalBalance,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.GetTotalBalanceRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.GetTotalBalanceResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.WalletPromiseClient.prototype.getTotalBalance =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Wallet/GetTotalBalance',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_GetTotalBalance);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.GetTotalStakeRequest,
+ *   !proto.pactus.GetTotalStakeResponse>}
+ */
+const methodDescriptor_Wallet_GetTotalStake = new grpc.web.MethodDescriptor(
+  '/pactus.Wallet/GetTotalStake',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.GetTotalStakeRequest,
+  proto.pactus.GetTotalStakeResponse,
+  /**
+   * @param {!proto.pactus.GetTotalStakeRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.GetTotalStakeResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.GetTotalStakeRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.GetTotalStakeResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.GetTotalStakeResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.WalletClient.prototype.getTotalStake =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Wallet/GetTotalStake',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_GetTotalStake,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.GetTotalStakeRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.GetTotalStakeResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.WalletPromiseClient.prototype.getTotalStake =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Wallet/GetTotalStake',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_GetTotalStake);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.GetValidatorAddressRequest,
+ *   !proto.pactus.GetValidatorAddressResponse>}
+ */
+const methodDescriptor_Wallet_GetValidatorAddress = new grpc.web.MethodDescriptor(
+  '/pactus.Wallet/GetValidatorAddress',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.GetValidatorAddressRequest,
+  proto.pactus.GetValidatorAddressResponse,
+  /**
+   * @param {!proto.pactus.GetValidatorAddressRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.GetValidatorAddressResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.GetValidatorAddressRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.GetValidatorAddressResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.GetValidatorAddressResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.WalletClient.prototype.getValidatorAddress =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Wallet/GetValidatorAddress',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_GetValidatorAddress,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.GetValidatorAddressRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.GetValidatorAddressResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.WalletPromiseClient.prototype.getValidatorAddress =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Wallet/GetValidatorAddress',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_GetValidatorAddress);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.GetAddressInfoRequest,
+ *   !proto.pactus.GetAddressInfoResponse>}
+ */
+const methodDescriptor_Wallet_GetAddressInfo = new grpc.web.MethodDescriptor(
+  '/pactus.Wallet/GetAddressInfo',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.GetAddressInfoRequest,
+  proto.pactus.GetAddressInfoResponse,
+  /**
+   * @param {!proto.pactus.GetAddressInfoRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.GetAddressInfoResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.GetAddressInfoRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.GetAddressInfoResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.GetAddressInfoResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.WalletClient.prototype.getAddressInfo =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Wallet/GetAddressInfo',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_GetAddressInfo,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.GetAddressInfoRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.GetAddressInfoResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.WalletPromiseClient.prototype.getAddressInfo =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Wallet/GetAddressInfo',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_GetAddressInfo);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.SetAddressLabelRequest,
+ *   !proto.pactus.SetAddressLabelResponse>}
+ */
+const methodDescriptor_Wallet_SetAddressLabel = new grpc.web.MethodDescriptor(
+  '/pactus.Wallet/SetAddressLabel',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.SetAddressLabelRequest,
+  proto.pactus.SetAddressLabelResponse,
+  /**
+   * @param {!proto.pactus.SetAddressLabelRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.SetAddressLabelResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.SetAddressLabelRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.SetAddressLabelResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.SetAddressLabelResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.WalletClient.prototype.setAddressLabel =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Wallet/SetAddressLabel',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_SetAddressLabel,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.SetAddressLabelRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.SetAddressLabelResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.WalletPromiseClient.prototype.setAddressLabel =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Wallet/SetAddressLabel',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_SetAddressLabel);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.GetNewAddressRequest,
+ *   !proto.pactus.GetNewAddressResponse>}
+ */
+const methodDescriptor_Wallet_GetNewAddress = new grpc.web.MethodDescriptor(
+  '/pactus.Wallet/GetNewAddress',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.GetNewAddressRequest,
+  proto.pactus.GetNewAddressResponse,
+  /**
+   * @param {!proto.pactus.GetNewAddressRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.GetNewAddressResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.GetNewAddressRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.GetNewAddressResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.GetNewAddressResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.WalletClient.prototype.getNewAddress =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Wallet/GetNewAddress',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_GetNewAddress,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.GetNewAddressRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.GetNewAddressResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.WalletPromiseClient.prototype.getNewAddress =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Wallet/GetNewAddress',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_GetNewAddress);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.pactus.ListAddressesRequest,
  *   !proto.pactus.ListAddressesResponse>}
  */
@@ -1055,61 +994,122 @@ proto.pactus.WalletPromiseClient.prototype.listAddresses =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.pactus.UpdatePasswordRequest,
- *   !proto.pactus.UpdatePasswordResponse>}
+ *   !proto.pactus.SignMessageRequest,
+ *   !proto.pactus.SignMessageResponse>}
  */
-const methodDescriptor_Wallet_UpdatePassword = new grpc.web.MethodDescriptor(
-  '/pactus.Wallet/UpdatePassword',
+const methodDescriptor_Wallet_SignMessage = new grpc.web.MethodDescriptor(
+  '/pactus.Wallet/SignMessage',
   grpc.web.MethodType.UNARY,
-  proto.pactus.UpdatePasswordRequest,
-  proto.pactus.UpdatePasswordResponse,
+  proto.pactus.SignMessageRequest,
+  proto.pactus.SignMessageResponse,
   /**
-   * @param {!proto.pactus.UpdatePasswordRequest} request
+   * @param {!proto.pactus.SignMessageRequest} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.pactus.UpdatePasswordResponse.deserializeBinary
+  proto.pactus.SignMessageResponse.deserializeBinary
 );
 
 
 /**
- * @param {!proto.pactus.UpdatePasswordRequest} request The
+ * @param {!proto.pactus.SignMessageRequest} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.pactus.UpdatePasswordResponse)}
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.SignMessageResponse)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.pactus.UpdatePasswordResponse>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.SignMessageResponse>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.pactus.WalletClient.prototype.updatePassword =
+proto.pactus.WalletClient.prototype.signMessage =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/pactus.Wallet/UpdatePassword',
+      '/pactus.Wallet/SignMessage',
       request,
       metadata || {},
-      methodDescriptor_Wallet_UpdatePassword,
+      methodDescriptor_Wallet_SignMessage,
       callback);
 };
 
 
 /**
- * @param {!proto.pactus.UpdatePasswordRequest} request The
+ * @param {!proto.pactus.SignMessageRequest} request The
  *     request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.pactus.UpdatePasswordResponse>}
+ * @return {!Promise<!proto.pactus.SignMessageResponse>}
  *     Promise that resolves to the response
  */
-proto.pactus.WalletPromiseClient.prototype.updatePassword =
+proto.pactus.WalletPromiseClient.prototype.signMessage =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/pactus.Wallet/UpdatePassword',
+      '/pactus.Wallet/SignMessage',
       request,
       metadata || {},
-      methodDescriptor_Wallet_UpdatePassword);
+      methodDescriptor_Wallet_SignMessage);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.SignRawTransactionRequest,
+ *   !proto.pactus.SignRawTransactionResponse>}
+ */
+const methodDescriptor_Wallet_SignRawTransaction = new grpc.web.MethodDescriptor(
+  '/pactus.Wallet/SignRawTransaction',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.SignRawTransactionRequest,
+  proto.pactus.SignRawTransactionResponse,
+  /**
+   * @param {!proto.pactus.SignRawTransactionRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.SignRawTransactionResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.SignRawTransactionRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.SignRawTransactionResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.SignRawTransactionResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.WalletClient.prototype.signRawTransaction =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Wallet/SignRawTransaction',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_SignRawTransaction,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.SignRawTransactionRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.SignRawTransactionResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.WalletPromiseClient.prototype.signRawTransaction =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Wallet/SignRawTransaction',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_SignRawTransaction);
 };
 
 

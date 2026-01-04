@@ -7130,8 +7130,9 @@ proto.pactus.AddressType = {
  * @enum {number}
  */
 proto.pactus.TxDirection = {
-  TX_DIRECTION_INCOMING: 0,
-  TX_DIRECTION_OUTGOING: 1
+  TX_DIRECTION_ANY: 0,
+  TX_DIRECTION_INCOMING: 1,
+  TX_DIRECTION_OUTGOING: 2
 };
 
 goog.object.extend(exports, proto.pactus);

@@ -410,7 +410,7 @@ func (wm *Manager) ListTransactions(walletName string,
 		return nil, ErrWalletNotLoaded
 	}
 
-	return wlt.ListTransactions("", opts...), nil
+	return wlt.ListTransactions(opts...), nil
 }
 
 func (wm *Manager) UpdatePassword(walletName, oldPassword, newPassword string) error {
