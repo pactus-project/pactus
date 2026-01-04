@@ -1,4 +1,4 @@
-package remoteprovider
+package remote
 
 import _ "embed"
 

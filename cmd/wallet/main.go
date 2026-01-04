@@ -7,7 +7,7 @@ import (
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet"
-	remoteprovider "github.com/pactus-project/pactus/wallet/provider/remote"
+	"github.com/pactus-project/pactus/wallet/provider/remote"
 	"github.com/spf13/cobra"
 )
 
@@ -27,16 +27,16 @@ func openWallet(ctx context.Context) (*wallet.Wallet, error) {
 	var openOpts []wallet.OpenWalletOption
 
 	if !*offlineOpt {
-		var providerOpts []remoteprovider.RemoteProviderOption
+		var providerOpts []remote.RemoteProviderOption
 		if *serverAddrsOpt != nil {
-			providerOpts = append(providerOpts, remoteprovider.WithCustomServers(*serverAddrsOpt))
+			providerOpts = append(providerOpts, remote.WithCustomServers(*serverAddrsOpt))
 		}
 
 		if *timeoutOpt > 0 {
-			providerOpts = append(providerOpts, remoteprovider.WithTimeout(time.Duration(*timeoutOpt)*time.Second))
+			providerOpts = append(providerOpts, remote.WithTimeout(time.Duration(*timeoutOpt)*time.Second))
 		}
 
-		provider, err := remoteprovider.NewRemoteBlockchainProvider(ctx, providerOpts...)
+		provider, err := remote.NewRemoteBlockchainProvider(ctx, providerOpts...)
 		if err != nil {
 			return nil, err
 		}

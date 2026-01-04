@@ -1,4 +1,4 @@
-package localprovider
+package local
 
 import (
 	"github.com/pactus-project/pactus/crypto"

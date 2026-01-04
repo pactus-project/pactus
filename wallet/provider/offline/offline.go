@@ -1,4 +1,4 @@
-package offlineprovider
+package offline
 
 import (
 	"errors"

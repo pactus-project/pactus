@@ -22,7 +22,7 @@ import (
 	"github.com/pactus-project/pactus/util/signal"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet"
-	remoteprovider "github.com/pactus-project/pactus/wallet/provider/remote"
+	"github.com/pactus-project/pactus/wallet/provider/remote"
 	"github.com/pactus-project/pactus/wallet/types"
 )
 
@@ -76,8 +76,8 @@ func CreateNode(ctx context.Context, numValidators int, chain genesis.ChainType,
 	mnemonic string, walletPassword string,
 ) (*wallet.Wallet, string, error) {
 	walletPath := PactusDefaultWalletPath(workingDir)
-	provider, err := remoteprovider.NewRemoteBlockchainProvider(ctx,
-		remoteprovider.WithNetwork(chain))
+	provider, err := remote.NewRemoteBlockchainProvider(ctx,
+		remote.WithNetwork(chain))
 	if err != nil {
 		return nil, "", err
 	}

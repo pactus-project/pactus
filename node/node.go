@@ -20,7 +20,7 @@ import (
 	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/version"
 	wltmgr "github.com/pactus-project/pactus/wallet/manager"
-	localprovider "github.com/pactus-project/pactus/wallet/provider/local"
+	"github.com/pactus-project/pactus/wallet/provider/local"
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/html"
 	"github.com/pactus-project/pactus/www/http"
@@ -119,7 +119,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		curConsMgr = consV2Mgr
 	}
 
-	walletProvider := localprovider.NewLocalBlockchainProvider(state)
+	walletProvider := local.NewLocalBlockchainProvider(state)
 	walletMgr, err := wltmgr.NewManager(ctx, conf.WalletManager, walletProvider, eventPipe)
 	if err != nil {
 		cancel()
