@@ -27,14 +27,12 @@ type remoteProviderConfig struct {
 	network genesis.ChainType
 	timeout time.Duration
 	servers []string
-	offline bool
 }
 
 var defaultOpenWalletConfig = remoteProviderConfig{
 	network: genesis.Mainnet,
 	timeout: 5 * time.Second,
 	servers: make([]string, 0),
-	offline: false,
 }
 
 type RemoteProviderOption func(*remoteProviderConfig)
@@ -54,12 +52,6 @@ func WithTimeout(timeout time.Duration) RemoteProviderOption {
 func WithCustomServers(servers []string) RemoteProviderOption {
 	return func(cfg *remoteProviderConfig) {
 		cfg.servers = servers
-	}
-}
-
-func WithOfflineMode() RemoteProviderOption {
-	return func(cfg *remoteProviderConfig) {
-		cfg.offline = true
 	}
 }
 

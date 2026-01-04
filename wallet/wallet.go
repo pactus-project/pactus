@@ -159,10 +159,6 @@ func (w *Wallet) Close() error {
 	return retErr
 }
 
-func (w *Wallet) IsOffline() bool {
-	return w.provider == nil
-}
-
 func (w *Wallet) Version() int {
 	return w.storage.WalletInfo().Version
 }

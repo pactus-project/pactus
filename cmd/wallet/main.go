@@ -24,26 +24,27 @@ func addPasswordOption(c *cobra.Command) *string {
 }
 
 func openWallet(ctx context.Context) (*wallet.Wallet, error) {
-	var opts []remoteprovider.RemoteProviderOption
-	if *serverAddrsOpt != nil {
-		opts = append(opts, remoteprovider.WithCustomServers(*serverAddrsOpt))
+	var openOpts []wallet.OpenWalletOption
+
+	if !*offlineOpt {
+		var providerOpts []remoteprovider.RemoteProviderOption
+		if *serverAddrsOpt != nil {
+			providerOpts = append(providerOpts, remoteprovider.WithCustomServers(*serverAddrsOpt))
+		}
+
+		if *timeoutOpt > 0 {
+			providerOpts = append(providerOpts, remoteprovider.WithTimeout(time.Duration(*timeoutOpt)*time.Second))
+		}
+
+		provider, err := remoteprovider.NewRemoteBlockchainProvider(ctx, providerOpts...)
+		if err != nil {
+			return nil, err
+		}
+
+		openOpts = append(openOpts, wallet.WithBlockchainProvider(provider))
 	}
 
-	if *timeoutOpt > 0 {
-		opts = append(opts, remoteprovider.WithTimeout(time.Duration(*timeoutOpt)*time.Second))
-	}
-
-	if *offlineOpt {
-		opts = append(opts, remoteprovider.WithOfflineMode())
-	}
-
-	provider, err := remoteprovider.NewRemoteBlockchainProvider(ctx, opts...)
-	if err != nil {
-		return nil, err
-	}
-
-	wlt, err := wallet.Open(ctx, *pathOpt,
-		wallet.WithBlockchainProvider(provider))
+	wlt, err := wallet.Open(ctx, *pathOpt, openOpts...)
 	if err != nil {
 		return nil, err
 	}

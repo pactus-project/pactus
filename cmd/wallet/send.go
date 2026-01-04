@@ -221,7 +221,7 @@ func signAndPublishTx(wlt *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass strin
 	terminal.PrintInfoMsgf("   Signed transaction data: %x", bs)
 	terminal.PrintLine()
 
-	if !wlt.IsOffline() {
+	if !*offlineOpt {
 		if !noConfirm {
 			terminal.PrintWarnMsgf("⚠️  You are going to broadcast the signed transaction")
 			terminal.PrintWarnMsgf("   This action cannot be undone")
