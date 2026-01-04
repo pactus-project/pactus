@@ -154,8 +154,8 @@ func (model *WalletModel) AddressRows() []AddressRow {
 		var scorePtr *float64
 		valAddr, err := crypto.AddressFromString(info.Address)
 		if err == nil {
-			val := model.node.State().ValidatorByAddress(valAddr)
-			if val != nil {
+			val, err := model.node.State().ValidatorByAddress(valAddr)
+			if err == nil && val != nil {
 				score := model.node.State().AvailabilityScore(val.Number())
 				scorePtr = &score
 			}

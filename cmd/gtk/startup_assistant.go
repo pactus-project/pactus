@@ -68,7 +68,7 @@ func setColoredText(label *gtk.Label, str string, color Color) {
 }
 
 //nolint:all  // complexity can't be reduced more. It needs to refactor.
-func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
+func startupAssistant(ctx context.Context, workingDir string, chainType genesis.ChainType) bool {
 	successful := false
 	assistant, err := gtk.AssistantNew()
 	fatalErrorCheck(err)
@@ -259,7 +259,7 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 				numValidators := comboBoxActiveValue(comboNumValidators)
 				walletPassword := getEntryText(entryPassword)
 
-				nodeWallet, rewardAddr, err = cmd.CreateNode(numValidators, chainType, workingDir, mnemonic, walletPassword)
+				nodeWallet, rewardAddr, err = cmd.CreateNode(ctx, numValidators, chainType, workingDir, mnemonic, walletPassword)
 				if err != nil {
 					showError(err)
 
@@ -295,7 +295,6 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 								return
 							}
 
-							ctx := context.Background()
 							mdCh := getMetadata(ctx, importer, listBox)
 
 							if metadata := <-mdCh; metadata == nil {
@@ -422,7 +421,7 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 				lblRecoveryStatus.SetText("Processing...")
 
 				// Reset recovery context
-				recoveryCtx, cancelRecovery := context.WithCancel(context.Background())
+				recoveryCtx, cancelRecovery := context.WithCancel(ctx)
 
 				// Setup cancel recovery button handler
 				btnCancelRecovery.Connect("clicked", func() {

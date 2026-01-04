@@ -1,4 +1,4 @@
-package wallet
+package remote
 
 import _ "embed"
 

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/spf13/cobra"
@@ -30,7 +32,7 @@ func buildTransactionsAddCmd(parentCmd *cobra.Command) {
 	addCmd.Run = func(_ *cobra.Command, args []string) {
 		txID := args[0]
 
-		wlt, err := openWallet()
+		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
 
 		id, err := hash.FromString(txID)
@@ -55,7 +57,7 @@ func buildTransactionsListCmd(parentCmd *cobra.Command) {
 	listCmd.Run = func(_ *cobra.Command, args []string) {
 		addr := args[0]
 
-		wlt, err := openWallet()
+		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
 
 		transactions := wlt.ListTransactions(addr)

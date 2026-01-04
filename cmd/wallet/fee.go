@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/spf13/cobra"
@@ -17,7 +19,7 @@ func buildFeeCmd(parentCmd *cobra.Command) {
 	parentCmd.AddCommand(feeCmd)
 
 	feeCmd.Run = func(_ *cobra.Command, args []string) {
-		wlt, err := openWallet()
+		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
 
 		fee, err := amount.FromString(args[0])

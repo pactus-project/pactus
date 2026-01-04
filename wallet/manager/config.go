@@ -10,7 +10,6 @@ type Config struct {
 	ChainType         genesis.ChainType `toml:"-"`
 	WalletsDir        string            `toml:"-"`
 	DefaultWalletName string            `toml:"-"`
-	GRPCAddress       string            `toml:"-"` // TODO: replace me with IBlockchainProvider
 }
 
 func DefaultConfig() *Config {

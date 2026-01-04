@@ -312,7 +312,7 @@ func (s *walletServer) ListTransactions(_ context.Context,
 		if info.BlockHeight > 0 {
 			confirmations = int(lastBlockHeight) - int(info.BlockHeight)
 		}
-		trxs = append(trxs, transactionToProto(trx, info.BlockHeight, confirmations))
+		trxs = append(trxs, transactionToProto(trx, uint32(info.BlockHeight), confirmations))
 	}
 
 	return &pactus.ListTransactionsResponse{

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/ipfs/boxo/util"
@@ -16,7 +17,7 @@ func buildNeuterCmd(parentCmd *cobra.Command) {
 	parentCmd.AddCommand(neuterCmd)
 
 	neuterCmd.Run = func(_ *cobra.Command, _ []string) {
-		wlt, err := openWallet()
+		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
 
 		path := wlt.Path() + ".neutered"

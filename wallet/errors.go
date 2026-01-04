@@ -6,12 +6,6 @@ import (
 )
 
 var (
-	// ErrInvalidNetwork describes an error in which the network is invalid.
-	ErrInvalidNetwork = errors.New("invalid network")
-
-	// ErrOffline describes an error in which the wallet is offline.
-	ErrOffline = errors.New("wallet is in offline mode")
-
 	// ErrInvalidAddressType describes an error in which the address type is invalid.
 	ErrInvalidAddressType = errors.New("invalid address type")
 

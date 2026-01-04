@@ -22,6 +22,7 @@ import (
 	"github.com/pactus-project/pactus/util/signal"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/wallet/provider/remote"
 	"github.com/pactus-project/pactus/wallet/types"
 )
 
@@ -71,22 +72,33 @@ func PactusDaemonName() string {
 	return "./pactus-daemon"
 }
 
-func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
+func CreateNode(ctx context.Context, numValidators int, chain genesis.ChainType, workingDir string,
 	mnemonic string, walletPassword string,
 ) (*wallet.Wallet, string, error) {
-	// To make process faster, we update the password after creating the addresses
 	walletPath := PactusDefaultWalletPath(workingDir)
-	wlt, err := wallet.Create(context.Background(),
-		walletPath, mnemonic, "", chain, wallet.WithOfflineMode())
+	provider, err := remote.NewRemoteBlockchainProvider(ctx,
+		remote.WithNetwork(chain))
+	if err != nil {
+		return nil, "", err
+	}
+
+	wlt, err := wallet.Create(ctx, walletPath, mnemonic, walletPassword, chain,
+		wallet.WithBlockchainProvider(provider))
 	if err != nil {
 		return nil, "", err
 	}
 
 	for i := 0; i < numValidators; i++ {
-		_, _ = wlt.NewAddress(crypto.AddressTypeValidator, fmt.Sprintf("Validator address %v", i+1))
+		_, err := wlt.NewAddress(crypto.AddressTypeValidator, fmt.Sprintf("Validator address %v", i+1))
+		if err != nil {
+			return nil, "", err
+		}
 	}
-	rewardAddrInfo, _ := wlt.NewAddress(crypto.AddressTypeEd25519Account, "Reward address",
+	rewardAddrInfo, err := wlt.NewAddress(crypto.AddressTypeEd25519Account, "Reward address",
 		wallet.WithPassword(walletPassword))
+	if err != nil {
+		return nil, "", err
+	}
 
 	confPath := PactusConfigPath(workingDir)
 	genPath := PactusGenesisPath(workingDir)
@@ -115,7 +127,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 		if numValidators < 4 {
 			return nil, "", errors.New("localnet needs at least 4 validators")
 		}
-		genDoc := makeLocalGenesis(*wlt)
+		genDoc := makeLocalGenesis(wlt)
 		if err := genDoc.SaveToFile(genPath); err != nil {
 			return nil, "", err
 		}
@@ -124,10 +136,6 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 		if err := conf.Save(confPath); err != nil {
 			return nil, "", err
 		}
-	}
-
-	if err := wlt.UpdatePassword("", walletPassword); err != nil {
-		return nil, "", err
 	}
 
 	return wlt, rewardAddrInfo.Address, nil
@@ -150,7 +158,7 @@ func StartNode(workingDir string, passwordFetcher func() (string, bool),
 	}
 
 	defaultWalletPath := PactusDefaultWalletPath(workingDir)
-	wlt, err := wallet.Open(context.Background(), defaultWalletPath, wallet.WithOfflineMode())
+	wlt, err := wallet.Open(context.Background(), defaultWalletPath)
 	if err != nil {
 		return nil, err
 	}
@@ -189,7 +197,7 @@ func StartNode(workingDir string, passwordFetcher func() (string, bool),
 }
 
 // makeLocalGenesis makes genesis file for the local network.
-func makeLocalGenesis(wlt wallet.Wallet) *genesis.Genesis {
+func makeLocalGenesis(wlt *wallet.Wallet) *genesis.Genesis {
 	// Treasury account
 	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
@@ -265,10 +273,6 @@ func MakeConfig(workingDir string) (*config.Config, *genesis.Genesis, error) {
 	conf.WalletManager.ChainType = chainType
 	conf.WalletManager.WalletsDir = walletsDir
 	conf.WalletManager.DefaultWalletName = DefaultWalletName
-
-	if conf.GRPC.Enable {
-		conf.WalletManager.GRPCAddress = conf.GRPC.Listen
-	}
 
 	if err := conf.BasicCheck(); err != nil {
 		return nil, nil, err

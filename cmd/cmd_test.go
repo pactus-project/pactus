@@ -318,7 +318,8 @@ func TestCreateNode(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		wlt, rewardAddrs, err := CreateNode(tt.numValidators, tt.chain, tt.workingDir, tt.mnemonic, "")
+		wlt, rewardAddrs, err := CreateNode(t.Context(),
+			tt.numValidators, tt.chain, tt.workingDir, tt.mnemonic, "")
 
 		if tt.withErr {
 			assert.Error(t, err)

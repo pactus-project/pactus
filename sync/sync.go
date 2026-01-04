@@ -558,8 +558,8 @@ func (sync *synchronizer) prepareBlocks(from, count uint32) [][]byte {
 	blocks := make([][]byte, 0, count)
 
 	for height := from; height < from+count; height++ {
-		cBlk := sync.state.CommittedBlock(height)
-		if cBlk == nil {
+		cBlk, err := sync.state.CommittedBlock(height)
+		if err != nil {
 			sync.logger.Warn("unable to find a block", "height", height)
 
 			return nil

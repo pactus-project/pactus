@@ -131,8 +131,11 @@ func MakeMessage(msgType Type) (Message, error) {
 }
 
 type Message interface {
+	// BasicCheck performs basic validation checks on the message.
 	BasicCheck() error
+	// Type returns the message type.
 	Type() Type
+	// TopicID returns the topic ID for the message.
 	TopicID() network.TopicID
 	// ShouldBroadcast indicates whether the message should be broadcasted
 	// or send directly as stream.
@@ -141,5 +144,6 @@ type Message interface {
 	// This is applicable for consensus messages, including BlockAnnounce.
 	// For non-consensus messages, this height is set to zero.
 	ConsensusHeight() uint32
+	// LogString returns a concise string representation intended for use in logs.
 	LogString() string
 }

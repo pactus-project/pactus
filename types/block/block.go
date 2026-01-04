@@ -18,6 +18,8 @@ import (
 	"github.com/pactus-project/pactus/util/encoding"
 )
 
+type Height uint32
+
 type Block struct {
 	memorizedHash *hash.Hash
 	memorizedData []byte
@@ -83,6 +85,7 @@ func (b *Block) Transactions() Txs {
 	return b.data.Txs
 }
 
+// BasicCheck performs basic validation checks on the block structure and its contents.
 func (b *Block) BasicCheck() error {
 	if err := b.Header().BasicCheck(); err != nil {
 		return err
@@ -124,6 +127,8 @@ func (b *Block) BasicCheck() error {
 	return nil
 }
 
+// Hash returns the hash of the block.
+// The hash is memorized after the first calculation.
 func (b *Block) Hash() hash.Hash {
 	if b.memorizedHash != nil {
 		return *b.memorizedHash
@@ -146,6 +151,8 @@ func (b *Block) Hash() hash.Hash {
 	return h
 }
 
+// Height returns the height of the block.
+// TODO: return block.Height type.
 func (b *Block) Height() uint32 {
 	if b.data.PrevCert == nil {
 		return 1

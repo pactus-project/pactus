@@ -633,24 +633,12 @@ func (st *state) IsProposer(addr crypto.Address, round int16) bool {
 	return st.committee.IsProposer(addr, round)
 }
 
-func (st *state) CommittedBlock(height uint32) *store.CommittedBlock {
-	blk, err := st.store.Block(height)
-	if err != nil {
-		st.logger.Trace("error on retrieving block", "error", err)
-
-		return nil
-	}
-
-	return blk
+func (st *state) CommittedBlock(height uint32) (*store.CommittedBlock, error) {
+	return st.store.Block(height)
 }
 
-func (st *state) CommittedTx(txID tx.ID) *store.CommittedTx {
-	transaction, err := st.store.Transaction(txID)
-	if err != nil {
-		st.logger.Trace("searching transaction in local store failed", "id", txID, "error", err)
-	}
-
-	return transaction
+func (st *state) CommittedTx(txID tx.ID) (*store.CommittedTx, error) {
+	return st.store.Transaction(txID)
 }
 
 func (st *state) BlockHash(height uint32) hash.Hash {
@@ -661,36 +649,21 @@ func (st *state) BlockHeight(h hash.Hash) uint32 {
 	return st.store.BlockHeight(h)
 }
 
-func (st *state) AccountByAddress(addr crypto.Address) *account.Account {
-	acc, err := st.store.Account(addr)
-	if err != nil {
-		st.logger.Trace("error on retrieving account", "error", err)
-	}
-
-	return acc
+func (st *state) AccountByAddress(addr crypto.Address) (*account.Account, error) {
+	return st.store.Account(addr)
 }
 
 func (st *state) ValidatorAddresses() []crypto.Address {
 	return st.store.ValidatorAddresses()
 }
 
-func (st *state) ValidatorByAddress(addr crypto.Address) *validator.Validator {
-	val, err := st.store.Validator(addr)
-	if err != nil {
-		st.logger.Trace("error on retrieving validator", "error", err)
-	}
-
-	return val
+func (st *state) ValidatorByAddress(addr crypto.Address) (*validator.Validator, error) {
+	return st.store.Validator(addr)
 }
 
 // ValidatorByNumber returns validator data based on validator number.
-func (st *state) ValidatorByNumber(n int32) *validator.Validator {
-	val, err := st.store.ValidatorByNumber(n)
-	if err != nil {
-		st.logger.Trace("error on retrieving validator", "error", err)
-	}
-
-	return val
+func (st *state) ValidatorByNumber(n int32) (*validator.Validator, error) {
+	return st.store.ValidatorByNumber(n)
 }
 
 func (st *state) PendingTx(txID tx.ID) *tx.Tx {
