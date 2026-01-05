@@ -51,21 +51,26 @@ class AddressType extends $pb.ProtobufEnum {
 
 /// TxDirection indicates the direction of a transaction relative to the wallet.
 class TxDirection extends $pb.ProtobufEnum {
-  /// Include only transactions where the wallet receives funds.
-  static const TxDirection TX_DIRECTION_INCOMING =
-      TxDirection._(0, _omitEnumNames ? '' : 'TX_DIRECTION_INCOMING');
+  /// include both incoming and outgoing transactions.
+  static const TxDirection TX_DIRECTION_ANY =
+      TxDirection._(0, _omitEnumNames ? '' : 'TX_DIRECTION_ANY');
 
-  /// Include only transactions where the wallet sends funds.
+  /// Include only incoming transactions where the wallet receives funds.
+  static const TxDirection TX_DIRECTION_INCOMING =
+      TxDirection._(1, _omitEnumNames ? '' : 'TX_DIRECTION_INCOMING');
+
+  /// Include only outgoing transactions where the wallet sends funds.
   static const TxDirection TX_DIRECTION_OUTGOING =
-      TxDirection._(1, _omitEnumNames ? '' : 'TX_DIRECTION_OUTGOING');
+      TxDirection._(2, _omitEnumNames ? '' : 'TX_DIRECTION_OUTGOING');
 
   static const $core.List<TxDirection> values = <TxDirection>[
+    TX_DIRECTION_ANY,
     TX_DIRECTION_INCOMING,
     TX_DIRECTION_OUTGOING,
   ];
 
   static final $core.List<TxDirection?> _byValue =
-      $pb.ProtobufEnum.$_initByValueList(values, 1);
+      $pb.ProtobufEnum.$_initByValueList(values, 2);
   static TxDirection? valueOf($core.int value) =>
       value < 0 || value >= _byValue.length ? null : _byValue[value];
 

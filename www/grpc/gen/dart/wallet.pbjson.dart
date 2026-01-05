@@ -38,15 +38,16 @@ final $typed_data.Uint8List addressTypeDescriptor = $convert.base64Decode(
 const TxDirection$json = {
   '1': 'TxDirection',
   '2': [
-    {'1': 'TX_DIRECTION_INCOMING', '2': 0},
-    {'1': 'TX_DIRECTION_OUTGOING', '2': 1},
+    {'1': 'TX_DIRECTION_ANY', '2': 0},
+    {'1': 'TX_DIRECTION_INCOMING', '2': 1},
+    {'1': 'TX_DIRECTION_OUTGOING', '2': 2},
   ],
 };
 
 /// Descriptor for `TxDirection`. Decode as a `google.protobuf.EnumDescriptorProto`.
 final $typed_data.Uint8List txDirectionDescriptor = $convert.base64Decode(
-    'CgtUeERpcmVjdGlvbhIZChVUWF9ESVJFQ1RJT05fSU5DT01JTkcQABIZChVUWF9ESVJFQ1RJT0'
-    '5fT1VUR09JTkcQAQ==');
+    'CgtUeERpcmVjdGlvbhIUChBUWF9ESVJFQ1RJT05fQU5ZEAASGQoVVFhfRElSRUNUSU9OX0lOQ0'
+    '9NSU5HEAESGQoVVFhfRElSRUNUSU9OX09VVEdPSU5HEAI=');
 
 @$core.Deprecated('Use addressInfoDescriptor instead')
 const AddressInfo$json = {
@@ -605,15 +606,15 @@ const ListTransactionsRequest$json = {
   '1': 'ListTransactionsRequest',
   '2': [
     {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
+    {'1': 'address', '3': 2, '4': 1, '5': 9, '10': 'address'},
     {
       '1': 'direction',
-      '3': 2,
+      '3': 3,
       '4': 1,
       '5': 14,
       '6': '.pactus.TxDirection',
       '10': 'direction'
     },
-    {'1': 'address', '3': 3, '4': 1, '5': 9, '10': 'address'},
     {'1': 'count', '3': 4, '4': 1, '5': 5, '10': 'count'},
     {'1': 'skip', '3': 5, '4': 1, '5': 5, '10': 'skip'},
   ],
@@ -622,8 +623,8 @@ const ListTransactionsRequest$json = {
 /// Descriptor for `ListTransactionsRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List listTransactionsRequestDescriptor = $convert.base64Decode(
     'ChdMaXN0VHJhbnNhY3Rpb25zUmVxdWVzdBIfCgt3YWxsZXRfbmFtZRgBIAEoCVIKd2FsbGV0Tm'
-    'FtZRIxCglkaXJlY3Rpb24YAiABKA4yEy5wYWN0dXMuVHhEaXJlY3Rpb25SCWRpcmVjdGlvbhIY'
-    'CgdhZGRyZXNzGAMgASgJUgdhZGRyZXNzEhQKBWNvdW50GAQgASgFUgVjb3VudBISCgRza2lwGA'
+    'FtZRIYCgdhZGRyZXNzGAIgASgJUgdhZGRyZXNzEjEKCWRpcmVjdGlvbhgDIAEoDjITLnBhY3R1'
+    'cy5UeERpcmVjdGlvblIJZGlyZWN0aW9uEhQKBWNvdW50GAQgASgFUgVjb3VudBISCgRza2lwGA'
     'UgASgFUgRza2lw');
 
 @$core.Deprecated('Use listTransactionsResponseDescriptor instead')
@@ -672,46 +673,6 @@ const $core.Map<$core.String, $core.dynamic> WalletServiceBase$json = {
       '3': '.pactus.UnloadWalletResponse'
     },
     {
-      '1': 'GetTotalBalance',
-      '2': '.pactus.GetTotalBalanceRequest',
-      '3': '.pactus.GetTotalBalanceResponse'
-    },
-    {
-      '1': 'SignRawTransaction',
-      '2': '.pactus.SignRawTransactionRequest',
-      '3': '.pactus.SignRawTransactionResponse'
-    },
-    {
-      '1': 'GetValidatorAddress',
-      '2': '.pactus.GetValidatorAddressRequest',
-      '3': '.pactus.GetValidatorAddressResponse'
-    },
-    {
-      '1': 'GetNewAddress',
-      '2': '.pactus.GetNewAddressRequest',
-      '3': '.pactus.GetNewAddressResponse'
-    },
-    {
-      '1': 'SignMessage',
-      '2': '.pactus.SignMessageRequest',
-      '3': '.pactus.SignMessageResponse'
-    },
-    {
-      '1': 'GetTotalStake',
-      '2': '.pactus.GetTotalStakeRequest',
-      '3': '.pactus.GetTotalStakeResponse'
-    },
-    {
-      '1': 'GetAddressInfo',
-      '2': '.pactus.GetAddressInfoRequest',
-      '3': '.pactus.GetAddressInfoResponse'
-    },
-    {
-      '1': 'SetAddressLabel',
-      '2': '.pactus.SetAddressLabelRequest',
-      '3': '.pactus.SetAddressLabelResponse'
-    },
-    {
       '1': 'ListWallets',
       '2': '.pactus.ListWalletsRequest',
       '3': '.pactus.ListWalletsResponse'
@@ -727,14 +688,54 @@ const $core.Map<$core.String, $core.dynamic> WalletServiceBase$json = {
       '3': '.pactus.IsWalletLoadedResponse'
     },
     {
+      '1': 'UpdatePassword',
+      '2': '.pactus.UpdatePasswordRequest',
+      '3': '.pactus.UpdatePasswordResponse'
+    },
+    {
+      '1': 'GetTotalBalance',
+      '2': '.pactus.GetTotalBalanceRequest',
+      '3': '.pactus.GetTotalBalanceResponse'
+    },
+    {
+      '1': 'GetTotalStake',
+      '2': '.pactus.GetTotalStakeRequest',
+      '3': '.pactus.GetTotalStakeResponse'
+    },
+    {
+      '1': 'GetValidatorAddress',
+      '2': '.pactus.GetValidatorAddressRequest',
+      '3': '.pactus.GetValidatorAddressResponse'
+    },
+    {
+      '1': 'GetAddressInfo',
+      '2': '.pactus.GetAddressInfoRequest',
+      '3': '.pactus.GetAddressInfoResponse'
+    },
+    {
+      '1': 'SetAddressLabel',
+      '2': '.pactus.SetAddressLabelRequest',
+      '3': '.pactus.SetAddressLabelResponse'
+    },
+    {
+      '1': 'GetNewAddress',
+      '2': '.pactus.GetNewAddressRequest',
+      '3': '.pactus.GetNewAddressResponse'
+    },
+    {
       '1': 'ListAddresses',
       '2': '.pactus.ListAddressesRequest',
       '3': '.pactus.ListAddressesResponse'
     },
     {
-      '1': 'UpdatePassword',
-      '2': '.pactus.UpdatePasswordRequest',
-      '3': '.pactus.UpdatePasswordResponse'
+      '1': 'SignMessage',
+      '2': '.pactus.SignMessageRequest',
+      '3': '.pactus.SignMessageResponse'
+    },
+    {
+      '1': 'SignRawTransaction',
+      '2': '.pactus.SignRawTransactionRequest',
+      '3': '.pactus.SignRawTransactionResponse'
     },
     {
       '1': 'ListTransactions',
@@ -755,33 +756,33 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>>
   '.pactus.LoadWalletResponse': LoadWalletResponse$json,
   '.pactus.UnloadWalletRequest': UnloadWalletRequest$json,
   '.pactus.UnloadWalletResponse': UnloadWalletResponse$json,
-  '.pactus.GetTotalBalanceRequest': GetTotalBalanceRequest$json,
-  '.pactus.GetTotalBalanceResponse': GetTotalBalanceResponse$json,
-  '.pactus.SignRawTransactionRequest': SignRawTransactionRequest$json,
-  '.pactus.SignRawTransactionResponse': SignRawTransactionResponse$json,
-  '.pactus.GetValidatorAddressRequest': GetValidatorAddressRequest$json,
-  '.pactus.GetValidatorAddressResponse': GetValidatorAddressResponse$json,
-  '.pactus.GetNewAddressRequest': GetNewAddressRequest$json,
-  '.pactus.GetNewAddressResponse': GetNewAddressResponse$json,
-  '.pactus.AddressInfo': AddressInfo$json,
-  '.pactus.SignMessageRequest': SignMessageRequest$json,
-  '.pactus.SignMessageResponse': SignMessageResponse$json,
-  '.pactus.GetTotalStakeRequest': GetTotalStakeRequest$json,
-  '.pactus.GetTotalStakeResponse': GetTotalStakeResponse$json,
-  '.pactus.GetAddressInfoRequest': GetAddressInfoRequest$json,
-  '.pactus.GetAddressInfoResponse': GetAddressInfoResponse$json,
-  '.pactus.SetAddressLabelRequest': SetAddressLabelRequest$json,
-  '.pactus.SetAddressLabelResponse': SetAddressLabelResponse$json,
   '.pactus.ListWalletsRequest': ListWalletsRequest$json,
   '.pactus.ListWalletsResponse': ListWalletsResponse$json,
   '.pactus.GetWalletInfoRequest': GetWalletInfoRequest$json,
   '.pactus.GetWalletInfoResponse': GetWalletInfoResponse$json,
   '.pactus.IsWalletLoadedRequest': IsWalletLoadedRequest$json,
   '.pactus.IsWalletLoadedResponse': IsWalletLoadedResponse$json,
-  '.pactus.ListAddressesRequest': ListAddressesRequest$json,
-  '.pactus.ListAddressesResponse': ListAddressesResponse$json,
   '.pactus.UpdatePasswordRequest': UpdatePasswordRequest$json,
   '.pactus.UpdatePasswordResponse': UpdatePasswordResponse$json,
+  '.pactus.GetTotalBalanceRequest': GetTotalBalanceRequest$json,
+  '.pactus.GetTotalBalanceResponse': GetTotalBalanceResponse$json,
+  '.pactus.GetTotalStakeRequest': GetTotalStakeRequest$json,
+  '.pactus.GetTotalStakeResponse': GetTotalStakeResponse$json,
+  '.pactus.GetValidatorAddressRequest': GetValidatorAddressRequest$json,
+  '.pactus.GetValidatorAddressResponse': GetValidatorAddressResponse$json,
+  '.pactus.GetAddressInfoRequest': GetAddressInfoRequest$json,
+  '.pactus.GetAddressInfoResponse': GetAddressInfoResponse$json,
+  '.pactus.AddressInfo': AddressInfo$json,
+  '.pactus.SetAddressLabelRequest': SetAddressLabelRequest$json,
+  '.pactus.SetAddressLabelResponse': SetAddressLabelResponse$json,
+  '.pactus.GetNewAddressRequest': GetNewAddressRequest$json,
+  '.pactus.GetNewAddressResponse': GetNewAddressResponse$json,
+  '.pactus.ListAddressesRequest': ListAddressesRequest$json,
+  '.pactus.ListAddressesResponse': ListAddressesResponse$json,
+  '.pactus.SignMessageRequest': SignMessageRequest$json,
+  '.pactus.SignMessageResponse': SignMessageResponse$json,
+  '.pactus.SignRawTransactionRequest': SignRawTransactionRequest$json,
+  '.pactus.SignRawTransactionResponse': SignRawTransactionResponse$json,
   '.pactus.ListTransactionsRequest': ListTransactionsRequest$json,
   '.pactus.ListTransactionsResponse': ListTransactionsResponse$json,
   '.pactus.TransactionInfo': $0.TransactionInfo$json,
@@ -801,25 +802,25 @@ final $typed_data.Uint8List walletServiceDescriptor = $convert.base64Decode(
     'ZXN0b3JlV2FsbGV0UmVxdWVzdBodLnBhY3R1cy5SZXN0b3JlV2FsbGV0UmVzcG9uc2USQwoKTG'
     '9hZFdhbGxldBIZLnBhY3R1cy5Mb2FkV2FsbGV0UmVxdWVzdBoaLnBhY3R1cy5Mb2FkV2FsbGV0'
     'UmVzcG9uc2USSQoMVW5sb2FkV2FsbGV0EhsucGFjdHVzLlVubG9hZFdhbGxldFJlcXVlc3QaHC'
-    '5wYWN0dXMuVW5sb2FkV2FsbGV0UmVzcG9uc2USUgoPR2V0VG90YWxCYWxhbmNlEh4ucGFjdHVz'
-    'LkdldFRvdGFsQmFsYW5jZVJlcXVlc3QaHy5wYWN0dXMuR2V0VG90YWxCYWxhbmNlUmVzcG9uc2'
-    'USWwoSU2lnblJhd1RyYW5zYWN0aW9uEiEucGFjdHVzLlNpZ25SYXdUcmFuc2FjdGlvblJlcXVl'
-    'c3QaIi5wYWN0dXMuU2lnblJhd1RyYW5zYWN0aW9uUmVzcG9uc2USXgoTR2V0VmFsaWRhdG9yQW'
-    'RkcmVzcxIiLnBhY3R1cy5HZXRWYWxpZGF0b3JBZGRyZXNzUmVxdWVzdBojLnBhY3R1cy5HZXRW'
-    'YWxpZGF0b3JBZGRyZXNzUmVzcG9uc2USTAoNR2V0TmV3QWRkcmVzcxIcLnBhY3R1cy5HZXROZX'
-    'dBZGRyZXNzUmVxdWVzdBodLnBhY3R1cy5HZXROZXdBZGRyZXNzUmVzcG9uc2USRgoLU2lnbk1l'
-    'c3NhZ2USGi5wYWN0dXMuU2lnbk1lc3NhZ2VSZXF1ZXN0GhsucGFjdHVzLlNpZ25NZXNzYWdlUm'
-    'VzcG9uc2USTAoNR2V0VG90YWxTdGFrZRIcLnBhY3R1cy5HZXRUb3RhbFN0YWtlUmVxdWVzdBod'
-    'LnBhY3R1cy5HZXRUb3RhbFN0YWtlUmVzcG9uc2USTwoOR2V0QWRkcmVzc0luZm8SHS5wYWN0dX'
-    'MuR2V0QWRkcmVzc0luZm9SZXF1ZXN0Gh4ucGFjdHVzLkdldEFkZHJlc3NJbmZvUmVzcG9uc2US'
-    'UgoPU2V0QWRkcmVzc0xhYmVsEh4ucGFjdHVzLlNldEFkZHJlc3NMYWJlbFJlcXVlc3QaHy5wYW'
-    'N0dXMuU2V0QWRkcmVzc0xhYmVsUmVzcG9uc2USRgoLTGlzdFdhbGxldHMSGi5wYWN0dXMuTGlz'
+    '5wYWN0dXMuVW5sb2FkV2FsbGV0UmVzcG9uc2USRgoLTGlzdFdhbGxldHMSGi5wYWN0dXMuTGlz'
     'dFdhbGxldHNSZXF1ZXN0GhsucGFjdHVzLkxpc3RXYWxsZXRzUmVzcG9uc2USTAoNR2V0V2FsbG'
     'V0SW5mbxIcLnBhY3R1cy5HZXRXYWxsZXRJbmZvUmVxdWVzdBodLnBhY3R1cy5HZXRXYWxsZXRJ'
     'bmZvUmVzcG9uc2USTwoOSXNXYWxsZXRMb2FkZWQSHS5wYWN0dXMuSXNXYWxsZXRMb2FkZWRSZX'
-    'F1ZXN0Gh4ucGFjdHVzLklzV2FsbGV0TG9hZGVkUmVzcG9uc2USTAoNTGlzdEFkZHJlc3NlcxIc'
-    'LnBhY3R1cy5MaXN0QWRkcmVzc2VzUmVxdWVzdBodLnBhY3R1cy5MaXN0QWRkcmVzc2VzUmVzcG'
-    '9uc2USTwoOVXBkYXRlUGFzc3dvcmQSHS5wYWN0dXMuVXBkYXRlUGFzc3dvcmRSZXF1ZXN0Gh4u'
-    'cGFjdHVzLlVwZGF0ZVBhc3N3b3JkUmVzcG9uc2USVQoQTGlzdFRyYW5zYWN0aW9ucxIfLnBhY3'
+    'F1ZXN0Gh4ucGFjdHVzLklzV2FsbGV0TG9hZGVkUmVzcG9uc2USTwoOVXBkYXRlUGFzc3dvcmQS'
+    'HS5wYWN0dXMuVXBkYXRlUGFzc3dvcmRSZXF1ZXN0Gh4ucGFjdHVzLlVwZGF0ZVBhc3N3b3JkUm'
+    'VzcG9uc2USUgoPR2V0VG90YWxCYWxhbmNlEh4ucGFjdHVzLkdldFRvdGFsQmFsYW5jZVJlcXVl'
+    'c3QaHy5wYWN0dXMuR2V0VG90YWxCYWxhbmNlUmVzcG9uc2USTAoNR2V0VG90YWxTdGFrZRIcLn'
+    'BhY3R1cy5HZXRUb3RhbFN0YWtlUmVxdWVzdBodLnBhY3R1cy5HZXRUb3RhbFN0YWtlUmVzcG9u'
+    'c2USXgoTR2V0VmFsaWRhdG9yQWRkcmVzcxIiLnBhY3R1cy5HZXRWYWxpZGF0b3JBZGRyZXNzUm'
+    'VxdWVzdBojLnBhY3R1cy5HZXRWYWxpZGF0b3JBZGRyZXNzUmVzcG9uc2USTwoOR2V0QWRkcmVz'
+    'c0luZm8SHS5wYWN0dXMuR2V0QWRkcmVzc0luZm9SZXF1ZXN0Gh4ucGFjdHVzLkdldEFkZHJlc3'
+    'NJbmZvUmVzcG9uc2USUgoPU2V0QWRkcmVzc0xhYmVsEh4ucGFjdHVzLlNldEFkZHJlc3NMYWJl'
+    'bFJlcXVlc3QaHy5wYWN0dXMuU2V0QWRkcmVzc0xhYmVsUmVzcG9uc2USTAoNR2V0TmV3QWRkcm'
+    'VzcxIcLnBhY3R1cy5HZXROZXdBZGRyZXNzUmVxdWVzdBodLnBhY3R1cy5HZXROZXdBZGRyZXNz'
+    'UmVzcG9uc2USTAoNTGlzdEFkZHJlc3NlcxIcLnBhY3R1cy5MaXN0QWRkcmVzc2VzUmVxdWVzdB'
+    'odLnBhY3R1cy5MaXN0QWRkcmVzc2VzUmVzcG9uc2USRgoLU2lnbk1lc3NhZ2USGi5wYWN0dXMu'
+    'U2lnbk1lc3NhZ2VSZXF1ZXN0GhsucGFjdHVzLlNpZ25NZXNzYWdlUmVzcG9uc2USWwoSU2lnbl'
+    'Jhd1RyYW5zYWN0aW9uEiEucGFjdHVzLlNpZ25SYXdUcmFuc2FjdGlvblJlcXVlc3QaIi5wYWN0'
+    'dXMuU2lnblJhd1RyYW5zYWN0aW9uUmVzcG9uc2USVQoQTGlzdFRyYW5zYWN0aW9ucxIfLnBhY3'
     'R1cy5MaXN0VHJhbnNhY3Rpb25zUmVxdWVzdBogLnBhY3R1cy5MaXN0VHJhbnNhY3Rpb25zUmVz'
     'cG9uc2U=');

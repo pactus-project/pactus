@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/util/terminal"
@@ -31,7 +30,6 @@ func buildCreateCmd(parentCmd *cobra.Command) {
 
 		network := genesis.Mainnet
 		if *testnetOpt {
-			crypto.ToTestnetHRP()
 			network = genesis.Testnet
 		}
 		wlt, err := wallet.Create(context.Background(), *pathOpt, mnemonic, password, network)

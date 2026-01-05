@@ -76,8 +76,7 @@ func CreateNode(ctx context.Context, numValidators int, chain genesis.ChainType,
 	mnemonic string, walletPassword string,
 ) (*wallet.Wallet, string, error) {
 	walletPath := PactusDefaultWalletPath(workingDir)
-	provider, err := remote.NewRemoteBlockchainProvider(ctx,
-		remote.WithNetwork(chain))
+	provider, err := remote.NewRemoteBlockchainProvider(ctx, chain, remote.WithTimeout(2*time.Second))
 	if err != nil {
 		return nil, "", err
 	}

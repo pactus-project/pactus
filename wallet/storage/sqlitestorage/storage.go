@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
+	"strings"
 	"time"
 
 	_ "github.com/glebarez/go-sqlite" // sqlite driver
@@ -341,6 +342,7 @@ func (s *Storage) InsertTransaction(info *types.TransactionInfo) error {
 		info.ID,
 		info.Sender,
 		info.Receiver,
+		info.Direction,
 		info.Amount,
 		info.Fee,
 		info.Memo,
@@ -386,6 +388,7 @@ func scanTransaction(s scanner) (*types.TransactionInfo, error) {
 		&info.ID,
 		&info.Sender,
 		&info.Receiver,
+		&info.Direction,
 		&info.Amount,
 		&info.Fee,
 		&info.Memo,
@@ -421,9 +424,56 @@ func (s *Storage) GetTransaction(id string) (*types.TransactionInfo, error) {
 	return info, nil
 }
 
-// ListTransactions returns a list of transactions for a receiver with pagination.
-func (s *Storage) ListTransactions(receiver string, count, skip int) ([]*types.TransactionInfo, error) {
-	rows, err := s.db.QueryContext(s.ctx, selectTransactionsByReceiverSQL, receiver, count, skip)
+// QueryTransactions returns transactions matching the provided filters with pagination.
+// Empty or "*" address value is treated as no filter. Filters are combined with AND.
+func (s *Storage) QueryTransactions(params storage.QueryParams) ([]*types.TransactionInfo, error) {
+	conditions := make([]string, 0, 3)
+	args := make([]any, 0, 6)
+
+	if params.Direction != types.TxDirectionAny {
+		conditions = append(conditions, "direction = ?")
+		args = append(args, params.Direction)
+	}
+
+	if params.Address != "*" {
+		switch params.Direction {
+		case types.TxDirectionAny:
+			conditions = append(conditions, "(sender = ? OR receiver = ?)")
+			args = append(args, params.Address, params.Address)
+		case types.TxDirectionIncoming:
+			conditions = append(conditions, "receiver = ?")
+			args = append(args, params.Address)
+		case types.TxDirectionOutgoing:
+			conditions = append(conditions, "sender = ?")
+			args = append(args, params.Address)
+		}
+	}
+
+	where := ""
+	if len(conditions) > 0 {
+		where = "WHERE " + strings.Join(conditions, " AND ")
+	}
+
+	// Apply pagination
+	args = append(args, params.Count, params.Skip)
+
+	var queryBuilder strings.Builder
+	queryBuilder.WriteString(`
+		SELECT
+			id, sender, receiver, direction, amount, fee, memo, status, block_height, payload_type,
+			data, comment, created_at, updated_at
+		FROM transactions
+	`)
+	if where != "" {
+		queryBuilder.WriteString(where)
+		queryBuilder.WriteString("\n")
+	}
+	queryBuilder.WriteString(`ORDER BY created_at DESC
+		LIMIT ? OFFSET ?`)
+
+	query := queryBuilder.String()
+
+	rows, err := s.db.QueryContext(s.ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}

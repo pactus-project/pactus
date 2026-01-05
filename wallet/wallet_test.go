@@ -2,6 +2,7 @@ package wallet_test
 
 import (
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -66,6 +67,10 @@ func setup(t *testing.T) *testData {
 		wallet:       wlt,
 		password:     "",
 	}
+}
+
+func (td *testData) RandMemo() string {
+	return td.RandString(32)
 }
 
 func TestCheckMnemonic(t *testing.T) {
@@ -220,7 +225,7 @@ func TestSigningTxWithBLS(t *testing.T) {
 	amt := td.RandAmount()
 	fee := td.RandFee()
 	lockTime := td.RandHeight()
-	memo := td.RandString(20)
+	memo := td.RandMemo()
 
 	opts := []wallet.TxOption{
 		wallet.OptionFee(fee.String()),
@@ -258,7 +263,7 @@ func TestSigningTxWithEd25519(t *testing.T) {
 	amt := td.RandAmount()
 	fee := td.RandFee()
 	lockTime := td.RandHeight()
-	memo := td.RandString(20)
+	memo := td.RandMemo()
 
 	opts := []wallet.TxOption{
 		wallet.OptionFee(fee.String()),
@@ -290,54 +295,53 @@ func TestSigningTxWithEd25519(t *testing.T) {
 func TestMakeTransferTx(t *testing.T) {
 	td := setup(t)
 
-	senderInfo, err := td.testVault.NewBLSAccountAddress("test")
-	require.NoError(t, err)
-
-	receiverInfo := td.RandAccAddress()
+	sender := td.RandAccAddress()
+	receiver := td.RandAccAddress()
 	amt := td.RandAmount()
-	lockTime := td.RandHeight()
-	defaultFee := td.RandFee()
-	td.mockStorage.EXPECT().WalletInfo().Return(&types.WalletInfo{DefaultFee: defaultFee}).AnyTimes()
+
+	td.mockStorage.EXPECT().WalletInfo().Return(&types.WalletInfo{DefaultFee: td.RandFee()}).AnyTimes()
 
 	t.Run("set parameters manually", func(t *testing.T) {
 		fee := td.RandFee()
+		lockTime := td.RandHeight()
+		memo := td.RandMemo()
 		opts := []wallet.TxOption{
 			wallet.OptionFee(fee.String()),
 			wallet.OptionLockTime(lockTime),
-			wallet.OptionMemo("test"),
+			wallet.OptionMemo(memo),
 		}
 
-		trx, err := td.wallet.MakeTransferTx(senderInfo.Address, receiverInfo.String(), amt, opts...)
+		trx, err := td.wallet.MakeTransferTx(sender.String(), receiver.String(), amt, opts...)
 		assert.NoError(t, err)
 		assert.Equal(t, fee, trx.Fee())
 		assert.Equal(t, lockTime, trx.LockTime())
-		assert.Equal(t, "test", trx.Memo())
+		assert.Equal(t, memo, trx.Memo())
 	})
 
 	t.Run("query parameters from the node", func(t *testing.T) {
 		testHeight := td.RandHeight()
 		td.mockProvider.EXPECT().LastBlockHeight().Return(block.Height(testHeight), nil)
 
-		trx, err := td.wallet.MakeTransferTx(senderInfo.Address, receiverInfo.String(), amt)
+		trx, err := td.wallet.MakeTransferTx(sender.String(), receiver.String(), amt)
 		assert.NoError(t, err)
 		assert.Equal(t, testHeight+1, trx.LockTime())
 		assert.Equal(t, amt, trx.Payload().Value())
 	})
 
 	t.Run("invalid sender address", func(t *testing.T) {
-		_, err := td.wallet.MakeTransferTx("invalid_addr_string", receiverInfo.String(), amt)
+		_, err := td.wallet.MakeTransferTx("invalid_addr_string", receiver.String(), amt)
 		assert.Error(t, err)
 	})
 
 	t.Run("invalid receiver address", func(t *testing.T) {
-		_, err := td.wallet.MakeTransferTx(senderInfo.Address, "invalid_addr_string", amt)
+		_, err := td.wallet.MakeTransferTx(sender.String(), "invalid_addr_string", amt)
 		assert.Error(t, err)
 	})
 
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
 		td.mockProvider.EXPECT().LastBlockHeight().Return(block.Height(0), errors.New("not found"))
 
-		_, err := td.wallet.MakeTransferTx(td.RandAccAddress().String(), receiverInfo.String(), amt)
+		_, err := td.wallet.MakeTransferTx(td.RandAccAddress().String(), receiver.String(), amt)
 		assert.Error(t, err)
 	})
 }
@@ -345,82 +349,78 @@ func TestMakeTransferTx(t *testing.T) {
 func TestMakeBondTx(t *testing.T) {
 	td := setup(t)
 
-	td.mockStorage.EXPECT().InsertAddress(gomock.Any()).Return(nil)
-	td.mockStorage.EXPECT().UpdateVault(td.testVault).Return(nil)
-	defaultFee := td.RandFee()
-	td.mockStorage.EXPECT().WalletInfo().Return(&types.WalletInfo{DefaultFee: defaultFee}).AnyTimes()
+	td.mockStorage.EXPECT().WalletInfo().Return(&types.WalletInfo{DefaultFee: td.RandFee()}).AnyTimes()
 
-	senderInfo, err := td.wallet.NewValidatorAddress("testing addr")
-	require.NoError(t, err)
-
-	receiver := td.RandValKey()
+	sender := td.RandAccAddress()
 	amt := td.RandAmount()
 
 	t.Run("set parameters manually", func(t *testing.T) {
+		receiver := td.RandValKey()
+
 		lockTime := td.RandHeight()
 		fee := td.RandFee()
+		memo := td.RandMemo()
 		opts := []wallet.TxOption{
 			wallet.OptionFee(fee.String()),
 			wallet.OptionLockTime(lockTime),
-			wallet.OptionMemo("test"),
+			wallet.OptionMemo(memo),
 		}
-
 		td.mockProvider.EXPECT().GetValidator(receiver.Address().String()).Return(nil, nil)
 
-		trx, err := td.wallet.MakeBondTx(senderInfo.Address, receiver.Address().String(),
+		trx, err := td.wallet.MakeBondTx(sender.String(), receiver.Address().String(),
 			receiver.PublicKey().String(), amt, opts...)
 		assert.NoError(t, err)
 		assert.Equal(t, fee, trx.Fee())
 		assert.Equal(t, lockTime, trx.LockTime())
-		assert.Equal(t, "test", trx.Memo())
+		assert.Equal(t, memo, trx.Memo())
 	})
 
 	t.Run("query parameters from the node", func(t *testing.T) {
+		receiver := td.RandValKey()
+
 		testHeight := td.RandHeight()
 		td.mockProvider.EXPECT().LastBlockHeight().Return(block.Height(testHeight), nil)
 		td.mockProvider.EXPECT().GetValidator(receiver.Address().String()).Return(nil, nil)
 
-		trx, err := td.wallet.MakeBondTx(senderInfo.Address, receiver.Address().String(), receiver.PublicKey().String(), amt)
+		trx, err := td.wallet.MakeBondTx(sender.String(), receiver.Address().String(), receiver.PublicKey().String(), amt)
 		assert.NoError(t, err)
 		assert.Equal(t, testHeight+1, trx.LockTime())
 		assert.Equal(t, amt, trx.Payload().Value())
 	})
 
 	t.Run("validator address is not stored in wallet", func(t *testing.T) {
-		t.Run("validator doesn't exist and public key not set", func(t *testing.T) {
-			td.mockStorage.EXPECT().AddressInfo(gomock.Any()).Return(nil, storage.ErrNotFound)
-			td.mockProvider.EXPECT().LastBlockHeight().Return(block.Height(td.RandHeight()), nil)
-			td.mockProvider.EXPECT().GetValidator(receiver.Address().String()).Return(nil, errors.New("not found"))
+		receiver := td.RandValKey()
+		td.mockProvider.EXPECT().LastBlockHeight().Return(block.Height(td.RandHeight()), nil).Times(4)
+		td.mockStorage.EXPECT().AddressInfo(receiver.Address().String()).Return(nil, storage.ErrNotFound).AnyTimes()
 
-			trx, err := td.wallet.MakeBondTx(senderInfo.Address, receiver.Address().String(), "", amt)
+		t.Run("validator doesn't exist and public key not set", func(t *testing.T) {
+			td.mockProvider.EXPECT().GetValidator(receiver.Address().String()).Return(nil, errors.New("not exist"))
+
+			trx, err := td.wallet.MakeBondTx(sender.String(), receiver.Address().String(), "", amt)
 			assert.NoError(t, err)
 			assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
 		})
 
 		t.Run("validator doesn't exist and public key set", func(t *testing.T) {
-			td.mockProvider.EXPECT().LastBlockHeight().Return(block.Height(td.RandHeight()), nil)
-			td.mockProvider.EXPECT().GetValidator(receiver.Address().String()).Return(td.GenerateTestValidator(), nil)
+			td.mockProvider.EXPECT().GetValidator(receiver.Address().String()).Return(nil, errors.New("not exist"))
 
-			trx, err := td.wallet.MakeBondTx(senderInfo.Address, receiver.Address().String(), receiver.PublicKey().String(), amt)
-			assert.NoError(t, err)
+			trx, err := td.wallet.MakeBondTx(sender.String(), receiver.Address().String(), receiver.PublicKey().String(), amt)
+			require.NoError(t, err)
 			assert.Equal(t, receiver.PublicKey().String(), trx.Payload().(*payload.BondPayload).PublicKey.String())
 		})
 
 		t.Run("validator exists and public key not set", func(t *testing.T) {
-			td.mockStorage.EXPECT().AddressInfo(gomock.Any()).Return(nil, storage.ErrNotFound)
-			td.mockProvider.EXPECT().LastBlockHeight().Return(block.Height(td.RandHeight()), nil)
 			td.mockProvider.EXPECT().GetValidator(receiver.Address().String()).Return(td.GenerateTestValidator(), nil)
 
-			trx, err := td.wallet.MakeBondTx(senderInfo.Address, receiver.Address().String(), "", amt)
+			trx, err := td.wallet.MakeBondTx(sender.String(), receiver.Address().String(), "", amt)
 			assert.NoError(t, err)
 			assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
 		})
 
 		t.Run("validator exists and public key set", func(t *testing.T) {
-			td.mockProvider.EXPECT().LastBlockHeight().Return(block.Height(td.RandHeight()), nil)
-			td.mockProvider.EXPECT().GetValidator(receiver.Address().String()).Return(nil, errors.New("validator exists"))
+			td.mockProvider.EXPECT().GetValidator(receiver.Address().String()).Return(td.GenerateTestValidator(), nil)
 
-			trx, err := td.wallet.MakeBondTx(senderInfo.Address,
+			trx, err := td.wallet.MakeBondTx(sender.String(),
 				receiver.Address().String(), receiver.PublicKey().String(), amt)
 			assert.NoError(t, err)
 			assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
@@ -434,40 +434,37 @@ func TestMakeBondTx(t *testing.T) {
 		require.NoError(t, err)
 
 		td.mockStorage.EXPECT().AddressInfo(receiverInfo.Address).Return(receiverInfo, nil).AnyTimes()
+		td.mockProvider.EXPECT().LastBlockHeight().Return(block.Height(td.RandHeight()), nil).Times(4)
 
 		t.Run("validator doesn't exist and public key not set", func(t *testing.T) {
-			td.mockProvider.EXPECT().LastBlockHeight().Return(block.Height(td.RandHeight()), nil)
-			td.mockProvider.EXPECT().GetValidator(receiverInfo.Address).Return(td.GenerateTestValidator(), nil)
+			td.mockProvider.EXPECT().GetValidator(receiverInfo.Address).Return(nil, errors.New("not exist"))
 
-			trx, err := td.wallet.MakeBondTx(senderInfo.Address, receiverInfo.Address, "", amt)
+			trx, err := td.wallet.MakeBondTx(sender.String(), receiverInfo.Address, "", amt)
 			assert.NoError(t, err)
 			assert.Equal(t, receiverInfo.PublicKey, trx.Payload().(*payload.BondPayload).PublicKey.String())
 		})
 
 		t.Run("validator doesn't exist and public key set", func(t *testing.T) {
-			td.mockProvider.EXPECT().LastBlockHeight().Return(block.Height(td.RandHeight()), nil)
-			td.mockProvider.EXPECT().GetValidator(receiverInfo.Address).Return(td.GenerateTestValidator(), nil)
+			td.mockProvider.EXPECT().GetValidator(receiverInfo.Address).Return(nil, errors.New("not exist"))
 
-			trx, err := td.wallet.MakeBondTx(senderInfo.Address, receiverInfo.Address, receiverInfo.PublicKey, amt)
+			trx, err := td.wallet.MakeBondTx(sender.String(), receiverInfo.Address, receiverInfo.PublicKey, amt)
 			assert.NoError(t, err)
 			assert.Equal(t, receiverInfo.PublicKey, trx.Payload().(*payload.BondPayload).PublicKey.String())
 		})
 
 		t.Run("validator exists and public key not set", func(t *testing.T) {
-			td.mockProvider.EXPECT().LastBlockHeight().Return(block.Height(td.RandHeight()), nil)
-			td.mockProvider.EXPECT().GetValidator(receiverInfo.Address).Return(nil, errors.New("validator exists"))
+			td.mockProvider.EXPECT().GetValidator(receiverInfo.Address).Return(td.GenerateTestValidator(), nil)
 
-			trx, err := td.wallet.MakeBondTx(senderInfo.Address,
+			trx, err := td.wallet.MakeBondTx(sender.String(),
 				receiverInfo.Address, "", amt)
 			assert.NoError(t, err)
 			assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
 		})
 
 		t.Run("validator exists and public key set", func(t *testing.T) {
-			td.mockProvider.EXPECT().LastBlockHeight().Return(block.Height(td.RandHeight()), nil)
-			td.mockProvider.EXPECT().GetValidator(receiverInfo.Address).Return(nil, errors.New("validator exists"))
+			td.mockProvider.EXPECT().GetValidator(receiverInfo.Address).Return(td.GenerateTestValidator(), nil)
 
-			trx, err := td.wallet.MakeBondTx(senderInfo.Address,
+			trx, err := td.wallet.MakeBondTx(sender.String(),
 				receiverInfo.Address, receiverInfo.PublicKey, amt)
 			assert.NoError(t, err)
 			assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
@@ -475,26 +472,26 @@ func TestMakeBondTx(t *testing.T) {
 	})
 
 	t.Run("invalid sender address", func(t *testing.T) {
-		_, err := td.wallet.MakeBondTx("invalid_addr_string", receiver.Address().String(), "", amt)
+		_, err := td.wallet.MakeBondTx("invalid_addr_string", td.RandValAddress().String(), "", amt)
 		assert.Error(t, err)
 	})
 
 	t.Run("invalid receiver address", func(t *testing.T) {
-		_, err := td.wallet.MakeBondTx(senderInfo.Address, "invalid_addr_string", "", amt)
+		_, err := td.wallet.MakeBondTx(sender.String(), "invalid_addr_string", "", amt)
 		assert.Error(t, err)
 	})
 
 	t.Run("invalid public key", func(t *testing.T) {
-		_, err := td.wallet.MakeBondTx(senderInfo.Address, receiver.Address().String(), "invalid-pub-key", amt)
+		_, err := td.wallet.MakeBondTx(sender.String(), td.RandValAddress().String(), "invalid-pub-key", amt)
 		assert.Error(t, err)
 	})
 
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
 		td.mockStorage.EXPECT().AddressInfo(gomock.Any()).Return(nil, storage.ErrNotFound)
 		td.mockProvider.EXPECT().LastBlockHeight().Return(block.Height(0), errors.New("unable to get height"))
-		td.mockProvider.EXPECT().GetValidator(gomock.Any()).Return(nil, errors.New("unable to get height")).AnyTimes()
+		td.mockProvider.EXPECT().GetValidator(gomock.Any()).Return(nil, errors.New("unable to get validator info")).AnyTimes()
 
-		_, err := td.wallet.MakeBondTx(td.RandAccAddress().String(), receiver.Address().String(), "", amt)
+		_, err := td.wallet.MakeBondTx(td.RandAccAddress().String(), td.RandValAddress().String(), "", amt)
 		assert.Error(t, err)
 	})
 }
@@ -502,13 +499,9 @@ func TestMakeBondTx(t *testing.T) {
 func TestMakeUnbondTx(t *testing.T) {
 	td := setup(t)
 
-	td.mockStorage.EXPECT().InsertAddress(gomock.Any()).Return(nil)
-	td.mockStorage.EXPECT().UpdateVault(td.testVault).Return(nil)
-	defaultFee := td.RandFee()
-	td.mockStorage.EXPECT().WalletInfo().Return(&types.WalletInfo{DefaultFee: defaultFee}).AnyTimes()
+	td.mockStorage.EXPECT().WalletInfo().Return(&types.WalletInfo{DefaultFee: td.RandFee()}).AnyTimes()
 
-	senderInfo, err := td.wallet.NewValidatorAddress("testing addr")
-	require.NoError(t, err)
+	sender := td.RandValAddress()
 
 	t.Run("set parameters manually", func(t *testing.T) {
 		lockTime := td.RandHeight()
@@ -517,7 +510,7 @@ func TestMakeUnbondTx(t *testing.T) {
 			wallet.OptionMemo("test"),
 		}
 
-		trx, err := td.wallet.MakeUnbondTx(senderInfo.Address, opts...)
+		trx, err := td.wallet.MakeUnbondTx(sender.String(), opts...)
 		assert.NoError(t, err)
 		assert.Zero(t, trx.Fee())
 		assert.Equal(t, lockTime, trx.LockTime())
@@ -528,7 +521,7 @@ func TestMakeUnbondTx(t *testing.T) {
 		testHeight := td.RandHeight()
 		td.mockProvider.EXPECT().LastBlockHeight().Return(block.Height(testHeight), nil)
 
-		trx, err := td.wallet.MakeUnbondTx(senderInfo.Address)
+		trx, err := td.wallet.MakeUnbondTx(sender.String())
 		assert.NoError(t, err)
 		assert.Equal(t, testHeight+1, trx.LockTime())
 		assert.Zero(t, trx.Payload().Value())
@@ -551,15 +544,10 @@ func TestMakeUnbondTx(t *testing.T) {
 func TestMakeWithdrawTx(t *testing.T) {
 	td := setup(t)
 
-	td.mockStorage.EXPECT().InsertAddress(gomock.Any()).Return(nil).Times(2)
-	td.mockStorage.EXPECT().UpdateVault(td.testVault).Return(nil).Times(2)
-	defaultFee := td.RandFee()
-	td.mockStorage.EXPECT().WalletInfo().Return(&types.WalletInfo{DefaultFee: defaultFee}).AnyTimes()
+	td.mockStorage.EXPECT().WalletInfo().Return(&types.WalletInfo{DefaultFee: td.RandFee()}).AnyTimes()
 
-	senderInfo, err := td.wallet.NewBLSAccountAddress("testing addr")
-	require.NoError(t, err)
-	receiverInfo, err := td.wallet.NewBLSAccountAddress("testing addr")
-	require.NoError(t, err)
+	sender := td.RandValAddress()
+	receiver := td.RandAccAddress()
 
 	amt := td.RandAmount()
 
@@ -572,7 +560,7 @@ func TestMakeWithdrawTx(t *testing.T) {
 			wallet.OptionMemo("test"),
 		}
 
-		trx, err := td.wallet.MakeWithdrawTx(senderInfo.Address, receiverInfo.Address, amt, opts...)
+		trx, err := td.wallet.MakeWithdrawTx(sender.String(), receiver.String(), amt, opts...)
 		assert.NoError(t, err)
 		assert.Equal(t, fee, trx.Fee())
 		assert.Equal(t, lockTime, trx.LockTime())
@@ -583,21 +571,21 @@ func TestMakeWithdrawTx(t *testing.T) {
 		testHeight := td.RandHeight()
 		td.mockProvider.EXPECT().LastBlockHeight().Return(block.Height(testHeight), nil)
 
-		trx, err := td.wallet.MakeWithdrawTx(senderInfo.Address, receiverInfo.Address, amt)
+		trx, err := td.wallet.MakeWithdrawTx(sender.String(), receiver.String(), amt)
 		assert.NoError(t, err)
 		assert.Equal(t, testHeight+1, trx.LockTime())
 		assert.Equal(t, amt, trx.Payload().Value())
 	})
 
 	t.Run("invalid sender address", func(t *testing.T) {
-		_, err := td.wallet.MakeWithdrawTx("invalid_addr_string", receiverInfo.Address, amt)
+		_, err := td.wallet.MakeWithdrawTx("invalid_addr_string", receiver.String(), amt)
 		assert.Error(t, err)
 	})
 
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
 		td.mockProvider.EXPECT().LastBlockHeight().Return(block.Height(0), errors.New("unable to get height"))
 
-		_, err := td.wallet.MakeWithdrawTx(td.RandAccAddress().String(), receiverInfo.Address, amt)
+		_, err := td.wallet.MakeWithdrawTx(td.RandAccAddress().String(), receiver.String(), amt)
 		assert.Error(t, err)
 	})
 }
@@ -671,19 +659,19 @@ func TestNeuter(t *testing.T) {
 }
 
 func TestTestnetWallet(t *testing.T) {
-	td := setup(t)
-
 	walletPath := util.TempFilePath()
 
 	t.Run("Create Testnet wallet", func(t *testing.T) {
 		mnemonic, _ := wallet.GenerateMnemonic(128)
-		wlt, err := wallet.Create(t.Context(), walletPath, mnemonic, td.password, genesis.Testnet)
+		wlt, err := wallet.Create(t.Context(), walletPath, mnemonic, "", genesis.Testnet)
 		require.NoError(t, err)
 		t.Cleanup(func() { _ = wlt.Close() })
 		assert.Equal(t, genesis.Testnet, wlt.Info().Network)
 
-		addr, _ := wlt.NewBLSAccountAddress("testnet-addr-1")
-		assert.Equal(t, "m/12381'/21777'/2'/0", addr.Path)
+		info, err := wlt.NewBLSAccountAddress("testnet-addr-1")
+		require.NoError(t, err)
+		assert.Equal(t, "m/12381'/21777'/2'/0", info.Path)
+		assert.True(t, strings.HasPrefix(info.Address, "tpc1"))
 	})
 
 	t.Run("Open Testnet wallet", func(t *testing.T) {
@@ -692,7 +680,9 @@ func TestTestnetWallet(t *testing.T) {
 		t.Cleanup(func() { _ = wlt.Close() })
 		assert.Equal(t, genesis.Testnet, wlt.Info().Network)
 
-		addr, _ := wlt.NewBLSAccountAddress("testnet-addr-2")
-		assert.Equal(t, "m/12381'/21777'/2'/1", addr.Path)
+		info, err := wlt.NewBLSAccountAddress("testnet-addr-2")
+		require.NoError(t, err)
+		assert.Equal(t, "m/12381'/21777'/2'/1", info.Path)
+		assert.True(t, strings.HasPrefix(info.Address, "tpc1"))
 	})
 }

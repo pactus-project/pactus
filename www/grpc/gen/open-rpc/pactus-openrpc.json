@@ -875,6 +875,85 @@
           }
         }
       },{
+      "name": "pactus.wallet.list_wallets",
+      "description": "ListWallets returns a list of all available wallets. If `include_unloaded` is set, it returns both loaded and unloaded wallets.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
+      "params": [{
+          "name": "include_unloaded",
+          "description": "Whether to include wallets that exist on disk but are not currently loaded.",
+          "schema": { "type": "boolean" }
+        }],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object","required": ["wallets"],
+          "properties": {"wallets": {
+  "type": "array",
+  "items": { "type": "string" }
+}}
+          }
+        }
+      },{
+      "name": "pactus.wallet.get_wallet_info",
+      "description": "GetWalletInfo returns detailed information about a specific wallet.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
+      "params": [{
+          "name": "wallet_name",
+          "description": "The name of the wallet to query.",
+          "schema": { "type": "string" }
+        }],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object","required": ["wallet_name","version","network","encrypted","uuid","created_at","default_fee","driver","path"],
+          "properties": {"wallet_name": { "type": "string" },"version": { "type": "integer" },"network": { "type": "string" },"encrypted": { "type": "boolean" },"uuid": { "type": "string" },"created_at": { "type": "integer" },"default_fee": { "type": "integer" },"driver": { "type": "string" },"path": { "type": "string" }}
+          }
+        }
+      },{
+      "name": "pactus.wallet.is_wallet_loaded",
+      "description": "IsWalletLoaded checks whether the specified wallet is currently loaded.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
+      "params": [{
+          "name": "wallet_name",
+          "description": "Name of the wallet to check.",
+          "schema": { "type": "string" }
+        }],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object","required": ["wallet_name","loaded"],
+          "properties": {"wallet_name": { "type": "string" },"loaded": { "type": "boolean" }}
+          }
+        }
+      },{
+      "name": "pactus.wallet.update_password",
+      "description": "UpdatePassword updates the password of an existing wallet.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
+      "params": [{
+          "name": "wallet_name",
+          "description": "The name of the wallet whose password will be updated.",
+          "schema": { "type": "string" }
+        },{
+          "name": "old_password",
+          "description": "The current wallet password.",
+          "schema": { "type": "string" }
+        },{
+          "name": "new_password",
+          "description": "The new wallet password.",
+          "schema": { "type": "string" }
+        }],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object","required": ["wallet_name"],
+          "properties": {"wallet_name": { "type": "string" }}
+          }
+        }
+      },{
       "name": "pactus.wallet.get_total_balance",
       "description": "GetTotalBalance returns the total available balance of the wallet.",
       "tags": [{ "name": "wallet"}],
@@ -892,28 +971,20 @@
           }
         }
       },{
-      "name": "pactus.wallet.sign_raw_transaction",
-      "description": "SignRawTransaction signs a raw transaction for a specified wallet.",
+      "name": "pactus.wallet.get_total_stake",
+      "description": "GetTotalStake returns the total stake amount in the wallet.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
       "params": [{
           "name": "wallet_name",
-          "description": "The name of the wallet used for signing.",
-          "schema": { "type": "string" }
-        },{
-          "name": "raw_transaction",
-          "description": "The raw transaction data to be signed.",
-          "schema": { "type": "string" }
-        },{
-          "name": "password",
-          "description": "Wallet password required for signing.",
+          "description": "The name of the wallet to get the total stake.",
           "schema": { "type": "string" }
         }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object","required": ["transaction_id","signed_raw_transaction"],
-          "properties": {"transaction_id": { "type": "string" },"signed_raw_transaction": { "type": "string" }}
+          "type": "object","required": ["wallet_name","total_stake"],
+          "properties": {"wallet_name": { "type": "string" },"total_stake": { "type": "integer" }}
           }
         }
       },{
@@ -931,84 +1002,6 @@
         "schema": {
           "type": "object","required": ["address"],
           "properties": {"address": { "type": "string" }}
-          }
-        }
-      },{
-      "name": "pactus.wallet.get_new_address",
-      "description": "GetNewAddress generates a new address for the specified wallet.",
-      "tags": [{ "name": "wallet"}],
-      "paramStructure": "by-name",
-      "params": [{
-          "name": "wallet_name",
-          "description": "The name of the wallet to generate a new address.",
-          "schema": { "type": "string" }
-        },{
-          "name": "address_type",
-          "description": "The type of address to generate.",
-          "schema": { "type": "integer" }
-        },{
-          "name": "label",
-          "description": "A label for the new address.",
-          "schema": { "type": "string" }
-        },{
-          "name": "password",
-          "description": "Password for the new address. It's required when address_type is Ed25519 type.",
-          "schema": { "type": "string" }
-        }],
-      "result": {
-        "name": "fields",
-        "schema": {
-          "type": "object","required": ["wallet_name","address_info"],
-          "properties": {"wallet_name": { "type": "string" },"address_info": {
-  "type": "object","required": ["address","public_key","label","path"],
-  "properties": {"address": { "type": "string" },"public_key": { "type": "string" },"label": { "type": "string" },"path": { "type": "string" }}
-}}
-          }
-        }
-      },{
-      "name": "pactus.wallet.sign_message",
-      "description": "SignMessage signs an arbitrary message using a wallet's private key.",
-      "tags": [{ "name": "wallet"}],
-      "paramStructure": "by-name",
-      "params": [{
-          "name": "wallet_name",
-          "description": "The name of the wallet to sign with.",
-          "schema": { "type": "string" }
-        },{
-          "name": "password",
-          "description": "Wallet password required for signing.",
-          "schema": { "type": "string" }
-        },{
-          "name": "address",
-          "description": "The address whose private key should be used for signing the message.",
-          "schema": { "type": "string" }
-        },{
-          "name": "message",
-          "description": "The arbitrary message to be signed.",
-          "schema": { "type": "string" }
-        }],
-      "result": {
-        "name": "fields",
-        "schema": {
-          "type": "object","required": ["signature"],
-          "properties": {"signature": { "type": "string" }}
-          }
-        }
-      },{
-      "name": "pactus.wallet.get_total_stake",
-      "description": "GetTotalStake returns the total stake amount in the wallet.",
-      "tags": [{ "name": "wallet"}],
-      "paramStructure": "by-name",
-      "params": [{
-          "name": "wallet_name",
-          "description": "The name of the wallet to get the total stake.",
-          "schema": { "type": "string" }
-        }],
-      "result": {
-        "name": "fields",
-        "schema": {
-          "type": "object","required": ["wallet_name","total_stake"],
-          "properties": {"wallet_name": { "type": "string" },"total_stake": { "type": "integer" }}
           }
         }
       },{
@@ -1065,57 +1058,35 @@
           }
         }
       },{
-      "name": "pactus.wallet.list_wallets",
-      "description": "ListWallets returns a list of all available wallets. If `include_unloaded` is set, it returns both loaded and unloaded wallets.",
+      "name": "pactus.wallet.get_new_address",
+      "description": "GetNewAddress generates a new address for the specified wallet.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
       "params": [{
-          "name": "include_unloaded",
-          "description": "Whether to include wallets that exist on disk but are not currently loaded.",
-          "schema": { "type": "boolean" }
+          "name": "wallet_name",
+          "description": "The name of the wallet to generate a new address.",
+          "schema": { "type": "string" }
+        },{
+          "name": "address_type",
+          "description": "The type of address to generate.",
+          "schema": { "type": "integer" }
+        },{
+          "name": "label",
+          "description": "A label for the new address.",
+          "schema": { "type": "string" }
+        },{
+          "name": "password",
+          "description": "Password for the new address. It's required when address_type is Ed25519 type.",
+          "schema": { "type": "string" }
         }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object","required": ["wallets"],
-          "properties": {"wallets": {
-  "type": "array",
-  "items": { "type": "string" }
+          "type": "object","required": ["wallet_name","address_info"],
+          "properties": {"wallet_name": { "type": "string" },"address_info": {
+  "type": "object","required": ["address","public_key","label","path"],
+  "properties": {"address": { "type": "string" },"public_key": { "type": "string" },"label": { "type": "string" },"path": { "type": "string" }}
 }}
-          }
-        }
-      },{
-      "name": "pactus.wallet.get_wallet_info",
-      "description": "GetWalletInfo returns detailed information about a specific wallet.",
-      "tags": [{ "name": "wallet"}],
-      "paramStructure": "by-name",
-      "params": [{
-          "name": "wallet_name",
-          "description": "The name of the wallet to query.",
-          "schema": { "type": "string" }
-        }],
-      "result": {
-        "name": "fields",
-        "schema": {
-          "type": "object","required": ["wallet_name","version","network","encrypted","uuid","created_at","default_fee","driver","path"],
-          "properties": {"wallet_name": { "type": "string" },"version": { "type": "integer" },"network": { "type": "string" },"encrypted": { "type": "boolean" },"uuid": { "type": "string" },"created_at": { "type": "integer" },"default_fee": { "type": "integer" },"driver": { "type": "string" },"path": { "type": "string" }}
-          }
-        }
-      },{
-      "name": "pactus.wallet.is_wallet_loaded",
-      "description": "IsWalletLoaded checks whether the specified wallet is currently loaded.",
-      "tags": [{ "name": "wallet"}],
-      "paramStructure": "by-name",
-      "params": [{
-          "name": "wallet_name",
-          "description": "Name of the wallet to check.",
-          "schema": { "type": "string" }
-        }],
-      "result": {
-        "name": "fields",
-        "schema": {
-          "type": "object","required": ["wallet_name","loaded"],
-          "properties": {"wallet_name": { "type": "string" },"loaded": { "type": "boolean" }}
           }
         }
       },{
@@ -1149,28 +1120,57 @@
           }
         }
       },{
-      "name": "pactus.wallet.update_password",
-      "description": "UpdatePassword updates the password of an existing wallet.",
+      "name": "pactus.wallet.sign_message",
+      "description": "SignMessage signs an arbitrary message using a wallet's private key.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
       "params": [{
           "name": "wallet_name",
-          "description": "The name of the wallet whose password will be updated.",
+          "description": "The name of the wallet to sign with.",
           "schema": { "type": "string" }
         },{
-          "name": "old_password",
-          "description": "The current wallet password.",
+          "name": "password",
+          "description": "Wallet password required for signing.",
           "schema": { "type": "string" }
         },{
-          "name": "new_password",
-          "description": "The new wallet password.",
+          "name": "address",
+          "description": "The address whose private key should be used for signing the message.",
+          "schema": { "type": "string" }
+        },{
+          "name": "message",
+          "description": "The arbitrary message to be signed.",
           "schema": { "type": "string" }
         }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object","required": ["wallet_name"],
-          "properties": {"wallet_name": { "type": "string" }}
+          "type": "object","required": ["signature"],
+          "properties": {"signature": { "type": "string" }}
+          }
+        }
+      },{
+      "name": "pactus.wallet.sign_raw_transaction",
+      "description": "SignRawTransaction signs a raw transaction for a specified wallet.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
+      "params": [{
+          "name": "wallet_name",
+          "description": "The name of the wallet used for signing.",
+          "schema": { "type": "string" }
+        },{
+          "name": "raw_transaction",
+          "description": "The raw transaction data to be signed.",
+          "schema": { "type": "string" }
+        },{
+          "name": "password",
+          "description": "Wallet password required for signing.",
+          "schema": { "type": "string" }
+        }],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object","required": ["transaction_id","signed_raw_transaction"],
+          "properties": {"transaction_id": { "type": "string" },"signed_raw_transaction": { "type": "string" }}
           }
         }
       },{
@@ -1183,13 +1183,13 @@
           "description": "The name of the wallet to query transactions for.",
           "schema": { "type": "string" }
         },{
-          "name": "direction",
-          "description": "Filter transactions by direction relative to the wallet. Defaults to incoming if not set.",
-          "schema": { "type": "integer" }
-        },{
           "name": "address",
           "description": "Optional: The address to filter transactions. If empty or set to "*", transactions for all addresses in the wallet are included.",
           "schema": { "type": "string" }
+        },{
+          "name": "direction",
+          "description": "Filter transactions by direction relative to the wallet. Defaults to any direction if not set.",
+          "schema": { "type": "integer" }
         },{
           "name": "count",
           "description": "Optional: The maximum number of transactions to return. Defaults to 10 if not set.",

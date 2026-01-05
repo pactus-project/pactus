@@ -17,12 +17,14 @@ class AddressType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
 
 class TxDirection(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
+    TX_DIRECTION_ANY: _ClassVar[TxDirection]
     TX_DIRECTION_INCOMING: _ClassVar[TxDirection]
     TX_DIRECTION_OUTGOING: _ClassVar[TxDirection]
 ADDRESS_TYPE_TREASURY: AddressType
 ADDRESS_TYPE_VALIDATOR: AddressType
 ADDRESS_TYPE_BLS_ACCOUNT: AddressType
 ADDRESS_TYPE_ED25519_ACCOUNT: AddressType
+TX_DIRECTION_ANY: TxDirection
 TX_DIRECTION_INCOMING: TxDirection
 TX_DIRECTION_OUTGOING: TxDirection
 
@@ -317,16 +319,16 @@ class UpdatePasswordResponse(_message.Message):
 class ListTransactionsRequest(_message.Message):
     __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
-    DIRECTION_FIELD_NUMBER: _ClassVar[int]
     ADDRESS_FIELD_NUMBER: _ClassVar[int]
+    DIRECTION_FIELD_NUMBER: _ClassVar[int]
     COUNT_FIELD_NUMBER: _ClassVar[int]
     SKIP_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
-    direction: TxDirection
     address: str
+    direction: TxDirection
     count: int
     skip: int
-    def __init__(self, wallet_name: _Optional[str] = ..., direction: _Optional[_Union[TxDirection, str]] = ..., address: _Optional[str] = ..., count: _Optional[int] = ..., skip: _Optional[int] = ...) -> None: ...
+    def __init__(self, wallet_name: _Optional[str] = ..., address: _Optional[str] = ..., direction: _Optional[_Union[TxDirection, str]] = ..., count: _Optional[int] = ..., skip: _Optional[int] = ...) -> None: ...
 
 class ListTransactionsResponse(_message.Message):
     __slots__ = ()

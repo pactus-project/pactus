@@ -1505,14 +1505,14 @@ pub struct ListTransactionsRequest {
     /// The name of the wallet to query transactions for.
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,
-    /// Filter transactions by direction relative to the wallet.
-    /// Defaults to incoming if not set.
-    #[prost(enumeration="TxDirection", tag="2")]
-    pub direction: i32,
     /// Optional: The address to filter transactions.
     /// If empty or set to "*", transactions for all addresses in the wallet are included.
-    #[prost(string, tag="3")]
+    #[prost(string, tag="2")]
     pub address: ::prost::alloc::string::String,
+    /// Filter transactions by direction relative to the wallet.
+    /// Defaults to any direction if not set.
+    #[prost(enumeration="TxDirection", tag="3")]
+    pub direction: i32,
     /// Optional: The maximum number of transactions to return.
     /// Defaults to 10 if not set.
     #[prost(int32, tag="4")]
@@ -1575,10 +1575,12 @@ impl AddressType {
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum TxDirection {
-    /// Include only transactions where the wallet receives funds.
-    Incoming = 0,
-    /// Include only transactions where the wallet sends funds.
-    Outgoing = 1,
+    /// include both incoming and outgoing transactions.
+    Any = 0,
+    /// Include only incoming transactions where the wallet receives funds.
+    Incoming = 1,
+    /// Include only outgoing transactions where the wallet sends funds.
+    Outgoing = 2,
 }
 impl TxDirection {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -1587,6 +1589,7 @@ impl TxDirection {
     /// (if the ProtoBuf definition does not change) and safe for programmatic use.
     pub fn as_str_name(&self) -> &'static str {
         match self {
+            Self::Any => "TX_DIRECTION_ANY",
             Self::Incoming => "TX_DIRECTION_INCOMING",
             Self::Outgoing => "TX_DIRECTION_OUTGOING",
         }
@@ -1594,6 +1597,7 @@ impl TxDirection {
     /// Creates an enum from field names used in the ProtoBuf definition.
     pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
         match value {
+            "TX_DIRECTION_ANY" => Some(Self::Any),
             "TX_DIRECTION_INCOMING" => Some(Self::Incoming),
             "TX_DIRECTION_OUTGOING" => Some(Self::Outgoing),
             _ => None,

@@ -3,6 +3,7 @@ package sqlitestorage
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util"
@@ -44,6 +45,29 @@ func setup(t *testing.T) *testData {
 		TestSuite: ts,
 		storage:   strg,
 	}
+}
+
+func (td *testData) RandomAddressInfo(t *testing.T) *types.AddressInfo {
+	t.Helper()
+
+	return &types.AddressInfo{
+		Address:   td.RandAccAddress().String(),
+		PublicKey: td.RandString(32),
+		Label:     td.RandString(16),
+		Path:      td.RandString(16),
+	}
+}
+
+func (td *testData) RandomTransactionInfo(t *testing.T) *types.TransactionInfo {
+	t.Helper()
+
+	trx := td.GenerateTestTransferTx()
+	txInfos, err := types.MakeTransactionInfos(trx, types.TransactionStatusPending, 0)
+	require.NoError(t, err)
+
+	txInfos[0].Direction = types.TxDirectionIncoming
+
+	return txInfos[0]
 }
 
 func TestWalletInfo(t *testing.T) {
@@ -101,27 +125,22 @@ func TestAddressOperations(t *testing.T) {
 	td := setup(t)
 
 	// Test InsertAddress
-	addr := &types.AddressInfo{
-		Address:   "test_address",
-		PublicKey: "test_public_key",
-		Label:     "test label",
-		Path:      "test_path",
-	}
+	addrInfo := td.RandomAddressInfo(t)
 
-	err := td.storage.InsertAddress(addr)
+	err := td.storage.InsertAddress(addrInfo)
 	require.NoError(t, err)
 
 	// Test AllAddresses
 	addresses := td.storage.AllAddresses()
 	require.Len(t, addresses, 1)
-	assert.Equal(t, addr.Address, addresses[0].Address)
-	assert.Equal(t, addr.PublicKey, addresses[0].PublicKey)
-	assert.Equal(t, addr.Label, addresses[0].Label)
-	assert.Equal(t, addr.Path, addresses[0].Path)
+	assert.Equal(t, addrInfo.Address, addresses[0].Address)
+	assert.Equal(t, addrInfo.PublicKey, addresses[0].PublicKey)
+	assert.Equal(t, addrInfo.Label, addresses[0].Label)
+	assert.Equal(t, addrInfo.Path, addresses[0].Path)
 
 	// Test UpdateAddress
-	addr.Label = "Updated Label"
-	err = td.storage.UpdateAddress(addr)
+	addrInfo.Label = "Updated Label"
+	err = td.storage.UpdateAddress(addrInfo)
 	require.NoError(t, err)
 
 	addresses = td.storage.AllAddresses()
@@ -131,12 +150,8 @@ func TestAddressOperations(t *testing.T) {
 func TestTransactionOperations(t *testing.T) {
 	td := setup(t)
 
-	trx := td.GenerateTestTransferTx()
-	txInfos, err := types.MakeTransactionInfos(trx, types.TransactionStatusPending, 0)
-	require.NoError(t, err)
-
-	txInfo := txInfos[0]
-	err = td.storage.InsertTransaction(txInfo)
+	txInfo := td.RandomTransactionInfo(t)
+	err := td.storage.InsertTransaction(txInfo)
 	require.NoError(t, err)
 
 	// Test HasTransaction
@@ -144,7 +159,7 @@ func TestTransactionOperations(t *testing.T) {
 	assert.False(t, td.storage.HasTransaction("non_existing"))
 
 	// Test GetTransaction
-	retrieved, err := td.storage.GetTransaction(trx.ID().String())
+	retrieved, err := td.storage.GetTransaction(txInfo.ID)
 	require.NoError(t, err)
 	assert.Equal(t, txInfo.ID, retrieved.ID)
 	assert.Equal(t, txInfo.Sender, retrieved.Sender)
@@ -170,36 +185,7 @@ func TestTransactionOperations(t *testing.T) {
 	assert.Equal(t, types.TransactionStatusConfirmed, retrieved.Status)
 }
 
-func TestTransactionCompositeKey(t *testing.T) {
-	td := setup(t)
-
-	trx := td.GenerateTestBatchTransferTx()
-	txInfos, err := types.MakeTransactionInfos(trx, types.TransactionStatusPending, 0)
-	require.NoError(t, err)
-
-	// Insert same transaction ID with different receivers (batch transfer scenario)
-	for _, txInfo := range txInfos {
-		err := td.storage.InsertTransaction(txInfo)
-		require.NoError(t, err)
-	}
-
-	// Transaction should exist
-	assert.True(t, td.storage.HasTransaction(trx.ID().String()))
-
-	// GetTransaction returns first match
-	retrieved, err := td.storage.GetTransaction(trx.ID().String())
-	require.NoError(t, err)
-	assert.Equal(t, txInfos[0].Sender, retrieved.Sender)
-
-	// List transactions for each receiver
-	for _, txInfo := range txInfos {
-		list1, err := td.storage.ListTransactions(txInfo.Receiver, 10, 0)
-		require.NoError(t, err)
-		assert.Len(t, list1, 1)
-	}
-}
-
-func TestListTransactions(t *testing.T) {
+func TestQueryTransactions(t *testing.T) {
 	td := setup(t)
 
 	// Insert multiple transactions
@@ -209,24 +195,119 @@ func TestListTransactions(t *testing.T) {
 		txInfo, err := types.MakeTransactionInfos(trx, types.TransactionStatusPending, 0)
 		require.NoError(t, err)
 
+		txInfo[0].Direction = types.TxDirectionIncoming
+
 		err = td.storage.InsertTransaction(txInfo[0])
 		require.NoError(t, err)
 	}
 
-	// Test ListTransactions with pagination
-	transactions, err := td.storage.ListTransactions(receiver.String(), 3, 0)
+	// Test QueryTransactions with pagination
+	transactions, err := td.storage.QueryTransactions(storage.QueryParams{
+		Address:   receiver.String(),
+		Direction: types.TxDirectionIncoming,
+		Count:     3,
+		Skip:      0,
+	})
 	require.NoError(t, err)
 	assert.Len(t, transactions, 3)
 
 	// Test with skip
-	transactions, err = td.storage.ListTransactions(receiver.String(), 3, 3)
+	transactions, err = td.storage.QueryTransactions(storage.QueryParams{
+		Address:   receiver.String(),
+		Direction: types.TxDirectionIncoming,
+		Count:     3,
+		Skip:      3,
+	})
 	require.NoError(t, err)
 	assert.Len(t, transactions, 2)
 
 	// Test with different receiver
-	transactions, err = td.storage.ListTransactions("other_receiver", 10, 0)
+	transactions, err = td.storage.QueryTransactions(storage.QueryParams{
+		Address:   "other_receiver",
+		Direction: types.TxDirectionIncoming,
+		Count:     10,
+		Skip:      0,
+	})
 	require.NoError(t, err)
 	assert.Len(t, transactions, 0)
+}
+
+func TestQueryTransactions_WildcardAndFilters(t *testing.T) {
+	td := setup(t)
+
+	// create three tx rows:
+	// 1) sender A -> receiver B
+	// 2) sender A -> receiver C
+	// 3) sender D -> receiver B
+	pubA, signerA := td.RandEd25519KeyPair()
+	pubD, signerD := td.RandEd25519KeyPair()
+	addrB := td.RandAccAddress()
+	addrC := td.RandAccAddress()
+
+	makeTx := func(signer crypto.PrivateKey, receiver crypto.Address, dir types.TxDirection) {
+		trx := td.GenerateTestTransferTx(
+			testsuite.TransactionWithSigner(signer),
+			testsuite.TransactionWithReceiver(receiver),
+		)
+		txInfos, err := types.MakeTransactionInfos(trx, types.TransactionStatusPending, 0)
+		require.NoError(t, err)
+		txInfos[0].Direction = dir
+		err = td.storage.InsertTransaction(txInfos[0])
+		require.NoError(t, err)
+	}
+
+	makeTx(signerA, addrB, types.TxDirectionOutgoing)
+	makeTx(signerA, addrC, types.TxDirectionOutgoing)
+	makeTx(signerD, addrB, types.TxDirectionIncoming)
+
+	// Wildcard both: all 3
+	txs, err := td.storage.QueryTransactions(storage.QueryParams{
+		Address:   "*",
+		Direction: types.TxDirectionAny,
+		Count:     10,
+		Skip:      0,
+	})
+	require.NoError(t, err)
+	assert.Len(t, txs, 3)
+
+	// Filter sender only (A): rows 1 and 2
+	txs, err = td.storage.QueryTransactions(storage.QueryParams{
+		Address:   pubA.AccountAddress().String(),
+		Direction: types.TxDirectionOutgoing,
+		Count:     10,
+		Skip:      0,
+	})
+	require.NoError(t, err)
+	assert.Len(t, txs, 2)
+
+	// Filter sender only (D): rows 3
+	txs, err = td.storage.QueryTransactions(storage.QueryParams{
+		Address:   pubD.AccountAddress().String(),
+		Direction: types.TxDirectionOutgoing,
+		Count:     10,
+		Skip:      0,
+	})
+	require.NoError(t, err)
+	assert.Len(t, txs, 0)
+	// Filter receiver only (B): rows with incoming to B (row 3)
+	txs, err = td.storage.QueryTransactions(storage.QueryParams{
+		Address:   addrB.String(),
+		Direction: types.TxDirectionIncoming,
+		Count:     10,
+		Skip:      0,
+	})
+	require.NoError(t, err)
+	assert.Len(t, txs, 1)
+
+	// Outgoing from A: rows 1 and 2
+	txs, err = td.storage.QueryTransactions(storage.QueryParams{
+		Address:   pubA.AccountAddress().String(),
+		Direction: types.TxDirectionOutgoing,
+		Count:     10,
+		Skip:      0,
+	})
+	require.NoError(t, err)
+	assert.Len(t, txs, 2)
 }
 
 func TestClone(t *testing.T) {

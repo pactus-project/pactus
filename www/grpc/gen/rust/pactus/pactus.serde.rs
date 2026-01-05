@@ -8035,10 +8035,10 @@ impl serde::Serialize for ListTransactionsRequest {
         if !self.wallet_name.is_empty() {
             len += 1;
         }
-        if self.direction != 0 {
+        if !self.address.is_empty() {
             len += 1;
         }
-        if !self.address.is_empty() {
+        if self.direction != 0 {
             len += 1;
         }
         if self.count != 0 {
@@ -8051,13 +8051,13 @@ impl serde::Serialize for ListTransactionsRequest {
         if !self.wallet_name.is_empty() {
             struct_ser.serialize_field("walletName", &self.wallet_name)?;
         }
+        if !self.address.is_empty() {
+            struct_ser.serialize_field("address", &self.address)?;
+        }
         if self.direction != 0 {
             let v = TxDirection::try_from(self.direction)
                 .map_err(|_| serde::ser::Error::custom(format!("Invalid variant {}", self.direction)))?;
             struct_ser.serialize_field("direction", &v)?;
-        }
-        if !self.address.is_empty() {
-            struct_ser.serialize_field("address", &self.address)?;
         }
         if self.count != 0 {
             struct_ser.serialize_field("count", &self.count)?;
@@ -8077,8 +8077,8 @@ impl<'de> serde::Deserialize<'de> for ListTransactionsRequest {
         const FIELDS: &[&str] = &[
             "wallet_name",
             "walletName",
-            "direction",
             "address",
+            "direction",
             "count",
             "skip",
         ];
@@ -8086,8 +8086,8 @@ impl<'de> serde::Deserialize<'de> for ListTransactionsRequest {
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             WalletName,
-            Direction,
             Address,
+            Direction,
             Count,
             Skip,
         }
@@ -8112,8 +8112,8 @@ impl<'de> serde::Deserialize<'de> for ListTransactionsRequest {
                     {
                         match value {
                             "walletName" | "wallet_name" => Ok(GeneratedField::WalletName),
-                            "direction" => Ok(GeneratedField::Direction),
                             "address" => Ok(GeneratedField::Address),
+                            "direction" => Ok(GeneratedField::Direction),
                             "count" => Ok(GeneratedField::Count),
                             "skip" => Ok(GeneratedField::Skip),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
@@ -8136,8 +8136,8 @@ impl<'de> serde::Deserialize<'de> for ListTransactionsRequest {
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
-                let mut direction__ = None;
                 let mut address__ = None;
+                let mut direction__ = None;
                 let mut count__ = None;
                 let mut skip__ = None;
                 while let Some(k) = map_.next_key()? {
@@ -8148,17 +8148,17 @@ impl<'de> serde::Deserialize<'de> for ListTransactionsRequest {
                             }
                             wallet_name__ = Some(map_.next_value()?);
                         }
-                        GeneratedField::Direction => {
-                            if direction__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("direction"));
-                            }
-                            direction__ = Some(map_.next_value::<TxDirection>()? as i32);
-                        }
                         GeneratedField::Address => {
                             if address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("address"));
                             }
                             address__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Direction => {
+                            if direction__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("direction"));
+                            }
+                            direction__ = Some(map_.next_value::<TxDirection>()? as i32);
                         }
                         GeneratedField::Count => {
                             if count__.is_some() {
@@ -8180,8 +8180,8 @@ impl<'de> serde::Deserialize<'de> for ListTransactionsRequest {
                 }
                 Ok(ListTransactionsRequest {
                     wallet_name: wallet_name__.unwrap_or_default(),
-                    direction: direction__.unwrap_or_default(),
                     address: address__.unwrap_or_default(),
+                    direction: direction__.unwrap_or_default(),
                     count: count__.unwrap_or_default(),
                     skip: skip__.unwrap_or_default(),
                 })
@@ -12471,6 +12471,7 @@ impl serde::Serialize for TxDirection {
         S: serde::Serializer,
     {
         let variant = match self {
+            Self::Any => "TX_DIRECTION_ANY",
             Self::Incoming => "TX_DIRECTION_INCOMING",
             Self::Outgoing => "TX_DIRECTION_OUTGOING",
         };
@@ -12484,6 +12485,7 @@ impl<'de> serde::Deserialize<'de> for TxDirection {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
+            "TX_DIRECTION_ANY",
             "TX_DIRECTION_INCOMING",
             "TX_DIRECTION_OUTGOING",
         ];
@@ -12526,6 +12528,7 @@ impl<'de> serde::Deserialize<'de> for TxDirection {
                 E: serde::de::Error,
             {
                 match value {
+                    "TX_DIRECTION_ANY" => Ok(TxDirection::Any),
                     "TX_DIRECTION_INCOMING" => Ok(TxDirection::Incoming),
                     "TX_DIRECTION_OUTGOING" => Ok(TxDirection::Outgoing),
                     _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),

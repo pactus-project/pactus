@@ -20,31 +20,6 @@ service Wallet {
   // UnloadWallet unloads a currently loaded wallet with the specified name.
   rpc UnloadWallet(UnloadWalletRequest) returns (UnloadWalletResponse);
 
-  // GetTotalBalance returns the total available balance of the wallet.
-  rpc GetTotalBalance(GetTotalBalanceRequest) returns (GetTotalBalanceResponse);
-
-  // SignRawTransaction signs a raw transaction for a specified wallet.
-  rpc SignRawTransaction(SignRawTransactionRequest) returns (SignRawTransactionResponse);
-
-  // GetValidatorAddress retrieves the validator address associated with a public key.
-  // Deprecated: Will move into utils.
-  rpc GetValidatorAddress(GetValidatorAddressRequest) returns (GetValidatorAddressResponse);
-
-  // GetNewAddress generates a new address for the specified wallet.
-  rpc GetNewAddress(GetNewAddressRequest) returns (GetNewAddressResponse);
-
-  // SignMessage signs an arbitrary message using a wallet's private key.
-  rpc SignMessage(SignMessageRequest) returns (SignMessageResponse);
-
-  // GetTotalStake returns the total stake amount in the wallet.
-  rpc GetTotalStake(GetTotalStakeRequest) returns (GetTotalStakeResponse);
-
-  // GetAddressInfo returns detailed information about a specific address.
-  rpc GetAddressInfo(GetAddressInfoRequest) returns (GetAddressInfoResponse);
-
-  // SetAddressLabel sets or updates the label for a given address.
-  rpc SetAddressLabel(SetAddressLabelRequest) returns (SetAddressLabelResponse);
-
   // ListWallets returns a list of all available wallets.
   // If `include_unloaded` is set, it returns both loaded and unloaded wallets.
   rpc ListWallets(ListWalletsRequest) returns (ListWalletsResponse);
@@ -55,11 +30,36 @@ service Wallet {
   // IsWalletLoaded checks whether the specified wallet is currently loaded.
   rpc IsWalletLoaded(IsWalletLoadedRequest) returns (IsWalletLoadedResponse);
 
+  // UpdatePassword updates the password of an existing wallet.
+  rpc UpdatePassword(UpdatePasswordRequest) returns (UpdatePasswordResponse);
+
+  // GetTotalBalance returns the total available balance of the wallet.
+  rpc GetTotalBalance(GetTotalBalanceRequest) returns (GetTotalBalanceResponse);
+
+  // GetTotalStake returns the total stake amount in the wallet.
+  rpc GetTotalStake(GetTotalStakeRequest) returns (GetTotalStakeResponse);
+
+  // GetValidatorAddress retrieves the validator address associated with a public key.
+  // Deprecated: Will move into utils.
+  rpc GetValidatorAddress(GetValidatorAddressRequest) returns (GetValidatorAddressResponse);
+
+  // GetAddressInfo returns detailed information about a specific address.
+  rpc GetAddressInfo(GetAddressInfoRequest) returns (GetAddressInfoResponse);
+
+  // SetAddressLabel sets or updates the label for a given address.
+  rpc SetAddressLabel(SetAddressLabelRequest) returns (SetAddressLabelResponse);
+
+  // GetNewAddress generates a new address for the specified wallet.
+  rpc GetNewAddress(GetNewAddressRequest) returns (GetNewAddressResponse);
+
   // ListAddresses returns all addresses in the specified wallet.
   rpc ListAddresses(ListAddressesRequest) returns (ListAddressesResponse);
 
-  // UpdatePassword updates the password of an existing wallet.
-  rpc UpdatePassword(UpdatePasswordRequest) returns (UpdatePasswordResponse);
+  // SignMessage signs an arbitrary message using a wallet's private key.
+  rpc SignMessage(SignMessageRequest) returns (SignMessageResponse);
+
+  // SignRawTransaction signs a raw transaction for a specified wallet.
+  rpc SignRawTransaction(SignRawTransactionRequest) returns (SignRawTransactionResponse);
 
   // ListTransactions returns a list of transactions for a wallet,
   // optionally filtered by a specific address, with pagination support.
@@ -381,11 +381,14 @@ message UpdatePasswordResponse {
 
 // TxDirection indicates the direction of a transaction relative to the wallet.
 enum TxDirection {
-  // Include only transactions where the wallet receives funds.
-  TX_DIRECTION_INCOMING = 0;
+  // include both incoming and outgoing transactions.
+  TX_DIRECTION_ANY = 0;
 
-  // Include only transactions where the wallet sends funds.
-  TX_DIRECTION_OUTGOING = 1;
+  // Include only incoming transactions where the wallet receives funds.
+  TX_DIRECTION_INCOMING = 1;
+
+  // Include only outgoing transactions where the wallet sends funds.
+  TX_DIRECTION_OUTGOING = 2;
 }
 
 // Request message for listing transactions of a wallet, optionally filtered by a specific address.
@@ -393,13 +396,13 @@ message ListTransactionsRequest {
   // The name of the wallet to query transactions for.
   string wallet_name = 1;
 
-  // Filter transactions by direction relative to the wallet.
-  // Defaults to incoming if not set.
-  TxDirection direction = 2;
-
   // Optional: The address to filter transactions.
   // If empty or set to "*", transactions for all addresses in the wallet are included.
-  string address = 3;
+  string address = 2;
+
+  // Filter transactions by direction relative to the wallet.
+  // Defaults to any direction if not set.
+  TxDirection direction = 3;
 
   // Optional: The maximum number of transactions to return.
   // Defaults to 10 if not set.

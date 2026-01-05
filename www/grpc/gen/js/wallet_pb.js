@@ -6709,8 +6709,8 @@ proto.pactus.ListTransactionsRequest.prototype.toObject = function(opt_includeIn
 proto.pactus.ListTransactionsRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
 walletName: jspb.Message.getFieldWithDefault(msg, 1, ""),
-direction: jspb.Message.getFieldWithDefault(msg, 2, 0),
-address: jspb.Message.getFieldWithDefault(msg, 3, ""),
+address: jspb.Message.getFieldWithDefault(msg, 2, ""),
+direction: jspb.Message.getFieldWithDefault(msg, 3, 0),
 count: jspb.Message.getFieldWithDefault(msg, 4, 0),
 skip: jspb.Message.getFieldWithDefault(msg, 5, 0)
   };
@@ -6754,12 +6754,12 @@ proto.pactus.ListTransactionsRequest.deserializeBinaryFromReader = function(msg,
       msg.setWalletName(value);
       break;
     case 2:
-      var value = /** @type {!proto.pactus.TxDirection} */ (reader.readEnum());
-      msg.setDirection(value);
-      break;
-    case 3:
       var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setAddress(value);
+      break;
+    case 3:
+      var value = /** @type {!proto.pactus.TxDirection} */ (reader.readEnum());
+      msg.setDirection(value);
       break;
     case 4:
       var value = /** @type {number} */ (reader.readInt32());
@@ -6805,16 +6805,16 @@ proto.pactus.ListTransactionsRequest.serializeBinaryToWriter = function(message,
       f
     );
   }
-  f = message.getDirection();
-  if (f !== 0.0) {
-    writer.writeEnum(
+  f = message.getAddress();
+  if (f.length > 0) {
+    writer.writeString(
       2,
       f
     );
   }
-  f = message.getAddress();
-  if (f.length > 0) {
-    writer.writeString(
+  f = message.getDirection();
+  if (f !== 0.0) {
+    writer.writeEnum(
       3,
       f
     );
@@ -6855,29 +6855,11 @@ proto.pactus.ListTransactionsRequest.prototype.setWalletName = function(value) {
 
 
 /**
- * optional TxDirection direction = 2;
- * @return {!proto.pactus.TxDirection}
- */
-proto.pactus.ListTransactionsRequest.prototype.getDirection = function() {
-  return /** @type {!proto.pactus.TxDirection} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
-};
-
-
-/**
- * @param {!proto.pactus.TxDirection} value
- * @return {!proto.pactus.ListTransactionsRequest} returns this
- */
-proto.pactus.ListTransactionsRequest.prototype.setDirection = function(value) {
-  return jspb.Message.setProto3EnumField(this, 2, value);
-};
-
-
-/**
- * optional string address = 3;
+ * optional string address = 2;
  * @return {string}
  */
 proto.pactus.ListTransactionsRequest.prototype.getAddress = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
@@ -6886,7 +6868,25 @@ proto.pactus.ListTransactionsRequest.prototype.getAddress = function() {
  * @return {!proto.pactus.ListTransactionsRequest} returns this
  */
 proto.pactus.ListTransactionsRequest.prototype.setAddress = function(value) {
-  return jspb.Message.setProto3StringField(this, 3, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional TxDirection direction = 3;
+ * @return {!proto.pactus.TxDirection}
+ */
+proto.pactus.ListTransactionsRequest.prototype.getDirection = function() {
+  return /** @type {!proto.pactus.TxDirection} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/**
+ * @param {!proto.pactus.TxDirection} value
+ * @return {!proto.pactus.ListTransactionsRequest} returns this
+ */
+proto.pactus.ListTransactionsRequest.prototype.setDirection = function(value) {
+  return jspb.Message.setProto3EnumField(this, 3, value);
 };
 
 
@@ -7130,8 +7130,9 @@ proto.pactus.AddressType = {
  * @enum {number}
  */
 proto.pactus.TxDirection = {
-  TX_DIRECTION_INCOMING: 0,
-  TX_DIRECTION_OUTGOING: 1
+  TX_DIRECTION_ANY: 0,
+  TX_DIRECTION_INCOMING: 1,
+  TX_DIRECTION_OUTGOING: 2
 };
 
 goog.object.extend(exports, proto.pactus);

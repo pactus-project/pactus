@@ -5,6 +5,8 @@ import (
 
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/util/terminal"
+	"github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/wallet/types"
 	"github.com/spf13/cobra"
 )
 
@@ -54,16 +56,42 @@ func buildTransactionsListCmd(parentCmd *cobra.Command) {
 	}
 	parentCmd.AddCommand(listCmd)
 
+	directionOpt := listCmd.Flags().String("direction", "any",
+		"filter transactions by direction: any, incoming, outgoing")
+	countOpt := listCmd.Flags().Int("count", 10, "number of transactions to list")
+	skipOpt := listCmd.Flags().Int("skip", 0, "number of transactions to skip")
+
 	listCmd.Run = func(_ *cobra.Command, args []string) {
-		addr := args[0]
+		var direction types.TxDirection
+		switch *directionOpt {
+		case "any":
+			direction = types.TxDirectionAny
+		case "incoming":
+			direction = types.TxDirectionIncoming
+		case "outgoing":
+			direction = types.TxDirectionOutgoing
+		default:
+			terminal.PrintErrorMsgf("invalid direction: %s", *directionOpt)
+
+			return
+		}
+
+		opts := []wallet.ListTransactionsOption{
+			wallet.WithAddress(args[0]),
+			wallet.WithDirection(direction),
+			wallet.WithCount(*countOpt),
+			wallet.WithSkip(*skipOpt),
+		}
 
 		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
 
-		transactions := wlt.ListTransactions(addr)
+		transactions := wlt.ListTransactions(opts...)
+		terminal.PrintInfoMsgBoldf("No Time\tID\tType\tStatus\tSender\tReceiver\tAmount")
 		for i, trx := range transactions {
-			terminal.PrintInfoMsgf("%d %v %v %v %v\t%v",
-				i+1, trx.CreatedAt.Format("02 Jan 06 15:04"), trx.ID[:12], trx.PayloadType, trx.Status, trx.Amount)
+			terminal.PrintInfoMsgf("%d - %v\t%v\t%s\t%s\t%s\t%s\t%s",
+				i+1, trx.CreatedAt.Format("02 Jan 06 15:04"),
+				trx.ID[:12], trx.PayloadType, trx.Status, trx.Sender, trx.Receiver, trx.Amount)
 		}
 	}
 }

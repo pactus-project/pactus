@@ -8,7 +8,6 @@ import (
 	"net"
 	"time"
 
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
@@ -24,24 +23,16 @@ import (
 var _ provider.IBlockchainProvider = (*RemoteBlockchainProvider)(nil)
 
 type remoteProviderConfig struct {
-	network genesis.ChainType
 	timeout time.Duration
 	servers []string
 }
 
 var defaultOpenWalletConfig = remoteProviderConfig{
-	network: genesis.Mainnet,
 	timeout: 5 * time.Second,
-	servers: make([]string, 0),
+	servers: nil,
 }
 
 type RemoteProviderOption func(*remoteProviderConfig)
-
-func WithNetwork(network genesis.ChainType) RemoteProviderOption {
-	return func(cfg *remoteProviderConfig) {
-		cfg.network = network
-	}
-}
 
 func WithTimeout(timeout time.Duration) RemoteProviderOption {
 	return func(cfg *remoteProviderConfig) {
@@ -66,46 +57,49 @@ type RemoteBlockchainProvider struct {
 	transactionClient pactus.TransactionClient
 }
 
-func NewRemoteBlockchainProvider(ctx context.Context, opts ...RemoteProviderOption) (*RemoteBlockchainProvider, error) {
+func NewRemoteBlockchainProvider(ctx context.Context, network genesis.ChainType,
+	opts ...RemoteProviderOption,
+) (*RemoteBlockchainProvider, error) {
 	cfg := defaultOpenWalletConfig
 	for _, opt := range opts {
 		opt(&cfg)
 	}
 
-	serversData := map[string][]ServerInfo{}
-	err := json.Unmarshal(serversJSON, &serversData)
-	if err != nil {
-		return nil, err
-	}
+	if cfg.servers == nil {
+		var servers []string
 
-	var servers []string
-	switch cfg.network {
-	case genesis.Mainnet:
-		for _, srv := range serversData["mainnet"] {
-			servers = append(servers, srv.Address)
+		serversData := map[string][]ServerInfo{}
+		err := json.Unmarshal(serversJSON, &serversData)
+		if err != nil {
+			return nil, err
 		}
 
-	case genesis.Testnet:
-		crypto.ToTestnetHRP()
+		switch network {
+		case genesis.Mainnet:
+			for _, srv := range serversData["mainnet"] {
+				servers = append(servers, srv.Address)
+			}
 
-		for _, srv := range serversData["testnet"] {
-			servers = append(servers, srv.Address)
+		case genesis.Testnet:
+			for _, srv := range serversData["testnet"] {
+				servers = append(servers, srv.Address)
+			}
+
+		case genesis.Localnet:
+			servers = []string{"localhost:50052"}
+
+		default:
+			return nil, ErrInvalidNetwork
 		}
 
-	case genesis.Localnet:
-		crypto.ToTestnetHRP()
+		util.Shuffle(servers)
 
-		servers = []string{"localhost:50052"}
-
-	default:
-		return nil, ErrInvalidNetwork
+		cfg.servers = servers
 	}
-
-	util.Shuffle(servers)
 
 	return &RemoteBlockchainProvider{
 		ctx:     ctx,
-		servers: servers,
+		servers: cfg.servers,
 		timeout: cfg.timeout,
 	}, nil
 }

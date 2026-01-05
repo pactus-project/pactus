@@ -6,6 +6,14 @@ import (
 	"github.com/pactus-project/pactus/wallet/vault"
 )
 
+// QueryParams specifies filters for querying stored transactions.
+type QueryParams struct {
+	Address   string
+	Direction types.TxDirection
+	Count     int
+	Skip      int
+}
+
 type IStorage interface {
 	WalletInfo() *types.WalletInfo
 	Vault() *vault.Vault
@@ -24,7 +32,7 @@ type IStorage interface {
 	UpdateTransactionStatus(id string, status types.TransactionStatus, blockHeight uint32) error
 	HasTransaction(id string) bool
 	GetTransaction(id string) (*types.TransactionInfo, error)
-	ListTransactions(receiver string, count int, skip int) ([]*types.TransactionInfo, error)
+	QueryTransactions(params QueryParams) ([]*types.TransactionInfo, error)
 
 	Close() error
 	Clone(path string) (IStorage, error)

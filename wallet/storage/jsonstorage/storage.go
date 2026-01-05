@@ -150,11 +150,11 @@ func (*Storage) GetTransaction(_ string) (*types.TransactionInfo, error) {
 	return nil, ErrUnsupported
 }
 
-func (*Storage) ListTransactions(_ string, _, _ int) ([]*types.TransactionInfo, error) {
+func (*Storage) GetPendingTransactions() (map[string]*types.TransactionInfo, error) {
 	return nil, ErrUnsupported
 }
 
-func (*Storage) GetPendingTransactions() (map[string]*types.TransactionInfo, error) {
+func (*Storage) QueryTransactions(_ storage.QueryParams) ([]*types.TransactionInfo, error) {
 	return nil, ErrUnsupported
 }
 

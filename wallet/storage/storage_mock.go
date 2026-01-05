@@ -214,19 +214,19 @@ func (mr *MockIStorageMockRecorder) IsLegacy() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsLegacy", reflect.TypeOf((*MockIStorage)(nil).IsLegacy))
 }
 
-// ListTransactions mocks base method.
-func (m *MockIStorage) ListTransactions(receiver string, count, skip int) ([]*types.TransactionInfo, error) {
+// QueryTransactions mocks base method.
+func (m *MockIStorage) QueryTransactions(q QueryParams) ([]*types.TransactionInfo, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListTransactions", receiver, count, skip)
+	ret := m.ctrl.Call(m, "QueryTransactions", q)
 	ret0, _ := ret[0].([]*types.TransactionInfo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// ListTransactions indicates an expected call of ListTransactions.
-func (mr *MockIStorageMockRecorder) ListTransactions(receiver, count, skip any) *gomock.Call {
+// QueryTransactions indicates an expected call of QueryTransactions.
+func (mr *MockIStorageMockRecorder) QueryTransactions(q any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTransactions", reflect.TypeOf((*MockIStorage)(nil).ListTransactions), receiver, count, skip)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueryTransactions", reflect.TypeOf((*MockIStorage)(nil).QueryTransactions), q)
 }
 
 // SetDefaultFee mocks base method.

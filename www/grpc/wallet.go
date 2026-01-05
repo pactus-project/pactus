@@ -295,7 +295,7 @@ func (s *walletServer) ListTransactions(_ context.Context,
 	req *pactus.ListTransactionsRequest,
 ) (*pactus.ListTransactionsResponse, error) {
 	infos, err := s.walletManager.ListTransactions(req.WalletName,
-		wallet.WithDirection(wallet.TxDirection(req.Direction)),
+		wallet.WithDirection(types.TxDirection(req.Direction)),
 		wallet.WithAddress(req.Address),
 		wallet.WithCount(int(req.Count)),
 		wallet.WithSkip(int(req.Skip)))
