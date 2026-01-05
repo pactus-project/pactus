@@ -26931,32 +26931,11 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
 
     /**
      * <pre>
-     * Filter transactions by direction relative to the wallet.
-     * Defaults to incoming if not set.
-     * </pre>
-     *
-     * <code>.pactus.TxDirection direction = 2 [json_name = "direction"];</code>
-     * @return The enum numeric value on the wire for direction.
-     */
-    int getDirectionValue();
-    /**
-     * <pre>
-     * Filter transactions by direction relative to the wallet.
-     * Defaults to incoming if not set.
-     * </pre>
-     *
-     * <code>.pactus.TxDirection direction = 2 [json_name = "direction"];</code>
-     * @return The direction.
-     */
-    pactus.WalletOuterClass.TxDirection getDirection();
-
-    /**
-     * <pre>
      * Optional: The address to filter transactions.
      * If empty or set to "*", transactions for all addresses in the wallet are included.
      * </pre>
      *
-     * <code>string address = 3 [json_name = "address"];</code>
+     * <code>string address = 2 [json_name = "address"];</code>
      * @return The address.
      */
     java.lang.String getAddress();
@@ -26966,11 +26945,32 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
      * If empty or set to "*", transactions for all addresses in the wallet are included.
      * </pre>
      *
-     * <code>string address = 3 [json_name = "address"];</code>
+     * <code>string address = 2 [json_name = "address"];</code>
      * @return The bytes for address.
      */
     com.google.protobuf.ByteString
         getAddressBytes();
+
+    /**
+     * <pre>
+     * Filter transactions by direction relative to the wallet.
+     * Defaults to any direction if not set.
+     * </pre>
+     *
+     * <code>.pactus.TxDirection direction = 3 [json_name = "direction"];</code>
+     * @return The enum numeric value on the wire for direction.
+     */
+    int getDirectionValue();
+    /**
+     * <pre>
+     * Filter transactions by direction relative to the wallet.
+     * Defaults to any direction if not set.
+     * </pre>
+     *
+     * <code>.pactus.TxDirection direction = 3 [json_name = "direction"];</code>
+     * @return The direction.
+     */
+    pactus.WalletOuterClass.TxDirection getDirection();
 
     /**
      * <pre>
@@ -27021,8 +27021,8 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     }
     private ListTransactionsRequest() {
       walletName_ = "";
-      direction_ = 0;
       address_ = "";
+      direction_ = 0;
     }
 
     public static final com.google.protobuf.Descriptors.Descriptor
@@ -27085,35 +27085,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       }
     }
 
-    public static final int DIRECTION_FIELD_NUMBER = 2;
-    private int direction_ = 0;
-    /**
-     * <pre>
-     * Filter transactions by direction relative to the wallet.
-     * Defaults to incoming if not set.
-     * </pre>
-     *
-     * <code>.pactus.TxDirection direction = 2 [json_name = "direction"];</code>
-     * @return The enum numeric value on the wire for direction.
-     */
-    @java.lang.Override public int getDirectionValue() {
-      return direction_;
-    }
-    /**
-     * <pre>
-     * Filter transactions by direction relative to the wallet.
-     * Defaults to incoming if not set.
-     * </pre>
-     *
-     * <code>.pactus.TxDirection direction = 2 [json_name = "direction"];</code>
-     * @return The direction.
-     */
-    @java.lang.Override public pactus.WalletOuterClass.TxDirection getDirection() {
-      pactus.WalletOuterClass.TxDirection result = pactus.WalletOuterClass.TxDirection.forNumber(direction_);
-      return result == null ? pactus.WalletOuterClass.TxDirection.UNRECOGNIZED : result;
-    }
-
-    public static final int ADDRESS_FIELD_NUMBER = 3;
+    public static final int ADDRESS_FIELD_NUMBER = 2;
     @SuppressWarnings("serial")
     private volatile java.lang.Object address_ = "";
     /**
@@ -27122,7 +27094,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
      * If empty or set to "*", transactions for all addresses in the wallet are included.
      * </pre>
      *
-     * <code>string address = 3 [json_name = "address"];</code>
+     * <code>string address = 2 [json_name = "address"];</code>
      * @return The address.
      */
     @java.lang.Override
@@ -27144,7 +27116,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
      * If empty or set to "*", transactions for all addresses in the wallet are included.
      * </pre>
      *
-     * <code>string address = 3 [json_name = "address"];</code>
+     * <code>string address = 2 [json_name = "address"];</code>
      * @return The bytes for address.
      */
     @java.lang.Override
@@ -27160,6 +27132,34 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
+    }
+
+    public static final int DIRECTION_FIELD_NUMBER = 3;
+    private int direction_ = 0;
+    /**
+     * <pre>
+     * Filter transactions by direction relative to the wallet.
+     * Defaults to any direction if not set.
+     * </pre>
+     *
+     * <code>.pactus.TxDirection direction = 3 [json_name = "direction"];</code>
+     * @return The enum numeric value on the wire for direction.
+     */
+    @java.lang.Override public int getDirectionValue() {
+      return direction_;
+    }
+    /**
+     * <pre>
+     * Filter transactions by direction relative to the wallet.
+     * Defaults to any direction if not set.
+     * </pre>
+     *
+     * <code>.pactus.TxDirection direction = 3 [json_name = "direction"];</code>
+     * @return The direction.
+     */
+    @java.lang.Override public pactus.WalletOuterClass.TxDirection getDirection() {
+      pactus.WalletOuterClass.TxDirection result = pactus.WalletOuterClass.TxDirection.forNumber(direction_);
+      return result == null ? pactus.WalletOuterClass.TxDirection.UNRECOGNIZED : result;
     }
 
     public static final int COUNT_FIELD_NUMBER = 4;
@@ -27211,11 +27211,11 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(walletName_)) {
         com.google.protobuf.GeneratedMessage.writeString(output, 1, walletName_);
       }
-      if (direction_ != pactus.WalletOuterClass.TxDirection.TX_DIRECTION_ANY.getNumber()) {
-        output.writeEnum(2, direction_);
-      }
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(address_)) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 3, address_);
+        com.google.protobuf.GeneratedMessage.writeString(output, 2, address_);
+      }
+      if (direction_ != pactus.WalletOuterClass.TxDirection.TX_DIRECTION_ANY.getNumber()) {
+        output.writeEnum(3, direction_);
       }
       if (count_ != 0) {
         output.writeInt32(4, count_);
@@ -27235,12 +27235,12 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(walletName_)) {
         size += com.google.protobuf.GeneratedMessage.computeStringSize(1, walletName_);
       }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(address_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(2, address_);
+      }
       if (direction_ != pactus.WalletOuterClass.TxDirection.TX_DIRECTION_ANY.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeEnumSize(2, direction_);
-      }
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(address_)) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(3, address_);
+          .computeEnumSize(3, direction_);
       }
       if (count_ != 0) {
         size += com.google.protobuf.CodedOutputStream
@@ -27267,9 +27267,9 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
 
       if (!getWalletName()
           .equals(other.getWalletName())) return false;
-      if (direction_ != other.direction_) return false;
       if (!getAddress()
           .equals(other.getAddress())) return false;
+      if (direction_ != other.direction_) return false;
       if (getCount()
           != other.getCount()) return false;
       if (getSkip()
@@ -27287,10 +27287,10 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + WALLET_NAME_FIELD_NUMBER;
       hash = (53 * hash) + getWalletName().hashCode();
-      hash = (37 * hash) + DIRECTION_FIELD_NUMBER;
-      hash = (53 * hash) + direction_;
       hash = (37 * hash) + ADDRESS_FIELD_NUMBER;
       hash = (53 * hash) + getAddress().hashCode();
+      hash = (37 * hash) + DIRECTION_FIELD_NUMBER;
+      hash = (53 * hash) + direction_;
       hash = (37 * hash) + COUNT_FIELD_NUMBER;
       hash = (53 * hash) + getCount();
       hash = (37 * hash) + SKIP_FIELD_NUMBER;
@@ -27431,8 +27431,8 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
         super.clear();
         bitField0_ = 0;
         walletName_ = "";
-        direction_ = 0;
         address_ = "";
+        direction_ = 0;
         count_ = 0;
         skip_ = 0;
         return this;
@@ -27472,10 +27472,10 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
           result.walletName_ = walletName_;
         }
         if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.direction_ = direction_;
+          result.address_ = address_;
         }
         if (((from_bitField0_ & 0x00000004) != 0)) {
-          result.address_ = address_;
+          result.direction_ = direction_;
         }
         if (((from_bitField0_ & 0x00000008) != 0)) {
           result.count_ = count_;
@@ -27502,13 +27502,13 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
           bitField0_ |= 0x00000001;
           onChanged();
         }
-        if (other.direction_ != 0) {
-          setDirectionValue(other.getDirectionValue());
-        }
         if (!other.getAddress().isEmpty()) {
           address_ = other.address_;
-          bitField0_ |= 0x00000004;
+          bitField0_ |= 0x00000002;
           onChanged();
+        }
+        if (other.direction_ != 0) {
+          setDirectionValue(other.getDirectionValue());
         }
         if (other.getCount() != 0) {
           setCount(other.getCount());
@@ -27547,16 +27547,16 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
                 bitField0_ |= 0x00000001;
                 break;
               } // case 10
-              case 16: {
-                direction_ = input.readEnum();
+              case 18: {
+                address_ = input.readStringRequireUtf8();
                 bitField0_ |= 0x00000002;
                 break;
-              } // case 16
-              case 26: {
-                address_ = input.readStringRequireUtf8();
+              } // case 18
+              case 24: {
+                direction_ = input.readEnum();
                 bitField0_ |= 0x00000004;
                 break;
-              } // case 26
+              } // case 24
               case 32: {
                 count_ = input.readInt32();
                 bitField0_ |= 0x00000008;
@@ -27676,82 +27676,6 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
         return this;
       }
 
-      private int direction_ = 0;
-      /**
-       * <pre>
-       * Filter transactions by direction relative to the wallet.
-       * Defaults to incoming if not set.
-       * </pre>
-       *
-       * <code>.pactus.TxDirection direction = 2 [json_name = "direction"];</code>
-       * @return The enum numeric value on the wire for direction.
-       */
-      @java.lang.Override public int getDirectionValue() {
-        return direction_;
-      }
-      /**
-       * <pre>
-       * Filter transactions by direction relative to the wallet.
-       * Defaults to incoming if not set.
-       * </pre>
-       *
-       * <code>.pactus.TxDirection direction = 2 [json_name = "direction"];</code>
-       * @param value The enum numeric value on the wire for direction to set.
-       * @return This builder for chaining.
-       */
-      public Builder setDirectionValue(int value) {
-        direction_ = value;
-        bitField0_ |= 0x00000002;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Filter transactions by direction relative to the wallet.
-       * Defaults to incoming if not set.
-       * </pre>
-       *
-       * <code>.pactus.TxDirection direction = 2 [json_name = "direction"];</code>
-       * @return The direction.
-       */
-      @java.lang.Override
-      public pactus.WalletOuterClass.TxDirection getDirection() {
-        pactus.WalletOuterClass.TxDirection result = pactus.WalletOuterClass.TxDirection.forNumber(direction_);
-        return result == null ? pactus.WalletOuterClass.TxDirection.UNRECOGNIZED : result;
-      }
-      /**
-       * <pre>
-       * Filter transactions by direction relative to the wallet.
-       * Defaults to incoming if not set.
-       * </pre>
-       *
-       * <code>.pactus.TxDirection direction = 2 [json_name = "direction"];</code>
-       * @param value The direction to set.
-       * @return This builder for chaining.
-       */
-      public Builder setDirection(pactus.WalletOuterClass.TxDirection value) {
-        if (value == null) { throw new NullPointerException(); }
-        bitField0_ |= 0x00000002;
-        direction_ = value.getNumber();
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Filter transactions by direction relative to the wallet.
-       * Defaults to incoming if not set.
-       * </pre>
-       *
-       * <code>.pactus.TxDirection direction = 2 [json_name = "direction"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearDirection() {
-        bitField0_ = (bitField0_ & ~0x00000002);
-        direction_ = 0;
-        onChanged();
-        return this;
-      }
-
       private java.lang.Object address_ = "";
       /**
        * <pre>
@@ -27759,7 +27683,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
        * If empty or set to "*", transactions for all addresses in the wallet are included.
        * </pre>
        *
-       * <code>string address = 3 [json_name = "address"];</code>
+       * <code>string address = 2 [json_name = "address"];</code>
        * @return The address.
        */
       public java.lang.String getAddress() {
@@ -27780,7 +27704,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
        * If empty or set to "*", transactions for all addresses in the wallet are included.
        * </pre>
        *
-       * <code>string address = 3 [json_name = "address"];</code>
+       * <code>string address = 2 [json_name = "address"];</code>
        * @return The bytes for address.
        */
       public com.google.protobuf.ByteString
@@ -27802,7 +27726,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
        * If empty or set to "*", transactions for all addresses in the wallet are included.
        * </pre>
        *
-       * <code>string address = 3 [json_name = "address"];</code>
+       * <code>string address = 2 [json_name = "address"];</code>
        * @param value The address to set.
        * @return This builder for chaining.
        */
@@ -27810,7 +27734,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
           java.lang.String value) {
         if (value == null) { throw new NullPointerException(); }
         address_ = value;
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -27820,12 +27744,12 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
        * If empty or set to "*", transactions for all addresses in the wallet are included.
        * </pre>
        *
-       * <code>string address = 3 [json_name = "address"];</code>
+       * <code>string address = 2 [json_name = "address"];</code>
        * @return This builder for chaining.
        */
       public Builder clearAddress() {
         address_ = getDefaultInstance().getAddress();
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -27835,7 +27759,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
        * If empty or set to "*", transactions for all addresses in the wallet are included.
        * </pre>
        *
-       * <code>string address = 3 [json_name = "address"];</code>
+       * <code>string address = 2 [json_name = "address"];</code>
        * @param value The bytes for address to set.
        * @return This builder for chaining.
        */
@@ -27844,7 +27768,83 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
         if (value == null) { throw new NullPointerException(); }
         checkByteStringIsUtf8(value);
         address_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      private int direction_ = 0;
+      /**
+       * <pre>
+       * Filter transactions by direction relative to the wallet.
+       * Defaults to any direction if not set.
+       * </pre>
+       *
+       * <code>.pactus.TxDirection direction = 3 [json_name = "direction"];</code>
+       * @return The enum numeric value on the wire for direction.
+       */
+      @java.lang.Override public int getDirectionValue() {
+        return direction_;
+      }
+      /**
+       * <pre>
+       * Filter transactions by direction relative to the wallet.
+       * Defaults to any direction if not set.
+       * </pre>
+       *
+       * <code>.pactus.TxDirection direction = 3 [json_name = "direction"];</code>
+       * @param value The enum numeric value on the wire for direction to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDirectionValue(int value) {
+        direction_ = value;
         bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Filter transactions by direction relative to the wallet.
+       * Defaults to any direction if not set.
+       * </pre>
+       *
+       * <code>.pactus.TxDirection direction = 3 [json_name = "direction"];</code>
+       * @return The direction.
+       */
+      @java.lang.Override
+      public pactus.WalletOuterClass.TxDirection getDirection() {
+        pactus.WalletOuterClass.TxDirection result = pactus.WalletOuterClass.TxDirection.forNumber(direction_);
+        return result == null ? pactus.WalletOuterClass.TxDirection.UNRECOGNIZED : result;
+      }
+      /**
+       * <pre>
+       * Filter transactions by direction relative to the wallet.
+       * Defaults to any direction if not set.
+       * </pre>
+       *
+       * <code>.pactus.TxDirection direction = 3 [json_name = "direction"];</code>
+       * @param value The direction to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDirection(pactus.WalletOuterClass.TxDirection value) {
+        if (value == null) { throw new NullPointerException(); }
+        bitField0_ |= 0x00000004;
+        direction_ = value.getNumber();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Filter transactions by direction relative to the wallet.
+       * Defaults to any direction if not set.
+       * </pre>
+       *
+       * <code>.pactus.TxDirection direction = 3 [json_name = "direction"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDirection() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        direction_ = 0;
         onChanged();
         return this;
       }
@@ -29315,9 +29315,9 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       "password\030\003 \001(\tR\013newPassword\"9\n\026UpdatePas" +
       "swordResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwall" +
       "etName\"\261\001\n\027ListTransactionsRequest\022\037\n\013wa" +
-      "llet_name\030\001 \001(\tR\nwalletName\0221\n\tdirection" +
-      "\030\002 \001(\0162\023.pactus.TxDirectionR\tdirection\022\030" +
-      "\n\007address\030\003 \001(\tR\007address\022\024\n\005count\030\004 \001(\005R" +
+      "llet_name\030\001 \001(\tR\nwalletName\022\030\n\007address\030\002" +
+      " \001(\tR\007address\0221\n\tdirection\030\003 \001(\0162\023.pactu" +
+      "s.TxDirectionR\tdirection\022\024\n\005count\030\004 \001(\005R" +
       "\005count\022\022\n\004skip\030\005 \001(\005R\004skip\"f\n\030ListTransa" +
       "ctionsResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwal" +
       "letName\022)\n\003txs\030\002 \003(\0132\027.pactus.Transactio" +
@@ -29586,7 +29586,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     internal_static_pactus_ListTransactionsRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_ListTransactionsRequest_descriptor,
-        new java.lang.String[] { "WalletName", "Direction", "Address", "Count", "Skip", });
+        new java.lang.String[] { "WalletName", "Address", "Direction", "Count", "Skip", });
     internal_static_pactus_ListTransactionsResponse_descriptor =
       getDescriptor().getMessageType(36);
     internal_static_pactus_ListTransactionsResponse_fieldAccessorTable = new

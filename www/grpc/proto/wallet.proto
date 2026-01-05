@@ -396,13 +396,13 @@ message ListTransactionsRequest {
   // The name of the wallet to query transactions for.
   string wallet_name = 1;
 
-  // Filter transactions by direction relative to the wallet.
-  // Defaults to incoming if not set.
-  TxDirection direction = 2;
-
   // Optional: The address to filter transactions.
   // If empty or set to "*", transactions for all addresses in the wallet are included.
-  string address = 3;
+  string address = 2;
+
+  // Filter transactions by direction relative to the wallet.
+  // Defaults to any direction if not set.
+  TxDirection direction = 3;
 
   // Optional: The maximum number of transactions to return.
   // Defaults to 10 if not set.

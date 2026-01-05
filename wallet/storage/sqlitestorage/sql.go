@@ -25,6 +25,7 @@ const (
 			id 				TEXT NOT NULL,
 			sender 			TEXT NOT NULL,
 			receiver 		TEXT NOT NULL,
+			direction 		INTEGER NOT NULL,
 			amount 			INTEGER NOT NULL,
 			fee 			INTEGER NOT NULL,
 			memo 			TEXT NOT NULL DEFAULT '',
@@ -37,6 +38,7 @@ const (
 			updated_at 		DATETIME DEFAULT CURRENT_TIMESTAMP,
 
 			PRIMARY KEY (id, receiver)
+			CHECK (direction IN (1, 2))
 		)`
 
 	// Wallet table operations.
@@ -64,8 +66,9 @@ const (
 
 	// Transaction table operations.
 	insertTransactionSQL = `
-		INSERT INTO transactions (id, sender, receiver, amount, fee, memo, status, block_height, payload_type, data, comment)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+		INSERT INTO transactions (id, sender, receiver, direction, amount, fee, memo,
+			status, block_height, payload_type, data, comment)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 
 	updateTransactionStatusSQL = `
 		UPDATE transactions SET status = ?, block_height = ?
@@ -73,7 +76,7 @@ const (
 
 	selectTransactionByIDSQL = `
 		SELECT
-			id, sender, receiver, amount, fee, memo, status, block_height, payload_type,
+			id, sender, receiver, direction, amount, fee, memo, status, block_height, payload_type,
 			data, comment, created_at, updated_at
 		FROM transactions
 		WHERE id = ?
@@ -84,8 +87,8 @@ const (
 
 	selectPendingTransactionsSQL = `
 		SELECT
-			id, sender, receiver, amount, fee, memo, status, block_height, payload_type,
-			data, comment, created_at, updated_at
+		id, sender, receiver, direction, amount, fee, memo, status, block_height, payload_type,
+		data, comment, created_at, updated_at
 		FROM transactions WHERE status = ?
 		ORDER BY created_at DESC`
 )

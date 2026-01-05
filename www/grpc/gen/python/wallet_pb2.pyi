@@ -319,16 +319,16 @@ class UpdatePasswordResponse(_message.Message):
 class ListTransactionsRequest(_message.Message):
     __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
-    DIRECTION_FIELD_NUMBER: _ClassVar[int]
     ADDRESS_FIELD_NUMBER: _ClassVar[int]
+    DIRECTION_FIELD_NUMBER: _ClassVar[int]
     COUNT_FIELD_NUMBER: _ClassVar[int]
     SKIP_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
-    direction: TxDirection
     address: str
+    direction: TxDirection
     count: int
     skip: int
-    def __init__(self, wallet_name: _Optional[str] = ..., direction: _Optional[_Union[TxDirection, str]] = ..., address: _Optional[str] = ..., count: _Optional[int] = ..., skip: _Optional[int] = ...) -> None: ...
+    def __init__(self, wallet_name: _Optional[str] = ..., address: _Optional[str] = ..., direction: _Optional[_Union[TxDirection, str]] = ..., count: _Optional[int] = ..., skip: _Optional[int] = ...) -> None: ...
 
 class ListTransactionsResponse(_message.Message):
     __slots__ = ()

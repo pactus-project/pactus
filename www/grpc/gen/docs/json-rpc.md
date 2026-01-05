@@ -4487,24 +4487,24 @@ optionally filtered by a specific address, with pagination support.</p>
     </td>
   </tr>
   <tr>
-    <td class="fw-bold">direction</td>
-    <td> numeric</td>
-    <td>
-    (Enum)Filter transactions by direction relative to the wallet.
-Defaults to incoming if not set.
-    <br>Available values:<ul>
-      <li>TX_DIRECTION_ANY = 0 (include both incoming and outgoing transactions.)</li>
-      <li>TX_DIRECTION_INCOMING = 1 (Include only incoming transactions where the wallet receives funds.)</li>
-      <li>TX_DIRECTION_OUTGOING = 2 (Include only outgoing transactions where the wallet sends funds.)</li>
-      </ul>
-    </td>
-  </tr>
-  <tr>
     <td class="fw-bold">address</td>
     <td> string</td>
     <td>
     Optional: The address to filter transactions.
 If empty or set to "*", transactions for all addresses in the wallet are included.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">direction</td>
+    <td> numeric</td>
+    <td>
+    (Enum)Filter transactions by direction relative to the wallet.
+Defaults to any direction if not set.
+    <br>Available values:<ul>
+      <li>TX_DIRECTION_ANY = 0 (include both incoming and outgoing transactions.)</li>
+      <li>TX_DIRECTION_INCOMING = 1 (Include only incoming transactions where the wallet receives funds.)</li>
+      <li>TX_DIRECTION_OUTGOING = 2 (Include only outgoing transactions where the wallet sends funds.)</li>
+      </ul>
     </td>
   </tr>
   <tr>

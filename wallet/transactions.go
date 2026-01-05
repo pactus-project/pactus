@@ -51,39 +51,32 @@ func (t *transactions) addTransactionWithStatus(trx *tx.Tx, status types.Transac
 	}
 
 	for _, info := range txInfos {
-		if t.storage.HasAddress(info.Sender) ||
-			t.storage.HasAddress(info.Receiver) {
-			if err := t.storage.InsertTransaction(info); err != nil {
-				return err
-			}
+		if t.storage.HasAddress(info.Sender) {
+			info.Direction = types.TxDirectionOutgoing
+		} else if t.storage.HasAddress(info.Receiver) {
+			info.Direction = types.TxDirectionIncoming
+		} else {
+			continue
+		}
+
+		if err := t.storage.InsertTransaction(info); err != nil {
+			return err
 		}
 	}
 
 	return nil
 }
 
-// TxDirection indicates whether to include incoming or outgoing transactions.
-type TxDirection int
-
-const (
-	// TxDirectionAny Include both incoming and outgoing transactions.
-	TxDirectionAny TxDirection = 0
-	// TxDirectionIncoming includes only incoming transactions where the wallet receives funds.
-	TxDirectionIncoming = 1
-	// TxDirectionOutgoing includes only outgoing transactions where the wallet sends funds.
-	TxDirectionOutgoing = 2
-)
-
 // listTransactionsConfig contains options for listing transactions.
 type listTransactionsConfig struct {
-	direction TxDirection
+	direction types.TxDirection
 	address   string
 	count     int
 	skip      int
 }
 
 var defaultListTransactionsConfig = listTransactionsConfig{
-	direction: TxDirectionAny,
+	direction: types.TxDirectionAny,
 	address:   "*",
 	count:     10,
 	skip:      0,
@@ -93,7 +86,7 @@ var defaultListTransactionsConfig = listTransactionsConfig{
 type ListTransactionsOption func(*listTransactionsConfig)
 
 // WithDirection filters transactions by direction (incoming or outgoing).
-func WithDirection(dir TxDirection) ListTransactionsOption {
+func WithDirection(dir types.TxDirection) ListTransactionsOption {
 	return func(cfg *listTransactionsConfig) {
 		cfg.direction = dir
 	}
@@ -131,22 +124,10 @@ func (t *transactions) ListTransactions(opts ...ListTransactionsOption) []*types
 	}
 
 	params := storage.QueryParams{
-		Count: cfg.count,
-		Skip:  cfg.skip,
-	}
-
-	switch cfg.direction {
-	case TxDirectionAny:
-		params.Sender = cfg.address
-		params.Receiver = cfg.address
-
-	case TxDirectionIncoming:
-		params.Sender = "*"
-		params.Receiver = cfg.address
-
-	case TxDirectionOutgoing:
-		params.Sender = cfg.address
-		params.Receiver = "*"
+		Address:   cfg.address,
+		Direction: cfg.direction,
+		Count:     cfg.count,
+		Skip:      cfg.skip,
 	}
 
 	txs, _ := t.storage.QueryTransactions(params)

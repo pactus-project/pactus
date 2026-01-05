@@ -42,10 +42,36 @@ const (
 	TransactionStatusConfirmed = TransactionStatus(1)
 )
 
+func (ts TransactionStatus) String() string {
+	switch ts {
+	case TransactionStatusFailed:
+		return "failed"
+	case TransactionStatusPending:
+		return "pending"
+	case TransactionStatusConfirmed:
+		return "confirmed"
+	default:
+		return "unknown"
+	}
+}
+
+// TxDirection indicates whether to include incoming or outgoing transactions.
+type TxDirection int
+
+const (
+	// TxDirectionAny includes both incoming and outgoing transactions.
+	TxDirectionAny TxDirection = 0
+	// TxDirectionIncoming includes only incoming transactions where the wallet receives funds.
+	TxDirectionIncoming = 1
+	// TxDirectionOutgoing includes only outgoing transactions where the wallet sends funds.
+	TxDirectionOutgoing = 2
+)
+
 type TransactionInfo struct {
 	ID          string
 	Sender      string
 	Receiver    string
+	Direction   TxDirection
 	Amount      amount.Amount
 	Fee         amount.Amount
 	Memo        string
@@ -60,7 +86,7 @@ type TransactionInfo struct {
 
 // MakeTransactionInfos builds TransactionInfo from trx.
 // Returns might contains more than one entry per recipient, this covers the batch transfer transaction.s
-// Data should be the serialized tx, otherwise it reurn error.
+// Data should be the serialized tx, otherwise it return error.
 func MakeTransactionInfos(trx *tx.Tx, status TransactionStatus, blockHeight block.Height) ([]*TransactionInfo, error) {
 	data, err := trx.Bytes()
 	if err != nil {
@@ -91,6 +117,7 @@ func MakeTransactionInfos(trx *tx.Tx, status TransactionStatus, blockHeight bloc
 			ID:          trx.ID().String(),
 			Sender:      trx.Payload().Signer().String(),
 			Receiver:    receiver,
+			Direction:   TxDirectionAny,
 			Amount:      trx.Payload().Value(),
 			Fee:         trx.Fee(),
 			Memo:        trx.Memo(),

@@ -84,6 +84,17 @@ func (m *txBuilder) setReceiverAddress(addr string) error {
 	return nil
 }
 
+// setPublicKey sets the public key for the transaction, typically used in bond transactions.
+func (m *txBuilder) setPublicKey(pubStr string) error {
+	pub, err := bls.PublicKeyFromString(pubStr)
+	if err != nil {
+		return err
+	}
+	m.pub = pub
+
+	return nil
+}
+
 // build constructs and finalizes the transaction, selecting the appropriate type based on the builder's configuration.
 func (m *txBuilder) build() (*tx.Tx, error) {
 	err := m.setLockTime()
@@ -96,8 +107,8 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 		trx = tx.NewTransferTx(m.lockTime, *m.sender, *m.receiver, m.amount, m.fee, tx.WithMemo(m.memo))
 	case payload.TypeBond:
 		pub := m.pub
-		_, err := m.provider.GetValidator(m.receiver.String())
-		if err != nil {
+		val, _ := m.provider.GetValidator(m.receiver.String())
+		if val != nil {
 			// validator exists
 			pub = nil
 		}

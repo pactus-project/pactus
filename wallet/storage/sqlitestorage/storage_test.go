@@ -65,6 +65,8 @@ func (td *testData) RandomTransactionInfo(t *testing.T) *types.TransactionInfo {
 	txInfos, err := types.MakeTransactionInfos(trx, types.TransactionStatusPending, 0)
 	require.NoError(t, err)
 
+	txInfos[0].Direction = types.TxDirectionIncoming
+
 	return txInfos[0]
 }
 
@@ -193,33 +195,38 @@ func TestQueryTransactions(t *testing.T) {
 		txInfo, err := types.MakeTransactionInfos(trx, types.TransactionStatusPending, 0)
 		require.NoError(t, err)
 
+		txInfo[0].Direction = types.TxDirectionIncoming
+
 		err = td.storage.InsertTransaction(txInfo[0])
 		require.NoError(t, err)
 	}
 
 	// Test QueryTransactions with pagination
 	transactions, err := td.storage.QueryTransactions(storage.QueryParams{
-		Receiver: receiver.String(),
-		Count:    3,
-		Skip:     0,
+		Address:   receiver.String(),
+		Direction: types.TxDirectionIncoming,
+		Count:     3,
+		Skip:      0,
 	})
 	require.NoError(t, err)
 	assert.Len(t, transactions, 3)
 
 	// Test with skip
 	transactions, err = td.storage.QueryTransactions(storage.QueryParams{
-		Receiver: receiver.String(),
-		Count:    3,
-		Skip:     3,
+		Address:   receiver.String(),
+		Direction: types.TxDirectionIncoming,
+		Count:     3,
+		Skip:      3,
 	})
 	require.NoError(t, err)
 	assert.Len(t, transactions, 2)
 
 	// Test with different receiver
 	transactions, err = td.storage.QueryTransactions(storage.QueryParams{
-		Receiver: "other_receiver",
-		Count:    10,
-		Skip:     0,
+		Address:   "other_receiver",
+		Direction: types.TxDirectionIncoming,
+		Count:     10,
+		Skip:      0,
 	})
 	require.NoError(t, err)
 	assert.Len(t, transactions, 0)
@@ -237,55 +244,70 @@ func TestQueryTransactions_WildcardAndFilters(t *testing.T) {
 	addrB := td.RandAccAddress()
 	addrC := td.RandAccAddress()
 
-	makeTx := func(signer crypto.PrivateKey, receiver crypto.Address) {
+	makeTx := func(signer crypto.PrivateKey, receiver crypto.Address, dir types.TxDirection) {
 		trx := td.GenerateTestTransferTx(
 			testsuite.TransactionWithSigner(signer),
 			testsuite.TransactionWithReceiver(receiver),
 		)
 		txInfos, err := types.MakeTransactionInfos(trx, types.TransactionStatusPending, 0)
 		require.NoError(t, err)
+		txInfos[0].Direction = dir
 		err = td.storage.InsertTransaction(txInfos[0])
 		require.NoError(t, err)
 	}
 
-	makeTx(signerA, addrB)
-	makeTx(signerA, addrC)
-	makeTx(signerD, addrB)
+	makeTx(signerA, addrB, types.TxDirectionOutgoing)
+	makeTx(signerA, addrC, types.TxDirectionOutgoing)
+	makeTx(signerD, addrB, types.TxDirectionIncoming)
 
 	// Wildcard both: all 3
 	txs, err := td.storage.QueryTransactions(storage.QueryParams{
-		Sender: "*", Receiver: "*", Count: 10, Skip: 0,
+		Address:   "*",
+		Direction: types.TxDirectionAny,
+		Count:     10,
+		Skip:      0,
 	})
 	require.NoError(t, err)
 	assert.Len(t, txs, 3)
 
 	// Filter sender only (A): rows 1 and 2
 	txs, err = td.storage.QueryTransactions(storage.QueryParams{
-		Sender: pubA.AccountAddress().String(), Receiver: "*", Count: 10, Skip: 0,
+		Address:   pubA.AccountAddress().String(),
+		Direction: types.TxDirectionOutgoing,
+		Count:     10,
+		Skip:      0,
 	})
 	require.NoError(t, err)
 	assert.Len(t, txs, 2)
 
-	// Filter receiver only (B): rows 1 and 3
+	// Filter sender only (D): rows 3
 	txs, err = td.storage.QueryTransactions(storage.QueryParams{
-		Sender: "*", Receiver: addrB.String(), Count: 10, Skip: 0,
+		Address:   pubD.AccountAddress().String(),
+		Direction: types.TxDirectionOutgoing,
+		Count:     10,
+		Skip:      0,
 	})
 	require.NoError(t, err)
-	assert.Len(t, txs, 2)
-
-	// AND both with matching pair (A,B): only row 1
+	assert.Len(t, txs, 0)
+	// Filter receiver only (B): rows with incoming to B (row 3)
 	txs, err = td.storage.QueryTransactions(storage.QueryParams{
-		Sender: pubA.AccountAddress().String(), Receiver: addrB.String(), Count: 10, Skip: 0,
+		Address:   addrB.String(),
+		Direction: types.TxDirectionIncoming,
+		Count:     10,
+		Skip:      0,
 	})
 	require.NoError(t, err)
 	assert.Len(t, txs, 1)
 
-	// AND both with non-matching pair (A,D): none
+	// Outgoing from A: rows 1 and 2
 	txs, err = td.storage.QueryTransactions(storage.QueryParams{
-		Sender: pubA.AccountAddress().String(), Receiver: pubD.AccountAddress().String(), Count: 10, Skip: 0,
+		Address:   pubA.AccountAddress().String(),
+		Direction: types.TxDirectionOutgoing,
+		Count:     10,
+		Skip:      0,
 	})
 	require.NoError(t, err)
-	assert.Len(t, txs, 0)
+	assert.Len(t, txs, 2)
 }
 
 func TestClone(t *testing.T) {

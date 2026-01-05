@@ -606,15 +606,15 @@ const ListTransactionsRequest$json = {
   '1': 'ListTransactionsRequest',
   '2': [
     {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
+    {'1': 'address', '3': 2, '4': 1, '5': 9, '10': 'address'},
     {
       '1': 'direction',
-      '3': 2,
+      '3': 3,
       '4': 1,
       '5': 14,
       '6': '.pactus.TxDirection',
       '10': 'direction'
     },
-    {'1': 'address', '3': 3, '4': 1, '5': 9, '10': 'address'},
     {'1': 'count', '3': 4, '4': 1, '5': 5, '10': 'count'},
     {'1': 'skip', '3': 5, '4': 1, '5': 5, '10': 'skip'},
   ],
@@ -623,8 +623,8 @@ const ListTransactionsRequest$json = {
 /// Descriptor for `ListTransactionsRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List listTransactionsRequestDescriptor = $convert.base64Decode(
     'ChdMaXN0VHJhbnNhY3Rpb25zUmVxdWVzdBIfCgt3YWxsZXRfbmFtZRgBIAEoCVIKd2FsbGV0Tm'
-    'FtZRIxCglkaXJlY3Rpb24YAiABKA4yEy5wYWN0dXMuVHhEaXJlY3Rpb25SCWRpcmVjdGlvbhIY'
-    'CgdhZGRyZXNzGAMgASgJUgdhZGRyZXNzEhQKBWNvdW50GAQgASgFUgVjb3VudBISCgRza2lwGA'
+    'FtZRIYCgdhZGRyZXNzGAIgASgJUgdhZGRyZXNzEjEKCWRpcmVjdGlvbhgDIAEoDjITLnBhY3R1'
+    'cy5UeERpcmVjdGlvblIJZGlyZWN0aW9uEhQKBWNvdW50GAQgASgFUgVjb3VudBISCgRza2lwGA'
     'UgASgFUgRza2lw');
 
 @$core.Deprecated('Use listTransactionsResponseDescriptor instead')

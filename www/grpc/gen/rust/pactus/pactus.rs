@@ -1505,14 +1505,14 @@ pub struct ListTransactionsRequest {
     /// The name of the wallet to query transactions for.
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,
-    /// Filter transactions by direction relative to the wallet.
-    /// Defaults to incoming if not set.
-    #[prost(enumeration="TxDirection", tag="2")]
-    pub direction: i32,
     /// Optional: The address to filter transactions.
     /// If empty or set to "*", transactions for all addresses in the wallet are included.
-    #[prost(string, tag="3")]
+    #[prost(string, tag="2")]
     pub address: ::prost::alloc::string::String,
+    /// Filter transactions by direction relative to the wallet.
+    /// Defaults to any direction if not set.
+    #[prost(enumeration="TxDirection", tag="3")]
+    pub direction: i32,
     /// Optional: The maximum number of transactions to return.
     /// Defaults to 10 if not set.
     #[prost(int32, tag="4")]

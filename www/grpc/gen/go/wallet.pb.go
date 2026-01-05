@@ -2099,12 +2099,12 @@ type ListTransactionsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The name of the wallet to query transactions for.
 	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
-	// Filter transactions by direction relative to the wallet.
-	// Defaults to incoming if not set.
-	Direction TxDirection `protobuf:"varint,2,opt,name=direction,proto3,enum=pactus.TxDirection" json:"direction,omitempty"`
 	// Optional: The address to filter transactions.
 	// If empty or set to "*", transactions for all addresses in the wallet are included.
-	Address string `protobuf:"bytes,3,opt,name=address,proto3" json:"address,omitempty"`
+	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
+	// Filter transactions by direction relative to the wallet.
+	// Defaults to any direction if not set.
+	Direction TxDirection `protobuf:"varint,3,opt,name=direction,proto3,enum=pactus.TxDirection" json:"direction,omitempty"`
 	// Optional: The maximum number of transactions to return.
 	// Defaults to 10 if not set.
 	Count int32 `protobuf:"varint,4,opt,name=count,proto3" json:"count,omitempty"`
@@ -2152,18 +2152,18 @@ func (x *ListTransactionsRequest) GetWalletName() string {
 	return ""
 }
 
-func (x *ListTransactionsRequest) GetDirection() TxDirection {
-	if x != nil {
-		return x.Direction
-	}
-	return TxDirection_TX_DIRECTION_ANY
-}
-
 func (x *ListTransactionsRequest) GetAddress() string {
 	if x != nil {
 		return x.Address
 	}
 	return ""
+}
+
+func (x *ListTransactionsRequest) GetDirection() TxDirection {
+	if x != nil {
+		return x.Direction
+	}
+	return TxDirection_TX_DIRECTION_ANY
 }
 
 func (x *ListTransactionsRequest) GetCount() int32 {
@@ -2384,9 +2384,9 @@ const file_wallet_proto_rawDesc = "" +
 	"walletName\"\xb1\x01\n" +
 	"\x17ListTransactionsRequest\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
-	"walletName\x121\n" +
-	"\tdirection\x18\x02 \x01(\x0e2\x13.pactus.TxDirectionR\tdirection\x12\x18\n" +
-	"\aaddress\x18\x03 \x01(\tR\aaddress\x12\x14\n" +
+	"walletName\x12\x18\n" +
+	"\aaddress\x18\x02 \x01(\tR\aaddress\x121\n" +
+	"\tdirection\x18\x03 \x01(\x0e2\x13.pactus.TxDirectionR\tdirection\x12\x14\n" +
 	"\x05count\x18\x04 \x01(\x05R\x05count\x12\x12\n" +
 	"\x04skip\x18\x05 \x01(\x05R\x04skip\"f\n" +
 	"\x18ListTransactionsResponse\x12\x1f\n" +

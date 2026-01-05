@@ -342,6 +342,7 @@ func (s *Storage) InsertTransaction(info *types.TransactionInfo) error {
 		info.ID,
 		info.Sender,
 		info.Receiver,
+		info.Direction,
 		info.Amount,
 		info.Fee,
 		info.Memo,
@@ -387,6 +388,7 @@ func scanTransaction(s scanner) (*types.TransactionInfo, error) {
 		&info.ID,
 		&info.Sender,
 		&info.Receiver,
+		&info.Direction,
 		&info.Amount,
 		&info.Fee,
 		&info.Memo,
@@ -423,18 +425,28 @@ func (s *Storage) GetTransaction(id string) (*types.TransactionInfo, error) {
 }
 
 // QueryTransactions returns transactions matching the provided filters with pagination.
-// Empty or "*" sender/receiver values are treated as no filter. Filters are combined with AND.
+// Empty or "*" address value is treated as no filter. Filters are combined with AND.
 func (s *Storage) QueryTransactions(params storage.QueryParams) ([]*types.TransactionInfo, error) {
-	conditions := make([]string, 0, 2)
-	args := make([]any, 0, 4)
+	conditions := make([]string, 0, 3)
+	args := make([]any, 0, 6)
 
-	if params.Sender != "" && params.Sender != "*" {
-		conditions = append(conditions, "sender = ?")
-		args = append(args, params.Sender)
+	if params.Direction != types.TxDirectionAny {
+		conditions = append(conditions, "direction = ?")
+		args = append(args, params.Direction)
 	}
-	if params.Receiver != "" && params.Receiver != "*" {
-		conditions = append(conditions, "receiver = ?")
-		args = append(args, params.Receiver)
+
+	if params.Address != "*" {
+		switch params.Direction {
+		case types.TxDirectionAny:
+			conditions = append(conditions, "(sender = ? OR receiver = ?)")
+			args = append(args, params.Address, params.Address)
+		case types.TxDirectionIncoming:
+			conditions = append(conditions, "receiver = ?")
+			args = append(args, params.Address)
+		case types.TxDirectionOutgoing:
+			conditions = append(conditions, "sender = ?")
+			args = append(args, params.Address)
+		}
 	}
 
 	where := ""
@@ -448,7 +460,7 @@ func (s *Storage) QueryTransactions(params storage.QueryParams) ([]*types.Transa
 	var queryBuilder strings.Builder
 	queryBuilder.WriteString(`
 		SELECT
-			id, sender, receiver, amount, fee, memo, status, block_height, payload_type,
+			id, sender, receiver, direction, amount, fee, memo, status, block_height, payload_type,
 			data, comment, created_at, updated_at
 		FROM transactions
 	`)

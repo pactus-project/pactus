@@ -3,7 +3,7 @@ package wallet
 import (
 	"context"
 
-	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
@@ -54,9 +54,9 @@ func Create(ctx context.Context, walletPath, mnemonic, password string,
 	}
 
 	coinType := addresspath.CoinTypePactusMainnet
-	if chain == genesis.Testnet ||
-		chain == genesis.Localnet {
+	if chain != genesis.Mainnet {
 		coinType = addresspath.CoinTypePactusTestnet
+		crypto.ToTestnetHRP()
 	}
 
 	vlt, err := vault.CreateVaultFromMnemonic(mnemonic, coinType)
@@ -126,6 +126,10 @@ func WithBlockchainProvider(provider provider.IBlockchainProvider) OpenWalletOpt
 }
 
 func New(storage storage.IStorage, opts ...OpenWalletOption) (*Wallet, error) {
+	if storage.Vault().CoinType != addresspath.CoinTypePactusMainnet {
+		crypto.ToTestnetHRP()
+	}
+
 	cfg := defaultOpenWalletConfig
 	for _, opt := range opts {
 		opt(&cfg)
@@ -321,7 +325,7 @@ func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amt amount.Amount,
 		}
 	}
 	if pubKey != "" {
-		maker.pub, err = bls.PublicKeyFromString(pubKey)
+		err = maker.setPublicKey(pubKey)
 		if err != nil {
 			return nil, err
 		}
@@ -438,4 +442,9 @@ func (w *Wallet) makeTxBuilder(options ...TxOption) (*txBuilder, error) {
 
 func (w *Wallet) SetDefaultFee(fee amount.Amount) error {
 	return w.storage.SetDefaultFee(fee)
+}
+
+// SetProvider sets the blockchain provider for the wallet.
+func (w *Wallet) SetProvider(provider provider.IBlockchainProvider) {
+	w.provider = provider
 }

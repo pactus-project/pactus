@@ -24,29 +24,27 @@ func addPasswordOption(c *cobra.Command) *string {
 }
 
 func openWallet(ctx context.Context) (*wallet.Wallet, error) {
-	var openOpts []wallet.OpenWalletOption
+	wlt, err := wallet.Open(ctx, *pathOpt)
+	if err != nil {
+		return nil, err
+	}
 
 	if !*offlineOpt {
-		var providerOpts []remote.RemoteProviderOption
+		var opts []remote.RemoteProviderOption
 		if *serverAddrsOpt != nil {
-			providerOpts = append(providerOpts, remote.WithCustomServers(*serverAddrsOpt))
+			opts = append(opts, remote.WithCustomServers(*serverAddrsOpt))
 		}
 
 		if *timeoutOpt > 0 {
-			providerOpts = append(providerOpts, remote.WithTimeout(time.Duration(*timeoutOpt)*time.Second))
+			opts = append(opts, remote.WithTimeout(time.Duration(*timeoutOpt)*time.Second))
 		}
 
-		provider, err := remote.NewRemoteBlockchainProvider(ctx, providerOpts...)
+		provider, err := remote.NewRemoteBlockchainProvider(ctx, wlt.Info().Network, opts...)
 		if err != nil {
 			return nil, err
 		}
 
-		openOpts = append(openOpts, wallet.WithBlockchainProvider(provider))
-	}
-
-	wlt, err := wallet.Open(ctx, *pathOpt, openOpts...)
-	if err != nil {
-		return nil, err
+		wlt.SetProvider(provider)
 	}
 
 	return wlt, err
@@ -65,7 +63,7 @@ func main() {
 	pathOpt = rootCmd.PersistentFlags().String("path",
 		cmd.PactusDefaultWalletPath(cmd.PactusDefaultHomeDir()), "the path to the wallet file")
 	offlineOpt = rootCmd.PersistentFlags().Bool("offline", false, "offline mode")
-	serverAddrsOpt = rootCmd.PersistentFlags().StringSlice("servers", []string{}, "servers gRPC address")
+	serverAddrsOpt = rootCmd.PersistentFlags().StringSlice("servers", nil, "servers gRPC address")
 	timeoutOpt = rootCmd.PersistentFlags().Int("timeout", 1,
 		"specifies the timeout duration for the connection in seconds")
 

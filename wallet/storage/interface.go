@@ -8,10 +8,10 @@ import (
 
 // QueryParams specifies filters for querying stored transactions.
 type QueryParams struct {
-	Sender   string
-	Receiver string
-	Count    int
-	Skip     int
+	Address   string
+	Direction types.TxDirection
+	Count     int
+	Skip      int
 }
 
 type IStorage interface {

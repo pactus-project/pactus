@@ -1274,8 +1274,15 @@
             "type": "string"
           },
           {
+            "name": "address",
+            "description": "Optional: The address to filter transactions.\nIf empty or set to \"*\", transactions for all addresses in the wallet are included.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "direction",
-            "description": "Filter transactions by direction relative to the wallet.\nDefaults to incoming if not set.\n\n - TX_DIRECTION_ANY: include both incoming and outgoing transactions.\n - TX_DIRECTION_INCOMING: Include only incoming transactions where the wallet receives funds.\n - TX_DIRECTION_OUTGOING: Include only outgoing transactions where the wallet sends funds.",
+            "description": "Filter transactions by direction relative to the wallet.\nDefaults to any direction if not set.\n\n - TX_DIRECTION_ANY: include both incoming and outgoing transactions.\n - TX_DIRECTION_INCOMING: Include only incoming transactions where the wallet receives funds.\n - TX_DIRECTION_OUTGOING: Include only outgoing transactions where the wallet sends funds.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -1285,13 +1292,6 @@
               "TX_DIRECTION_OUTGOING"
             ],
             "default": "TX_DIRECTION_ANY"
-          },
-          {
-            "name": "address",
-            "description": "Optional: The address to filter transactions.\nIf empty or set to \"*\", transactions for all addresses in the wallet are included.",
-            "in": "query",
-            "required": false,
-            "type": "string"
           },
           {
             "name": "count",

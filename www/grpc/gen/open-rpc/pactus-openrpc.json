@@ -1183,13 +1183,13 @@
           "description": "The name of the wallet to query transactions for.",
           "schema": { "type": "string" }
         },{
-          "name": "direction",
-          "description": "Filter transactions by direction relative to the wallet. Defaults to incoming if not set.",
-          "schema": { "type": "integer" }
-        },{
           "name": "address",
           "description": "Optional: The address to filter transactions. If empty or set to "*", transactions for all addresses in the wallet are included.",
           "schema": { "type": "string" }
+        },{
+          "name": "direction",
+          "description": "Filter transactions by direction relative to the wallet. Defaults to any direction if not set.",
+          "schema": { "type": "integer" }
         },{
           "name": "count",
           "description": "Optional: The maximum number of transactions to return. Defaults to 10 if not set.",

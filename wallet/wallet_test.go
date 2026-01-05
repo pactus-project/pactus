@@ -2,6 +2,7 @@ package wallet_test
 
 import (
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -671,19 +672,19 @@ func TestNeuter(t *testing.T) {
 }
 
 func TestTestnetWallet(t *testing.T) {
-	td := setup(t)
-
 	walletPath := util.TempFilePath()
 
 	t.Run("Create Testnet wallet", func(t *testing.T) {
 		mnemonic, _ := wallet.GenerateMnemonic(128)
-		wlt, err := wallet.Create(t.Context(), walletPath, mnemonic, td.password, genesis.Testnet)
+		wlt, err := wallet.Create(t.Context(), walletPath, mnemonic, "", genesis.Testnet)
 		require.NoError(t, err)
 		t.Cleanup(func() { _ = wlt.Close() })
 		assert.Equal(t, genesis.Testnet, wlt.Info().Network)
 
-		addr, _ := wlt.NewBLSAccountAddress("testnet-addr-1")
-		assert.Equal(t, "m/12381'/21777'/2'/0", addr.Path)
+		info, err := wlt.NewBLSAccountAddress("testnet-addr-1")
+		require.NoError(t, err)
+		assert.Equal(t, "m/12381'/21777'/2'/0", info.Path)
+		assert.True(t, strings.HasPrefix(info.Address, "tpc1"))
 	})
 
 	t.Run("Open Testnet wallet", func(t *testing.T) {
@@ -692,7 +693,9 @@ func TestTestnetWallet(t *testing.T) {
 		t.Cleanup(func() { _ = wlt.Close() })
 		assert.Equal(t, genesis.Testnet, wlt.Info().Network)
 
-		addr, _ := wlt.NewBLSAccountAddress("testnet-addr-2")
-		assert.Equal(t, "m/12381'/21777'/2'/1", addr.Path)
+		info, err := wlt.NewBLSAccountAddress("testnet-addr-2")
+		require.NoError(t, err)
+		assert.Equal(t, "m/12381'/21777'/2'/1", info.Path)
+		assert.True(t, strings.HasPrefix(info.Address, "tpc1"))
 	})
 }
