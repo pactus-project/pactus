@@ -52,7 +52,7 @@ func (td *testData) RandomAddressInfo(t *testing.T) *types.AddressInfo {
 
 	return &types.AddressInfo{
 		Address:   td.RandAccAddress().String(),
-		PublicKey: td.RandString(16),
+		PublicKey: td.RandString(32),
 		Label:     td.RandString(16),
 		Path:      td.RandString(16),
 	}
