@@ -20,6 +20,7 @@ func buildPasswordCmd(parentCmd *cobra.Command) {
 	passwordCmd.Run = func(_ *cobra.Command, _ []string) {
 		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
+		defer wlt.Close()
 
 		oldPassword := getPassword(wlt, *passOpt)
 		newPassword := prompt.PromptPassword("New Password", true)

@@ -19,6 +19,7 @@ func buildNeuterCmd(parentCmd *cobra.Command) {
 	neuterCmd.Run = func(_ *cobra.Command, _ []string) {
 		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
+		defer wlt.Close()
 
 		path := wlt.Path() + ".neutered"
 

@@ -57,7 +57,7 @@ func (*Manager) Start() error {
 
 func (wm *Manager) Stop() {
 	for _, wlt := range wm.wallets {
-		_ = wlt.Close()
+		wlt.Close()
 	}
 }
 

@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/encrypter"
@@ -149,18 +150,14 @@ func New(storage storage.IStorage, opts ...OpenWalletOption) (*Wallet, error) {
 	return wlt, nil
 }
 
-func (w *Wallet) Close() error {
-	var retErr error
-
+func (w *Wallet) Close() {
 	if err := w.provider.Close(); err != nil {
-		retErr = err
+		logger.Warn("failed to close provider", "error", err)
 	}
 
-	if err := w.storage.Close(); err != nil && retErr == nil {
-		retErr = err
+	if err := w.storage.Close(); err != nil {
+		logger.Warn("failed to close storage", "error", err)
 	}
-
-	return retErr
 }
 
 func (w *Wallet) Version() int {

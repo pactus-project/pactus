@@ -49,6 +49,7 @@ func buildAddressAllCmd(parentCmd *cobra.Command) {
 	allCmd.Run = func(_ *cobra.Command, _ []string) {
 		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
+		defer wlt.Close()
 
 		terminal.PrintLine()
 		for i, info := range wlt.ListAddresses() {
@@ -93,6 +94,7 @@ func buildAddressNewCmd(parentCmd *cobra.Command) {
 		}
 		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
+		defer wlt.Close()
 
 		switch *addressType {
 		case crypto.AddressTypeValidator.String():
@@ -131,6 +133,7 @@ func buildAddressBalanceCmd(parentCmd *cobra.Command) {
 
 		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
+		defer wlt.Close()
 
 		terminal.PrintLine()
 
@@ -158,6 +161,7 @@ func buildAddressPrivCmd(parentCmd *cobra.Command) {
 
 		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
+		defer wlt.Close()
 
 		password := getPassword(wlt, *passOpt)
 		prv, err := wlt.PrivateKey(password, addr)
@@ -183,6 +187,7 @@ func buildAddressPubCmd(parentCmd *cobra.Command) {
 
 		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
+		defer wlt.Close()
 
 		info, err := wlt.AddressInfo(addr)
 		if err != nil {
@@ -214,6 +219,7 @@ func buildAddressImportCmd(parentCmd *cobra.Command) {
 
 		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
+		defer wlt.Close()
 
 		password := getPassword(wlt, *passOpt)
 
@@ -268,6 +274,7 @@ func buildAddressLabelCmd(parentCmd *cobra.Command) {
 
 		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
+		defer wlt.Close()
 
 		oldLabel := wlt.AddressLabel(addr)
 		newLabel := prompt.PromptInputWithSuggestion("Label", oldLabel)

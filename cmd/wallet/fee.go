@@ -21,6 +21,7 @@ func buildFeeCmd(parentCmd *cobra.Command) {
 	feeCmd.Run = func(_ *cobra.Command, args []string) {
 		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
+		defer wlt.Close()
 
 		fee, err := amount.FromString(args[0])
 		terminal.FatalErrorCheck(err)

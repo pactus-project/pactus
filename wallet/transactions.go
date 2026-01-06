@@ -102,14 +102,18 @@ func WithAddress(address string) ListTransactionsOption {
 // WithCount sets the maximum number of transactions to return.
 func WithCount(count int) ListTransactionsOption {
 	return func(cfg *listTransactionsConfig) {
-		cfg.count = count
+		if count > 0 {
+			cfg.count = count
+		}
 	}
 }
 
 // WithSkip sets the number of transactions to skip.
 func WithSkip(skip int) ListTransactionsOption {
 	return func(cfg *listTransactionsConfig) {
-		cfg.skip = skip
+		if skip > 0 {
+			cfg.skip = skip
+		}
 	}
 }
 

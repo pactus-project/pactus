@@ -60,6 +60,7 @@ func buildGetSeedCmd(parentCmd *cobra.Command) {
 	getSeedCmd.Run = func(_ *cobra.Command, _ []string) {
 		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
+		defer wlt.Close()
 
 		password := getPassword(wlt, *passOpt)
 		mnemonic, err := wlt.Mnemonic(password)
