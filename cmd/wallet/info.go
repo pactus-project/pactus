@@ -20,6 +20,7 @@ func buildInfoCmd(parentCmd *cobra.Command) {
 	infoCmd.Run = func(_ *cobra.Command, _ []string) {
 		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
+		defer wlt.Close()
 
 		info := wlt.Info()
 

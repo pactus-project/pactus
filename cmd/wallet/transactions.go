@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/util/terminal"
@@ -36,6 +37,7 @@ func buildTransactionsAddCmd(parentCmd *cobra.Command) {
 
 		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
+		defer wlt.Close()
 
 		id, err := hash.FromString(txID)
 		terminal.FatalErrorCheck(err)
@@ -85,13 +87,57 @@ func buildTransactionsListCmd(parentCmd *cobra.Command) {
 
 		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
+		defer wlt.Close()
 
 		transactions := wlt.ListTransactions(opts...)
-		terminal.PrintInfoMsgBoldf("No Time\tID\tType\tStatus\tSender\tReceiver\tAmount")
+		const (
+			noWidth      = 4
+			timeWidth    = 16
+			idWidth      = 65
+			addressWidth = 16
+			amountWidth  = 12
+			typeWidth    = 10
+			statusWidth  = 10
+		)
+
+		headerFmt := fmt.Sprintf("%%-%dv %%-%dv %%-%dv %%-%dv %%-%dv %%-%dv %%-%dv %%-%dv",
+			noWidth, timeWidth, idWidth, addressWidth, addressWidth, amountWidth, typeWidth, statusWidth)
+		rowFmt := headerFmt
+
+		terminal.PrintInfoMsgBoldf(headerFmt,
+			"No", "Time", "ID", "Sender", "Receiver", "Amount", "Type", "Status")
+
+		fit := func(s string, width int) string {
+			if len(s) > width {
+				if width <= 3 {
+					return s[:width]
+				}
+
+				return fmt.Sprintf("%-*s", width, s[:width-3]+"...")
+			}
+
+			return fmt.Sprintf("%-*s", width, s)
+		}
+
+		shortAddr := func(addr string) string {
+			const keep = 6
+			if len(addr) <= (keep*2)+3 {
+				return addr
+			}
+			return fmt.Sprintf("%s...%s", addr[:keep], addr[len(addr)-keep:])
+		}
+
 		for i, trx := range transactions {
-			terminal.PrintInfoMsgf("%d - %v\t%v\t%s\t%s\t%s\t%s\t%s",
-				i+1, trx.CreatedAt.Format("02 Jan 06 15:04"),
-				trx.ID[:12], trx.PayloadType, trx.Status, trx.Sender, trx.Receiver, trx.Amount)
+			terminal.PrintInfoMsgf(rowFmt,
+				i+1,
+				trx.CreatedAt.Format("2/1/2006 15:04"),
+				fit(trx.ID, idWidth),
+				fit(shortAddr(trx.Sender), addressWidth),
+				fit(shortAddr(trx.Receiver), addressWidth),
+				fit(trx.Amount.String(), amountWidth),
+				fit(trx.PayloadType.String(), typeWidth),
+				fit(trx.Status.String(), statusWidth),
+			)
 		}
 	}
 }

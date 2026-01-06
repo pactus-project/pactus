@@ -45,6 +45,7 @@ func buildSendTransferCmd(parentCmd *cobra.Command) {
 
 		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
+		defer wlt.Close()
 
 		opts := []wallet.TxOption{
 			wallet.OptionFee(*feeOpt),
@@ -89,6 +90,7 @@ func buildSendBondCmd(parentCmd *cobra.Command) {
 
 		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
+		defer wlt.Close()
 
 		opts := []wallet.TxOption{
 			wallet.OptionFee(*feeOpt),
@@ -129,6 +131,7 @@ func buildSendUnbondCmd(parentCmd *cobra.Command) {
 
 		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
+		defer wlt.Close()
 
 		opts := []wallet.TxOption{
 			wallet.OptionFee(*feeOpt),
@@ -170,6 +173,7 @@ func buildSendWithdrawCmd(parentCmd *cobra.Command) {
 
 		wlt, err := openWallet(context.Background())
 		terminal.FatalErrorCheck(err)
+		defer wlt.Close()
 
 		opts := []wallet.TxOption{
 			wallet.OptionFee(*feeOpt),
