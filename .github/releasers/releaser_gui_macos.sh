@@ -59,9 +59,6 @@ mkdir -p ${GUI_BUNDLE}
 cp ${BUILD_DIR}/pactus-gui                ${GUI_BUNDLE}
 cp ${ROOT_DIR}/.github/releasers/macos/*  ${GUI_BUNDLE}
 
-# Icon
-cp ${ROOT_DIR}/.github/releasers/pactus.icns  ${GUI_BUNDLE}
-
 # https://stackoverflow.com/questions/21242932/sed-i-may-not-be-used-with-stdin-on-mac-os-x
 sed -i '' "s/%SHORTVERSION%/${VERSION}/"     ${GUI_BUNDLE}/Info.plist
 sed -i '' "s/%VERSION%/Version ${VERSION}/"  ${GUI_BUNDLE}/Info.plist
