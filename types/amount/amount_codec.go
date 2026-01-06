@@ -2,7 +2,6 @@ package amount
 
 import (
 	"database/sql/driver"
-	"encoding/json"
 )
 
 // Value implements the driver.Valuer interface for SQL database operations.
@@ -24,50 +23,40 @@ func (a *Amount) Scan(src any) error {
 	}
 }
 
-// MarshalJSON implements the json.Marshaler interface.
-// It serializes the Amount as a string in PAC format.
-func (a Amount) MarshalJSON() ([]byte, error) {
-	return json.Marshal(a.Format())
-}
-
-// UnmarshalJSON implements the json.Unmarshaler interface.
-// It expects a string value in PAC format.
-func (a *Amount) UnmarshalJSON(data []byte) error {
-	var str string
-	if err := json.Unmarshal(data, &str); err != nil {
-		return err
-	}
-
-	amt, err := FromString(str)
-	if err != nil {
-		return err
-	}
-
-	*a = amt
-
-	return nil
-}
-
 // MarshalYAML implements the yaml.Marshaler interface.
-// It serializes the Amount as a string in PAC format.
+// It serializes the Amount as a float in PAC units.
 func (a Amount) MarshalYAML() (any, error) {
-	return a.Format(), nil
+	// Emit PAC value (human-readable float)
+	return a.ToPAC(), nil
 }
 
 // UnmarshalYAML implements the yaml.Unmarshaler interface.
-// It expects a string value in PAC format.
+//
+// It accepts either:
+//   - a float value in PAC format (e.g., 123.456), or
+//   - an integer value in NanoPAC format (e.g., 123456000000).
 func (a *Amount) UnmarshalYAML(unmarshal func(any) error) error {
-	var str string
-	if err := unmarshal(&str); err != nil {
+	var v any
+	if err := unmarshal(&v); err != nil {
 		return err
 	}
 
-	amt, err := FromString(str)
-	if err != nil {
-		return err
-	}
+	switch val := v.(type) {
+	case float64:
+		// PAC format
+		amt, err := NewAmount(val)
+		if err != nil {
+			return err
+		}
+		*a = amt
 
-	*a = amt
+	case int:
+		// NanoPAC format (small integers)
+		*a = Amount(val)
+
+	default:
+		return ErrInvalidYAMLType
+	}
 
 	return nil
 }
