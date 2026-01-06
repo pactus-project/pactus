@@ -52,7 +52,7 @@ func setup(t *testing.T) *testData {
 		mockProvider.EXPECT().Close().Times(1)
 		mockStorage.EXPECT().Close().Times(1)
 		if wlt != nil {
-			_ = wlt.Close()
+			wlt.Close()
 		}
 	})
 
@@ -665,7 +665,7 @@ func TestTestnetWallet(t *testing.T) {
 		mnemonic, _ := wallet.GenerateMnemonic(128)
 		wlt, err := wallet.Create(t.Context(), walletPath, mnemonic, "", genesis.Testnet)
 		require.NoError(t, err)
-		t.Cleanup(func() { _ = wlt.Close() })
+
 		assert.Equal(t, genesis.Testnet, wlt.Info().Network)
 
 		info, err := wlt.NewBLSAccountAddress("testnet-addr-1")
@@ -677,7 +677,7 @@ func TestTestnetWallet(t *testing.T) {
 	t.Run("Open Testnet wallet", func(t *testing.T) {
 		wlt, err := wallet.Open(t.Context(), walletPath)
 		require.NoError(t, err)
-		t.Cleanup(func() { _ = wlt.Close() })
+
 		assert.Equal(t, genesis.Testnet, wlt.Info().Network)
 
 		info, err := wlt.NewBLSAccountAddress("testnet-addr-2")

@@ -107,16 +107,16 @@ func buildTransactionsListCmd(parentCmd *cobra.Command) {
 		terminal.PrintInfoMsgBoldf(headerFmt,
 			"No", "Time", "ID", "Sender", "Receiver", "Amount", "Type", "Status")
 
-		fit := func(s string, width int) string {
-			if len(s) > width {
+		fit := func(text string, width int) string {
+			if len(text) > width {
 				if width <= 3 {
-					return s[:width]
+					return text[:width]
 				}
 
-				return fmt.Sprintf("%-*s", width, s[:width-3]+"...")
+				return fmt.Sprintf("%-*s", width, text[:width-3]+"...")
 			}
 
-			return fmt.Sprintf("%-*s", width, s)
+			return fmt.Sprintf("%-*s", width, text)
 		}
 
 		shortAddr := func(addr string) string {
@@ -124,6 +124,7 @@ func buildTransactionsListCmd(parentCmd *cobra.Command) {
 			if len(addr) <= (keep*2)+3 {
 				return addr
 			}
+
 			return fmt.Sprintf("%s...%s", addr[:keep], addr[len(addr)-keep:])
 		}
 
