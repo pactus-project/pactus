@@ -240,14 +240,12 @@ func (s *Storage) loadAddresses() error {
 
 	s.addressMap = make(map[string]types.AddressInfo)
 	for rows.Next() {
-		var addr types.AddressInfo
-		err := rows.Scan(&addr.Address, &addr.PublicKey, &addr.Label,
-			&addr.Path, &addr.CreatedAt, &addr.UpdatedAt)
+		addr, err := scanAddress(rows)
 		if err != nil {
 			return fmt.Errorf("failed to scan address: %w", err)
 		}
 
-		s.addressMap[addr.Address] = addr
+		s.addressMap[addr.Address] = *addr
 	}
 
 	return rows.Err()
@@ -375,6 +373,25 @@ func (s *Storage) HasTransaction(id string) bool {
 // scanner is an interface that both *sql.Row and *sql.Rows satisfy.
 type scanner interface {
 	Scan(dest ...any) error
+}
+
+// scanAddress scans a row into an AddressInfo struct.
+func scanAddress(s scanner) (*types.AddressInfo, error) {
+	var info types.AddressInfo
+
+	err := s.Scan(
+		&info.Address,
+		&info.PublicKey,
+		&info.Label,
+		&info.Path,
+		&info.CreatedAt,
+		&info.UpdatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &info, nil
 }
 
 // scanTransaction scans a row into a TransactionInfo struct.
