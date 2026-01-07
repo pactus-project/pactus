@@ -9,9 +9,9 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"sync"
 
 	"github.com/gofrs/flock"
-	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd"
@@ -98,63 +98,80 @@ func main() {
 
 		return
 	}
+	var guiNode *node.Node
 
 	// Connect function to application startup event, this is not required.
 	app.Connect("startup", func() {
 		log.Println("application startup")
 	})
 
-	node, err := newNode(workingDir)
-	gtkutil.FatalErrorCheck(err)
-
 	var gui *gtkapp.GUI
-
-	// Connect function to application activate event
-	app.Connect("activate", func() {
-		log.Println("application activate")
-
-		// Show about dialog as splash screen
-		splashDlg := view.NewAboutDialog()
-		splashDlg.SetVersion(version.NodeVersion().StringWithAlias())
-		splashDlg.SetDecorated(false)
-		splashDlg.SetResizable(false)
-		splashDlg.SetPosition(gtk.WIN_POS_CENTER)
-		splashDlg.SetTypeHint(gdk.WINDOW_TYPE_HINT_SPLASHSCREEN)
-
-		gtk.WindowSetAutoStartupNotification(false)
-		splashDlg.ShowAll()
-		gtk.WindowSetAutoStartupNotification(true)
-
-		app.AddWindow(splashDlg)
-
-		// This might also force GTK to draw the splash screen
-		for gtk.EventsPending() {
-			gtk.MainIteration()
-		}
-
-		// Running the run-up logic in a separate goroutine
-		glib.TimeoutAdd(uint(100), func() bool {
-			gui, err = gtkapp.Run(node, app)
-			gtkutil.FatalErrorCheck(err)
-			splashDlg.Destroy()
-
-			// Ensures the function is not called again
-			return false
-		})
-	})
+	activateOnce := new(sync.Once)
+	shutdownOnce := new(sync.Once)
 
 	shutdown := func() {
-		if gui != nil && gui.Cleanup != nil {
-			gui.Cleanup()
-		}
-		node.Stop()
-		_ = fileLock.Unlock()
+		shutdownOnce.Do(func() {
+			if gui != nil {
+				gui.Cleanup()
+			}
+			if guiNode != nil {
+				guiNode.Stop()
+			}
+			_ = fileLock.Unlock()
+		})
 	}
 
 	// Connect function to application shutdown event, this is not required.
 	app.Connect("shutdown", func() {
 		log.Println("Application shutdown")
 		shutdown()
+	})
+
+	// Connect function to application activate event
+	app.Connect("activate", func() {
+		activateOnce.Do(func() {
+			log.Println("application activate")
+
+			splash := view.NewSplashWindow(app)
+			splash.SetVersion(version.NodeVersion().StringWithAlias())
+			gtk.WindowSetAutoStartupNotification(false)
+			splash.ShowAll()
+			gtk.WindowSetAutoStartupNotification(true)
+			app.AddWindow(splash.Window())
+
+			notify := func(msg string) {
+				glib.IdleAdd(func() bool {
+					splash.SetStatus(msg)
+
+					return false
+				})
+			}
+
+			go func() {
+				n, err := newNode(workingDir, notify)
+
+				glib.IdleAdd(func() bool {
+					if err != nil {
+						splash.Destroy()
+						shutdown()
+						gtkutil.ShowError(err)
+						app.Quit()
+
+						return false
+					}
+
+					guiNode = n
+					splash.SetStatus("Loading wallet interface...")
+
+					gui, err = gtkapp.Run(guiNode, app)
+					gtkutil.FatalErrorCheck(err)
+
+					splash.Destroy()
+
+					return false
+				})
+			}()
+		})
 	})
 
 	signal.HandleInterrupt(func() {
@@ -166,7 +183,15 @@ func main() {
 	os.Exit(app.Run(nil))
 }
 
-func newNode(workingDir string) (*node.Node, error) {
+type statusReporter func(string)
+
+func reportStatus(cb statusReporter, msg string) {
+	if cb != nil {
+		cb(msg)
+	}
+}
+
+func newNode(workingDir string, statusCb statusReporter) (*node.Node, error) {
 	// change working directory
 	if err := os.Chdir(workingDir); err != nil {
 		log.Println("Aborted! Unable to changes working directory. " + err.Error())
@@ -174,14 +199,29 @@ func newNode(workingDir string) (*node.Node, error) {
 		return nil, err
 	}
 
+	reportStatus(statusCb, "Opening wallet...")
 	passwordFetcher := func() (string, bool) {
 		if *passwordOpt != "" {
 			return *passwordOpt, true
 		}
-		pwd, ok := gtkapp.PromptWalletPassword()
+
+		var (
+			pwd string
+			ok  bool
+		)
+		done := make(chan struct{})
+		glib.IdleAdd(func() bool {
+			pwd, ok = gtkapp.PromptWalletPassword()
+			close(done)
+
+			return false
+		})
+		<-done
 
 		return pwd, ok
 	}
+
+	reportStatus(statusCb, "Starting node services...")
 	n, err := cmd.StartNode(workingDir, passwordFetcher, nil)
 	if err != nil {
 		return nil, err

@@ -13,8 +13,9 @@ import (
 )
 
 type GUI struct {
-	Window  *gtk.ApplicationWindow
-	Cleanup func()
+	MainWindow *view.MainWindowView
+	NodeCtrl   *controller.NodeWidgetController
+	WalletCtrl *controller.WalletWidgetController
 }
 
 // Run builds and shows the main window, wiring views/controllers.
@@ -124,11 +125,15 @@ func Run(n *node.Node, gtkApp *gtk.Application) (*GUI, error) {
 	mwView.Window.ShowAll()
 	gtkApp.AddWindow(mwView.Window)
 
-	cleanup := func() {
-		walletCtrl.Cleanup()
-		nodeCtrl.Cleanup()
-		mwView.Window.Close()
-	}
+	return &GUI{
+		MainWindow: mwView,
+		NodeCtrl:   nodeCtrl,
+		WalletCtrl: walletCtrl,
+	}, nil
+}
 
-	return &GUI{Window: mwView.Window, Cleanup: cleanup}, nil
+func (g *GUI) Cleanup() {
+	g.NodeCtrl.Cleanup()
+	g.WalletCtrl.Cleanup()
+	g.MainWindow.Cleanup()
 }
