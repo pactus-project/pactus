@@ -79,7 +79,7 @@ Examples:
 	skipOpt := listCmd.Flags().Int("skip", 0,
 		"Number of transactions to skip for pagination. Default is 0.")
 
-	listCmd.Run = func(_ *cobra.Command, args []string) {
+	listCmd.Run = func(_ *cobra.Command, _ []string) {
 		var direction types.TxDirection
 		switch *directionOpt {
 		case "any":
