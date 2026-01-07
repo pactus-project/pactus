@@ -8,6 +8,12 @@ BUILD_DIR="${ROOT_DIR}/build"
 PACKAGE_NAME="pactus-gui_${VERSION}"
 PACKAGE_DIR="${ROOT_DIR}/${PACKAGE_NAME}"
 
+# Ensure GTK prefix is provided for bundling assets
+if [ -z "${LIB_HOME}" ]; then
+    echo "LIB_HOME is not set. Set it to your GTK prefix (e.g. /opt/homebrew or /usr/local)."
+    exit 1
+fi
+
 # Check the architecture
 ARC="$(uname -m)"
 
