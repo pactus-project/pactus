@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/wallet/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
@@ -13,29 +14,41 @@ import (
 func TestTransactionsListOptions(t *testing.T) {
 	tests := []struct {
 		opts     []ListTransactionsOption
+		expDir   types.TxDirection
+		expAddr  string
 		expCount int
 		expSkip  int
 	}{
 		{
+			opts:   []ListTransactionsOption{},
+			expDir: types.TxDirectionAny, expAddr: "*", expCount: 10, expSkip: 0,
+		},
+		{
 			opts: []ListTransactionsOption{
+				WithDirection(types.TxDirectionAny),
+				WithAddress(""),
 				WithCount(-1),
 				WithSkip(-1),
 			},
-			expCount: 10, expSkip: 0,
+			expDir: types.TxDirectionAny, expAddr: "*", expCount: 10, expSkip: 0,
 		},
 		{
 			opts: []ListTransactionsOption{
+				WithDirection(types.TxDirectionOutgoing),
+				WithAddress("*"),
 				WithCount(0),
 				WithSkip(0),
 			},
-			expCount: 10, expSkip: 0,
+			expDir: types.TxDirectionOutgoing, expAddr: "*", expCount: 10, expSkip: 0,
 		},
 		{
 			opts: []ListTransactionsOption{
+				WithDirection(types.TxDirectionIncoming),
+				WithAddress("addr1"),
 				WithCount(5),
 				WithSkip(2),
 			},
-			expCount: 5, expSkip: 2,
+			expDir: types.TxDirectionIncoming, expAddr: "addr1", expCount: 5, expSkip: 2,
 		},
 	}
 
@@ -45,6 +58,8 @@ func TestTransactionsListOptions(t *testing.T) {
 			opt(&cfg)
 		}
 
+		assert.Equal(t, tt.expDir, cfg.direction)
+		assert.Equal(t, tt.expAddr, cfg.address)
 		assert.Equal(t, tt.expCount, cfg.count)
 		assert.Equal(t, tt.expSkip, cfg.skip)
 	}

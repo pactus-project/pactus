@@ -95,7 +95,9 @@ func WithDirection(dir types.TxDirection) ListTransactionsOption {
 // WithAddress filters transactions by the specified address.
 func WithAddress(address string) ListTransactionsOption {
 	return func(cfg *listTransactionsConfig) {
-		cfg.address = address
+		if address != "" {
+			cfg.address = address
+		}
 	}
 }
 
