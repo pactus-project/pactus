@@ -11,23 +11,25 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// buildTransactionsCmd builds all sub-commands related to the wallet transactions.
-func buildTransactionsCmd(parentCmd *cobra.Command) {
-	transactionsCmd := &cobra.Command{
-		Use:   "transactions",
-		Short: "retrieving the list of transaction for the wallet",
+// buildTransactionCmd builds all sub-commands related to the wallet transactions.
+func buildTransactionCmd(parentCmd *cobra.Command) {
+	transactionCmd := &cobra.Command{
+		Use:   "transaction",
+		Short: "Manage and view wallet transactions",
+		Long:  "The 'transactions' command allows you to list existing transactions with optional filtering",
 	}
 
-	parentCmd.AddCommand(transactionsCmd)
-	buildTransactionsAddCmd(transactionsCmd)
-	buildTransactionsListCmd(transactionsCmd)
+	parentCmd.AddCommand(transactionCmd)
+	buildTransactionAddCmd(transactionCmd)
+	buildTransactionListCmd(transactionCmd)
 }
 
-// buildTransactionsAddCmd builds a command for adding a transaction to the wallet.
-func buildTransactionsAddCmd(parentCmd *cobra.Command) {
+// buildTransactionsAddCmd builds the command for adding a transaction to the wallet.
+func buildTransactionAddCmd(parentCmd *cobra.Command) {
 	addCmd := &cobra.Command{
 		Use:   "add [flags] <ID>",
 		Short: "Add a transaction to the wallet",
+		Long:  "Add a specific transaction to the wallet using its transaction ID",
 		Args:  cobra.ExactArgs(1),
 	}
 	parentCmd.AddCommand(addCmd)
@@ -49,21 +51,35 @@ func buildTransactionsAddCmd(parentCmd *cobra.Command) {
 	}
 }
 
-// buildTransactionsListCmd builds a command for listing transactions of a specific address.
-func buildTransactionsListCmd(parentCmd *cobra.Command) {
+// buildTransactionListCmd builds the command for listing wallet transactions.
+func buildTransactionListCmd(parentCmd *cobra.Command) {
 	listCmd := &cobra.Command{
-		Use:   "list [flags] <ADDRESS>",
-		Short: "List transactions for a given address",
-		Args:  cobra.ExactArgs(1),
+		Use:   "list [flags]",
+		Short: "List transactions in the wallet",
+		Long: `List transactions stored in the wallet.
+
+Examples:
+  # List last 10 transactions (default)
+  transaction list
+
+  # List last 20 outgoing transactions
+  transaction list --direction outgoing --count 20
+
+  # List transactions for a specific address
+  transaction list --address pc1xyz...`,
 	}
 	parentCmd.AddCommand(listCmd)
 
 	directionOpt := listCmd.Flags().String("direction", "any",
-		"filter transactions by direction: any, incoming, outgoing")
-	countOpt := listCmd.Flags().Int("count", 10, "number of transactions to list")
-	skipOpt := listCmd.Flags().Int("skip", 0, "number of transactions to skip")
+		"Filter transactions by direction: 'any', 'incoming', or 'outgoing'. Default is 'any'.")
+	addressOpt := listCmd.Flags().String("address", "*",
+		"Filter transactions by wallet address. Use '*' to include all addresses.")
+	countOpt := listCmd.Flags().Int("count", 10,
+		"Maximum number of transactions to display. Default is 10.")
+	skipOpt := listCmd.Flags().Int("skip", 0,
+		"Number of transactions to skip for pagination. Default is 0.")
 
-	listCmd.Run = func(_ *cobra.Command, args []string) {
+	listCmd.Run = func(_ *cobra.Command, _ []string) {
 		var direction types.TxDirection
 		switch *directionOpt {
 		case "any":
@@ -79,7 +95,7 @@ func buildTransactionsListCmd(parentCmd *cobra.Command) {
 		}
 
 		opts := []wallet.ListTransactionsOption{
-			wallet.WithAddress(args[0]),
+			wallet.WithAddress(*addressOpt),
 			wallet.WithDirection(direction),
 			wallet.WithCount(*countOpt),
 			wallet.WithSkip(*skipOpt),

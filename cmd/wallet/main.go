@@ -74,7 +74,7 @@ func main() {
 	buildPasswordCmd(rootCmd)
 	buildSendCmd(rootCmd)
 	buildAddressCmd(rootCmd)
-	buildTransactionsCmd(rootCmd)
+	buildTransactionCmd(rootCmd)
 	buildInfoCmd(rootCmd)
 	buildNeuterCmd(rootCmd)
 
