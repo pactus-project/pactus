@@ -1,4 +1,4 @@
-package wallet_test
+package wallet
 
 import (
 	"errors"
@@ -13,7 +13,6 @@ import (
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
-	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/provider"
 	"github.com/pactus-project/pactus/wallet/storage"
@@ -27,7 +26,7 @@ import (
 type testData struct {
 	*testsuite.TestSuite
 
-	wallet       *wallet.Wallet
+	wallet       *Wallet
 	password     string
 	testVault    *vault.Vault
 	mockStorage  *storage.MockIStorage
@@ -42,11 +41,11 @@ func setup(t *testing.T) *testData {
 	mockStorage := storage.NewMockIStorage(ts.Ctrl)
 	mockProvider := provider.NewMockIBlockchainProvider(ts.Ctrl)
 
-	mnemonic1, _ := wallet.GenerateMnemonic(128)
+	mnemonic1, _ := GenerateMnemonic(128)
 	testVault, _ := vault.CreateVaultFromMnemonic(mnemonic1, addresspath.CoinTypePactusMainnet)
 	mockStorage.EXPECT().Vault().Return(testVault).AnyTimes()
 
-	var wlt *wallet.Wallet
+	var wlt *Wallet
 
 	t.Cleanup(func() {
 		mockProvider.EXPECT().Close().Times(1)
@@ -56,7 +55,7 @@ func setup(t *testing.T) *testData {
 		}
 	})
 
-	wlt, err := wallet.New(mockStorage, wallet.WithBlockchainProvider(mockProvider))
+	wlt, err := New(mockStorage, WithBlockchainProvider(mockProvider))
 	assert.NoError(t, err)
 
 	return &testData{
@@ -75,14 +74,14 @@ func (td *testData) RandMemo() string {
 
 func TestCheckMnemonic(t *testing.T) {
 	for _, entropy := range []int{128, 160, 192, 224, 256} {
-		mnemonic, _ := wallet.GenerateMnemonic(entropy)
-		assert.NoError(t, wallet.CheckMnemonic(mnemonic))
+		mnemonic, _ := GenerateMnemonic(entropy)
+		assert.NoError(t, CheckMnemonic(mnemonic))
 	}
 }
 
 func TestOpenWallet(t *testing.T) {
 	t.Run("Invalid wallet path", func(t *testing.T) {
-		_, err := wallet.Open(t.Context(), util.TempFilePath())
+		_, err := Open(t.Context(), util.TempFilePath())
 		assert.Error(t, err)
 	})
 
@@ -90,36 +89,36 @@ func TestOpenWallet(t *testing.T) {
 		path := util.TempFilePath()
 		assert.NoError(t, util.WriteFile(path, []byte("invalid_data")))
 
-		_, err := wallet.Open(t.Context(), path)
+		_, err := Open(t.Context(), path)
 		assert.Error(t, err)
 	})
 }
 
 func TestCreateWallet(t *testing.T) {
-	mnemonic, _ := wallet.GenerateMnemonic(256)
+	mnemonic, _ := GenerateMnemonic(256)
 	password := ""
 	t.Run("Wallet exists", func(t *testing.T) {
 		path := util.TempFilePath()
 		err := util.WriteFile(path, []byte("something-here"))
 		require.NoError(t, err)
 
-		_, err = wallet.Create(t.Context(), path, mnemonic, password, genesis.Mainnet)
-		assert.Error(t, err, wallet.ExitsError{Path: path})
+		_, err = Create(t.Context(), path, mnemonic, password, genesis.Mainnet)
+		assert.Error(t, err, ExitsError{Path: path})
 	})
 
 	t.Run("Invalid mnemonic", func(t *testing.T) {
-		_, err := wallet.Create(t.Context(), util.TempFilePath(), "invalid mnemonic", password, genesis.Mainnet)
+		_, err := Create(t.Context(), util.TempFilePath(), "invalid mnemonic", password, genesis.Mainnet)
 		assert.Error(t, err)
 	})
 
 	t.Run("Invalid path", func(t *testing.T) {
-		_, err := wallet.Create(t.Context(), "\x00", mnemonic, password, genesis.Mainnet)
+		_, err := Create(t.Context(), "\x00", mnemonic, password, genesis.Mainnet)
 		assert.Error(t, err)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		walletPath := util.TempFilePath()
-		_, err := wallet.Create(t.Context(), walletPath, mnemonic, password, genesis.Mainnet)
+		_, err := Create(t.Context(), walletPath, mnemonic, password, genesis.Mainnet)
 		assert.NoError(t, err)
 	})
 }
@@ -227,10 +226,10 @@ func TestSigningTxWithBLS(t *testing.T) {
 	lockTime := td.RandHeight()
 	memo := td.RandMemo()
 
-	opts := []wallet.TxOption{
-		wallet.OptionFee(fee.String()),
-		wallet.OptionLockTime(lockTime),
-		wallet.OptionMemo(memo),
+	opts := []TxOption{
+		OptionFee(fee.String()),
+		OptionLockTime(lockTime),
+		OptionMemo(memo),
 	}
 
 	td.mockStorage.EXPECT().WalletInfo().Return(&types.WalletInfo{DefaultFee: td.RandFee()})
@@ -265,10 +264,10 @@ func TestSigningTxWithEd25519(t *testing.T) {
 	lockTime := td.RandHeight()
 	memo := td.RandMemo()
 
-	opts := []wallet.TxOption{
-		wallet.OptionFee(fee.String()),
-		wallet.OptionLockTime(lockTime),
-		wallet.OptionMemo(memo),
+	opts := []TxOption{
+		OptionFee(fee.String()),
+		OptionLockTime(lockTime),
+		OptionMemo(memo),
 	}
 
 	td.mockStorage.EXPECT().WalletInfo().Return(&types.WalletInfo{DefaultFee: td.RandFee()})
@@ -305,10 +304,10 @@ func TestMakeTransferTx(t *testing.T) {
 		fee := td.RandFee()
 		lockTime := td.RandHeight()
 		memo := td.RandMemo()
-		opts := []wallet.TxOption{
-			wallet.OptionFee(fee.String()),
-			wallet.OptionLockTime(lockTime),
-			wallet.OptionMemo(memo),
+		opts := []TxOption{
+			OptionFee(fee.String()),
+			OptionLockTime(lockTime),
+			OptionMemo(memo),
 		}
 
 		trx, err := td.wallet.MakeTransferTx(sender.String(), receiver.String(), amt, opts...)
@@ -360,10 +359,10 @@ func TestMakeBondTx(t *testing.T) {
 		lockTime := td.RandHeight()
 		fee := td.RandFee()
 		memo := td.RandMemo()
-		opts := []wallet.TxOption{
-			wallet.OptionFee(fee.String()),
-			wallet.OptionLockTime(lockTime),
-			wallet.OptionMemo(memo),
+		opts := []TxOption{
+			OptionFee(fee.String()),
+			OptionLockTime(lockTime),
+			OptionMemo(memo),
 		}
 		td.mockProvider.EXPECT().GetValidator(receiver.Address().String()).Return(nil, nil)
 
@@ -505,9 +504,9 @@ func TestMakeUnbondTx(t *testing.T) {
 
 	t.Run("set parameters manually", func(t *testing.T) {
 		lockTime := td.RandHeight()
-		opts := []wallet.TxOption{
-			wallet.OptionLockTime(lockTime),
-			wallet.OptionMemo("test"),
+		opts := []TxOption{
+			OptionLockTime(lockTime),
+			OptionMemo("test"),
 		}
 
 		trx, err := td.wallet.MakeUnbondTx(sender.String(), opts...)
@@ -554,10 +553,10 @@ func TestMakeWithdrawTx(t *testing.T) {
 	t.Run("set parameters manually", func(t *testing.T) {
 		lockTime := td.RandHeight()
 		fee := td.RandFee()
-		opts := []wallet.TxOption{
-			wallet.OptionFee(fee.String()),
-			wallet.OptionLockTime(lockTime),
-			wallet.OptionMemo("test"),
+		opts := []TxOption{
+			OptionFee(fee.String()),
+			OptionLockTime(lockTime),
+			OptionMemo("test"),
 		}
 
 		trx, err := td.wallet.MakeWithdrawTx(sender.String(), receiver.String(), amt, opts...)
@@ -662,8 +661,8 @@ func TestTestnetWallet(t *testing.T) {
 	walletPath := util.TempFilePath()
 
 	t.Run("Create Testnet wallet", func(t *testing.T) {
-		mnemonic, _ := wallet.GenerateMnemonic(128)
-		wlt, err := wallet.Create(t.Context(), walletPath, mnemonic, "", genesis.Testnet)
+		mnemonic, _ := GenerateMnemonic(128)
+		wlt, err := Create(t.Context(), walletPath, mnemonic, "", genesis.Testnet)
 		require.NoError(t, err)
 
 		assert.Equal(t, genesis.Testnet, wlt.Info().Network)
@@ -675,7 +674,7 @@ func TestTestnetWallet(t *testing.T) {
 	})
 
 	t.Run("Open Testnet wallet", func(t *testing.T) {
-		wlt, err := wallet.Open(t.Context(), walletPath)
+		wlt, err := Open(t.Context(), walletPath)
 		require.NoError(t, err)
 
 		assert.Equal(t, genesis.Testnet, wlt.Info().Network)
