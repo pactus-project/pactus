@@ -84,9 +84,10 @@ type TransactionInfo struct {
 	UpdatedAt   time.Time
 }
 
-// MakeTransactionInfos builds TransactionInfo from trx.
-// Returns might contains more than one entry per recipient, this covers the batch transfer transaction.s
-// Data should be the serialized tx, otherwise it return error.
+// MakeTransactionInfos builds one or more TransactionInfo entries from the given transaction.
+//
+// It may return multiple entries (one per recipient) to support batch transfer transactions.
+// Note that the caller is responsible for setting the transaction direction.
 func MakeTransactionInfos(trx *tx.Tx, status TransactionStatus, blockHeight block.Height) ([]*TransactionInfo, error) {
 	data, err := trx.Bytes()
 	if err != nil {

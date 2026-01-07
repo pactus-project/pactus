@@ -1,4 +1,4 @@
-package wallet_test
+package wallet
 
 import (
 	"testing"
@@ -6,7 +6,6 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/ed25519"
-	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/pactus-project/pactus/wallet/storage"
 	"github.com/pactus-project/pactus/wallet/types"
@@ -30,8 +29,9 @@ func TestPrivateKey(t *testing.T) {
 func TestAddressCount(t *testing.T) {
 	td := setup(t)
 
-	td.mockStorage.EXPECT().AddressCount().Return(3)
-	assert.Equal(t, 3, td.wallet.AddressCount())
+	count := td.RandInt(100)
+	td.mockStorage.EXPECT().AddressCount().Return(count)
+	assert.Equal(t, count, td.wallet.AddressCount())
 }
 
 func TestHasAddress(t *testing.T) {
@@ -85,7 +85,7 @@ func TestListAddresses(t *testing.T) {
 	})
 
 	t.Run("Only account addresses", func(t *testing.T) {
-		infos := td.wallet.ListAddresses(wallet.OnlyAccountAddresses())
+		infos := td.wallet.ListAddresses(OnlyAccountAddresses())
 
 		for _, i := range infos {
 			addr, _ := crypto.AddressFromString(i.Address)
@@ -94,7 +94,7 @@ func TestListAddresses(t *testing.T) {
 	})
 
 	t.Run("Only validator addresses", func(t *testing.T) {
-		infos := td.wallet.ListAddresses(wallet.OnlyValidatorAddresses())
+		infos := td.wallet.ListAddresses(OnlyValidatorAddresses())
 
 		for _, i := range infos {
 			addr, _ := crypto.AddressFromString(i.Address)
@@ -185,7 +185,7 @@ func TestImportBLSPrivateKey(t *testing.T) {
 		td.mockStorage.EXPECT().HasAddress(pub.AccountAddress().String()).Return(true)
 
 		err := td.wallet.ImportBLSPrivateKey(td.password, prv)
-		assert.ErrorIs(t, err, wallet.ErrAddressExists)
+		assert.ErrorIs(t, err, ErrAddressExists)
 	})
 }
 
@@ -217,7 +217,7 @@ func TestImportEd25519PrivateKey(t *testing.T) {
 		td.mockStorage.EXPECT().HasAddress(pub.AccountAddress().String()).Return(true)
 
 		err := td.wallet.ImportEd25519PrivateKey(td.password, prv)
-		assert.ErrorIs(t, err, wallet.ErrAddressExists)
+		assert.ErrorIs(t, err, ErrAddressExists)
 	})
 }
 

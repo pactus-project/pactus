@@ -336,8 +336,6 @@ func (s *Storage) HasAddress(address string) bool {
 
 // InsertTransaction inserts a new transaction.
 func (s *Storage) InsertTransaction(info *types.TransactionInfo) error {
-	data := info.Data
-
 	_, err := s.db.ExecContext(s.ctx, insertTransactionSQL,
 		info.ID,
 		info.Sender,
@@ -349,7 +347,7 @@ func (s *Storage) InsertTransaction(info *types.TransactionInfo) error {
 		info.Status,
 		info.BlockHeight,
 		int(info.PayloadType),
-		data,
+		info.Data,
 		info.Comment,
 	)
 

@@ -392,7 +392,11 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 
 	txInfos, _ := types.MakeTransactionInfos(trx, types.TransactionStatusPending, 0)
 	for _, info := range txInfos {
-		_ = w.storage.InsertTransaction(info)
+		info.Direction = types.TxDirectionOutgoing
+		err := w.storage.InsertTransaction(info)
+		if err != nil {
+			logger.Warn("transaction broadcasted but not recorded in wallet storage", "error", err)
+		}
 	}
 
 	return hash, nil
@@ -444,4 +448,5 @@ func (w *Wallet) SetDefaultFee(fee amount.Amount) error {
 // SetProvider sets the blockchain provider for the wallet.
 func (w *Wallet) SetProvider(provider provider.IBlockchainProvider) {
 	w.provider = provider
+	w.transactions.provider = provider
 }
