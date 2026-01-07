@@ -38,10 +38,9 @@ AppPublisher=Pactus
 AppPublisherURL=https://pactus.org/
 DefaultDirName={autopf}/Pactus
 DefaultGroupName=Pactus
-SetupIconFile=.github/releasers/pactus.ico
+SetupIconFile=.github/releasers/windows/pactus.ico
 LicenseFile=LICENSE
 Uninstallable=yes
-UninstallDisplayIcon={app}\\pactus-gui\\pactus-gui.exe
 
 [Files]
 Source:"${PACKAGE_NAME}/*"; DestDir:"{app}"; Flags: recursesubdirs

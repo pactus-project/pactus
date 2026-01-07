@@ -43,8 +43,7 @@ tar -czvf ${ROOT_DIR}/${FILE_NAME}.tar.gz -p ${PACKAGE_NAME}
 # building AppImage
 # https://github.com/linuxdeploy/linuxdeploy-plugin-gtk
 
-cp ${ROOT_DIR}/.github/releasers/linux/*    ${PACKAGE_DIR}
-cp ${ROOT_DIR}/.github/releasers/pactus.png ${PACKAGE_DIR}
+cp ${ROOT_DIR}/.github/releasers/linux/*  ${PACKAGE_DIR}
 
 cd ${PACKAGE_DIR}
 
