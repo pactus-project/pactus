@@ -256,14 +256,14 @@ func (*MockStore) WriteBatch() error {
 	return nil
 }
 
-func (m *MockStore) AddTestValidator(options ...func(*testsuite.ValidatorMaker)) *validator.Validator {
+func (m *MockStore) AddTestValidator(options ...testsuite.ValidatorMakerOption) *validator.Validator {
 	val := m.ts.GenerateTestValidator(options...)
 	m.UpdateValidator(val)
 
 	return val
 }
 
-func (m *MockStore) AddTestAccount(options ...func(*testsuite.AccountMaker)) (crypto.Address, *account.Account) {
+func (m *MockStore) AddTestAccount(options ...testsuite.AccountMakerOption) (crypto.Address, *account.Account) {
 	acc, addr := m.ts.GenerateTestAccount(options...)
 	m.UpdateAccount(addr, acc)
 

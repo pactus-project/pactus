@@ -96,7 +96,7 @@ func (td *testData) shouldPublishTransaction(t *testing.T, txID tx.ID) {
 }
 
 // makeValidTransferTx makes a valid Transfer transaction for testing purpose.
-func (td *testData) makeValidTransferTx(options ...func(tm *testsuite.TransactionMaker)) *tx.Tx {
+func (td *testData) makeValidTransferTx(options ...testsuite.TransactionMakerOption) *tx.Tx {
 	options = append(options, testsuite.TransactionWithLockTime(td.sbx.CurrentHeight()))
 	trx := td.GenerateTestTransferTx(options...)
 	signer := trx.Payload().Signer()
@@ -109,7 +109,7 @@ func (td *testData) makeValidTransferTx(options ...func(tm *testsuite.Transactio
 }
 
 // makeValidBatchTransferTx make a valid Batch transfer transaction for test purpose.
-func (td *testData) makeValidBatchTransferTx(options ...func(tm *testsuite.TransactionMaker)) *tx.Tx {
+func (td *testData) makeValidBatchTransferTx(options ...testsuite.TransactionMakerOption) *tx.Tx {
 	options = append(options, testsuite.TransactionWithLockTime(td.sbx.CurrentHeight()))
 	trx := td.GenerateTestBatchTransferTx(options...)
 	signer := trx.Payload().Signer()
@@ -122,12 +122,12 @@ func (td *testData) makeValidBatchTransferTx(options ...func(tm *testsuite.Trans
 }
 
 // makeValidSubsidyTx make a valid Batch transfer transaction for test purpose.
-func (td *testData) makeValidSubsidyTx(options ...func(tm *testsuite.TransactionMaker)) *tx.Tx {
+func (td *testData) makeValidSubsidyTx(options ...testsuite.TransactionMakerOption) *tx.Tx {
 	return td.GenerateTestSubsidyTx(options...)
 }
 
 // makeValidBondTx makes a valid Bond transaction for testing purpose.
-func (td *testData) makeValidBondTx(options ...func(tm *testsuite.TransactionMaker)) *tx.Tx {
+func (td *testData) makeValidBondTx(options ...testsuite.TransactionMakerOption) *tx.Tx {
 	options = append(options, testsuite.TransactionWithLockTime(td.sbx.CurrentHeight()))
 	trx := td.GenerateTestBondTx(options...)
 	signer := trx.Payload().Signer()
@@ -141,7 +141,7 @@ func (td *testData) makeValidBondTx(options ...func(tm *testsuite.TransactionMak
 
 // makeValidUnbondTx makes a valid Unbond transaction for testing purpose.
 // Ensure that the signer key is set through the options.
-func (td *testData) makeValidUnbondTx(options ...func(tm *testsuite.TransactionMaker)) *tx.Tx {
+func (td *testData) makeValidUnbondTx(options ...testsuite.TransactionMakerOption) *tx.Tx {
 	options = append(options, testsuite.TransactionWithLockTime(td.sbx.CurrentHeight()))
 	trx := td.GenerateTestUnbondTx(options...)
 
@@ -154,7 +154,7 @@ func (td *testData) makeValidUnbondTx(options ...func(tm *testsuite.TransactionM
 
 // makeValidWithdrawTx makes a valid Withdraw transaction for testing purpose.
 // Ensure that the signer key is set through the options.
-func (td *testData) makeValidWithdrawTx(options ...func(tm *testsuite.TransactionMaker)) *tx.Tx {
+func (td *testData) makeValidWithdrawTx(options ...testsuite.TransactionMakerOption) *tx.Tx {
 	options = append(options, testsuite.TransactionWithLockTime(td.sbx.CurrentHeight()))
 	trx := td.GenerateTestWithdrawTx(options...)
 
@@ -169,7 +169,7 @@ func (td *testData) makeValidWithdrawTx(options ...func(tm *testsuite.Transactio
 
 // makeValidSortitionTx makes a valid Sortition transaction for testing purpose.
 // Ensure that the signer key is set through the options.
-func (td *testData) makeValidSortitionTx(options ...func(tm *testsuite.TransactionMaker)) *tx.Tx {
+func (td *testData) makeValidSortitionTx(options ...testsuite.TransactionMakerOption) *tx.Tx {
 	options = append(options, testsuite.TransactionWithLockTime(td.sbx.CurrentHeight()))
 	trx := td.GenerateTestSortitionTx(options...)
 
