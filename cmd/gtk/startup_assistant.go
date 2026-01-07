@@ -32,46 +32,11 @@ func setMargin(widget gtk.IWidget, top, bottom, start, end int) {
 	widget.ToWidget().SetMarginEnd(end)
 }
 
-// ---- Local shims for startup assistant only (boot flow) ----
-// The rest of cmd/gtk should call gtkutil directly.
-
-type Color = gtkutil.Color
-
-const (
-	ColorRed    = gtkutil.ColorRed
-	ColorGreen  = gtkutil.ColorGreen
-	ColorBlue   = gtkutil.ColorBlue
-	ColorYellow = gtkutil.ColorYellow
-	ColorOrange = gtkutil.ColorOrange
-	ColorPurple = gtkutil.ColorPurple
-	ColorGray   = gtkutil.ColorGray
-)
-
-func fatalErrorCheck(err error) { gtkutil.FatalErrorCheck(err) }
-
-func showErrorDialog(parent gtk.IWindow, msg string) { gtkutil.ShowErrorDialog(parent, msg) }
-
-func showInfoDialog(parent gtk.IWindow, msg string) { gtkutil.ShowInfoDialog(parent, msg) }
-
-func showError(err error) { gtkutil.ShowError(err) }
-
-func getTextViewContent(tv *gtk.TextView) string { return gtkutil.GetTextViewContent(tv) }
-
-func setTextViewContent(tv *gtk.TextView, content string) { gtkutil.SetTextViewContent(tv, content) }
-
-func getEntryText(entry *gtk.Entry) string { return gtkutil.GetEntryText(entry) }
-
-func comboBoxActiveValue(combo *gtk.ComboBox) int { return gtkutil.ComboBoxActiveValue(combo) }
-
-func setColoredText(label *gtk.Label, str string, color Color) {
-	gtkutil.SetColoredText(label, str, color)
-}
-
 //nolint:all  // complexity can't be reduced more. It needs to refactor.
 func startupAssistant(ctx context.Context, workingDir string, chainType genesis.ChainType) bool {
 	successful := false
 	assistant, err := gtk.AssistantNew()
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	assistant.SetDefaultSize(600, 400)
 	assistant.SetTitle("Pactus - Node Setup Wizard")
@@ -141,7 +106,7 @@ func startupAssistant(ctx context.Context, workingDir string, chainType genesis.
 		isRestoreMode := radioRestoreWallet.GetActive()
 		curPageName, err := page.GetName()
 		curPageIndex := assistant.GetCurrentPage()
-		fatalErrorCheck(err)
+		gtkutil.FatalErrorCheck(err)
 
 		isForward := true
 		if curPageIndex > 0 && curPageIndex < prevPageIndex {
@@ -170,7 +135,7 @@ func startupAssistant(ctx context.Context, workingDir string, chainType genesis.
 				assistantPageComplete(assistant, wgtSeedGenerate, false)
 			} else {
 				mnemonic, _ = wallet.GenerateMnemonic(128)
-				setTextViewContent(txtSeed, mnemonic)
+				gtkutil.SetTextViewContent(txtSeed, mnemonic)
 				assistantPageComplete(assistant, wgtSeedGenerate, true)
 			}
 		case pageSeedConfirmName:
@@ -209,10 +174,10 @@ func startupAssistant(ctx context.Context, workingDir string, chainType genesis.
 			}
 		case pagePasswordName:
 			if isRestoreMode {
-				mnemonic = getTextViewContent(textRestoreSeed)
+				mnemonic = gtkutil.GetTextViewContent(textRestoreSeed)
 
 				if err := wallet.CheckMnemonic(mnemonic); err != nil {
-					showErrorDialog(assistant, "Invalid seed phrase. Please check your seed phrase and try again.")
+					gtkutil.ShowErrorDialog(assistant, "Invalid seed phrase. Please check your seed phrase and try again.")
 					assistant.PreviousPage()
 				}
 			}
@@ -223,24 +188,24 @@ func startupAssistant(ctx context.Context, workingDir string, chainType genesis.
 		case pageNodeTypeName:
 			assistantPageComplete(assistant, wgtNodeType, true)
 			ssLabel, err := gtk.LabelNew("")
-			fatalErrorCheck(err)
+			gtkutil.FatalErrorCheck(err)
 			setMargin(ssLabel, 6, 6, 6, 6)
 			ssLabel.SetHAlign(gtk.ALIGN_START)
 
 			listBox, err := gtk.ListBoxNew()
-			fatalErrorCheck(err)
+			gtkutil.FatalErrorCheck(err)
 			setMargin(listBox, 6, 6, 6, 6)
 			listBox.SetHAlign(gtk.ALIGN_CENTER)
 			listBox.SetSizeRequest(700, -1)
 
 			ssDLBtn, err := gtk.ButtonNewWithLabel("⏬ Download")
-			fatalErrorCheck(err)
+			gtkutil.FatalErrorCheck(err)
 			setMargin(ssDLBtn, 6, 6, 6, 6)
 			ssDLBtn.SetHAlign(gtk.ALIGN_CENTER)
 			ssDLBtn.SetSizeRequest(700, -1)
 
 			ssPBLabel, err := gtk.LabelNew("")
-			fatalErrorCheck(err)
+			gtkutil.FatalErrorCheck(err)
 			setMargin(ssPBLabel, 6, 6, 6, 6)
 			ssPBLabel.SetHAlign(gtk.ALIGN_START)
 
@@ -256,12 +221,12 @@ func startupAssistant(ctx context.Context, workingDir string, chainType genesis.
 			snapshotIndex := 0
 
 			if !nodeCreated {
-				numValidators := comboBoxActiveValue(comboNumValidators)
-				walletPassword := getEntryText(entryPassword)
+				numValidators := gtkutil.ComboBoxActiveValue(comboNumValidators)
+				walletPassword := gtkutil.GetEntryText(entryPassword)
 
 				nodeWallet, rewardAddr, err = cmd.CreateNode(ctx, numValidators, chainType, workingDir, mnemonic, walletPassword)
 				if err != nil {
-					showError(err)
+					gtkutil.ShowError(err)
 
 					return
 				}
@@ -290,7 +255,7 @@ func startupAssistant(ctx context.Context, workingDir string, chainType genesis.
 								storeDir,
 							)
 							if err != nil {
-								showError(err)
+								gtkutil.ShowError(err)
 
 								return
 							}
@@ -298,7 +263,7 @@ func startupAssistant(ctx context.Context, workingDir string, chainType genesis.
 							mdCh := getMetadata(ctx, importer, listBox)
 
 							if metadata := <-mdCh; metadata == nil {
-								setColoredText(ssLabel, "❌ Failed to get snapshot list. Please try again later.", ColorRed)
+								gtkutil.SetColoredText(ssLabel, "❌ Failed to get snapshot list. Please try again later.", gtkutil.ColorRed)
 							} else {
 								ssLabel.SetText("🔽 Please select a snapshot to download:")
 								listBox.SetVisible(true)
@@ -347,7 +312,7 @@ func startupAssistant(ctx context.Context, workingDir string, chainType genesis.
 
 										glib.IdleAdd(func() {
 											if err != nil {
-												setColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), ColorRed)
+												gtkutil.SetColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), gtkutil.ColorRed)
 
 												return
 											}
@@ -356,7 +321,7 @@ func startupAssistant(ctx context.Context, workingDir string, chainType genesis.
 											ssPBLabel.SetText("📂 Extracting downloaded files...")
 											err := importer.ExtractAndStoreFiles()
 											if err != nil {
-												setColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), ColorRed)
+												gtkutil.SetColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), gtkutil.ColorRed)
 
 												return
 											}
@@ -365,7 +330,7 @@ func startupAssistant(ctx context.Context, workingDir string, chainType genesis.
 											ssPBLabel.SetText("📑 Moving data...")
 											err = importer.MoveStore()
 											if err != nil {
-												setColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), ColorRed)
+												gtkutil.SetColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), gtkutil.ColorRed)
 
 												return
 											}
@@ -373,12 +338,12 @@ func startupAssistant(ctx context.Context, workingDir string, chainType genesis.
 											log.Print("cleanup...\n")
 											err = importer.Cleanup()
 											if err != nil {
-												setColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), ColorRed)
+												gtkutil.SetColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), gtkutil.ColorRed)
 
 												return
 											}
 
-											setColoredText(ssPBLabel, "✅ Import completed.", ColorGreen)
+											gtkutil.SetColoredText(ssPBLabel, "✅ Import completed.", gtkutil.ColorGreen)
 											assistantPageComplete(assistant, wgtNodeType, true)
 										})
 									}()
@@ -431,14 +396,14 @@ func startupAssistant(ctx context.Context, workingDir string, chainType genesis.
 				})
 
 				go func() {
-					walletPassword := getEntryText(entryPassword)
+					walletPassword := gtkutil.GetEntryText(entryPassword)
 
 					recoveryIndex := 0
 					err = nodeWallet.RecoveryAddresses(recoveryCtx, walletPassword, func(addr string) {
 						glib.IdleAdd(func() {
-							currentText := getTextViewContent(txtRecoveryLog)
+							currentText := gtkutil.GetTextViewContent(txtRecoveryLog)
 							newText := fmt.Sprintf("%s%d. %s\n", currentText, recoveryIndex+1, addr)
-							setTextViewContent(txtRecoveryLog, newText)
+							gtkutil.SetTextViewContent(txtRecoveryLog, newText)
 							recoveredAddrs = append(recoveredAddrs, addr)
 							recoveryIndex++
 						})
@@ -447,16 +412,16 @@ func startupAssistant(ctx context.Context, workingDir string, chainType genesis.
 					glib.IdleAdd(func() {
 						if err != nil {
 							if errors.Is(err, context.Canceled) {
-								setColoredText(lblRecoveryStatus, "Address recovery aborted", ColorYellow)
+								gtkutil.SetColoredText(lblRecoveryStatus, "Address recovery aborted", gtkutil.ColorYellow)
 								btnCancelRecovery.SetVisible(false)
 								assistantPageComplete(assistant, wgtAddressRecovery, true)
 							} else {
-								setColoredText(lblRecoveryStatus, fmt.Sprintf("Address recovery failed: %v", err), ColorRed)
+								gtkutil.SetColoredText(lblRecoveryStatus, fmt.Sprintf("Address recovery failed: %v", err), gtkutil.ColorRed)
 								btnCancelRecovery.SetVisible(false)
 								assistantPageComplete(assistant, wgtAddressRecovery, true)
 							}
 						} else {
-							setColoredText(lblRecoveryStatus, "✅ Wallet addresses successfully recovered", ColorGreen)
+							gtkutil.SetColoredText(lblRecoveryStatus, "✅ Wallet addresses successfully recovered", gtkutil.ColorGreen)
 							btnCancelRecovery.SetVisible(false)
 							assistantPageComplete(assistant, wgtAddressRecovery, true)
 						}
@@ -485,7 +450,7 @@ func startupAssistant(ctx context.Context, workingDir string, chainType genesis.
 			nodeInfo += fmt.Sprintf("\n📁 Working Directory: %s", workingDir)
 			nodeInfo += fmt.Sprintf("\n🌐 Network: %s\n", chainType.String())
 
-			setTextViewContent(txtNodeInfo, nodeInfo)
+			gtkutil.SetTextViewContent(txtNodeInfo, nodeInfo)
 		}
 		prevPageIndex = curPageIndex + prevPageAdjust
 	})
@@ -501,17 +466,17 @@ func startupAssistant(ctx context.Context, workingDir string, chainType genesis.
 func pageAssistant() assistantFunc {
 	return func(assistant *gtk.Assistant, content gtk.IWidget, name, title, subject, desc string) *gtk.Widget {
 		page, err := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 20)
-		fatalErrorCheck(err)
+		gtkutil.FatalErrorCheck(err)
 
 		page.SetHExpand(true)
 
 		frame, err := gtk.FrameNew(subject)
-		fatalErrorCheck(err)
+		gtkutil.FatalErrorCheck(err)
 
 		frame.SetHExpand(true)
 
 		labelDesc, err := gtk.LabelNew("")
-		fatalErrorCheck(err)
+		gtkutil.FatalErrorCheck(err)
 
 		labelDesc.SetUseMarkup(true)
 		labelDesc.SetMarkup("<span allow_breaks='true'>" + desc + "</span>")
@@ -522,7 +487,7 @@ func pageAssistant() assistantFunc {
 		frame.Add(content)
 
 		box, err := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 10)
-		fatalErrorCheck(err)
+		gtkutil.FatalErrorCheck(err)
 
 		box.Add(frame)
 		box.Add(labelDesc)
@@ -538,14 +503,14 @@ func pageAssistant() assistantFunc {
 func pageWalletMode(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, *gtk.RadioButton, string) {
 	var mode *gtk.Widget
 	newWalletRadio, err := gtk.RadioButtonNewWithLabel(nil, "Create a new wallet from scratch")
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	restoreWalletRadio, err := gtk.RadioButtonNewWithLabelFromWidget(newWalletRadio,
 		"Restore a wallet from seed phrase")
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	radioBox, err := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 0)
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	radioBox.Add(newWalletRadio)
 	setMargin(newWalletRadio, 6, 6, 6, 6)
@@ -570,7 +535,7 @@ func pageWalletMode(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Wi
 func pageSeedGenerate(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, *gtk.TextView, string) {
 	var pageWidget *gtk.Widget
 	textViewSeed, err := gtk.TextViewNew()
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	setMargin(textViewSeed, 6, 6, 6, 6)
 	textViewSeed.SetWrapMode(gtk.WRAP_WORD)
@@ -599,7 +564,7 @@ func pageSeedGenerate(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.
 func pageSeedRestore(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, *gtk.TextView, string) {
 	var pageWidget *gtk.Widget
 	textViewRestoreSeed, err := gtk.TextViewNew()
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	setMargin(textViewRestoreSeed, 6, 6, 6, 6)
 	textViewRestoreSeed.SetWrapMode(gtk.WRAP_WORD)
@@ -628,7 +593,7 @@ func pageSeedConfirm(assistant *gtk.Assistant, assistFunc assistantFunc,
 ) (*gtk.Widget, string) {
 	pageWidget := new(gtk.Widget)
 	textViewConfirmSeed, err := gtk.TextViewNew()
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	setMargin(textViewConfirmSeed, 6, 6, 6, 6)
 	textViewConfirmSeed.SetWrapMode(gtk.WRAP_WORD)
@@ -637,16 +602,16 @@ func pageSeedConfirm(assistant *gtk.Assistant, assistFunc assistantFunc,
 	textViewConfirmSeed.SetSizeRequest(0, 80)
 
 	textViewConfirmSeed.Connect("paste_clipboard", func(_ *gtk.TextView) {
-		showInfoDialog(assistant, "Copy and paste is not allowed")
+		gtkutil.ShowInfoDialog(assistant, "Copy and paste is not allowed")
 		textViewConfirmSeed.StopEmission("paste_clipboard")
 	})
 
 	seedConfirmTextBuffer, err := textViewConfirmSeed.GetBuffer()
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	seedConfirmTextBuffer.Connect("changed", func(_ *gtk.TextBuffer) {
-		mnemonic1 := getTextViewContent(textViewSeed)
-		mnemonic2 := getTextViewContent(textViewConfirmSeed)
+		mnemonic1 := gtkutil.GetTextViewContent(textViewSeed)
+		mnemonic2 := gtkutil.GetTextViewContent(textViewConfirmSeed)
 		space := regexp.MustCompile(`\s+`)
 		mnemonic2 = space.ReplaceAllString(mnemonic2, " ")
 		mnemonic2 = strings.TrimSpace(mnemonic2)
@@ -683,20 +648,20 @@ func pageNodeType(assistant *gtk.Assistant, assistFunc assistantFunc) (
 	var pageWidget *gtk.Widget
 
 	vbox, err := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 0)
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	grid, err := gtk.GridNew()
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	btnFullNode, err := gtk.RadioButtonNewWithLabel(nil, "Full node")
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 	btnFullNode.SetActive(true)
 
 	btnPruneNode, err := gtk.RadioButtonNewWithLabelFromWidget(btnFullNode, "Pruned node")
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	radioBox, err := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 0)
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	radioBox.Add(btnFullNode)
 	setMargin(btnFullNode, 6, 6, 6, 6)
@@ -730,32 +695,32 @@ Historical data is available at: <a href="https://snapshot.pactus.org/">https://
 func pagePassword(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, *gtk.Entry, string) {
 	pageWidget := new(gtk.Widget)
 	entryPassword, err := gtk.EntryNew()
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	setMargin(entryPassword, 6, 6, 6, 6)
 	entryPassword.SetVisibility(false)
 	labelPassword, err := gtk.LabelNew("Password: ")
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	labelPassword.SetHAlign(gtk.ALIGN_START)
 	setMargin(labelPassword, 6, 6, 6, 6)
 
 	entryConfirmPassword, err := gtk.EntryNew()
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	setMargin(entryConfirmPassword, 6, 6, 6, 6)
 	entryConfirmPassword.SetVisibility(false)
 	labelConfirmPassword, err := gtk.LabelNew("Confirmation: ")
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	labelConfirmPassword.SetHAlign(gtk.ALIGN_START)
 	setMargin(labelConfirmPassword, 6, 6, 6, 6)
 
 	grid, err := gtk.GridNew()
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	labelMessage, err := gtk.LabelNew("")
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	grid.Attach(labelPassword, 0, 0, 1, 1)
 	grid.Attach(entryPassword, 1, 0, 1, 1)
@@ -764,15 +729,15 @@ func pagePassword(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widg
 	grid.Attach(labelMessage, 1, 2, 1, 1)
 
 	validatePassword := func() {
-		pass1 := getEntryText(entryPassword)
-		pass2 := getEntryText(entryConfirmPassword)
+		pass1 := gtkutil.GetEntryText(entryPassword)
+		pass2 := gtkutil.GetEntryText(entryConfirmPassword)
 
 		if pass1 == pass2 {
 			labelMessage.SetText("")
 			assistantPageComplete(assistant, pageWidget, true)
 		} else {
 			if pass2 != "" {
-				setColoredText(labelMessage, "Passwords do not match", ColorYellow)
+				gtkutil.SetColoredText(labelMessage, "Passwords do not match", gtkutil.ColorYellow)
 			}
 			assistantPageComplete(assistant, pageWidget, false)
 		}
@@ -806,19 +771,19 @@ func pageNumValidators(assistant *gtk.Assistant,
 ) (*gtk.Widget, *gtk.ComboBox, string) {
 	var pageWidget *gtk.Widget
 	lsNumValidators, err := gtk.ListStoreNew(glib.TYPE_INT)
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	for i := 0; i < 32; i++ {
 		iter := lsNumValidators.Append()
 		err = lsNumValidators.SetValue(iter, 0, i+1)
-		fatalErrorCheck(err)
+		gtkutil.FatalErrorCheck(err)
 	}
 
 	comboNumValidators, err := gtk.ComboBoxNewWithModel(lsNumValidators)
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	cellRenderer, err := gtk.CellRendererTextNew()
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	// Set the default selected value to 7 (index 6)
 	comboNumValidators.SetActive(6)
@@ -827,13 +792,13 @@ func pageNumValidators(assistant *gtk.Assistant,
 	comboNumValidators.AddAttribute(cellRenderer, "text", 0)
 
 	labelNumValidators, err := gtk.LabelNew("Number of validators: ")
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	setMargin(labelNumValidators, 6, 6, 6, 6)
 	setMargin(comboNumValidators, 6, 6, 6, 6)
 
 	grid, err := gtk.GridNew()
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	grid.Add(labelNumValidators)
 	grid.Attach(comboNumValidators, 1, 0, 1, 1)
@@ -863,11 +828,11 @@ func pageAddressRecovery(assistant *gtk.Assistant, assistFunc assistantFunc) (
 
 	// Create a vertical box to hold all elements
 	vbox, err := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 10)
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	// Create TextView for recovery log (read-only, scrollable)
 	textViewRecoveryLog, err := gtk.TextViewNew()
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 	setMargin(textViewRecoveryLog, 6, 6, 6, 6)
 	textViewRecoveryLog.SetWrapMode(gtk.WRAP_WORD)
 	textViewRecoveryLog.SetEditable(false)
@@ -875,19 +840,19 @@ func pageAddressRecovery(assistant *gtk.Assistant, assistFunc assistantFunc) (
 
 	// Create scrolled window for the text view
 	scrolledWindow, err := gtk.ScrolledWindowNew(nil, nil)
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 	scrolledWindow.SetSizeRequest(0, 200)
 	scrolledWindow.Add(textViewRecoveryLog)
 
 	// Create status label
 	lblRecoveryStatus, err := gtk.LabelNew("")
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 	setMargin(lblRecoveryStatus, 6, 6, 6, 6)
 	lblRecoveryStatus.SetHAlign(gtk.ALIGN_START)
 
 	// Create cancel button
 	btnCancelRecovery, err := gtk.ButtonNewWithLabel("Cancel")
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 	setMargin(btnCancelRecovery, 6, 6, 6, 6)
 	btnCancelRecovery.SetHAlign(gtk.ALIGN_CENTER)
 	btnCancelRecovery.SetSizeRequest(150, -1)
@@ -916,7 +881,7 @@ func pageAddressRecovery(assistant *gtk.Assistant, assistFunc assistantFunc) (
 func pageSummary(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, *gtk.TextView, string) {
 	var pageWidget *gtk.Widget
 	textViewNodeInfo, err := gtk.TextViewNew()
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	setMargin(textViewNodeInfo, 6, 6, 6, 6)
 	textViewNodeInfo.SetWrapMode(gtk.WRAP_WORD)
@@ -924,7 +889,7 @@ func pageSummary(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widge
 	textViewNodeInfo.SetMonospace(true)
 
 	scrolledWindow, err := gtk.ScrolledWindowNew(nil, nil)
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	scrolledWindow.SetSizeRequest(0, 300)
 	scrolledWindow.Add(textViewNodeInfo)
@@ -980,10 +945,10 @@ func getMetadata(
 				md.CreatedAtTime().Format("2006-01-02"),
 				util.FormatBytesToHumanReadable(md.Data.Size),
 			))
-			fatalErrorCheck(err)
+			gtkutil.FatalErrorCheck(err)
 
 			listBoxRow, err := gtk.ListBoxRowNew()
-			fatalErrorCheck(err)
+			gtkutil.FatalErrorCheck(err)
 
 			listBoxRow.Add(label)
 			listBox.Add(listBoxRow)

@@ -56,3 +56,7 @@ func NewMainWindowView() (*MainWindowView, error) {
 
 	return view, nil
 }
+
+func (v *MainWindowView) Cleanup() {
+	v.Window.Destroy()
+}
