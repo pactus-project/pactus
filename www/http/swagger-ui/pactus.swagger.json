@@ -473,6 +473,29 @@
         ]
       }
     },
+    "/pactus/blockchain/get_validator_addresses": {
+      "get": {
+        "summary": "GetValidatorAddresses retrieves a list of all validator addresses.",
+        "operationId": "Blockchain_GetValidatorAddresses",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetValidatorAddressesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
     "/pactus/blockchain/get_validator_by_number": {
       "get": {
         "summary": "GetValidatorByNumber retrieves information about a validator based on the provided number.",
@@ -901,7 +924,7 @@
       }
     },
     "/pactus/wallet/create_wallet": {
-      "get": {
+      "post": {
         "summary": "CreateWallet creates a new wallet with the specified parameters.",
         "operationId": "Wallet_CreateWallet",
         "responses": {
@@ -920,18 +943,13 @@
         },
         "parameters": [
           {
-            "name": "walletName",
-            "description": "The name for the new wallet.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "password",
-            "description": "Password to secure the new wallet.",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "description": "Request message for creating a new wallet.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusCreateWalletRequest"
+            }
           }
         ],
         "tags": [
@@ -979,7 +997,7 @@
       }
     },
     "/pactus/wallet/get_new_address": {
-      "get": {
+      "post": {
         "summary": "GetNewAddress generates a new address for the specified wallet.",
         "operationId": "Wallet_GetNewAddress",
         "responses": {
@@ -998,39 +1016,13 @@
         },
         "parameters": [
           {
-            "name": "walletName",
-            "description": "The name of the wallet to generate a new address.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "addressType",
-            "description": "The type of address to generate.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould not be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type used for validator nodes.\n - ADDRESS_TYPE_BLS_ACCOUNT: Account address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519_ACCOUNT: Account address type with Ed25519 signature scheme.\nNote: Generating a new Ed25519 address requires the wallet password.",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "enum": [
-              "ADDRESS_TYPE_TREASURY",
-              "ADDRESS_TYPE_VALIDATOR",
-              "ADDRESS_TYPE_BLS_ACCOUNT",
-              "ADDRESS_TYPE_ED25519_ACCOUNT"
-            ],
-            "default": "ADDRESS_TYPE_TREASURY"
-          },
-          {
-            "name": "label",
-            "description": "A label for the new address.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "password",
-            "description": "Password for the new address. It's required when address_type is Ed25519 type.",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "description": "Request message for generating a new wallet address.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusGetNewAddressRequest"
+            }
           }
         ],
         "tags": [
@@ -1348,7 +1340,7 @@
       }
     },
     "/pactus/wallet/load_wallet": {
-      "get": {
+      "post": {
         "summary": "LoadWallet loads an existing wallet with the given name.",
         "operationId": "Wallet_LoadWallet",
         "responses": {
@@ -1367,11 +1359,13 @@
         },
         "parameters": [
           {
-            "name": "walletName",
-            "description": "The name of the wallet to load.",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "description": "Request message for loading an existing wallet.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusLoadWalletRequest"
+            }
           }
         ],
         "tags": [
@@ -1380,7 +1374,7 @@
       }
     },
     "/pactus/wallet/restore_wallet": {
-      "get": {
+      "post": {
         "summary": "RestoreWallet restores an existing wallet with the given mnemonic.",
         "operationId": "Wallet_RestoreWallet",
         "responses": {
@@ -1399,25 +1393,13 @@
         },
         "parameters": [
           {
-            "name": "walletName",
-            "description": "The name for the restored wallet.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "mnemonic",
-            "description": "The mnemonic (seed phrase) for wallet recovery.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "password",
-            "description": "Password to secure the restored wallet.",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "description": "Request message for restoring a wallet from mnemonic (seed phrase).",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusRestoreWalletRequest"
+            }
           }
         ],
         "tags": [
@@ -1479,7 +1461,7 @@
       }
     },
     "/pactus/wallet/sign_message": {
-      "get": {
+      "post": {
         "summary": "SignMessage signs an arbitrary message using a wallet's private key.",
         "operationId": "Wallet_SignMessage",
         "responses": {
@@ -1498,32 +1480,13 @@
         },
         "parameters": [
           {
-            "name": "walletName",
-            "description": "The name of the wallet to sign with.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "password",
-            "description": "Wallet password required for signing.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "address",
-            "description": "The address whose private key should be used for signing the message.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "message",
-            "description": "The arbitrary message to be signed.",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "description": "Request message to sign an arbitrary message.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusSignMessageRequest"
+            }
           }
         ],
         "tags": [
@@ -1532,7 +1495,7 @@
       }
     },
     "/pactus/wallet/sign_raw_transaction": {
-      "get": {
+      "post": {
         "summary": "SignRawTransaction signs a raw transaction for a specified wallet.",
         "operationId": "Wallet_SignRawTransaction",
         "responses": {
@@ -1551,25 +1514,13 @@
         },
         "parameters": [
           {
-            "name": "walletName",
-            "description": "The name of the wallet used for signing.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "rawTransaction",
-            "description": "The raw transaction data to be signed.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "password",
-            "description": "Wallet password required for signing.",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "description": "Request message for signing a raw transaction.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusSignRawTransactionRequest"
+            }
           }
         ],
         "tags": [
@@ -1578,7 +1529,7 @@
       }
     },
     "/pactus/wallet/unload_wallet": {
-      "get": {
+      "post": {
         "summary": "UnloadWallet unloads a currently loaded wallet with the specified name.",
         "operationId": "Wallet_UnloadWallet",
         "responses": {
@@ -1597,11 +1548,13 @@
         },
         "parameters": [
           {
-            "name": "walletName",
-            "description": "The name of the wallet to unload.",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "description": "Request message for unloading a wallet.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusUnloadWalletRequest"
+            }
           }
         ],
         "tags": [
@@ -1610,7 +1563,7 @@
       }
     },
     "/pactus/wallet/update_password": {
-      "get": {
+      "post": {
         "summary": "UpdatePassword updates the password of an existing wallet.",
         "operationId": "Wallet_UpdatePassword",
         "responses": {
@@ -1629,25 +1582,13 @@
         },
         "parameters": [
           {
-            "name": "walletName",
-            "description": "The name of the wallet whose password will be updated.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "oldPassword",
-            "description": "The current wallet password.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "newPassword",
-            "description": "The new wallet password.",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "description": "Request message for updating wallet password.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusUpdatePasswordRequest"
+            }
           }
         ],
         "tags": [
@@ -1914,6 +1855,20 @@
       },
       "description": "CounterInfo holds counter data regarding byte and bundle counts."
     },
+    "pactusCreateWalletRequest": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name for the new wallet."
+        },
+        "password": {
+          "type": "string",
+          "description": "Password to secure the new wallet."
+        }
+      },
+      "description": "Request message for creating a new wallet."
+    },
     "pactusCreateWalletResponse": {
       "type": "object",
       "properties": {
@@ -2157,6 +2112,28 @@
         }
       },
       "description": "Response message contains information about the overall network."
+    },
+    "pactusGetNewAddressRequest": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name of the wallet to generate a new address."
+        },
+        "addressType": {
+          "$ref": "#/definitions/pactusAddressType",
+          "description": "The type of address to generate."
+        },
+        "label": {
+          "type": "string",
+          "description": "A label for the new address."
+        },
+        "password": {
+          "type": "string",
+          "description": "Password for the new address. It's required when address_type is Ed25519 type."
+        }
+      },
+      "description": "Request message for generating a new wallet address."
     },
     "pactusGetNewAddressResponse": {
       "type": "object",
@@ -2627,6 +2604,16 @@
       },
       "description": "Response message contains wallet names."
     },
+    "pactusLoadWalletRequest": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name of the wallet to load."
+        }
+      },
+      "description": "Request message for loading an existing wallet."
+    },
     "pactusLoadWalletResponse": {
       "type": "object",
       "properties": {
@@ -2950,6 +2937,24 @@
       },
       "description": "Recipient is receiver with amount."
     },
+    "pactusRestoreWalletRequest": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name for the restored wallet."
+        },
+        "mnemonic": {
+          "type": "string",
+          "description": "The mnemonic (seed phrase) for wallet recovery."
+        },
+        "password": {
+          "type": "string",
+          "description": "Password to secure the restored wallet."
+        }
+      },
+      "description": "Request message for restoring a wallet from mnemonic (seed phrase)."
+    },
     "pactusRestoreWalletResponse": {
       "type": "object",
       "properties": {
@@ -2977,6 +2982,28 @@
         }
       },
       "description": "Response message for updated address label."
+    },
+    "pactusSignMessageRequest": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name of the wallet to sign with."
+        },
+        "password": {
+          "type": "string",
+          "description": "Wallet password required for signing."
+        },
+        "address": {
+          "type": "string",
+          "description": "The address whose private key should be used for signing the message."
+        },
+        "message": {
+          "type": "string",
+          "description": "The arbitrary message to be signed."
+        }
+      },
+      "description": "Request message to sign an arbitrary message."
     },
     "pactusSignMessageResponse": {
       "type": "object",
@@ -3011,6 +3038,24 @@
         }
       },
       "description": "Response message contains the signature generated from the message."
+    },
+    "pactusSignRawTransactionRequest": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name of the wallet used for signing."
+        },
+        "rawTransaction": {
+          "type": "string",
+          "description": "The raw transaction data to be signed."
+        },
+        "password": {
+          "type": "string",
+          "description": "Wallet password required for signing."
+        }
+      },
+      "description": "Request message for signing a raw transaction."
     },
     "pactusSignRawTransactionResponse": {
       "type": "object",
@@ -3156,6 +3201,16 @@
       "default": "TX_DIRECTION_ANY",
       "description": "TxDirection indicates the direction of a transaction relative to the wallet.\n\n - TX_DIRECTION_ANY: include both incoming and outgoing transactions.\n - TX_DIRECTION_INCOMING: Include only incoming transactions where the wallet receives funds.\n - TX_DIRECTION_OUTGOING: Include only outgoing transactions where the wallet sends funds."
     },
+    "pactusUnloadWalletRequest": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name of the wallet to unload."
+        }
+      },
+      "description": "Request message for unloading a wallet."
+    },
     "pactusUnloadWalletResponse": {
       "type": "object",
       "properties": {
@@ -3165,6 +3220,24 @@
         }
       },
       "description": "Response message confirming wallet unloading."
+    },
+    "pactusUpdatePasswordRequest": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name of the wallet whose password will be updated."
+        },
+        "oldPassword": {
+          "type": "string",
+          "description": "The current wallet password."
+        },
+        "newPassword": {
+          "type": "string",
+          "description": "The new wallet password."
+        }
+      },
+      "description": "Request message for updating wallet password."
     },
     "pactusUpdatePasswordResponse": {
       "type": "object",
