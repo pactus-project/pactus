@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"path/filepath"
+	"time"
 
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/crypto"
@@ -11,6 +12,7 @@ import (
 	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/wallet/provider/remote"
 	"github.com/spf13/cobra"
 )
 
@@ -111,12 +113,17 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			chain = genesis.Localnet
 		}
 
+		ctx := context.Background()
 		wlt, rewardAddrs, err := cmd.CreateNode(context.Background(),
 			valNum, chain, workingDir, mnemonic, password)
 		terminal.FatalErrorCheck(err)
 
 		// Recovering addresses
 		if *restoreOpt != "" {
+			provider, err := remote.NewRemoteBlockchainProvider(ctx, chain, remote.WithTimeout(2*time.Second))
+			terminal.FatalErrorCheck(err)
+
+			wlt.SetProvider(provider)
 			cmd.RecoverWalletAddresses(wlt, password)
 		}
 
