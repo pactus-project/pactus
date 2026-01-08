@@ -101,10 +101,10 @@ jobs:
         name: [macos-amd64, macos-arm64]
         include:
           - name: macos-amd64
-            runner: macos-13
+            runner: macos-15-intel
             lib_home: /usr/local
           - name: macos-arm64
-            runner: macos-14
+            runner: macos-26
             lib_home: /opt/homebrew
 
     env:
@@ -150,7 +150,7 @@ jobs:
         name: [windows_amd64]
         include:
           - name: windows_amd64
-            runner: windows-2022 # windows-2025 is not supported for Inno Setup 6
+            runner: windows-2025
 
     defaults:
       run:
