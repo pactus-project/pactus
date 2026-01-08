@@ -22,6 +22,9 @@ http:
     - selector: pactus.Blockchain.GetValidatorByNumber
       get: "/pactus/blockchain/get_validator_by_number"
 
+    - selector: pactus.Blockchain.GetValidatorAddresses
+      get: "/pactus/blockchain/get_validator_addresses"
+
     - selector: pactus.Blockchain.GetBlockchainInfo
       get: "/pactus/blockchain/get_blockchain_info"
 
@@ -82,16 +85,20 @@ http:
       get: "/pactus/wallet/get_validator_address"
 
     - selector: pactus.Wallet.CreateWallet
-      get: "/pactus/wallet/create_wallet"
+      post: "/pactus/wallet/create_wallet"
+      body: "*"
 
     - selector: pactus.Wallet.RestoreWallet
-      get: "/pactus/wallet/restore_wallet"
+      post: "/pactus/wallet/restore_wallet"
+      body: "*"
 
     - selector: pactus.Wallet.LoadWallet
-      get: "/pactus/wallet/load_wallet"
+      post: "/pactus/wallet/load_wallet"
+      body: "*"
 
     - selector: pactus.Wallet.UnloadWallet
-      get: "/pactus/wallet/unload_wallet"
+      post: "/pactus/wallet/unload_wallet"
+      body: "*"
 
     - selector: pactus.Wallet.ListWallets
       get: "/pactus/wallet/list_wallets"
@@ -103,19 +110,23 @@ http:
       get: "/pactus/wallet/get_wallet_info"
 
     - selector: pactus.Wallet.UpdatePassword
-      get: "/pactus/wallet/update_password"
+      post: "/pactus/wallet/update_password"
+      body: "*"
 
     - selector: pactus.Wallet.SignRawTransaction
-      get: "/pactus/wallet/sign_raw_transaction"
+      post: "/pactus/wallet/sign_raw_transaction"
+      body: "*"
 
     - selector: pactus.Wallet.GetNewAddress
-      get: "/pactus/wallet/get_new_address"
+      post: "/pactus/wallet/get_new_address"
+      body: "*"
 
     - selector: pactus.Wallet.GetTotalBalance
       get: "/pactus/wallet/get_total_balance"
 
     - selector: pactus.Wallet.SignMessage
-      get: "/pactus/wallet/sign_message"
+      post: "/pactus/wallet/sign_message"
+      body: "*"
 
     - selector: pactus.Wallet.GetTotalStake
       get: "/pactus/wallet/get_total_stake"
