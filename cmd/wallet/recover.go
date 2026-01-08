@@ -33,7 +33,11 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 		if *testnetOpt {
 			chainType = genesis.Testnet
 		}
-		wlt, err := wallet.Create(context.Background(), *pathOpt, mnemonic, *passOpt, chainType)
+		ctx := context.Background()
+		wlt, err := wallet.Create(ctx, *pathOpt, mnemonic, *passOpt, chainType)
+		terminal.FatalErrorCheck(err)
+
+		err = setProvider(ctx, wlt)
 		terminal.FatalErrorCheck(err)
 
 		cmd.RecoverWalletAddresses(wlt, *passOpt)

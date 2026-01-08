@@ -29,25 +29,36 @@ func openWallet(ctx context.Context) (*wallet.Wallet, error) {
 		return nil, err
 	}
 
-	if !*offlineOpt {
-		var opts []remote.RemoteProviderOption
-		if *serverAddrsOpt != nil {
-			opts = append(opts, remote.WithCustomServers(*serverAddrsOpt))
-		}
-
-		if *timeoutOpt > 0 {
-			opts = append(opts, remote.WithTimeout(time.Duration(*timeoutOpt)*time.Second))
-		}
-
-		provider, err := remote.NewRemoteBlockchainProvider(ctx, wlt.Info().Network, opts...)
-		if err != nil {
-			return nil, err
-		}
-
-		wlt.SetProvider(provider)
+	err = setProvider(ctx, wlt)
+	if err != nil {
+		return nil, err
 	}
 
 	return wlt, err
+}
+
+func setProvider(ctx context.Context, wlt *wallet.Wallet) error {
+	if *offlineOpt {
+		return nil
+	}
+
+	var opts []remote.RemoteProviderOption
+	if *serverAddrsOpt != nil {
+		opts = append(opts, remote.WithCustomServers(*serverAddrsOpt))
+	}
+
+	if *timeoutOpt > 0 {
+		opts = append(opts, remote.WithTimeout(time.Duration(*timeoutOpt)*time.Second))
+	}
+
+	provider, err := remote.NewRemoteBlockchainProvider(ctx, wlt.Info().Network, opts...)
+	if err != nil {
+		return err
+	}
+
+	wlt.SetProvider(provider)
+
+	return nil
 }
 
 func main() {
