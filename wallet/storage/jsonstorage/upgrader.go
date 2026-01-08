@@ -69,8 +69,7 @@ func (u *upgrader) upgrade() error {
 			return err
 		}
 
-		logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d",
-			Version1, Version2))
+		logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d", Version1, Version2))
 
 		fallthrough
 
@@ -79,16 +78,14 @@ func (u *upgrader) upgrade() error {
 			store.Vault.Encrypter.Params.SetUint32("keylen", 32)
 		}
 
-		logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d",
-			Version2, Version3))
+		logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d", Version2, Version3))
 
 		fallthrough
 
 	case Version3:
 		legacyStore.Vault.DefaultFee = amount.Amount(10_000_000) // Set default fee to 0.01 PAC
 
-		logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d",
-			Version3, Version4))
+		logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d", Version3, Version4))
 
 		fallthrough
 
@@ -106,6 +103,8 @@ func (u *upgrader) upgrade() error {
 				Path:      ai.Path,
 			}
 		}
+
+		logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d", Version4, Version5))
 
 		return store.Save(u.path)
 
