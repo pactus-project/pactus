@@ -17,8 +17,7 @@ cd pactus
 make build
 ```
 
-This will be compile `pactus-daemon` and `pactus-wallet` on your machine.
-Make sure Pactus is properly compiled and installed on your machine:
+This will compile `pactus-daemon`, `pactus-wallet` and `pactus-shell` on your machine.
 
 ```bash
 cd build
@@ -39,9 +38,9 @@ make test
 
 This may take several minutes to finish.
 
-## What is pactus-daemon?
+## What is `pactus-daemon`?
 
-`pactus-daemon` is a full node implementation of Pactus blockchain.
+`pactus-daemon` is a full node implementation of the Pactus blockchain.
 You can use `pactus-daemon` to run a full node:
 
 ```bash
@@ -51,7 +50,7 @@ You can use `pactus-daemon` to run a full node:
 
 ### Testnet
 
-To join the TestNet, first you need to initialize your node
+To join the Testnet, first you need to initialize your node
 and then start the node:
 
 ```bash
@@ -59,19 +58,18 @@ and then start the node:
 ./pactus-daemon start -w=<working_dir>
 ```
 
-### Local net
+### Localnet
 
 You can create a local node to set up a local network for development purposes on your machine:
 
- ```bash
- ./pactus-daemon init  -w=<working_dir> --localnet
- ./pactus-daemon start -w=<working_dir>
- ```
+```bash
+./pactus-daemon init  -w=<working_dir> --localnet
+./pactus-daemon start -w=<working_dir>
+```
 
-## What is pactus-wallet?
+## What is `pactus-wallet`?
 
-Pactus wallet is a native wallet in the Pactus blockchain that lets users easily manage
-their accounts on the Pactus blockchain.
+`pactus-wallet` is the CLI tool for creating and managing wallets on the Pactus blockchain.
 
 ### Getting started
 
@@ -113,12 +111,22 @@ You can recover a wallet if you have the seed phrase.
 ./pactus-wallet --path ~/pactus/wallets/wallet_2 recover
 ```
 
+## What is `pactus-shell`?
+
+`pactus-shell` is an interactive command-line client for exploring and calling the Pactus gRPC APIs.
+
+Start it against your node (default gRPC address is `localhost:50051`):
+
+```bash
+./pactus-shell interactive --server-addr localhost:50051
+```
+
 ## Docker
 
-You can run Pactus using a Docker file. Please make sure you have installed
-[docker](https://docs.docker.com/engine/install/) on your machine.
+You can run Pactus using a Docker image. Please make sure you have installed
+[Docker](https://docs.docker.com/engine/install/) on your machine.
 
-Pull the Docker from Docker Hub:
+Pull the image from Docker Hub:
 
 ```bash
 docker pull pactus/pactus:main
@@ -136,9 +144,9 @@ Now we can run Pactus and join the testnet:
 docker run -it -v ~/pactus/testnet:/root/pactus -p 8080:8080 -p 21777:21777 --name pactus-testnet pactus/pactus:main pactus-daemon start
 ```
 
-check "[http://localhost:8080](http://localhost:8080)" for the list of APIs.
+Check "[http://localhost:8080](http://localhost:8080)" for the list of APIs.
 
-Also you can stop/start docker:
+You can stop or start the container:
 
 ```bash
 docker start pactus-testnet
@@ -149,4 +157,14 @@ Or check the logs:
 
 ```bash
 docker logs pactus-testnet --tail 1000 -f
+```
+
+## Profiling with pprof
+
+If you need runtime profiling, enable the HTML server with pprof in your node configuration and run the node.
+
+Once running, you can collect and explore a CPU profile with the pprof web UI (replace the host and port with your HTML server address):
+
+```bash
+go tool pprof -http :3000 "http://localhost:8080/debug/pprof/profile?debug=1"
 ```
