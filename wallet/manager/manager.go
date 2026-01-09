@@ -2,6 +2,7 @@ package manager
 
 import (
 	"context"
+	"fmt"
 	"path/filepath"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -19,17 +20,17 @@ import (
 var _ IManager = (*Manager)(nil)
 
 type Manager struct {
-	ctx                context.Context
-	wallets            map[string]*wallet.Wallet
-	chainType          genesis.ChainType
-	walletDirectory    string
-	DefaultWalletName  string
-	blockchainProvider provider.IBlockchainProvider
-	eventPipe          pipeline.Pipeline[any]
+	ctx               context.Context
+	wallets           map[string]*wallet.Wallet
+	chainType         genesis.ChainType
+	walletDirectory   string
+	DefaultWalletName string
+	provider          provider.IBlockchainProvider
+	eventPipe         pipeline.Pipeline[any]
 }
 
 func NewManager(ctx context.Context, conf *Config,
-	blockchainProvider provider.IBlockchainProvider,
+	provider provider.IBlockchainProvider,
 	eventPipe pipeline.Pipeline[any],
 ) (IManager, error) {
 	wallets := make(map[string]*wallet.Wallet)
@@ -39,21 +40,23 @@ func NewManager(ctx context.Context, conf *Config,
 	}
 
 	for _, file := range files {
-		wlt, err := wallet.Open(ctx, file)
+		wlt, err := wallet.Open(ctx, file,
+			wallet.WithBlockchainProvider(provider),
+			wallet.WithEventPipe(eventPipe))
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to open wallet %s: %w", file, err)
 		}
 
 		wallets[filepath.Base(file)] = wlt
 	}
 
 	return &Manager{
-		ctx:                ctx,
-		wallets:            wallets,
-		chainType:          conf.ChainType,
-		walletDirectory:    conf.WalletsDir,
-		blockchainProvider: blockchainProvider,
-		eventPipe:          eventPipe,
+		ctx:             ctx,
+		wallets:         wallets,
+		chainType:       conf.ChainType,
+		walletDirectory: conf.WalletsDir,
+		provider:        provider,
+		eventPipe:       eventPipe,
 	}, nil
 }
 
@@ -79,7 +82,9 @@ func (wm *Manager) createWalletWithMnemonic(
 		return ErrWalletAlreadyExists
 	}
 
-	wlt, err := wallet.Create(wm.ctx, walletPath, mnemonic, password, wm.chainType)
+	wlt, err := wallet.Create(wm.ctx, walletPath, mnemonic, password, wm.chainType,
+		wallet.WithBlockchainProvider(wm.provider),
+		wallet.WithEventPipe(wm.eventPipe))
 	if err != nil {
 		return err
 	}

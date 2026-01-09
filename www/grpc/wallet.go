@@ -88,7 +88,7 @@ func (s *walletServer) RestoreWallet(_ context.Context,
 	}, nil
 }
 
-func (s *walletServer) LoadWallet(_ context.Context,
+func (*walletServer) LoadWallet(_ context.Context,
 	req *pactus.LoadWalletRequest,
 ) (*pactus.LoadWalletResponse, error) {
 	return &pactus.LoadWalletResponse{
@@ -96,7 +96,7 @@ func (s *walletServer) LoadWallet(_ context.Context,
 	}, nil
 }
 
-func (s *walletServer) UnloadWallet(_ context.Context,
+func (*walletServer) UnloadWallet(_ context.Context,
 	req *pactus.UnloadWalletRequest,
 ) (*pactus.UnloadWalletResponse, error) {
 	return &pactus.UnloadWalletResponse{
@@ -105,7 +105,7 @@ func (s *walletServer) UnloadWallet(_ context.Context,
 }
 
 func (s *walletServer) ListWallets(_ context.Context,
-	req *pactus.ListWalletsRequest,
+	_ *pactus.ListWalletsRequest,
 ) (*pactus.ListWalletsResponse, error) {
 	wallets, err := s.walletManager.ListWallets()
 	if err != nil {
