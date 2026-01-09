@@ -161,10 +161,9 @@ docker logs pactus-testnet --tail 1000 -f
 
 ## Profiling with pprof
 
-If you need runtime profiling, enable the HTML server with pprof in your node configuration and run the node.
-
+If you need runtime profiling, enable the HTML server with pprof in your node configuration and restart the node.
 Once running, you can collect and explore a CPU profile with the pprof web UI (replace the host and port with your HTML server address):
 
 ```bash
-go tool pprof -http :3000 "http://localhost:8080/debug/pprof/profile?debug=1"
+go tool pprof -http :3000 "http://localhost:8081/debug/pprof/profile?debug=1"
 ```
