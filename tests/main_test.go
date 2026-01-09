@@ -103,7 +103,6 @@ func TestMain(m *testing.M) {
 		tConfigs[i].HTML.Enable = false
 		tConfigs[i].GRPC.Enable = false
 		tConfigs[i].WalletManager.WalletsDir = util.TempDirPath()
-		tConfigs[i].WalletManager.DefaultWalletName = "default_wallet"
 
 		walletPath := filepath.Join(tConfigs[i].WalletManager.WalletsDir, "default_wallet")
 		mnemonic, _ := wallet.GenerateMnemonic(128)

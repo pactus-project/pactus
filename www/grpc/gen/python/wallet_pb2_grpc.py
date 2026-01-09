@@ -45,11 +45,6 @@ class WalletStub(object):
                 request_serializer=wallet__pb2.GetWalletInfoRequest.SerializeToString,
                 response_deserializer=wallet__pb2.GetWalletInfoResponse.FromString,
                 _registered_method=True)
-        self.IsWalletLoaded = channel.unary_unary(
-                '/pactus.Wallet/IsWalletLoaded',
-                request_serializer=wallet__pb2.IsWalletLoadedRequest.SerializeToString,
-                response_deserializer=wallet__pb2.IsWalletLoadedResponse.FromString,
-                _registered_method=True)
         self.UpdatePassword = channel.unary_unary(
                 '/pactus.Wallet/UpdatePassword',
                 request_serializer=wallet__pb2.UpdatePasswordRequest.SerializeToString,
@@ -127,6 +122,7 @@ class WalletServicer(object):
 
     def LoadWallet(self, request, context):
         """LoadWallet loads an existing wallet with the given name.
+        deprecated: It will be removed in a future version.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -134,6 +130,7 @@ class WalletServicer(object):
 
     def UnloadWallet(self, request, context):
         """UnloadWallet unloads a currently loaded wallet with the specified name.
+        deprecated: It will be removed in a future version.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -141,7 +138,6 @@ class WalletServicer(object):
 
     def ListWallets(self, request, context):
         """ListWallets returns a list of all available wallets.
-        If `include_unloaded` is set, it returns both loaded and unloaded wallets.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -149,13 +145,6 @@ class WalletServicer(object):
 
     def GetWalletInfo(self, request, context):
         """GetWalletInfo returns detailed information about a specific wallet.
-        """
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def IsWalletLoaded(self, request, context):
-        """IsWalletLoaded checks whether the specified wallet is currently loaded.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -272,11 +261,6 @@ def add_WalletServicer_to_server(servicer, server):
                     servicer.GetWalletInfo,
                     request_deserializer=wallet__pb2.GetWalletInfoRequest.FromString,
                     response_serializer=wallet__pb2.GetWalletInfoResponse.SerializeToString,
-            ),
-            'IsWalletLoaded': grpc.unary_unary_rpc_method_handler(
-                    servicer.IsWalletLoaded,
-                    request_deserializer=wallet__pb2.IsWalletLoadedRequest.FromString,
-                    response_serializer=wallet__pb2.IsWalletLoadedResponse.SerializeToString,
             ),
             'UpdatePassword': grpc.unary_unary_rpc_method_handler(
                     servicer.UpdatePassword,
@@ -497,33 +481,6 @@ class Wallet(object):
             '/pactus.Wallet/GetWalletInfo',
             wallet__pb2.GetWalletInfoRequest.SerializeToString,
             wallet__pb2.GetWalletInfoResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def IsWalletLoaded(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/pactus.Wallet/IsWalletLoaded',
-            wallet__pb2.IsWalletLoadedRequest.SerializeToString,
-            wallet__pb2.IsWalletLoadedResponse.FromString,
             options,
             channel_credentials,
             insecure,

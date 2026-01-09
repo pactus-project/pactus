@@ -201,37 +201,6 @@ public final class WalletGrpc {
     return getGetWalletInfoMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<pactus.WalletOuterClass.IsWalletLoadedRequest,
-      pactus.WalletOuterClass.IsWalletLoadedResponse> getIsWalletLoadedMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "IsWalletLoaded",
-      requestType = pactus.WalletOuterClass.IsWalletLoadedRequest.class,
-      responseType = pactus.WalletOuterClass.IsWalletLoadedResponse.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<pactus.WalletOuterClass.IsWalletLoadedRequest,
-      pactus.WalletOuterClass.IsWalletLoadedResponse> getIsWalletLoadedMethod() {
-    io.grpc.MethodDescriptor<pactus.WalletOuterClass.IsWalletLoadedRequest, pactus.WalletOuterClass.IsWalletLoadedResponse> getIsWalletLoadedMethod;
-    if ((getIsWalletLoadedMethod = WalletGrpc.getIsWalletLoadedMethod) == null) {
-      synchronized (WalletGrpc.class) {
-        if ((getIsWalletLoadedMethod = WalletGrpc.getIsWalletLoadedMethod) == null) {
-          WalletGrpc.getIsWalletLoadedMethod = getIsWalletLoadedMethod =
-              io.grpc.MethodDescriptor.<pactus.WalletOuterClass.IsWalletLoadedRequest, pactus.WalletOuterClass.IsWalletLoadedResponse>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "IsWalletLoaded"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.WalletOuterClass.IsWalletLoadedRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.WalletOuterClass.IsWalletLoadedResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("IsWalletLoaded"))
-              .build();
-        }
-      }
-    }
-    return getIsWalletLoadedMethod;
-  }
-
   private static volatile io.grpc.MethodDescriptor<pactus.WalletOuterClass.UpdatePasswordRequest,
       pactus.WalletOuterClass.UpdatePasswordResponse> getUpdatePasswordMethod;
 
@@ -662,6 +631,7 @@ public final class WalletGrpc {
     /**
      * <pre>
      * LoadWallet loads an existing wallet with the given name.
+     * deprecated: It will be removed in a future version.
      * </pre>
      */
     default void loadWallet(pactus.WalletOuterClass.LoadWalletRequest request,
@@ -672,6 +642,7 @@ public final class WalletGrpc {
     /**
      * <pre>
      * UnloadWallet unloads a currently loaded wallet with the specified name.
+     * deprecated: It will be removed in a future version.
      * </pre>
      */
     default void unloadWallet(pactus.WalletOuterClass.UnloadWalletRequest request,
@@ -682,7 +653,6 @@ public final class WalletGrpc {
     /**
      * <pre>
      * ListWallets returns a list of all available wallets.
-     * If `include_unloaded` is set, it returns both loaded and unloaded wallets.
      * </pre>
      */
     default void listWallets(pactus.WalletOuterClass.ListWalletsRequest request,
@@ -698,16 +668,6 @@ public final class WalletGrpc {
     default void getWalletInfo(pactus.WalletOuterClass.GetWalletInfoRequest request,
         io.grpc.stub.StreamObserver<pactus.WalletOuterClass.GetWalletInfoResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetWalletInfoMethod(), responseObserver);
-    }
-
-    /**
-     * <pre>
-     * IsWalletLoaded checks whether the specified wallet is currently loaded.
-     * </pre>
-     */
-    default void isWalletLoaded(pactus.WalletOuterClass.IsWalletLoadedRequest request,
-        io.grpc.stub.StreamObserver<pactus.WalletOuterClass.IsWalletLoadedResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getIsWalletLoadedMethod(), responseObserver);
     }
 
     /**
@@ -881,6 +841,7 @@ public final class WalletGrpc {
     /**
      * <pre>
      * LoadWallet loads an existing wallet with the given name.
+     * deprecated: It will be removed in a future version.
      * </pre>
      */
     public void loadWallet(pactus.WalletOuterClass.LoadWalletRequest request,
@@ -892,6 +853,7 @@ public final class WalletGrpc {
     /**
      * <pre>
      * UnloadWallet unloads a currently loaded wallet with the specified name.
+     * deprecated: It will be removed in a future version.
      * </pre>
      */
     public void unloadWallet(pactus.WalletOuterClass.UnloadWalletRequest request,
@@ -903,7 +865,6 @@ public final class WalletGrpc {
     /**
      * <pre>
      * ListWallets returns a list of all available wallets.
-     * If `include_unloaded` is set, it returns both loaded and unloaded wallets.
      * </pre>
      */
     public void listWallets(pactus.WalletOuterClass.ListWalletsRequest request,
@@ -921,17 +882,6 @@ public final class WalletGrpc {
         io.grpc.stub.StreamObserver<pactus.WalletOuterClass.GetWalletInfoResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetWalletInfoMethod(), getCallOptions()), request, responseObserver);
-    }
-
-    /**
-     * <pre>
-     * IsWalletLoaded checks whether the specified wallet is currently loaded.
-     * </pre>
-     */
-    public void isWalletLoaded(pactus.WalletOuterClass.IsWalletLoadedRequest request,
-        io.grpc.stub.StreamObserver<pactus.WalletOuterClass.IsWalletLoadedResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getIsWalletLoadedMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -1100,6 +1050,7 @@ public final class WalletGrpc {
     /**
      * <pre>
      * LoadWallet loads an existing wallet with the given name.
+     * deprecated: It will be removed in a future version.
      * </pre>
      */
     public pactus.WalletOuterClass.LoadWalletResponse loadWallet(pactus.WalletOuterClass.LoadWalletRequest request) throws io.grpc.StatusException {
@@ -1110,6 +1061,7 @@ public final class WalletGrpc {
     /**
      * <pre>
      * UnloadWallet unloads a currently loaded wallet with the specified name.
+     * deprecated: It will be removed in a future version.
      * </pre>
      */
     public pactus.WalletOuterClass.UnloadWalletResponse unloadWallet(pactus.WalletOuterClass.UnloadWalletRequest request) throws io.grpc.StatusException {
@@ -1120,7 +1072,6 @@ public final class WalletGrpc {
     /**
      * <pre>
      * ListWallets returns a list of all available wallets.
-     * If `include_unloaded` is set, it returns both loaded and unloaded wallets.
      * </pre>
      */
     public pactus.WalletOuterClass.ListWalletsResponse listWallets(pactus.WalletOuterClass.ListWalletsRequest request) throws io.grpc.StatusException {
@@ -1136,16 +1087,6 @@ public final class WalletGrpc {
     public pactus.WalletOuterClass.GetWalletInfoResponse getWalletInfo(pactus.WalletOuterClass.GetWalletInfoRequest request) throws io.grpc.StatusException {
       return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetWalletInfoMethod(), getCallOptions(), request);
-    }
-
-    /**
-     * <pre>
-     * IsWalletLoaded checks whether the specified wallet is currently loaded.
-     * </pre>
-     */
-    public pactus.WalletOuterClass.IsWalletLoadedResponse isWalletLoaded(pactus.WalletOuterClass.IsWalletLoadedRequest request) throws io.grpc.StatusException {
-      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
-          getChannel(), getIsWalletLoadedMethod(), getCallOptions(), request);
     }
 
     /**
@@ -1303,6 +1244,7 @@ public final class WalletGrpc {
     /**
      * <pre>
      * LoadWallet loads an existing wallet with the given name.
+     * deprecated: It will be removed in a future version.
      * </pre>
      */
     public pactus.WalletOuterClass.LoadWalletResponse loadWallet(pactus.WalletOuterClass.LoadWalletRequest request) {
@@ -1313,6 +1255,7 @@ public final class WalletGrpc {
     /**
      * <pre>
      * UnloadWallet unloads a currently loaded wallet with the specified name.
+     * deprecated: It will be removed in a future version.
      * </pre>
      */
     public pactus.WalletOuterClass.UnloadWalletResponse unloadWallet(pactus.WalletOuterClass.UnloadWalletRequest request) {
@@ -1323,7 +1266,6 @@ public final class WalletGrpc {
     /**
      * <pre>
      * ListWallets returns a list of all available wallets.
-     * If `include_unloaded` is set, it returns both loaded and unloaded wallets.
      * </pre>
      */
     public pactus.WalletOuterClass.ListWalletsResponse listWallets(pactus.WalletOuterClass.ListWalletsRequest request) {
@@ -1339,16 +1281,6 @@ public final class WalletGrpc {
     public pactus.WalletOuterClass.GetWalletInfoResponse getWalletInfo(pactus.WalletOuterClass.GetWalletInfoRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetWalletInfoMethod(), getCallOptions(), request);
-    }
-
-    /**
-     * <pre>
-     * IsWalletLoaded checks whether the specified wallet is currently loaded.
-     * </pre>
-     */
-    public pactus.WalletOuterClass.IsWalletLoadedResponse isWalletLoaded(pactus.WalletOuterClass.IsWalletLoadedRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getIsWalletLoadedMethod(), getCallOptions(), request);
     }
 
     /**
@@ -1508,6 +1440,7 @@ public final class WalletGrpc {
     /**
      * <pre>
      * LoadWallet loads an existing wallet with the given name.
+     * deprecated: It will be removed in a future version.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.WalletOuterClass.LoadWalletResponse> loadWallet(
@@ -1519,6 +1452,7 @@ public final class WalletGrpc {
     /**
      * <pre>
      * UnloadWallet unloads a currently loaded wallet with the specified name.
+     * deprecated: It will be removed in a future version.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.WalletOuterClass.UnloadWalletResponse> unloadWallet(
@@ -1530,7 +1464,6 @@ public final class WalletGrpc {
     /**
      * <pre>
      * ListWallets returns a list of all available wallets.
-     * If `include_unloaded` is set, it returns both loaded and unloaded wallets.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.WalletOuterClass.ListWalletsResponse> listWallets(
@@ -1548,17 +1481,6 @@ public final class WalletGrpc {
         pactus.WalletOuterClass.GetWalletInfoRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetWalletInfoMethod(), getCallOptions()), request);
-    }
-
-    /**
-     * <pre>
-     * IsWalletLoaded checks whether the specified wallet is currently loaded.
-     * </pre>
-     */
-    public com.google.common.util.concurrent.ListenableFuture<pactus.WalletOuterClass.IsWalletLoadedResponse> isWalletLoaded(
-        pactus.WalletOuterClass.IsWalletLoadedRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getIsWalletLoadedMethod(), getCallOptions()), request);
     }
 
     /**
@@ -1691,18 +1613,17 @@ public final class WalletGrpc {
   private static final int METHODID_UNLOAD_WALLET = 3;
   private static final int METHODID_LIST_WALLETS = 4;
   private static final int METHODID_GET_WALLET_INFO = 5;
-  private static final int METHODID_IS_WALLET_LOADED = 6;
-  private static final int METHODID_UPDATE_PASSWORD = 7;
-  private static final int METHODID_GET_TOTAL_BALANCE = 8;
-  private static final int METHODID_GET_TOTAL_STAKE = 9;
-  private static final int METHODID_GET_VALIDATOR_ADDRESS = 10;
-  private static final int METHODID_GET_ADDRESS_INFO = 11;
-  private static final int METHODID_SET_ADDRESS_LABEL = 12;
-  private static final int METHODID_GET_NEW_ADDRESS = 13;
-  private static final int METHODID_LIST_ADDRESSES = 14;
-  private static final int METHODID_SIGN_MESSAGE = 15;
-  private static final int METHODID_SIGN_RAW_TRANSACTION = 16;
-  private static final int METHODID_LIST_TRANSACTIONS = 17;
+  private static final int METHODID_UPDATE_PASSWORD = 6;
+  private static final int METHODID_GET_TOTAL_BALANCE = 7;
+  private static final int METHODID_GET_TOTAL_STAKE = 8;
+  private static final int METHODID_GET_VALIDATOR_ADDRESS = 9;
+  private static final int METHODID_GET_ADDRESS_INFO = 10;
+  private static final int METHODID_SET_ADDRESS_LABEL = 11;
+  private static final int METHODID_GET_NEW_ADDRESS = 12;
+  private static final int METHODID_LIST_ADDRESSES = 13;
+  private static final int METHODID_SIGN_MESSAGE = 14;
+  private static final int METHODID_SIGN_RAW_TRANSACTION = 15;
+  private static final int METHODID_LIST_TRANSACTIONS = 16;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1744,10 +1665,6 @@ public final class WalletGrpc {
         case METHODID_GET_WALLET_INFO:
           serviceImpl.getWalletInfo((pactus.WalletOuterClass.GetWalletInfoRequest) request,
               (io.grpc.stub.StreamObserver<pactus.WalletOuterClass.GetWalletInfoResponse>) responseObserver);
-          break;
-        case METHODID_IS_WALLET_LOADED:
-          serviceImpl.isWalletLoaded((pactus.WalletOuterClass.IsWalletLoadedRequest) request,
-              (io.grpc.stub.StreamObserver<pactus.WalletOuterClass.IsWalletLoadedResponse>) responseObserver);
           break;
         case METHODID_UPDATE_PASSWORD:
           serviceImpl.updatePassword((pactus.WalletOuterClass.UpdatePasswordRequest) request,
@@ -1853,13 +1770,6 @@ public final class WalletGrpc {
               pactus.WalletOuterClass.GetWalletInfoRequest,
               pactus.WalletOuterClass.GetWalletInfoResponse>(
                 service, METHODID_GET_WALLET_INFO)))
-        .addMethod(
-          getIsWalletLoadedMethod(),
-          io.grpc.stub.ServerCalls.asyncUnaryCall(
-            new MethodHandlers<
-              pactus.WalletOuterClass.IsWalletLoadedRequest,
-              pactus.WalletOuterClass.IsWalletLoadedResponse>(
-                service, METHODID_IS_WALLET_LOADED)))
         .addMethod(
           getUpdatePasswordMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -1991,7 +1901,6 @@ public final class WalletGrpc {
               .addMethod(getUnloadWalletMethod())
               .addMethod(getListWalletsMethod())
               .addMethod(getGetWalletInfoMethod())
-              .addMethod(getIsWalletLoadedMethod())
               .addMethod(getUpdatePasswordMethod())
               .addMethod(getGetTotalBalanceMethod())
               .addMethod(getGetTotalStakeMethod())

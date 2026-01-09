@@ -842,7 +842,7 @@
         }
       },{
       "name": "pactus.wallet.load_wallet",
-      "description": "LoadWallet loads an existing wallet with the given name.",
+      "description": "LoadWallet loads an existing wallet with the given name. deprecated: It will be removed in a future version.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
       "params": [{
@@ -859,7 +859,7 @@
         }
       },{
       "name": "pactus.wallet.unload_wallet",
-      "description": "UnloadWallet unloads a currently loaded wallet with the specified name.",
+      "description": "UnloadWallet unloads a currently loaded wallet with the specified name. deprecated: It will be removed in a future version.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
       "params": [{
@@ -876,14 +876,10 @@
         }
       },{
       "name": "pactus.wallet.list_wallets",
-      "description": "ListWallets returns a list of all available wallets. If `include_unloaded` is set, it returns both loaded and unloaded wallets.",
+      "description": "ListWallets returns a list of all available wallets.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
-      "params": [{
-          "name": "include_unloaded",
-          "description": "Whether to include wallets that exist on disk but are not currently loaded.",
-          "schema": { "type": "boolean" }
-        }],
+      "params": [],
       "result": {
         "name": "fields",
         "schema": {
@@ -909,23 +905,6 @@
         "schema": {
           "type": "object","required": ["wallet_name","version","network","encrypted","uuid","created_at","default_fee","driver","path"],
           "properties": {"wallet_name": { "type": "string" },"version": { "type": "integer" },"network": { "type": "string" },"encrypted": { "type": "boolean" },"uuid": { "type": "string" },"created_at": { "type": "integer" },"default_fee": { "type": "integer" },"driver": { "type": "string" },"path": { "type": "string" }}
-          }
-        }
-      },{
-      "name": "pactus.wallet.is_wallet_loaded",
-      "description": "IsWalletLoaded checks whether the specified wallet is currently loaded.",
-      "tags": [{ "name": "wallet"}],
-      "paramStructure": "by-name",
-      "params": [{
-          "name": "wallet_name",
-          "description": "Name of the wallet to check.",
-          "schema": { "type": "string" }
-        }],
-      "result": {
-        "name": "fields",
-        "schema": {
-          "type": "object","required": ["wallet_name","loaded"],
-          "properties": {"wallet_name": { "type": "string" },"loaded": { "type": "boolean" }}
           }
         }
       },{

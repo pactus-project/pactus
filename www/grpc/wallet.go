@@ -91,10 +91,6 @@ func (s *walletServer) RestoreWallet(_ context.Context,
 func (s *walletServer) LoadWallet(_ context.Context,
 	req *pactus.LoadWalletRequest,
 ) (*pactus.LoadWalletResponse, error) {
-	if err := s.walletManager.LoadWallet(req.WalletName); err != nil {
-		return nil, err
-	}
-
 	return &pactus.LoadWalletResponse{
 		WalletName: req.WalletName,
 	}, nil
@@ -103,10 +99,6 @@ func (s *walletServer) LoadWallet(_ context.Context,
 func (s *walletServer) UnloadWallet(_ context.Context,
 	req *pactus.UnloadWalletRequest,
 ) (*pactus.UnloadWalletResponse, error) {
-	if err := s.walletManager.UnloadWallet(req.WalletName); err != nil {
-		return nil, err
-	}
-
 	return &pactus.UnloadWalletResponse{
 		WalletName: req.WalletName,
 	}, nil
@@ -115,24 +107,13 @@ func (s *walletServer) UnloadWallet(_ context.Context,
 func (s *walletServer) ListWallets(_ context.Context,
 	req *pactus.ListWalletsRequest,
 ) (*pactus.ListWalletsResponse, error) {
-	wallets, err := s.walletManager.ListWallets(req.IncludeUnloaded)
+	wallets, err := s.walletManager.ListWallets()
 	if err != nil {
 		return nil, err
 	}
 
 	return &pactus.ListWalletsResponse{
 		Wallets: wallets,
-	}, nil
-}
-
-func (s *walletServer) IsWalletLoaded(_ context.Context,
-	req *pactus.IsWalletLoadedRequest,
-) (*pactus.IsWalletLoadedResponse, error) {
-	loaded := s.walletManager.IsWalletLoaded(req.WalletName)
-
-	return &pactus.IsWalletLoadedResponse{
-		WalletName: req.WalletName,
-		Loaded:     loaded,
 	}, nil
 }
 

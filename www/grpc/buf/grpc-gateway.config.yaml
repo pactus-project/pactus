@@ -103,9 +103,6 @@ http:
     - selector: pactus.Wallet.ListWallets
       get: "/pactus/wallet/list_wallets"
 
-    - selector: pactus.Wallet.IsWalletLoaded
-      get: "/pactus/wallet/is_wallet_loaded"
-
     - selector: pactus.Wallet.GetWalletInfo
       get: "/pactus/wallet/get_wallet_info"
 

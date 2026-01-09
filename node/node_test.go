@@ -46,7 +46,6 @@ func TestRunningNode(t *testing.T) {
 	conf.Network.NetworkKey = util.TempFilePath()
 	conf.Network.PeerStorePath = util.TempFilePath()
 	conf.WalletManager.WalletsDir = util.TempDirPath()
-	conf.WalletManager.DefaultWalletName = "default_wallet"
 
 	walletPath := filepath.Join(conf.WalletManager.WalletsDir, "default_wallet")
 	mnemonic, _ := wallet.GenerateMnemonic(128)
@@ -77,7 +76,9 @@ func TestRunningNode(t *testing.T) {
 
 	assert.NotEmpty(t, node.GRPC().Address())
 
-	assert.True(t, node.WalletManager().IsWalletLoaded("default_wallet"))
+	wallets, err := node.WalletManager().ListWallets()
+	require.NoError(t, err)
+	assert.NotEmpty(t, wallets)
 
 	node.Stop()
 }

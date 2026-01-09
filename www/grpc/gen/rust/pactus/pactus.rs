@@ -1220,6 +1220,7 @@ pub struct CreateWalletResponse {
     pub mnemonic: ::prost::alloc::string::String,
 }
 /// Request message for loading an existing wallet.
+/// Deprecated: It will be removed in a future version.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct LoadWalletRequest {
     /// The name of the wallet to load.
@@ -1227,6 +1228,7 @@ pub struct LoadWalletRequest {
     pub wallet_name: ::prost::alloc::string::String,
 }
 /// Response message confirming wallet loaded.
+/// Deprecated: It will be removed in a future version.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct LoadWalletResponse {
     /// The name of the loaded wallet.
@@ -1234,6 +1236,7 @@ pub struct LoadWalletResponse {
     pub wallet_name: ::prost::alloc::string::String,
 }
 /// Request message for unloading a wallet.
+/// Deprecated: It will be removed in a future version.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct UnloadWalletRequest {
     /// The name of the wallet to unload.
@@ -1241,6 +1244,7 @@ pub struct UnloadWalletRequest {
     pub wallet_name: ::prost::alloc::string::String,
 }
 /// Response message confirming wallet unloading.
+/// Deprecated: It will be removed in a future version.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct UnloadWalletResponse {
     /// The name of the unloaded wallet.
@@ -1393,9 +1397,6 @@ pub struct SetAddressLabelResponse {
 /// Request message for listing wallets.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ListWalletsRequest {
-    /// Whether to include wallets that exist on disk but are not currently loaded.
-    #[prost(bool, tag="1")]
-    pub include_unloaded: bool,
 }
 /// Response message contains wallet names.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -1403,23 +1404,6 @@ pub struct ListWalletsResponse {
     /// Array of wallet names.
     #[prost(string, repeated, tag="1")]
     pub wallets: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
-}
-/// Request message for checking wallet load status.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct IsWalletLoadedRequest {
-    /// Name of the wallet to check.
-    #[prost(string, tag="1")]
-    pub wallet_name: ::prost::alloc::string::String,
-}
-/// Response message indicating wallet load status.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct IsWalletLoadedResponse {
-    /// Name of the wallet.
-    #[prost(string, tag="1")]
-    pub wallet_name: ::prost::alloc::string::String,
-    /// True if the wallet is currently loaded.
-    #[prost(bool, tag="2")]
-    pub loaded: bool,
 }
 /// Request message for getting wallet information.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]

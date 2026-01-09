@@ -265,7 +265,6 @@ func MakeConfig(workingDir string) (*config.Config, *genesis.Genesis, error) {
 
 	conf.WalletManager.ChainType = chainType
 	conf.WalletManager.WalletsDir = walletsDir
-	conf.WalletManager.DefaultWalletName = DefaultWalletName
 
 	if err := conf.BasicCheck(); err != nil {
 		return nil, nil, err

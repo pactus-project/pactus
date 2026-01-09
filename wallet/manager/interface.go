@@ -17,10 +17,7 @@ type IManager interface {
 	CreateWallet(walletName, password string) (string, error)
 	RestoreWallet(walletName, mnemonic, password string) error
 
-	LoadWallet(walletName string) error
-	UnloadWallet(walletName string) error
-	IsWalletLoaded(walletName string) bool
-	ListWallets(IncludeUnloaded bool) ([]string, error)
+	ListWallets() ([]string, error)
 	WalletInfo(walletName string) (*types.WalletInfo, error)
 	UpdatePassword(walletName, oldPassword, newPassword string) error
 	TotalBalance(walletName string) (amount.Amount, error)
