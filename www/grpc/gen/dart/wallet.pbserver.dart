@@ -33,8 +33,6 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
       $pb.ServerContext ctx, $1.ListWalletsRequest request);
   $async.Future<$1.GetWalletInfoResponse> getWalletInfo(
       $pb.ServerContext ctx, $1.GetWalletInfoRequest request);
-  $async.Future<$1.IsWalletLoadedResponse> isWalletLoaded(
-      $pb.ServerContext ctx, $1.IsWalletLoadedRequest request);
   $async.Future<$1.UpdatePasswordResponse> updatePassword(
       $pb.ServerContext ctx, $1.UpdatePasswordRequest request);
   $async.Future<$1.GetTotalBalanceResponse> getTotalBalance(
@@ -72,8 +70,6 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
         return $1.ListWalletsRequest();
       case 'GetWalletInfo':
         return $1.GetWalletInfoRequest();
-      case 'IsWalletLoaded':
-        return $1.IsWalletLoadedRequest();
       case 'UpdatePassword':
         return $1.UpdatePasswordRequest();
       case 'GetTotalBalance':
@@ -116,8 +112,6 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
         return listWallets(ctx, request as $1.ListWalletsRequest);
       case 'GetWalletInfo':
         return getWalletInfo(ctx, request as $1.GetWalletInfoRequest);
-      case 'IsWalletLoaded':
-        return isWalletLoaded(ctx, request as $1.IsWalletLoadedRequest);
       case 'UpdatePassword':
         return updatePassword(ctx, request as $1.UpdatePasswordRequest);
       case 'GetTotalBalance':

@@ -11,7 +11,6 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/provider"
@@ -21,34 +20,44 @@ import (
 var _ IManager = (*Manager)(nil)
 
 type Manager struct {
-	ctx                context.Context
-	wallets            map[string]*wallet.Wallet
-	chainType          genesis.ChainType
-	walletDirectory    string
-	DefaultWalletName  string
-	blockchainProvider provider.IBlockchainProvider
-	eventPipe          pipeline.Pipeline[any]
+	ctx               context.Context
+	wallets           map[string]*wallet.Wallet
+	chainType         genesis.ChainType
+	walletDirectory   string
+	DefaultWalletName string
+	provider          provider.IBlockchainProvider
+	eventPipe         pipeline.Pipeline[any]
 }
 
 func NewManager(ctx context.Context, conf *Config,
-	blockchainProvider provider.IBlockchainProvider,
+	provider provider.IBlockchainProvider,
 	eventPipe pipeline.Pipeline[any],
 ) (IManager, error) {
-	mgr := &Manager{
-		ctx:                ctx,
-		wallets:            make(map[string]*wallet.Wallet),
-		chainType:          conf.ChainType,
-		walletDirectory:    conf.WalletsDir,
-		DefaultWalletName:  conf.DefaultWalletName,
-		blockchainProvider: blockchainProvider,
-		eventPipe:          eventPipe,
-	}
-
-	if err := mgr.LoadWallet(conf.DefaultWalletName); err != nil {
+	wallets := make(map[string]*wallet.Wallet)
+	files, err := util.ListFilesInDir(conf.WalletsDir)
+	if err != nil {
 		return nil, err
 	}
 
-	return mgr, nil
+	for _, file := range files {
+		wlt, err := wallet.Open(ctx, file,
+			wallet.WithBlockchainProvider(provider),
+			wallet.WithEventPipe(eventPipe))
+		if err != nil {
+			return nil, fmt.Errorf("failed to open wallet %s: %w", file, err)
+		}
+
+		wallets[filepath.Base(file)] = wlt
+	}
+
+	return &Manager{
+		ctx:             ctx,
+		wallets:         wallets,
+		chainType:       conf.ChainType,
+		walletDirectory: conf.WalletsDir,
+		provider:        provider,
+		eventPipe:       eventPipe,
+	}, nil
 }
 
 func (*Manager) Start() error {
@@ -73,10 +82,14 @@ func (wm *Manager) createWalletWithMnemonic(
 		return ErrWalletAlreadyExists
 	}
 
-	_, err := wallet.Create(wm.ctx, walletPath, mnemonic, password, wm.chainType)
+	wlt, err := wallet.Create(wm.ctx, walletPath, mnemonic, password, wm.chainType,
+		wallet.WithBlockchainProvider(wm.provider),
+		wallet.WithEventPipe(wm.eventPipe))
 	if err != nil {
 		return err
 	}
+
+	wm.wallets[walletName] = wlt
 
 	return nil
 }
@@ -110,27 +123,6 @@ func (wm *Manager) CreateWallet(
 
 func (wm *Manager) RestoreWallet(walletName, mnemonic, password string) error {
 	return wm.createWalletWithMnemonic(walletName, mnemonic, password)
-}
-
-func (wm *Manager) LoadWallet(walletName string) error {
-	if _, ok := wm.wallets[walletName]; ok {
-		return ErrWalletAlreadyLoaded
-	}
-
-	walletPath := wm.getWalletPath(walletName)
-	opts := []wallet.OpenWalletOption{
-		wallet.WithEventPipe(wm.eventPipe),
-		wallet.WithBlockchainProvider(wm.blockchainProvider),
-	}
-
-	wlt, err := wallet.Open(wm.ctx, walletPath, opts...)
-	if err != nil {
-		return err
-	}
-
-	wm.wallets[walletName] = wlt
-
-	return nil
 }
 
 func (wm *Manager) NewAddress(walletName string, addressType crypto.AddressType, label string,
@@ -273,22 +265,6 @@ func (wm *Manager) BroadcastTransaction(walletName string, trx *tx.Tx) (string, 
 	return wlt.BroadcastTransaction(trx)
 }
 
-func (wm *Manager) UnloadWallet(
-	walletName string,
-) error {
-	if _, ok := wm.wallets[walletName]; !ok {
-		return ErrWalletNotLoaded
-	}
-
-	if walletName == wm.DefaultWalletName {
-		return ErrCannotUnloadDefaultWallet
-	}
-
-	delete(wm.wallets, walletName)
-
-	return nil
-}
-
 func (wm *Manager) TotalBalance(walletName string) (amount.Amount, error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
@@ -359,38 +335,13 @@ func (wm *Manager) WalletInfo(walletName string) (*types.WalletInfo, error) {
 	return wlt.Info(), nil
 }
 
-func (wm *Manager) ListWallets(includeUnloaded bool) ([]string, error) {
-	wallets := make([]string, 0)
-
-	if includeUnloaded {
-		files, err := util.ListFilesInDir(wm.walletDirectory)
-		if err != nil {
-			return nil, err
-		}
-
-		for _, file := range files {
-			_, err = wallet.Open(wm.ctx, file)
-			if err != nil {
-				logger.Warn(fmt.Sprintf("file %s is not wallet", file))
-
-				continue
-			}
-
-			wallets = append(wallets, filepath.Base(file))
-		}
-	} else {
-		for name := range wm.wallets {
-			wallets = append(wallets, name)
-		}
+func (wm *Manager) ListWallets() ([]string, error) {
+	wallets := make([]string, 0, len(wm.wallets))
+	for name := range wm.wallets {
+		wallets = append(wallets, name)
 	}
 
 	return wallets, nil
-}
-
-func (wm *Manager) IsWalletLoaded(walletName string) bool {
-	_, loaded := wm.wallets[walletName]
-
-	return loaded
 }
 
 func (wm *Manager) ListAddresses(walletName string, opts ...wallet.ListAddressOption) ([]types.AddressInfo, error) {

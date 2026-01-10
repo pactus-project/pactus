@@ -8,12 +8,7 @@ var (
 	// ErrWalletAlreadyExists indicates a wallet already exists on disk.
 	ErrWalletAlreadyExists = errors.New("wallet already exists")
 
-	// ErrWalletAlreadyLoaded indicates a wallet is already loaded in memory.
-	ErrWalletAlreadyLoaded = errors.New("wallet already loaded")
-
+	// TODO: rename me
 	// ErrWalletNotLoaded indicates a wallet is not loaded in memory.
 	ErrWalletNotLoaded = errors.New("wallet is not loaded")
-
-	// ErrCannotUnloadDefaultWallet indicates an attempt to unload the default wallet.
-	ErrCannotUnloadDefaultWallet = errors.New("cannot unload default wallet")
 )

@@ -7,9 +7,8 @@ import (
 // Config defines parameters for the wallet module.
 type Config struct {
 	// private config
-	ChainType         genesis.ChainType `toml:"-"`
-	WalletsDir        string            `toml:"-"`
-	DefaultWalletName string            `toml:"-"`
+	ChainType  genesis.ChainType `toml:"-"`
+	WalletsDir string            `toml:"-"`
 }
 
 func DefaultConfig() *Config {

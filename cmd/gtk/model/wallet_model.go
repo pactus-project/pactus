@@ -3,8 +3,6 @@
 package model
 
 import (
-	"errors"
-
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/types/amount"
@@ -38,10 +36,6 @@ type AddressRow struct {
 
 func NewWalletModel(node *node.Node, walletName string) (*WalletModel, error) {
 	manager := node.WalletManager()
-	if err := manager.LoadWallet(walletName); err != nil &&
-		!errors.Is(err, wltmgr.ErrWalletAlreadyLoaded) {
-		return nil, err
-	}
 
 	return &WalletModel{node: node, manager: manager, walletName: walletName}, nil
 }

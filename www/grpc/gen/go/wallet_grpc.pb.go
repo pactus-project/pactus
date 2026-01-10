@@ -25,7 +25,6 @@ const (
 	Wallet_UnloadWallet_FullMethodName        = "/pactus.Wallet/UnloadWallet"
 	Wallet_ListWallets_FullMethodName         = "/pactus.Wallet/ListWallets"
 	Wallet_GetWalletInfo_FullMethodName       = "/pactus.Wallet/GetWalletInfo"
-	Wallet_IsWalletLoaded_FullMethodName      = "/pactus.Wallet/IsWalletLoaded"
 	Wallet_UpdatePassword_FullMethodName      = "/pactus.Wallet/UpdatePassword"
 	Wallet_GetTotalBalance_FullMethodName     = "/pactus.Wallet/GetTotalBalance"
 	Wallet_GetTotalStake_FullMethodName       = "/pactus.Wallet/GetTotalStake"
@@ -50,16 +49,15 @@ type WalletClient interface {
 	// RestoreWallet restores an existing wallet with the given mnemonic.
 	RestoreWallet(ctx context.Context, in *RestoreWalletRequest, opts ...grpc.CallOption) (*RestoreWalletResponse, error)
 	// LoadWallet loads an existing wallet with the given name.
+	// deprecated: It will be removed in a future version.
 	LoadWallet(ctx context.Context, in *LoadWalletRequest, opts ...grpc.CallOption) (*LoadWalletResponse, error)
 	// UnloadWallet unloads a currently loaded wallet with the specified name.
+	// deprecated: It will be removed in a future version.
 	UnloadWallet(ctx context.Context, in *UnloadWalletRequest, opts ...grpc.CallOption) (*UnloadWalletResponse, error)
 	// ListWallets returns a list of all available wallets.
-	// If `include_unloaded` is set, it returns both loaded and unloaded wallets.
 	ListWallets(ctx context.Context, in *ListWalletsRequest, opts ...grpc.CallOption) (*ListWalletsResponse, error)
 	// GetWalletInfo returns detailed information about a specific wallet.
 	GetWalletInfo(ctx context.Context, in *GetWalletInfoRequest, opts ...grpc.CallOption) (*GetWalletInfoResponse, error)
-	// IsWalletLoaded checks whether the specified wallet is currently loaded.
-	IsWalletLoaded(ctx context.Context, in *IsWalletLoadedRequest, opts ...grpc.CallOption) (*IsWalletLoadedResponse, error)
 	// UpdatePassword updates the password of an existing wallet.
 	UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*UpdatePasswordResponse, error)
 	// GetTotalBalance returns the total available balance of the wallet.
@@ -148,16 +146,6 @@ func (c *walletClient) GetWalletInfo(ctx context.Context, in *GetWalletInfoReque
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetWalletInfoResponse)
 	err := c.cc.Invoke(ctx, Wallet_GetWalletInfo_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *walletClient) IsWalletLoaded(ctx context.Context, in *IsWalletLoadedRequest, opts ...grpc.CallOption) (*IsWalletLoadedResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(IsWalletLoadedResponse)
-	err := c.cc.Invoke(ctx, Wallet_IsWalletLoaded_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -285,16 +273,15 @@ type WalletServer interface {
 	// RestoreWallet restores an existing wallet with the given mnemonic.
 	RestoreWallet(context.Context, *RestoreWalletRequest) (*RestoreWalletResponse, error)
 	// LoadWallet loads an existing wallet with the given name.
+	// deprecated: It will be removed in a future version.
 	LoadWallet(context.Context, *LoadWalletRequest) (*LoadWalletResponse, error)
 	// UnloadWallet unloads a currently loaded wallet with the specified name.
+	// deprecated: It will be removed in a future version.
 	UnloadWallet(context.Context, *UnloadWalletRequest) (*UnloadWalletResponse, error)
 	// ListWallets returns a list of all available wallets.
-	// If `include_unloaded` is set, it returns both loaded and unloaded wallets.
 	ListWallets(context.Context, *ListWalletsRequest) (*ListWalletsResponse, error)
 	// GetWalletInfo returns detailed information about a specific wallet.
 	GetWalletInfo(context.Context, *GetWalletInfoRequest) (*GetWalletInfoResponse, error)
-	// IsWalletLoaded checks whether the specified wallet is currently loaded.
-	IsWalletLoaded(context.Context, *IsWalletLoadedRequest) (*IsWalletLoadedResponse, error)
 	// UpdatePassword updates the password of an existing wallet.
 	UpdatePassword(context.Context, *UpdatePasswordRequest) (*UpdatePasswordResponse, error)
 	// GetTotalBalance returns the total available balance of the wallet.
@@ -345,9 +332,6 @@ func (UnimplementedWalletServer) ListWallets(context.Context, *ListWalletsReques
 }
 func (UnimplementedWalletServer) GetWalletInfo(context.Context, *GetWalletInfoRequest) (*GetWalletInfoResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetWalletInfo not implemented")
-}
-func (UnimplementedWalletServer) IsWalletLoaded(context.Context, *IsWalletLoadedRequest) (*IsWalletLoadedResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method IsWalletLoaded not implemented")
 }
 func (UnimplementedWalletServer) UpdatePassword(context.Context, *UpdatePasswordRequest) (*UpdatePasswordResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdatePassword not implemented")
@@ -506,24 +490,6 @@ func _Wallet_GetWalletInfo_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(WalletServer).GetWalletInfo(ctx, req.(*GetWalletInfoRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Wallet_IsWalletLoaded_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IsWalletLoadedRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WalletServer).IsWalletLoaded(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Wallet_IsWalletLoaded_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WalletServer).IsWalletLoaded(ctx, req.(*IsWalletLoadedRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -756,10 +722,6 @@ var Wallet_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetWalletInfo",
 			Handler:    _Wallet_GetWalletInfo_Handler,
-		},
-		{
-			MethodName: "IsWalletLoaded",
-			Handler:    _Wallet_IsWalletLoaded_Handler,
 		},
 		{
 			MethodName: "UpdatePassword",

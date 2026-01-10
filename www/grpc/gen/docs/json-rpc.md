@@ -226,10 +226,6 @@ curl --location 'http://localhost:8545/' \
           <span class="rpc-badge"></span> pactus.wallet.get_wallet_info</a>
         </li>
         <li>
-          <a href="#pactus.wallet.is_wallet_loaded">
-          <span class="rpc-badge"></span> pactus.wallet.is_wallet_loaded</a>
-        </li>
-        <li>
           <a href="#pactus.wallet.update_password">
           <span class="rpc-badge"></span> pactus.wallet.update_password</a>
         </li>
@@ -3588,7 +3584,8 @@ signing, verification, and other cryptographic operations.</p>
 
 #### pactus.wallet.load_wallet <span id="pactus.wallet.load_wallet" class="rpc-badge"></span>
 
-<p>LoadWallet loads an existing wallet with the given name.</p>
+<p>LoadWallet loads an existing wallet with the given name.
+deprecated: It will be removed in a future version.</p>
 
 <h4>Parameters</h4>
 
@@ -3625,7 +3622,8 @@ signing, verification, and other cryptographic operations.</p>
 
 #### pactus.wallet.unload_wallet <span id="pactus.wallet.unload_wallet" class="rpc-badge"></span>
 
-<p>UnloadWallet unloads a currently loaded wallet with the specified name.</p>
+<p>UnloadWallet unloads a currently loaded wallet with the specified name.
+deprecated: It will be removed in a future version.</p>
 
 <h4>Parameters</h4>
 
@@ -3662,25 +3660,11 @@ signing, verification, and other cryptographic operations.</p>
 
 #### pactus.wallet.list_wallets <span id="pactus.wallet.list_wallets" class="rpc-badge"></span>
 
-<p>ListWallets returns a list of all available wallets.
-If `include_unloaded` is set, it returns both loaded and unloaded wallets.</p>
+<p>ListWallets returns a list of all available wallets.</p>
 
 <h4>Parameters</h4>
 
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">include_unloaded</td>
-    <td> boolean</td>
-    <td>
-    Whether to include wallets that exist on disk but are not currently loaded.
-    </td>
-  </tr>
-  </tbody>
-</table>
+Parameters has no fields.
   <h4>Result</h4>
 
 <table class="table table-bordered table-responsive table-sm">
@@ -3786,50 +3770,6 @@ If `include_unloaded` is set, it returns both loaded and unloaded wallets.</p>
     <td> string</td>
     <td>
     Path to the wallet file or storage location.
-    </td>
-  </tr>
-     </tbody>
-</table>
-
-#### pactus.wallet.is_wallet_loaded <span id="pactus.wallet.is_wallet_loaded" class="rpc-badge"></span>
-
-<p>IsWalletLoaded checks whether the specified wallet is currently loaded.</p>
-
-<h4>Parameters</h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">wallet_name</td>
-    <td> string</td>
-    <td>
-    Name of the wallet to check.
-    </td>
-  </tr>
-  </tbody>
-</table>
-  <h4>Result</h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">wallet_name</td>
-    <td> string</td>
-    <td>
-    Name of the wallet.
-    </td>
-  </tr>
-     <tr>
-    <td class="fw-bold">loaded</td>
-    <td> boolean</td>
-    <td>
-    True if the wallet is currently loaded.
     </td>
   </tr>
      </tbody>

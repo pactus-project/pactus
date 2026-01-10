@@ -6323,6 +6323,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
   /**
    * <pre>
    * Request message for loading an existing wallet.
+   * Deprecated: It will be removed in a future version.
    * </pre>
    *
    * Protobuf type {@code pactus.LoadWalletRequest}
@@ -6568,6 +6569,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     /**
      * <pre>
      * Request message for loading an existing wallet.
+     * Deprecated: It will be removed in a future version.
      * </pre>
      *
      * Protobuf type {@code pactus.LoadWalletRequest}
@@ -6877,6 +6879,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
   /**
    * <pre>
    * Response message confirming wallet loaded.
+   * Deprecated: It will be removed in a future version.
    * </pre>
    *
    * Protobuf type {@code pactus.LoadWalletResponse}
@@ -7122,6 +7125,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     /**
      * <pre>
      * Response message confirming wallet loaded.
+     * Deprecated: It will be removed in a future version.
      * </pre>
      *
      * Protobuf type {@code pactus.LoadWalletResponse}
@@ -7431,6 +7435,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
   /**
    * <pre>
    * Request message for unloading a wallet.
+   * Deprecated: It will be removed in a future version.
    * </pre>
    *
    * Protobuf type {@code pactus.UnloadWalletRequest}
@@ -7676,6 +7681,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     /**
      * <pre>
      * Request message for unloading a wallet.
+     * Deprecated: It will be removed in a future version.
      * </pre>
      *
      * Protobuf type {@code pactus.UnloadWalletRequest}
@@ -7985,6 +7991,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
   /**
    * <pre>
    * Response message confirming wallet unloading.
+   * Deprecated: It will be removed in a future version.
    * </pre>
    *
    * Protobuf type {@code pactus.UnloadWalletResponse}
@@ -8230,6 +8237,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     /**
      * <pre>
      * Response message confirming wallet unloading.
+     * Deprecated: It will be removed in a future version.
      * </pre>
      *
      * Protobuf type {@code pactus.UnloadWalletResponse}
@@ -18933,16 +18941,6 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
   public interface ListWalletsRequestOrBuilder extends
       // @@protoc_insertion_point(interface_extends:pactus.ListWalletsRequest)
       com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <pre>
-     * Whether to include wallets that exist on disk but are not currently loaded.
-     * </pre>
-     *
-     * <code>bool include_unloaded = 1 [json_name = "includeUnloaded"];</code>
-     * @return The includeUnloaded.
-     */
-    boolean getIncludeUnloaded();
   }
   /**
    * <pre>
@@ -18985,21 +18983,6 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
               pactus.WalletOuterClass.ListWalletsRequest.class, pactus.WalletOuterClass.ListWalletsRequest.Builder.class);
     }
 
-    public static final int INCLUDE_UNLOADED_FIELD_NUMBER = 1;
-    private boolean includeUnloaded_ = false;
-    /**
-     * <pre>
-     * Whether to include wallets that exist on disk but are not currently loaded.
-     * </pre>
-     *
-     * <code>bool include_unloaded = 1 [json_name = "includeUnloaded"];</code>
-     * @return The includeUnloaded.
-     */
-    @java.lang.Override
-    public boolean getIncludeUnloaded() {
-      return includeUnloaded_;
-    }
-
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -19014,9 +18997,6 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (includeUnloaded_ != false) {
-        output.writeBool(1, includeUnloaded_);
-      }
       getUnknownFields().writeTo(output);
     }
 
@@ -19026,10 +19006,6 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       if (size != -1) return size;
 
       size = 0;
-      if (includeUnloaded_ != false) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBoolSize(1, includeUnloaded_);
-      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -19045,8 +19021,6 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       }
       pactus.WalletOuterClass.ListWalletsRequest other = (pactus.WalletOuterClass.ListWalletsRequest) obj;
 
-      if (getIncludeUnloaded()
-          != other.getIncludeUnloaded()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -19058,9 +19032,6 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + INCLUDE_UNLOADED_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
-          getIncludeUnloaded());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -19195,8 +19166,6 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        bitField0_ = 0;
-        includeUnloaded_ = false;
         return this;
       }
 
@@ -19223,16 +19192,8 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       @java.lang.Override
       public pactus.WalletOuterClass.ListWalletsRequest buildPartial() {
         pactus.WalletOuterClass.ListWalletsRequest result = new pactus.WalletOuterClass.ListWalletsRequest(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
-      }
-
-      private void buildPartial0(pactus.WalletOuterClass.ListWalletsRequest result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.includeUnloaded_ = includeUnloaded_;
-        }
       }
 
       @java.lang.Override
@@ -19247,9 +19208,6 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
 
       public Builder mergeFrom(pactus.WalletOuterClass.ListWalletsRequest other) {
         if (other == pactus.WalletOuterClass.ListWalletsRequest.getDefaultInstance()) return this;
-        if (other.getIncludeUnloaded() != false) {
-          setIncludeUnloaded(other.getIncludeUnloaded());
-        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -19276,11 +19234,6 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
               case 0:
                 done = true;
                 break;
-              case 8: {
-                includeUnloaded_ = input.readBool();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 8
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -19294,51 +19247,6 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
         } finally {
           onChanged();
         } // finally
-        return this;
-      }
-      private int bitField0_;
-
-      private boolean includeUnloaded_ ;
-      /**
-       * <pre>
-       * Whether to include wallets that exist on disk but are not currently loaded.
-       * </pre>
-       *
-       * <code>bool include_unloaded = 1 [json_name = "includeUnloaded"];</code>
-       * @return The includeUnloaded.
-       */
-      @java.lang.Override
-      public boolean getIncludeUnloaded() {
-        return includeUnloaded_;
-      }
-      /**
-       * <pre>
-       * Whether to include wallets that exist on disk but are not currently loaded.
-       * </pre>
-       *
-       * <code>bool include_unloaded = 1 [json_name = "includeUnloaded"];</code>
-       * @param value The includeUnloaded to set.
-       * @return This builder for chaining.
-       */
-      public Builder setIncludeUnloaded(boolean value) {
-
-        includeUnloaded_ = value;
-        bitField0_ |= 0x00000001;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Whether to include wallets that exist on disk but are not currently loaded.
-       * </pre>
-       *
-       * <code>bool include_unloaded = 1 [json_name = "includeUnloaded"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearIncludeUnloaded() {
-        bitField0_ = (bitField0_ & ~0x00000001);
-        includeUnloaded_ = false;
-        onChanged();
         return this;
       }
 
@@ -20040,1207 +19948,6 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
 
     @java.lang.Override
     public pactus.WalletOuterClass.ListWalletsResponse getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
-  public interface IsWalletLoadedRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:pactus.IsWalletLoadedRequest)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <pre>
-     * Name of the wallet to check.
-     * </pre>
-     *
-     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-     * @return The walletName.
-     */
-    java.lang.String getWalletName();
-    /**
-     * <pre>
-     * Name of the wallet to check.
-     * </pre>
-     *
-     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-     * @return The bytes for walletName.
-     */
-    com.google.protobuf.ByteString
-        getWalletNameBytes();
-  }
-  /**
-   * <pre>
-   * Request message for checking wallet load status.
-   * </pre>
-   *
-   * Protobuf type {@code pactus.IsWalletLoadedRequest}
-   */
-  public static final class IsWalletLoadedRequest extends
-      com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:pactus.IsWalletLoadedRequest)
-      IsWalletLoadedRequestOrBuilder {
-  private static final long serialVersionUID = 0L;
-    static {
-      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-        /* major= */ 4,
-        /* minor= */ 33,
-        /* patch= */ 2,
-        /* suffix= */ "",
-        "IsWalletLoadedRequest");
-    }
-    // Use IsWalletLoadedRequest.newBuilder() to construct.
-    private IsWalletLoadedRequest(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-      super(builder);
-    }
-    private IsWalletLoadedRequest() {
-      walletName_ = "";
-    }
-
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return pactus.WalletOuterClass.internal_static_pactus_IsWalletLoadedRequest_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return pactus.WalletOuterClass.internal_static_pactus_IsWalletLoadedRequest_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              pactus.WalletOuterClass.IsWalletLoadedRequest.class, pactus.WalletOuterClass.IsWalletLoadedRequest.Builder.class);
-    }
-
-    public static final int WALLET_NAME_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object walletName_ = "";
-    /**
-     * <pre>
-     * Name of the wallet to check.
-     * </pre>
-     *
-     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-     * @return The walletName.
-     */
-    @java.lang.Override
-    public java.lang.String getWalletName() {
-      java.lang.Object ref = walletName_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        walletName_ = s;
-        return s;
-      }
-    }
-    /**
-     * <pre>
-     * Name of the wallet to check.
-     * </pre>
-     *
-     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-     * @return The bytes for walletName.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getWalletNameBytes() {
-      java.lang.Object ref = walletName_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        walletName_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    private byte memoizedIsInitialized = -1;
-    @java.lang.Override
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    @java.lang.Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(walletName_)) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 1, walletName_);
-      }
-      getUnknownFields().writeTo(output);
-    }
-
-    @java.lang.Override
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(walletName_)) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(1, walletName_);
-      }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof pactus.WalletOuterClass.IsWalletLoadedRequest)) {
-        return super.equals(obj);
-      }
-      pactus.WalletOuterClass.IsWalletLoadedRequest other = (pactus.WalletOuterClass.IsWalletLoadedRequest) obj;
-
-      if (!getWalletName()
-          .equals(other.getWalletName())) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-      return true;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + WALLET_NAME_FIELD_NUMBER;
-      hash = (53 * hash) + getWalletName().hashCode();
-      hash = (29 * hash) + getUnknownFields().hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static pactus.WalletOuterClass.IsWalletLoadedRequest parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static pactus.WalletOuterClass.IsWalletLoadedRequest parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static pactus.WalletOuterClass.IsWalletLoadedRequest parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static pactus.WalletOuterClass.IsWalletLoadedRequest parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static pactus.WalletOuterClass.IsWalletLoadedRequest parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static pactus.WalletOuterClass.IsWalletLoadedRequest parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static pactus.WalletOuterClass.IsWalletLoadedRequest parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input);
-    }
-    public static pactus.WalletOuterClass.IsWalletLoadedRequest parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    public static pactus.WalletOuterClass.IsWalletLoadedRequest parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-
-    public static pactus.WalletOuterClass.IsWalletLoadedRequest parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static pactus.WalletOuterClass.IsWalletLoadedRequest parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input);
-    }
-    public static pactus.WalletOuterClass.IsWalletLoadedRequest parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    @java.lang.Override
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(pactus.WalletOuterClass.IsWalletLoadedRequest prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    @java.lang.Override
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * <pre>
-     * Request message for checking wallet load status.
-     * </pre>
-     *
-     * Protobuf type {@code pactus.IsWalletLoadedRequest}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:pactus.IsWalletLoadedRequest)
-        pactus.WalletOuterClass.IsWalletLoadedRequestOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return pactus.WalletOuterClass.internal_static_pactus_IsWalletLoadedRequest_descriptor;
-      }
-
-      @java.lang.Override
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return pactus.WalletOuterClass.internal_static_pactus_IsWalletLoadedRequest_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                pactus.WalletOuterClass.IsWalletLoadedRequest.class, pactus.WalletOuterClass.IsWalletLoadedRequest.Builder.class);
-      }
-
-      // Construct using pactus.WalletOuterClass.IsWalletLoadedRequest.newBuilder()
-      private Builder() {
-
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-        super(parent);
-
-      }
-      @java.lang.Override
-      public Builder clear() {
-        super.clear();
-        bitField0_ = 0;
-        walletName_ = "";
-        return this;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return pactus.WalletOuterClass.internal_static_pactus_IsWalletLoadedRequest_descriptor;
-      }
-
-      @java.lang.Override
-      public pactus.WalletOuterClass.IsWalletLoadedRequest getDefaultInstanceForType() {
-        return pactus.WalletOuterClass.IsWalletLoadedRequest.getDefaultInstance();
-      }
-
-      @java.lang.Override
-      public pactus.WalletOuterClass.IsWalletLoadedRequest build() {
-        pactus.WalletOuterClass.IsWalletLoadedRequest result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      @java.lang.Override
-      public pactus.WalletOuterClass.IsWalletLoadedRequest buildPartial() {
-        pactus.WalletOuterClass.IsWalletLoadedRequest result = new pactus.WalletOuterClass.IsWalletLoadedRequest(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
-        onBuilt();
-        return result;
-      }
-
-      private void buildPartial0(pactus.WalletOuterClass.IsWalletLoadedRequest result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.walletName_ = walletName_;
-        }
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.WalletOuterClass.IsWalletLoadedRequest) {
-          return mergeFrom((pactus.WalletOuterClass.IsWalletLoadedRequest)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(pactus.WalletOuterClass.IsWalletLoadedRequest other) {
-        if (other == pactus.WalletOuterClass.IsWalletLoadedRequest.getDefaultInstance()) return this;
-        if (!other.getWalletName().isEmpty()) {
-          walletName_ = other.walletName_;
-          bitField0_ |= 0x00000001;
-          onChanged();
-        }
-        this.mergeUnknownFields(other.getUnknownFields());
-        onChanged();
-        return this;
-      }
-
-      @java.lang.Override
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                walletName_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 10
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.unwrapIOException();
-        } finally {
-          onChanged();
-        } // finally
-        return this;
-      }
-      private int bitField0_;
-
-      private java.lang.Object walletName_ = "";
-      /**
-       * <pre>
-       * Name of the wallet to check.
-       * </pre>
-       *
-       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-       * @return The walletName.
-       */
-      public java.lang.String getWalletName() {
-        java.lang.Object ref = walletName_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          walletName_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <pre>
-       * Name of the wallet to check.
-       * </pre>
-       *
-       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-       * @return The bytes for walletName.
-       */
-      public com.google.protobuf.ByteString
-          getWalletNameBytes() {
-        java.lang.Object ref = walletName_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          walletName_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <pre>
-       * Name of the wallet to check.
-       * </pre>
-       *
-       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-       * @param value The walletName to set.
-       * @return This builder for chaining.
-       */
-      public Builder setWalletName(
-          java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
-        walletName_ = value;
-        bitField0_ |= 0x00000001;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Name of the wallet to check.
-       * </pre>
-       *
-       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearWalletName() {
-        walletName_ = getDefaultInstance().getWalletName();
-        bitField0_ = (bitField0_ & ~0x00000001);
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Name of the wallet to check.
-       * </pre>
-       *
-       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-       * @param value The bytes for walletName to set.
-       * @return This builder for chaining.
-       */
-      public Builder setWalletNameBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
-        walletName_ = value;
-        bitField0_ |= 0x00000001;
-        onChanged();
-        return this;
-      }
-
-      // @@protoc_insertion_point(builder_scope:pactus.IsWalletLoadedRequest)
-    }
-
-    // @@protoc_insertion_point(class_scope:pactus.IsWalletLoadedRequest)
-    private static final pactus.WalletOuterClass.IsWalletLoadedRequest DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new pactus.WalletOuterClass.IsWalletLoadedRequest();
-    }
-
-    public static pactus.WalletOuterClass.IsWalletLoadedRequest getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<IsWalletLoadedRequest>
-        PARSER = new com.google.protobuf.AbstractParser<IsWalletLoadedRequest>() {
-      @java.lang.Override
-      public IsWalletLoadedRequest parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
-      }
-    };
-
-    public static com.google.protobuf.Parser<IsWalletLoadedRequest> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<IsWalletLoadedRequest> getParserForType() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public pactus.WalletOuterClass.IsWalletLoadedRequest getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
-  public interface IsWalletLoadedResponseOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:pactus.IsWalletLoadedResponse)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <pre>
-     * Name of the wallet.
-     * </pre>
-     *
-     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-     * @return The walletName.
-     */
-    java.lang.String getWalletName();
-    /**
-     * <pre>
-     * Name of the wallet.
-     * </pre>
-     *
-     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-     * @return The bytes for walletName.
-     */
-    com.google.protobuf.ByteString
-        getWalletNameBytes();
-
-    /**
-     * <pre>
-     * True if the wallet is currently loaded.
-     * </pre>
-     *
-     * <code>bool loaded = 2 [json_name = "loaded"];</code>
-     * @return The loaded.
-     */
-    boolean getLoaded();
-  }
-  /**
-   * <pre>
-   * Response message indicating wallet load status.
-   * </pre>
-   *
-   * Protobuf type {@code pactus.IsWalletLoadedResponse}
-   */
-  public static final class IsWalletLoadedResponse extends
-      com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:pactus.IsWalletLoadedResponse)
-      IsWalletLoadedResponseOrBuilder {
-  private static final long serialVersionUID = 0L;
-    static {
-      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-        /* major= */ 4,
-        /* minor= */ 33,
-        /* patch= */ 2,
-        /* suffix= */ "",
-        "IsWalletLoadedResponse");
-    }
-    // Use IsWalletLoadedResponse.newBuilder() to construct.
-    private IsWalletLoadedResponse(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-      super(builder);
-    }
-    private IsWalletLoadedResponse() {
-      walletName_ = "";
-    }
-
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return pactus.WalletOuterClass.internal_static_pactus_IsWalletLoadedResponse_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return pactus.WalletOuterClass.internal_static_pactus_IsWalletLoadedResponse_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              pactus.WalletOuterClass.IsWalletLoadedResponse.class, pactus.WalletOuterClass.IsWalletLoadedResponse.Builder.class);
-    }
-
-    public static final int WALLET_NAME_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object walletName_ = "";
-    /**
-     * <pre>
-     * Name of the wallet.
-     * </pre>
-     *
-     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-     * @return The walletName.
-     */
-    @java.lang.Override
-    public java.lang.String getWalletName() {
-      java.lang.Object ref = walletName_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        walletName_ = s;
-        return s;
-      }
-    }
-    /**
-     * <pre>
-     * Name of the wallet.
-     * </pre>
-     *
-     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-     * @return The bytes for walletName.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getWalletNameBytes() {
-      java.lang.Object ref = walletName_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        walletName_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int LOADED_FIELD_NUMBER = 2;
-    private boolean loaded_ = false;
-    /**
-     * <pre>
-     * True if the wallet is currently loaded.
-     * </pre>
-     *
-     * <code>bool loaded = 2 [json_name = "loaded"];</code>
-     * @return The loaded.
-     */
-    @java.lang.Override
-    public boolean getLoaded() {
-      return loaded_;
-    }
-
-    private byte memoizedIsInitialized = -1;
-    @java.lang.Override
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    @java.lang.Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(walletName_)) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 1, walletName_);
-      }
-      if (loaded_ != false) {
-        output.writeBool(2, loaded_);
-      }
-      getUnknownFields().writeTo(output);
-    }
-
-    @java.lang.Override
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(walletName_)) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(1, walletName_);
-      }
-      if (loaded_ != false) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBoolSize(2, loaded_);
-      }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof pactus.WalletOuterClass.IsWalletLoadedResponse)) {
-        return super.equals(obj);
-      }
-      pactus.WalletOuterClass.IsWalletLoadedResponse other = (pactus.WalletOuterClass.IsWalletLoadedResponse) obj;
-
-      if (!getWalletName()
-          .equals(other.getWalletName())) return false;
-      if (getLoaded()
-          != other.getLoaded()) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-      return true;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + WALLET_NAME_FIELD_NUMBER;
-      hash = (53 * hash) + getWalletName().hashCode();
-      hash = (37 * hash) + LOADED_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
-          getLoaded());
-      hash = (29 * hash) + getUnknownFields().hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static pactus.WalletOuterClass.IsWalletLoadedResponse parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static pactus.WalletOuterClass.IsWalletLoadedResponse parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static pactus.WalletOuterClass.IsWalletLoadedResponse parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static pactus.WalletOuterClass.IsWalletLoadedResponse parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static pactus.WalletOuterClass.IsWalletLoadedResponse parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static pactus.WalletOuterClass.IsWalletLoadedResponse parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static pactus.WalletOuterClass.IsWalletLoadedResponse parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input);
-    }
-    public static pactus.WalletOuterClass.IsWalletLoadedResponse parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    public static pactus.WalletOuterClass.IsWalletLoadedResponse parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-
-    public static pactus.WalletOuterClass.IsWalletLoadedResponse parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static pactus.WalletOuterClass.IsWalletLoadedResponse parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input);
-    }
-    public static pactus.WalletOuterClass.IsWalletLoadedResponse parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessage
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    @java.lang.Override
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(pactus.WalletOuterClass.IsWalletLoadedResponse prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    @java.lang.Override
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * <pre>
-     * Response message indicating wallet load status.
-     * </pre>
-     *
-     * Protobuf type {@code pactus.IsWalletLoadedResponse}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:pactus.IsWalletLoadedResponse)
-        pactus.WalletOuterClass.IsWalletLoadedResponseOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return pactus.WalletOuterClass.internal_static_pactus_IsWalletLoadedResponse_descriptor;
-      }
-
-      @java.lang.Override
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return pactus.WalletOuterClass.internal_static_pactus_IsWalletLoadedResponse_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                pactus.WalletOuterClass.IsWalletLoadedResponse.class, pactus.WalletOuterClass.IsWalletLoadedResponse.Builder.class);
-      }
-
-      // Construct using pactus.WalletOuterClass.IsWalletLoadedResponse.newBuilder()
-      private Builder() {
-
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-        super(parent);
-
-      }
-      @java.lang.Override
-      public Builder clear() {
-        super.clear();
-        bitField0_ = 0;
-        walletName_ = "";
-        loaded_ = false;
-        return this;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return pactus.WalletOuterClass.internal_static_pactus_IsWalletLoadedResponse_descriptor;
-      }
-
-      @java.lang.Override
-      public pactus.WalletOuterClass.IsWalletLoadedResponse getDefaultInstanceForType() {
-        return pactus.WalletOuterClass.IsWalletLoadedResponse.getDefaultInstance();
-      }
-
-      @java.lang.Override
-      public pactus.WalletOuterClass.IsWalletLoadedResponse build() {
-        pactus.WalletOuterClass.IsWalletLoadedResponse result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      @java.lang.Override
-      public pactus.WalletOuterClass.IsWalletLoadedResponse buildPartial() {
-        pactus.WalletOuterClass.IsWalletLoadedResponse result = new pactus.WalletOuterClass.IsWalletLoadedResponse(this);
-        if (bitField0_ != 0) { buildPartial0(result); }
-        onBuilt();
-        return result;
-      }
-
-      private void buildPartial0(pactus.WalletOuterClass.IsWalletLoadedResponse result) {
-        int from_bitField0_ = bitField0_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.walletName_ = walletName_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.loaded_ = loaded_;
-        }
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.WalletOuterClass.IsWalletLoadedResponse) {
-          return mergeFrom((pactus.WalletOuterClass.IsWalletLoadedResponse)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(pactus.WalletOuterClass.IsWalletLoadedResponse other) {
-        if (other == pactus.WalletOuterClass.IsWalletLoadedResponse.getDefaultInstance()) return this;
-        if (!other.getWalletName().isEmpty()) {
-          walletName_ = other.walletName_;
-          bitField0_ |= 0x00000001;
-          onChanged();
-        }
-        if (other.getLoaded() != false) {
-          setLoaded(other.getLoaded());
-        }
-        this.mergeUnknownFields(other.getUnknownFields());
-        onChanged();
-        return this;
-      }
-
-      @java.lang.Override
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 10: {
-                walletName_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000001;
-                break;
-              } // case 10
-              case 16: {
-                loaded_ = input.readBool();
-                bitField0_ |= 0x00000002;
-                break;
-              } // case 16
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.unwrapIOException();
-        } finally {
-          onChanged();
-        } // finally
-        return this;
-      }
-      private int bitField0_;
-
-      private java.lang.Object walletName_ = "";
-      /**
-       * <pre>
-       * Name of the wallet.
-       * </pre>
-       *
-       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-       * @return The walletName.
-       */
-      public java.lang.String getWalletName() {
-        java.lang.Object ref = walletName_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          walletName_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <pre>
-       * Name of the wallet.
-       * </pre>
-       *
-       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-       * @return The bytes for walletName.
-       */
-      public com.google.protobuf.ByteString
-          getWalletNameBytes() {
-        java.lang.Object ref = walletName_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          walletName_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <pre>
-       * Name of the wallet.
-       * </pre>
-       *
-       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-       * @param value The walletName to set.
-       * @return This builder for chaining.
-       */
-      public Builder setWalletName(
-          java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
-        walletName_ = value;
-        bitField0_ |= 0x00000001;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Name of the wallet.
-       * </pre>
-       *
-       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearWalletName() {
-        walletName_ = getDefaultInstance().getWalletName();
-        bitField0_ = (bitField0_ & ~0x00000001);
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Name of the wallet.
-       * </pre>
-       *
-       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-       * @param value The bytes for walletName to set.
-       * @return This builder for chaining.
-       */
-      public Builder setWalletNameBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
-        walletName_ = value;
-        bitField0_ |= 0x00000001;
-        onChanged();
-        return this;
-      }
-
-      private boolean loaded_ ;
-      /**
-       * <pre>
-       * True if the wallet is currently loaded.
-       * </pre>
-       *
-       * <code>bool loaded = 2 [json_name = "loaded"];</code>
-       * @return The loaded.
-       */
-      @java.lang.Override
-      public boolean getLoaded() {
-        return loaded_;
-      }
-      /**
-       * <pre>
-       * True if the wallet is currently loaded.
-       * </pre>
-       *
-       * <code>bool loaded = 2 [json_name = "loaded"];</code>
-       * @param value The loaded to set.
-       * @return This builder for chaining.
-       */
-      public Builder setLoaded(boolean value) {
-
-        loaded_ = value;
-        bitField0_ |= 0x00000002;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * True if the wallet is currently loaded.
-       * </pre>
-       *
-       * <code>bool loaded = 2 [json_name = "loaded"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearLoaded() {
-        bitField0_ = (bitField0_ & ~0x00000002);
-        loaded_ = false;
-        onChanged();
-        return this;
-      }
-
-      // @@protoc_insertion_point(builder_scope:pactus.IsWalletLoadedResponse)
-    }
-
-    // @@protoc_insertion_point(class_scope:pactus.IsWalletLoadedResponse)
-    private static final pactus.WalletOuterClass.IsWalletLoadedResponse DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new pactus.WalletOuterClass.IsWalletLoadedResponse();
-    }
-
-    public static pactus.WalletOuterClass.IsWalletLoadedResponse getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<IsWalletLoadedResponse>
-        PARSER = new com.google.protobuf.AbstractParser<IsWalletLoadedResponse>() {
-      @java.lang.Override
-      public IsWalletLoadedResponse parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
-      }
-    };
-
-    public static com.google.protobuf.Parser<IsWalletLoadedResponse> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<IsWalletLoadedResponse> getParserForType() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public pactus.WalletOuterClass.IsWalletLoadedResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -29174,16 +27881,6 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_pactus_ListWalletsResponse_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_pactus_IsWalletLoadedRequest_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_pactus_IsWalletLoadedRequest_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_pactus_IsWalletLoadedResponse_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_pactus_IsWalletLoadedResponse_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_GetWalletInfoRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -29289,82 +27986,76 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       "\003 \001(\tR\007address\022\024\n\005label\030\004 \001(\tR\005label\"j\n\027" +
       "SetAddressLabelResponse\022\037\n\013wallet_name\030\001" +
       " \001(\tR\nwalletName\022\030\n\007address\030\002 \001(\tR\007addre" +
-      "ss\022\024\n\005label\030\003 \001(\tR\005label\"?\n\022ListWalletsR" +
-      "equest\022)\n\020include_unloaded\030\001 \001(\010R\017includ" +
-      "eUnloaded\"/\n\023ListWalletsResponse\022\030\n\007wall" +
-      "ets\030\001 \003(\tR\007wallets\"8\n\025IsWalletLoadedRequ" +
-      "est\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\"Q\n\026" +
-      "IsWalletLoadedResponse\022\037\n\013wallet_name\030\001 " +
-      "\001(\tR\nwalletName\022\026\n\006loaded\030\002 \001(\010R\006loaded\"" +
-      "7\n\024GetWalletInfoRequest\022\037\n\013wallet_name\030\001" +
-      " \001(\tR\nwalletName\"\212\002\n\025GetWalletInfoRespon" +
-      "se\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\022\030\n\007v" +
-      "ersion\030\002 \001(\005R\007version\022\030\n\007network\030\003 \001(\tR\007" +
-      "network\022\034\n\tencrypted\030\004 \001(\010R\tencrypted\022\022\n" +
-      "\004uuid\030\005 \001(\tR\004uuid\022\035\n\ncreated_at\030\006 \001(\003R\tc" +
-      "reatedAt\022\037\n\013default_fee\030\007 \001(\003R\ndefaultFe" +
-      "e\022\026\n\006driver\030\010 \001(\tR\006driver\022\022\n\004path\030\t \001(\tR" +
-      "\004path\"q\n\024ListAddressesRequest\022\037\n\013wallet_" +
-      "name\030\001 \001(\tR\nwalletName\0228\n\raddress_types\030" +
-      "\002 \003(\0162\023.pactus.AddressTypeR\014addressTypes" +
-      "\"a\n\025ListAddressesResponse\022\037\n\013wallet_name" +
-      "\030\001 \001(\tR\nwalletName\022\'\n\004data\030\002 \003(\0132\023.pactu" +
-      "s.AddressInfoR\004data\"~\n\025UpdatePasswordReq" +
-      "uest\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\022!\n" +
-      "\014old_password\030\002 \001(\tR\013oldPassword\022!\n\014new_" +
-      "password\030\003 \001(\tR\013newPassword\"9\n\026UpdatePas" +
-      "swordResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwall" +
-      "etName\"\261\001\n\027ListTransactionsRequest\022\037\n\013wa" +
-      "llet_name\030\001 \001(\tR\nwalletName\022\030\n\007address\030\002" +
-      " \001(\tR\007address\0221\n\tdirection\030\003 \001(\0162\023.pactu" +
-      "s.TxDirectionR\tdirection\022\024\n\005count\030\004 \001(\005R" +
-      "\005count\022\022\n\004skip\030\005 \001(\005R\004skip\"f\n\030ListTransa" +
-      "ctionsResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwal" +
-      "letName\022)\n\003txs\030\002 \003(\0132\027.pactus.Transactio" +
-      "nInfoR\003txs*\204\001\n\013AddressType\022\031\n\025ADDRESS_TY" +
-      "PE_TREASURY\020\000\022\032\n\026ADDRESS_TYPE_VALIDATOR\020" +
-      "\001\022\034\n\030ADDRESS_TYPE_BLS_ACCOUNT\020\002\022 \n\034ADDRE" +
-      "SS_TYPE_ED25519_ACCOUNT\020\003*Y\n\013TxDirection" +
-      "\022\024\n\020TX_DIRECTION_ANY\020\000\022\031\n\025TX_DIRECTION_I" +
-      "NCOMING\020\001\022\031\n\025TX_DIRECTION_OUTGOING\020\0022\250\013\n" +
-      "\006Wallet\022I\n\014CreateWallet\022\033.pactus.CreateW" +
-      "alletRequest\032\034.pactus.CreateWalletRespon" +
-      "se\022L\n\rRestoreWallet\022\034.pactus.RestoreWall" +
-      "etRequest\032\035.pactus.RestoreWalletResponse" +
-      "\022C\n\nLoadWallet\022\031.pactus.LoadWalletReques" +
-      "t\032\032.pactus.LoadWalletResponse\022I\n\014UnloadW" +
-      "allet\022\033.pactus.UnloadWalletRequest\032\034.pac" +
-      "tus.UnloadWalletResponse\022F\n\013ListWallets\022" +
-      "\032.pactus.ListWalletsRequest\032\033.pactus.Lis" +
-      "tWalletsResponse\022L\n\rGetWalletInfo\022\034.pact" +
-      "us.GetWalletInfoRequest\032\035.pactus.GetWall" +
-      "etInfoResponse\022O\n\016IsWalletLoaded\022\035.pactu" +
-      "s.IsWalletLoadedRequest\032\036.pactus.IsWalle" +
-      "tLoadedResponse\022O\n\016UpdatePassword\022\035.pact" +
-      "us.UpdatePasswordRequest\032\036.pactus.Update" +
-      "PasswordResponse\022R\n\017GetTotalBalance\022\036.pa" +
-      "ctus.GetTotalBalanceRequest\032\037.pactus.Get" +
-      "TotalBalanceResponse\022L\n\rGetTotalStake\022\034." +
-      "pactus.GetTotalStakeRequest\032\035.pactus.Get" +
-      "TotalStakeResponse\022^\n\023GetValidatorAddres" +
-      "s\022\".pactus.GetValidatorAddressRequest\032#." +
-      "pactus.GetValidatorAddressResponse\022O\n\016Ge" +
-      "tAddressInfo\022\035.pactus.GetAddressInfoRequ" +
-      "est\032\036.pactus.GetAddressInfoResponse\022R\n\017S" +
-      "etAddressLabel\022\036.pactus.SetAddressLabelR" +
-      "equest\032\037.pactus.SetAddressLabelResponse\022" +
-      "L\n\rGetNewAddress\022\034.pactus.GetNewAddressR" +
-      "equest\032\035.pactus.GetNewAddressResponse\022L\n" +
-      "\rListAddresses\022\034.pactus.ListAddressesReq" +
-      "uest\032\035.pactus.ListAddressesResponse\022F\n\013S" +
-      "ignMessage\022\032.pactus.SignMessageRequest\032\033" +
-      ".pactus.SignMessageResponse\022[\n\022SignRawTr" +
-      "ansaction\022!.pactus.SignRawTransactionReq" +
-      "uest\032\".pactus.SignRawTransactionResponse" +
-      "\022U\n\020ListTransactions\022\037.pactus.ListTransa" +
-      "ctionsRequest\032 .pactus.ListTransactionsR" +
-      "esponseB:\n\006pactusZ0github.com/pactus-pro" +
-      "ject/pactus/www/grpc/pactusb\006proto3"
+      "ss\022\024\n\005label\030\003 \001(\tR\005label\"\024\n\022ListWalletsR" +
+      "equest\"/\n\023ListWalletsResponse\022\030\n\007wallets" +
+      "\030\001 \003(\tR\007wallets\"7\n\024GetWalletInfoRequest\022" +
+      "\037\n\013wallet_name\030\001 \001(\tR\nwalletName\"\212\002\n\025Get" +
+      "WalletInfoResponse\022\037\n\013wallet_name\030\001 \001(\tR" +
+      "\nwalletName\022\030\n\007version\030\002 \001(\005R\007version\022\030\n" +
+      "\007network\030\003 \001(\tR\007network\022\034\n\tencrypted\030\004 \001" +
+      "(\010R\tencrypted\022\022\n\004uuid\030\005 \001(\tR\004uuid\022\035\n\ncre" +
+      "ated_at\030\006 \001(\003R\tcreatedAt\022\037\n\013default_fee\030" +
+      "\007 \001(\003R\ndefaultFee\022\026\n\006driver\030\010 \001(\tR\006drive" +
+      "r\022\022\n\004path\030\t \001(\tR\004path\"q\n\024ListAddressesRe" +
+      "quest\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\0228" +
+      "\n\raddress_types\030\002 \003(\0162\023.pactus.AddressTy" +
+      "peR\014addressTypes\"a\n\025ListAddressesRespons" +
+      "e\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\022\'\n\004da" +
+      "ta\030\002 \003(\0132\023.pactus.AddressInfoR\004data\"~\n\025U" +
+      "pdatePasswordRequest\022\037\n\013wallet_name\030\001 \001(" +
+      "\tR\nwalletName\022!\n\014old_password\030\002 \001(\tR\013old" +
+      "Password\022!\n\014new_password\030\003 \001(\tR\013newPassw" +
+      "ord\"9\n\026UpdatePasswordResponse\022\037\n\013wallet_" +
+      "name\030\001 \001(\tR\nwalletName\"\261\001\n\027ListTransacti" +
+      "onsRequest\022\037\n\013wallet_name\030\001 \001(\tR\nwalletN" +
+      "ame\022\030\n\007address\030\002 \001(\tR\007address\0221\n\tdirecti" +
+      "on\030\003 \001(\0162\023.pactus.TxDirectionR\tdirection" +
+      "\022\024\n\005count\030\004 \001(\005R\005count\022\022\n\004skip\030\005 \001(\005R\004sk" +
+      "ip\"f\n\030ListTransactionsResponse\022\037\n\013wallet" +
+      "_name\030\001 \001(\tR\nwalletName\022)\n\003txs\030\002 \003(\0132\027.p" +
+      "actus.TransactionInfoR\003txs*\204\001\n\013AddressTy" +
+      "pe\022\031\n\025ADDRESS_TYPE_TREASURY\020\000\022\032\n\026ADDRESS" +
+      "_TYPE_VALIDATOR\020\001\022\034\n\030ADDRESS_TYPE_BLS_AC" +
+      "COUNT\020\002\022 \n\034ADDRESS_TYPE_ED25519_ACCOUNT\020" +
+      "\003*Y\n\013TxDirection\022\024\n\020TX_DIRECTION_ANY\020\000\022\031" +
+      "\n\025TX_DIRECTION_INCOMING\020\001\022\031\n\025TX_DIRECTIO" +
+      "N_OUTGOING\020\0022\327\n\n\006Wallet\022I\n\014CreateWallet\022" +
+      "\033.pactus.CreateWalletRequest\032\034.pactus.Cr" +
+      "eateWalletResponse\022L\n\rRestoreWallet\022\034.pa" +
+      "ctus.RestoreWalletRequest\032\035.pactus.Resto" +
+      "reWalletResponse\022C\n\nLoadWallet\022\031.pactus." +
+      "LoadWalletRequest\032\032.pactus.LoadWalletRes" +
+      "ponse\022I\n\014UnloadWallet\022\033.pactus.UnloadWal" +
+      "letRequest\032\034.pactus.UnloadWalletResponse" +
+      "\022F\n\013ListWallets\022\032.pactus.ListWalletsRequ" +
+      "est\032\033.pactus.ListWalletsResponse\022L\n\rGetW" +
+      "alletInfo\022\034.pactus.GetWalletInfoRequest\032" +
+      "\035.pactus.GetWalletInfoResponse\022O\n\016Update" +
+      "Password\022\035.pactus.UpdatePasswordRequest\032" +
+      "\036.pactus.UpdatePasswordResponse\022R\n\017GetTo" +
+      "talBalance\022\036.pactus.GetTotalBalanceReque" +
+      "st\032\037.pactus.GetTotalBalanceResponse\022L\n\rG" +
+      "etTotalStake\022\034.pactus.GetTotalStakeReque" +
+      "st\032\035.pactus.GetTotalStakeResponse\022^\n\023Get" +
+      "ValidatorAddress\022\".pactus.GetValidatorAd" +
+      "dressRequest\032#.pactus.GetValidatorAddres" +
+      "sResponse\022O\n\016GetAddressInfo\022\035.pactus.Get" +
+      "AddressInfoRequest\032\036.pactus.GetAddressIn" +
+      "foResponse\022R\n\017SetAddressLabel\022\036.pactus.S" +
+      "etAddressLabelRequest\032\037.pactus.SetAddres" +
+      "sLabelResponse\022L\n\rGetNewAddress\022\034.pactus" +
+      ".GetNewAddressRequest\032\035.pactus.GetNewAdd" +
+      "ressResponse\022L\n\rListAddresses\022\034.pactus.L" +
+      "istAddressesRequest\032\035.pactus.ListAddress" +
+      "esResponse\022F\n\013SignMessage\022\032.pactus.SignM" +
+      "essageRequest\032\033.pactus.SignMessageRespon" +
+      "se\022[\n\022SignRawTransaction\022!.pactus.SignRa" +
+      "wTransactionRequest\032\".pactus.SignRawTran" +
+      "sactionResponse\022U\n\020ListTransactions\022\037.pa" +
+      "ctus.ListTransactionsRequest\032 .pactus.Li" +
+      "stTransactionsResponseB:\n\006pactusZ0github" +
+      ".com/pactus-project/pactus/www/grpc/pact" +
+      "usb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -29526,69 +28217,57 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     internal_static_pactus_ListWalletsRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_ListWalletsRequest_descriptor,
-        new java.lang.String[] { "IncludeUnloaded", });
+        new java.lang.String[] { });
     internal_static_pactus_ListWalletsResponse_descriptor =
       getDescriptor().getMessageType(26);
     internal_static_pactus_ListWalletsResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_ListWalletsResponse_descriptor,
         new java.lang.String[] { "Wallets", });
-    internal_static_pactus_IsWalletLoadedRequest_descriptor =
-      getDescriptor().getMessageType(27);
-    internal_static_pactus_IsWalletLoadedRequest_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_pactus_IsWalletLoadedRequest_descriptor,
-        new java.lang.String[] { "WalletName", });
-    internal_static_pactus_IsWalletLoadedResponse_descriptor =
-      getDescriptor().getMessageType(28);
-    internal_static_pactus_IsWalletLoadedResponse_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_pactus_IsWalletLoadedResponse_descriptor,
-        new java.lang.String[] { "WalletName", "Loaded", });
     internal_static_pactus_GetWalletInfoRequest_descriptor =
-      getDescriptor().getMessageType(29);
+      getDescriptor().getMessageType(27);
     internal_static_pactus_GetWalletInfoRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetWalletInfoRequest_descriptor,
         new java.lang.String[] { "WalletName", });
     internal_static_pactus_GetWalletInfoResponse_descriptor =
-      getDescriptor().getMessageType(30);
+      getDescriptor().getMessageType(28);
     internal_static_pactus_GetWalletInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetWalletInfoResponse_descriptor,
         new java.lang.String[] { "WalletName", "Version", "Network", "Encrypted", "Uuid", "CreatedAt", "DefaultFee", "Driver", "Path", });
     internal_static_pactus_ListAddressesRequest_descriptor =
-      getDescriptor().getMessageType(31);
+      getDescriptor().getMessageType(29);
     internal_static_pactus_ListAddressesRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_ListAddressesRequest_descriptor,
         new java.lang.String[] { "WalletName", "AddressTypes", });
     internal_static_pactus_ListAddressesResponse_descriptor =
-      getDescriptor().getMessageType(32);
+      getDescriptor().getMessageType(30);
     internal_static_pactus_ListAddressesResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_ListAddressesResponse_descriptor,
         new java.lang.String[] { "WalletName", "Data", });
     internal_static_pactus_UpdatePasswordRequest_descriptor =
-      getDescriptor().getMessageType(33);
+      getDescriptor().getMessageType(31);
     internal_static_pactus_UpdatePasswordRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_UpdatePasswordRequest_descriptor,
         new java.lang.String[] { "WalletName", "OldPassword", "NewPassword", });
     internal_static_pactus_UpdatePasswordResponse_descriptor =
-      getDescriptor().getMessageType(34);
+      getDescriptor().getMessageType(32);
     internal_static_pactus_UpdatePasswordResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_UpdatePasswordResponse_descriptor,
         new java.lang.String[] { "WalletName", });
     internal_static_pactus_ListTransactionsRequest_descriptor =
-      getDescriptor().getMessageType(35);
+      getDescriptor().getMessageType(33);
     internal_static_pactus_ListTransactionsRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_ListTransactionsRequest_descriptor,
         new java.lang.String[] { "WalletName", "Address", "Direction", "Count", "Skip", });
     internal_static_pactus_ListTransactionsResponse_descriptor =
-      getDescriptor().getMessageType(36);
+      getDescriptor().getMessageType(34);
     internal_static_pactus_ListTransactionsResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_ListTransactionsResponse_descriptor,

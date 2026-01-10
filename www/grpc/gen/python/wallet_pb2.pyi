@@ -232,29 +232,13 @@ class SetAddressLabelResponse(_message.Message):
 
 class ListWalletsRequest(_message.Message):
     __slots__ = ()
-    INCLUDE_UNLOADED_FIELD_NUMBER: _ClassVar[int]
-    include_unloaded: bool
-    def __init__(self, include_unloaded: _Optional[bool] = ...) -> None: ...
+    def __init__(self) -> None: ...
 
 class ListWalletsResponse(_message.Message):
     __slots__ = ()
     WALLETS_FIELD_NUMBER: _ClassVar[int]
     wallets: _containers.RepeatedScalarFieldContainer[str]
     def __init__(self, wallets: _Optional[_Iterable[str]] = ...) -> None: ...
-
-class IsWalletLoadedRequest(_message.Message):
-    __slots__ = ()
-    WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
-    wallet_name: str
-    def __init__(self, wallet_name: _Optional[str] = ...) -> None: ...
-
-class IsWalletLoadedResponse(_message.Message):
-    __slots__ = ()
-    WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
-    LOADED_FIELD_NUMBER: _ClassVar[int]
-    wallet_name: str
-    loaded: bool
-    def __init__(self, wallet_name: _Optional[str] = ..., loaded: _Optional[bool] = ...) -> None: ...
 
 class GetWalletInfoRequest(_message.Message):
     __slots__ = ()

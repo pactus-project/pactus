@@ -1158,38 +1158,6 @@
         ]
       }
     },
-    "/pactus/wallet/is_wallet_loaded": {
-      "get": {
-        "summary": "IsWalletLoaded checks whether the specified wallet is currently loaded.",
-        "operationId": "Wallet_IsWalletLoaded",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pactusIsWalletLoadedResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "walletName",
-            "description": "Name of the wallet to check.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "Wallet"
-        ]
-      }
-    },
     "/pactus/wallet/list_addresses": {
       "get": {
         "summary": "ListAddresses returns all addresses in the specified wallet.",
@@ -1309,7 +1277,7 @@
     },
     "/pactus/wallet/list_wallets": {
       "get": {
-        "summary": "ListWallets returns a list of all available wallets.\nIf `include_unloaded` is set, it returns both loaded and unloaded wallets.",
+        "summary": "ListWallets returns a list of all available wallets.",
         "operationId": "Wallet_ListWallets",
         "responses": {
           "200": {
@@ -1325,15 +1293,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "includeUnloaded",
-            "description": "Whether to include wallets that exist on disk but are not currently loaded.",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          }
-        ],
         "tags": [
           "Wallet"
         ]
@@ -1341,7 +1300,7 @@
     },
     "/pactus/wallet/load_wallet": {
       "post": {
-        "summary": "LoadWallet loads an existing wallet with the given name.",
+        "summary": "LoadWallet loads an existing wallet with the given name.\ndeprecated: It will be removed in a future version.",
         "operationId": "Wallet_LoadWallet",
         "responses": {
           "200": {
@@ -1360,7 +1319,7 @@
         "parameters": [
           {
             "name": "body",
-            "description": "Request message for loading an existing wallet.",
+            "description": "Request message for loading an existing wallet.\nDeprecated: It will be removed in a future version.",
             "in": "body",
             "required": true,
             "schema": {
@@ -1530,7 +1489,7 @@
     },
     "/pactus/wallet/unload_wallet": {
       "post": {
-        "summary": "UnloadWallet unloads a currently loaded wallet with the specified name.",
+        "summary": "UnloadWallet unloads a currently loaded wallet with the specified name.\ndeprecated: It will be removed in a future version.",
         "operationId": "Wallet_UnloadWallet",
         "responses": {
           "200": {
@@ -1549,7 +1508,7 @@
         "parameters": [
           {
             "name": "body",
-            "description": "Request message for unloading a wallet.",
+            "description": "Request message for unloading a wallet.\nDeprecated: It will be removed in a future version.",
             "in": "body",
             "required": true,
             "schema": {
@@ -2541,20 +2500,6 @@
       },
       "description": "Response message contains wallet details."
     },
-    "pactusIsWalletLoadedResponse": {
-      "type": "object",
-      "properties": {
-        "walletName": {
-          "type": "string",
-          "description": "Name of the wallet."
-        },
-        "loaded": {
-          "type": "boolean",
-          "description": "True if the wallet is currently loaded."
-        }
-      },
-      "description": "Response message indicating wallet load status."
-    },
     "pactusListAddressesResponse": {
       "type": "object",
       "properties": {
@@ -2612,7 +2557,7 @@
           "description": "The name of the wallet to load."
         }
       },
-      "description": "Request message for loading an existing wallet."
+      "description": "Request message for loading an existing wallet.\nDeprecated: It will be removed in a future version."
     },
     "pactusLoadWalletResponse": {
       "type": "object",
@@ -2622,7 +2567,7 @@
           "description": "The name of the loaded wallet."
         }
       },
-      "description": "Response message confirming wallet loaded."
+      "description": "Response message confirming wallet loaded.\nDeprecated: It will be removed in a future version."
     },
     "pactusMetricInfo": {
       "type": "object",
@@ -3209,7 +3154,7 @@
           "description": "The name of the wallet to unload."
         }
       },
-      "description": "Request message for unloading a wallet."
+      "description": "Request message for unloading a wallet.\nDeprecated: It will be removed in a future version."
     },
     "pactusUnloadWalletResponse": {
       "type": "object",
@@ -3219,7 +3164,7 @@
           "description": "The name of the unloaded wallet."
         }
       },
-      "description": "Response message confirming wallet unloading."
+      "description": "Response message confirming wallet unloading.\nDeprecated: It will be removed in a future version."
     },
     "pactusUpdatePasswordRequest": {
       "type": "object",
