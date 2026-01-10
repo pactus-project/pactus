@@ -41,6 +41,21 @@ const (
 			CHECK (direction IN (1, 2))
 		)`
 
+	// Partial index to speed up pending-transaction queries ordered by creation time.
+	createPendingTxIndexSQL = `
+		CREATE INDEX IF NOT EXISTS idx_transactions_pending_created_at
+		ON transactions (created_at DESC)
+		WHERE status = 0`
+
+	// Indexes to speed up lookups by sender/receiver and ordering by created_at.
+	createTxSenderCreatedIdxSQL = `
+		CREATE INDEX IF NOT EXISTS idx_tx_sender_created_at
+		ON transactions(sender, created_at DESC)`
+
+	createTxReceiverCreatedIdxSQL = `
+		CREATE INDEX IF NOT EXISTS idx_tx_receiver_created_at
+		ON transactions(receiver, created_at DESC)`
+
 	// Wallet table operations.
 	insertWalletEntrySQL = `
 		INSERT INTO wallet (name, value) VALUES (?, ?)`

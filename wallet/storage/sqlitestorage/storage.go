@@ -46,10 +46,31 @@ func dbPath(path string) string {
 	return filepath.Join(path, "wallet.db")
 }
 
-func openDB(path string) (*sql.DB, error) {
+func configurePragmas(ctx context.Context, db *sql.DB) error {
+	pragmas := []string{
+		"PRAGMA journal_mode=WAL;",
+		"PRAGMA synchronous=NORMAL;",
+	}
+
+	for _, pragma := range pragmas {
+		if _, err := db.ExecContext(ctx, pragma); err != nil {
+			return fmt.Errorf("failed to set pragma %q: %w", pragma, err)
+		}
+	}
+
+	return nil
+}
+
+func openDB(ctx context.Context, path string) (*sql.DB, error) {
 	db, err := sql.Open("sqlite", dbPath(path))
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
+	}
+
+	if err := configurePragmas(ctx, db); err != nil {
+		_ = db.Close()
+
+		return nil, err
 	}
 
 	return db, nil
@@ -61,7 +82,7 @@ func Create(ctx context.Context, path string, network genesis.ChainType, vlt *va
 		return nil, err
 	}
 
-	db, err := openDB(path)
+	db, err := openDB(ctx, path)
 	if err != nil {
 		return nil, err
 	}
@@ -71,6 +92,10 @@ func Create(ctx context.Context, path string, network genesis.ChainType, vlt *va
 		createWalletTableSQL,
 		createAddressesTableSQL,
 		createTransactionsTableSQL,
+
+		createPendingTxIndexSQL,
+		createTxSenderCreatedIdxSQL,
+		createTxReceiverCreatedIdxSQL,
 	}
 	for _, query := range tables {
 		if _, err := db.ExecContext(ctx, query); err != nil {
@@ -117,7 +142,7 @@ func Create(ctx context.Context, path string, network genesis.ChainType, vlt *va
 
 // Open opens an existing SQLite storage instance without creating schema.
 func Open(ctx context.Context, path string) (*Storage, error) {
-	db, err := openDB(path)
+	db, err := openDB(ctx, path)
 	if err != nil {
 		return nil, err
 	}
