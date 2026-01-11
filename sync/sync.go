@@ -107,6 +107,9 @@ func NewSynchronizer(
 
 	sync.handlers = handlers
 
+	sync.networkPipe.RegisterReceiver(sync.processNetworkEvent)
+	sync.broadcastPipe.RegisterReceiver(sync.broadcastMessage)
+
 	return sync, nil
 }
 
@@ -122,9 +125,7 @@ func (sync *synchronizer) Start() error {
 		return err
 	}
 
-	go sync.ntp.Start()
-	sync.networkPipe.RegisterReceiver(sync.processNetworkEvent)
-	sync.broadcastPipe.RegisterReceiver(sync.broadcastMessage)
+	sync.ntp.Start()
 
 	return nil
 }
