@@ -128,17 +128,17 @@ func addFields(event *zerolog.Event, keyvals ...any) *zerolog.Event {
 
 		value := keyvals[index+1]
 		switch typ := value.(type) {
-		case fmt.Stringer:
-			if isNil(typ) {
-				event.Any(key, typ)
-			} else {
-				event.Stringer(key, typ)
-			}
 		case LogStringer:
 			if isNil(typ) {
 				event.Any(key, typ)
 			} else {
 				event.Str(key, typ.LogString())
+			}
+		case fmt.Stringer:
+			if isNil(typ) {
+				event.Any(key, typ)
+			} else {
+				event.Stringer(key, typ)
 			}
 		case error:
 			event.AnErr(key, typ)

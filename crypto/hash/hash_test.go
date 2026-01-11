@@ -2,12 +2,12 @@ package hash_test
 
 import (
 	"encoding/hex"
-	"strings"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestHashFromString(t *testing.T) {
@@ -15,7 +15,6 @@ func TestHashFromString(t *testing.T) {
 
 	hash1 := ts.RandHash()
 	hash2, err := hash.FromString(hash1.String())
-	assert.Contains(t, strings.ToUpper(hash1.String()), hash1.LogString())
 	assert.NoError(t, err)
 	assert.Equal(t, hash1, hash2)
 
@@ -56,4 +55,12 @@ func TestHashBasicCheck(t *testing.T) {
 	assert.NoError(t, err)
 	assert.True(t, h.IsUndef())
 	assert.Equal(t, hash.UndefHash.Bytes(), h.Bytes())
+}
+
+func TestShortString(t *testing.T) {
+	h, err := hash.FromString("1234560000000000000000000000000000000000000000000000000000abcdef")
+	require.NoError(t, err)
+
+	assert.Equal(t, h.ShortString(), "123456-abcdef")
+	assert.Equal(t, h.ShortString(), h.LogString())
 }

@@ -1,6 +1,7 @@
 package crypto
 
 import (
+	"fmt"
 	"io"
 	"slices"
 
@@ -79,11 +80,6 @@ func (addr Address) Bytes() []byte {
 	return addr[:]
 }
 
-// LogString returns a concise string representation intended for use in logs.
-func (addr Address) LogString() string {
-	return addr.String()[0:12]
-}
-
 // String returns a human-readable string for the address.
 func (addr Address) String() string {
 	if addr == TreasuryAddress {
@@ -96,6 +92,18 @@ func (addr Address) String() string {
 		addr[1:])
 
 	return str
+}
+
+// ShortString returns a shortened string representation of the hash,
+func (addr Address) ShortString() string {
+	str := addr.String()
+
+	return fmt.Sprintf("%s-%s", str[:8], str[len(str)-5:])
+}
+
+// LogString returns a concise string representation intended for use in logs.
+func (addr Address) LogString() string {
+	return addr.ShortString()
 }
 
 func (addr Address) Type() AddressType {
