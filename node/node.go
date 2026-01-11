@@ -63,11 +63,11 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	chainType := genDoc.ChainType()
 
 	broadcastPipe := pipeline.New[message.Message](ctx,
-		pipeline.WithName("Broadcast Pipeline"), pipeline.WithBufferSize(100))
+		pipeline.WithName("Broadcast Pipeline"), pipeline.WithBufferSize(512))
 	networkPipe := pipeline.New[network.Event](ctx,
-		pipeline.WithName("Network Pipeline"), pipeline.WithBufferSize(500))
+		pipeline.WithName("Network Pipeline"), pipeline.WithBufferSize(1024))
 	eventPipe := pipeline.New[any](ctx,
-		pipeline.WithName("Event Pipeline"), pipeline.WithBufferSize(100))
+		pipeline.WithName("Event Pipeline"), pipeline.WithBufferSize(512))
 
 	store, err := store.NewStore(conf.Store)
 	if err != nil {

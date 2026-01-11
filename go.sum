@@ -63,6 +63,8 @@ github.com/ezex-io/gopkg/pipeline v0.0.0-20260111172426-02a2b22bfd26 h1:5upygdNN
 github.com/ezex-io/gopkg/pipeline v0.0.0-20260111172426-02a2b22bfd26/go.mod h1:eDWtiQtQ6pAdxKSttVQbk98KXxdeFWzxaZcWKWODbX0=
 github.com/ezex-io/gopkg/pipeline v0.0.0-20260111182818-b8c80cf2088a h1:ZQI4DkvoEHNlJ8DwwQJGetFCmQrvIY1Y+2PRtfO602k=
 github.com/ezex-io/gopkg/pipeline v0.0.0-20260111182818-b8c80cf2088a/go.mod h1:eDWtiQtQ6pAdxKSttVQbk98KXxdeFWzxaZcWKWODbX0=
+github.com/ezex-io/gopkg/pipeline v0.0.0-20260111184558-c198249d6c8c h1:YGmwk0uLZa93l1tHFEtUeOh/Z+fvkWNrcinasvn467M=
+github.com/ezex-io/gopkg/pipeline v0.0.0-20260111184558-c198249d6c8c/go.mod h1:eDWtiQtQ6pAdxKSttVQbk98KXxdeFWzxaZcWKWODbX0=
 github.com/ezex-io/gopkg/scheduler v0.0.0-20260110162954-1b1b92dea387 h1:5FNnGFbfqDbaJjJN1AZSMBp7cJL4ukd109RHJ+eA82w=
 github.com/ezex-io/gopkg/scheduler v0.0.0-20260110162954-1b1b92dea387/go.mod h1:I5PLJTun10b6UvzR2s2oA2++QDsQQbUVVbKQDABLkSI=
 github.com/ezex-io/gopkg/scheduler v0.0.0-20260111143633-dc5f88d98566 h1:tJrMLhMqKZwWlYmDwRowObH2O0ZyYEXAts57RbOTrPA=
