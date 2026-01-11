@@ -3,6 +3,7 @@ package manager
 import (
 	"testing"
 
+	"github.com/ezex-io/gopkg/pipeline"
 	"github.com/pactus-project/pactus/consensusv2"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -11,7 +12,6 @@ import (
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util/logger"
-	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -25,7 +25,7 @@ func TestManager(t *testing.T) {
 
 	rewardAddrs := []crypto.Address{ts.RandAccAddress(), ts.RandAccAddress()}
 	valKeys := []*bls.ValidatorKey{state.TestValKeys[0], ts.RandValKey()}
-	pipe := pipeline.MockingPipeline[message.Message]()
+	pipe := pipeline.New[message.Message](t.Context())
 
 	randomHeight := ts.RandHeight()
 	rndBlk, rndCert := ts.GenerateTestBlock(randomHeight)
@@ -166,7 +166,7 @@ func TestMediator(t *testing.T) {
 	stateHeight := ts.RandHeight()
 	blk, cert := ts.GenerateTestBlock(stateHeight)
 	state.TestStore.SaveBlock(blk, cert)
-	pipe := pipeline.MockingPipeline[message.Message]()
+	pipe := pipeline.New[message.Message](t.Context())
 	conf := consensusv2.DefaultConfig()
 
 	mgrInt := NewManagerV2(t.Context(), conf, state, valKeys, rewardAddrs, pipe)

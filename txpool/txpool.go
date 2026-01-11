@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/ezex-io/gopkg/pipeline"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/sandbox"
@@ -16,7 +17,6 @@ import (
 	"github.com/pactus-project/pactus/util/linkedlist"
 	"github.com/pactus-project/pactus/util/linkedmap"
 	"github.com/pactus-project/pactus/util/logger"
-	"github.com/pactus-project/pactus/util/pipeline"
 )
 
 type txPool struct {

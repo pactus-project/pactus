@@ -3,10 +3,10 @@ package zmq
 import (
 	"context"
 
+	"github.com/ezex-io/gopkg/pipeline"
 	"github.com/go-zeromq/zmq4"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/util/logger"
-	"github.com/pactus-project/pactus/util/pipeline"
 )
 
 type Server struct {

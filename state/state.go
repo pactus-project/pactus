@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ezex-io/gopkg/pipeline"
 	"github.com/pactus-project/pactus/committee"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -32,7 +33,6 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/persistentmerkle"
-	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/simplemerkle"
 	"github.com/pactus-project/pactus/version"
 )

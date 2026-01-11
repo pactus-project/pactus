@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/ezex-io/gopkg/pipeline"
 	"github.com/pactus-project/pactus/config"
 	consmgr "github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto"
@@ -17,7 +18,6 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/util/logger"
-	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/version"
 	wltmgr "github.com/pactus-project/pactus/wallet/manager"
 	"github.com/pactus-project/pactus/wallet/provider/local"
@@ -62,9 +62,12 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 
 	chainType := genDoc.ChainType()
 
-	broadcastPipe := pipeline.New[message.Message](ctx, "Broadcast Pipeline", 100)
-	networkPipe := pipeline.New[network.Event](ctx, "Network Pipeline", 500)
-	eventPipe := pipeline.New[any](ctx, "Event Pipeline", 100)
+	broadcastPipe := pipeline.New[message.Message](ctx,
+		pipeline.WithName("Broadcast Pipeline"), pipeline.WithBufferSize(100))
+	networkPipe := pipeline.New[network.Event](ctx,
+		pipeline.WithName("Network Pipeline"), pipeline.WithBufferSize(500))
+	eventPipe := pipeline.New[any](ctx,
+		pipeline.WithName("Event Pipeline"), pipeline.WithBufferSize(100))
 
 	store, err := store.NewStore(conf.Store)
 	if err != nil {
