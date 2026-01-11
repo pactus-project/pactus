@@ -34,7 +34,7 @@ func setup(t *testing.T) *testData {
 		WithQuerier(querier),
 	}
 
-	checker := NewNtpChecker(opts...)
+	checker := NewNtpChecker(t.Context(), opts...)
 
 	td := &testData{
 		checker: checker,

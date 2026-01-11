@@ -178,12 +178,12 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	networkAlice := network.MockingNetwork(ts, ts.RandPeerID())
 	networkBob := network.MockingNetwork(ts, ts.RandPeerID())
 
-	sync1, err := NewSynchronizer(configAlice, valKeyAlice, stateAlice,
+	sync1, err := NewSynchronizer(t.Context(), configAlice, valKeyAlice, stateAlice,
 		consV1MgrAlice, consV2MgrAlice, networkAlice, broadcastPipe, networkAlice.EventPipe)
 	assert.NoError(t, err)
 	syncAlice := sync1.(*synchronizer)
 
-	sync2, err := NewSynchronizer(configBob, valKeyBob, stateBob,
+	sync2, err := NewSynchronizer(t.Context(), configBob, valKeyBob, stateBob,
 		consV1MgrBob, consV2MgrBob, networkBob, broadcastPipe, networkBob.EventPipe)
 	assert.NoError(t, err)
 	syncBob := sync2.(*synchronizer)

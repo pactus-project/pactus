@@ -74,7 +74,7 @@ func setup(t *testing.T, config *Config) *testData {
 	mockNetwork := network.MockingNetwork(ts, ts.RandPeerID())
 	broadcastPipe := pipeline.MockingPipeline[message.Message]()
 
-	syncInst, err := NewSynchronizer(config, valKeys,
+	syncInst, err := NewSynchronizer(t.Context(), config, valKeys,
 		mockState, consV1Mgr, consV2Mgr, mockNetwork, broadcastPipe, mockNetwork.EventPipe)
 	assert.NoError(t, err)
 	sync := syncInst.(*synchronizer)

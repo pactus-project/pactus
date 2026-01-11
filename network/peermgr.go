@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ezex-io/gopkg/scheduler"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pnet "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
@@ -77,19 +78,7 @@ func newPeerMgr(ctx context.Context, host lp2phost.Host,
 func (mgr *peerMgr) Start() {
 	mgr.CheckConnectivity()
 
-	go func() {
-		ticker := time.NewTicker(mgr.checkInterval)
-		defer ticker.Stop()
-
-		for {
-			select {
-			case <-mgr.ctx.Done():
-				return
-			case <-ticker.C:
-				mgr.CheckConnectivity()
-			}
-		}
-	}()
+	scheduler.Every(mgr.ctx, mgr.checkInterval).Do(mgr.CheckConnectivity)
 }
 
 func (mgr *peerMgr) Stop() {

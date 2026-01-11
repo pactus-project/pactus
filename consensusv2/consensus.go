@@ -1,10 +1,12 @@
 package consensusv2
 
 import (
+	"context"
 	"fmt"
 	"sync"
 	"time"
 
+	"github.com/ezex-io/gopkg/scheduler"
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/consensusv2/log"
 	"github.com/pactus-project/pactus/crypto"
@@ -27,6 +29,7 @@ type broadcaster func(crypto.Address, message.Message)
 type consensusV2 struct {
 	lk sync.RWMutex
 
+	ctx         context.Context
 	config      *Config
 	logger      *logger.SubLogger
 	log         *log.Log
@@ -56,6 +59,7 @@ type consensusV2 struct {
 }
 
 func NewConsensus(
+	ctx context.Context,
 	conf *Config,
 	bcState state.Facade,
 	valKey *bls.ValidatorKey,
@@ -67,11 +71,12 @@ func NewConsensus(
 		broadcastPipe.Send(msg)
 	}
 
-	return makeConsensus(conf, bcState,
+	return makeConsensus(ctx, conf, bcState,
 		valKey, rewardAddr, broadcaster, mediator)
 }
 
 func makeConsensus(
+	ctx context.Context,
 	conf *Config,
 	bcState state.Facade,
 	valKey *bls.ValidatorKey,
@@ -80,6 +85,7 @@ func makeConsensus(
 	mediator mediator,
 ) *consensusV2 {
 	cons := &consensusV2{
+		ctx:         ctx,
 		config:      conf,
 		bcState:     bcState,
 		broadcaster: broadcaster,
@@ -176,14 +182,12 @@ func (cs *consensusV2) MoveToNewHeight() {
 }
 
 func (cs *consensusV2) scheduleTimeout(duration time.Duration, height uint32, round int16, target tickerTarget) {
-	ticker := &ticker{duration, height, round, target}
-	timer := time.NewTimer(duration)
 	cs.logger.Trace("new timer scheduled ⏱️", "duration", duration, "height", height, "round", round, "target", target)
 
-	go func() {
-		<-timer.C
+	ticker := &ticker{duration, height, round, target}
+	scheduler.After(cs.ctx, duration).Do(func() {
 		cs.handleTimeout(ticker)
-	}()
+	})
 }
 
 func (cs *consensusV2) handleTimeout(ticker *ticker) {

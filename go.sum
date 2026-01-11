@@ -57,6 +57,10 @@ github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymF
 github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=
 github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
+github.com/ezex-io/gopkg/scheduler v0.0.0-20260110162954-1b1b92dea387 h1:5FNnGFbfqDbaJjJN1AZSMBp7cJL4ukd109RHJ+eA82w=
+github.com/ezex-io/gopkg/scheduler v0.0.0-20260110162954-1b1b92dea387/go.mod h1:I5PLJTun10b6UvzR2s2oA2++QDsQQbUVVbKQDABLkSI=
+github.com/ezex-io/gopkg/scheduler v0.0.0-20260111143633-dc5f88d98566 h1:tJrMLhMqKZwWlYmDwRowObH2O0ZyYEXAts57RbOTrPA=
+github.com/ezex-io/gopkg/scheduler v0.0.0-20260111143633-dc5f88d98566/go.mod h1:I5PLJTun10b6UvzR2s2oA2++QDsQQbUVVbKQDABLkSI=
 github.com/felixge/httpsnoop v1.0.4 h1:NFTV2Zj1bL4mc9sqWACXbQFVBBg2W3GPvqp8/ESS2Wg=
 github.com/felixge/httpsnoop v1.0.4/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
 github.com/filecoin-project/go-clock v0.1.0 h1:SFbYIM75M8NnFm1yMHhN9Ahy3W5bEZV9gd6MPfXbKVU=

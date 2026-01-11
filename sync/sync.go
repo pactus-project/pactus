@@ -1,6 +1,7 @@
 package sync
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -50,7 +51,9 @@ type synchronizer struct {
 	ntp           *ntp.Checker
 }
 
+//nolint:revive // arguments can't be reduced.
 func NewSynchronizer(
+	ctx context.Context,
 	conf *Config,
 	valKeys []*bls.ValidatorKey,
 	state state.Facade,
@@ -69,7 +72,7 @@ func NewSynchronizer(
 		network:       network,
 		broadcastPipe: broadcastPipe,
 		networkPipe:   networkPipe,
-		ntp:           ntp.NewNtpChecker(),
+		ntp:           ntp.NewNtpChecker(ctx),
 	}
 
 	sync.peerSet = peerset.NewPeerSet(conf.SessionTimeout())

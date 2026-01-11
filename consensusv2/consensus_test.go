@@ -127,13 +127,13 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 				})
 		}
 	}
-	td.consX = makeConsensus(testConfig(), stateX, valKeys[tIndexX],
+	td.consX = makeConsensus(t.Context(), testConfig(), stateX, valKeys[tIndexX],
 		valKeys[tIndexX].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
-	td.consY = makeConsensus(testConfig(), stateY, valKeys[tIndexY],
+	td.consY = makeConsensus(t.Context(), testConfig(), stateY, valKeys[tIndexY],
 		valKeys[tIndexY].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
-	td.consB = makeConsensus(testConfig(), stateB, valKeys[tIndexB],
+	td.consB = makeConsensus(t.Context(), testConfig(), stateB, valKeys[tIndexB],
 		valKeys[tIndexB].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
-	td.consP = makeConsensus(testConfig(), stateP, valKeys[tIndexP],
+	td.consP = makeConsensus(t.Context(), testConfig(), stateP, valKeys[tIndexP],
 		valKeys[tIndexP].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
 
 	// -------------------------------
@@ -509,7 +509,7 @@ func TestNotInCommittee(t *testing.T) {
 
 	state, _ := state.LoadOrNewState(td.genDoc, []*bls.ValidatorKey{valKey}, str, td.txPool, nil)
 	pipe := pipeline.MockingPipeline[message.Message]()
-	consInst := NewConsensus(testConfig(), state, valKey, valKey.Address(), pipe,
+	consInst := NewConsensus(t.Context(), testConfig(), state, valKey, valKey.Address(), pipe,
 		newConcreteMediator())
 	cons := consInst.(*consensusV2)
 
@@ -783,7 +783,7 @@ func TestNonActiveValidator(t *testing.T) {
 
 	valKey := td.RandValKey()
 	pipe := pipeline.MockingPipeline[message.Message]()
-	consInst := NewConsensus(testConfig(), state.MockingState(td.TestSuite),
+	consInst := NewConsensus(t.Context(), testConfig(), state.MockingState(td.TestSuite),
 		valKey, valKey.Address(), pipe, newConcreteMediator())
 	nonActiveCons := consInst.(*consensusV2)
 
