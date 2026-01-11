@@ -77,7 +77,7 @@ func (h Hash) String() string {
 
 // ShortString returns a shortened string representation of the hash,
 func (h Hash) ShortString() string {
-	return fmt.Sprintf("%x-%x", h[:4], h[28:])
+	return fmt.Sprintf("%x-%x", h[:3], h[29:])
 }
 
 // LogString returns a concise string representation intended for use in logs.
