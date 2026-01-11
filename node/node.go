@@ -93,13 +93,14 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		return nil, err
 	}
 
-	consV1Mgr := consmgr.NewManagerV1(conf.Consensus, state, valKeys, rewardAddrs, broadcastPipe)
-	consV2Mgr := consmgr.NewManagerV2(conf.ConsensusV2, state, valKeys, rewardAddrs, broadcastPipe)
+	consV1Mgr := consmgr.NewManagerV1(ctx, conf.Consensus, state, valKeys, rewardAddrs, broadcastPipe)
+	consV2Mgr := consmgr.NewManagerV2(ctx, conf.ConsensusV2, state, valKeys, rewardAddrs, broadcastPipe)
 
 	if !store.IsPruned() {
 		conf.Sync.Services.Append(service.FullNode)
 	}
-	sync, err := sync.NewSynchronizer(conf.Sync, valKeys, state, consV1Mgr, consV2Mgr, net, broadcastPipe, networkPipe)
+	sync, err := sync.NewSynchronizer(ctx, conf.Sync, valKeys, state,
+		consV1Mgr, consV2Mgr, net, broadcastPipe, networkPipe)
 	if err != nil {
 		cancel()
 

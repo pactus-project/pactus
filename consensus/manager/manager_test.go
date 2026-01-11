@@ -32,7 +32,7 @@ func TestManager(t *testing.T) {
 	state.TestStore.SaveBlock(rndBlk, rndCert)
 	conf := consensusv2.DefaultConfig()
 
-	mgrInt := NewManagerV2(conf, state, valKeys, rewardAddrs, pipe)
+	mgrInt := NewManagerV2(t.Context(), conf, state, valKeys, rewardAddrs, pipe)
 	mgr := mgrInt.(*manager)
 
 	consA := mgr.instances[0] // active
@@ -169,7 +169,7 @@ func TestMediator(t *testing.T) {
 	pipe := pipeline.MockingPipeline[message.Message]()
 	conf := consensusv2.DefaultConfig()
 
-	mgrInt := NewManagerV2(conf, state, valKeys, rewardAddrs, pipe)
+	mgrInt := NewManagerV2(t.Context(), conf, state, valKeys, rewardAddrs, pipe)
 	mgr := mgrInt.(*manager)
 
 	mgr.MoveToNewHeight()

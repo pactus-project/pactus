@@ -1,6 +1,8 @@
 package manager
 
 import (
+	"context"
+
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/consensusv2"
 	"github.com/pactus-project/pactus/crypto"
@@ -28,6 +30,7 @@ type manager struct {
 // each associated with a validator key and a reward address.
 // It is not thread-safe.
 func NewManagerV1(
+	ctx context.Context,
 	conf *consensus.Config,
 	state state.Facade,
 	valKeys []*bls.ValidatorKey,
@@ -43,7 +46,7 @@ func NewManagerV1(
 	mediatorConcrete := consensus.NewConcreteMediator()
 
 	for i, key := range valKeys {
-		cons := consensus.NewConsensus(conf, state, key, rewardAddrs[i], broadcastPipe, mediatorConcrete)
+		cons := consensus.NewConsensus(ctx, conf, state, key, rewardAddrs[i], broadcastPipe, mediatorConcrete)
 
 		mgr.instances[i] = cons
 	}
@@ -52,6 +55,7 @@ func NewManagerV1(
 }
 
 func NewManagerV2(
+	ctx context.Context,
 	conf *consensusv2.Config,
 	state state.Facade,
 	valKeys []*bls.ValidatorKey,
@@ -67,7 +71,7 @@ func NewManagerV2(
 	mediatorConcrete := consensus.NewConcreteMediator()
 
 	for i, key := range valKeys {
-		cons := consensusv2.NewConsensus(conf, state, key, rewardAddrs[i], broadcastPipe, mediatorConcrete)
+		cons := consensusv2.NewConsensus(ctx, conf, state, key, rewardAddrs[i], broadcastPipe, mediatorConcrete)
 
 		mgr.instances[i] = cons
 	}

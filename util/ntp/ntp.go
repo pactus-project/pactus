@@ -1,10 +1,12 @@
 package ntp
 
 import (
+	"context"
 	"math"
 	"sync"
 	"time"
 
+	"github.com/ezex-io/gopkg/scheduler"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
@@ -33,12 +35,12 @@ var _pools = []string{
 type Checker struct {
 	lk sync.RWMutex
 
+	ctx       context.Context
+	cancel    func()
 	querier   Querier
 	offset    time.Duration
 	interval  time.Duration
 	threshold time.Duration
-	ticker    *time.Ticker
-	closed    chan bool
 }
 
 // CheckerOption defines the type for functions that configure a Checker.
@@ -56,7 +58,6 @@ func WithQuerier(querier Querier) CheckerOption {
 func WithInterval(interval time.Duration) CheckerOption {
 	return func(c *Checker) {
 		c.interval = interval
-		c.ticker = time.NewTicker(interval)
 	}
 }
 
@@ -70,17 +71,18 @@ func WithThreshold(threshold time.Duration) CheckerOption {
 
 // NewNtpChecker creates a new Checker with the provided options.
 // If no options are provided, it uses default values for interval and threshold.
-func NewNtpChecker(opts ...CheckerOption) *Checker {
+func NewNtpChecker(ctx context.Context, opts ...CheckerOption) *Checker {
+	ctx, cancel := context.WithCancel(ctx)
 	defaultInterval := time.Minute
 	defaultThreshold := time.Second
 
 	// Initialize the checker with default values.
 	checker := &Checker{
+		ctx:       ctx,
+		cancel:    cancel,
 		interval:  defaultInterval,
 		threshold: defaultThreshold,
 		querier:   RemoteQuerier{},
-		ticker:    time.NewTicker(defaultInterval),
-		closed:    make(chan bool),
 	}
 
 	// Apply provided options to override default values.
@@ -92,30 +94,23 @@ func NewNtpChecker(opts ...CheckerOption) *Checker {
 }
 
 func (c *Checker) Start() {
-	for {
-		select {
-		case <-c.closed:
-			return
+	scheduler.Every(c.ctx, c.interval).Do(func() {
+		offset, _ := c.queryClockOffset()
 
-		case <-c.ticker.C:
-			offset, _ := c.queryClockOffset()
+		c.lk.Lock()
+		c.offset = offset
+		c.lk.Unlock()
 
-			c.lk.Lock()
-			c.offset = offset
-			c.lk.Unlock()
-
-			if c.offset != maxClockOffset && c.IsOutOfSync() {
-				logger.Error(
-					"the system time is out of sync with the network time by more than one second",
-					"threshold", c.threshold, "offset", offset)
-			}
+		if c.offset != maxClockOffset && c.IsOutOfSync() {
+			logger.Error(
+				"the system time is out of sync with the network time by more than one second",
+				"threshold", c.threshold, "offset", offset)
 		}
-	}
+	})
 }
 
 func (c *Checker) Stop() {
-	c.closed <- true
-	c.ticker.Stop()
+	c.cancel()
 }
 
 func (c *Checker) IsOutOfSync() bool {
