@@ -94,7 +94,7 @@ func (addr Address) String() string {
 	return str
 }
 
-// ShortString returns a shortened string representation of the hash,
+// ShortString returns a shortened string representation of the hash.
 func (addr Address) ShortString() string {
 	str := addr.String()
 

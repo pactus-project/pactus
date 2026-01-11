@@ -75,7 +75,7 @@ func (h Hash) String() string {
 	return hex.EncodeToString(h[:])
 }
 
-// ShortString returns a shortened string representation of the hash,
+// ShortString returns a shortened string representation of the hash.
 func (h Hash) ShortString() string {
 	return fmt.Sprintf("%x-%x", h[:3], h[29:])
 }
