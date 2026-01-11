@@ -65,19 +65,24 @@ func CalcHash(data []byte) Hash {
 	return h
 }
 
-// String returns the hex-encoded string representation of the hash.
-func (h Hash) String() string {
-	return hex.EncodeToString(h[:])
-}
-
 // Bytes returns the raw byte representation of the hash.
 func (h Hash) Bytes() []byte {
 	return h[:]
 }
 
+// String returns the hex-encoded string representation of the hash.
+func (h Hash) String() string {
+	return hex.EncodeToString(h[:])
+}
+
+// ShortString returns a shortened string representation of the hash.
+func (h Hash) ShortString() string {
+	return fmt.Sprintf("%x-%x", h[:3], h[29:])
+}
+
 // LogString returns a concise string representation intended for use in logs.
 func (h Hash) LogString() string {
-	return fmt.Sprintf("%X", h[:6])
+	return h.ShortString()
 }
 
 func (h Hash) IsUndef() bool {

@@ -10,8 +10,8 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/bech32m"
-	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestTreasuryAddressType(t *testing.T) {
@@ -39,13 +39,6 @@ func TestAddressType(t *testing.T) {
 		assert.Equal(t, tt.account, addr.IsAccountAddress())
 		assert.Equal(t, tt.validator, addr.IsValidatorAddress())
 	}
-}
-
-func TestShortString(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	addr1 := ts.RandAccAddress()
-	assert.Contains(t, addr1.String(), addr1.LogString())
 }
 
 func TestFromString(t *testing.T) {
@@ -235,4 +228,12 @@ func TestAddressDecoding(t *testing.T) {
 			assert.Equal(t, data, w.Bytes())
 		}
 	}
+}
+
+func TestShortString(t *testing.T) {
+	h, err := crypto.AddressFromString("pc1p0hrct7eflrpw4ccrttxzs4qud2axex4dcdzdfr")
+	require.NoError(t, err)
+
+	assert.Equal(t, h.ShortString(), "pc1p0hrc-dzdfr")
+	assert.Equal(t, h.ShortString(), h.LogString())
 }

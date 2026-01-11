@@ -530,7 +530,7 @@ func (st *state) evaluateSortition() bool {
 func (st *state) LogString() string {
 	return fmt.Sprintf("{#%d ⌘ %v 🕣 %v}",
 		st.lastInfo.BlockHeight(),
-		st.lastInfo.BlockHash().LogString(),
+		st.lastInfo.BlockHash(),
 		st.lastInfo.BlockTime().Format("15.04.05"))
 }
 
