@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ezex-io/gopkg/pipeline"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	"github.com/pactus-project/pactus/consensus"
 	consmgr "github.com/pactus-project/pactus/consensus/manager"
@@ -22,7 +23,6 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
-	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/version"
 	"github.com/stretchr/testify/assert"
@@ -72,7 +72,7 @@ func setup(t *testing.T, config *Config) *testData {
 	consV2Mgr.MoveToNewHeight()
 
 	mockNetwork := network.MockingNetwork(ts, ts.RandPeerID())
-	broadcastPipe := pipeline.MockingPipeline[message.Message]()
+	broadcastPipe := pipeline.New[message.Message](t.Context())
 
 	syncInst, err := NewSynchronizer(t.Context(), config, valKeys,
 		mockState, consV1Mgr, consV2Mgr, mockNetwork, broadcastPipe, mockNetwork.EventPipe)

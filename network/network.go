@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ezex-io/gopkg/pipeline"
 	lp2p "github.com/libp2p/go-libp2p"
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2pcrypto "github.com/libp2p/go-libp2p/core/crypto"
@@ -23,7 +24,6 @@ import (
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
-	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/version"
 	"github.com/prometheus/client_golang/prometheus"
 	"golang.org/x/exp/slices"

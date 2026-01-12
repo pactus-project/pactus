@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ezex-io/gopkg/pipeline"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	consmgr "github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -16,7 +17,6 @@ import (
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/logger"
-	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -174,7 +174,7 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	consV2MgrAlice, _ := consmgr.MockingManager(ts, stateAlice, valKeyAlice)
 	consV1MgrBob, _ := consmgr.MockingManager(ts, stateBob, valKeyBob)
 	consV2MgrBob, _ := consmgr.MockingManager(ts, stateBob, valKeyBob)
-	broadcastPipe := pipeline.MockingPipeline[message.Message]()
+	broadcastPipe := pipeline.New[message.Message](t.Context())
 	networkAlice := network.MockingNetwork(ts, ts.RandPeerID())
 	networkBob := network.MockingNetwork(ts, ts.RandPeerID())
 

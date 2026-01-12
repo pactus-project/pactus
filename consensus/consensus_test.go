@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ezex-io/gopkg/pipeline"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
@@ -23,7 +24,6 @@ import (
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
-	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -95,7 +95,7 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	getTime := util.RoundNow(params.BlockIntervalInSecond).
 		Add(time.Duration(params.BlockIntervalInSecond) * time.Second)
 	genDoc := genesis.MakeGenesis(getTime, accs, vals, params)
-	eventPipe := pipeline.MockingPipeline[any]()
+	eventPipe := pipeline.New[any](t.Context())
 	stateX, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexX]},
 		store.MockingStore(ts), txPool, eventPipe)
 	require.NoError(t, err)
@@ -449,7 +449,7 @@ func TestNotInCommittee(t *testing.T) {
 	valKey := td.RandValKey()
 
 	state := state.MockingState(td.TestSuite)
-	pipe := pipeline.MockingPipeline[message.Message]()
+	pipe := pipeline.New[message.Message](t.Context())
 	consInt := NewConsensus(t.Context(), testConfig(), state, valKey,
 		valKey.Address(), pipe, NewConcreteMediator())
 	cons := consInt.(*consensus)
@@ -754,7 +754,7 @@ func TestNonActiveValidator(t *testing.T) {
 	td := setup(t)
 
 	valKey := td.RandValKey()
-	pipe := pipeline.MockingPipeline[message.Message]()
+	pipe := pipeline.New[message.Message](t.Context())
 	consInt := NewConsensus(t.Context(), testConfig(), state.MockingState(td.TestSuite),
 		valKey, valKey.Address(), pipe, NewConcreteMediator())
 	nonActiveCons := consInt.(*consensus)

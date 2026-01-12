@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/ezex-io/gopkg/pipeline"
 	"github.com/pactus-project/pactus/state"
-	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/require"
 )
@@ -24,7 +24,7 @@ func setup(t *testing.T, conf *Config) *testData {
 
 	ts := testsuite.NewTestSuite(t)
 	mockState := state.MockingState(ts)
-	pipe := pipeline.MockingPipeline[any]()
+	pipe := pipeline.New[any](t.Context())
 	server, err := New(context.Background(), conf, pipe)
 	require.NoError(t, err)
 

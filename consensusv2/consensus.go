@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ezex-io/gopkg/pipeline"
 	"github.com/ezex-io/gopkg/scheduler"
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/consensusv2/log"
@@ -21,7 +22,6 @@ import (
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
-	"github.com/pactus-project/pactus/util/pipeline"
 )
 
 type broadcaster func(crypto.Address, message.Message)

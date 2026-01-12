@@ -2,13 +2,14 @@ package network
 
 import (
 	"bytes"
+	"context"
 	"io"
 	"sync"
 
+	"github.com/ezex-io/gopkg/pipeline"
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
-	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
 )
 
@@ -34,7 +35,7 @@ func MockingNetwork(ts *testsuite.TestSuite, pid lp2ppeer.ID) *MockNetwork {
 	return &MockNetwork{
 		TestSuite: ts,
 		PublishCh: make(chan PublishData, 100),
-		EventPipe: pipeline.MockingPipeline[Event](),
+		EventPipe: pipeline.New[Event](context.Background()),
 		OtherNets: make(map[lp2ppeer.ID]*MockNetwork),
 		ID:        pid,
 	}

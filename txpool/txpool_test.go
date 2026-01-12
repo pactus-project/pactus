@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ezex-io/gopkg/pipeline"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/execution"
@@ -14,7 +15,6 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util/logger"
-	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -25,7 +25,7 @@ type testData struct {
 
 	pool *txPool
 	sbx  *sandbox.MockSandbox
-	pipe *pipeline.MockPipeline[message.Message]
+	pipe pipeline.Pipeline[message.Message]
 }
 
 func testDefaultConfig() *Config {
@@ -49,7 +49,7 @@ func setup(t *testing.T, cfg *Config) *testData {
 
 	ts := testsuite.NewTestSuite(t)
 
-	pipe := pipeline.MockingPipeline[message.Message]()
+	pipe := pipeline.New[message.Message](t.Context())
 	sbx := sandbox.MockingSandbox(ts)
 	config := testDefaultConfig()
 	if cfg != nil {

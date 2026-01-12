@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/ezex-io/gopkg/pipeline"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	consmgr "github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -23,7 +24,6 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/ntp"
-	"github.com/pactus-project/pactus/util/pipeline"
 )
 
 // IMPORTANT NOTES:
@@ -107,6 +107,9 @@ func NewSynchronizer(
 
 	sync.handlers = handlers
 
+	sync.networkPipe.RegisterReceiver(sync.processNetworkEvent)
+	sync.broadcastPipe.RegisterReceiver(sync.broadcastMessage)
+
 	return sync, nil
 }
 
@@ -122,9 +125,7 @@ func (sync *synchronizer) Start() error {
 		return err
 	}
 
-	go sync.ntp.Start()
-	sync.networkPipe.RegisterReceiver(sync.processNetworkEvent)
-	sync.broadcastPipe.RegisterReceiver(sync.broadcastMessage)
+	sync.ntp.Start()
 
 	return nil
 }
