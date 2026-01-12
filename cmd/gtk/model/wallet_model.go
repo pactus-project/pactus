@@ -205,3 +205,16 @@ func (model *WalletModel) SignTransaction(password string, trx *tx.Tx) error {
 func (model *WalletModel) BroadcastTransaction(trx *tx.Tx) (string, error) {
 	return model.manager.BroadcastTransaction(model.walletName, trx)
 }
+
+func (model *WalletModel) Transactions(count, skip int) []*types.TransactionInfo {
+	txs, err := model.manager.ListTransactions(
+		model.walletName,
+		wallet.WithCount(count),
+		wallet.WithSkip(skip),
+	)
+	if err != nil {
+		return nil
+	}
+
+	return txs
+}

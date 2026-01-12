@@ -38,9 +38,21 @@ var (
 	iconSendData     []byte
 	IconSendPixbuf16 *gdk.Pixbuf
 
-	//go:embed icons/fee.png
+	//go:embed icons/fee.svg
 	iconFeeData     []byte
 	IconFeePixbuf16 *gdk.Pixbuf
+
+	//go:embed icons/refresh.svg
+	iconRefreshData     []byte
+	IconRefreshPixbuf16 *gdk.Pixbuf
+
+	//go:embed icons/prev.svg
+	iconPrevData     []byte
+	IconPrevPixbuf16 *gdk.Pixbuf
+
+	//go:embed icons/next.svg
+	iconNextData     []byte
+	IconNextPixbuf16 *gdk.Pixbuf
 )
 
 func initIcons() {
@@ -61,4 +73,7 @@ func initIcons() {
 	IconClosePixbuf16 = toPixbuf(iconCloseData)
 	IconSendPixbuf16 = toPixbuf(iconSendData)
 	IconFeePixbuf16 = toPixbuf(iconFeeData)
+	IconRefreshPixbuf16 = toPixbuf(iconRefreshData)
+	IconPrevPixbuf16 = toPixbuf(iconPrevData)
+	IconNextPixbuf16 = toPixbuf(iconNextData)
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
@@ -24,6 +25,7 @@ type WalletWidgetModel interface {
 	TotalBalance() (amount.Amount, error)
 	TotalStake() (amount.Amount, error)
 	AddressRows() []model.AddressRow
+	Transactions(count, skip int) []*types.TransactionInfo
 }
 
 type WalletWidgetHandlers struct {
@@ -44,14 +46,19 @@ type WalletWidgetController struct {
 
 	handlers WalletWidgetHandlers
 
-	timeoutID glib.SourceHandle
-
 	ctx    context.Context
 	cancel context.CancelFunc
+
+	txSkip  int
+	txCount int
 }
 
 func NewWalletWidgetController(view *view.WalletWidgetView, model WalletWidgetModel) *WalletWidgetController {
-	return &WalletWidgetController{view: view, model: model}
+	return &WalletWidgetController{
+		view:    view,
+		model:   model,
+		txCount: 20,
+	}
 }
 
 func (c *WalletWidgetController) Bind(h WalletWidgetHandlers) {
@@ -78,6 +85,10 @@ func (c *WalletWidgetController) Bind(h WalletWidgetHandlers) {
 				c.handlers.OnNewAddress()
 			}
 		},
+		"on_address_refresh": func() {
+			c.txSkip = 0
+			c.Refresh()
+		},
 		"on_set_default_fee": func() {
 			if c.handlers.OnSetDefaultFee != nil {
 				c.handlers.OnSetDefaultFee()
@@ -92,6 +103,21 @@ func (c *WalletWidgetController) Bind(h WalletWidgetHandlers) {
 			if c.handlers.OnShowSeed != nil {
 				c.handlers.OnShowSeed()
 			}
+		},
+		"on_tx_refresh": func() {
+			c.RefreshTransactions()
+		},
+		"on_tx_prev": func() {
+			if c.txSkip >= c.txCount {
+				c.txSkip -= c.txCount
+			} else {
+				c.txSkip = 0
+			}
+			c.RefreshTransactions()
+		},
+		"on_tx_next": func() {
+			c.txSkip += c.txCount
+			c.RefreshTransactions()
 		},
 	})
 
@@ -134,11 +160,6 @@ func (c *WalletWidgetController) Bind(h WalletWidgetHandlers) {
 	})
 
 	c.Refresh()
-	c.timeoutID = glib.TimeoutAdd(15000, func() bool {
-		c.Refresh()
-
-		return true
-	})
 }
 
 func (c *WalletWidgetController) selectedAddress() string {
@@ -150,22 +171,36 @@ func (c *WalletWidgetController) selectedAddress() string {
 	return addr
 }
 
+// getDirectionTextWithIcon returns formatted text with icon for the transaction direction.
+func getDirectionTextWithIcon(dir types.TxDirection) string {
+	switch dir {
+	case types.TxDirectionIncoming:
+		return "incoming ↘"
+	case types.TxDirectionOutgoing:
+		return "outgoing ↗"
+	case types.TxDirectionAny:
+		return "any"
+	default:
+		return "unknown"
+	}
+}
+
 func (c *WalletWidgetController) Refresh() {
+	c.refreshAddresses()
+	c.RefreshTransactions()
+}
+
+func (c *WalletWidgetController) refreshAddresses() {
 	// Compute in background and then update UI on main loop.
 	ctx := c.ctx
 	go func() {
-		if ctx != nil {
-			select {
-			case <-ctx.Done():
-				return
-			default:
-			}
+		if gtkutil.IsContextDone(ctx) {
+			return
 		}
 
 		rows := c.model.AddressRows()
 
 		// Update info lines.
-
 		balance, _ := c.model.TotalBalance()
 		stake, _ := c.model.TotalStake()
 		balanceStr := balance.String()
@@ -177,23 +212,11 @@ func (c *WalletWidgetController) Refresh() {
 			encryptedStr = gtkutil.YesNo(info.Encrypted)
 		}
 
-		if ctx != nil {
-			select {
-			case <-ctx.Done():
-				return
-			default:
-			}
+		if gtkutil.IsContextDone(ctx) {
+			return
 		}
 
 		glib.IdleAdd(func() bool {
-			if ctx != nil {
-				select {
-				case <-ctx.Done():
-					return false
-				default:
-				}
-			}
-
 			c.view.LabelEncrypted.SetText(encryptedStr)
 			c.view.LabelTotalBalance.SetText(balanceStr)
 			c.view.LabelTotalStake.SetText(stakeStr)
@@ -219,11 +242,51 @@ func (c *WalletWidgetController) Refresh() {
 	}()
 }
 
+func (c *WalletWidgetController) RefreshTransactions() {
+	ctx := c.ctx
+	skip := c.txSkip
+	count := c.txCount
+
+	go func() {
+		if gtkutil.IsContextDone(ctx) {
+			return
+		}
+
+		trxs := c.model.Transactions(count, skip)
+		hasNext := len(trxs) == count
+
+		if gtkutil.IsContextDone(ctx) {
+			return
+		}
+
+		glib.IdleAdd(func() bool {
+			c.view.ClearTxRows()
+
+			for _, trx := range trxs {
+				c.view.AppendTxRow(
+					[]int{0, 1, 2, 3, 4, 5, 6, 7, 8},
+					[]any{
+						trx.No,
+						cmd.ShortHash(trx.TxID),
+						cmd.ShortAddress(trx.Sender),
+						cmd.ShortAddress(trx.Receiver),
+						trx.PayloadType.String(),
+						trx.Amount.String(),
+						getDirectionTextWithIcon(trx.Direction),
+						trx.Status.String(),
+						trx.Comment,
+					},
+				)
+			}
+
+			c.view.SetTxPager(skip > 0, hasNext)
+
+			return false
+		})
+	}()
+}
+
 func (c *WalletWidgetController) Cleanup() {
-	if c.timeoutID != 0 {
-		glib.SourceRemove(c.timeoutID)
-		c.timeoutID = 0
-	}
 	if c.cancel != nil {
 		c.cancel()
 		c.cancel = nil

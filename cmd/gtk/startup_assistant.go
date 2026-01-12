@@ -290,7 +290,7 @@ func startupAssistant(ctx context.Context, workingDir string, chainType genesis.
 									go func() {
 										log.Print("start downloading...\n")
 
-										time.Sleep(5 * time.Second)
+										time.Sleep(1 * time.Second)
 										err := importer.Download(ctx, &metadata[snapshotIndex],
 											func(fileName string) func(stats downloader.Stats) {
 												return func(stats downloader.Stats) {

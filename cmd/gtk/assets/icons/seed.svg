@@ -1,64 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Uploaded to SVGRepo https://www.svgrepo.com -->
-
 <svg
-   version="1.1"
-   id="Layer_1"
-   x="0px"
-   y="0px"
    viewBox="0 0 16 16"
-   enable-background="new 0 0 16 16"
-   xml:space="preserve"
+   version="1.1"
+   id="svg318"
    sodipodi:docname="seed.svg"
    inkscape:version="1.2 (dc2aedaf03, 2022-05-15)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"><defs
-   id="defs43" /><sodipodi:namedview
-   id="namedview41"
-   pagecolor="#ffffff"
-   bordercolor="#000000"
-   borderopacity="0.25"
-   inkscape:showpageshadow="2"
-   inkscape:pageopacity="0.0"
-   inkscape:pagecheckerboard="0"
-   inkscape:deskcolor="#d1d1d1"
-   showgrid="false"
-   inkscape:zoom="3.5626328"
-   inkscape:cx="98.803334"
-   inkscape:cy="39.577472"
-   inkscape:window-width="1920"
-   inkscape:window-height="1011"
-   inkscape:window-x="0"
-   inkscape:window-y="32"
-   inkscape:window-maximized="1"
-   inkscape:current-layer="Layer_1" />
-<g
-   id="g1026"
-   inkscape:label="g1"
-   transform="matrix(0.06603307,0,0,0.06603384,-1.1226031,-15.108543)"><path
-     fill="#eea700"
-     d="m 106,228.8 c -22.8,12.9 -44.8,35 -62.2,77 C 2.1,406.7 64.5,468.9 128,471.1 l -0.4,-0.1 0.4,-2 c 3.2,-16 13.7,-72.6 14.1,-130.5 0.4,-53.4 -8,-85.5 -24.2,-100.6 -3.5,-3.3 -7.5,-6.3 -11.9,-9.1 z"
-     id="path213"
-     inkscape:label="path2" /><path
-     fill="#eea700"
-     d="m 214.7,244.1 c 5.1,6.5 -13,51.7 -41.7,67.2 -0.8,66.9 -18.7,137.3 -25.3,159.4 43.1,-3.3 88.5,-35.4 96.7,-106.7 6.3,-55.1 -6.3,-94.7 -29.7,-119.9 z"
-     id="path210"
-     inkscape:label="path1" /></g>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs322" />
+  <sodipodi:namedview
+     id="namedview320"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="13.109375"
+     inkscape:cx="44.014302"
+     inkscape:cy="30.588796"
+     inkscape:window-width="1920"
+     inkscape:window-height="1011"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg318" />
+  <!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) -->
+  <path
+     d="M 2,2.997 H 0 c 0,3.865625 3.1343751,7 7.0000001,7 v 4.5 c 0,0.275 0.2250001,0.5 0.5,0.5 h 1 c 0.2749997,0 0.4999998,-0.225 0.4999998,-0.5 v -4.5 c 0,-3.865625 -3.1343748,-7 -6.9999999,-7 z m 12,-2 c -2.63125,0 -4.9187502,1.453125 -6.1156249,3.6 C 8.7500001,5.54075 9.3906253,6.687625 9.728125,7.9595 13.25,7.593875 16,4.618875 16,0.997 Z"
+     id="path316"
+     style="stroke-width:0.03125;fill:#008000" />
 </svg>
