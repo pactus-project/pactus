@@ -29,9 +29,9 @@ type IStorage interface {
 
 	InsertTransaction(info *types.TransactionInfo) error
 	GetPendingTransactions() (map[string]*types.TransactionInfo, error)
-	UpdateTransactionStatus(id string, status types.TransactionStatus, blockHeight uint32) error
-	HasTransaction(id string) bool
-	GetTransaction(id string) (*types.TransactionInfo, error)
+	UpdateTransactionStatus(no int64, status types.TransactionStatus, blockHeight uint32) error
+	GetTransaction(no int64) (*types.TransactionInfo, error)
+	HasTransaction(txID string) bool
 	QueryTransactions(params QueryParams) ([]*types.TransactionInfo, error)
 
 	Close() error

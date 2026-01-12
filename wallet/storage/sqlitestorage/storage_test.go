@@ -2,6 +2,7 @@ package sqlitestorage
 
 import (
 	"testing"
+	"time"
 
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
@@ -64,6 +65,10 @@ func (td *testData) InsertRandomAddressInfo(t *testing.T) *types.AddressInfo {
 	err := td.storage.InsertAddress(addrInfo)
 	require.NoError(t, err)
 
+	// Get the address info from the database
+	addrInfo, err = td.storage.AddressInfo(addrInfo.Address)
+	require.NoError(t, err)
+
 	return addrInfo
 }
 
@@ -94,6 +99,10 @@ func (td *testData) InsertRandomTransactionInfo(t *testing.T, direction types.Tx
 
 	txInfo := td.RandomTransactionInfo(t, direction, opts...)
 	err := td.storage.InsertTransaction(txInfo)
+	require.NoError(t, err)
+
+	// Get the transaction info from the database
+	txInfo, err = td.storage.GetTransaction(txInfo.No)
 	require.NoError(t, err)
 
 	return txInfo
@@ -205,13 +214,13 @@ func TestTransactionOperations(t *testing.T) {
 	txInfo := td.InsertRandomTransactionInfo(t, td.RandomDirection(t))
 
 	// Test HasTransaction
-	assert.True(t, td.storage.HasTransaction(txInfo.ID))
+	assert.True(t, td.storage.HasTransaction(txInfo.TxID))
 	assert.False(t, td.storage.HasTransaction("non_existing"))
 
 	// Test GetTransaction
-	retrieved, err := td.storage.GetTransaction(txInfo.ID)
+	retrieved, err := td.storage.GetTransaction(txInfo.No)
 	require.NoError(t, err)
-	assert.Equal(t, txInfo.ID, retrieved.ID)
+	assert.Equal(t, txInfo.TxID, retrieved.TxID)
 	assert.Equal(t, txInfo.Sender, retrieved.Sender)
 	assert.Equal(t, txInfo.Receiver, retrieved.Receiver)
 	assert.Equal(t, txInfo.Amount, retrieved.Amount)
@@ -223,14 +232,14 @@ func TestTransactionOperations(t *testing.T) {
 	assert.Equal(t, txInfo.Comment, retrieved.Comment)
 
 	// Test GetTransaction not found
-	_, err = td.storage.GetTransaction("non_existent")
+	_, err = td.storage.GetTransaction(-1)
 	assert.ErrorIs(t, err, storage.ErrNotFound)
 
 	// Test UpdateTransactionStatus
-	err = td.storage.UpdateTransactionStatus(txInfo.ID, types.TransactionStatusConfirmed, 1)
+	err = td.storage.UpdateTransactionStatus(txInfo.No, types.TransactionStatusConfirmed, 1)
 	require.NoError(t, err)
 
-	retrieved, err = td.storage.GetTransaction(txInfo.ID)
+	retrieved, err = td.storage.GetTransaction(txInfo.No)
 	require.NoError(t, err)
 	assert.Equal(t, types.TransactionStatusConfirmed, retrieved.Status)
 }
@@ -356,14 +365,14 @@ func TestGetPendingTransactions(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, pendings, 3)
 
-	_ = td.storage.UpdateTransactionStatus(txInfo1.ID, types.TransactionStatusConfirmed, td.RandHeight())
-	_ = td.storage.UpdateTransactionStatus(txInfo2.ID, types.TransactionStatusFailed, 0)
+	_ = td.storage.UpdateTransactionStatus(txInfo1.No, types.TransactionStatusConfirmed, td.RandHeight())
+	_ = td.storage.UpdateTransactionStatus(txInfo2.No, types.TransactionStatusFailed, 0)
 
 	pendings, err = td.storage.GetPendingTransactions()
 	require.NoError(t, err)
 	require.Len(t, pendings, 1)
 
-	assert.Contains(t, pendings, txInfo3.ID)
+	assert.Contains(t, pendings, txInfo3.TxID)
 }
 
 func TestClone(t *testing.T) {
@@ -386,4 +395,42 @@ func TestClone(t *testing.T) {
 	assert.Equal(t, originalInfo.Driver, clonedInfo.Driver)
 	assert.Equal(t, td.storage.Vault(), cloned.Vault())
 	assert.Equal(t, td.storage.AllAddresses(), cloned.AllAddresses())
+}
+
+func TestUpdatedAt(t *testing.T) {
+	td := setup(t)
+
+	addrInfo := td.InsertRandomAddressInfo(t)
+	trxInfo := td.InsertRandomTransactionInfo(t, td.RandomDirection(t))
+
+	addrInfo1, err := td.storage.AddressInfo(addrInfo.Address)
+	require.NoError(t, err)
+
+	trxInfo1, err := td.storage.GetTransaction(trxInfo.No)
+	require.NoError(t, err)
+
+	time.Sleep(1 * time.Second)
+
+	err = td.storage.UpdateAddress(addrInfo)
+	require.NoError(t, err)
+
+	err = td.storage.UpdateTransactionStatus(trxInfo.No, types.TransactionStatusConfirmed, td.RandHeight())
+	require.NoError(t, err)
+
+	addrInfo2, err := td.storage.AddressInfo(addrInfo.Address)
+	require.NoError(t, err)
+	assert.NotEqual(t, addrInfo1.UpdatedAt, addrInfo2.UpdatedAt)
+
+	trxInfo2, err := td.storage.GetTransaction(trxInfo.No)
+	require.NoError(t, err)
+	assert.NotEqual(t, trxInfo1.UpdatedAt, trxInfo2.UpdatedAt)
+}
+
+func TestInsertDuplicateTransaction(t *testing.T) {
+	td := setup(t)
+
+	txInfo := td.InsertRandomTransactionInfo(t, td.RandomDirection(t))
+
+	err := td.storage.InsertTransaction(txInfo)
+	require.Error(t, err)
 }
