@@ -93,9 +93,12 @@ func Create(ctx context.Context, path string, network genesis.ChainType, vlt *va
 		createAddressesTableSQL,
 		createTransactionsTableSQL,
 
-		createPendingTxIndexSQL,
-		createTxSenderCreatedIdxSQL,
-		createTxReceiverCreatedIdxSQL,
+		createAddressesUpdatedAtTriggerSQL,
+		createTransactionsUpdatedAtTriggerSQL,
+
+		createPendingNoIdxSQL,
+		createTxSenderNoIdxSQL,
+		createTxReceiverNoIdxSQL,
 	}
 	for _, query := range tables {
 		if _, err := db.ExecContext(ctx, query); err != nil {
@@ -359,8 +362,8 @@ func (s *Storage) HasAddress(address string) bool {
 
 // InsertTransaction inserts a new transaction.
 func (s *Storage) InsertTransaction(info *types.TransactionInfo) error {
-	_, err := s.db.ExecContext(s.ctx, insertTransactionSQL,
-		info.ID,
+	result, err := s.db.ExecContext(s.ctx, insertTransactionSQL,
+		info.TxID,
 		info.Sender,
 		info.Receiver,
 		info.Direction,
@@ -373,21 +376,26 @@ func (s *Storage) InsertTransaction(info *types.TransactionInfo) error {
 		info.Data,
 		info.Comment,
 	)
+	if err != nil {
+		return err
+	}
+
+	info.No, _ = result.LastInsertId()
+
+	return nil
+}
+
+// UpdateTransactionStatus updates the status and block height for all transactions with the given primary key.
+func (s *Storage) UpdateTransactionStatus(no int64, status types.TransactionStatus, blockHeight uint32) error {
+	_, err := s.db.ExecContext(s.ctx, updateTransactionStatusSQL, int(status), blockHeight, no)
 
 	return err
 }
 
-// UpdateTransactionStatus updates the status and block height for all transactions with the given ID.
-func (s *Storage) UpdateTransactionStatus(id string, status types.TransactionStatus, blockHeight uint32) error {
-	_, err := s.db.ExecContext(s.ctx, updateTransactionStatusSQL, int(status), blockHeight, id)
-
-	return err
-}
-
-// HasTransaction checks if a transaction exists.
-func (s *Storage) HasTransaction(id string) bool {
+// HasTransaction checks if a transaction exists by transaction ID.
+func (s *Storage) HasTransaction(txID string) bool {
 	var count int
-	err := s.db.QueryRowContext(s.ctx, countTransactionByIDSQL, id).Scan(&count)
+	err := s.db.QueryRowContext(s.ctx, countTransactionByTxIDSQL, txID).Scan(&count)
 	if err != nil {
 		return false
 	}
@@ -425,7 +433,8 @@ func scanTransaction(s scanner) (*types.TransactionInfo, error) {
 	var status, payloadType int
 
 	err := s.Scan(
-		&info.ID,
+		&info.No,
+		&info.TxID,
 		&info.Sender,
 		&info.Receiver,
 		&info.Direction,
@@ -450,9 +459,9 @@ func scanTransaction(s scanner) (*types.TransactionInfo, error) {
 	return &info, nil
 }
 
-// GetTransaction retrieves a transaction by ID (returns first match if multiple receivers).
-func (s *Storage) GetTransaction(id string) (*types.TransactionInfo, error) {
-	info, err := scanTransaction(s.db.QueryRowContext(s.ctx, selectTransactionByIDSQL, id))
+// GetTransaction retrieves a transaction by primary key.
+func (s *Storage) GetTransaction(no int64) (*types.TransactionInfo, error) {
+	info, err := scanTransaction(s.db.QueryRowContext(s.ctx, selectTransactionByNoSQL, no))
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, storage.ErrNotFound
@@ -500,7 +509,7 @@ func (s *Storage) QueryTransactions(params storage.QueryParams) ([]*types.Transa
 	var queryBuilder strings.Builder
 	queryBuilder.WriteString(`
 		SELECT
-			id, sender, receiver, direction, amount, fee, memo, status, block_height, payload_type,
+			no, tx_id, sender, receiver, direction, amount, fee, memo, status, block_height, payload_type,
 			data, comment, created_at, updated_at
 		FROM transactions
 	`)
@@ -547,7 +556,7 @@ func (s *Storage) GetPendingTransactions() (map[string]*types.TransactionInfo, e
 			return nil, err
 		}
 
-		pending[info.ID] = info
+		pending[info.TxID] = info
 	}
 
 	return pending, rows.Err()

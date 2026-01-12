@@ -68,7 +68,8 @@ const (
 )
 
 type TransactionInfo struct {
-	ID          string
+	No          int64
+	TxID        string
 	Sender      string
 	Receiver    string
 	Direction   TxDirection
@@ -115,7 +116,7 @@ func MakeTransactionInfos(trx *tx.Tx, status TransactionStatus, blockHeight bloc
 	infos := make([]*TransactionInfo, len(receivers))
 	for i, receiver := range receivers {
 		infos[i] = &TransactionInfo{
-			ID:          trx.ID().String(),
+			TxID:        trx.ID().String(),
 			Sender:      trx.Payload().Signer().String(),
 			Receiver:    receiver,
 			Direction:   TxDirectionAny,

@@ -130,18 +130,18 @@ func (mr *MockIStorageMockRecorder) GetPendingTransactions() *gomock.Call {
 }
 
 // GetTransaction mocks base method.
-func (m *MockIStorage) GetTransaction(id string) (*types.TransactionInfo, error) {
+func (m *MockIStorage) GetTransaction(no int64) (*types.TransactionInfo, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTransaction", id)
+	ret := m.ctrl.Call(m, "GetTransaction", no)
 	ret0, _ := ret[0].(*types.TransactionInfo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetTransaction indicates an expected call of GetTransaction.
-func (mr *MockIStorageMockRecorder) GetTransaction(id any) *gomock.Call {
+func (mr *MockIStorageMockRecorder) GetTransaction(no any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransaction", reflect.TypeOf((*MockIStorage)(nil).GetTransaction), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransaction", reflect.TypeOf((*MockIStorage)(nil).GetTransaction), no)
 }
 
 // HasAddress mocks base method.
@@ -159,17 +159,17 @@ func (mr *MockIStorageMockRecorder) HasAddress(address any) *gomock.Call {
 }
 
 // HasTransaction mocks base method.
-func (m *MockIStorage) HasTransaction(id string) bool {
+func (m *MockIStorage) HasTransaction(txID string) bool {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HasTransaction", id)
+	ret := m.ctrl.Call(m, "HasTransaction", txID)
 	ret0, _ := ret[0].(bool)
 	return ret0
 }
 
 // HasTransaction indicates an expected call of HasTransaction.
-func (mr *MockIStorageMockRecorder) HasTransaction(id any) *gomock.Call {
+func (mr *MockIStorageMockRecorder) HasTransaction(txID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasTransaction", reflect.TypeOf((*MockIStorage)(nil).HasTransaction), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasTransaction", reflect.TypeOf((*MockIStorage)(nil).HasTransaction), txID)
 }
 
 // InsertAddress mocks base method.
@@ -258,17 +258,17 @@ func (mr *MockIStorageMockRecorder) UpdateAddress(info any) *gomock.Call {
 }
 
 // UpdateTransactionStatus mocks base method.
-func (m *MockIStorage) UpdateTransactionStatus(id string, status types.TransactionStatus, blockHeight uint32) error {
+func (m *MockIStorage) UpdateTransactionStatus(no int64, status types.TransactionStatus, blockHeight uint32) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateTransactionStatus", id, status, blockHeight)
+	ret := m.ctrl.Call(m, "UpdateTransactionStatus", no, status, blockHeight)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // UpdateTransactionStatus indicates an expected call of UpdateTransactionStatus.
-func (mr *MockIStorageMockRecorder) UpdateTransactionStatus(id, status, blockHeight any) *gomock.Call {
+func (mr *MockIStorageMockRecorder) UpdateTransactionStatus(no, status, blockHeight any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTransactionStatus", reflect.TypeOf((*MockIStorage)(nil).UpdateTransactionStatus), id, status, blockHeight)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTransactionStatus", reflect.TypeOf((*MockIStorage)(nil).UpdateTransactionStatus), no, status, blockHeight)
 }
 
 // UpdateVault mocks base method.

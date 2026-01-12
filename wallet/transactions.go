@@ -210,7 +210,9 @@ func (t *transactions) processBlock(blk *block.Block) {
 		txID := trx.ID().String()
 
 		if _, ok := pendingTxs[txID]; ok {
-			if err := t.storage.UpdateTransactionStatus(txID, types.TransactionStatusConfirmed, blk.Height()); err != nil {
+			pendingInfo := pendingTxs[txID]
+			if err := t.storage.UpdateTransactionStatus(pendingInfo.No,
+				types.TransactionStatusConfirmed, blk.Height()); err != nil {
 				logger.Warn("failed to update transaction status", "error", err, "id", txID)
 			}
 

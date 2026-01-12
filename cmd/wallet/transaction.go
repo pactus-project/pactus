@@ -148,7 +148,7 @@ Examples:
 			terminal.PrintInfoMsgf(rowFmt,
 				i+1,
 				trx.CreatedAt.Format("2/1/2006 15:04"),
-				fit(trx.ID, idWidth),
+				fit(trx.TxID, idWidth),
 				fit(shortAddr(trx.Sender), addressWidth),
 				fit(shortAddr(trx.Receiver), addressWidth),
 				fit(trx.Amount.String(), amountWidth),

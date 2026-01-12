@@ -138,7 +138,7 @@ func (*Storage) InsertTransaction(_ *types.TransactionInfo) error {
 	return ErrUnsupported
 }
 
-func (*Storage) UpdateTransactionStatus(_ string, _ types.TransactionStatus, _ uint32) error {
+func (*Storage) UpdateTransactionStatus(_ int64, _ types.TransactionStatus, _ uint32) error {
 	return ErrUnsupported
 }
 
@@ -146,7 +146,7 @@ func (*Storage) HasTransaction(_ string) bool {
 	return false
 }
 
-func (*Storage) GetTransaction(_ string) (*types.TransactionInfo, error) {
+func (*Storage) GetTransaction(_ int64) (*types.TransactionInfo, error) {
 	return nil, ErrUnsupported
 }
 

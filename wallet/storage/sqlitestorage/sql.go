@@ -13,7 +13,7 @@ const (
 	createAddressesTableSQL = `
 		CREATE TABLE addresses (
 			address 		TEXT PRIMARY KEY,
-			public_key 		TEXT NOT NULL,
+			public_key 		TEXT NOT NULL DEFAULT '',
 			path 			TEXT NOT NULL DEFAULT '',
 			label 			TEXT NOT NULL DEFAULT '',
 			created_at 		DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -22,14 +22,15 @@ const (
 
 	createTransactionsTableSQL = `
 		CREATE TABLE transactions (
-			id 				TEXT NOT NULL,
+			no 				INTEGER PRIMARY KEY,   -- alias for rowid, auto-incremented starting at 1
+			tx_id 			TEXT NOT NULL,         -- transaction identifier
 			sender 			TEXT NOT NULL,
 			receiver 		TEXT NOT NULL,
 			direction 		INTEGER NOT NULL,
 			amount 			INTEGER NOT NULL,
 			fee 			INTEGER NOT NULL,
 			memo 			TEXT NOT NULL DEFAULT '',
-			status 			INTEGER NOT NULL,
+			status 			INTEGER NOT NULL,      -- status: failed=-1, pending=0, confirmed=1
 			block_height 	INTEGER NOT NULL,
 			payload_type 	INTEGER NOT NULL,
 			data 			BLOB NOT NULL DEFAULT X'',
@@ -37,24 +38,44 @@ const (
 			created_at 		DATETIME DEFAULT CURRENT_TIMESTAMP,
 			updated_at 		DATETIME DEFAULT CURRENT_TIMESTAMP,
 
-			PRIMARY KEY (id, receiver)
-			CHECK (direction IN (1, 2))
+			UNIQUE (tx_id, receiver)
+			CHECK (direction IN (1, 2)) -- incoming=1, outgoing=2
 		)`
 
+	createAddressesUpdatedAtTriggerSQL = `
+		CREATE TRIGGER IF NOT EXISTS trg_addresses_updated_at
+		AFTER UPDATE ON addresses
+		FOR EACH ROW
+		BEGIN
+			UPDATE addresses
+			SET updated_at = CURRENT_TIMESTAMP
+			WHERE address = OLD.address;
+		END`
+
+	createTransactionsUpdatedAtTriggerSQL = `
+		CREATE TRIGGER IF NOT EXISTS trg_transactions_updated_at
+		AFTER UPDATE ON transactions
+		FOR EACH ROW
+		BEGIN
+			UPDATE transactions
+			SET updated_at = CURRENT_TIMESTAMP
+			WHERE no = OLD.no;
+		END`
+
 	// Partial index to speed up pending-transaction queries ordered by creation time.
-	createPendingTxIndexSQL = `
-		CREATE INDEX IF NOT EXISTS idx_transactions_pending_created_at
-		ON transactions (created_at DESC)
+	createPendingNoIdxSQL = `
+		CREATE INDEX IF NOT EXISTS idx_transactions_pending_no
+		ON transactions (no DESC)
 		WHERE status = 0`
 
 	// Indexes to speed up lookups by sender/receiver and ordering by created_at.
-	createTxSenderCreatedIdxSQL = `
-		CREATE INDEX IF NOT EXISTS idx_tx_sender_created_at
-		ON transactions(sender, created_at DESC)`
+	createTxSenderNoIdxSQL = `
+		CREATE INDEX IF NOT EXISTS idx_tx_sender_no
+		ON transactions(sender, no DESC)`
 
-	createTxReceiverCreatedIdxSQL = `
-		CREATE INDEX IF NOT EXISTS idx_tx_receiver_created_at
-		ON transactions(receiver, created_at DESC)`
+	createTxReceiverNoIdxSQL = `
+		CREATE INDEX IF NOT EXISTS idx_tx_receiver_no
+		ON transactions(receiver, no DESC)`
 
 	// Wallet table operations.
 	insertWalletEntrySQL = `
@@ -81,28 +102,28 @@ const (
 
 	// Transaction table operations.
 	insertTransactionSQL = `
-		INSERT INTO transactions (id, sender, receiver, direction, amount, fee, memo,
+		INSERT INTO transactions (tx_id, sender, receiver, direction, amount, fee, memo,
 			status, block_height, payload_type, data, comment)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 
 	updateTransactionStatusSQL = `
 		UPDATE transactions SET status = ?, block_height = ?
-		WHERE id = ?`
+		WHERE no = ?`
 
-	selectTransactionByIDSQL = `
+	selectTransactionByNoSQL = `
 		SELECT
-			id, sender, receiver, direction, amount, fee, memo, status, block_height, payload_type,
+			no, tx_id, sender, receiver, direction, amount, fee, memo, status, block_height, payload_type,
 			data, comment, created_at, updated_at
 		FROM transactions
-		WHERE id = ?
+		WHERE no = ?
 		LIMIT 1`
 
-	countTransactionByIDSQL = `
-		SELECT COUNT(*) FROM transactions WHERE id = ?`
+	countTransactionByTxIDSQL = `
+		SELECT COUNT(*) FROM transactions WHERE tx_id = ?`
 
 	selectPendingTransactionsSQL = `
 		SELECT
-		id, sender, receiver, direction, amount, fee, memo, status, block_height, payload_type,
+		no, tx_id, sender, receiver, direction, amount, fee, memo, status, block_height, payload_type,
 		data, comment, created_at, updated_at
 		FROM transactions WHERE status = ?
 		ORDER BY created_at DESC`
