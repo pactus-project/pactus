@@ -67,6 +67,19 @@ const (
 	TxDirectionOutgoing = 2
 )
 
+func (dir TxDirection) String() string {
+	switch dir {
+	case TxDirectionAny:
+		return "any"
+	case TxDirectionIncoming:
+		return "incoming"
+	case TxDirectionOutgoing:
+		return "outgoing"
+	default:
+		return "unknown"
+	}
+}
+
 type TransactionInfo struct {
 	No          int64
 	TxID        string

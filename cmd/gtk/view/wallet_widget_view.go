@@ -14,27 +14,33 @@ type WalletWidgetView struct {
 
 	Box *gtk.Box
 
-	TreeViewWallet    *gtk.TreeView
-	LabelName         *gtk.Label
-	LabelDriver       *gtk.Label
-	LabelCreatedAt    *gtk.Label
-	LabelLocation     *gtk.Label
-	LabelEncrypted    *gtk.Label
-	LabelTotalBalance *gtk.Label
-	LabelDefaultFee   *gtk.Label
-	LabelTotalStake   *gtk.Label
+	TreeViewWallet       *gtk.TreeView
+	TreeViewTransactions *gtk.TreeView
+	LabelName            *gtk.Label
+	LabelDriver          *gtk.Label
+	LabelCreatedAt       *gtk.Label
+	LabelLocation        *gtk.Label
+	LabelEncrypted       *gtk.Label
+	LabelTotalBalance    *gtk.Label
+	LabelDefaultFee      *gtk.Label
+	LabelTotalStake      *gtk.Label
 
-	BtnNewAddress     *gtk.ToolButton
-	BtnSetDefaultFee  *gtk.ToolButton
-	BtnChangePassword *gtk.ToolButton
-	BtnShowSeed       *gtk.ToolButton
+	BtnRefreshAddresses *gtk.ToolButton
+	BtnNewAddress       *gtk.ToolButton
+	BtnSetDefaultFee    *gtk.ToolButton
+	BtnChangePassword   *gtk.ToolButton
+	BtnShowSeed         *gtk.ToolButton
+	BtnTxRefresh        *gtk.ToolButton
+	BtnTxPrev           *gtk.ToolButton
+	BtnTxNext           *gtk.ToolButton
 
 	ContextMenu         *gtk.Menu
 	MenuItemUpdateLabel *gtk.MenuItem
 	MenuItemDetails     *gtk.MenuItem
 	MenuItemPrivateKey  *gtk.MenuItem
 
-	listStore *gtk.ListStore
+	listStore   *gtk.ListStore
+	txListStore *gtk.ListStore
 }
 
 func createTextColumn(title string, columnID int) (*gtk.TreeViewColumn, error) {
@@ -57,33 +63,45 @@ func NewWalletWidgetView(columnTypes ...glib.Type) (*WalletWidgetView, error) {
 	builder := NewViewBuilder(assets.WalletWidgetUI)
 
 	treeViewWallet := builder.GetTreeViewObj("id_treeview_addresses")
+	treeViewTransactions := builder.GetTreeViewObj("id_treeview_transactions")
 
 	view := &WalletWidgetView{
 		ViewBuilder: builder,
 		Box:         builder.GetBoxObj("id_box_wallet"),
 
-		TreeViewWallet: treeViewWallet,
-		LabelName:      builder.GetLabelObj("id_label_wallet_name"),
-		LabelDriver:    builder.GetLabelObj("id_label_wallet_driver"),
-		LabelCreatedAt: builder.GetLabelObj("id_label_wallet_created_at"),
-		LabelLocation:  builder.GetLabelObj("id_label_wallet_location"),
-		LabelEncrypted: builder.GetLabelObj("id_label_wallet_encrypted"),
+		TreeViewWallet:       treeViewWallet,
+		TreeViewTransactions: treeViewTransactions,
+		LabelName:            builder.GetLabelObj("id_label_wallet_name"),
+		LabelDriver:          builder.GetLabelObj("id_label_wallet_driver"),
+		LabelCreatedAt:       builder.GetLabelObj("id_label_wallet_created_at"),
+		LabelLocation:        builder.GetLabelObj("id_label_wallet_location"),
+		LabelEncrypted:       builder.GetLabelObj("id_label_wallet_encrypted"),
 
 		LabelTotalBalance: builder.GetLabelObj("id_label_wallet_total_balance"),
 		LabelTotalStake:   builder.GetLabelObj("id_label_wallet_total_stake"),
 		LabelDefaultFee:   builder.GetLabelObj("id_label_wallet_default_fee"),
 
-		BtnNewAddress:     builder.GetToolButtonObj("id_button_new_address"),
-		BtnSetDefaultFee:  builder.GetToolButtonObj("id_button_set_default_fee"),
-		BtnChangePassword: builder.GetToolButtonObj("id_button_change_password"),
-		BtnShowSeed:       builder.GetToolButtonObj("id_button_show_seed"),
+		BtnRefreshAddresses: builder.GetToolButtonObj("id_button_refresh_addresses"),
+		BtnNewAddress:       builder.GetToolButtonObj("id_button_new_address"),
+		BtnSetDefaultFee:    builder.GetToolButtonObj("id_button_set_default_fee"),
+		BtnChangePassword:   builder.GetToolButtonObj("id_button_change_password"),
+		BtnShowSeed:         builder.GetToolButtonObj("id_button_show_seed"),
+		BtnTxRefresh:        builder.GetToolButtonObj("id_button_tx_refresh"),
+		BtnTxPrev:           builder.GetToolButtonObj("id_button_tx_prev"),
+		BtnTxNext:           builder.GetToolButtonObj("id_button_tx_next"),
 	}
 
 	// Toolbar icons.
+	view.BtnRefreshAddresses.SetIconWidget(gtkutil.ImageFromPixbuf(assets.IconRefreshPixbuf16))
 	view.BtnNewAddress.SetIconWidget(gtkutil.ImageFromPixbuf(assets.IconAddPixbuf16))
 	view.BtnSetDefaultFee.SetIconWidget(gtkutil.ImageFromPixbuf(assets.IconFeePixbuf16))
 	view.BtnChangePassword.SetIconWidget(gtkutil.ImageFromPixbuf(assets.IconPasswordPixbuf16))
 	view.BtnShowSeed.SetIconWidget(gtkutil.ImageFromPixbuf(assets.IconSeedPixbuf16))
+	view.BtnTxRefresh.SetIconWidget(gtkutil.ImageFromPixbuf(assets.IconRefreshPixbuf16))
+	view.BtnTxPrev.SetIconWidget(gtkutil.ImageFromPixbuf(assets.IconPrevPixbuf16))
+	view.BtnTxNext.SetIconWidget(gtkutil.ImageFromPixbuf(assets.IconNextPixbuf16))
+	view.BtnTxPrev.SetSensitive(false)
+	view.BtnTxNext.SetSensitive(false)
 
 	// Build list store for address table.
 	if len(columnTypes) == 0 {
@@ -136,6 +154,71 @@ func NewWalletWidgetView(columnTypes ...glib.Type) (*WalletWidgetView, error) {
 	view.TreeViewWallet.AppendColumn(colStake)
 	view.TreeViewWallet.AppendColumn(colScore)
 
+	// Transactions list store and columns.
+	txStore, err := gtk.ListStoreNew(
+		glib.TYPE_STRING, // no
+		glib.TYPE_STRING, // id
+		glib.TYPE_STRING, // sender
+		glib.TYPE_STRING, // receiver
+		glib.TYPE_STRING, // type
+		glib.TYPE_STRING, // amount
+		glib.TYPE_STRING, // direction
+		glib.TYPE_STRING, // status
+		glib.TYPE_STRING, // comment
+	)
+	if err != nil {
+		return nil, err
+	}
+	view.txListStore = txStore
+	view.TreeViewTransactions.SetModel(txStore.ToTreeModel())
+
+	colTxNo, err := createTextColumn("#", 0)
+	if err != nil {
+		return nil, err
+	}
+	colTxID, err := createTextColumn("ID", 1)
+	if err != nil {
+		return nil, err
+	}
+	colTxSender, err := createTextColumn("Sender", 2)
+	if err != nil {
+		return nil, err
+	}
+	colTxReceiver, err := createTextColumn("Receiver", 3)
+	if err != nil {
+		return nil, err
+	}
+	colTxType, err := createTextColumn("Type", 4)
+	if err != nil {
+		return nil, err
+	}
+	colTxAmount, err := createTextColumn("Amount", 5)
+	if err != nil {
+		return nil, err
+	}
+	colTxDir, err := createTextColumn("Direction", 6)
+	if err != nil {
+		return nil, err
+	}
+	colTxStatus, err := createTextColumn("Status", 7)
+	if err != nil {
+		return nil, err
+	}
+	colTxComment, err := createTextColumn("Comment", 8)
+	if err != nil {
+		return nil, err
+	}
+
+	view.TreeViewTransactions.AppendColumn(colTxNo)
+	view.TreeViewTransactions.AppendColumn(colTxID)
+	view.TreeViewTransactions.AppendColumn(colTxSender)
+	view.TreeViewTransactions.AppendColumn(colTxReceiver)
+	view.TreeViewTransactions.AppendColumn(colTxType)
+	view.TreeViewTransactions.AppendColumn(colTxAmount)
+	view.TreeViewTransactions.AppendColumn(colTxDir)
+	view.TreeViewTransactions.AppendColumn(colTxStatus)
+	view.TreeViewTransactions.AppendColumn(colTxComment)
+
 	// Context menu (actions are wired by controller).
 	menu, err := gtk.MenuNew()
 	if err != nil {
@@ -180,6 +263,20 @@ func (view *WalletWidgetView) ClearRows() {
 func (view *WalletWidgetView) AppendRow(cols []int, values []any) {
 	iter := view.listStore.Append()
 	_ = view.listStore.Set(iter, cols, values)
+}
+
+func (view *WalletWidgetView) ClearTxRows() {
+	view.txListStore.Clear()
+}
+
+func (view *WalletWidgetView) AppendTxRow(cols []int, values []any) {
+	iter := view.txListStore.Append()
+	_ = view.txListStore.Set(iter, cols, values)
+}
+
+func (view *WalletWidgetView) SetTxPager(prevEnabled, nextEnabled bool) {
+	view.BtnTxPrev.SetSensitive(prevEnabled)
+	view.BtnTxNext.SetSensitive(nextEnabled)
 }
 
 func (view *WalletWidgetView) SelectionAddress(addressColumn int) (string, bool, error) {
