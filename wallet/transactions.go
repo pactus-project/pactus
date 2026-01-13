@@ -216,7 +216,7 @@ func (t *transactions) processBlock(blk *block.Block) {
 				logger.Warn("failed to update transaction status", "error", err, "id", txID)
 			}
 
-			logger.Info("confirmed pending transaction", "id", txID)
+			logger.Info("confirmed pending transaction", "id", trx.ID())
 
 			continue
 		}
@@ -235,11 +235,11 @@ func (t *transactions) processBlock(blk *block.Block) {
 		}
 
 		if err := t.addTransactionWithStatus(trx, types.TransactionStatusConfirmed, block.Height(blk.Height())); err != nil {
-			logger.Warn("failed to add outgoing transaction to wallet", "error", err, "id", txID)
+			logger.Warn("failed to add outgoing transaction to wallet", "error", err, "id", trx.ID())
 
 			continue
 		}
 
-		logger.Info("added outgoing transaction to wallet", "id", txID)
+		logger.Info("added outgoing transaction to wallet", "id", trx.ID())
 	}
 }
