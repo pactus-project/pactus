@@ -12,6 +12,7 @@ import (
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/types/amount"
@@ -101,25 +102,16 @@ func (c *NodeWidgetController) Bind() error {
 func (c *NodeWidgetController) timeout1() {
 	ctx := c.ctx
 	go func() {
-		if ctx != nil {
-			select {
-			case <-ctx.Done():
-				return
-			default:
-			}
+		if gtkutil.IsContextDone(ctx) {
+			return
 		}
 
 		lastBlockTime := c.node.State().LastBlockTime()
 		lastBlockHeight := c.node.State().LastBlockHeight()
 
 		glib.IdleAdd(func() bool {
-			if ctx != nil {
-				select {
-				case <-ctx.Done():
-
-					return false
-				default:
-				}
+			if gtkutil.IsContextDone(ctx) {
+				return false
 			}
 
 			c.view.LabelLastBlockTime.SetText(lastBlockTime.Format("02 Jan 06 15:04:05 MST"))

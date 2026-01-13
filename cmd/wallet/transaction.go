@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet"
@@ -135,22 +136,13 @@ Examples:
 			return fmt.Sprintf("%-*s", width, text)
 		}
 
-		shortAddr := func(addr string) string {
-			const keep = 6
-			if len(addr) <= (keep*2)+3 {
-				return addr
-			}
-
-			return fmt.Sprintf("%s...%s", addr[:keep], addr[len(addr)-keep:])
-		}
-
 		for i, trx := range transactions {
 			terminal.PrintInfoMsgf(rowFmt,
 				i+1,
 				trx.CreatedAt.Format("2/1/2006 15:04"),
 				fit(trx.TxID, idWidth),
-				fit(shortAddr(trx.Sender), addressWidth),
-				fit(shortAddr(trx.Receiver), addressWidth),
+				fit(cmd.ShortAddress(trx.Sender), addressWidth),
+				fit(cmd.ShortAddress(trx.Receiver), addressWidth),
 				fit(trx.Amount.String(), amountWidth),
 				fit(trx.PayloadType.String(), typeWidth),
 				fit(trx.Status.String(), statusWidth),
