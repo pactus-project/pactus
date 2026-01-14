@@ -42,9 +42,9 @@ type WalletWidgetHandlers struct {
 type WalletWidgetController struct {
 	view *view.WalletWidgetView
 
-	model WalletWidgetModel
-
-	handlers WalletWidgetHandlers
+	model     WalletWidgetModel
+	handlers  WalletWidgetHandlers
+	timeoutID glib.SourceHandle
 
 	ctx    context.Context
 	cancel context.CancelFunc
@@ -159,6 +159,18 @@ func (c *WalletWidgetController) Bind(h WalletWidgetHandlers) {
 		}
 	})
 
+	totalBalance1, _ := c.model.TotalBalance()
+	c.timeoutID = glib.TimeoutAdd(15000, func() bool {
+		totalBalance2, _ := c.model.TotalBalance()
+
+		if totalBalance1 != totalBalance2 {
+			c.Refresh()
+
+			totalBalance1 = totalBalance2
+		}
+
+		return true
+	})
 	c.Refresh()
 }
 
@@ -287,6 +299,11 @@ func (c *WalletWidgetController) RefreshTransactions() {
 }
 
 func (c *WalletWidgetController) Cleanup() {
+	if c.timeoutID != 0 {
+		glib.SourceRemove(c.timeoutID)
+		c.timeoutID = 0
+	}
+
 	if c.cancel != nil {
 		c.cancel()
 		c.cancel = nil
