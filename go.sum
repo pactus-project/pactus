@@ -69,6 +69,12 @@ github.com/ezex-io/gopkg/scheduler v0.0.0-20260110162954-1b1b92dea387 h1:5FNnGFb
 github.com/ezex-io/gopkg/scheduler v0.0.0-20260110162954-1b1b92dea387/go.mod h1:I5PLJTun10b6UvzR2s2oA2++QDsQQbUVVbKQDABLkSI=
 github.com/ezex-io/gopkg/scheduler v0.0.0-20260111143633-dc5f88d98566 h1:tJrMLhMqKZwWlYmDwRowObH2O0ZyYEXAts57RbOTrPA=
 github.com/ezex-io/gopkg/scheduler v0.0.0-20260111143633-dc5f88d98566/go.mod h1:I5PLJTun10b6UvzR2s2oA2++QDsQQbUVVbKQDABLkSI=
+github.com/ezex-io/gopkg/testsuite v0.0.0-20260114173711-dd6a2dd5d697 h1:C03mP5rz6+AMdh5G7gNz/GVBUjXYbX4VqsO1uVH9ZJU=
+github.com/ezex-io/gopkg/testsuite v0.0.0-20260114173711-dd6a2dd5d697/go.mod h1:UY5y7MLtFkTqRPJ8ExnHgXRfZtIryYVIS0JjrI13N5o=
+github.com/ezex-io/gopkg/testsuite v0.0.0-20260114174103-bef7983fa4d5 h1:E0HSkHU16rGZ08vJ3M99y2ZwOaUDnLA/QonHNESjBFg=
+github.com/ezex-io/gopkg/testsuite v0.0.0-20260114174103-bef7983fa4d5/go.mod h1:UY5y7MLtFkTqRPJ8ExnHgXRfZtIryYVIS0JjrI13N5o=
+github.com/ezex-io/gopkg/testsuite v0.0.0-20260114174958-d74e6b9e615f h1:nK33Ymc2oL1fVokusFvdF5Ym7rkrRAVUNKdN6u1AJyA=
+github.com/ezex-io/gopkg/testsuite v0.0.0-20260114174958-d74e6b9e615f/go.mod h1:UY5y7MLtFkTqRPJ8ExnHgXRfZtIryYVIS0JjrI13N5o=
 github.com/felixge/httpsnoop v1.0.4 h1:NFTV2Zj1bL4mc9sqWACXbQFVBBg2W3GPvqp8/ESS2Wg=
 github.com/felixge/httpsnoop v1.0.4/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
 github.com/filecoin-project/go-clock v0.1.0 h1:SFbYIM75M8NnFm1yMHhN9Ahy3W5bEZV9gd6MPfXbKVU=

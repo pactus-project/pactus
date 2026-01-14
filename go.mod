@@ -64,6 +64,7 @@ require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/ezex-io/gopkg/pipeline v0.0.0-20260111184558-c198249d6c8c // indirect
 	github.com/ezex-io/gopkg/scheduler v0.0.0-20260111143633-dc5f88d98566 // indirect
+	github.com/ezex-io/gopkg/testsuite v0.0.0-20260114174958-d74e6b9e615f // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/filecoin-project/go-clock v0.1.0 // indirect
 	github.com/flynn/noise v1.1.0 // indirect
