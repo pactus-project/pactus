@@ -8,7 +8,6 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
-	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
@@ -598,21 +597,20 @@ func TestTotalBalance(t *testing.T) {
 
 	addr1, err := crypto.AddressFromString(accInfo1.Address)
 	require.NoError(t, err)
-	addr3, err := crypto.AddressFromString(accInfo3.Address)
+	addr2, err := crypto.AddressFromString(accInfo2.Address)
 	require.NoError(t, err)
 
 	acc1, _ := td.GenerateTestAccount(testsuite.AccountWithAddress(addr1))
-	acc2 := account.NewAccount(2)
-	acc3, _ := td.GenerateTestAccount(testsuite.AccountWithAddress(addr3))
+	acc2, _ := td.GenerateTestAccount(testsuite.AccountWithAddress(addr2))
 
 	td.mockStorage.EXPECT().AllAddresses().Return([]types.AddressInfo{*accInfo1, *accInfo2, *accInfo3})
 	td.mockProvider.EXPECT().GetAccount(accInfo1.Address).Return(acc1, nil)
 	td.mockProvider.EXPECT().GetAccount(accInfo2.Address).Return(acc2, nil)
-	td.mockProvider.EXPECT().GetAccount(accInfo3.Address).Return(acc3, nil)
+	td.mockProvider.EXPECT().GetAccount(accInfo3.Address).Return(nil, errors.New("not found"))
 
 	totalBalance, err := td.wallet.TotalBalance()
 	assert.NoError(t, err)
-	assert.Equal(t, acc1.Balance()+acc2.Balance()+acc3.Balance(), totalBalance)
+	assert.Equal(t, acc1.Balance()+acc2.Balance(), totalBalance)
 }
 
 func TestTotalStake(t *testing.T) {
@@ -620,6 +618,7 @@ func TestTotalStake(t *testing.T) {
 
 	valInfo1, _ := td.testVault.NewValidatorAddress("val-1")
 	valInfo2, _ := td.testVault.NewValidatorAddress("val-2")
+	valInfo3, _ := td.testVault.NewValidatorAddress("val-3")
 
 	pub1, err := bls.PublicKeyFromString(valInfo1.PublicKey)
 	require.NoError(t, err)
@@ -629,9 +628,10 @@ func TestTotalStake(t *testing.T) {
 	val1 := td.GenerateTestValidator(testsuite.ValidatorWithPublicKey(pub1))
 	val2 := td.GenerateTestValidator(testsuite.ValidatorWithPublicKey(pub2))
 
-	td.mockStorage.EXPECT().AllAddresses().Return([]types.AddressInfo{*valInfo1, *valInfo2})
+	td.mockStorage.EXPECT().AllAddresses().Return([]types.AddressInfo{*valInfo1, *valInfo2, *valInfo3})
 	td.mockProvider.EXPECT().GetValidator(valInfo1.Address).Return(val1, nil)
 	td.mockProvider.EXPECT().GetValidator(valInfo2.Address).Return(val2, nil)
+	td.mockProvider.EXPECT().GetValidator(valInfo3.Address).Return(nil, errors.New("not found"))
 
 	stake, err := td.wallet.TotalStake()
 	require.NoError(t, err)

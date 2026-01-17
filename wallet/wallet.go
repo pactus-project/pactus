@@ -251,10 +251,9 @@ func (w *Wallet) TotalBalance() (amount.Amount, error) {
 	infos := w.ListAddresses(OnlyAccountAddresses())
 	for _, info := range infos {
 		acc, err := w.provider.GetAccount(info.Address)
-		if err != nil {
-			return 0, err
+		if err == nil {
+			totalBalance += acc.Balance()
 		}
-		totalBalance += acc.Balance()
 	}
 
 	return totalBalance, nil
@@ -267,10 +266,9 @@ func (w *Wallet) TotalStake() (amount.Amount, error) {
 	infos := w.ListAddresses(OnlyValidatorAddresses())
 	for _, info := range infos {
 		val, err := w.provider.GetValidator(info.Address)
-		if err != nil {
-			return 0, err
+		if err == nil {
+			totalStake += val.Stake()
 		}
-		totalStake += val.Stake()
 	}
 
 	return totalStake, nil
