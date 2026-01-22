@@ -198,11 +198,11 @@ func getDirectionTextWithIcon(dir types.TxDirection) string {
 }
 
 func (c *WalletWidgetController) Refresh() {
-	c.refreshAddresses()
+	c.RefreshAddresses()
 	c.RefreshTransactions()
 }
 
-func (c *WalletWidgetController) refreshAddresses() {
+func (c *WalletWidgetController) RefreshAddresses() {
 	// Compute in background and then update UI on main loop.
 	ctx := c.ctx
 	go func() {
