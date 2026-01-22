@@ -671,6 +671,8 @@ func TestTestnetWallet(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, "m/12381'/21777'/2'/0", info.Path)
 		assert.True(t, strings.HasPrefix(info.Address, "tpc1"))
+
+		wlt.Close()
 	})
 
 	t.Run("Open Testnet wallet", func(t *testing.T) {
@@ -683,5 +685,7 @@ func TestTestnetWallet(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, "m/12381'/21777'/2'/1", info.Path)
 		assert.True(t, strings.HasPrefix(info.Address, "tpc1"))
+
+		wlt.Close()
 	})
 }
