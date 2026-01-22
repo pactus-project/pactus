@@ -106,7 +106,11 @@ func TestMain(m *testing.M) {
 
 		walletPath := filepath.Join(tConfigs[i].WalletManager.WalletsDir, "default_wallet")
 		mnemonic, _ := wallet.GenerateMnemonic(128)
-		_, _ = wallet.Create(context.Background(), walletPath, mnemonic, "", genesis.Mainnet)
+		wlt, err := wallet.Create(context.Background(), walletPath, mnemonic, "", genesis.Mainnet)
+		if err != nil {
+			panic(fmt.Errorf("failed to create wallet: %w", err))
+		}
+		wlt.Close()
 
 		if i == 0 {
 			tConfigs[i].GRPC.Enable = true

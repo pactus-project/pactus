@@ -48,7 +48,7 @@ func dbPath(path string) string {
 
 func configurePragmas(ctx context.Context, db *sql.DB) error {
 	pragmas := []string{
-		"PRAGMA journal_mode=WAL;",
+		"PRAGMA locking_mode=EXCLUSIVE;",
 		"PRAGMA synchronous=NORMAL;",
 	}
 
