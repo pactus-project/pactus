@@ -93,6 +93,7 @@ Message has no fields.
 <h4>{{.ResponseLongType}} <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
 
 {{with getMessage .ResponseLongType  }}{{- print "" -}}
+  {{if .HasFields}}{{- print "" -}}
  <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -165,6 +166,9 @@ Message has no fields.
   </tbody>
 {{end}}{{- print "" -}}
 </table>
+{{else}}{{- print "" -}}
+Message has no fields.
+{{end}}{{- print "" -}}
 {{end}}{{end}}{{end}}{{- print "\n" -}}
 
 ## Scalar Value Types

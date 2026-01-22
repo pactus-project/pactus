@@ -3237,12 +3237,6 @@ maximum number of messages to queue before dropping older ones.
 Message has no fields.
   <h4>PingResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
 
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  </tbody>
 </table>
 
 ### Utils Service

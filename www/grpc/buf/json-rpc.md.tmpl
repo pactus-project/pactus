@@ -143,6 +143,7 @@ Parameters has no fields.
 <h4>Result</h4>
 
 {{with getMessage .ResponseLongType  }}{{- print "" -}}
+  {{if .HasFields}}{{- print "" -}}
  <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -215,4 +216,7 @@ Parameters has no fields.
   </tbody>
 {{end}}{{- print "" -}}
 </table>
+{{else}}{{- print "" -}}
+Result has no fields.
+{{end}}{{- print "" -}}
 {{end}}{{end}}{{end}}{{- print "" -}}
