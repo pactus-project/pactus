@@ -52,6 +52,7 @@ func Run(n *node.Node, gtkApp *gtk.Application) (*GUI, error) {
 	walletCtrl.Bind(controller.WalletWidgetHandlers{
 		OnNewAddress: func() {
 			nav.ShowCreateAddress()
+			walletCtrl.RefreshAddresses()
 		},
 		OnSetDefaultFee: func() {
 			nav.ShowSetDefaultFee()
@@ -64,6 +65,7 @@ func Run(n *node.Node, gtkApp *gtk.Application) (*GUI, error) {
 		},
 		OnUpdateLabel: func(address string) {
 			nav.ShowUpdateLabel(address)
+			walletCtrl.RefreshAddresses()
 		},
 		OnShowDetails: func(address string) {
 			nav.ShowAddressDetails(address)
