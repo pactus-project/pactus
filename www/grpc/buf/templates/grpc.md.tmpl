@@ -1,0 +1,144 @@
+{{/* This template generates gRPC document for https://docs.pactus.org/api/grpc/ */}}---
+title: GRPC API Reference
+weight: 1
+---
+
+Every node in the Pactus network can be configured to use the
+[gRPC](https://grpc.io/) protocol for communication.
+Here you can find the list of all gRPC methods and messages.
+
+## Units
+
+All the amounts are in NanoPAC units,
+which are atomic and the smallest unit in the Pactus blockchain.
+Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
+
+## Packages
+
+For seamless integration with Pactus, you can use these client libraries:
+
+- <i class="fa-brands fa-js"></i> [pactus-grpc](https://www.npmjs.com/package/pactus-grpc/) package for Javascript
+- <i class="fa-brands fa-python"></i> [pactus-grpc](https://pypi.org/project/pactus-grpc/) package for Python
+- <i class="fa-brands fa-rust"></i> [pactus-grpc](https://crates.io/crates/pactus-grpc) package for Rust
+
+## gRPC Services
+
+<div id="toc-container">
+  <ul class="">
+  {{- range .Files -}}
+    {{ range .Services }}
+    <li> {{.Name}} Service
+      <ul>{{- $service_name := .FullName -}}
+        {{ range .Methods }}
+        <li>
+          <a href="#{{$service_name}}.{{.Name}}">
+          <span class="rpc-badge"></span>{{.Name}}</a>
+        </li>
+        {{- end }}
+      </ul>
+    </li>
+    {{- end -}}
+  {{- end }}
+  </ul>
+</div>
+
+<div class="api-doc">
+{{- range .Files -}}
+{{- range .Services }}
+
+### {{.Name}} Service
+
+{{p .Description}}
+{{- $service_name := .FullName }}
+{{- range .Methods }}
+
+#### {{.Name}} <span id="{{$service_name}}.{{.Name}}" class="rpc-badge"></span>
+
+{{p .Description}}
+
+<h4>{{.RequestLongType}} <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+{{- with getMessage .RequestLongType }}
+{{ if .HasFields }}
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  {{ range .Fields -}}
+  <tr>
+    <td class="fw-bold">{{.Name}}</td>
+    <td>{{.Label}} {{.LongType}}</td>
+    <td>
+{{- template "field_req_desc" . }}
+    </td>
+  </tr>
+  {{ end -}}
+  </tbody>
+</table>
+{{- else -}}
+Request Message has no fields.
+{{- end -}}
+{{- end }}
+
+<h4>{{.ResponseLongType}} <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+{{- with getMessage .ResponseLongType }}
+{{ if .HasFields }}
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  {{ range .Fields -}}
+  <tr>
+    <td class="fw-bold">{{.Name}}</td>
+    <td>{{.Label}} {{.LongType}}</td>
+    <td>
+{{- template "field_res_desc" . }}
+    </td>
+  </tr>
+  {{$msg0 := .}} {{with getMessage .LongType -}}
+  {{- range .Fields -}}
+  <tr>
+    <td class="fw-bold">{{$msg0.Name}}{{if $msg0.IsRepeated}}[]{{end}}.{{.Name}}</td>
+    <td>{{.Label}} {{.LongType}}</td>
+    <td>
+{{- template "field_res_desc" . }}
+    </td>
+  </tr>
+  {{$msg1 := .}} {{with getMessage .LongType -}}
+  {{- range .Fields -}}
+  <tr>
+    <td class="fw-bold">{{$msg0.Name}}{{if $msg0.IsRepeated}}[]{{end}}.{{$msg1.Name}}{{if $msg1.IsRepeated}}[]{{end}}.{{.Name}}</td>
+    <td>{{.Label}} {{.LongType}}</td>
+    <td>
+{{- template "field_res_desc" . }}
+    </td>
+  </tr>
+{{- end}}{{end}}{{end}}{{end}}{{end -}}
+</tbody>
+</table>
+{{- else -}}
+Response Message has no fields.
+{{- end}}{{end}}{{end}}{{end -}}
+{{- end -}}
+
+## Scalar Value Types
+
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr><td>.proto Type</td><td>Go</td><td>C++</td><td>Rust</td><td>Java</td><td>Python</td></tr>
+  </thead>
+  <tbody class="table-group-divider">{{range .Scalars}}
+      <tr id="{{.ProtoType}}">
+        <td class="fw-bold">{{.ProtoType}}</td>
+        <td>{{.GoType}}</td>
+        <td>{{.CppType}}</td>
+        <td>{{.RustType}}</td>
+        <td>{{.JavaType}}</td>
+        <td>{{.PythonType}}</td>
+      </tr>{{end}}
+  </tbody>
+</table>
+</div>

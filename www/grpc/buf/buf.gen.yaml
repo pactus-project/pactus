@@ -5,13 +5,13 @@ plugins:
     opt: paths=source_relative
   - local: protoc-gen-doc
     out: ./gen/open-rpc
-    opt: ./buf/openrpc.tmpl,pactus-openrpc.json
+    opt: ./buf/templates/openrpc.tmpl,pactus-openrpc.json
   - local: protoc-gen-doc
     out: ./gen/docs
-    opt: ./buf/grpc.md.tmpl,grpc.md
+    opt: ./buf/templates/components.tmpl;./buf/templates/grpc.md.tmpl,grpc.md
   - local: protoc-gen-doc
     out: ./gen/docs
-    opt: ./buf/json-rpc.md.tmpl,json-rpc.md
+    opt: ./buf/templates/components.tmpl;./buf/templates/json-rpc.md.tmpl,json-rpc.md
   - local: protoc-gen-jrpc-gateway
     out: ./gen/go
   - local: protoc-gen-grpc-gateway

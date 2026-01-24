@@ -1,0 +1,31 @@
+{{/* ---------- components ---------- */}}
+{{- define "field_req_desc"}}
+  {{if .IsEnum}}(Enum){{- end -}}
+  {{if .IsOneOf}}(OneOf){{- end -}}
+  {{if (index .Options "deprecated"|default false)}}<strong>(Deprecated) </strong>{{- end -}}
+  {{.Description -}}
+  {{if .DefaultValue}}Default: {{.DefaultValue}}{{- end -}}
+  {{- with getEnum .LongType -}}
+  <br>Available values:
+  <ul>
+  {{- range .Values }}
+    <li>{{.Name}} = {{.Number}} ({{ .Description }})</li>
+  {{- end }}
+  </ul>
+  {{- end -}}
+{{end -}}
+
+{{- define "field_res_desc"}}
+  {{if .IsEnum}}(Enum){{end -}}
+  {{if .IsOneOf}}(OneOf){{end -}}
+  {{if (index .Options "deprecated"|default false)}}<strong>(Deprecated) </strong>{{end -}}
+  {{.Description -}}
+  {{if .DefaultValue}}Default: {{.DefaultValue}}{{end -}}
+  {{with getEnum .LongType }}
+      <br>Available values:<ul>
+      {{range .Values -}}
+      <li>{{.Name}} = {{.Number}} ({{ .Description }})</li>
+      {{end -}}
+      </ul>
+  {{- end -}}
+{{end -}}
