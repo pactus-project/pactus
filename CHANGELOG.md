@@ -1,5 +1,55 @@
 # Changelog
 
+## [1.11.0](https://github.com/pactus-project/pactus/compare/v1.10.0...v1.11.0) (2026-01-24)
+
+### Feat
+
+- **gtk**: use timeout to refresh wallet page ([#2039](https://github.com/pactus-project/pactus/pull/2039))
+- **gtk**: add transactions page ([#2035](https://github.com/pactus-project/pactus/pull/2035))
+- **types**: define ShortString for Address and Hash ([#2031](https://github.com/pactus-project/pactus/pull/2031))
+- **gtk**: add splash screen for starting the node ([#2019](https://github.com/pactus-project/pactus/pull/2019))
+- **wallet**: define query parameters for list of transactions ([#2014](https://github.com/pactus-project/pactus/pull/2014))
+- **wallet**: define Blockchain Provider interface ([#2013](https://github.com/pactus-project/pactus/pull/2013))
+- **wallet**: process blocks for wallet transactions ([#2011](https://github.com/pactus-project/pactus/pull/2011))
+- **cmd**: add transaction command ([#2006](https://github.com/pactus-project/pactus/pull/2006))
+- **grpc**: add List Transaction API for wallets ([#2005](https://github.com/pactus-project/pactus/pull/2005))
+- **grpc**: add Update Password API for wallets ([#2004](https://github.com/pactus-project/pactus/pull/2004))
+- **wallet**: add SQLite3 storage ([#2001](https://github.com/pactus-project/pactus/pull/2001))
+- **util**: add LogString for compact log formatting ([#2000](https://github.com/pactus-project/pactus/pull/2000))
+- **types**: decode transaction from hex string ([#1998](https://github.com/pactus-project/pactus/pull/1998))
+- **types**: decode block from hex string ([#1999](https://github.com/pactus-project/pactus/pull/1999))
+- **types**: format amount with thousand separators ([#1977](https://github.com/pactus-project/pactus/pull/1977))
+
+### Fix
+
+- **gtk**: refresh wallet view on changing address ([#2041](https://github.com/pactus-project/pactus/pull/2041))
+- **wallet**: total balance for non-existing accounts ([#2040](https://github.com/pactus-project/pactus/pull/2040))
+- **wallet**: add no column for transaction table ([#2034](https://github.com/pactus-project/pactus/pull/2034))
+- **wallet**: configure Pragmas and create indices ([#2030](https://github.com/pactus-project/pactus/pull/2030))
+- **wallet**: deprecate load wallet API ([#2029](https://github.com/pactus-project/pactus/pull/2029))
+- **cmd**: ensure provider is set when recovering wallet ([#2027](https://github.com/pactus-project/pactus/pull/2027))
+- **grpc**: correct wallet verbs and add validator addresses route ([#2023](https://github.com/pactus-project/pactus/pull/2023))
+- **wallet**: set default values for address and direction ([#2022](https://github.com/pactus-project/pactus/pull/2022))
+- **cmd**: show transaction list in a table ([#2015](https://github.com/pactus-project/pactus/pull/2015))
+- **grpc**: include driver and path in GetWalletInfo response ([#2010](https://github.com/pactus-project/pactus/pull/2010))
+- **wallet**: load default_wallet on startup ([#2008](https://github.com/pactus-project/pactus/pull/2008))
+- **util**: list only top-level files and directories without recursion ([#2009](https://github.com/pactus-project/pactus/pull/2009))
+- **wallet**: list SQLite wallets in wallet manager ([#2003](https://github.com/pactus-project/pactus/pull/2003))
+- **wallet**: add Close method for wallet ([#2002](https://github.com/pactus-project/pactus/pull/2002))
+- **network**: remove leading and trailing spaces from network key ([#1992](https://github.com/pactus-project/pactus/pull/1992))
+- **gtk**: fix dark theme issue in Windows ([#1973](https://github.com/pactus-project/pactus/pull/1973))
+- **wallet**: panic on disconnect of wallet client connection ([#1971](https://github.com/pactus-project/pactus/pull/1971))
+
+### Refactor
+
+- **other**: use pipeline package ([#2033](https://github.com/pactus-project/pactus/pull/2033))
+- **consensus, network, util**: use scheduler package to manage … ([#2032](https://github.com/pactus-project/pactus/pull/2032))
+- **wallet**: define storage interface ([#1995](https://github.com/pactus-project/pactus/pull/1995))
+- **gtk**: refactor Pactus GUI ([#1994](https://github.com/pactus-project/pactus/pull/1994))
+- **wallet**: refactor wallet manager ([#1993](https://github.com/pactus-project/pactus/pull/1993))
+- **version**: replace Split in loops with more efficient SplitSeq ([#1982](https://github.com/pactus-project/pactus/pull/1982))
+- **crypto**: use b.Loop() to simplify the code and improve performance ([#1970](https://github.com/pactus-project/pactus/pull/1970))
+
 ## [1.10.0](https://github.com/pactus-project/pactus/compare/v1.9.0...v1.10.0) (2025-10-27)
 
 ### Feat
