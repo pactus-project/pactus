@@ -328,3 +328,8 @@ func TestLimitReaderClose(t *testing.T) {
 		assert.NoError(t, r.Close())
 	})
 }
+
+func TestIsDir(t *testing.T) {
+	assert.True(t, IsDir(TempDirPath()))
+	assert.False(t, IsDir(TempFilePath()))
+}

@@ -84,8 +84,12 @@ func Create(ctx context.Context, walletPath, mnemonic, password string,
 // Offline wallet doesn’t have any connection to any node.
 // Online wallet has a connection to one of the pre-defined servers.
 func Open(ctx context.Context, walletPath string, opts ...OpenWalletOption) (*Wallet, error) {
-	sqliteStrg, err := sqlitestorage.Open(ctx, walletPath)
-	if err == nil {
+	if util.IsDir(walletPath) {
+		sqliteStrg, err := sqlitestorage.Open(ctx, walletPath)
+		if err != nil {
+			return nil, err
+		}
+
 		return New(sqliteStrg, opts...)
 	}
 

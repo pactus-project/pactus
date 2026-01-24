@@ -176,6 +176,8 @@ func StartNode(workingDir string, passwordFetcher func() (string, bool),
 		return nil, err
 	}
 
+	wlt.Close()
+
 	node, err := node.NewNode(gen, conf, valKeys, rewardAddrs)
 	if err != nil {
 		return nil, err
