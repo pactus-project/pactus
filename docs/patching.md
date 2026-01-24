@@ -50,9 +50,9 @@ Keep your terminal open for further steps.
 
 ```bash
 PRV_VER="1.11.0"
-CUR_VER="1.11.1"
-NEXT_VER="1.11.2"
-BASE_BRANCH="1.11.x"
+CUR_VER="1.12.1"
+NEXT_VER="1.12.2"
+BASE_BRANCH="1.12.x"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
 ```
