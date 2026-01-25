@@ -56,9 +56,11 @@ func Run(n *node.Node, gtkApp *gtk.Application) (*GUI, error) {
 		},
 		OnSetDefaultFee: func() {
 			nav.ShowSetDefaultFee()
+			walletCtrl.RefreshInfo()
 		},
 		OnChangePassword: func() {
 			nav.ShowChangePassword()
+			walletCtrl.RefreshInfo()
 		},
 		OnShowSeed: func() {
 			nav.ShowSeed()
@@ -91,27 +93,34 @@ func Run(n *node.Node, gtkApp *gtk.Application) (*GUI, error) {
 		},
 		OnTransactionTransfer: func() {
 			nav.ShowTransferTx()
+			walletCtrl.RefreshTransactions()
 		},
 		OnTransactionBond: func() {
 			nav.ShowBondTx()
+			walletCtrl.RefreshTransactions()
 		},
 		OnTransactionUnbond: func() {
 			nav.ShowUnbondTx()
+			walletCtrl.RefreshTransactions()
 		},
 		OnTransactionWithdraw: func() {
 			nav.ShowWithdrawTx()
+			walletCtrl.RefreshTransactions()
 		},
 		OnWalletNewAddress: func() {
 			nav.ShowCreateAddress()
+			walletCtrl.RefreshAddresses()
 		},
 		OnWalletChangePassword: func() {
 			nav.ShowChangePassword()
+			walletCtrl.RefreshInfo()
 		},
 		OnWalletShowSeed: func() {
 			nav.ShowSeed()
 		},
 		OnWalletSetDefaultFee: func() {
 			nav.ShowSetDefaultFee()
+			walletCtrl.RefreshInfo()
 		},
 		OnMenuActivateWebsite: func() {
 			_ = gtkutil.OpenURLInBrowser("https://pactus.org/")
