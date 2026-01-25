@@ -285,7 +285,6 @@ curl --location 'http://localhost:8545/' \
 <p>GetTransaction retrieves transaction details based on the provided request parameters.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -302,18 +301,17 @@ curl --location 'http://localhost:8545/' \
     <td class="fw-bold">verbosity</td>
     <td> numeric</td>
     <td>
-  (Enum)The verbosity level for transaction details.<br>Available values:
-  <ul>
-    <li>TRANSACTION_VERBOSITY_DATA = 0 (Request transaction data only.)</li>
-    <li>TRANSACTION_VERBOSITY_INFO = 1 (Request detailed transaction information.)</li>
-  </ul>
+  (Enum)The verbosity level for transaction details.
+      <br>Available values:<ul>
+      <li>TRANSACTION_VERBOSITY_DATA = 0 (Request transaction data only.)</li>
+      <li>TRANSACTION_VERBOSITY_INFO = 1 (Request detailed transaction information.)</li>
+      </ul>
     </td>
   </tr>
   </tbody>
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -385,16 +383,16 @@ curl --location 'http://localhost:8545/' \
     <td class="fw-bold">transaction.payload_type</td>
     <td> numeric</td>
     <td>
-  (Enum)The type of transaction payload.<br>Available values:
-  <ul>
-    <li>PAYLOAD_TYPE_UNSPECIFIED = 0 (Unspecified payload type.)</li>
-    <li>PAYLOAD_TYPE_TRANSFER = 1 (Transfer payload type.)</li>
-    <li>PAYLOAD_TYPE_BOND = 2 (Bond payload type.)</li>
-    <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
-    <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
-    <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
-    <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
-  </ul>
+  (Enum)The type of transaction payload.
+      <br>Available values:<ul>
+      <li>PAYLOAD_TYPE_UNSPECIFIED = 0 (Unspecified payload type.)</li>
+      <li>PAYLOAD_TYPE_TRANSFER = 1 (Transfer payload type.)</li>
+      <li>PAYLOAD_TYPE_BOND = 2 (Bond payload type.)</li>
+      <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
+      <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
+      <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
+      <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
+      </ul>
     </td>
   </tr>
    <tr>
@@ -581,7 +579,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 <p>CalculateFee calculates the transaction fee based on the specified amount and payload type.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -598,16 +595,16 @@ A value of zero means the transaction is unconfirmed and may still in the transa
     <td class="fw-bold">payload_type</td>
     <td> numeric</td>
     <td>
-  (Enum)The type of transaction payload.<br>Available values:
-  <ul>
-    <li>PAYLOAD_TYPE_UNSPECIFIED = 0 (Unspecified payload type.)</li>
-    <li>PAYLOAD_TYPE_TRANSFER = 1 (Transfer payload type.)</li>
-    <li>PAYLOAD_TYPE_BOND = 2 (Bond payload type.)</li>
-    <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
-    <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
-    <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
-    <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
-  </ul>
+  (Enum)The type of transaction payload.
+      <br>Available values:<ul>
+      <li>PAYLOAD_TYPE_UNSPECIFIED = 0 (Unspecified payload type.)</li>
+      <li>PAYLOAD_TYPE_TRANSFER = 1 (Transfer payload type.)</li>
+      <li>PAYLOAD_TYPE_BOND = 2 (Bond payload type.)</li>
+      <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
+      <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
+      <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
+      <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
+      </ul>
     </td>
   </tr>
   <tr>
@@ -621,7 +618,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -648,7 +644,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 <p>BroadcastTransaction broadcasts a signed transaction to the network.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -665,7 +660,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -685,7 +679,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 <p>GetRawTransferTransaction retrieves raw details of a transfer transaction.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -737,7 +730,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -764,7 +756,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 <p>GetRawBondTransaction retrieves raw details of a bond transaction.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -823,7 +814,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -850,7 +840,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 <p>GetRawUnbondTransaction retrieves raw details of an unbond transaction.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -881,7 +870,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -908,7 +896,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 <p>GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -960,7 +947,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -987,7 +973,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 <p>GetRawBatchTransferTransaction retrieves raw details of batch transfer transaction.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -1032,7 +1017,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -1059,7 +1043,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 <p>DecodeRawTransaction accepts raw transaction and returns decoded transaction.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -1076,7 +1059,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -1134,16 +1116,16 @@ A value of zero means the transaction is unconfirmed and may still in the transa
     <td class="fw-bold">transaction.payload_type</td>
     <td> numeric</td>
     <td>
-  (Enum)The type of transaction payload.<br>Available values:
-  <ul>
-    <li>PAYLOAD_TYPE_UNSPECIFIED = 0 (Unspecified payload type.)</li>
-    <li>PAYLOAD_TYPE_TRANSFER = 1 (Transfer payload type.)</li>
-    <li>PAYLOAD_TYPE_BOND = 2 (Bond payload type.)</li>
-    <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
-    <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
-    <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
-    <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
-  </ul>
+  (Enum)The type of transaction payload.
+      <br>Available values:<ul>
+      <li>PAYLOAD_TYPE_UNSPECIFIED = 0 (Unspecified payload type.)</li>
+      <li>PAYLOAD_TYPE_TRANSFER = 1 (Transfer payload type.)</li>
+      <li>PAYLOAD_TYPE_BOND = 2 (Bond payload type.)</li>
+      <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
+      <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
+      <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
+      <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
+      </ul>
     </td>
   </tr>
    <tr>
@@ -1334,7 +1316,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 <p>GetBlock retrieves information about a block based on the provided request parameters.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -1351,19 +1332,18 @@ A value of zero means the transaction is unconfirmed and may still in the transa
     <td class="fw-bold">verbosity</td>
     <td> numeric</td>
     <td>
-  (Enum)The verbosity level for block information.<br>Available values:
-  <ul>
-    <li>BLOCK_VERBOSITY_DATA = 0 (Request only block data.)</li>
-    <li>BLOCK_VERBOSITY_INFO = 1 (Request block information and transaction IDs.)</li>
-    <li>BLOCK_VERBOSITY_TRANSACTIONS = 2 (Request block information and detailed transaction data.)</li>
-  </ul>
+  (Enum)The verbosity level for block information.
+      <br>Available values:<ul>
+      <li>BLOCK_VERBOSITY_DATA = 0 (Request only block data.)</li>
+      <li>BLOCK_VERBOSITY_INFO = 1 (Request block information and transaction IDs.)</li>
+      <li>BLOCK_VERBOSITY_TRANSACTIONS = 2 (Request block information and detailed transaction data.)</li>
+      </ul>
     </td>
   </tr>
   </tbody>
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -1534,16 +1514,16 @@ BLOCK_VERBOSITY_TRANSACTIONS.
     <td class="fw-bold">txs[].payload_type</td>
     <td> numeric</td>
     <td>
-  (Enum)The type of transaction payload.<br>Available values:
-  <ul>
-    <li>PAYLOAD_TYPE_UNSPECIFIED = 0 (Unspecified payload type.)</li>
-    <li>PAYLOAD_TYPE_TRANSFER = 1 (Transfer payload type.)</li>
-    <li>PAYLOAD_TYPE_BOND = 2 (Bond payload type.)</li>
-    <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
-    <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
-    <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
-    <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
-  </ul>
+  (Enum)The type of transaction payload.
+      <br>Available values:<ul>
+      <li>PAYLOAD_TYPE_UNSPECIFIED = 0 (Unspecified payload type.)</li>
+      <li>PAYLOAD_TYPE_TRANSFER = 1 (Transfer payload type.)</li>
+      <li>PAYLOAD_TYPE_BOND = 2 (Bond payload type.)</li>
+      <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
+      <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
+      <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
+      <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
+      </ul>
     </td>
   </tr>
    <tr>
@@ -1730,7 +1710,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 <p>GetBlockHash retrieves the hash of a block at the specified height.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -1747,7 +1726,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -1767,7 +1745,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 <p>GetBlockHeight retrieves the height of a block with the specified hash.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -1784,7 +1761,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -1807,7 +1783,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 Parameters has no fields.
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -1984,7 +1959,6 @@ Parameters has no fields.
 Parameters has no fields.
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -2070,15 +2044,15 @@ Parameters has no fields.
     <td class="fw-bold">instances[].votes[].type</td>
     <td> numeric</td>
     <td>
-  (Enum)The type of the vote.<br>Available values:
-  <ul>
-    <li>VOTE_TYPE_UNSPECIFIED = 0 (Unspecified vote type.)</li>
-    <li>VOTE_TYPE_PREPARE = 1 (Prepare vote type.)</li>
-    <li>VOTE_TYPE_PRECOMMIT = 2 (Precommit vote type.)</li>
-    <li>VOTE_TYPE_CP_PRE_VOTE = 3 (Change-proposer:pre-vote vote type.)</li>
-    <li>VOTE_TYPE_CP_MAIN_VOTE = 4 (Change-proposer:main-vote vote type.)</li>
-    <li>VOTE_TYPE_CP_DECIDED = 5 (Change-proposer:decided vote type.)</li>
-  </ul>
+  (Enum)The type of the vote.
+      <br>Available values:<ul>
+      <li>VOTE_TYPE_UNSPECIFIED = 0 (Unspecified vote type.)</li>
+      <li>VOTE_TYPE_PREPARE = 1 (Prepare vote type.)</li>
+      <li>VOTE_TYPE_PRECOMMIT = 2 (Precommit vote type.)</li>
+      <li>VOTE_TYPE_CP_PRE_VOTE = 3 (Change-proposer:pre-vote vote type.)</li>
+      <li>VOTE_TYPE_CP_MAIN_VOTE = 4 (Change-proposer:main-vote vote type.)</li>
+      <li>VOTE_TYPE_CP_DECIDED = 5 (Change-proposer:decided vote type.)</li>
+      </ul>
     </td>
   </tr><tr>
     <td class="fw-bold">instances[].votes[].voter</td>
@@ -2118,7 +2092,6 @@ Parameters has no fields.
 <p>GetAccount retrieves information about an account based on the provided address.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -2135,7 +2108,6 @@ Parameters has no fields.
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -2190,7 +2162,6 @@ Parameters has no fields.
 <p>GetValidator retrieves information about a validator based on the provided address.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -2207,7 +2178,6 @@ Parameters has no fields.
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -2304,7 +2274,6 @@ Parameters has no fields.
 <p>GetValidatorByNumber retrieves information about a validator based on the provided number.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -2321,7 +2290,6 @@ Parameters has no fields.
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -2421,7 +2389,6 @@ Parameters has no fields.
 Parameters has no fields.
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -2441,7 +2408,6 @@ Parameters has no fields.
 <p>GetPublicKey retrieves the public key of an account based on the provided address.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -2458,7 +2424,6 @@ Parameters has no fields.
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -2478,7 +2443,6 @@ Parameters has no fields.
 <p>GetTxPoolContent retrieves current transactions in the transaction pool.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -2488,23 +2452,22 @@ Parameters has no fields.
     <td class="fw-bold">payload_type</td>
     <td> numeric</td>
     <td>
-  (Enum)The type of transactions to retrieve from the transaction pool. 0 means all types.<br>Available values:
-  <ul>
-    <li>PAYLOAD_TYPE_UNSPECIFIED = 0 (Unspecified payload type.)</li>
-    <li>PAYLOAD_TYPE_TRANSFER = 1 (Transfer payload type.)</li>
-    <li>PAYLOAD_TYPE_BOND = 2 (Bond payload type.)</li>
-    <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
-    <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
-    <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
-    <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
-  </ul>
+  (Enum)The type of transactions to retrieve from the transaction pool. 0 means all types.
+      <br>Available values:<ul>
+      <li>PAYLOAD_TYPE_UNSPECIFIED = 0 (Unspecified payload type.)</li>
+      <li>PAYLOAD_TYPE_TRANSFER = 1 (Transfer payload type.)</li>
+      <li>PAYLOAD_TYPE_BOND = 2 (Bond payload type.)</li>
+      <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
+      <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
+      <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
+      <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
+      </ul>
     </td>
   </tr>
   </tbody>
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -2562,16 +2525,16 @@ Parameters has no fields.
     <td class="fw-bold">txs[].payload_type</td>
     <td> numeric</td>
     <td>
-  (Enum)The type of transaction payload.<br>Available values:
-  <ul>
-    <li>PAYLOAD_TYPE_UNSPECIFIED = 0 (Unspecified payload type.)</li>
-    <li>PAYLOAD_TYPE_TRANSFER = 1 (Transfer payload type.)</li>
-    <li>PAYLOAD_TYPE_BOND = 2 (Bond payload type.)</li>
-    <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
-    <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
-    <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
-    <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
-  </ul>
+  (Enum)The type of transaction payload.
+      <br>Available values:<ul>
+      <li>PAYLOAD_TYPE_UNSPECIFIED = 0 (Unspecified payload type.)</li>
+      <li>PAYLOAD_TYPE_TRANSFER = 1 (Transfer payload type.)</li>
+      <li>PAYLOAD_TYPE_BOND = 2 (Bond payload type.)</li>
+      <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
+      <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
+      <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
+      <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
+      </ul>
     </td>
   </tr>
    <tr>
@@ -2762,7 +2725,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 <p>GetNetworkInfo retrieves information about the overall network.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -2779,7 +2741,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -2893,12 +2854,12 @@ A value of zero means the transaction is unconfirmed and may still in the transa
     <td class="fw-bold">connected_peers[].direction</td>
     <td> numeric</td>
     <td>
-  (Enum)Connection direction (e.g., inbound, outbound).<br>Available values:
-  <ul>
-    <li>DIRECTION_UNKNOWN = 0 (Unknown direction (default value).)</li>
-    <li>DIRECTION_INBOUND = 1 (Inbound connection - peer connected to us.)</li>
-    <li>DIRECTION_OUTBOUND = 2 (Outbound connection - we connected to peer.)</li>
-  </ul>
+  (Enum)Connection direction (e.g., inbound, outbound).
+      <br>Available values:<ul>
+      <li>DIRECTION_UNKNOWN = 0 (Unknown direction (default value).)</li>
+      <li>DIRECTION_INBOUND = 1 (Inbound connection - peer connected to us.)</li>
+      <li>DIRECTION_OUTBOUND = 2 (Outbound connection - we connected to peer.)</li>
+      </ul>
     </td>
   </tr>
    <tr>
@@ -3055,7 +3016,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 Parameters has no fields.
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3205,7 +3165,6 @@ maximum number of messages to queue before dropping older ones.
 Parameters has no fields.
 
 <h4>Result</h4>
-
 Result has no fields.
 
 ### Utils Service
@@ -3218,7 +3177,6 @@ signing, verification, and other cryptographic operations.</p>
 <p>SignMessageWithPrivateKey signs a message with the provided private key.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3242,7 +3200,6 @@ signing, verification, and other cryptographic operations.</p>
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3262,7 +3219,6 @@ signing, verification, and other cryptographic operations.</p>
 <p>VerifyMessage verifies a signature against the public key and message.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3293,7 +3249,6 @@ signing, verification, and other cryptographic operations.</p>
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3313,7 +3268,6 @@ signing, verification, and other cryptographic operations.</p>
 <p>PublicKeyAggregation aggregates multiple BLS public keys into a single key.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3330,7 +3284,6 @@ signing, verification, and other cryptographic operations.</p>
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3357,7 +3310,6 @@ signing, verification, and other cryptographic operations.</p>
 <p>SignatureAggregation aggregates multiple BLS signatures into a single signature.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3374,7 +3326,6 @@ signing, verification, and other cryptographic operations.</p>
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3398,7 +3349,6 @@ signing, verification, and other cryptographic operations.</p>
 <p>CreateWallet creates a new wallet with the specified parameters.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3422,7 +3372,6 @@ signing, verification, and other cryptographic operations.</p>
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3449,7 +3398,6 @@ signing, verification, and other cryptographic operations.</p>
 <p>RestoreWallet restores an existing wallet with the given mnemonic.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3480,7 +3428,6 @@ signing, verification, and other cryptographic operations.</p>
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3501,7 +3448,6 @@ signing, verification, and other cryptographic operations.</p>
 deprecated: It will be removed in a future version.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3518,7 +3464,6 @@ deprecated: It will be removed in a future version.</p>
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3539,7 +3484,6 @@ deprecated: It will be removed in a future version.</p>
 deprecated: It will be removed in a future version.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3556,7 +3500,6 @@ deprecated: It will be removed in a future version.</p>
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3579,7 +3522,6 @@ deprecated: It will be removed in a future version.</p>
 Parameters has no fields.
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3599,7 +3541,6 @@ Parameters has no fields.
 <p>GetWalletInfo returns detailed information about a specific wallet.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3616,7 +3557,6 @@ Parameters has no fields.
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3692,7 +3632,6 @@ Parameters has no fields.
 <p>UpdatePassword updates the password of an existing wallet.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3723,7 +3662,6 @@ Parameters has no fields.
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3743,7 +3681,6 @@ Parameters has no fields.
 <p>GetTotalBalance returns the total available balance of the wallet.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3760,7 +3697,6 @@ Parameters has no fields.
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3787,7 +3723,6 @@ Parameters has no fields.
 <p>GetTotalStake returns the total stake amount in the wallet.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3804,7 +3739,6 @@ Parameters has no fields.
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3832,7 +3766,6 @@ Parameters has no fields.
 Deprecated: Will move into utils.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3849,7 +3782,6 @@ Deprecated: Will move into utils.</p>
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3869,7 +3801,6 @@ Deprecated: Will move into utils.</p>
 <p>GetAddressInfo returns detailed information about a specific address.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3893,7 +3824,6 @@ Deprecated: Will move into utils.</p>
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3948,7 +3878,6 @@ Deprecated: Will move into utils.</p>
 <p>SetAddressLabel sets or updates the label for a given address.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -3986,7 +3915,6 @@ Deprecated: Will move into utils.</p>
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -4020,7 +3948,6 @@ Deprecated: Will move into utils.</p>
 <p>GetNewAddress generates a new address for the specified wallet.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -4037,15 +3964,15 @@ Deprecated: Will move into utils.</p>
     <td class="fw-bold">address_type</td>
     <td> numeric</td>
     <td>
-  (Enum)The type of address to generate.<br>Available values:
-  <ul>
-    <li>ADDRESS_TYPE_TREASURY = 0 (Treasury address type.
+  (Enum)The type of address to generate.
+      <br>Available values:<ul>
+      <li>ADDRESS_TYPE_TREASURY = 0 (Treasury address type.
 Should not be used to generate new addresses.)</li>
-    <li>ADDRESS_TYPE_VALIDATOR = 1 (Validator address type used for validator nodes.)</li>
-    <li>ADDRESS_TYPE_BLS_ACCOUNT = 2 (Account address type with BLS signature scheme.)</li>
-    <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.
+      <li>ADDRESS_TYPE_VALIDATOR = 1 (Validator address type used for validator nodes.)</li>
+      <li>ADDRESS_TYPE_BLS_ACCOUNT = 2 (Account address type with BLS signature scheme.)</li>
+      <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.
 Note: Generating a new Ed25519 address requires the wallet password.)</li>
-  </ul>
+      </ul>
     </td>
   </tr>
   <tr>
@@ -4066,7 +3993,6 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -4121,7 +4047,6 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
 <p>ListAddresses returns all addresses in the specified wallet.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -4138,22 +4063,21 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     <td class="fw-bold">address_types</td>
     <td>repeated numeric</td>
     <td>
-  (Enum)Filter addresses by their types. If empty, all address types are included.<br>Available values:
-  <ul>
-    <li>ADDRESS_TYPE_TREASURY = 0 (Treasury address type.
+  (Enum)Filter addresses by their types. If empty, all address types are included.
+      <br>Available values:<ul>
+      <li>ADDRESS_TYPE_TREASURY = 0 (Treasury address type.
 Should not be used to generate new addresses.)</li>
-    <li>ADDRESS_TYPE_VALIDATOR = 1 (Validator address type used for validator nodes.)</li>
-    <li>ADDRESS_TYPE_BLS_ACCOUNT = 2 (Account address type with BLS signature scheme.)</li>
-    <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.
+      <li>ADDRESS_TYPE_VALIDATOR = 1 (Validator address type used for validator nodes.)</li>
+      <li>ADDRESS_TYPE_BLS_ACCOUNT = 2 (Account address type with BLS signature scheme.)</li>
+      <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.
 Note: Generating a new Ed25519 address requires the wallet password.)</li>
-  </ul>
+      </ul>
     </td>
   </tr>
   </tbody>
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -4208,7 +4132,6 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
 <p>SignMessage signs an arbitrary message using a wallet's private key.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -4246,7 +4169,6 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -4266,7 +4188,6 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
 <p>SignRawTransaction signs a raw transaction for a specified wallet.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -4297,7 +4218,6 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -4325,7 +4245,6 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
 optionally filtered by a specific address, with pagination support.</p>
 
 <h4>Parameters</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -4351,12 +4270,12 @@ If empty or set to "*", transactions for all addresses in the wallet are include
     <td> numeric</td>
     <td>
   (Enum)Filter transactions by direction relative to the wallet.
-Defaults to any direction if not set.<br>Available values:
-  <ul>
-    <li>TX_DIRECTION_ANY = 0 (include both incoming and outgoing transactions.)</li>
-    <li>TX_DIRECTION_INCOMING = 1 (Include only incoming transactions where the wallet receives funds.)</li>
-    <li>TX_DIRECTION_OUTGOING = 2 (Include only outgoing transactions where the wallet sends funds.)</li>
-  </ul>
+Defaults to any direction if not set.
+      <br>Available values:<ul>
+      <li>TX_DIRECTION_ANY = 0 (include both incoming and outgoing transactions.)</li>
+      <li>TX_DIRECTION_INCOMING = 1 (Include only incoming transactions where the wallet receives funds.)</li>
+      <li>TX_DIRECTION_OUTGOING = 2 (Include only outgoing transactions where the wallet sends funds.)</li>
+      </ul>
     </td>
   </tr>
   <tr>
@@ -4379,7 +4298,6 @@ Defaults to 0 if not set.
 </table>
 
 <h4>Result</h4>
-
 <table class="table table-bordered table-responsive table-sm">
   <thead>
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -4444,16 +4362,16 @@ Defaults to 0 if not set.
     <td class="fw-bold">txs[].payload_type</td>
     <td> numeric</td>
     <td>
-  (Enum)The type of transaction payload.<br>Available values:
-  <ul>
-    <li>PAYLOAD_TYPE_UNSPECIFIED = 0 (Unspecified payload type.)</li>
-    <li>PAYLOAD_TYPE_TRANSFER = 1 (Transfer payload type.)</li>
-    <li>PAYLOAD_TYPE_BOND = 2 (Bond payload type.)</li>
-    <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
-    <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
-    <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
-    <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
-  </ul>
+  (Enum)The type of transaction payload.
+      <br>Available values:<ul>
+      <li>PAYLOAD_TYPE_UNSPECIFIED = 0 (Unspecified payload type.)</li>
+      <li>PAYLOAD_TYPE_TRANSFER = 1 (Transfer payload type.)</li>
+      <li>PAYLOAD_TYPE_BOND = 2 (Bond payload type.)</li>
+      <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
+      <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
+      <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
+      <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
+      </ul>
     </td>
   </tr>
    <tr>
@@ -4633,4 +4551,5 @@ A value of zero means the transaction is unconfirmed and may still in the transa
     </td>
   </tr>
    </tbody>
-</table></div>
+</table>
+</div>

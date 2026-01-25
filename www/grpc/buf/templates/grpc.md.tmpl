@@ -59,7 +59,7 @@ For seamless integration with Pactus, you can use these client libraries:
 <h4>{{.RequestLongType}} <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
 {{- with getMessage .RequestLongType }}
-{{ if .HasFields }}
+{{ if .HasFields -}}
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -70,7 +70,7 @@ For seamless integration with Pactus, you can use these client libraries:
     <td class="fw-bold">{{.Name}}</td>
     <td>{{.Label}} {{.LongType}}</td>
     <td>
-{{- template "field_req_desc" . }}
+{{- template "field_desc" . }}
     </td>
   </tr>
   {{ end -}}
@@ -84,7 +84,7 @@ Request Message has no fields.
 <h4>{{.ResponseLongType}} <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
 
 {{- with getMessage .ResponseLongType }}
-{{ if .HasFields }}
+{{ if .HasFields -}}
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -95,7 +95,7 @@ Request Message has no fields.
     <td class="fw-bold">{{.Name}}</td>
     <td>{{.Label}} {{.LongType}}</td>
     <td>
-{{- template "field_res_desc" . }}
+{{- template "field_desc" . }}
     </td>
   </tr>
   {{$msg0 := .}} {{with getMessage .LongType -}}
@@ -104,7 +104,7 @@ Request Message has no fields.
     <td class="fw-bold">{{$msg0.Name}}{{if $msg0.IsRepeated}}[]{{end}}.{{.Name}}</td>
     <td>{{.Label}} {{.LongType}}</td>
     <td>
-{{- template "field_res_desc" . }}
+{{- template "field_desc" . }}
     </td>
   </tr>
   {{$msg1 := .}} {{with getMessage .LongType -}}
@@ -113,7 +113,7 @@ Request Message has no fields.
     <td class="fw-bold">{{$msg0.Name}}{{if $msg0.IsRepeated}}[]{{end}}.{{$msg1.Name}}{{if $msg1.IsRepeated}}[]{{end}}.{{.Name}}</td>
     <td>{{.Label}} {{.LongType}}</td>
     <td>
-{{- template "field_res_desc" . }}
+{{- template "field_desc" . }}
     </td>
   </tr>
 {{- end}}{{end}}{{end}}{{end}}{{end -}}
