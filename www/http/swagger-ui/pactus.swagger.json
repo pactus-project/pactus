@@ -1235,7 +1235,7 @@
           },
           {
             "name": "address",
-            "description": "Optional: The address to filter transactions.\nIf empty or set to \"*\", transactions for all addresses in the wallet are included.",
+            "description": "Optional: The address to filter transactions.\nIf empty or set to '*', transactions for all addresses in the wallet are included.",
             "in": "query",
             "required": false,
             "type": "string"

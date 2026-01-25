@@ -2438,7 +2438,7 @@ class ListTransactionsRequest extends $pb.GeneratedMessage {
   void clearWalletName() => $_clearField(1);
 
   /// Optional: The address to filter transactions.
-  /// If empty or set to "*", transactions for all addresses in the wallet are included.
+  /// If empty or set to '*', transactions for all addresses in the wallet are included.
   @$pb.TagNumber(2)
   $core.String get address => $_getSZ(1);
   @$pb.TagNumber(2)

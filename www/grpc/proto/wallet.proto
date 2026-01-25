@@ -382,7 +382,7 @@ message ListTransactionsRequest {
   string wallet_name = 1;
 
   // Optional: The address to filter transactions.
-  // If empty or set to "*", transactions for all addresses in the wallet are included.
+  // If empty or set to '*', transactions for all addresses in the wallet are included.
   string address = 2;
 
   // Filter transactions by direction relative to the wallet.

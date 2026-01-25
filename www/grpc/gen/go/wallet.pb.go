@@ -1994,7 +1994,7 @@ type ListTransactionsRequest struct {
 	// The name of the wallet to query transactions for.
 	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
 	// Optional: The address to filter transactions.
-	// If empty or set to "*", transactions for all addresses in the wallet are included.
+	// If empty or set to '*', transactions for all addresses in the wallet are included.
 	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
 	// Filter transactions by direction relative to the wallet.
 	// Defaults to any direction if not set.

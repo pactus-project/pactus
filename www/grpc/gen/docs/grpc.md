@@ -4254,7 +4254,7 @@ optionally filtered by a specific address, with pagination support.</p>
     <td> string</td>
     <td>
   Optional: The address to filter transactions.
-If empty or set to "*", transactions for all addresses in the wallet are included.
+If empty or set to '*', transactions for all addresses in the wallet are included.
     </td>
   </tr>
   <tr>

@@ -1163,7 +1163,7 @@
           "schema": { "type": "string" }
         },{
           "name": "address",
-          "description": "Optional: The address to filter transactions. If empty or set to "*", transactions for all addresses in the wallet are included.",
+          "description": "Optional: The address to filter transactions. If empty or set to '*', transactions for all addresses in the wallet are included.",
           "schema": { "type": "string" }
         },{
           "name": "direction",
