@@ -109,7 +109,7 @@ curl --location 'http://localhost:8545/' \
 <h4>Parameters</h4>
 
 {{- with getMessage .RequestLongType }}
-{{ if .HasFields }}
+{{ if .HasFields -}}
 <table class="table table-bordered table-responsive table-sm">
   <thead>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
@@ -120,7 +120,7 @@ curl --location 'http://localhost:8545/' \
     <td class="fw-bold">{{.SnakeName}}</td>
     <td>{{.Label}} {{.JSONType}}</td>
     <td>
-{{- template "field_req_desc" . }}
+{{- template "field_desc" . }}
     </td>
   </tr>
   {{ end -}}
@@ -133,7 +133,7 @@ Parameters has no fields.
 
 <h4>Result</h4>
 
-{{ with getMessage .ResponseLongType -}}
+{{- with getMessage .ResponseLongType }}
 {{ if .HasFields -}}
 <table class="table table-bordered table-responsive table-sm">
   <thead>
@@ -145,7 +145,7 @@ Parameters has no fields.
     <td class="fw-bold">{{.Name}}</td>
     <td>{{.Label}} {{.JSONType}}</td>
     <td>
-{{- template "field_req_desc" . }}
+{{- template "field_desc" . }}
     </td>
   </tr>
   {{$msg0 := .}} {{with getMessage .LongType -}}
@@ -154,7 +154,7 @@ Parameters has no fields.
     <td class="fw-bold">{{$msg0.Name}}{{if $msg0.IsRepeated}}[]{{end}}.{{.Name}}</td>
     <td>{{.Label}} {{.JSONType}}</td>
     <td>
-{{- template "field_req_desc" . }}
+{{- template "field_desc" . }}
     </td>
   </tr>
   {{$msg1 := .}} {{with getMessage .LongType -}}
@@ -163,7 +163,7 @@ Parameters has no fields.
     <td class="fw-bold">{{$msg0.Name}}{{if $msg0.IsRepeated}}[]{{end}}.{{$msg1.Name}}{{if $msg1.IsRepeated}}[]{{end}}.{{.Name}}</td>
     <td>{{.Label}} {{.JSONType}}</td>
     <td>
-{{- template "field_req_desc" . }}
+{{- template "field_desc" . }}
     </td>
   </tr>
 {{- end}}{{end}}{{end}}{{end}}{{end -}}
@@ -172,5 +172,5 @@ Parameters has no fields.
 {{- else -}}
 Result has no fields.
 {{- end}}{{end}}{{end}}{{end -}}
-{{- end -}}
+{{- end}}
 </div>
