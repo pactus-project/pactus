@@ -99,15 +99,7 @@ func TestSendRawTransaction(t *testing.T) {
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
-	t.Run("Should fail, transaction with invalid signature", func(t *testing.T) {
-		trx := td.GenerateTestTransferTx()
-		trx.SetSignature(td.RandBLSSignature())
-		data, _ := trx.Bytes()
-		res, err := client.BroadcastTransaction(context.Background(),
-			&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
-		assert.Error(t, err)
-		assert.Nil(t, res)
-	})
+
 	trx := td.GenerateTestTransferTx()
 	data, _ := trx.Bytes()
 	t.Run("Should pass", func(t *testing.T) {

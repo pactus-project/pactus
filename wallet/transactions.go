@@ -206,6 +206,25 @@ func (t *transactions) processBlock(blk *block.Block) {
 		return
 	}
 
+	for txID, pendingInfo := range pendingTxs {
+		trx, err := tx.FromBytes(pendingInfo.Data)
+		if err != nil {
+			logger.Warn("failed to deserialize transaction", "error", err, "id", txID)
+
+			continue
+		}
+
+		// TODO: cehck for expired and failed transactions
+
+		// Re-broadcast the transaction
+		_, err = t.provider.SendTx(trx)
+		if err != nil {
+			logger.Warn("failed to broadcast transaction", "error", err, "id", txID, "fee", trx.Fee())
+
+			continue
+		}
+	}
+
 	for _, trx := range blk.Transactions() {
 		txID := trx.ID().String()
 

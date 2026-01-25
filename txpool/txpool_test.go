@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/execution"
+	"github.com/pactus-project/pactus/execution/executor"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/amount"
@@ -330,10 +331,24 @@ func TestEstimatedConsumptionalFee(t *testing.T) {
 func TestAppendInvalidTransaction(t *testing.T) {
 	td := setup(t, nil)
 
-	invTrx := td.GenerateTestTransferTx()
+	t.Run("basic check error", func(t *testing.T) {
+		trx := td.makeValidTransferTx()
+		trx.SetSignature(nil)
 
-	err := td.pool.AppendTx(invTrx)
-	assert.Error(t, err)
+		err := td.pool.AppendTx(trx)
+		assert.ErrorIs(t, err, tx.BasicCheckError{
+			Reason: "no signature",
+		})
+	})
+
+	t.Run("execution error", func(t *testing.T) {
+		invTrx := td.GenerateTestTransferTx()
+
+		err := td.pool.AppendTx(invTrx)
+		assert.ErrorIs(t, err, executor.AccountNotFoundError{
+			Address: invTrx.Payload().Signer(),
+		})
+	})
 }
 
 // TestFullPool tests if the pool prunes the old transactions when it is full.
