@@ -1490,7 +1490,7 @@ pub struct ListTransactionsRequest {
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,
     /// Optional: The address to filter transactions.
-    /// If empty or set to "*", transactions for all addresses in the wallet are included.
+    /// If empty or set to '*', transactions for all addresses in the wallet are included.
     #[prost(string, tag="2")]
     pub address: ::prost::alloc::string::String,
     /// Filter transactions by direction relative to the wallet.

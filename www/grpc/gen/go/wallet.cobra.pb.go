@@ -767,7 +767,7 @@ func _WalletListTransactionsCommand(cfg *client.Config) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "The name of the wallet to query transactions for.")
-	cmd.PersistentFlags().StringVar(&req.Address, cfg.FlagNamer("Address"), "", "Optional: The address to filter transactions.\n If empty or set to \"*\", transactions for all addresses in the wallet are included.")
+	cmd.PersistentFlags().StringVar(&req.Address, cfg.FlagNamer("Address"), "", "Optional: The address to filter transactions.\n If empty or set to '*', transactions for all addresses in the wallet are included.")
 	flag.EnumVar(cmd.PersistentFlags(), &req.Direction, cfg.FlagNamer("Direction"), "Filter transactions by direction relative to the wallet.\n Defaults to any direction if not set.")
 	cmd.PersistentFlags().Int32Var(&req.Count, cfg.FlagNamer("Count"), 0, "Optional: The maximum number of transactions to return.\n Defaults to 10 if not set.")
 	cmd.PersistentFlags().Int32Var(&req.Skip, cfg.FlagNamer("Skip"), 0, "Optional: The number of transactions to skip (for pagination).\n Defaults to 0 if not set.")

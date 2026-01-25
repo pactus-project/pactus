@@ -25639,7 +25639,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     /**
      * <pre>
      * Optional: The address to filter transactions.
-     * If empty or set to "*", transactions for all addresses in the wallet are included.
+     * If empty or set to '*', transactions for all addresses in the wallet are included.
      * </pre>
      *
      * <code>string address = 2 [json_name = "address"];</code>
@@ -25649,7 +25649,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     /**
      * <pre>
      * Optional: The address to filter transactions.
-     * If empty or set to "*", transactions for all addresses in the wallet are included.
+     * If empty or set to '*', transactions for all addresses in the wallet are included.
      * </pre>
      *
      * <code>string address = 2 [json_name = "address"];</code>
@@ -25798,7 +25798,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     /**
      * <pre>
      * Optional: The address to filter transactions.
-     * If empty or set to "*", transactions for all addresses in the wallet are included.
+     * If empty or set to '*', transactions for all addresses in the wallet are included.
      * </pre>
      *
      * <code>string address = 2 [json_name = "address"];</code>
@@ -25820,7 +25820,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     /**
      * <pre>
      * Optional: The address to filter transactions.
-     * If empty or set to "*", transactions for all addresses in the wallet are included.
+     * If empty or set to '*', transactions for all addresses in the wallet are included.
      * </pre>
      *
      * <code>string address = 2 [json_name = "address"];</code>
@@ -26387,7 +26387,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       /**
        * <pre>
        * Optional: The address to filter transactions.
-       * If empty or set to "*", transactions for all addresses in the wallet are included.
+       * If empty or set to '*', transactions for all addresses in the wallet are included.
        * </pre>
        *
        * <code>string address = 2 [json_name = "address"];</code>
@@ -26408,7 +26408,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       /**
        * <pre>
        * Optional: The address to filter transactions.
-       * If empty or set to "*", transactions for all addresses in the wallet are included.
+       * If empty or set to '*', transactions for all addresses in the wallet are included.
        * </pre>
        *
        * <code>string address = 2 [json_name = "address"];</code>
@@ -26430,7 +26430,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       /**
        * <pre>
        * Optional: The address to filter transactions.
-       * If empty or set to "*", transactions for all addresses in the wallet are included.
+       * If empty or set to '*', transactions for all addresses in the wallet are included.
        * </pre>
        *
        * <code>string address = 2 [json_name = "address"];</code>
@@ -26448,7 +26448,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       /**
        * <pre>
        * Optional: The address to filter transactions.
-       * If empty or set to "*", transactions for all addresses in the wallet are included.
+       * If empty or set to '*', transactions for all addresses in the wallet are included.
        * </pre>
        *
        * <code>string address = 2 [json_name = "address"];</code>
@@ -26463,7 +26463,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       /**
        * <pre>
        * Optional: The address to filter transactions.
-       * If empty or set to "*", transactions for all addresses in the wallet are included.
+       * If empty or set to '*', transactions for all addresses in the wallet are included.
        * </pre>
        *
        * <code>string address = 2 [json_name = "address"];</code>
