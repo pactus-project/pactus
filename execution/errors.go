@@ -44,9 +44,9 @@ func (e LockTimeInFutureError) Error() string {
 
 // SignerBannedError is returned when the signer of transaction is banned and its assets is freezed.
 type SignerBannedError struct {
-	addr crypto.Address
+	Address crypto.Address
 }
 
 func (e SignerBannedError) Error() string {
-	return fmt.Sprintf("the signer is banned: %s", e.addr.String())
+	return fmt.Sprintf("the signer is banned: %s", e.Address.String())
 }

@@ -72,10 +72,6 @@ func (s *transactionServer) BroadcastTransaction(_ context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
 	}
 
-	if err := trx.BasicCheck(); err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "couldn't verify transaction: %v", err.Error())
-	}
-
 	if err := s.state.AddPendingTxAndBroadcast(trx); err != nil {
 		return nil, status.Errorf(codes.Canceled, "couldn't add to transaction pool: %v", err.Error())
 	}

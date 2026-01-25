@@ -146,6 +146,12 @@ func (p *txPool) checkFee(trx *tx.Tx) error {
 }
 
 func (p *txPool) checkTx(trx *tx.Tx) error {
+	if err := trx.BasicCheck(); err != nil {
+		p.logger.Debug("invalid transaction", "trx", trx, "error", err)
+
+		return err
+	}
+
 	if err := execution.CheckAndExecute(trx, p.sbx, false); err != nil {
 		p.logger.Debug("invalid transaction", "trx", trx, "error", err)
 
