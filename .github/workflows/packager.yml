@@ -24,18 +24,24 @@ jobs:
         with:
           fetch-depth: 0
 
-      # `exit 1`: all concurrent actions are canceled and future actions are skipped.
-      # Read more here: https://docs.github.com/en/actions/sharing-automations/creating-actions/setting-exit-codes-for-actions
-      - name: Checkout latest release tag
+      - name: Determine Release Type
         run: |
           LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-          if [[ ! "$LATEST_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Tag $LATEST_TAG is not a final release tag (vX.Y.Z)."
+          echo "Latest tag: $LATEST_TAG"
+
+          if [[ "$LATEST_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Final release detected."
+            DRY_RUN=false
+          elif [[ "$LATEST_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-rc[0-9]+$ ]]; then
+            echo "Pre-release detected, using dry-run."
+            DRY_RUN=true
+          else
+            echo "Tag $LATEST_TAG is invalid."
             exit 1
           fi
 
-          echo "Latest tag (Version): $LATEST_TAG"
           echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+          echo "DRY_RUN=$DRY_RUN" >> $GITHUB_ENV
           git checkout $LATEST_TAG
 
       - name: Setup Node.js
@@ -107,7 +113,13 @@ jobs:
           registry-url: "https://registry.npmjs.org"
 
       - name: Publish to npm
-        run: npm publish --access public
+        run: |
+          if [[ "${{ env.DRY_RUN }}" == "true" ]]; then
+            echo "Dry-run: npm publish --access public --dry-run"
+            npm publish --access public --dry-run
+          else
+            npm publish --access public
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
 
@@ -133,7 +145,13 @@ jobs:
           registry-url: "https://registry.npmjs.org"
 
       - name: Publish to npm
-        run: npm publish --access public
+        run: |
+          if [[ "${{ env.DRY_RUN }}" == "true" ]]; then
+            echo "Dry-run: npm publish --access public --dry-run"
+            npm publish --access public --dry-run
+          else
+            npm publish --access public
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
 
@@ -163,6 +181,7 @@ jobs:
           python3 -m build
 
       - name: Publish distribution to PyPI
+        if: ${{ env.DRY_RUN == 'false' }}
         uses: pypa/gh-action-pypi-publish@release/v1
 
   publish-pypi-jsonrpc:
@@ -191,6 +210,7 @@ jobs:
           python3 -m build
 
       - name: Publish distribution to PyPI
+        if: ${{ env.DRY_RUN == 'false' }}
         uses: pypa/gh-action-pypi-publish@release/v1
 
   publish-crates-grpc:
@@ -211,7 +231,13 @@ jobs:
           name: package-rust-grpc
 
       - name: Publish to crates.io
-        run: cargo publish
+        run: |
+          if [[ "${{ env.DRY_RUN }}" == "true" ]]; then
+            echo "Dry-run: cargo publish --dry-run"
+            cargo publish --dry-run
+          else
+            cargo publish
+          fi
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
@@ -233,7 +259,12 @@ jobs:
           name: package-rust-jsonrpc
 
       - name: Publish to crates.io
-        run: cargo publish
+        run: |
+          if [[ "${{ env.DRY_RUN }}" == "true" ]]; then
+            echo "Dry-run: cargo publish --dry-run"
+            cargo publish --dry-run
+          else
+            cargo publish
+          fi
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-
