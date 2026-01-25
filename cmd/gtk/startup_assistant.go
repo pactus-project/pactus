@@ -20,6 +20,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/downloader"
 	"github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/wallet/provider/remote"
 )
 
 type assistantFunc func(assistant *gtk.Assistant, content gtk.IWidget, name,
@@ -33,7 +34,7 @@ func setMargin(widget gtk.IWidget, top, bottom, start, end int) {
 }
 
 //nolint:all  // complexity can't be reduced more. It needs to refactor.
-func startupAssistant(ctx context.Context, workingDir string, chainType genesis.ChainType) bool {
+func startupAssistant(ctx context.Context, workingDir string, chain genesis.ChainType) bool {
 	successful := false
 	assistant, err := gtk.AssistantNew()
 	gtkutil.FatalErrorCheck(err)
@@ -224,7 +225,7 @@ func startupAssistant(ctx context.Context, workingDir string, chainType genesis.
 				numValidators := gtkutil.ComboBoxActiveValue(comboNumValidators)
 				walletPassword := gtkutil.GetEntryText(entryPassword)
 
-				nodeWallet, rewardAddr, err = cmd.CreateNode(ctx, numValidators, chainType, workingDir, mnemonic, walletPassword)
+				nodeWallet, rewardAddr, err = cmd.CreateNode(ctx, numValidators, chain, workingDir, mnemonic, walletPassword)
 				if err != nil {
 					gtkutil.ShowError(err)
 
@@ -249,11 +250,7 @@ func startupAssistant(ctx context.Context, workingDir string, chainType genesis.
 							snapshotURL := cmd.DefaultSnapshotURL // TODO: make me optional...
 
 							storeDir := filepath.Join(workingDir, "data")
-							importer, err := cmd.NewImporter(
-								chainType,
-								snapshotURL,
-								storeDir,
-							)
+							importer, err := cmd.NewImporter(chain, snapshotURL, storeDir)
 							if err != nil {
 								gtkutil.ShowError(err)
 
@@ -398,6 +395,10 @@ func startupAssistant(ctx context.Context, workingDir string, chainType genesis.
 				go func() {
 					walletPassword := gtkutil.GetEntryText(entryPassword)
 
+					provider, err := remote.NewRemoteBlockchainProvider(ctx, chain, remote.WithTimeout(2*time.Second))
+					gtkutil.FatalErrorCheck(err)
+					nodeWallet.SetProvider(provider)
+
 					recoveryIndex := 0
 					err = nodeWallet.RecoveryAddresses(recoveryCtx, walletPassword, func(addr string) {
 						glib.IdleAdd(func() {
@@ -448,7 +449,7 @@ func startupAssistant(ctx context.Context, workingDir string, chainType genesis.
 			nodeInfo += fmt.Sprintf("%s\n", rewardAddr)
 
 			nodeInfo += fmt.Sprintf("\n📁 Working Directory: %s", workingDir)
-			nodeInfo += fmt.Sprintf("\n🌐 Network: %s\n", chainType.String())
+			nodeInfo += fmt.Sprintf("\n🌐 Network: %s\n", chain.String())
 
 			gtkutil.SetTextViewContent(txtNodeInfo, nodeInfo)
 		}
@@ -459,6 +460,8 @@ func startupAssistant(ctx context.Context, workingDir string, chainType genesis.
 	assistant.ShowAll()
 
 	gtk.Main()
+
+	nodeWallet.Close()
 
 	return successful
 }
