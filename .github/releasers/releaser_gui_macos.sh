@@ -34,7 +34,7 @@ cd ${ROOT_DIR}
 CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-daemon ./cmd/daemon
 CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-wallet ./cmd/wallet
 CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-shell ./cmd/shell
-CGO_ENABLED=1 go build -ldflags "-s -w" -trimpath -tags gtk -o ${BUILD_DIR}/pactus-gui ./cmd/gtk
+CGO_ENABLED=1 go build -ldflags "-s -w -extldflags -headerpad_max_install_names" -trimpath -tags gtk -o ${BUILD_DIR}/pactus-gui ./cmd/gtk
 
 
 echo "Installing gtk-mac-bundler"
