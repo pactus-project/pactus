@@ -218,8 +218,6 @@ jobs:
     name: Publish pactus-grpc package to crates.io
     needs: packager
     runs-on: ubuntu-latest
-    container:
-      image: rust:1.87
 
     environment:
       name: crates.io
@@ -230,6 +228,10 @@ jobs:
         uses: actions/download-artifact@v6
         with:
           name: package-rust-grpc
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.90.0
 
       - name: Publish to crates.io
         run: |
@@ -245,8 +247,6 @@ jobs:
     name: Publish pactus-jsonrpc package to crates.io
     needs: packager
     runs-on: ubuntu-latest
-    container:
-      image: rust:1.87
 
     environment:
       name: crates.io
@@ -257,6 +257,10 @@ jobs:
         uses: actions/download-artifact@v6
         with:
           name: package-rust-jsonrpc
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.90.0
 
       - name: Publish to crates.io
         run: |
