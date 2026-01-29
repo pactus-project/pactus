@@ -1,19 +1,18 @@
 [package]
-name = "pactus-grpc"
-version = "{{ VERSION }}"
-edition = "2021"
+name        = "pactus-grpc"
+version     = "{{ VERSION }}"
+edition     = "2021"
 description = "Rust client for interacting with the Pactus blockchain via gRPC"
-authors = ["Pactus Development Team <info@pactus.org>"]
-license = "MIT"
-homepage = "https://pactus.org"
-repository = "https://github.com/pactus-project/pactus"
-keywords = ["pactus", "blockchain", "grpc"]
+authors     = [ "Pactus Development Team <info@pactus.org>" ]
+license     = "MIT"
+homepage    = "https://pactus.org"
+repository  = "https://github.com/pactus-project/pactus"
+keywords    = [ "pactus", "blockchain", "grpc" ]
 
 [dependencies]
-tonic = { version = "0.12", default-features = false, features = ["transport", "codegen", "prost"] }
-prost = { version = "0.13", default-features = false, features = ["derive", "std"] }
+tonic = { version = "0.14", default-features = false, features = ["transport", "codegen"] }
+prost = { version = "0.14", default-features = false, features = ["derive", "std"] }
+tonic-prost = { version = "0.14", default-features = false, features = [] }
 serde = { version = "1.0", default-features = false, features = [] }
-serde_json = { version = "1.0", default-features = false, features = ["std"] }
 async-trait = { version = "0.1", default-features = false, features = [] }
 pbjson = { version = "0.8", default-features = false, features = [] }
-

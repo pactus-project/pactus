@@ -69,11 +69,22 @@ plugins:
   - remote: buf.build/protocolbuffers/pyi:v33.2
     out: ./gen/python
     # https://buf.build/community/neoeinstein-prost
+    # https://github.com/neoeinstein/protoc-gen-prost
   - remote: buf.build/community/neoeinstein-prost:v0.5.0
     out: ./gen/rust
+    opt:
+      - flat_output_dir=true
+      - compile_well_known_types=true
     # https://buf.build/community/neoeinstein-prost-serde
+    # https://github.com/neoeinstein/protoc-gen-prost
   - remote: buf.build/community/neoeinstein-prost-serde:v0.4.0
     out: ./gen/rust
+    opt:
+      - flat_output_dir=true
     # https://buf.build/community/neoeinstein-tonic
+    # https://github.com/neoeinstein/protoc-gen-prost
   - remote: buf.build/community/neoeinstein-tonic:v0.5.0
     out: ./gen/rust
+    opt:
+      - flat_output_dir=true
+      - compile_well_known_types=true
