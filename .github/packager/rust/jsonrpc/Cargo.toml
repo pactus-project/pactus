@@ -13,4 +13,4 @@ keywords    = [ "pactus", "blockchain", "json-rpc" ]
 jsonrpsee = { version = "0.26", default-features = false, features = ["http-client"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "std"] }
 serde_json = { version = "1.0", default-features = false, features = ["std"] }
-derive_builder = { version = "0.20", default-features = false, features = [] }
+derive_builder = { version = "0.20", default-features = false, features = ["std"] }
