@@ -18,6 +18,8 @@ jobs:
   packager:
     runs-on: ubuntu-latest
     if: github.event.workflow_run.conclusion == 'success'
+    outputs:
+      dry_run: ${{ steps.release-type.outputs.dry_run }}
 
     steps:
       - uses: actions/checkout@v6
@@ -25,23 +27,24 @@ jobs:
           fetch-depth: 0
 
       - name: Determine Release Type
+        id: release-type
         run: |
           LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
           echo "Latest tag: $LATEST_TAG"
 
           if [[ "$LATEST_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Final release detected."
+            echo "🚀 Final release detected."
             DRY_RUN=false
           elif [[ "$LATEST_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-rc[0-9]+$ ]]; then
-            echo "Pre-release detected, using dry-run."
+            echo "🧪 Pre-release detected, using dry-run."
             DRY_RUN=true
           else
             echo "Tag $LATEST_TAG is invalid."
             exit 1
           fi
 
+          echo "dry_run=$DRY_RUN" >> "$GITHUB_OUTPUT"
           echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
-          echo "DRY_RUN=$DRY_RUN" >> $GITHUB_ENV
           git checkout $LATEST_TAG
 
       - name: Setup Node.js
@@ -114,8 +117,7 @@ jobs:
 
       - name: Publish to npm
         run: |
-          if [[ "${{ env.DRY_RUN }}" == "true" ]]; then
-            echo "Dry-run: npm publish --access public --dry-run"
+          if [[ "${{ needs.packager.outputs.dry_run }}" == "true" ]]; then
             npm publish --access public --dry-run
           else
             npm publish --access public
@@ -146,8 +148,7 @@ jobs:
 
       - name: Publish to npm
         run: |
-          if [[ "${{ env.DRY_RUN }}" == "true" ]]; then
-            echo "Dry-run: npm publish --access public --dry-run"
+          if [[ "${{ needs.packager.outputs.dry_run }}" == "true" ]]; then
             npm publish --access public --dry-run
           else
             npm publish --access public
@@ -181,7 +182,7 @@ jobs:
           python3 -m build
 
       - name: Publish distribution to PyPI
-        if: ${{ env.DRY_RUN == 'false' }}
+        if: needs.packager.outputs.dry_run == 'false'
         uses: pypa/gh-action-pypi-publish@release/v1
 
   publish-pypi-jsonrpc:
@@ -210,7 +211,7 @@ jobs:
           python3 -m build
 
       - name: Publish distribution to PyPI
-        if: ${{ env.DRY_RUN == 'false' }}
+        if: needs.packager.outputs.dry_run == 'false'
         uses: pypa/gh-action-pypi-publish@release/v1
 
   publish-crates-grpc:
@@ -232,8 +233,7 @@ jobs:
 
       - name: Publish to crates.io
         run: |
-          if [[ "${{ env.DRY_RUN }}" == "true" ]]; then
-            echo "Dry-run: cargo publish --dry-run"
+          if [[ "${{ needs.packager.outputs.dry_run }}" == "true" ]]; then
             cargo publish --dry-run
           else
             cargo publish
@@ -260,8 +260,7 @@ jobs:
 
       - name: Publish to crates.io
         run: |
-          if [[ "${{ env.DRY_RUN }}" == "true" ]]; then
-            echo "Dry-run: cargo publish --dry-run"
+          if [[ "${{ needs.packager.outputs.dry_run }}" == "true" ]]; then
             cargo publish --dry-run
           else
             cargo publish
