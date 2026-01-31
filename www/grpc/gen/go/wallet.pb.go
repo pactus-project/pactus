@@ -1670,7 +1670,9 @@ type GetWalletInfoResponse struct {
 	// The storage driver used by the wallet (e.g., SQLite, Legacy JSON ).
 	Driver string `protobuf:"bytes,8,opt,name=driver,proto3" json:"driver,omitempty"`
 	// Path to the wallet file or storage location.
-	Path          string `protobuf:"bytes,9,opt,name=path,proto3" json:"path,omitempty"`
+	Path string `protobuf:"bytes,9,opt,name=path,proto3" json:"path,omitempty"`
+	// Unix timestamp of the last update.
+	LastUpdate    int64 `protobuf:"varint,10,opt,name=last_update,json=lastUpdate,proto3" json:"last_update,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1766,6 +1768,13 @@ func (x *GetWalletInfoResponse) GetPath() string {
 		return x.Path
 	}
 	return ""
+}
+
+func (x *GetWalletInfoResponse) GetLastUpdate() int64 {
+	if x != nil {
+		return x.LastUpdate
+	}
+	return 0
 }
 
 // Request message for listing wallet addresses.
@@ -2238,7 +2247,7 @@ const file_wallet_proto_rawDesc = "" +
 	"\awallets\x18\x01 \x03(\tR\awallets\"7\n" +
 	"\x14GetWalletInfoRequest\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
-	"walletName\"\x8a\x02\n" +
+	"walletName\"\xab\x02\n" +
 	"\x15GetWalletInfoResponse\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
 	"walletName\x12\x18\n" +
@@ -2251,7 +2260,10 @@ const file_wallet_proto_rawDesc = "" +
 	"\vdefault_fee\x18\a \x01(\x03R\n" +
 	"defaultFee\x12\x16\n" +
 	"\x06driver\x18\b \x01(\tR\x06driver\x12\x12\n" +
-	"\x04path\x18\t \x01(\tR\x04path\"q\n" +
+	"\x04path\x18\t \x01(\tR\x04path\x12\x1f\n" +
+	"\vlast_update\x18\n" +
+	" \x01(\x03R\n" +
+	"lastUpdate\"q\n" +
 	"\x14ListAddressesRequest\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
 	"walletName\x128\n" +

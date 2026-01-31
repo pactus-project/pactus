@@ -5288,7 +5288,8 @@ uuid: jspb.Message.getFieldWithDefault(msg, 5, ""),
 createdAt: jspb.Message.getFieldWithDefault(msg, 6, 0),
 defaultFee: jspb.Message.getFieldWithDefault(msg, 7, 0),
 driver: jspb.Message.getFieldWithDefault(msg, 8, ""),
-path: jspb.Message.getFieldWithDefault(msg, 9, "")
+path: jspb.Message.getFieldWithDefault(msg, 9, ""),
+lastUpdate: jspb.Message.getFieldWithDefault(msg, 10, 0)
   };
 
   if (includeInstance) {
@@ -5360,6 +5361,10 @@ proto.pactus.GetWalletInfoResponse.deserializeBinaryFromReader = function(msg, r
     case 9:
       var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setPath(value);
+      break;
+    case 10:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setLastUpdate(value);
       break;
     default:
       reader.skipField();
@@ -5450,6 +5455,13 @@ proto.pactus.GetWalletInfoResponse.serializeBinaryToWriter = function(message, w
   if (f.length > 0) {
     writer.writeString(
       9,
+      f
+    );
+  }
+  f = message.getLastUpdate();
+  if (f !== 0) {
+    writer.writeInt64(
+      10,
       f
     );
   }
@@ -5615,6 +5627,24 @@ proto.pactus.GetWalletInfoResponse.prototype.getPath = function() {
  */
 proto.pactus.GetWalletInfoResponse.prototype.setPath = function(value) {
   return jspb.Message.setProto3StringField(this, 9, value);
+};
+
+
+/**
+ * optional int64 last_update = 10;
+ * @return {number}
+ */
+proto.pactus.GetWalletInfoResponse.prototype.getLastUpdate = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetWalletInfoResponse} returns this
+ */
+proto.pactus.GetWalletInfoResponse.prototype.setLastUpdate = function(value) {
+  return jspb.Message.setProto3IntField(this, 10, value);
 };
 
 
