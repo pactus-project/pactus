@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.11.1](https://github.com/pactus-project/pactus/compare/v1.11.0...v1.11.1) (2026-02-01)
+
+### Fix
+
+- **gtk**: close wallet on node startup ([#2057](https://github.com/pactus-project/pactus/pull/2057))
+
 ## [1.11.0](https://github.com/pactus-project/pactus/compare/v1.10.0...v1.11.0) (2026-01-25)
 
 ### Feat
