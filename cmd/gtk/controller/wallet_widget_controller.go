@@ -107,6 +107,57 @@ func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) 
 		})
 	})
 
+	// Context menu actions.
+	c.view.MenuItemUpdateLabel.Connect("activate", func(_ *gtk.MenuItem) {
+		addr := c.selectedAddress()
+		if addr != "" && c.handlers.OnUpdateLabel != nil {
+			c.handlers.OnUpdateLabel(addr)
+		}
+	})
+	c.view.MenuItemDetails.Connect("activate", func(_ *gtk.MenuItem) {
+		addr := c.selectedAddress()
+		if addr != "" && c.handlers.OnShowDetails != nil {
+			c.handlers.OnShowDetails(addr)
+		}
+	})
+	c.view.MenuItemPrivateKey.Connect("activate", func(_ *gtk.MenuItem) {
+		addr := c.selectedAddress()
+		if addr != "" && c.handlers.OnShowPrivateKey != nil {
+			c.handlers.OnShowPrivateKey(addr)
+		}
+	})
+
+	// Right-click popup.
+	c.view.TreeViewWallet.Connect("button-press-event", func(_ *gtk.TreeView, event *gdk.Event) bool {
+		eventButton := gdk.EventButtonNewFromEvent(event)
+		if eventButton.Type() == gdk.EVENT_BUTTON_PRESS && eventButton.Button() == gdk.BUTTON_SECONDARY {
+			c.view.ContextMenu.PopupAtPointer(event)
+		}
+
+		return false
+	})
+
+	// Double-click opens details.
+	c.view.TreeViewWallet.Connect("row-activated", func(_ *gtk.TreeView, _ *gtk.TreePath, _ *gtk.TreeViewColumn) {
+		addr := c.selectedAddress()
+		if addr != "" && c.handlers.OnShowDetails != nil {
+			c.handlers.OnShowDetails(addr)
+		}
+	})
+
+	walletInfo, _ := c.model.WalletInfo()
+	lastUpdate := walletInfo.LastUpdate
+	c.timeoutID = glib.TimeoutAdd(2000, func() bool {
+		walletInfo, _ := c.model.WalletInfo()
+
+		if lastUpdate != walletInfo.LastUpdate {
+			c.Refresh()
+
+			lastUpdate = walletInfo.LastUpdate
+		}
+
+		return true
+	})
 	c.Refresh()
 
 	return nil
