@@ -328,6 +328,9 @@ message GetWalletInfoResponse {
 
   // Path to the wallet file or storage location.
   string path = 9;
+
+  // Unix timestamp of the last update.
+  int64 last_update = 10;
 }
 
 // Request message for listing wallet addresses.

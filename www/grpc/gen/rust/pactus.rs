@@ -1442,6 +1442,9 @@ pub struct GetWalletInfoResponse {
     /// Path to the wallet file or storage location.
     #[prost(string, tag="9")]
     pub path: ::prost::alloc::string::String,
+    /// Unix timestamp of the last update.
+    #[prost(int64, tag="10")]
+    pub last_update: i64,
 }
 /// Request message for listing wallet addresses.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]

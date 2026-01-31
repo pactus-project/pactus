@@ -7395,6 +7395,9 @@ impl serde::Serialize for GetWalletInfoResponse {
         if !self.path.is_empty() {
             len += 1;
         }
+        if self.last_update != 0 {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.GetWalletInfoResponse", len)?;
         if !self.wallet_name.is_empty() {
             struct_ser.serialize_field("walletName", &self.wallet_name)?;
@@ -7427,6 +7430,11 @@ impl serde::Serialize for GetWalletInfoResponse {
         if !self.path.is_empty() {
             struct_ser.serialize_field("path", &self.path)?;
         }
+        if self.last_update != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("lastUpdate", ToString::to_string(&self.last_update).as_str())?;
+        }
         struct_ser.end()
     }
 }
@@ -7449,6 +7457,8 @@ impl<'de> serde::Deserialize<'de> for GetWalletInfoResponse {
             "defaultFee",
             "driver",
             "path",
+            "last_update",
+            "lastUpdate",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -7462,6 +7472,7 @@ impl<'de> serde::Deserialize<'de> for GetWalletInfoResponse {
             DefaultFee,
             Driver,
             Path,
+            LastUpdate,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -7492,6 +7503,7 @@ impl<'de> serde::Deserialize<'de> for GetWalletInfoResponse {
                             "defaultFee" | "default_fee" => Ok(GeneratedField::DefaultFee),
                             "driver" => Ok(GeneratedField::Driver),
                             "path" => Ok(GeneratedField::Path),
+                            "lastUpdate" | "last_update" => Ok(GeneratedField::LastUpdate),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -7520,6 +7532,7 @@ impl<'de> serde::Deserialize<'de> for GetWalletInfoResponse {
                 let mut default_fee__ = None;
                 let mut driver__ = None;
                 let mut path__ = None;
+                let mut last_update__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
@@ -7582,6 +7595,14 @@ impl<'de> serde::Deserialize<'de> for GetWalletInfoResponse {
                             }
                             path__ = Some(map_.next_value()?);
                         }
+                        GeneratedField::LastUpdate => {
+                            if last_update__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("lastUpdate"));
+                            }
+                            last_update__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
                     }
                 }
                 Ok(GetWalletInfoResponse {
@@ -7594,6 +7615,7 @@ impl<'de> serde::Deserialize<'de> for GetWalletInfoResponse {
                     default_fee: default_fee__.unwrap_or_default(),
                     driver: driver__.unwrap_or_default(),
                     path: path__.unwrap_or_default(),
+                    last_update: last_update__.unwrap_or_default(),
                 })
             }
         }

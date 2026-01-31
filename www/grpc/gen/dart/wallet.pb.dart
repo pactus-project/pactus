@@ -1947,6 +1947,7 @@ class GetWalletInfoResponse extends $pb.GeneratedMessage {
     $fixnum.Int64? defaultFee,
     $core.String? driver,
     $core.String? path,
+    $fixnum.Int64? lastUpdate,
   }) {
     final result = create();
     if (walletName != null) result.walletName = walletName;
@@ -1958,6 +1959,7 @@ class GetWalletInfoResponse extends $pb.GeneratedMessage {
     if (defaultFee != null) result.defaultFee = defaultFee;
     if (driver != null) result.driver = driver;
     if (path != null) result.path = path;
+    if (lastUpdate != null) result.lastUpdate = lastUpdate;
     return result;
   }
 
@@ -1983,6 +1985,7 @@ class GetWalletInfoResponse extends $pb.GeneratedMessage {
     ..aInt64(7, _omitFieldNames ? '' : 'defaultFee')
     ..aOS(8, _omitFieldNames ? '' : 'driver')
     ..aOS(9, _omitFieldNames ? '' : 'path')
+    ..aInt64(10, _omitFieldNames ? '' : 'lastUpdate')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -2094,6 +2097,16 @@ class GetWalletInfoResponse extends $pb.GeneratedMessage {
   $core.bool hasPath() => $_has(8);
   @$pb.TagNumber(9)
   void clearPath() => $_clearField(9);
+
+  /// Unix timestamp of the last update.
+  @$pb.TagNumber(10)
+  $fixnum.Int64 get lastUpdate => $_getI64(9);
+  @$pb.TagNumber(10)
+  set lastUpdate($fixnum.Int64 value) => $_setInt64(9, value);
+  @$pb.TagNumber(10)
+  $core.bool hasLastUpdate() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearLastUpdate() => $_clearField(10);
 }
 
 /// Request message for listing wallet addresses.

@@ -2496,6 +2496,11 @@
         "path": {
           "type": "string",
           "description": "Path to the wallet file or storage location."
+        },
+        "lastUpdate": {
+          "type": "string",
+          "format": "int64",
+          "description": "Unix timestamp of the last update."
         }
       },
       "description": "Response message contains wallet details."

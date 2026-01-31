@@ -485,6 +485,7 @@ const GetWalletInfoResponse$json = {
     {'1': 'default_fee', '3': 7, '4': 1, '5': 3, '10': 'defaultFee'},
     {'1': 'driver', '3': 8, '4': 1, '5': 9, '10': 'driver'},
     {'1': 'path', '3': 9, '4': 1, '5': 9, '10': 'path'},
+    {'1': 'last_update', '3': 10, '4': 1, '5': 3, '10': 'lastUpdate'},
   ],
 };
 
@@ -494,7 +495,8 @@ final $typed_data.Uint8List getWalletInfoResponseDescriptor = $convert.base64Dec
     'USGAoHdmVyc2lvbhgCIAEoBVIHdmVyc2lvbhIYCgduZXR3b3JrGAMgASgJUgduZXR3b3JrEhwK'
     'CWVuY3J5cHRlZBgEIAEoCFIJZW5jcnlwdGVkEhIKBHV1aWQYBSABKAlSBHV1aWQSHQoKY3JlYX'
     'RlZF9hdBgGIAEoA1IJY3JlYXRlZEF0Eh8KC2RlZmF1bHRfZmVlGAcgASgDUgpkZWZhdWx0RmVl'
-    'EhYKBmRyaXZlchgIIAEoCVIGZHJpdmVyEhIKBHBhdGgYCSABKAlSBHBhdGg=');
+    'EhYKBmRyaXZlchgIIAEoCVIGZHJpdmVyEhIKBHBhdGgYCSABKAlSBHBhdGgSHwoLbGFzdF91cG'
+    'RhdGUYCiABKANSCmxhc3RVcGRhdGU=');
 
 @$core.Deprecated('Use listAddressesRequestDescriptor instead')
 const ListAddressesRequest$json = {

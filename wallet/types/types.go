@@ -22,6 +22,7 @@ type WalletInfo struct {
 	Encrypted  bool
 	Neutered   bool
 	CreatedAt  time.Time
+	LastUpdate time.Time
 }
 
 // AddressInfo represents the information about a wallet address.

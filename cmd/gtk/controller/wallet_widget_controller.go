@@ -150,14 +150,15 @@ func (c *WalletWidgetController) Bind(h WalletWidgetHandlers) {
 		}
 	})
 
-	totalBalance1, _ := c.model.TotalBalance()
-	c.timeoutID = glib.TimeoutAdd(15000, func() bool {
-		totalBalance2, _ := c.model.TotalBalance()
+	walletInfo, _ := c.model.WalletInfo()
+	lastUpdate := walletInfo.LastUpdate
+	c.timeoutID = glib.TimeoutAdd(2000, func() bool {
+		walletInfo, _ := c.model.WalletInfo()
 
-		if totalBalance1 != totalBalance2 {
+		if lastUpdate != walletInfo.LastUpdate {
 			c.Refresh()
 
-			totalBalance1 = totalBalance2
+			lastUpdate = walletInfo.LastUpdate
 		}
 
 		return true
