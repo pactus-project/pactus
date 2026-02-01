@@ -4311,51 +4311,89 @@ Defaults to 0 if not set.
   </tr>
    <tr>
     <td class="fw-bold">txs</td>
-    <td>repeated object (TransactionInfo)</td>
+    <td>repeated object (WalletTransactionInfo)</td>
     <td>
   List of transactions for the wallet, filtered by the specified address if provided.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">txs[].id</td>
+    <td class="fw-bold">txs[].no</td>
+    <td> numeric</td>
+    <td>
+  A sequence number for the transaction in the wallet.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">txs[].tx_id</td>
     <td> string</td>
     <td>
   The unique ID of the transaction.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">txs[].data</td>
+    <td class="fw-bold">txs[].sender</td>
     <td> string</td>
     <td>
-  The raw transaction data in hexadecimal format.
+  The sender's address.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">txs[].version</td>
-    <td> numeric</td>
+    <td class="fw-bold">txs[].receiver</td>
+    <td> string</td>
     <td>
-  The version of the transaction.
+  The receiver's address.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">txs[].lock_time</td>
+    <td class="fw-bold">txs[].direction</td>
     <td> numeric</td>
     <td>
-  The lock time for the transaction.
+  (Enum)The direction of the transaction relative to the wallet.
+      <br>Available values:<ul>
+      <li>TX_DIRECTION_ANY = 0 (include both incoming and outgoing transactions.)</li>
+      <li>TX_DIRECTION_INCOMING = 1 (Include only incoming transactions where the wallet receives funds.)</li>
+      <li>TX_DIRECTION_OUTGOING = 2 (Include only outgoing transactions where the wallet sends funds.)</li>
+      </ul>
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">txs[].value</td>
+    <td class="fw-bold">txs[].amount</td>
     <td> numeric</td>
     <td>
-  The value of the transaction in NanoPAC.
+  The amount involved in the transaction in NanoPAC.
     </td>
   </tr>
    <tr>
     <td class="fw-bold">txs[].fee</td>
     <td> numeric</td>
     <td>
-  The fee for the transaction in NanoPAC.
+  The transaction fee in NanoPAC.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">txs[].memo</td>
+    <td> string</td>
+    <td>
+  A memo string for the transaction.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">txs[].status</td>
+    <td> numeric</td>
+    <td>
+  (Enum)The current status of the transaction.
+      <br>Available values:<ul>
+      <li>TRANSACTION_STATUS_PENDING = 0 (Pending status for transactions in the mempool.)</li>
+      <li>TRANSACTION_STATUS_CONFIRMED = 1 (Confirmed status for transactions included in a block.)</li>
+      <li>TRANSACTION_STATUS_FAILED = -1 (Failed status for transactions that were not successful.)</li>
+      </ul>
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">txs[].block_height</td>
+    <td> numeric</td>
+    <td>
+  The block height containing the transaction.
     </td>
   </tr>
    <tr>
@@ -4375,179 +4413,31 @@ Defaults to 0 if not set.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">txs[].transfer</td>
-    <td> object (PayloadTransfer)</td>
+    <td class="fw-bold">txs[].data</td>
+    <td> string</td>
     <td>
-  (OneOf)Transfer transaction payload.
+  The raw transaction data.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">txs[].transfer.sender</td>
+    <td class="fw-bold">txs[].comment</td>
     <td> string</td>
     <td>
-  The sender's address.
+  A comment associated with the transaction in the wallet.
     </td>
-  </tr><tr>
-    <td class="fw-bold">txs[].transfer.receiver</td>
-    <td> string</td>
-    <td>
-  The receiver's address.
-    </td>
-  </tr><tr>
-    <td class="fw-bold">txs[].transfer.amount</td>
+  </tr>
+   <tr>
+    <td class="fw-bold">txs[].created_at</td>
     <td> numeric</td>
     <td>
-  The amount to be transferred in NanoPAC.
-    </td>
-  </tr><tr>
-    <td class="fw-bold">txs[].bond</td>
-    <td> object (PayloadBond)</td>
-    <td>
-  (OneOf)Bond transaction payload.
+  Unix timestamp of when the transaction was created.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">txs[].bond.sender</td>
-    <td> string</td>
-    <td>
-  The sender's address.
-    </td>
-  </tr><tr>
-    <td class="fw-bold">txs[].bond.receiver</td>
-    <td> string</td>
-    <td>
-  The receiver's address.
-    </td>
-  </tr><tr>
-    <td class="fw-bold">txs[].bond.stake</td>
+    <td class="fw-bold">txs[].updated_at</td>
     <td> numeric</td>
     <td>
-  The stake amount in NanoPAC.
-    </td>
-  </tr><tr>
-    <td class="fw-bold">txs[].bond.public_key</td>
-    <td> string</td>
-    <td>
-  The public key of the validator.
-    </td>
-  </tr><tr>
-    <td class="fw-bold">txs[].sortition</td>
-    <td> object (PayloadSortition)</td>
-    <td>
-  (OneOf)Sortition transaction payload.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">txs[].sortition.address</td>
-    <td> string</td>
-    <td>
-  The validator address associated with the sortition proof.
-    </td>
-  </tr><tr>
-    <td class="fw-bold">txs[].sortition.proof</td>
-    <td> string</td>
-    <td>
-  The proof for the sortition.
-    </td>
-  </tr><tr>
-    <td class="fw-bold">txs[].unbond</td>
-    <td> object (PayloadUnbond)</td>
-    <td>
-  (OneOf)Unbond transaction payload.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">txs[].unbond.validator</td>
-    <td> string</td>
-    <td>
-  The address of the validator to unbond from.
-    </td>
-  </tr><tr>
-    <td class="fw-bold">txs[].withdraw</td>
-    <td> object (PayloadWithdraw)</td>
-    <td>
-  (OneOf)Withdraw transaction payload.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">txs[].withdraw.validator_address</td>
-    <td> string</td>
-    <td>
-  The address of the validator to withdraw from.
-    </td>
-  </tr><tr>
-    <td class="fw-bold">txs[].withdraw.account_address</td>
-    <td> string</td>
-    <td>
-  The address of the account to withdraw to.
-    </td>
-  </tr><tr>
-    <td class="fw-bold">txs[].withdraw.amount</td>
-    <td> numeric</td>
-    <td>
-  The withdrawal amount in NanoPAC.
-    </td>
-  </tr><tr>
-    <td class="fw-bold">txs[].batch_transfer</td>
-    <td> object (PayloadBatchTransfer)</td>
-    <td>
-  (OneOf)Batch Transfer transaction payload.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">txs[].batch_transfer.sender</td>
-    <td> string</td>
-    <td>
-  The sender's address.
-    </td>
-  </tr><tr>
-    <td class="fw-bold">txs[].batch_transfer.recipients</td>
-    <td>repeated object (Recipient)</td>
-    <td>
-  The list of recipients with their amounts.
-    </td>
-  </tr><tr>
-    <td class="fw-bold">txs[].memo</td>
-    <td> string</td>
-    <td>
-  A memo string for the transaction.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">txs[].public_key</td>
-    <td> string</td>
-    <td>
-  The public key associated with the transaction.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">txs[].signature</td>
-    <td> string</td>
-    <td>
-  The signature for the transaction.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">txs[].block_height</td>
-    <td> numeric</td>
-    <td>
-  The block height containing the transaction.
-A value of zero means the transaction is unconfirmed and may still in the transaction pool.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">txs[].confirmed</td>
-    <td> boolean</td>
-    <td>
-  Indicates whether the transaction is confirmed.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">txs[].confirmations</td>
-    <td> numeric</td>
-    <td>
-  The number of blocks that have been added to the chain after this transaction was included in a block.
-A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+  Unix timestamp of when the transaction was last updated.
     </td>
   </tr>
    </tbody>

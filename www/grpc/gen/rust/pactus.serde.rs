@@ -12171,6 +12171,80 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
         deserializer.deserialize_struct("pactus.TransactionInfo", FIELDS, GeneratedVisitor)
     }
 }
+impl serde::Serialize for TransactionStatus {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let variant = match self {
+            Self::Pending => "TRANSACTION_STATUS_PENDING",
+            Self::Confirmed => "TRANSACTION_STATUS_CONFIRMED",
+            Self::Failed => "TRANSACTION_STATUS_FAILED",
+        };
+        serializer.serialize_str(variant)
+    }
+}
+impl<'de> serde::Deserialize<'de> for TransactionStatus {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "TRANSACTION_STATUS_PENDING",
+            "TRANSACTION_STATUS_CONFIRMED",
+            "TRANSACTION_STATUS_FAILED",
+        ];
+
+        struct GeneratedVisitor;
+
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = TransactionStatus;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                write!(formatter, "expected one of: {:?}", &FIELDS)
+            }
+
+            fn visit_i64<E>(self, v: i64) -> std::result::Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                i32::try_from(v)
+                    .ok()
+                    .and_then(|x| x.try_into().ok())
+                    .ok_or_else(|| {
+                        serde::de::Error::invalid_value(serde::de::Unexpected::Signed(v), &self)
+                    })
+            }
+
+            fn visit_u64<E>(self, v: u64) -> std::result::Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                i32::try_from(v)
+                    .ok()
+                    .and_then(|x| x.try_into().ok())
+                    .ok_or_else(|| {
+                        serde::de::Error::invalid_value(serde::de::Unexpected::Unsigned(v), &self)
+                    })
+            }
+
+            fn visit_str<E>(self, value: &str) -> std::result::Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                match value {
+                    "TRANSACTION_STATUS_PENDING" => Ok(TransactionStatus::Pending),
+                    "TRANSACTION_STATUS_CONFIRMED" => Ok(TransactionStatus::Confirmed),
+                    "TRANSACTION_STATUS_FAILED" => Ok(TransactionStatus::Failed),
+                    _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),
+                }
+            }
+        }
+        deserializer.deserialize_any(GeneratedVisitor)
+    }
+}
 impl serde::Serialize for TransactionVerbosity {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
@@ -13489,6 +13563,372 @@ impl<'de> serde::Deserialize<'de> for VoteType {
             }
         }
         deserializer.deserialize_any(GeneratedVisitor)
+    }
+}
+impl serde::Serialize for WalletTransactionInfo {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.no != 0 {
+            len += 1;
+        }
+        if !self.tx_id.is_empty() {
+            len += 1;
+        }
+        if !self.sender.is_empty() {
+            len += 1;
+        }
+        if !self.receiver.is_empty() {
+            len += 1;
+        }
+        if self.direction != 0 {
+            len += 1;
+        }
+        if self.amount != 0 {
+            len += 1;
+        }
+        if self.fee != 0 {
+            len += 1;
+        }
+        if !self.memo.is_empty() {
+            len += 1;
+        }
+        if self.status != 0 {
+            len += 1;
+        }
+        if self.block_height != 0 {
+            len += 1;
+        }
+        if self.payload_type != 0 {
+            len += 1;
+        }
+        if !self.data.is_empty() {
+            len += 1;
+        }
+        if !self.comment.is_empty() {
+            len += 1;
+        }
+        if self.created_at != 0 {
+            len += 1;
+        }
+        if self.updated_at != 0 {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.WalletTransactionInfo", len)?;
+        if self.no != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("no", ToString::to_string(&self.no).as_str())?;
+        }
+        if !self.tx_id.is_empty() {
+            struct_ser.serialize_field("txId", &self.tx_id)?;
+        }
+        if !self.sender.is_empty() {
+            struct_ser.serialize_field("sender", &self.sender)?;
+        }
+        if !self.receiver.is_empty() {
+            struct_ser.serialize_field("receiver", &self.receiver)?;
+        }
+        if self.direction != 0 {
+            let v = TxDirection::try_from(self.direction)
+                .map_err(|_| serde::ser::Error::custom(format!("Invalid variant {}", self.direction)))?;
+            struct_ser.serialize_field("direction", &v)?;
+        }
+        if self.amount != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("amount", ToString::to_string(&self.amount).as_str())?;
+        }
+        if self.fee != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("fee", ToString::to_string(&self.fee).as_str())?;
+        }
+        if !self.memo.is_empty() {
+            struct_ser.serialize_field("memo", &self.memo)?;
+        }
+        if self.status != 0 {
+            let v = TransactionStatus::try_from(self.status)
+                .map_err(|_| serde::ser::Error::custom(format!("Invalid variant {}", self.status)))?;
+            struct_ser.serialize_field("status", &v)?;
+        }
+        if self.block_height != 0 {
+            struct_ser.serialize_field("blockHeight", &self.block_height)?;
+        }
+        if self.payload_type != 0 {
+            let v = PayloadType::try_from(self.payload_type)
+                .map_err(|_| serde::ser::Error::custom(format!("Invalid variant {}", self.payload_type)))?;
+            struct_ser.serialize_field("payloadType", &v)?;
+        }
+        if !self.data.is_empty() {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("data", pbjson::private::base64::encode(&self.data).as_str())?;
+        }
+        if !self.comment.is_empty() {
+            struct_ser.serialize_field("comment", &self.comment)?;
+        }
+        if self.created_at != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("createdAt", ToString::to_string(&self.created_at).as_str())?;
+        }
+        if self.updated_at != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("updatedAt", ToString::to_string(&self.updated_at).as_str())?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for WalletTransactionInfo {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "no",
+            "tx_id",
+            "txId",
+            "sender",
+            "receiver",
+            "direction",
+            "amount",
+            "fee",
+            "memo",
+            "status",
+            "block_height",
+            "blockHeight",
+            "payload_type",
+            "payloadType",
+            "data",
+            "comment",
+            "created_at",
+            "createdAt",
+            "updated_at",
+            "updatedAt",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            No,
+            TxId,
+            Sender,
+            Receiver,
+            Direction,
+            Amount,
+            Fee,
+            Memo,
+            Status,
+            BlockHeight,
+            PayloadType,
+            Data,
+            Comment,
+            CreatedAt,
+            UpdatedAt,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "no" => Ok(GeneratedField::No),
+                            "txId" | "tx_id" => Ok(GeneratedField::TxId),
+                            "sender" => Ok(GeneratedField::Sender),
+                            "receiver" => Ok(GeneratedField::Receiver),
+                            "direction" => Ok(GeneratedField::Direction),
+                            "amount" => Ok(GeneratedField::Amount),
+                            "fee" => Ok(GeneratedField::Fee),
+                            "memo" => Ok(GeneratedField::Memo),
+                            "status" => Ok(GeneratedField::Status),
+                            "blockHeight" | "block_height" => Ok(GeneratedField::BlockHeight),
+                            "payloadType" | "payload_type" => Ok(GeneratedField::PayloadType),
+                            "data" => Ok(GeneratedField::Data),
+                            "comment" => Ok(GeneratedField::Comment),
+                            "createdAt" | "created_at" => Ok(GeneratedField::CreatedAt),
+                            "updatedAt" | "updated_at" => Ok(GeneratedField::UpdatedAt),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = WalletTransactionInfo;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.WalletTransactionInfo")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<WalletTransactionInfo, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut no__ = None;
+                let mut tx_id__ = None;
+                let mut sender__ = None;
+                let mut receiver__ = None;
+                let mut direction__ = None;
+                let mut amount__ = None;
+                let mut fee__ = None;
+                let mut memo__ = None;
+                let mut status__ = None;
+                let mut block_height__ = None;
+                let mut payload_type__ = None;
+                let mut data__ = None;
+                let mut comment__ = None;
+                let mut created_at__ = None;
+                let mut updated_at__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::No => {
+                            if no__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("no"));
+                            }
+                            no__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::TxId => {
+                            if tx_id__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("txId"));
+                            }
+                            tx_id__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Sender => {
+                            if sender__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("sender"));
+                            }
+                            sender__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Receiver => {
+                            if receiver__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("receiver"));
+                            }
+                            receiver__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Direction => {
+                            if direction__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("direction"));
+                            }
+                            direction__ = Some(map_.next_value::<TxDirection>()? as i32);
+                        }
+                        GeneratedField::Amount => {
+                            if amount__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("amount"));
+                            }
+                            amount__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::Fee => {
+                            if fee__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("fee"));
+                            }
+                            fee__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::Memo => {
+                            if memo__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("memo"));
+                            }
+                            memo__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Status => {
+                            if status__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("status"));
+                            }
+                            status__ = Some(map_.next_value::<TransactionStatus>()? as i32);
+                        }
+                        GeneratedField::BlockHeight => {
+                            if block_height__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("blockHeight"));
+                            }
+                            block_height__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::PayloadType => {
+                            if payload_type__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("payloadType"));
+                            }
+                            payload_type__ = Some(map_.next_value::<PayloadType>()? as i32);
+                        }
+                        GeneratedField::Data => {
+                            if data__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("data"));
+                            }
+                            data__ = 
+                                Some(map_.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::Comment => {
+                            if comment__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("comment"));
+                            }
+                            comment__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::CreatedAt => {
+                            if created_at__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("createdAt"));
+                            }
+                            created_at__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::UpdatedAt => {
+                            if updated_at__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("updatedAt"));
+                            }
+                            updated_at__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                    }
+                }
+                Ok(WalletTransactionInfo {
+                    no: no__.unwrap_or_default(),
+                    tx_id: tx_id__.unwrap_or_default(),
+                    sender: sender__.unwrap_or_default(),
+                    receiver: receiver__.unwrap_or_default(),
+                    direction: direction__.unwrap_or_default(),
+                    amount: amount__.unwrap_or_default(),
+                    fee: fee__.unwrap_or_default(),
+                    memo: memo__.unwrap_or_default(),
+                    status: status__.unwrap_or_default(),
+                    block_height: block_height__.unwrap_or_default(),
+                    payload_type: payload_type__.unwrap_or_default(),
+                    data: data__.unwrap_or_default(),
+                    comment: comment__.unwrap_or_default(),
+                    created_at: created_at__.unwrap_or_default(),
+                    updated_at: updated_at__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.WalletTransactionInfo", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for ZmqPublisherInfo {
