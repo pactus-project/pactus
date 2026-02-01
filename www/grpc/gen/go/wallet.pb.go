@@ -338,7 +338,7 @@ type GetNewAddressResponse struct {
 	// The name of the wallet where address was generated.
 	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
 	// Detailed information about the new address.
-	AddressInfo   *AddressInfo `protobuf:"bytes,2,opt,name=address_info,json=addressInfo,proto3" json:"address_info,omitempty"`
+	Addr          *AddressInfo `protobuf:"bytes,2,opt,name=addr,proto3" json:"addr,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -380,9 +380,9 @@ func (x *GetNewAddressResponse) GetWalletName() string {
 	return ""
 }
 
-func (x *GetNewAddressResponse) GetAddressInfo() *AddressInfo {
+func (x *GetNewAddressResponse) GetAddr() *AddressInfo {
 	if x != nil {
-		return x.AddressInfo
+		return x.Addr
 	}
 	return nil
 }
@@ -1388,7 +1388,7 @@ type GetAddressInfoResponse struct {
 	// The name of the wallet containing the address.
 	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
 	// Detailed information about the address.
-	AddressInfo   *AddressInfo `protobuf:"bytes,2,opt,name=address_info,json=addressInfo,proto3" json:"address_info,omitempty"`
+	Addr          *AddressInfo `protobuf:"bytes,2,opt,name=addr,proto3" json:"addr,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1430,9 +1430,9 @@ func (x *GetAddressInfoResponse) GetWalletName() string {
 	return ""
 }
 
-func (x *GetAddressInfoResponse) GetAddressInfo() *AddressInfo {
+func (x *GetAddressInfoResponse) GetAddr() *AddressInfo {
 	if x != nil {
-		return x.AddressInfo
+		return x.Addr
 	}
 	return nil
 }
@@ -1882,7 +1882,7 @@ type ListAddressesResponse struct {
 	// The name of the queried wallet.
 	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
 	// List of all addresses in the wallet with their details.
-	Data          []*AddressInfo `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
+	Addrs         []*AddressInfo `protobuf:"bytes,2,rep,name=addrs,proto3" json:"addrs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1924,9 +1924,9 @@ func (x *ListAddressesResponse) GetWalletName() string {
 	return ""
 }
 
-func (x *ListAddressesResponse) GetData() []*AddressInfo {
+func (x *ListAddressesResponse) GetAddrs() []*AddressInfo {
 	if x != nil {
-		return x.Data
+		return x.Addrs
 	}
 	return nil
 }
@@ -2370,11 +2370,11 @@ const file_wallet_proto_rawDesc = "" +
 	"walletName\x126\n" +
 	"\faddress_type\x18\x02 \x01(\x0e2\x13.pactus.AddressTypeR\vaddressType\x12\x14\n" +
 	"\x05label\x18\x03 \x01(\tR\x05label\x12\x1a\n" +
-	"\bpassword\x18\x04 \x01(\tR\bpassword\"p\n" +
+	"\bpassword\x18\x04 \x01(\tR\bpassword\"a\n" +
 	"\x15GetNewAddressResponse\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
-	"walletName\x126\n" +
-	"\faddress_info\x18\x02 \x01(\v2\x13.pactus.AddressInfoR\vaddressInfo\"o\n" +
+	"walletName\x12'\n" +
+	"\x04addr\x18\x02 \x01(\v2\x13.pactus.AddressInfoR\x04addr\"o\n" +
 	"\x14RestoreWalletRequest\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
 	"walletName\x12\x1a\n" +
@@ -2442,11 +2442,11 @@ const file_wallet_proto_rawDesc = "" +
 	"\x15GetAddressInfoRequest\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
 	"walletName\x12\x18\n" +
-	"\aaddress\x18\x02 \x01(\tR\aaddress\"q\n" +
+	"\aaddress\x18\x02 \x01(\tR\aaddress\"b\n" +
 	"\x16GetAddressInfoResponse\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
-	"walletName\x126\n" +
-	"\faddress_info\x18\x02 \x01(\v2\x13.pactus.AddressInfoR\vaddressInfo\"\x85\x01\n" +
+	"walletName\x12'\n" +
+	"\x04addr\x18\x02 \x01(\v2\x13.pactus.AddressInfoR\x04addr\"\x85\x01\n" +
 	"\x16SetAddressLabelRequest\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
 	"walletName\x12\x1a\n" +
@@ -2480,11 +2480,11 @@ const file_wallet_proto_rawDesc = "" +
 	"\x14ListAddressesRequest\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
 	"walletName\x128\n" +
-	"\raddress_types\x18\x02 \x03(\x0e2\x13.pactus.AddressTypeR\faddressTypes\"a\n" +
+	"\raddress_types\x18\x02 \x03(\x0e2\x13.pactus.AddressTypeR\faddressTypes\"c\n" +
 	"\x15ListAddressesResponse\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
-	"walletName\x12'\n" +
-	"\x04data\x18\x02 \x03(\v2\x13.pactus.AddressInfoR\x04data\"~\n" +
+	"walletName\x12)\n" +
+	"\x05addrs\x18\x02 \x03(\v2\x13.pactus.AddressInfoR\x05addrs\"~\n" +
 	"\x15UpdatePasswordRequest\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
 	"walletName\x12!\n" +
@@ -2616,10 +2616,10 @@ var file_wallet_proto_goTypes = []any{
 }
 var file_wallet_proto_depIdxs = []int32{
 	0,  // 0: pactus.GetNewAddressRequest.address_type:type_name -> pactus.AddressType
-	3,  // 1: pactus.GetNewAddressResponse.address_info:type_name -> pactus.AddressInfo
-	3,  // 2: pactus.GetAddressInfoResponse.address_info:type_name -> pactus.AddressInfo
+	3,  // 1: pactus.GetNewAddressResponse.addr:type_name -> pactus.AddressInfo
+	3,  // 2: pactus.GetAddressInfoResponse.addr:type_name -> pactus.AddressInfo
 	0,  // 3: pactus.ListAddressesRequest.address_types:type_name -> pactus.AddressType
-	3,  // 4: pactus.ListAddressesResponse.data:type_name -> pactus.AddressInfo
+	3,  // 4: pactus.ListAddressesResponse.addrs:type_name -> pactus.AddressInfo
 	1,  // 5: pactus.WalletTransactionInfo.direction:type_name -> pactus.TxDirection
 	2,  // 6: pactus.WalletTransactionInfo.status:type_name -> pactus.TransactionStatus
 	39, // 7: pactus.WalletTransactionInfo.payload_type:type_name -> pactus.PayloadType

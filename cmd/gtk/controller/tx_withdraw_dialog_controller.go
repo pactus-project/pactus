@@ -12,12 +12,13 @@ import (
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/types"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 type TxWithdrawModel interface {
 	WalletInfo() (*types.WalletInfo, error)
-	ListAddresses(opts ...wallet.ListAddressOption) []types.AddressInfo
-	AddressInfo(addr string) *types.AddressInfo
+	ListAddresses(opts ...wallet.ListAddressOption) []*pactus.AddressInfo
+	AddressInfo(addr string) *pactus.AddressInfo
 	Stake(addr string) (amount.Amount, error)
 
 	MakeWithdrawTx(sender, receiver string, amt amount.Amount, opts ...wallet.TxOption) (*tx.Tx, error)

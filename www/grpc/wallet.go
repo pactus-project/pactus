@@ -192,8 +192,8 @@ func (s *walletServer) GetNewAddress(_ context.Context,
 	}
 
 	return &pactus.GetNewAddressResponse{
-		WalletName:  req.WalletName,
-		AddressInfo: s.addressInfoToProto(info),
+		WalletName: req.WalletName,
+		Addr:       s.addressInfoToProto(info),
 	}, nil
 }
 
@@ -206,8 +206,8 @@ func (s *walletServer) GetAddressInfo(_ context.Context,
 	}
 
 	return &pactus.GetAddressInfoResponse{
-		WalletName:  req.WalletName,
-		AddressInfo: s.addressInfoToProto(info),
+		WalletName: req.WalletName,
+		Addr:       s.addressInfoToProto(info),
 	}, nil
 }
 
@@ -267,7 +267,7 @@ func (s *walletServer) ListAddresses(_ context.Context,
 
 	return &pactus.ListAddressesResponse{
 		WalletName: req.WalletName,
-		Data:       addrsPB,
+		Addrs:      addrsPB,
 	}, nil
 }
 

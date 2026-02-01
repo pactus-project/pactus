@@ -26,7 +26,7 @@ type WalletWidgetModel interface {
 	TotalBalance() (amount.Amount, error)
 	TotalStake() (amount.Amount, error)
 	AddressRows() []model.AddressRow
-	Transactions(count, skip int) []*pactus.TransactionInfo
+	Transactions(count, skip int) []*pactus.WalletTransactionInfo
 }
 
 type WalletWidgetHandlers struct {
@@ -277,12 +277,12 @@ func (c *WalletWidgetController) RefreshTransactions() {
 					[]int{0, 1, 2, 3, 4, 5, 6, 7, 8},
 					[]any{
 						trx.No,
-						cmd.ShortHash(trx.Id),
+						cmd.ShortHash(trx.TxId),
 						cmd.ShortAddress(trx.Sender),
 						cmd.ShortAddress(trx.Receiver),
 						trx.PayloadType.String(),
-						trx.Payload.Amount.String(),
-						getDirectionTextWithIcon(trx.Direction),
+						amount.Amount(trx.Amount).String(),
+						getDirectionTextWithIcon(types.TxDirection(trx.Direction)),
 						trx.Status.String(),
 						trx.Comment,
 					},

@@ -110,12 +110,12 @@ const GetNewAddressResponse$json = {
   '2': [
     {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
     {
-      '1': 'address_info',
+      '1': 'addr',
       '3': 2,
       '4': 1,
       '5': 11,
       '6': '.pactus.AddressInfo',
-      '10': 'addressInfo'
+      '10': 'addr'
     },
   ],
 };
@@ -123,8 +123,7 @@ const GetNewAddressResponse$json = {
 /// Descriptor for `GetNewAddressResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getNewAddressResponseDescriptor = $convert.base64Decode(
     'ChVHZXROZXdBZGRyZXNzUmVzcG9uc2USHwoLd2FsbGV0X25hbWUYASABKAlSCndhbGxldE5hbW'
-    'USNgoMYWRkcmVzc19pbmZvGAIgASgLMhMucGFjdHVzLkFkZHJlc3NJbmZvUgthZGRyZXNzSW5m'
-    'bw==');
+    'USJwoEYWRkchgCIAEoCzITLnBhY3R1cy5BZGRyZXNzSW5mb1IEYWRkcg==');
 
 @$core.Deprecated('Use restoreWalletRequestDescriptor instead')
 const RestoreWalletRequest$json = {
@@ -403,21 +402,21 @@ const GetAddressInfoResponse$json = {
   '2': [
     {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
     {
-      '1': 'address_info',
+      '1': 'addr',
       '3': 2,
       '4': 1,
       '5': 11,
       '6': '.pactus.AddressInfo',
-      '10': 'addressInfo'
+      '10': 'addr'
     },
   ],
 };
 
 /// Descriptor for `GetAddressInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getAddressInfoResponseDescriptor = $convert.base64Decode(
-    'ChZHZXRBZGRyZXNzSW5mb1Jlc3BvbnNlEh8KC3dhbGxldF9uYW1lGAEgASgJUgp3YWxsZXROYW'
-    '1lEjYKDGFkZHJlc3NfaW5mbxgCIAEoCzITLnBhY3R1cy5BZGRyZXNzSW5mb1ILYWRkcmVzc0lu'
-    'Zm8=');
+final $typed_data.Uint8List getAddressInfoResponseDescriptor =
+    $convert.base64Decode(
+        'ChZHZXRBZGRyZXNzSW5mb1Jlc3BvbnNlEh8KC3dhbGxldF9uYW1lGAEgASgJUgp3YWxsZXROYW'
+        '1lEicKBGFkZHIYAiABKAsyEy5wYWN0dXMuQWRkcmVzc0luZm9SBGFkZHI=');
 
 @$core.Deprecated('Use setAddressLabelRequestDescriptor instead')
 const SetAddressLabelRequest$json = {
@@ -538,12 +537,12 @@ const ListAddressesResponse$json = {
   '2': [
     {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
     {
-      '1': 'data',
+      '1': 'addrs',
       '3': 2,
       '4': 3,
       '5': 11,
       '6': '.pactus.AddressInfo',
-      '10': 'data'
+      '10': 'addrs'
     },
   ],
 };
@@ -551,7 +550,7 @@ const ListAddressesResponse$json = {
 /// Descriptor for `ListAddressesResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List listAddressesResponseDescriptor = $convert.base64Decode(
     'ChVMaXN0QWRkcmVzc2VzUmVzcG9uc2USHwoLd2FsbGV0X25hbWUYASABKAlSCndhbGxldE5hbW'
-    'USJwoEZGF0YRgCIAMoCzITLnBhY3R1cy5BZGRyZXNzSW5mb1IEZGF0YQ==');
+    'USKQoFYWRkcnMYAiADKAsyEy5wYWN0dXMuQWRkcmVzc0luZm9SBWFkZHJz');
 
 @$core.Deprecated('Use updatePasswordRequestDescriptor instead')
 const UpdatePasswordRequest$json = {

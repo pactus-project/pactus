@@ -3836,35 +3836,35 @@ Deprecated: Will move into utils.</p>
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">address_info</td>
+    <td class="fw-bold">addr</td>
     <td> object (AddressInfo)</td>
     <td>
   Detailed information about the address.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">address_info.address</td>
+    <td class="fw-bold">addr.address</td>
     <td> string</td>
     <td>
   The address string.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">address_info.public_key</td>
+    <td class="fw-bold">addr.public_key</td>
     <td> string</td>
     <td>
   The public key associated with the address.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">address_info.label</td>
+    <td class="fw-bold">addr.label</td>
     <td> string</td>
     <td>
   A human-readable label associated with the address.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">address_info.path</td>
+    <td class="fw-bold">addr.path</td>
     <td> string</td>
     <td>
   The Hierarchical Deterministic (HD) path of the address within the wallet.
@@ -4005,35 +4005,35 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">address_info</td>
+    <td class="fw-bold">addr</td>
     <td> object (AddressInfo)</td>
     <td>
   Detailed information about the new address.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">address_info.address</td>
+    <td class="fw-bold">addr.address</td>
     <td> string</td>
     <td>
   The address string.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">address_info.public_key</td>
+    <td class="fw-bold">addr.public_key</td>
     <td> string</td>
     <td>
   The public key associated with the address.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">address_info.label</td>
+    <td class="fw-bold">addr.label</td>
     <td> string</td>
     <td>
   A human-readable label associated with the address.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">address_info.path</td>
+    <td class="fw-bold">addr.path</td>
     <td> string</td>
     <td>
   The Hierarchical Deterministic (HD) path of the address within the wallet.
@@ -4090,35 +4090,35 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">data</td>
+    <td class="fw-bold">addrs</td>
     <td>repeated object (AddressInfo)</td>
     <td>
   List of all addresses in the wallet with their details.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">data[].address</td>
+    <td class="fw-bold">addrs[].address</td>
     <td> string</td>
     <td>
   The address string.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">data[].public_key</td>
+    <td class="fw-bold">addrs[].public_key</td>
     <td> string</td>
     <td>
   The public key associated with the address.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">data[].label</td>
+    <td class="fw-bold">addrs[].label</td>
     <td> string</td>
     <td>
   A human-readable label associated with the address.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">data[].path</td>
+    <td class="fw-bold">addrs[].path</td>
     <td> string</td>
     <td>
   The Hierarchical Deterministic (HD) path of the address within the wallet.

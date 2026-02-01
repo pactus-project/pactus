@@ -1177,7 +1177,7 @@ pub struct GetNewAddressResponse {
     pub wallet_name: ::prost::alloc::string::String,
     /// Detailed information about the new address.
     #[prost(message, optional, tag="2")]
-    pub address_info: ::core::option::Option<AddressInfo>,
+    pub addr: ::core::option::Option<AddressInfo>,
 }
 /// Request message for restoring a wallet from mnemonic (seed phrase).
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -1363,7 +1363,7 @@ pub struct GetAddressInfoResponse {
     pub wallet_name: ::prost::alloc::string::String,
     /// Detailed information about the address.
     #[prost(message, optional, tag="2")]
-    pub address_info: ::core::option::Option<AddressInfo>,
+    pub addr: ::core::option::Option<AddressInfo>,
 }
 /// Request message for setting address label.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -1461,7 +1461,7 @@ pub struct ListAddressesResponse {
     pub wallet_name: ::prost::alloc::string::String,
     /// List of all addresses in the wallet with their details.
     #[prost(message, repeated, tag="2")]
-    pub data: ::prost::alloc::vec::Vec<AddressInfo>,
+    pub addrs: ::prost::alloc::vec::Vec<AddressInfo>,
 }
 /// Request message for updating wallet password.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]

@@ -218,11 +218,11 @@ class GetNewAddressRequest extends $pb.GeneratedMessage {
 class GetNewAddressResponse extends $pb.GeneratedMessage {
   factory GetNewAddressResponse({
     $core.String? walletName,
-    AddressInfo? addressInfo,
+    AddressInfo? addr,
   }) {
     final result = create();
     if (walletName != null) result.walletName = walletName;
-    if (addressInfo != null) result.addressInfo = addressInfo;
+    if (addr != null) result.addr = addr;
     return result;
   }
 
@@ -240,7 +240,7 @@ class GetNewAddressResponse extends $pb.GeneratedMessage {
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
-    ..aOM<AddressInfo>(2, _omitFieldNames ? '' : 'addressInfo',
+    ..aOM<AddressInfo>(2, _omitFieldNames ? '' : 'addr',
         subBuilder: AddressInfo.create)
     ..hasRequiredFields = false;
 
@@ -276,15 +276,15 @@ class GetNewAddressResponse extends $pb.GeneratedMessage {
 
   /// Detailed information about the new address.
   @$pb.TagNumber(2)
-  AddressInfo get addressInfo => $_getN(1);
+  AddressInfo get addr => $_getN(1);
   @$pb.TagNumber(2)
-  set addressInfo(AddressInfo value) => $_setField(2, value);
+  set addr(AddressInfo value) => $_setField(2, value);
   @$pb.TagNumber(2)
-  $core.bool hasAddressInfo() => $_has(1);
+  $core.bool hasAddr() => $_has(1);
   @$pb.TagNumber(2)
-  void clearAddressInfo() => $_clearField(2);
+  void clearAddr() => $_clearField(2);
   @$pb.TagNumber(2)
-  AddressInfo ensureAddressInfo() => $_ensure(1);
+  AddressInfo ensureAddr() => $_ensure(1);
 }
 
 /// Request message for restoring a wallet from mnemonic (seed phrase).
@@ -1542,11 +1542,11 @@ class GetAddressInfoRequest extends $pb.GeneratedMessage {
 class GetAddressInfoResponse extends $pb.GeneratedMessage {
   factory GetAddressInfoResponse({
     $core.String? walletName,
-    AddressInfo? addressInfo,
+    AddressInfo? addr,
   }) {
     final result = create();
     if (walletName != null) result.walletName = walletName;
-    if (addressInfo != null) result.addressInfo = addressInfo;
+    if (addr != null) result.addr = addr;
     return result;
   }
 
@@ -1564,7 +1564,7 @@ class GetAddressInfoResponse extends $pb.GeneratedMessage {
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
-    ..aOM<AddressInfo>(2, _omitFieldNames ? '' : 'addressInfo',
+    ..aOM<AddressInfo>(2, _omitFieldNames ? '' : 'addr',
         subBuilder: AddressInfo.create)
     ..hasRequiredFields = false;
 
@@ -1600,15 +1600,15 @@ class GetAddressInfoResponse extends $pb.GeneratedMessage {
 
   /// Detailed information about the address.
   @$pb.TagNumber(2)
-  AddressInfo get addressInfo => $_getN(1);
+  AddressInfo get addr => $_getN(1);
   @$pb.TagNumber(2)
-  set addressInfo(AddressInfo value) => $_setField(2, value);
+  set addr(AddressInfo value) => $_setField(2, value);
   @$pb.TagNumber(2)
-  $core.bool hasAddressInfo() => $_has(1);
+  $core.bool hasAddr() => $_has(1);
   @$pb.TagNumber(2)
-  void clearAddressInfo() => $_clearField(2);
+  void clearAddr() => $_clearField(2);
   @$pb.TagNumber(2)
-  AddressInfo ensureAddressInfo() => $_ensure(1);
+  AddressInfo ensureAddr() => $_ensure(1);
 }
 
 /// Request message for setting address label.
@@ -2167,11 +2167,11 @@ class ListAddressesRequest extends $pb.GeneratedMessage {
 class ListAddressesResponse extends $pb.GeneratedMessage {
   factory ListAddressesResponse({
     $core.String? walletName,
-    $core.Iterable<AddressInfo>? data,
+    $core.Iterable<AddressInfo>? addrs,
   }) {
     final result = create();
     if (walletName != null) result.walletName = walletName;
-    if (data != null) result.data.addAll(data);
+    if (addrs != null) result.addrs.addAll(addrs);
     return result;
   }
 
@@ -2189,7 +2189,7 @@ class ListAddressesResponse extends $pb.GeneratedMessage {
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
-    ..pPM<AddressInfo>(2, _omitFieldNames ? '' : 'data',
+    ..pPM<AddressInfo>(2, _omitFieldNames ? '' : 'addrs',
         subBuilder: AddressInfo.create)
     ..hasRequiredFields = false;
 
@@ -2225,7 +2225,7 @@ class ListAddressesResponse extends $pb.GeneratedMessage {
 
   /// List of all addresses in the wallet with their details.
   @$pb.TagNumber(2)
-  $pb.PbList<AddressInfo> get data => $_getList(1);
+  $pb.PbList<AddressInfo> get addrs => $_getList(1);
 }
 
 /// Request message for updating wallet password.

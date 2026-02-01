@@ -2417,15 +2417,15 @@ impl serde::Serialize for GetAddressInfoResponse {
         if !self.wallet_name.is_empty() {
             len += 1;
         }
-        if self.address_info.is_some() {
+        if self.addr.is_some() {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("pactus.GetAddressInfoResponse", len)?;
         if !self.wallet_name.is_empty() {
             struct_ser.serialize_field("walletName", &self.wallet_name)?;
         }
-        if let Some(v) = self.address_info.as_ref() {
-            struct_ser.serialize_field("addressInfo", v)?;
+        if let Some(v) = self.addr.as_ref() {
+            struct_ser.serialize_field("addr", v)?;
         }
         struct_ser.end()
     }
@@ -2439,14 +2439,13 @@ impl<'de> serde::Deserialize<'de> for GetAddressInfoResponse {
         const FIELDS: &[&str] = &[
             "wallet_name",
             "walletName",
-            "address_info",
-            "addressInfo",
+            "addr",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             WalletName,
-            AddressInfo,
+            Addr,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -2469,7 +2468,7 @@ impl<'de> serde::Deserialize<'de> for GetAddressInfoResponse {
                     {
                         match value {
                             "walletName" | "wallet_name" => Ok(GeneratedField::WalletName),
-                            "addressInfo" | "address_info" => Ok(GeneratedField::AddressInfo),
+                            "addr" => Ok(GeneratedField::Addr),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -2490,7 +2489,7 @@ impl<'de> serde::Deserialize<'de> for GetAddressInfoResponse {
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
-                let mut address_info__ = None;
+                let mut addr__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
@@ -2499,17 +2498,17 @@ impl<'de> serde::Deserialize<'de> for GetAddressInfoResponse {
                             }
                             wallet_name__ = Some(map_.next_value()?);
                         }
-                        GeneratedField::AddressInfo => {
-                            if address_info__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("addressInfo"));
+                        GeneratedField::Addr => {
+                            if addr__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("addr"));
                             }
-                            address_info__ = map_.next_value()?;
+                            addr__ = map_.next_value()?;
                         }
                     }
                 }
                 Ok(GetAddressInfoResponse {
                     wallet_name: wallet_name__.unwrap_or_default(),
-                    address_info: address_info__,
+                    addr: addr__,
                 })
             }
         }
@@ -4157,15 +4156,15 @@ impl serde::Serialize for GetNewAddressResponse {
         if !self.wallet_name.is_empty() {
             len += 1;
         }
-        if self.address_info.is_some() {
+        if self.addr.is_some() {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("pactus.GetNewAddressResponse", len)?;
         if !self.wallet_name.is_empty() {
             struct_ser.serialize_field("walletName", &self.wallet_name)?;
         }
-        if let Some(v) = self.address_info.as_ref() {
-            struct_ser.serialize_field("addressInfo", v)?;
+        if let Some(v) = self.addr.as_ref() {
+            struct_ser.serialize_field("addr", v)?;
         }
         struct_ser.end()
     }
@@ -4179,14 +4178,13 @@ impl<'de> serde::Deserialize<'de> for GetNewAddressResponse {
         const FIELDS: &[&str] = &[
             "wallet_name",
             "walletName",
-            "address_info",
-            "addressInfo",
+            "addr",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             WalletName,
-            AddressInfo,
+            Addr,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -4209,7 +4207,7 @@ impl<'de> serde::Deserialize<'de> for GetNewAddressResponse {
                     {
                         match value {
                             "walletName" | "wallet_name" => Ok(GeneratedField::WalletName),
-                            "addressInfo" | "address_info" => Ok(GeneratedField::AddressInfo),
+                            "addr" => Ok(GeneratedField::Addr),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -4230,7 +4228,7 @@ impl<'de> serde::Deserialize<'de> for GetNewAddressResponse {
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
-                let mut address_info__ = None;
+                let mut addr__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
@@ -4239,17 +4237,17 @@ impl<'de> serde::Deserialize<'de> for GetNewAddressResponse {
                             }
                             wallet_name__ = Some(map_.next_value()?);
                         }
-                        GeneratedField::AddressInfo => {
-                            if address_info__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("addressInfo"));
+                        GeneratedField::Addr => {
+                            if addr__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("addr"));
                             }
-                            address_info__ = map_.next_value()?;
+                            addr__ = map_.next_value()?;
                         }
                     }
                 }
                 Ok(GetNewAddressResponse {
                     wallet_name: wallet_name__.unwrap_or_default(),
-                    address_info: address_info__,
+                    addr: addr__,
                 })
             }
         }
@@ -7725,15 +7723,15 @@ impl serde::Serialize for ListAddressesResponse {
         if !self.wallet_name.is_empty() {
             len += 1;
         }
-        if !self.data.is_empty() {
+        if !self.addrs.is_empty() {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("pactus.ListAddressesResponse", len)?;
         if !self.wallet_name.is_empty() {
             struct_ser.serialize_field("walletName", &self.wallet_name)?;
         }
-        if !self.data.is_empty() {
-            struct_ser.serialize_field("data", &self.data)?;
+        if !self.addrs.is_empty() {
+            struct_ser.serialize_field("addrs", &self.addrs)?;
         }
         struct_ser.end()
     }
@@ -7747,13 +7745,13 @@ impl<'de> serde::Deserialize<'de> for ListAddressesResponse {
         const FIELDS: &[&str] = &[
             "wallet_name",
             "walletName",
-            "data",
+            "addrs",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             WalletName,
-            Data,
+            Addrs,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -7776,7 +7774,7 @@ impl<'de> serde::Deserialize<'de> for ListAddressesResponse {
                     {
                         match value {
                             "walletName" | "wallet_name" => Ok(GeneratedField::WalletName),
-                            "data" => Ok(GeneratedField::Data),
+                            "addrs" => Ok(GeneratedField::Addrs),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -7797,7 +7795,7 @@ impl<'de> serde::Deserialize<'de> for ListAddressesResponse {
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
-                let mut data__ = None;
+                let mut addrs__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
@@ -7806,17 +7804,17 @@ impl<'de> serde::Deserialize<'de> for ListAddressesResponse {
                             }
                             wallet_name__ = Some(map_.next_value()?);
                         }
-                        GeneratedField::Data => {
-                            if data__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("data"));
+                        GeneratedField::Addrs => {
+                            if addrs__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("addrs"));
                             }
-                            data__ = Some(map_.next_value()?);
+                            addrs__ = Some(map_.next_value()?);
                         }
                     }
                 }
                 Ok(ListAddressesResponse {
                     wallet_name: wallet_name__.unwrap_or_default(),
-                    data: data__.unwrap_or_default(),
+                    addrs: addrs__.unwrap_or_default(),
                 })
             }
         }

@@ -11,7 +11,6 @@ import (
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/types"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -116,7 +115,7 @@ func (model *WalletModel) TotalStake() (amount.Amount, error) {
 	return amount.Amount(res.TotalStake), nil
 }
 
-func (model *WalletModel) AddressInfo(addr string) *types.AddressInfo {
+func (model *WalletModel) AddressInfo(addr string) *pactus.AddressInfo {
 	res, err := model.walletClient.GetAddressInfo(model.ctx, &pactus.GetAddressInfoRequest{
 		WalletName: model.walletName,
 		Address:    addr,
@@ -125,15 +124,10 @@ func (model *WalletModel) AddressInfo(addr string) *types.AddressInfo {
 		return nil
 	}
 
-	return &types.AddressInfo{
-		Address:   res.AddressInfo.Address,
-		PublicKey: res.AddressInfo.PublicKey,
-		Label:     res.AddressInfo.Label,
-		Path:      res.AddressInfo.Path,
-	}
+	return res.Addr
 }
 
-func (model *WalletModel) ListAddresses(opts ...wallet.ListAddressOption) []types.AddressInfo {
+func (model *WalletModel) ListAddresses(opts ...wallet.ListAddressOption) []*pactus.AddressInfo {
 	res, err := model.walletClient.ListAddresses(model.ctx, &pactus.ListAddressesRequest{
 		WalletName: model.walletName,
 	})
@@ -141,17 +135,7 @@ func (model *WalletModel) ListAddresses(opts ...wallet.ListAddressOption) []type
 		return nil
 	}
 
-	infos := make([]types.AddressInfo, len(res.Data))
-	for i, info := range res.Data {
-		infos[i] = types.AddressInfo{
-			Address:   info.Address,
-			PublicKey: info.PublicKey,
-			Label:     info.Label,
-			Path:      info.Path,
-		}
-	}
-
-	return infos
+	return res.Addrs
 }
 
 func (model *WalletModel) Balance(addr string) (amount.Amount, error) {
@@ -214,10 +198,10 @@ func (model *WalletModel) NewAddress(
 	}
 
 	return &types.AddressInfo{
-		Address:   res.AddressInfo.Address,
-		PublicKey: res.AddressInfo.PublicKey,
-		Label:     res.AddressInfo.Label,
-		Path:      res.AddressInfo.Path,
+		Address:   res.Addr.Address,
+		PublicKey: res.Addr.PublicKey,
+		Label:     res.Addr.Label,
+		Path:      res.Addr.Path,
 	}, nil
 }
 
@@ -230,7 +214,7 @@ func (model *WalletModel) AddressLabel(addr string) string {
 		return ""
 	}
 
-	return res.AddressInfo.Label
+	return res.Addr.Label
 }
 
 func (model *WalletModel) SetAddressLabel(addr, label string) error {
@@ -252,7 +236,7 @@ func (model *WalletModel) AddressRows() []AddressRow {
 	if err != nil {
 		return rows
 	}
-	for no, info := range res.Data {
+	for no, info := range res.Addrs {
 		balance, _ := model.Balance(info.Address)
 		stake, _ := model.Stake(info.Address)
 
@@ -380,7 +364,7 @@ func (model *WalletModel) BroadcastTransaction(trx *tx.Tx) (string, error) {
 	return res.Id, nil
 }
 
-func (model *WalletModel) Transactions(count, skip int) []*pactus.TransactionInfo {
+func (model *WalletModel) Transactions(count, skip int) []*pactus.WalletTransactionInfo {
 	res, err := model.walletClient.ListTransactions(model.ctx, &pactus.ListTransactionsRequest{
 		WalletName: model.walletName,
 		Count:      int32(count),

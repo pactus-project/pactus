@@ -1000,8 +1000,8 @@
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object","required": ["wallet_name","address_info"],
-          "properties": {"wallet_name": { "type": "string" },"address_info": {
+          "type": "object","required": ["wallet_name","addr"],
+          "properties": {"wallet_name": { "type": "string" },"addr": {
   "type": "object","required": ["address","public_key","label","path"],
   "properties": {"address": { "type": "string" },"public_key": { "type": "string" },"label": { "type": "string" },"path": { "type": "string" }}
 }}
@@ -1061,8 +1061,8 @@
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object","required": ["wallet_name","address_info"],
-          "properties": {"wallet_name": { "type": "string" },"address_info": {
+          "type": "object","required": ["wallet_name","addr"],
+          "properties": {"wallet_name": { "type": "string" },"addr": {
   "type": "object","required": ["address","public_key","label","path"],
   "properties": {"address": { "type": "string" },"public_key": { "type": "string" },"label": { "type": "string" },"path": { "type": "string" }}
 }}
@@ -1088,8 +1088,8 @@
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object","required": ["wallet_name","data"],
-          "properties": {"wallet_name": { "type": "string" },"data": {
+          "type": "object","required": ["wallet_name","addrs"],
+          "properties": {"wallet_name": { "type": "string" },"addrs": {
   "type": "array",
   "items": {
   "type": "object","required": ["address","public_key","label","path"],

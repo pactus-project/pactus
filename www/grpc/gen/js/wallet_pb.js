@@ -1285,7 +1285,7 @@ proto.pactus.GetNewAddressResponse.prototype.toObject = function(opt_includeInst
 proto.pactus.GetNewAddressResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
 walletName: jspb.Message.getFieldWithDefault(msg, 1, ""),
-addressInfo: (f = msg.getAddressInfo()) && proto.pactus.AddressInfo.toObject(includeInstance, f)
+addr: (f = msg.getAddr()) && proto.pactus.AddressInfo.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1329,7 +1329,7 @@ proto.pactus.GetNewAddressResponse.deserializeBinaryFromReader = function(msg, r
     case 2:
       var value = new proto.pactus.AddressInfo;
       reader.readMessage(value,proto.pactus.AddressInfo.deserializeBinaryFromReader);
-      msg.setAddressInfo(value);
+      msg.setAddr(value);
       break;
     default:
       reader.skipField();
@@ -1367,7 +1367,7 @@ proto.pactus.GetNewAddressResponse.serializeBinaryToWriter = function(message, w
       f
     );
   }
-  f = message.getAddressInfo();
+  f = message.getAddr();
   if (f != null) {
     writer.writeMessage(
       2,
@@ -1397,10 +1397,10 @@ proto.pactus.GetNewAddressResponse.prototype.setWalletName = function(value) {
 
 
 /**
- * optional AddressInfo address_info = 2;
+ * optional AddressInfo addr = 2;
  * @return {?proto.pactus.AddressInfo}
  */
-proto.pactus.GetNewAddressResponse.prototype.getAddressInfo = function() {
+proto.pactus.GetNewAddressResponse.prototype.getAddr = function() {
   return /** @type{?proto.pactus.AddressInfo} */ (
     jspb.Message.getWrapperField(this, proto.pactus.AddressInfo, 2));
 };
@@ -1410,7 +1410,7 @@ proto.pactus.GetNewAddressResponse.prototype.getAddressInfo = function() {
  * @param {?proto.pactus.AddressInfo|undefined} value
  * @return {!proto.pactus.GetNewAddressResponse} returns this
 */
-proto.pactus.GetNewAddressResponse.prototype.setAddressInfo = function(value) {
+proto.pactus.GetNewAddressResponse.prototype.setAddr = function(value) {
   return jspb.Message.setWrapperField(this, 2, value);
 };
 
@@ -1419,8 +1419,8 @@ proto.pactus.GetNewAddressResponse.prototype.setAddressInfo = function(value) {
  * Clears the message field making it undefined.
  * @return {!proto.pactus.GetNewAddressResponse} returns this
  */
-proto.pactus.GetNewAddressResponse.prototype.clearAddressInfo = function() {
-  return this.setAddressInfo(undefined);
+proto.pactus.GetNewAddressResponse.prototype.clearAddr = function() {
+  return this.setAddr(undefined);
 };
 
 
@@ -1428,7 +1428,7 @@ proto.pactus.GetNewAddressResponse.prototype.clearAddressInfo = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.pactus.GetNewAddressResponse.prototype.hasAddressInfo = function() {
+proto.pactus.GetNewAddressResponse.prototype.hasAddr = function() {
   return jspb.Message.getField(this, 2) != null;
 };
 
@@ -4326,7 +4326,7 @@ proto.pactus.GetAddressInfoResponse.prototype.toObject = function(opt_includeIns
 proto.pactus.GetAddressInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
 walletName: jspb.Message.getFieldWithDefault(msg, 1, ""),
-addressInfo: (f = msg.getAddressInfo()) && proto.pactus.AddressInfo.toObject(includeInstance, f)
+addr: (f = msg.getAddr()) && proto.pactus.AddressInfo.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -4370,7 +4370,7 @@ proto.pactus.GetAddressInfoResponse.deserializeBinaryFromReader = function(msg, 
     case 2:
       var value = new proto.pactus.AddressInfo;
       reader.readMessage(value,proto.pactus.AddressInfo.deserializeBinaryFromReader);
-      msg.setAddressInfo(value);
+      msg.setAddr(value);
       break;
     default:
       reader.skipField();
@@ -4408,7 +4408,7 @@ proto.pactus.GetAddressInfoResponse.serializeBinaryToWriter = function(message, 
       f
     );
   }
-  f = message.getAddressInfo();
+  f = message.getAddr();
   if (f != null) {
     writer.writeMessage(
       2,
@@ -4438,10 +4438,10 @@ proto.pactus.GetAddressInfoResponse.prototype.setWalletName = function(value) {
 
 
 /**
- * optional AddressInfo address_info = 2;
+ * optional AddressInfo addr = 2;
  * @return {?proto.pactus.AddressInfo}
  */
-proto.pactus.GetAddressInfoResponse.prototype.getAddressInfo = function() {
+proto.pactus.GetAddressInfoResponse.prototype.getAddr = function() {
   return /** @type{?proto.pactus.AddressInfo} */ (
     jspb.Message.getWrapperField(this, proto.pactus.AddressInfo, 2));
 };
@@ -4451,7 +4451,7 @@ proto.pactus.GetAddressInfoResponse.prototype.getAddressInfo = function() {
  * @param {?proto.pactus.AddressInfo|undefined} value
  * @return {!proto.pactus.GetAddressInfoResponse} returns this
 */
-proto.pactus.GetAddressInfoResponse.prototype.setAddressInfo = function(value) {
+proto.pactus.GetAddressInfoResponse.prototype.setAddr = function(value) {
   return jspb.Message.setWrapperField(this, 2, value);
 };
 
@@ -4460,8 +4460,8 @@ proto.pactus.GetAddressInfoResponse.prototype.setAddressInfo = function(value) {
  * Clears the message field making it undefined.
  * @return {!proto.pactus.GetAddressInfoResponse} returns this
  */
-proto.pactus.GetAddressInfoResponse.prototype.clearAddressInfo = function() {
-  return this.setAddressInfo(undefined);
+proto.pactus.GetAddressInfoResponse.prototype.clearAddr = function() {
+  return this.setAddr(undefined);
 };
 
 
@@ -4469,7 +4469,7 @@ proto.pactus.GetAddressInfoResponse.prototype.clearAddressInfo = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.pactus.GetAddressInfoResponse.prototype.hasAddressInfo = function() {
+proto.pactus.GetAddressInfoResponse.prototype.hasAddr = function() {
   return jspb.Message.getField(this, 2) != null;
 };
 
@@ -5866,7 +5866,7 @@ proto.pactus.ListAddressesResponse.prototype.toObject = function(opt_includeInst
 proto.pactus.ListAddressesResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
 walletName: jspb.Message.getFieldWithDefault(msg, 1, ""),
-dataList: jspb.Message.toObjectList(msg.getDataList(),
+addrsList: jspb.Message.toObjectList(msg.getAddrsList(),
     proto.pactus.AddressInfo.toObject, includeInstance)
   };
 
@@ -5911,7 +5911,7 @@ proto.pactus.ListAddressesResponse.deserializeBinaryFromReader = function(msg, r
     case 2:
       var value = new proto.pactus.AddressInfo;
       reader.readMessage(value,proto.pactus.AddressInfo.deserializeBinaryFromReader);
-      msg.addData(value);
+      msg.addAddrs(value);
       break;
     default:
       reader.skipField();
@@ -5949,7 +5949,7 @@ proto.pactus.ListAddressesResponse.serializeBinaryToWriter = function(message, w
       f
     );
   }
-  f = message.getDataList();
+  f = message.getAddrsList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
       2,
@@ -5979,10 +5979,10 @@ proto.pactus.ListAddressesResponse.prototype.setWalletName = function(value) {
 
 
 /**
- * repeated AddressInfo data = 2;
+ * repeated AddressInfo addrs = 2;
  * @return {!Array<!proto.pactus.AddressInfo>}
  */
-proto.pactus.ListAddressesResponse.prototype.getDataList = function() {
+proto.pactus.ListAddressesResponse.prototype.getAddrsList = function() {
   return /** @type{!Array<!proto.pactus.AddressInfo>} */ (
     jspb.Message.getRepeatedWrapperField(this, proto.pactus.AddressInfo, 2));
 };
@@ -5992,7 +5992,7 @@ proto.pactus.ListAddressesResponse.prototype.getDataList = function() {
  * @param {!Array<!proto.pactus.AddressInfo>} value
  * @return {!proto.pactus.ListAddressesResponse} returns this
 */
-proto.pactus.ListAddressesResponse.prototype.setDataList = function(value) {
+proto.pactus.ListAddressesResponse.prototype.setAddrsList = function(value) {
   return jspb.Message.setRepeatedWrapperField(this, 2, value);
 };
 
@@ -6002,7 +6002,7 @@ proto.pactus.ListAddressesResponse.prototype.setDataList = function(value) {
  * @param {number=} opt_index
  * @return {!proto.pactus.AddressInfo}
  */
-proto.pactus.ListAddressesResponse.prototype.addData = function(opt_value, opt_index) {
+proto.pactus.ListAddressesResponse.prototype.addAddrs = function(opt_value, opt_index) {
   return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.pactus.AddressInfo, opt_index);
 };
 
@@ -6011,8 +6011,8 @@ proto.pactus.ListAddressesResponse.prototype.addData = function(opt_value, opt_i
  * Clears the list making it empty but non-null.
  * @return {!proto.pactus.ListAddressesResponse} returns this
  */
-proto.pactus.ListAddressesResponse.prototype.clearDataList = function() {
-  return this.setDataList([]);
+proto.pactus.ListAddressesResponse.prototype.clearAddrsList = function() {
+  return this.setAddrsList([]);
 };
 
 

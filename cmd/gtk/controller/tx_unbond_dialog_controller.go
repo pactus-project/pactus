@@ -10,12 +10,12 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/wallet"
-	"github.com/pactus-project/pactus/wallet/types"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 type TxUnbondModel interface {
-	ListAddresses(opts ...wallet.ListAddressOption) []types.AddressInfo
-	AddressInfo(addr string) *types.AddressInfo
+	ListAddresses(opts ...wallet.ListAddressOption) []*pactus.AddressInfo
+	AddressInfo(addr string) *pactus.AddressInfo
 	Stake(addr string) (amount.Amount, error)
 
 	MakeUnbondTx(validator string, opts ...wallet.TxOption) (*tx.Tx, error)
