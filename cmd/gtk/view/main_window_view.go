@@ -15,6 +15,7 @@ type MainWindowView struct {
 
 	BoxNode          *gtk.Box
 	BoxDefaultWallet *gtk.Box
+	BoxValidators    *gtk.Box
 
 	ExplorerMenuItem      *gtk.MenuItem
 	WebsiteMenuItem       *gtk.MenuItem
@@ -26,6 +27,7 @@ func NewMainWindowView() (*MainWindowView, error) {
 
 	boxNode := builder.GetBoxObj("id_box_node")
 	boxDefaultWallet := builder.GetBoxObj("id_box_default_wallet")
+	boxValidators := builder.GetBoxObj("id_box_validators")
 
 	view := &MainWindowView{
 		ViewBuilder: builder,
@@ -33,6 +35,7 @@ func NewMainWindowView() (*MainWindowView, error) {
 
 		BoxNode:          boxNode,
 		BoxDefaultWallet: boxDefaultWallet,
+		BoxValidators:    boxValidators,
 
 		ExplorerMenuItem:      builder.GetMenuItem("id_explorer_menu"),
 		WebsiteMenuItem:       builder.GetMenuItem("id_website_menu"),

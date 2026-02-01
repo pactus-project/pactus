@@ -16,3 +16,6 @@ var NodeWidgetUI []byte
 
 //go:embed ui/widget_wallet.ui
 var WalletWidgetUI []byte
+
+//go:embed ui/widget_validator.ui
+var ValidatorWidgetUI []byte

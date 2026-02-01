@@ -4,7 +4,6 @@ package model
 
 import (
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/wallet"
@@ -13,10 +12,6 @@ import (
 )
 
 type WalletModel struct {
-	// TODO: we need node for Availability score.
-	// Any better way?
-	// Define ValidatorsModel and separate view for validators.
-	node       *node.Node
 	manager    wltmgr.IManager
 	walletName string
 }
@@ -24,20 +19,17 @@ type WalletModel struct {
 // AddressRow is a UI-friendly but UI-agnostic representation of an address entry.
 // Formatting (strings/markup) should be done by presenters/controllers, not here.
 type AddressRow struct {
-	No                int
-	Address           string
-	Label             string
-	Path              string
-	Imported          bool
-	Balance           amount.Amount
-	Stake             amount.Amount
-	AvailabilityScore *float64
+	No       int
+	Address  string
+	Label    string
+	Path     string
+	Imported bool
+	Balance  amount.Amount
+	Stake    amount.Amount
 }
 
-func NewWalletModel(node *node.Node, walletName string) (*WalletModel, error) {
-	manager := node.WalletManager()
-
-	return &WalletModel{node: node, manager: manager, walletName: walletName}, nil
+func NewWalletModel(manager wltmgr.IManager, walletName string) (*WalletModel, error) {
+	return &WalletModel{manager: manager, walletName: walletName}, nil
 }
 
 // WalletName returns the display name used in the UI.
@@ -145,25 +137,14 @@ func (model *WalletModel) AddressRows() []AddressRow {
 		balance, _ := model.manager.Balance(model.walletName, info.Address)
 		stake, _ := model.manager.Stake(model.walletName, info.Address)
 
-		var scorePtr *float64
-		valAddr, err := crypto.AddressFromString(info.Address)
-		if err == nil {
-			val, err := model.node.State().ValidatorByAddress(valAddr)
-			if err == nil && val != nil {
-				score := model.node.State().AvailabilityScore(val.Number())
-				scorePtr = &score
-			}
-		}
-
 		rows = append(rows, AddressRow{
-			No:                no + 1,
-			Address:           info.Address,
-			Label:             info.Label,
-			Path:              info.Path,
-			Imported:          info.Path == "",
-			Balance:           balance,
-			Stake:             stake,
-			AvailabilityScore: scorePtr,
+			No:       no + 1,
+			Address:  info.Address,
+			Label:    info.Label,
+			Path:     info.Path,
+			Imported: info.Path == "",
+			Balance:  balance,
+			Stake:    stake,
 		})
 	}
 

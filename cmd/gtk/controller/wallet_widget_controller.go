@@ -239,14 +239,13 @@ func (c *WalletWidgetController) RefreshAddresses() {
 			c.view.ClearRows()
 			for _, item := range rows {
 				c.view.AppendRow(
-					[]int{0, 1, 2, 3, 4, 5},
+					[]int{0, 1, 2, 3, 4},
 					[]any{
 						strconv.Itoa(item.No),
 						item.Address,
 						gtkutil.ImportedLabel(item.Label, item.Imported),
 						item.Balance.String(),
 						item.Stake.String(),
-						gtkutil.FloatPtr(item.AvailabilityScore),
 					},
 				)
 			}
