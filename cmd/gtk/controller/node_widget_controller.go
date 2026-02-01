@@ -44,19 +44,6 @@ type nodeWidgetSnapshot struct {
 	clockOffsetErr   error
 }
 
-func isContextDone(ctx context.Context) bool {
-	if ctx == nil {
-		return false
-	}
-
-	select {
-	case <-ctx.Done():
-		return true
-	default:
-		return false
-	}
-}
-
 func NewNodeWidgetController(view *view.NodeWidgetView, nde *node.Node) *NodeWidgetController {
 	return &NodeWidgetController{view: view, node: nde, genesisTime: nde.State().Genesis().GenesisTime()}
 }
@@ -67,12 +54,6 @@ func (c *NodeWidgetController) Bind() error {
 		return err
 	}
 
-	// Reset lifecycle context (in case Bind is called more than once).
-	if c.cancel != nil {
-		c.cancel()
-	}
-	c.ctx, c.cancel = context.WithCancel(context.Background())
-
 	c.view.LabelWorkingDirectory.SetText(cwd)
 	c.view.LabelNetwork.SetText(c.node.State().Genesis().ChainType().String())
 	c.view.LabelNetworkID.SetText(c.node.Network().SelfID().String())
@@ -82,11 +63,19 @@ func (c *NodeWidgetController) Bind() error {
 	c.view.ConnectSignals(map[string]any{})
 
 	c.timeout1ID = glib.TimeoutAdd(1000, func() bool {
+		if gtkutil.IsContextDone(c.ctx) {
+			return false
+		}
+
 		c.timeout1()
 
 		return true
 	})
 	c.timeout10ID = glib.TimeoutAdd(10000, func() bool {
+		if gtkutil.IsContextDone(c.ctx) {
+			return false
+		}
+
 		c.timeout10()
 
 		return true
@@ -100,9 +89,8 @@ func (c *NodeWidgetController) Bind() error {
 }
 
 func (c *NodeWidgetController) timeout1() {
-	ctx := c.ctx
 	go func() {
-		if gtkutil.IsContextDone(ctx) {
+		if gtkutil.IsContextDone(c.ctx) {
 			return
 		}
 
@@ -110,7 +98,7 @@ func (c *NodeWidgetController) timeout1() {
 		lastBlockHeight := c.node.State().LastBlockHeight()
 
 		glib.IdleAdd(func() bool {
-			if gtkutil.IsContextDone(ctx) {
+			if gtkutil.IsContextDone(c.ctx) {
 				return false
 			}
 
@@ -134,9 +122,8 @@ func (c *NodeWidgetController) timeout1() {
 }
 
 func (c *NodeWidgetController) timeout10() {
-	ctx := c.ctx
 	go func() {
-		if isContextDone(ctx) {
+		if gtkutil.IsContextDone(c.ctx) {
 			return
 		}
 
@@ -159,12 +146,12 @@ func (c *NodeWidgetController) timeout10() {
 			clockOffsetErr: offsetErr,
 		}
 
-		glib.IdleAdd(func() bool { return c.applyTimeout10Snapshot(ctx, &snapshot) })
+		glib.IdleAdd(func() bool { return c.applyTimeout10Snapshot(&snapshot) })
 	}()
 }
 
-func (c *NodeWidgetController) applyTimeout10Snapshot(ctx context.Context, snapshot *nodeWidgetSnapshot) bool {
-	if isContextDone(ctx) {
+func (c *NodeWidgetController) applyTimeout10Snapshot(snapshot *nodeWidgetSnapshot) bool {
+	if gtkutil.IsContextDone(c.ctx) {
 		return false
 	}
 	if snapshot == nil {

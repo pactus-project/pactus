@@ -325,5 +325,56 @@ func (s *WalletJsonRPC) Methods() map[string]func(ctx context.Context, message j
 
 			return s.client.ListTransactions(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
+
+		"pactus.wallet.set_default_fee": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(SetDefaultFeeRequest)
+
+			var jrpcData paramsAndHeadersWallet
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.SetDefaultFee(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
+
+		"pactus.wallet.get_mnemonic": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(GetMnemonicRequest)
+
+			var jrpcData paramsAndHeadersWallet
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.GetMnemonic(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
+
+		"pactus.wallet.get_private_key": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(GetPrivateKeyRequest)
+
+			var jrpcData paramsAndHeadersWallet
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.GetPrivateKey(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
 	}
 }

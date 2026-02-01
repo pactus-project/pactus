@@ -1177,7 +1177,7 @@ pub struct GetNewAddressResponse {
     pub wallet_name: ::prost::alloc::string::String,
     /// Detailed information about the new address.
     #[prost(message, optional, tag="2")]
-    pub address_info: ::core::option::Option<AddressInfo>,
+    pub addr: ::core::option::Option<AddressInfo>,
 }
 /// Request message for restoring a wallet from mnemonic (seed phrase).
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -1363,7 +1363,7 @@ pub struct GetAddressInfoResponse {
     pub wallet_name: ::prost::alloc::string::String,
     /// Detailed information about the address.
     #[prost(message, optional, tag="2")]
-    pub address_info: ::core::option::Option<AddressInfo>,
+    pub addr: ::core::option::Option<AddressInfo>,
 }
 /// Request message for setting address label.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -1461,7 +1461,7 @@ pub struct ListAddressesResponse {
     pub wallet_name: ::prost::alloc::string::String,
     /// List of all addresses in the wallet with their details.
     #[prost(message, repeated, tag="2")]
-    pub data: ::prost::alloc::vec::Vec<AddressInfo>,
+    pub addrs: ::prost::alloc::vec::Vec<AddressInfo>,
 }
 /// Request message for updating wallet password.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -1564,6 +1564,60 @@ pub struct ListTransactionsResponse {
     /// List of transactions for the wallet, filtered by the specified address if provided.
     #[prost(message, repeated, tag="2")]
     pub txs: ::prost::alloc::vec::Vec<WalletTransactionInfo>,
+}
+/// Request message for setting default fee.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SetDefaultFeeRequest {
+    /// The name of the wallet to set the default fee.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+    /// The default fee amount in NanoPAC.
+    #[prost(int64, tag="2")]
+    pub amount: i64,
+}
+/// Response message for updated default fee.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SetDefaultFeeResponse {
+    /// The name of the wallet where the default fee was updated.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+}
+/// Request message for getting mnemonic.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetMnemonicRequest {
+    /// The name of the wallet to get the mnemonic.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+    /// Wallet password.
+    #[prost(string, tag="2")]
+    pub password: ::prost::alloc::string::String,
+}
+/// Response message contains mnemonic.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetMnemonicResponse {
+    /// The mnemonic (seed phrase).
+    #[prost(string, tag="1")]
+    pub mnemonic: ::prost::alloc::string::String,
+}
+/// Request message for getting private key.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetPrivateKeyRequest {
+    /// The name of the wallet containing the address.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+    /// Wallet password.
+    #[prost(string, tag="2")]
+    pub password: ::prost::alloc::string::String,
+    /// The address to get the private key.
+    #[prost(string, tag="3")]
+    pub address: ::prost::alloc::string::String,
+}
+/// Response message contains private key.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetPrivateKeyResponse {
+    /// The private key in hexadecimal format.
+    #[prost(string, tag="1")]
+    pub private_key: ::prost::alloc::string::String,
 }
 /// AddressType defines different types of blockchain addresses.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]

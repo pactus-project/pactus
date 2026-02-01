@@ -28,13 +28,11 @@ func NewValidatorWidgetController(view *view.ValidatorWidgetView, nde *node.Node
 }
 
 func (c *ValidatorWidgetController) Bind() error {
-	// Reset lifecycle context.
-	if c.cancel != nil {
-		c.cancel()
-	}
-	c.ctx, c.cancel = context.WithCancel(context.Background())
-
 	c.timeoutID = glib.TimeoutAdd(10000, func() bool {
+		if gtkutil.IsContextDone(c.ctx) {
+			return false
+		}
+
 		c.refresh()
 
 		return true
@@ -47,9 +45,8 @@ func (c *ValidatorWidgetController) Bind() error {
 }
 
 func (c *ValidatorWidgetController) refresh() {
-	ctx := c.ctx
 	go func() {
-		if gtkutil.IsContextDone(ctx) {
+		if gtkutil.IsContextDone(c.ctx) {
 			return
 		}
 
@@ -63,7 +60,7 @@ func (c *ValidatorWidgetController) refresh() {
 		}
 
 		glib.IdleAdd(func() bool {
-			if gtkutil.IsContextDone(ctx) {
+			if gtkutil.IsContextDone(c.ctx) {
 				return false
 			}
 

@@ -36,6 +36,9 @@ const (
 	Wallet_SignMessage_FullMethodName         = "/pactus.Wallet/SignMessage"
 	Wallet_SignRawTransaction_FullMethodName  = "/pactus.Wallet/SignRawTransaction"
 	Wallet_ListTransactions_FullMethodName    = "/pactus.Wallet/ListTransactions"
+	Wallet_SetDefaultFee_FullMethodName       = "/pactus.Wallet/SetDefaultFee"
+	Wallet_GetMnemonic_FullMethodName         = "/pactus.Wallet/GetMnemonic"
+	Wallet_GetPrivateKey_FullMethodName       = "/pactus.Wallet/GetPrivateKey"
 )
 
 // WalletClient is the client API for Wallet service.
@@ -82,6 +85,12 @@ type WalletClient interface {
 	// ListTransactions returns a list of transactions for a wallet,
 	// optionally filtered by a specific address, with pagination support.
 	ListTransactions(ctx context.Context, in *ListTransactionsRequest, opts ...grpc.CallOption) (*ListTransactionsResponse, error)
+	// SetDefaultFee sets the default fee for the wallet.
+	SetDefaultFee(ctx context.Context, in *SetDefaultFeeRequest, opts ...grpc.CallOption) (*SetDefaultFeeResponse, error)
+	// GetMnemonic returns the mnemonic (seed phrase) for the wallet.
+	GetMnemonic(ctx context.Context, in *GetMnemonicRequest, opts ...grpc.CallOption) (*GetMnemonicResponse, error)
+	// GetPrivateKey returns the private key for a given address.
+	GetPrivateKey(ctx context.Context, in *GetPrivateKeyRequest, opts ...grpc.CallOption) (*GetPrivateKeyResponse, error)
 }
 
 type walletClient struct {
@@ -262,6 +271,36 @@ func (c *walletClient) ListTransactions(ctx context.Context, in *ListTransaction
 	return out, nil
 }
 
+func (c *walletClient) SetDefaultFee(ctx context.Context, in *SetDefaultFeeRequest, opts ...grpc.CallOption) (*SetDefaultFeeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetDefaultFeeResponse)
+	err := c.cc.Invoke(ctx, Wallet_SetDefaultFee_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *walletClient) GetMnemonic(ctx context.Context, in *GetMnemonicRequest, opts ...grpc.CallOption) (*GetMnemonicResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMnemonicResponse)
+	err := c.cc.Invoke(ctx, Wallet_GetMnemonic_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *walletClient) GetPrivateKey(ctx context.Context, in *GetPrivateKeyRequest, opts ...grpc.CallOption) (*GetPrivateKeyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPrivateKeyResponse)
+	err := c.cc.Invoke(ctx, Wallet_GetPrivateKey_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WalletServer is the server API for Wallet service.
 // All implementations should embed UnimplementedWalletServer
 // for forward compatibility.
@@ -306,6 +345,12 @@ type WalletServer interface {
 	// ListTransactions returns a list of transactions for a wallet,
 	// optionally filtered by a specific address, with pagination support.
 	ListTransactions(context.Context, *ListTransactionsRequest) (*ListTransactionsResponse, error)
+	// SetDefaultFee sets the default fee for the wallet.
+	SetDefaultFee(context.Context, *SetDefaultFeeRequest) (*SetDefaultFeeResponse, error)
+	// GetMnemonic returns the mnemonic (seed phrase) for the wallet.
+	GetMnemonic(context.Context, *GetMnemonicRequest) (*GetMnemonicResponse, error)
+	// GetPrivateKey returns the private key for a given address.
+	GetPrivateKey(context.Context, *GetPrivateKeyRequest) (*GetPrivateKeyResponse, error)
 }
 
 // UnimplementedWalletServer should be embedded to have
@@ -365,6 +410,15 @@ func (UnimplementedWalletServer) SignRawTransaction(context.Context, *SignRawTra
 }
 func (UnimplementedWalletServer) ListTransactions(context.Context, *ListTransactionsRequest) (*ListTransactionsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListTransactions not implemented")
+}
+func (UnimplementedWalletServer) SetDefaultFee(context.Context, *SetDefaultFeeRequest) (*SetDefaultFeeResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetDefaultFee not implemented")
+}
+func (UnimplementedWalletServer) GetMnemonic(context.Context, *GetMnemonicRequest) (*GetMnemonicResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMnemonic not implemented")
+}
+func (UnimplementedWalletServer) GetPrivateKey(context.Context, *GetPrivateKeyRequest) (*GetPrivateKeyResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPrivateKey not implemented")
 }
 func (UnimplementedWalletServer) testEmbeddedByValue() {}
 
@@ -692,6 +746,60 @@ func _Wallet_ListTransactions_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Wallet_SetDefaultFee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetDefaultFeeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).SetDefaultFee(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Wallet_SetDefaultFee_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).SetDefaultFee(ctx, req.(*SetDefaultFeeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Wallet_GetMnemonic_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMnemonicRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).GetMnemonic(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Wallet_GetMnemonic_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).GetMnemonic(ctx, req.(*GetMnemonicRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Wallet_GetPrivateKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPrivateKeyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).GetPrivateKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Wallet_GetPrivateKey_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).GetPrivateKey(ctx, req.(*GetPrivateKeyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Wallet_ServiceDesc is the grpc.ServiceDesc for Wallet service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -766,6 +874,18 @@ var Wallet_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListTransactions",
 			Handler:    _Wallet_ListTransactions_Handler,
+		},
+		{
+			MethodName: "SetDefaultFee",
+			Handler:    _Wallet_SetDefaultFee_Handler,
+		},
+		{
+			MethodName: "GetMnemonic",
+			Handler:    _Wallet_GetMnemonic_Handler,
+		},
+		{
+			MethodName: "GetPrivateKey",
+			Handler:    _Wallet_GetPrivateKey_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

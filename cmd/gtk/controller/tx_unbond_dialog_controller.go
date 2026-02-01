@@ -7,18 +7,18 @@ import (
 
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/wallet"
-	"github.com/pactus-project/pactus/wallet/types"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 type TxUnbondModel interface {
-	ListAddresses(opts ...wallet.ListAddressOption) []types.AddressInfo
-	AddressInfo(addr string) *types.AddressInfo
+	ListAddresses(addressTypes ...crypto.AddressType) []*pactus.AddressInfo
+	AddressInfo(addr string) *pactus.AddressInfo
 	Stake(addr string) (amount.Amount, error)
 
-	MakeUnbondTx(validator string, opts ...wallet.TxOption) (*tx.Tx, error)
+	MakeUnbondTx(validatorAddr, memo string) (*tx.Tx, error)
 	SignTransaction(password string, trx *tx.Tx) error
 	BroadcastTransaction(trx *tx.Tx) (string, error)
 }
@@ -38,7 +38,7 @@ func NewTxUnbondDialogController(
 }
 
 func (c *TxUnbondDialogController) Run() {
-	for _, ai := range c.model.ListAddresses(wallet.OnlyValidatorAddresses()) {
+	for _, ai := range c.model.ListAddresses(crypto.AddressTypeValidator) {
 		c.view.ValidatorCombo.Append(ai.Address, ai.Address)
 	}
 
@@ -76,10 +76,10 @@ func (c *TxUnbondDialogController) onValidatorChanged() {
 
 func (c *TxUnbondDialogController) onSend() {
 	validatorEntry, _ := c.view.ValidatorCombo.GetEntry()
-	validator := gtkutil.GetEntryText(validatorEntry)
+	validatorAddr := gtkutil.GetEntryText(validatorEntry)
 	memo := gtkutil.GetEntryText(c.view.MemoEntry)
 
-	trx, err := c.model.MakeUnbondTx(validator, wallet.OptionMemo(memo))
+	trx, err := c.model.MakeUnbondTx(validatorAddr, memo)
 	if err != nil {
 		gtkutil.ShowError(err)
 
@@ -97,7 +97,7 @@ Memo:      %s
 
 You are going to sign and broadcast this transaction.
 <b>⚠️ This action cannot be undone.</b>
-Do you want to continue with this transaction?`, validator, trx.Fee(), trx.Memo())
+Do you want to continue with this transaction?`, validatorAddr, trx.Fee(), trx.Memo())
 
 	if !gtkutil.ShowQuestionDialog(c.view.Dialog, msg) {
 		return

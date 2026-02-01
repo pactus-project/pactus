@@ -109,8 +109,11 @@ func main() {
 	activateOnce := new(sync.Once)
 	shutdownOnce := new(sync.Once)
 
+	ctx, cancel := context.WithCancel(context.Background())
+
 	shutdown := func() {
 		shutdownOnce.Do(func() {
+			cancel()
 			if gui != nil {
 				gui.Cleanup()
 			}
@@ -148,7 +151,7 @@ func main() {
 			}
 
 			go func() {
-				n, err := newNode(workingDir, notify)
+				n, err := newNode(workingDir, notify) //nolint:contextcheck // TODO: fix this
 
 				glib.IdleAdd(func() bool {
 					if err != nil {
@@ -163,7 +166,7 @@ func main() {
 					guiNode = n
 					splash.SetStatus("Loading wallet interface...")
 
-					gui, err = gtkapp.Run(guiNode, app)
+					gui, err = gtkapp.Run(ctx, guiNode, app)
 					gtkutil.FatalErrorCheck(err)
 
 					splash.Destroy()

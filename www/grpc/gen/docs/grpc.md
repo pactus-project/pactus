@@ -219,6 +219,18 @@ For seamless integration with Pactus, you can use these client libraries:
           <a href="#pactus.Wallet.ListTransactions">
           <span class="rpc-badge"></span>ListTransactions</a>
         </li>
+        <li>
+          <a href="#pactus.Wallet.SetDefaultFee">
+          <span class="rpc-badge"></span>SetDefaultFee</a>
+        </li>
+        <li>
+          <a href="#pactus.Wallet.GetMnemonic">
+          <span class="rpc-badge"></span>GetMnemonic</a>
+        </li>
+        <li>
+          <a href="#pactus.Wallet.GetPrivateKey">
+          <span class="rpc-badge"></span>GetPrivateKey</a>
+        </li>
       </ul>
     </li>
   </ul>
@@ -3823,35 +3835,35 @@ Deprecated: Will move into utils.</p>
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">address_info</td>
+    <td class="fw-bold">addr</td>
     <td> AddressInfo</td>
     <td>
   Detailed information about the address.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">address_info.address</td>
+    <td class="fw-bold">addr.address</td>
     <td> string</td>
     <td>
   The address string.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">address_info.public_key</td>
+    <td class="fw-bold">addr.public_key</td>
     <td> string</td>
     <td>
   The public key associated with the address.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">address_info.label</td>
+    <td class="fw-bold">addr.label</td>
     <td> string</td>
     <td>
   A human-readable label associated with the address.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">address_info.path</td>
+    <td class="fw-bold">addr.path</td>
     <td> string</td>
     <td>
   The Hierarchical Deterministic (HD) path of the address within the wallet.
@@ -3994,35 +4006,35 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">address_info</td>
+    <td class="fw-bold">addr</td>
     <td> AddressInfo</td>
     <td>
   Detailed information about the new address.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">address_info.address</td>
+    <td class="fw-bold">addr.address</td>
     <td> string</td>
     <td>
   The address string.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">address_info.public_key</td>
+    <td class="fw-bold">addr.public_key</td>
     <td> string</td>
     <td>
   The public key associated with the address.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">address_info.label</td>
+    <td class="fw-bold">addr.label</td>
     <td> string</td>
     <td>
   A human-readable label associated with the address.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">address_info.path</td>
+    <td class="fw-bold">addr.path</td>
     <td> string</td>
     <td>
   The Hierarchical Deterministic (HD) path of the address within the wallet.
@@ -4080,35 +4092,35 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">data</td>
+    <td class="fw-bold">addrs</td>
     <td>repeated AddressInfo</td>
     <td>
   List of all addresses in the wallet with their details.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">data[].address</td>
+    <td class="fw-bold">addrs[].address</td>
     <td> string</td>
     <td>
   The address string.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">data[].public_key</td>
+    <td class="fw-bold">addrs[].public_key</td>
     <td> string</td>
     <td>
   The public key associated with the address.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">data[].label</td>
+    <td class="fw-bold">addrs[].label</td>
     <td> string</td>
     <td>
   A human-readable label associated with the address.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">data[].path</td>
+    <td class="fw-bold">addrs[].path</td>
     <td> string</td>
     <td>
   The Hierarchical Deterministic (HD) path of the address within the wallet.
@@ -4431,6 +4443,142 @@ Defaults to 0 if not set.
     <td> int64</td>
     <td>
   Unix timestamp of when the transaction was last updated.
+    </td>
+  </tr>
+   </tbody>
+</table>
+
+#### SetDefaultFee <span id="pactus.Wallet.SetDefaultFee" class="rpc-badge"></span>
+
+<p>SetDefaultFee sets the default fee for the wallet.</p>
+
+<h4>SetDefaultFeeRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+  The name of the wallet to set the default fee.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">amount</td>
+    <td> int64</td>
+    <td>
+  The default fee amount in NanoPAC.
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<h4>SetDefaultFeeResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+  The name of the wallet where the default fee was updated.
+    </td>
+  </tr>
+   </tbody>
+</table>
+
+#### GetMnemonic <span id="pactus.Wallet.GetMnemonic" class="rpc-badge"></span>
+
+<p>GetMnemonic returns the mnemonic (seed phrase) for the wallet.</p>
+
+<h4>GetMnemonicRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+  The name of the wallet to get the mnemonic.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">password</td>
+    <td> string</td>
+    <td>
+  Wallet password.
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<h4>GetMnemonicResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">mnemonic</td>
+    <td> string</td>
+    <td>
+  The mnemonic (seed phrase).
+    </td>
+  </tr>
+   </tbody>
+</table>
+
+#### GetPrivateKey <span id="pactus.Wallet.GetPrivateKey" class="rpc-badge"></span>
+
+<p>GetPrivateKey returns the private key for a given address.</p>
+
+<h4>GetPrivateKeyRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+  The name of the wallet containing the address.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">password</td>
+    <td> string</td>
+    <td>
+  Wallet password.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">address</td>
+    <td> string</td>
+    <td>
+  The address to get the private key.
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<h4>GetPrivateKeyResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">private_key</td>
+    <td> string</td>
+    <td>
+  The private key in hexadecimal format.
     </td>
   </tr>
    </tbody>

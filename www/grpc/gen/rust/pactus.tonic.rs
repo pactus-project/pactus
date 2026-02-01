@@ -3480,6 +3480,77 @@ pub mod wallet_client {
                 .insert(GrpcMethod::new("pactus.Wallet", "ListTransactions"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn set_default_fee(
+            &mut self,
+            request: impl tonic::IntoRequest<super::SetDefaultFeeRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::SetDefaultFeeResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pactus.Wallet/SetDefaultFee",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pactus.Wallet", "SetDefaultFee"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn get_mnemonic(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetMnemonicRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetMnemonicResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pactus.Wallet/GetMnemonic",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new("pactus.Wallet", "GetMnemonic"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn get_private_key(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetPrivateKeyRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetPrivateKeyResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pactus.Wallet/GetPrivateKey",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pactus.Wallet", "GetPrivateKey"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -3612,6 +3683,27 @@ pub mod wallet_server {
             request: tonic::Request<super::ListTransactionsRequest>,
         ) -> std::result::Result<
             tonic::Response<super::ListTransactionsResponse>,
+            tonic::Status,
+        >;
+        async fn set_default_fee(
+            &self,
+            request: tonic::Request<super::SetDefaultFeeRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::SetDefaultFeeResponse>,
+            tonic::Status,
+        >;
+        async fn get_mnemonic(
+            &self,
+            request: tonic::Request<super::GetMnemonicRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetMnemonicResponse>,
+            tonic::Status,
+        >;
+        async fn get_private_key(
+            &self,
+            request: tonic::Request<super::GetPrivateKeyRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetPrivateKeyResponse>,
             tonic::Status,
         >;
     }
@@ -4439,6 +4531,141 @@ pub mod wallet_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = ListTransactionsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pactus.Wallet/SetDefaultFee" => {
+                    #[allow(non_camel_case_types)]
+                    struct SetDefaultFeeSvc<T: Wallet>(pub Arc<T>);
+                    impl<
+                        T: Wallet,
+                    > tonic::server::UnaryService<super::SetDefaultFeeRequest>
+                    for SetDefaultFeeSvc<T> {
+                        type Response = super::SetDefaultFeeResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::SetDefaultFeeRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Wallet>::set_default_fee(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = SetDefaultFeeSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pactus.Wallet/GetMnemonic" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetMnemonicSvc<T: Wallet>(pub Arc<T>);
+                    impl<
+                        T: Wallet,
+                    > tonic::server::UnaryService<super::GetMnemonicRequest>
+                    for GetMnemonicSvc<T> {
+                        type Response = super::GetMnemonicResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetMnemonicRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Wallet>::get_mnemonic(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetMnemonicSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pactus.Wallet/GetPrivateKey" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetPrivateKeySvc<T: Wallet>(pub Arc<T>);
+                    impl<
+                        T: Wallet,
+                    > tonic::server::UnaryService<super::GetPrivateKeyRequest>
+                    for GetPrivateKeySvc<T> {
+                        type Response = super::GetPrivateKeyResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetPrivateKeyRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Wallet>::get_private_key(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetPrivateKeySvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

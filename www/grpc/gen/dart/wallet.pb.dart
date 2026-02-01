@@ -218,11 +218,11 @@ class GetNewAddressRequest extends $pb.GeneratedMessage {
 class GetNewAddressResponse extends $pb.GeneratedMessage {
   factory GetNewAddressResponse({
     $core.String? walletName,
-    AddressInfo? addressInfo,
+    AddressInfo? addr,
   }) {
     final result = create();
     if (walletName != null) result.walletName = walletName;
-    if (addressInfo != null) result.addressInfo = addressInfo;
+    if (addr != null) result.addr = addr;
     return result;
   }
 
@@ -240,7 +240,7 @@ class GetNewAddressResponse extends $pb.GeneratedMessage {
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
-    ..aOM<AddressInfo>(2, _omitFieldNames ? '' : 'addressInfo',
+    ..aOM<AddressInfo>(2, _omitFieldNames ? '' : 'addr',
         subBuilder: AddressInfo.create)
     ..hasRequiredFields = false;
 
@@ -276,15 +276,15 @@ class GetNewAddressResponse extends $pb.GeneratedMessage {
 
   /// Detailed information about the new address.
   @$pb.TagNumber(2)
-  AddressInfo get addressInfo => $_getN(1);
+  AddressInfo get addr => $_getN(1);
   @$pb.TagNumber(2)
-  set addressInfo(AddressInfo value) => $_setField(2, value);
+  set addr(AddressInfo value) => $_setField(2, value);
   @$pb.TagNumber(2)
-  $core.bool hasAddressInfo() => $_has(1);
+  $core.bool hasAddr() => $_has(1);
   @$pb.TagNumber(2)
-  void clearAddressInfo() => $_clearField(2);
+  void clearAddr() => $_clearField(2);
   @$pb.TagNumber(2)
-  AddressInfo ensureAddressInfo() => $_ensure(1);
+  AddressInfo ensureAddr() => $_ensure(1);
 }
 
 /// Request message for restoring a wallet from mnemonic (seed phrase).
@@ -1542,11 +1542,11 @@ class GetAddressInfoRequest extends $pb.GeneratedMessage {
 class GetAddressInfoResponse extends $pb.GeneratedMessage {
   factory GetAddressInfoResponse({
     $core.String? walletName,
-    AddressInfo? addressInfo,
+    AddressInfo? addr,
   }) {
     final result = create();
     if (walletName != null) result.walletName = walletName;
-    if (addressInfo != null) result.addressInfo = addressInfo;
+    if (addr != null) result.addr = addr;
     return result;
   }
 
@@ -1564,7 +1564,7 @@ class GetAddressInfoResponse extends $pb.GeneratedMessage {
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
-    ..aOM<AddressInfo>(2, _omitFieldNames ? '' : 'addressInfo',
+    ..aOM<AddressInfo>(2, _omitFieldNames ? '' : 'addr',
         subBuilder: AddressInfo.create)
     ..hasRequiredFields = false;
 
@@ -1600,15 +1600,15 @@ class GetAddressInfoResponse extends $pb.GeneratedMessage {
 
   /// Detailed information about the address.
   @$pb.TagNumber(2)
-  AddressInfo get addressInfo => $_getN(1);
+  AddressInfo get addr => $_getN(1);
   @$pb.TagNumber(2)
-  set addressInfo(AddressInfo value) => $_setField(2, value);
+  set addr(AddressInfo value) => $_setField(2, value);
   @$pb.TagNumber(2)
-  $core.bool hasAddressInfo() => $_has(1);
+  $core.bool hasAddr() => $_has(1);
   @$pb.TagNumber(2)
-  void clearAddressInfo() => $_clearField(2);
+  void clearAddr() => $_clearField(2);
   @$pb.TagNumber(2)
-  AddressInfo ensureAddressInfo() => $_ensure(1);
+  AddressInfo ensureAddr() => $_ensure(1);
 }
 
 /// Request message for setting address label.
@@ -2167,11 +2167,11 @@ class ListAddressesRequest extends $pb.GeneratedMessage {
 class ListAddressesResponse extends $pb.GeneratedMessage {
   factory ListAddressesResponse({
     $core.String? walletName,
-    $core.Iterable<AddressInfo>? data,
+    $core.Iterable<AddressInfo>? addrs,
   }) {
     final result = create();
     if (walletName != null) result.walletName = walletName;
-    if (data != null) result.data.addAll(data);
+    if (addrs != null) result.addrs.addAll(addrs);
     return result;
   }
 
@@ -2189,7 +2189,7 @@ class ListAddressesResponse extends $pb.GeneratedMessage {
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
-    ..pPM<AddressInfo>(2, _omitFieldNames ? '' : 'data',
+    ..pPM<AddressInfo>(2, _omitFieldNames ? '' : 'addrs',
         subBuilder: AddressInfo.create)
     ..hasRequiredFields = false;
 
@@ -2225,7 +2225,7 @@ class ListAddressesResponse extends $pb.GeneratedMessage {
 
   /// List of all addresses in the wallet with their details.
   @$pb.TagNumber(2)
-  $pb.PbList<AddressInfo> get data => $_getList(1);
+  $pb.PbList<AddressInfo> get addrs => $_getList(1);
 }
 
 /// Request message for updating wallet password.
@@ -2791,6 +2791,396 @@ class ListTransactionsResponse extends $pb.GeneratedMessage {
   $pb.PbList<WalletTransactionInfo> get txs => $_getList(1);
 }
 
+/// Request message for setting default fee.
+class SetDefaultFeeRequest extends $pb.GeneratedMessage {
+  factory SetDefaultFeeRequest({
+    $core.String? walletName,
+    $fixnum.Int64? amount,
+  }) {
+    final result = create();
+    if (walletName != null) result.walletName = walletName;
+    if (amount != null) result.amount = amount;
+    return result;
+  }
+
+  SetDefaultFeeRequest._();
+
+  factory SetDefaultFeeRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory SetDefaultFeeRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'SetDefaultFeeRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'walletName')
+    ..aInt64(2, _omitFieldNames ? '' : 'amount')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SetDefaultFeeRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SetDefaultFeeRequest copyWith(void Function(SetDefaultFeeRequest) updates) =>
+      super.copyWith((message) => updates(message as SetDefaultFeeRequest))
+          as SetDefaultFeeRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static SetDefaultFeeRequest create() => SetDefaultFeeRequest._();
+  @$core.override
+  SetDefaultFeeRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static SetDefaultFeeRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<SetDefaultFeeRequest>(create);
+  static SetDefaultFeeRequest? _defaultInstance;
+
+  /// The name of the wallet to set the default fee.
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => $_clearField(1);
+
+  /// The default fee amount in NanoPAC.
+  @$pb.TagNumber(2)
+  $fixnum.Int64 get amount => $_getI64(1);
+  @$pb.TagNumber(2)
+  set amount($fixnum.Int64 value) => $_setInt64(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasAmount() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearAmount() => $_clearField(2);
+}
+
+/// Response message for updated default fee.
+class SetDefaultFeeResponse extends $pb.GeneratedMessage {
+  factory SetDefaultFeeResponse({
+    $core.String? walletName,
+  }) {
+    final result = create();
+    if (walletName != null) result.walletName = walletName;
+    return result;
+  }
+
+  SetDefaultFeeResponse._();
+
+  factory SetDefaultFeeResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory SetDefaultFeeResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'SetDefaultFeeResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'walletName')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SetDefaultFeeResponse clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SetDefaultFeeResponse copyWith(
+          void Function(SetDefaultFeeResponse) updates) =>
+      super.copyWith((message) => updates(message as SetDefaultFeeResponse))
+          as SetDefaultFeeResponse;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static SetDefaultFeeResponse create() => SetDefaultFeeResponse._();
+  @$core.override
+  SetDefaultFeeResponse createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static SetDefaultFeeResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<SetDefaultFeeResponse>(create);
+  static SetDefaultFeeResponse? _defaultInstance;
+
+  /// The name of the wallet where the default fee was updated.
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => $_clearField(1);
+}
+
+/// Request message for getting mnemonic.
+class GetMnemonicRequest extends $pb.GeneratedMessage {
+  factory GetMnemonicRequest({
+    $core.String? walletName,
+    $core.String? password,
+  }) {
+    final result = create();
+    if (walletName != null) result.walletName = walletName;
+    if (password != null) result.password = password;
+    return result;
+  }
+
+  GetMnemonicRequest._();
+
+  factory GetMnemonicRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetMnemonicRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetMnemonicRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'walletName')
+    ..aOS(2, _omitFieldNames ? '' : 'password')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetMnemonicRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetMnemonicRequest copyWith(void Function(GetMnemonicRequest) updates) =>
+      super.copyWith((message) => updates(message as GetMnemonicRequest))
+          as GetMnemonicRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetMnemonicRequest create() => GetMnemonicRequest._();
+  @$core.override
+  GetMnemonicRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static GetMnemonicRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetMnemonicRequest>(create);
+  static GetMnemonicRequest? _defaultInstance;
+
+  /// The name of the wallet to get the mnemonic.
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => $_clearField(1);
+
+  /// Wallet password.
+  @$pb.TagNumber(2)
+  $core.String get password => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set password($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasPassword() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearPassword() => $_clearField(2);
+}
+
+/// Response message contains mnemonic.
+class GetMnemonicResponse extends $pb.GeneratedMessage {
+  factory GetMnemonicResponse({
+    $core.String? mnemonic,
+  }) {
+    final result = create();
+    if (mnemonic != null) result.mnemonic = mnemonic;
+    return result;
+  }
+
+  GetMnemonicResponse._();
+
+  factory GetMnemonicResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetMnemonicResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetMnemonicResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'mnemonic')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetMnemonicResponse clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetMnemonicResponse copyWith(void Function(GetMnemonicResponse) updates) =>
+      super.copyWith((message) => updates(message as GetMnemonicResponse))
+          as GetMnemonicResponse;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetMnemonicResponse create() => GetMnemonicResponse._();
+  @$core.override
+  GetMnemonicResponse createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static GetMnemonicResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetMnemonicResponse>(create);
+  static GetMnemonicResponse? _defaultInstance;
+
+  /// The mnemonic (seed phrase).
+  @$pb.TagNumber(1)
+  $core.String get mnemonic => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set mnemonic($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasMnemonic() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMnemonic() => $_clearField(1);
+}
+
+/// Request message for getting private key.
+class GetPrivateKeyRequest extends $pb.GeneratedMessage {
+  factory GetPrivateKeyRequest({
+    $core.String? walletName,
+    $core.String? password,
+    $core.String? address,
+  }) {
+    final result = create();
+    if (walletName != null) result.walletName = walletName;
+    if (password != null) result.password = password;
+    if (address != null) result.address = address;
+    return result;
+  }
+
+  GetPrivateKeyRequest._();
+
+  factory GetPrivateKeyRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetPrivateKeyRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetPrivateKeyRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'walletName')
+    ..aOS(2, _omitFieldNames ? '' : 'password')
+    ..aOS(3, _omitFieldNames ? '' : 'address')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetPrivateKeyRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetPrivateKeyRequest copyWith(void Function(GetPrivateKeyRequest) updates) =>
+      super.copyWith((message) => updates(message as GetPrivateKeyRequest))
+          as GetPrivateKeyRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetPrivateKeyRequest create() => GetPrivateKeyRequest._();
+  @$core.override
+  GetPrivateKeyRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static GetPrivateKeyRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetPrivateKeyRequest>(create);
+  static GetPrivateKeyRequest? _defaultInstance;
+
+  /// The name of the wallet containing the address.
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => $_clearField(1);
+
+  /// Wallet password.
+  @$pb.TagNumber(2)
+  $core.String get password => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set password($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasPassword() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearPassword() => $_clearField(2);
+
+  /// The address to get the private key.
+  @$pb.TagNumber(3)
+  $core.String get address => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set address($core.String value) => $_setString(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasAddress() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearAddress() => $_clearField(3);
+}
+
+/// Response message contains private key.
+class GetPrivateKeyResponse extends $pb.GeneratedMessage {
+  factory GetPrivateKeyResponse({
+    $core.String? privateKey,
+  }) {
+    final result = create();
+    if (privateKey != null) result.privateKey = privateKey;
+    return result;
+  }
+
+  GetPrivateKeyResponse._();
+
+  factory GetPrivateKeyResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetPrivateKeyResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetPrivateKeyResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'privateKey')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetPrivateKeyResponse clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetPrivateKeyResponse copyWith(
+          void Function(GetPrivateKeyResponse) updates) =>
+      super.copyWith((message) => updates(message as GetPrivateKeyResponse))
+          as GetPrivateKeyResponse;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetPrivateKeyResponse create() => GetPrivateKeyResponse._();
+  @$core.override
+  GetPrivateKeyResponse createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static GetPrivateKeyResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetPrivateKeyResponse>(create);
+  static GetPrivateKeyResponse? _defaultInstance;
+
+  /// The private key in hexadecimal format.
+  @$pb.TagNumber(1)
+  $core.String get privateKey => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set privateKey($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasPrivateKey() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearPrivateKey() => $_clearField(1);
+}
+
 /// Wallet service provides RPC methods for wallet management operations.
 class WalletApi {
   final $pb.RpcClient _client;
@@ -2902,6 +3292,24 @@ class WalletApi {
           $pb.ClientContext? ctx, ListTransactionsRequest request) =>
       _client.invoke<ListTransactionsResponse>(ctx, 'Wallet',
           'ListTransactions', request, ListTransactionsResponse());
+
+  /// SetDefaultFee sets the default fee for the wallet.
+  $async.Future<SetDefaultFeeResponse> setDefaultFee(
+          $pb.ClientContext? ctx, SetDefaultFeeRequest request) =>
+      _client.invoke<SetDefaultFeeResponse>(
+          ctx, 'Wallet', 'SetDefaultFee', request, SetDefaultFeeResponse());
+
+  /// GetMnemonic returns the mnemonic (seed phrase) for the wallet.
+  $async.Future<GetMnemonicResponse> getMnemonic(
+          $pb.ClientContext? ctx, GetMnemonicRequest request) =>
+      _client.invoke<GetMnemonicResponse>(
+          ctx, 'Wallet', 'GetMnemonic', request, GetMnemonicResponse());
+
+  /// GetPrivateKey returns the private key for a given address.
+  $async.Future<GetPrivateKeyResponse> getPrivateKey(
+          $pb.ClientContext? ctx, GetPrivateKeyRequest request) =>
+      _client.invoke<GetPrivateKeyResponse>(
+          ctx, 'Wallet', 'GetPrivateKey', request, GetPrivateKeyResponse());
 }
 
 const $core.bool _omitFieldNames =

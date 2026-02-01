@@ -16,6 +16,7 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/wallet/types"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 type WalletWidgetModel interface {
@@ -25,7 +26,7 @@ type WalletWidgetModel interface {
 	TotalBalance() (amount.Amount, error)
 	TotalStake() (amount.Amount, error)
 	AddressRows() []model.AddressRow
-	Transactions(count, skip int) []*types.TransactionInfo
+	Transactions(count, skip int) []*pactus.WalletTransactionInfo
 }
 
 type WalletWidgetHandlers struct {
@@ -276,12 +277,12 @@ func (c *WalletWidgetController) RefreshTransactions() {
 					[]int{0, 1, 2, 3, 4, 5, 6, 7, 8},
 					[]any{
 						trx.No,
-						cmd.ShortHash(trx.TxID),
+						cmd.ShortHash(trx.TxId),
 						cmd.ShortAddress(trx.Sender),
 						cmd.ShortAddress(trx.Receiver),
 						trx.PayloadType.String(),
-						trx.Amount.String(),
-						getDirectionTextWithIcon(trx.Direction),
+						amount.Amount(trx.Amount).String(),
+						getDirectionTextWithIcon(types.TxDirection(trx.Direction)),
 						trx.Status.String(),
 						trx.Comment,
 					},

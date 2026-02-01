@@ -49,6 +49,28 @@ function deserialize_pactus_GetAddressInfoResponse(buffer_arg) {
   return wallet_pb.GetAddressInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_GetMnemonicRequest(arg) {
+  if (!(arg instanceof wallet_pb.GetMnemonicRequest)) {
+    throw new Error('Expected argument of type pactus.GetMnemonicRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetMnemonicRequest(buffer_arg) {
+  return wallet_pb.GetMnemonicRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_GetMnemonicResponse(arg) {
+  if (!(arg instanceof wallet_pb.GetMnemonicResponse)) {
+    throw new Error('Expected argument of type pactus.GetMnemonicResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetMnemonicResponse(buffer_arg) {
+  return wallet_pb.GetMnemonicResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_GetNewAddressRequest(arg) {
   if (!(arg instanceof wallet_pb.GetNewAddressRequest)) {
     throw new Error('Expected argument of type pactus.GetNewAddressRequest');
@@ -69,6 +91,28 @@ function serialize_pactus_GetNewAddressResponse(arg) {
 
 function deserialize_pactus_GetNewAddressResponse(buffer_arg) {
   return wallet_pb.GetNewAddressResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_GetPrivateKeyRequest(arg) {
+  if (!(arg instanceof wallet_pb.GetPrivateKeyRequest)) {
+    throw new Error('Expected argument of type pactus.GetPrivateKeyRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetPrivateKeyRequest(buffer_arg) {
+  return wallet_pb.GetPrivateKeyRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_GetPrivateKeyResponse(arg) {
+  if (!(arg instanceof wallet_pb.GetPrivateKeyResponse)) {
+    throw new Error('Expected argument of type pactus.GetPrivateKeyResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetPrivateKeyResponse(buffer_arg) {
+  return wallet_pb.GetPrivateKeyResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_pactus_GetTotalBalanceRequest(arg) {
@@ -289,6 +333,28 @@ function serialize_pactus_SetAddressLabelResponse(arg) {
 
 function deserialize_pactus_SetAddressLabelResponse(buffer_arg) {
   return wallet_pb.SetAddressLabelResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_SetDefaultFeeRequest(arg) {
+  if (!(arg instanceof wallet_pb.SetDefaultFeeRequest)) {
+    throw new Error('Expected argument of type pactus.SetDefaultFeeRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_SetDefaultFeeRequest(buffer_arg) {
+  return wallet_pb.SetDefaultFeeRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_SetDefaultFeeResponse(arg) {
+  if (!(arg instanceof wallet_pb.SetDefaultFeeResponse)) {
+    throw new Error('Expected argument of type pactus.SetDefaultFeeResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_SetDefaultFeeResponse(buffer_arg) {
+  return wallet_pb.SetDefaultFeeResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_pactus_SignMessageRequest(arg) {
@@ -589,6 +655,42 @@ listTransactions: {
     requestDeserialize: deserialize_pactus_ListTransactionsRequest,
     responseSerialize: serialize_pactus_ListTransactionsResponse,
     responseDeserialize: deserialize_pactus_ListTransactionsResponse,
+  },
+  // SetDefaultFee sets the default fee for the wallet.
+setDefaultFee: {
+    path: '/pactus.Wallet/SetDefaultFee',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.SetDefaultFeeRequest,
+    responseType: wallet_pb.SetDefaultFeeResponse,
+    requestSerialize: serialize_pactus_SetDefaultFeeRequest,
+    requestDeserialize: deserialize_pactus_SetDefaultFeeRequest,
+    responseSerialize: serialize_pactus_SetDefaultFeeResponse,
+    responseDeserialize: deserialize_pactus_SetDefaultFeeResponse,
+  },
+  // GetMnemonic returns the mnemonic (seed phrase) for the wallet.
+getMnemonic: {
+    path: '/pactus.Wallet/GetMnemonic',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.GetMnemonicRequest,
+    responseType: wallet_pb.GetMnemonicResponse,
+    requestSerialize: serialize_pactus_GetMnemonicRequest,
+    requestDeserialize: deserialize_pactus_GetMnemonicRequest,
+    responseSerialize: serialize_pactus_GetMnemonicResponse,
+    responseDeserialize: deserialize_pactus_GetMnemonicResponse,
+  },
+  // GetPrivateKey returns the private key for a given address.
+getPrivateKey: {
+    path: '/pactus.Wallet/GetPrivateKey',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.GetPrivateKeyRequest,
+    responseType: wallet_pb.GetPrivateKeyResponse,
+    requestSerialize: serialize_pactus_GetPrivateKeyRequest,
+    requestDeserialize: deserialize_pactus_GetPrivateKeyRequest,
+    responseSerialize: serialize_pactus_GetPrivateKeyResponse,
+    responseDeserialize: deserialize_pactus_GetPrivateKeyResponse,
   },
 };
 

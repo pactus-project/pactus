@@ -1113,5 +1113,188 @@ proto.pactus.WalletPromiseClient.prototype.listTransactions =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.SetDefaultFeeRequest,
+ *   !proto.pactus.SetDefaultFeeResponse>}
+ */
+const methodDescriptor_Wallet_SetDefaultFee = new grpc.web.MethodDescriptor(
+  '/pactus.Wallet/SetDefaultFee',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.SetDefaultFeeRequest,
+  proto.pactus.SetDefaultFeeResponse,
+  /**
+   * @param {!proto.pactus.SetDefaultFeeRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.SetDefaultFeeResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.SetDefaultFeeRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.SetDefaultFeeResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.SetDefaultFeeResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.WalletClient.prototype.setDefaultFee =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Wallet/SetDefaultFee',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_SetDefaultFee,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.SetDefaultFeeRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.SetDefaultFeeResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.WalletPromiseClient.prototype.setDefaultFee =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Wallet/SetDefaultFee',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_SetDefaultFee);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.GetMnemonicRequest,
+ *   !proto.pactus.GetMnemonicResponse>}
+ */
+const methodDescriptor_Wallet_GetMnemonic = new grpc.web.MethodDescriptor(
+  '/pactus.Wallet/GetMnemonic',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.GetMnemonicRequest,
+  proto.pactus.GetMnemonicResponse,
+  /**
+   * @param {!proto.pactus.GetMnemonicRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.GetMnemonicResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.GetMnemonicRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.GetMnemonicResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.GetMnemonicResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.WalletClient.prototype.getMnemonic =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Wallet/GetMnemonic',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_GetMnemonic,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.GetMnemonicRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.GetMnemonicResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.WalletPromiseClient.prototype.getMnemonic =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Wallet/GetMnemonic',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_GetMnemonic);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.GetPrivateKeyRequest,
+ *   !proto.pactus.GetPrivateKeyResponse>}
+ */
+const methodDescriptor_Wallet_GetPrivateKey = new grpc.web.MethodDescriptor(
+  '/pactus.Wallet/GetPrivateKey',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.GetPrivateKeyRequest,
+  proto.pactus.GetPrivateKeyResponse,
+  /**
+   * @param {!proto.pactus.GetPrivateKeyRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.GetPrivateKeyResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.GetPrivateKeyRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.GetPrivateKeyResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.GetPrivateKeyResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.WalletClient.prototype.getPrivateKey =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Wallet/GetPrivateKey',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_GetPrivateKey,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.GetPrivateKeyRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.GetPrivateKeyResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.WalletPromiseClient.prototype.getPrivateKey =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Wallet/GetPrivateKey',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_GetPrivateKey);
+};
+
+
 module.exports = proto.pactus;
 

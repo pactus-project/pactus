@@ -7,20 +7,21 @@ import (
 
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
-	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/types"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 type TxWithdrawModel interface {
 	WalletInfo() (*types.WalletInfo, error)
-	ListAddresses(opts ...wallet.ListAddressOption) []types.AddressInfo
-	AddressInfo(addr string) *types.AddressInfo
+	ListAddresses(addressTypes ...crypto.AddressType) []*pactus.AddressInfo
+	AddressInfo(addr string) *pactus.AddressInfo
 	Stake(addr string) (amount.Amount, error)
 
-	MakeWithdrawTx(sender, receiver string, amt amount.Amount, opts ...wallet.TxOption) (*tx.Tx, error)
+	MakeWithdrawTx(sender, receiver string, amt amount.Amount, fee amount.Amount, memo string) (*tx.Tx, error)
 	SignTransaction(password string, trx *tx.Tx) error
 	BroadcastTransaction(trx *tx.Tx) (string, error)
 }
@@ -64,12 +65,12 @@ func (c *TxWithdrawDialogController) applyDefaults() {
 }
 
 func (c *TxWithdrawDialogController) populateCombos() {
-	for _, ai := range c.model.ListAddresses(wallet.OnlyValidatorAddresses()) {
+	for _, ai := range c.model.ListAddresses(crypto.AddressTypeValidator) {
 		c.view.ValidatorCombo.Append(ai.Address, ai.Address)
 	}
 	c.view.ValidatorCombo.SetActive(0)
 
-	for _, ai := range c.model.ListAddresses(wallet.OnlyAccountAddresses()) {
+	for _, ai := range c.model.ListAddresses(crypto.AddressTypeBLSAccount, crypto.AddressTypeEd25519Account) {
 		c.view.ReceiverCombo.Append(ai.Address, ai.Address)
 	}
 }
@@ -118,6 +119,7 @@ func (c *TxWithdrawDialogController) onSend() {
 	receiverEntry, _ := c.view.ReceiverCombo.GetEntry()
 	receiver := gtkutil.GetEntryText(receiverEntry)
 	amountStr := gtkutil.GetEntryText(c.view.StakeEntry)
+	feeStr := gtkutil.GetEntryText(c.view.FeeEntry)
 	memo := gtkutil.GetEntryText(c.view.MemoEntry)
 
 	amt, err := amount.FromString(amountStr)
@@ -127,10 +129,14 @@ func (c *TxWithdrawDialogController) onSend() {
 		return
 	}
 
-	feeStr := gtkutil.GetEntryText(c.view.FeeEntry)
-	opts := []wallet.TxOption{wallet.OptionMemo(memo), wallet.OptionFee(feeStr)}
+	fee, err := amount.FromString(feeStr)
+	if err != nil {
+		gtkutil.ShowError(err)
 
-	trx, err := c.model.MakeWithdrawTx(sender, receiver, amt, opts...)
+		return
+	}
+
+	trx, err := c.model.MakeWithdrawTx(sender, receiver, amt, fee, memo)
 	if err != nil {
 		gtkutil.ShowError(err)
 

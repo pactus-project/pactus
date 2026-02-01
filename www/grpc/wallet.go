@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/wallet"
 	wltmgr "github.com/pactus-project/pactus/wallet/manager"
 	"github.com/pactus-project/pactus/wallet/types"
@@ -192,8 +193,8 @@ func (s *walletServer) GetNewAddress(_ context.Context,
 	}
 
 	return &pactus.GetNewAddressResponse{
-		WalletName:  req.WalletName,
-		AddressInfo: s.addressInfoToProto(info),
+		WalletName: req.WalletName,
+		Addr:       s.addressInfoToProto(info),
 	}, nil
 }
 
@@ -206,8 +207,8 @@ func (s *walletServer) GetAddressInfo(_ context.Context,
 	}
 
 	return &pactus.GetAddressInfoResponse{
-		WalletName:  req.WalletName,
-		AddressInfo: s.addressInfoToProto(info),
+		WalletName: req.WalletName,
+		Addr:       s.addressInfoToProto(info),
 	}, nil
 }
 
@@ -267,7 +268,7 @@ func (s *walletServer) ListAddresses(_ context.Context,
 
 	return &pactus.ListAddressesResponse{
 		WalletName: req.WalletName,
-		Data:       addrsPB,
+		Addrs:      addrsPB,
 	}, nil
 }
 
@@ -320,5 +321,44 @@ func (s *walletServer) UpdatePassword(_ context.Context,
 
 	return &pactus.UpdatePasswordResponse{
 		WalletName: req.WalletName,
+	}, nil
+}
+
+func (s *walletServer) SetDefaultFee(_ context.Context,
+	req *pactus.SetDefaultFeeRequest,
+) (*pactus.SetDefaultFeeResponse, error) {
+	err := s.walletManager.SetDefaultFee(req.WalletName, amount.Amount(req.Amount))
+	if err != nil {
+		return nil, err
+	}
+
+	return &pactus.SetDefaultFeeResponse{
+		WalletName: req.WalletName,
+	}, nil
+}
+
+func (s *walletServer) GetMnemonic(_ context.Context,
+	req *pactus.GetMnemonicRequest,
+) (*pactus.GetMnemonicResponse, error) {
+	mnemonic, err := s.walletManager.Mnemonic(req.WalletName, req.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pactus.GetMnemonicResponse{
+		Mnemonic: mnemonic,
+	}, nil
+}
+
+func (s *walletServer) GetPrivateKey(_ context.Context,
+	req *pactus.GetPrivateKeyRequest,
+) (*pactus.GetPrivateKeyResponse, error) {
+	prv, err := s.walletManager.PrivateKey(req.WalletName, req.Password, req.Address)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pactus.GetPrivateKeyResponse{
+		PrivateKey: prv.String(),
 	}, nil
 }
