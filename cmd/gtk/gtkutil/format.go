@@ -4,7 +4,6 @@ package gtkutil
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 )
 
@@ -44,12 +43,4 @@ func YesNo(v bool) string {
 	}
 
 	return "No"
-}
-
-func FloatPtr(v *float64) string {
-	if v == nil {
-		return ""
-	}
-
-	return strconv.FormatFloat(*v, 'f', -1, 64)
 }
