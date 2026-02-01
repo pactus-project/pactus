@@ -1483,6 +1483,55 @@ pub struct UpdatePasswordResponse {
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,
 }
+/// WalletTransactionInfo contains information about a transaction in a wallet.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct WalletTransactionInfo {
+    /// A sequence number for the transaction in the wallet.
+    #[prost(int64, tag="1")]
+    pub no: i64,
+    /// The unique ID of the transaction.
+    #[prost(string, tag="2")]
+    pub tx_id: ::prost::alloc::string::String,
+    /// The sender's address.
+    #[prost(string, tag="3")]
+    pub sender: ::prost::alloc::string::String,
+    /// The receiver's address.
+    #[prost(string, tag="4")]
+    pub receiver: ::prost::alloc::string::String,
+    /// The direction of the transaction relative to the wallet.
+    #[prost(enumeration="TxDirection", tag="5")]
+    pub direction: i32,
+    /// The amount involved in the transaction in NanoPAC.
+    #[prost(int64, tag="6")]
+    pub amount: i64,
+    /// The transaction fee in NanoPAC.
+    #[prost(int64, tag="7")]
+    pub fee: i64,
+    /// A memo string for the transaction.
+    #[prost(string, tag="8")]
+    pub memo: ::prost::alloc::string::String,
+    /// The current status of the transaction.
+    #[prost(enumeration="TransactionStatus", tag="9")]
+    pub status: i32,
+    /// The block height containing the transaction.
+    #[prost(uint32, tag="10")]
+    pub block_height: u32,
+    /// The type of transaction payload.
+    #[prost(enumeration="PayloadType", tag="11")]
+    pub payload_type: i32,
+    /// The raw transaction data.
+    #[prost(bytes="vec", tag="12")]
+    pub data: ::prost::alloc::vec::Vec<u8>,
+    /// A comment associated with the transaction in the wallet.
+    #[prost(string, tag="13")]
+    pub comment: ::prost::alloc::string::String,
+    /// Unix timestamp of when the transaction was created.
+    #[prost(int64, tag="14")]
+    pub created_at: i64,
+    /// Unix timestamp of when the transaction was last updated.
+    #[prost(int64, tag="15")]
+    pub updated_at: i64,
+}
 /// Request message for listing transactions of a wallet, optionally filtered by a specific address.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ListTransactionsRequest {
@@ -1514,7 +1563,7 @@ pub struct ListTransactionsResponse {
     pub wallet_name: ::prost::alloc::string::String,
     /// List of transactions for the wallet, filtered by the specified address if provided.
     #[prost(message, repeated, tag="2")]
-    pub txs: ::prost::alloc::vec::Vec<TransactionInfo>,
+    pub txs: ::prost::alloc::vec::Vec<WalletTransactionInfo>,
 }
 /// AddressType defines different types of blockchain addresses.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
@@ -1584,6 +1633,39 @@ impl TxDirection {
             "TX_DIRECTION_ANY" => Some(Self::Any),
             "TX_DIRECTION_INCOMING" => Some(Self::Incoming),
             "TX_DIRECTION_OUTGOING" => Some(Self::Outgoing),
+            _ => None,
+        }
+    }
+}
+/// TransactionStatus defines the status of a transaction.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum TransactionStatus {
+    /// Pending status for transactions in the mempool.
+    Pending = 0,
+    /// Confirmed status for transactions included in a block.
+    Confirmed = 1,
+    /// Failed status for transactions that were not successful.
+    Failed = -1,
+}
+impl TransactionStatus {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Pending => "TRANSACTION_STATUS_PENDING",
+            Self::Confirmed => "TRANSACTION_STATUS_CONFIRMED",
+            Self::Failed => "TRANSACTION_STATUS_FAILED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "TRANSACTION_STATUS_PENDING" => Some(Self::Pending),
+            "TRANSACTION_STATUS_CONFIRMED" => Some(Self::Confirmed),
+            "TRANSACTION_STATUS_FAILED" => Some(Self::Failed),
             _ => None,
         }
     }

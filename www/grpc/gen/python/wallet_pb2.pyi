@@ -20,6 +20,12 @@ class TxDirection(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     TX_DIRECTION_ANY: _ClassVar[TxDirection]
     TX_DIRECTION_INCOMING: _ClassVar[TxDirection]
     TX_DIRECTION_OUTGOING: _ClassVar[TxDirection]
+
+class TransactionStatus(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    TRANSACTION_STATUS_PENDING: _ClassVar[TransactionStatus]
+    TRANSACTION_STATUS_CONFIRMED: _ClassVar[TransactionStatus]
+    TRANSACTION_STATUS_FAILED: _ClassVar[TransactionStatus]
 ADDRESS_TYPE_TREASURY: AddressType
 ADDRESS_TYPE_VALIDATOR: AddressType
 ADDRESS_TYPE_BLS_ACCOUNT: AddressType
@@ -27,6 +33,9 @@ ADDRESS_TYPE_ED25519_ACCOUNT: AddressType
 TX_DIRECTION_ANY: TxDirection
 TX_DIRECTION_INCOMING: TxDirection
 TX_DIRECTION_OUTGOING: TxDirection
+TRANSACTION_STATUS_PENDING: TransactionStatus
+TRANSACTION_STATUS_CONFIRMED: TransactionStatus
+TRANSACTION_STATUS_FAILED: TransactionStatus
 
 class AddressInfo(_message.Message):
     __slots__ = ()
@@ -300,6 +309,40 @@ class UpdatePasswordResponse(_message.Message):
     wallet_name: str
     def __init__(self, wallet_name: _Optional[str] = ...) -> None: ...
 
+class WalletTransactionInfo(_message.Message):
+    __slots__ = ()
+    NO_FIELD_NUMBER: _ClassVar[int]
+    TX_ID_FIELD_NUMBER: _ClassVar[int]
+    SENDER_FIELD_NUMBER: _ClassVar[int]
+    RECEIVER_FIELD_NUMBER: _ClassVar[int]
+    DIRECTION_FIELD_NUMBER: _ClassVar[int]
+    AMOUNT_FIELD_NUMBER: _ClassVar[int]
+    FEE_FIELD_NUMBER: _ClassVar[int]
+    MEMO_FIELD_NUMBER: _ClassVar[int]
+    STATUS_FIELD_NUMBER: _ClassVar[int]
+    BLOCK_HEIGHT_FIELD_NUMBER: _ClassVar[int]
+    PAYLOAD_TYPE_FIELD_NUMBER: _ClassVar[int]
+    DATA_FIELD_NUMBER: _ClassVar[int]
+    COMMENT_FIELD_NUMBER: _ClassVar[int]
+    CREATED_AT_FIELD_NUMBER: _ClassVar[int]
+    UPDATED_AT_FIELD_NUMBER: _ClassVar[int]
+    no: int
+    tx_id: str
+    sender: str
+    receiver: str
+    direction: TxDirection
+    amount: int
+    fee: int
+    memo: str
+    status: TransactionStatus
+    block_height: int
+    payload_type: _transaction_pb2.PayloadType
+    data: bytes
+    comment: str
+    created_at: int
+    updated_at: int
+    def __init__(self, no: _Optional[int] = ..., tx_id: _Optional[str] = ..., sender: _Optional[str] = ..., receiver: _Optional[str] = ..., direction: _Optional[_Union[TxDirection, str]] = ..., amount: _Optional[int] = ..., fee: _Optional[int] = ..., memo: _Optional[str] = ..., status: _Optional[_Union[TransactionStatus, str]] = ..., block_height: _Optional[int] = ..., payload_type: _Optional[_Union[_transaction_pb2.PayloadType, str]] = ..., data: _Optional[bytes] = ..., comment: _Optional[str] = ..., created_at: _Optional[int] = ..., updated_at: _Optional[int] = ...) -> None: ...
+
 class ListTransactionsRequest(_message.Message):
     __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
@@ -319,5 +362,5 @@ class ListTransactionsResponse(_message.Message):
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     TXS_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
-    txs: _containers.RepeatedCompositeFieldContainer[_transaction_pb2.TransactionInfo]
-    def __init__(self, wallet_name: _Optional[str] = ..., txs: _Optional[_Iterable[_Union[_transaction_pb2.TransactionInfo, _Mapping]]] = ...) -> None: ...
+    txs: _containers.RepeatedCompositeFieldContainer[WalletTransactionInfo]
+    def __init__(self, wallet_name: _Optional[str] = ..., txs: _Optional[_Iterable[_Union[WalletTransactionInfo, _Mapping]]] = ...) -> None: ...

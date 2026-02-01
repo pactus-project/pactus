@@ -6,7 +6,6 @@ import (
 	"errors"
 
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/wallet"
 	wltmgr "github.com/pactus-project/pactus/wallet/manager"
 	"github.com/pactus-project/pactus/wallet/types"
@@ -284,16 +283,25 @@ func (s *walletServer) ListTransactions(_ context.Context,
 		return nil, err
 	}
 
-	lastBlockHeight := s.state.LastBlockHeight()
-	trxs := make([]*pactus.TransactionInfo, 0, len(infos))
+	trxs := make([]*pactus.WalletTransactionInfo, 0, len(infos))
 	for _, info := range infos {
-		trx, _ := tx.FromBytes(info.Data)
-
-		confirmations := 0
-		if info.BlockHeight > 0 {
-			confirmations = int(lastBlockHeight) - int(info.BlockHeight)
-		}
-		trxs = append(trxs, transactionToProto(trx, uint32(info.BlockHeight), confirmations))
+		trxs = append(trxs, &pactus.WalletTransactionInfo{
+			No:          info.No,
+			TxId:        info.TxID,
+			Sender:      info.Sender,
+			Receiver:    info.Receiver,
+			Direction:   pactus.TxDirection(info.Direction),
+			Amount:      info.Amount.ToNanoPAC(),
+			Fee:         info.Fee.ToNanoPAC(),
+			Memo:        info.Memo,
+			Status:      pactus.TransactionStatus(info.Status),
+			BlockHeight: uint32(info.BlockHeight),
+			PayloadType: pactus.PayloadType(info.PayloadType),
+			Data:        info.Data,
+			Comment:     info.Comment,
+			CreatedAt:   info.CreatedAt.Unix(),
+			UpdatedAt:   info.UpdatedAt.Unix(),
+		})
 	}
 
 	return &pactus.ListTransactionsResponse{

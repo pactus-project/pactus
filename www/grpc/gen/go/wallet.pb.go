@@ -133,6 +133,59 @@ func (TxDirection) EnumDescriptor() ([]byte, []int) {
 	return file_wallet_proto_rawDescGZIP(), []int{1}
 }
 
+// TransactionStatus defines the status of a transaction.
+type TransactionStatus int32
+
+const (
+	// Pending status for transactions in the mempool.
+	TransactionStatus_TRANSACTION_STATUS_PENDING TransactionStatus = 0
+	// Confirmed status for transactions included in a block.
+	TransactionStatus_TRANSACTION_STATUS_CONFIRMED TransactionStatus = 1
+	// Failed status for transactions that were not successful.
+	TransactionStatus_TRANSACTION_STATUS_FAILED TransactionStatus = -1
+)
+
+// Enum value maps for TransactionStatus.
+var (
+	TransactionStatus_name = map[int32]string{
+		0:  "TRANSACTION_STATUS_PENDING",
+		1:  "TRANSACTION_STATUS_CONFIRMED",
+		-1: "TRANSACTION_STATUS_FAILED",
+	}
+	TransactionStatus_value = map[string]int32{
+		"TRANSACTION_STATUS_PENDING":   0,
+		"TRANSACTION_STATUS_CONFIRMED": 1,
+		"TRANSACTION_STATUS_FAILED":    -1,
+	}
+)
+
+func (x TransactionStatus) Enum() *TransactionStatus {
+	p := new(TransactionStatus)
+	*p = x
+	return p
+}
+
+func (x TransactionStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (TransactionStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_wallet_proto_enumTypes[2].Descriptor()
+}
+
+func (TransactionStatus) Type() protoreflect.EnumType {
+	return &file_wallet_proto_enumTypes[2]
+}
+
+func (x TransactionStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use TransactionStatus.Descriptor instead.
+func (TransactionStatus) EnumDescriptor() ([]byte, []int) {
+	return file_wallet_proto_rawDescGZIP(), []int{2}
+}
+
 // AddressInfo contains detailed information about a wallet address.
 type AddressInfo struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -1988,6 +2041,178 @@ func (x *UpdatePasswordResponse) GetWalletName() string {
 	return ""
 }
 
+// WalletTransactionInfo contains information about a transaction in a wallet.
+type WalletTransactionInfo struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// A sequence number for the transaction in the wallet.
+	No int64 `protobuf:"varint,1,opt,name=no,proto3" json:"no,omitempty"`
+	// The unique ID of the transaction.
+	TxId string `protobuf:"bytes,2,opt,name=tx_id,json=txId,proto3" json:"tx_id,omitempty"`
+	// The sender's address.
+	Sender string `protobuf:"bytes,3,opt,name=sender,proto3" json:"sender,omitempty"`
+	// The receiver's address.
+	Receiver string `protobuf:"bytes,4,opt,name=receiver,proto3" json:"receiver,omitempty"`
+	// The direction of the transaction relative to the wallet.
+	Direction TxDirection `protobuf:"varint,5,opt,name=direction,proto3,enum=pactus.TxDirection" json:"direction,omitempty"`
+	// The amount involved in the transaction in NanoPAC.
+	Amount int64 `protobuf:"varint,6,opt,name=amount,proto3" json:"amount,omitempty"`
+	// The transaction fee in NanoPAC.
+	Fee int64 `protobuf:"varint,7,opt,name=fee,proto3" json:"fee,omitempty"`
+	// A memo string for the transaction.
+	Memo string `protobuf:"bytes,8,opt,name=memo,proto3" json:"memo,omitempty"`
+	// The current status of the transaction.
+	Status TransactionStatus `protobuf:"varint,9,opt,name=status,proto3,enum=pactus.TransactionStatus" json:"status,omitempty"`
+	// The block height containing the transaction.
+	BlockHeight uint32 `protobuf:"varint,10,opt,name=block_height,json=blockHeight,proto3" json:"block_height,omitempty"`
+	// The type of transaction payload.
+	PayloadType PayloadType `protobuf:"varint,11,opt,name=payload_type,json=payloadType,proto3,enum=pactus.PayloadType" json:"payload_type,omitempty"`
+	// The raw transaction data.
+	Data []byte `protobuf:"bytes,12,opt,name=data,proto3" json:"data,omitempty"`
+	// A comment associated with the transaction in the wallet.
+	Comment string `protobuf:"bytes,13,opt,name=comment,proto3" json:"comment,omitempty"`
+	// Unix timestamp of when the transaction was created.
+	CreatedAt int64 `protobuf:"varint,14,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// Unix timestamp of when the transaction was last updated.
+	UpdatedAt     int64 `protobuf:"varint,15,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *WalletTransactionInfo) Reset() {
+	*x = WalletTransactionInfo{}
+	mi := &file_wallet_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WalletTransactionInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WalletTransactionInfo) ProtoMessage() {}
+
+func (x *WalletTransactionInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_wallet_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WalletTransactionInfo.ProtoReflect.Descriptor instead.
+func (*WalletTransactionInfo) Descriptor() ([]byte, []int) {
+	return file_wallet_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *WalletTransactionInfo) GetNo() int64 {
+	if x != nil {
+		return x.No
+	}
+	return 0
+}
+
+func (x *WalletTransactionInfo) GetTxId() string {
+	if x != nil {
+		return x.TxId
+	}
+	return ""
+}
+
+func (x *WalletTransactionInfo) GetSender() string {
+	if x != nil {
+		return x.Sender
+	}
+	return ""
+}
+
+func (x *WalletTransactionInfo) GetReceiver() string {
+	if x != nil {
+		return x.Receiver
+	}
+	return ""
+}
+
+func (x *WalletTransactionInfo) GetDirection() TxDirection {
+	if x != nil {
+		return x.Direction
+	}
+	return TxDirection_TX_DIRECTION_ANY
+}
+
+func (x *WalletTransactionInfo) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *WalletTransactionInfo) GetFee() int64 {
+	if x != nil {
+		return x.Fee
+	}
+	return 0
+}
+
+func (x *WalletTransactionInfo) GetMemo() string {
+	if x != nil {
+		return x.Memo
+	}
+	return ""
+}
+
+func (x *WalletTransactionInfo) GetStatus() TransactionStatus {
+	if x != nil {
+		return x.Status
+	}
+	return TransactionStatus_TRANSACTION_STATUS_PENDING
+}
+
+func (x *WalletTransactionInfo) GetBlockHeight() uint32 {
+	if x != nil {
+		return x.BlockHeight
+	}
+	return 0
+}
+
+func (x *WalletTransactionInfo) GetPayloadType() PayloadType {
+	if x != nil {
+		return x.PayloadType
+	}
+	return PayloadType_PAYLOAD_TYPE_UNSPECIFIED
+}
+
+func (x *WalletTransactionInfo) GetData() []byte {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+func (x *WalletTransactionInfo) GetComment() string {
+	if x != nil {
+		return x.Comment
+	}
+	return ""
+}
+
+func (x *WalletTransactionInfo) GetCreatedAt() int64 {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return 0
+}
+
+func (x *WalletTransactionInfo) GetUpdatedAt() int64 {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return 0
+}
+
 // Request message for listing transactions of a wallet, optionally filtered by a specific address.
 type ListTransactionsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -2011,7 +2236,7 @@ type ListTransactionsRequest struct {
 
 func (x *ListTransactionsRequest) Reset() {
 	*x = ListTransactionsRequest{}
-	mi := &file_wallet_proto_msgTypes[33]
+	mi := &file_wallet_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2023,7 +2248,7 @@ func (x *ListTransactionsRequest) String() string {
 func (*ListTransactionsRequest) ProtoMessage() {}
 
 func (x *ListTransactionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_wallet_proto_msgTypes[33]
+	mi := &file_wallet_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2036,7 +2261,7 @@ func (x *ListTransactionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTransactionsRequest.ProtoReflect.Descriptor instead.
 func (*ListTransactionsRequest) Descriptor() ([]byte, []int) {
-	return file_wallet_proto_rawDescGZIP(), []int{33}
+	return file_wallet_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *ListTransactionsRequest) GetWalletName() string {
@@ -2080,14 +2305,14 @@ type ListTransactionsResponse struct {
 	// The name of the wallet queried.
 	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
 	// List of transactions for the wallet, filtered by the specified address if provided.
-	Txs           []*TransactionInfo `protobuf:"bytes,2,rep,name=txs,proto3" json:"txs,omitempty"`
+	Txs           []*WalletTransactionInfo `protobuf:"bytes,2,rep,name=txs,proto3" json:"txs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListTransactionsResponse) Reset() {
 	*x = ListTransactionsResponse{}
-	mi := &file_wallet_proto_msgTypes[34]
+	mi := &file_wallet_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2099,7 +2324,7 @@ func (x *ListTransactionsResponse) String() string {
 func (*ListTransactionsResponse) ProtoMessage() {}
 
 func (x *ListTransactionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_wallet_proto_msgTypes[34]
+	mi := &file_wallet_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2112,7 +2337,7 @@ func (x *ListTransactionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTransactionsResponse.ProtoReflect.Descriptor instead.
 func (*ListTransactionsResponse) Descriptor() ([]byte, []int) {
-	return file_wallet_proto_rawDescGZIP(), []int{34}
+	return file_wallet_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *ListTransactionsResponse) GetWalletName() string {
@@ -2122,7 +2347,7 @@ func (x *ListTransactionsResponse) GetWalletName() string {
 	return ""
 }
 
-func (x *ListTransactionsResponse) GetTxs() []*TransactionInfo {
+func (x *ListTransactionsResponse) GetTxs() []*WalletTransactionInfo {
 	if x != nil {
 		return x.Txs
 	}
@@ -2267,18 +2492,37 @@ const file_wallet_proto_rawDesc = "" +
 	"\fnew_password\x18\x03 \x01(\tR\vnewPassword\"9\n" +
 	"\x16UpdatePasswordResponse\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
-	"walletName\"\xb1\x01\n" +
+	"walletName\"\xdb\x03\n" +
+	"\x15WalletTransactionInfo\x12\x0e\n" +
+	"\x02no\x18\x01 \x01(\x03R\x02no\x12\x13\n" +
+	"\x05tx_id\x18\x02 \x01(\tR\x04txId\x12\x16\n" +
+	"\x06sender\x18\x03 \x01(\tR\x06sender\x12\x1a\n" +
+	"\breceiver\x18\x04 \x01(\tR\breceiver\x121\n" +
+	"\tdirection\x18\x05 \x01(\x0e2\x13.pactus.TxDirectionR\tdirection\x12\x16\n" +
+	"\x06amount\x18\x06 \x01(\x03R\x06amount\x12\x10\n" +
+	"\x03fee\x18\a \x01(\x03R\x03fee\x12\x12\n" +
+	"\x04memo\x18\b \x01(\tR\x04memo\x121\n" +
+	"\x06status\x18\t \x01(\x0e2\x19.pactus.TransactionStatusR\x06status\x12!\n" +
+	"\fblock_height\x18\n" +
+	" \x01(\rR\vblockHeight\x126\n" +
+	"\fpayload_type\x18\v \x01(\x0e2\x13.pactus.PayloadTypeR\vpayloadType\x12\x12\n" +
+	"\x04data\x18\f \x01(\fR\x04data\x12\x18\n" +
+	"\acomment\x18\r \x01(\tR\acomment\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x0e \x01(\x03R\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\x0f \x01(\x03R\tupdatedAt\"\xb1\x01\n" +
 	"\x17ListTransactionsRequest\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
 	"walletName\x12\x18\n" +
 	"\aaddress\x18\x02 \x01(\tR\aaddress\x121\n" +
 	"\tdirection\x18\x03 \x01(\x0e2\x13.pactus.TxDirectionR\tdirection\x12\x14\n" +
 	"\x05count\x18\x04 \x01(\x05R\x05count\x12\x12\n" +
-	"\x04skip\x18\x05 \x01(\x05R\x04skip\"f\n" +
+	"\x04skip\x18\x05 \x01(\x05R\x04skip\"l\n" +
 	"\x18ListTransactionsResponse\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
-	"walletName\x12)\n" +
-	"\x03txs\x18\x02 \x03(\v2\x17.pactus.TransactionInfoR\x03txs*\x84\x01\n" +
+	"walletName\x12/\n" +
+	"\x03txs\x18\x02 \x03(\v2\x1d.pactus.WalletTransactionInfoR\x03txs*\x84\x01\n" +
 	"\vAddressType\x12\x19\n" +
 	"\x15ADDRESS_TYPE_TREASURY\x10\x00\x12\x1a\n" +
 	"\x16ADDRESS_TYPE_VALIDATOR\x10\x01\x12\x1c\n" +
@@ -2287,7 +2531,11 @@ const file_wallet_proto_rawDesc = "" +
 	"\vTxDirection\x12\x14\n" +
 	"\x10TX_DIRECTION_ANY\x10\x00\x12\x19\n" +
 	"\x15TX_DIRECTION_INCOMING\x10\x01\x12\x19\n" +
-	"\x15TX_DIRECTION_OUTGOING\x10\x022\xd7\n" +
+	"\x15TX_DIRECTION_OUTGOING\x10\x02*}\n" +
+	"\x11TransactionStatus\x12\x1e\n" +
+	"\x1aTRANSACTION_STATUS_PENDING\x10\x00\x12 \n" +
+	"\x1cTRANSACTION_STATUS_CONFIRMED\x10\x01\x12&\n" +
+	"\x19TRANSACTION_STATUS_FAILED\x10\xff\xff\xff\xff\xff\xff\xff\xff\xff\x012\xd7\n" +
 	"\n" +
 	"\x06Wallet\x12I\n" +
 	"\fCreateWallet\x12\x1b.pactus.CreateWalletRequest\x1a\x1c.pactus.CreateWalletResponse\x12L\n" +
@@ -2322,95 +2570,100 @@ func file_wallet_proto_rawDescGZIP() []byte {
 	return file_wallet_proto_rawDescData
 }
 
-var file_wallet_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_wallet_proto_msgTypes = make([]protoimpl.MessageInfo, 35)
+var file_wallet_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_wallet_proto_msgTypes = make([]protoimpl.MessageInfo, 36)
 var file_wallet_proto_goTypes = []any{
 	(AddressType)(0),                    // 0: pactus.AddressType
 	(TxDirection)(0),                    // 1: pactus.TxDirection
-	(*AddressInfo)(nil),                 // 2: pactus.AddressInfo
-	(*GetNewAddressRequest)(nil),        // 3: pactus.GetNewAddressRequest
-	(*GetNewAddressResponse)(nil),       // 4: pactus.GetNewAddressResponse
-	(*RestoreWalletRequest)(nil),        // 5: pactus.RestoreWalletRequest
-	(*RestoreWalletResponse)(nil),       // 6: pactus.RestoreWalletResponse
-	(*CreateWalletRequest)(nil),         // 7: pactus.CreateWalletRequest
-	(*CreateWalletResponse)(nil),        // 8: pactus.CreateWalletResponse
-	(*LoadWalletRequest)(nil),           // 9: pactus.LoadWalletRequest
-	(*LoadWalletResponse)(nil),          // 10: pactus.LoadWalletResponse
-	(*UnloadWalletRequest)(nil),         // 11: pactus.UnloadWalletRequest
-	(*UnloadWalletResponse)(nil),        // 12: pactus.UnloadWalletResponse
-	(*GetValidatorAddressRequest)(nil),  // 13: pactus.GetValidatorAddressRequest
-	(*GetValidatorAddressResponse)(nil), // 14: pactus.GetValidatorAddressResponse
-	(*SignRawTransactionRequest)(nil),   // 15: pactus.SignRawTransactionRequest
-	(*SignRawTransactionResponse)(nil),  // 16: pactus.SignRawTransactionResponse
-	(*GetTotalBalanceRequest)(nil),      // 17: pactus.GetTotalBalanceRequest
-	(*GetTotalBalanceResponse)(nil),     // 18: pactus.GetTotalBalanceResponse
-	(*SignMessageRequest)(nil),          // 19: pactus.SignMessageRequest
-	(*SignMessageResponse)(nil),         // 20: pactus.SignMessageResponse
-	(*GetTotalStakeRequest)(nil),        // 21: pactus.GetTotalStakeRequest
-	(*GetTotalStakeResponse)(nil),       // 22: pactus.GetTotalStakeResponse
-	(*GetAddressInfoRequest)(nil),       // 23: pactus.GetAddressInfoRequest
-	(*GetAddressInfoResponse)(nil),      // 24: pactus.GetAddressInfoResponse
-	(*SetAddressLabelRequest)(nil),      // 25: pactus.SetAddressLabelRequest
-	(*SetAddressLabelResponse)(nil),     // 26: pactus.SetAddressLabelResponse
-	(*ListWalletsRequest)(nil),          // 27: pactus.ListWalletsRequest
-	(*ListWalletsResponse)(nil),         // 28: pactus.ListWalletsResponse
-	(*GetWalletInfoRequest)(nil),        // 29: pactus.GetWalletInfoRequest
-	(*GetWalletInfoResponse)(nil),       // 30: pactus.GetWalletInfoResponse
-	(*ListAddressesRequest)(nil),        // 31: pactus.ListAddressesRequest
-	(*ListAddressesResponse)(nil),       // 32: pactus.ListAddressesResponse
-	(*UpdatePasswordRequest)(nil),       // 33: pactus.UpdatePasswordRequest
-	(*UpdatePasswordResponse)(nil),      // 34: pactus.UpdatePasswordResponse
-	(*ListTransactionsRequest)(nil),     // 35: pactus.ListTransactionsRequest
-	(*ListTransactionsResponse)(nil),    // 36: pactus.ListTransactionsResponse
-	(*TransactionInfo)(nil),             // 37: pactus.TransactionInfo
+	(TransactionStatus)(0),              // 2: pactus.TransactionStatus
+	(*AddressInfo)(nil),                 // 3: pactus.AddressInfo
+	(*GetNewAddressRequest)(nil),        // 4: pactus.GetNewAddressRequest
+	(*GetNewAddressResponse)(nil),       // 5: pactus.GetNewAddressResponse
+	(*RestoreWalletRequest)(nil),        // 6: pactus.RestoreWalletRequest
+	(*RestoreWalletResponse)(nil),       // 7: pactus.RestoreWalletResponse
+	(*CreateWalletRequest)(nil),         // 8: pactus.CreateWalletRequest
+	(*CreateWalletResponse)(nil),        // 9: pactus.CreateWalletResponse
+	(*LoadWalletRequest)(nil),           // 10: pactus.LoadWalletRequest
+	(*LoadWalletResponse)(nil),          // 11: pactus.LoadWalletResponse
+	(*UnloadWalletRequest)(nil),         // 12: pactus.UnloadWalletRequest
+	(*UnloadWalletResponse)(nil),        // 13: pactus.UnloadWalletResponse
+	(*GetValidatorAddressRequest)(nil),  // 14: pactus.GetValidatorAddressRequest
+	(*GetValidatorAddressResponse)(nil), // 15: pactus.GetValidatorAddressResponse
+	(*SignRawTransactionRequest)(nil),   // 16: pactus.SignRawTransactionRequest
+	(*SignRawTransactionResponse)(nil),  // 17: pactus.SignRawTransactionResponse
+	(*GetTotalBalanceRequest)(nil),      // 18: pactus.GetTotalBalanceRequest
+	(*GetTotalBalanceResponse)(nil),     // 19: pactus.GetTotalBalanceResponse
+	(*SignMessageRequest)(nil),          // 20: pactus.SignMessageRequest
+	(*SignMessageResponse)(nil),         // 21: pactus.SignMessageResponse
+	(*GetTotalStakeRequest)(nil),        // 22: pactus.GetTotalStakeRequest
+	(*GetTotalStakeResponse)(nil),       // 23: pactus.GetTotalStakeResponse
+	(*GetAddressInfoRequest)(nil),       // 24: pactus.GetAddressInfoRequest
+	(*GetAddressInfoResponse)(nil),      // 25: pactus.GetAddressInfoResponse
+	(*SetAddressLabelRequest)(nil),      // 26: pactus.SetAddressLabelRequest
+	(*SetAddressLabelResponse)(nil),     // 27: pactus.SetAddressLabelResponse
+	(*ListWalletsRequest)(nil),          // 28: pactus.ListWalletsRequest
+	(*ListWalletsResponse)(nil),         // 29: pactus.ListWalletsResponse
+	(*GetWalletInfoRequest)(nil),        // 30: pactus.GetWalletInfoRequest
+	(*GetWalletInfoResponse)(nil),       // 31: pactus.GetWalletInfoResponse
+	(*ListAddressesRequest)(nil),        // 32: pactus.ListAddressesRequest
+	(*ListAddressesResponse)(nil),       // 33: pactus.ListAddressesResponse
+	(*UpdatePasswordRequest)(nil),       // 34: pactus.UpdatePasswordRequest
+	(*UpdatePasswordResponse)(nil),      // 35: pactus.UpdatePasswordResponse
+	(*WalletTransactionInfo)(nil),       // 36: pactus.WalletTransactionInfo
+	(*ListTransactionsRequest)(nil),     // 37: pactus.ListTransactionsRequest
+	(*ListTransactionsResponse)(nil),    // 38: pactus.ListTransactionsResponse
+	(PayloadType)(0),                    // 39: pactus.PayloadType
 }
 var file_wallet_proto_depIdxs = []int32{
 	0,  // 0: pactus.GetNewAddressRequest.address_type:type_name -> pactus.AddressType
-	2,  // 1: pactus.GetNewAddressResponse.address_info:type_name -> pactus.AddressInfo
-	2,  // 2: pactus.GetAddressInfoResponse.address_info:type_name -> pactus.AddressInfo
+	3,  // 1: pactus.GetNewAddressResponse.address_info:type_name -> pactus.AddressInfo
+	3,  // 2: pactus.GetAddressInfoResponse.address_info:type_name -> pactus.AddressInfo
 	0,  // 3: pactus.ListAddressesRequest.address_types:type_name -> pactus.AddressType
-	2,  // 4: pactus.ListAddressesResponse.data:type_name -> pactus.AddressInfo
-	1,  // 5: pactus.ListTransactionsRequest.direction:type_name -> pactus.TxDirection
-	37, // 6: pactus.ListTransactionsResponse.txs:type_name -> pactus.TransactionInfo
-	7,  // 7: pactus.Wallet.CreateWallet:input_type -> pactus.CreateWalletRequest
-	5,  // 8: pactus.Wallet.RestoreWallet:input_type -> pactus.RestoreWalletRequest
-	9,  // 9: pactus.Wallet.LoadWallet:input_type -> pactus.LoadWalletRequest
-	11, // 10: pactus.Wallet.UnloadWallet:input_type -> pactus.UnloadWalletRequest
-	27, // 11: pactus.Wallet.ListWallets:input_type -> pactus.ListWalletsRequest
-	29, // 12: pactus.Wallet.GetWalletInfo:input_type -> pactus.GetWalletInfoRequest
-	33, // 13: pactus.Wallet.UpdatePassword:input_type -> pactus.UpdatePasswordRequest
-	17, // 14: pactus.Wallet.GetTotalBalance:input_type -> pactus.GetTotalBalanceRequest
-	21, // 15: pactus.Wallet.GetTotalStake:input_type -> pactus.GetTotalStakeRequest
-	13, // 16: pactus.Wallet.GetValidatorAddress:input_type -> pactus.GetValidatorAddressRequest
-	23, // 17: pactus.Wallet.GetAddressInfo:input_type -> pactus.GetAddressInfoRequest
-	25, // 18: pactus.Wallet.SetAddressLabel:input_type -> pactus.SetAddressLabelRequest
-	3,  // 19: pactus.Wallet.GetNewAddress:input_type -> pactus.GetNewAddressRequest
-	31, // 20: pactus.Wallet.ListAddresses:input_type -> pactus.ListAddressesRequest
-	19, // 21: pactus.Wallet.SignMessage:input_type -> pactus.SignMessageRequest
-	15, // 22: pactus.Wallet.SignRawTransaction:input_type -> pactus.SignRawTransactionRequest
-	35, // 23: pactus.Wallet.ListTransactions:input_type -> pactus.ListTransactionsRequest
-	8,  // 24: pactus.Wallet.CreateWallet:output_type -> pactus.CreateWalletResponse
-	6,  // 25: pactus.Wallet.RestoreWallet:output_type -> pactus.RestoreWalletResponse
-	10, // 26: pactus.Wallet.LoadWallet:output_type -> pactus.LoadWalletResponse
-	12, // 27: pactus.Wallet.UnloadWallet:output_type -> pactus.UnloadWalletResponse
-	28, // 28: pactus.Wallet.ListWallets:output_type -> pactus.ListWalletsResponse
-	30, // 29: pactus.Wallet.GetWalletInfo:output_type -> pactus.GetWalletInfoResponse
-	34, // 30: pactus.Wallet.UpdatePassword:output_type -> pactus.UpdatePasswordResponse
-	18, // 31: pactus.Wallet.GetTotalBalance:output_type -> pactus.GetTotalBalanceResponse
-	22, // 32: pactus.Wallet.GetTotalStake:output_type -> pactus.GetTotalStakeResponse
-	14, // 33: pactus.Wallet.GetValidatorAddress:output_type -> pactus.GetValidatorAddressResponse
-	24, // 34: pactus.Wallet.GetAddressInfo:output_type -> pactus.GetAddressInfoResponse
-	26, // 35: pactus.Wallet.SetAddressLabel:output_type -> pactus.SetAddressLabelResponse
-	4,  // 36: pactus.Wallet.GetNewAddress:output_type -> pactus.GetNewAddressResponse
-	32, // 37: pactus.Wallet.ListAddresses:output_type -> pactus.ListAddressesResponse
-	20, // 38: pactus.Wallet.SignMessage:output_type -> pactus.SignMessageResponse
-	16, // 39: pactus.Wallet.SignRawTransaction:output_type -> pactus.SignRawTransactionResponse
-	36, // 40: pactus.Wallet.ListTransactions:output_type -> pactus.ListTransactionsResponse
-	24, // [24:41] is the sub-list for method output_type
-	7,  // [7:24] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	3,  // 4: pactus.ListAddressesResponse.data:type_name -> pactus.AddressInfo
+	1,  // 5: pactus.WalletTransactionInfo.direction:type_name -> pactus.TxDirection
+	2,  // 6: pactus.WalletTransactionInfo.status:type_name -> pactus.TransactionStatus
+	39, // 7: pactus.WalletTransactionInfo.payload_type:type_name -> pactus.PayloadType
+	1,  // 8: pactus.ListTransactionsRequest.direction:type_name -> pactus.TxDirection
+	36, // 9: pactus.ListTransactionsResponse.txs:type_name -> pactus.WalletTransactionInfo
+	8,  // 10: pactus.Wallet.CreateWallet:input_type -> pactus.CreateWalletRequest
+	6,  // 11: pactus.Wallet.RestoreWallet:input_type -> pactus.RestoreWalletRequest
+	10, // 12: pactus.Wallet.LoadWallet:input_type -> pactus.LoadWalletRequest
+	12, // 13: pactus.Wallet.UnloadWallet:input_type -> pactus.UnloadWalletRequest
+	28, // 14: pactus.Wallet.ListWallets:input_type -> pactus.ListWalletsRequest
+	30, // 15: pactus.Wallet.GetWalletInfo:input_type -> pactus.GetWalletInfoRequest
+	34, // 16: pactus.Wallet.UpdatePassword:input_type -> pactus.UpdatePasswordRequest
+	18, // 17: pactus.Wallet.GetTotalBalance:input_type -> pactus.GetTotalBalanceRequest
+	22, // 18: pactus.Wallet.GetTotalStake:input_type -> pactus.GetTotalStakeRequest
+	14, // 19: pactus.Wallet.GetValidatorAddress:input_type -> pactus.GetValidatorAddressRequest
+	24, // 20: pactus.Wallet.GetAddressInfo:input_type -> pactus.GetAddressInfoRequest
+	26, // 21: pactus.Wallet.SetAddressLabel:input_type -> pactus.SetAddressLabelRequest
+	4,  // 22: pactus.Wallet.GetNewAddress:input_type -> pactus.GetNewAddressRequest
+	32, // 23: pactus.Wallet.ListAddresses:input_type -> pactus.ListAddressesRequest
+	20, // 24: pactus.Wallet.SignMessage:input_type -> pactus.SignMessageRequest
+	16, // 25: pactus.Wallet.SignRawTransaction:input_type -> pactus.SignRawTransactionRequest
+	37, // 26: pactus.Wallet.ListTransactions:input_type -> pactus.ListTransactionsRequest
+	9,  // 27: pactus.Wallet.CreateWallet:output_type -> pactus.CreateWalletResponse
+	7,  // 28: pactus.Wallet.RestoreWallet:output_type -> pactus.RestoreWalletResponse
+	11, // 29: pactus.Wallet.LoadWallet:output_type -> pactus.LoadWalletResponse
+	13, // 30: pactus.Wallet.UnloadWallet:output_type -> pactus.UnloadWalletResponse
+	29, // 31: pactus.Wallet.ListWallets:output_type -> pactus.ListWalletsResponse
+	31, // 32: pactus.Wallet.GetWalletInfo:output_type -> pactus.GetWalletInfoResponse
+	35, // 33: pactus.Wallet.UpdatePassword:output_type -> pactus.UpdatePasswordResponse
+	19, // 34: pactus.Wallet.GetTotalBalance:output_type -> pactus.GetTotalBalanceResponse
+	23, // 35: pactus.Wallet.GetTotalStake:output_type -> pactus.GetTotalStakeResponse
+	15, // 36: pactus.Wallet.GetValidatorAddress:output_type -> pactus.GetValidatorAddressResponse
+	25, // 37: pactus.Wallet.GetAddressInfo:output_type -> pactus.GetAddressInfoResponse
+	27, // 38: pactus.Wallet.SetAddressLabel:output_type -> pactus.SetAddressLabelResponse
+	5,  // 39: pactus.Wallet.GetNewAddress:output_type -> pactus.GetNewAddressResponse
+	33, // 40: pactus.Wallet.ListAddresses:output_type -> pactus.ListAddressesResponse
+	21, // 41: pactus.Wallet.SignMessage:output_type -> pactus.SignMessageResponse
+	17, // 42: pactus.Wallet.SignRawTransaction:output_type -> pactus.SignRawTransactionResponse
+	38, // 43: pactus.Wallet.ListTransactions:output_type -> pactus.ListTransactionsResponse
+	27, // [27:44] is the sub-list for method output_type
+	10, // [10:27] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_wallet_proto_init() }
@@ -2424,8 +2677,8 @@ func file_wallet_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_wallet_proto_rawDesc), len(file_wallet_proto_rawDesc)),
-			NumEnums:      2,
-			NumMessages:   35,
+			NumEnums:      3,
+			NumMessages:   36,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

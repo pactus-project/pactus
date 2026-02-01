@@ -77,5 +77,35 @@ class TxDirection extends $pb.ProtobufEnum {
   const TxDirection._(super.value, super.name);
 }
 
+/// TransactionStatus defines the status of a transaction.
+class TransactionStatus extends $pb.ProtobufEnum {
+  /// Pending status for transactions in the mempool.
+  static const TransactionStatus TRANSACTION_STATUS_PENDING =
+      TransactionStatus._(
+          0, _omitEnumNames ? '' : 'TRANSACTION_STATUS_PENDING');
+
+  /// Confirmed status for transactions included in a block.
+  static const TransactionStatus TRANSACTION_STATUS_CONFIRMED =
+      TransactionStatus._(
+          1, _omitEnumNames ? '' : 'TRANSACTION_STATUS_CONFIRMED');
+
+  /// Failed status for transactions that were not successful.
+  static const TransactionStatus TRANSACTION_STATUS_FAILED =
+      TransactionStatus._(
+          -1, _omitEnumNames ? '' : 'TRANSACTION_STATUS_FAILED');
+
+  static const $core.List<TransactionStatus> values = <TransactionStatus>[
+    TRANSACTION_STATUS_PENDING,
+    TRANSACTION_STATUS_CONFIRMED,
+    TRANSACTION_STATUS_FAILED,
+  ];
+
+  static final $core.Map<$core.int, TransactionStatus> _byValue =
+      $pb.ProtobufEnum.initByValue(values);
+  static TransactionStatus? valueOf($core.int value) => _byValue[value];
+
+  const TransactionStatus._(super.value, super.name);
+}
+
 const $core.bool _omitEnumNames =
     $core.bool.fromEnvironment('protobuf.omit_enum_names');

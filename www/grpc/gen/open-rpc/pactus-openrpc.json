@@ -1185,32 +1185,8 @@
           "properties": {"wallet_name": { "type": "string" },"txs": {
   "type": "array",
   "items": {
-  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","memo","public_key","signature","block_height","confirmed","confirmations"],
-  "properties": {"id": { "type": "string" },"data": { "type": "string" },"version": { "type": "integer" },"lock_time": { "type": "integer" },"value": { "type": "integer" },"fee": { "type": "integer" },"payload_type": { "type": "integer" },"transfer": {
-  "type": "object","required": ["sender","receiver","amount"],
-  "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
-},"bond": {
-  "type": "object","required": ["sender","receiver","stake","public_key"],
-  "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" }}
-},"sortition": {
-  "type": "object","required": ["address","proof"],
-  "properties": {"address": { "type": "string" },"proof": { "type": "string" }}
-},"unbond": {
-  "type": "object","required": ["validator"],
-  "properties": {"validator": { "type": "string" }}
-},"withdraw": {
-  "type": "object","required": ["validator_address","account_address","amount"],
-  "properties": {"validator_address": { "type": "string" },"account_address": { "type": "string" },"amount": { "type": "integer" }}
-},"batch_transfer": {
-  "type": "object","required": ["sender","recipients"],
-  "properties": {"sender": { "type": "string" },"recipients": {
-  "type": "array",
-  "items": {
-  "type": "object","required": ["receiver","amount"],
-  "properties": {"receiver": { "type": "string" },"amount": { "type": "integer" }}
-}
-}}
-},"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" },"block_height": { "type": "integer" },"confirmed": { "type": "boolean" },"confirmations": { "type": "integer" }}
+  "type": "object","required": ["no","tx_id","sender","receiver","direction","amount","fee","memo","status","block_height","payload_type","data","comment","created_at","updated_at"],
+  "properties": {"no": { "type": "integer" },"tx_id": { "type": "string" },"sender": { "type": "string" },"receiver": { "type": "string" },"direction": { "type": "integer" },"amount": { "type": "integer" },"fee": { "type": "integer" },"memo": { "type": "string" },"status": { "type": "integer" },"block_height": { "type": "integer" },"payload_type": { "type": "integer" },"data": { "type": "string" },"comment": { "type": "string" },"created_at": { "type": "integer" },"updated_at": { "type": "integer" }}
 }
 }}
           }
