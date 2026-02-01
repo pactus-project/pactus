@@ -3624,6 +3624,13 @@ Parameters has no fields.
   Path to the wallet file or storage location.
     </td>
   </tr>
+   <tr>
+    <td class="fw-bold">last_update</td>
+    <td> numeric</td>
+    <td>
+  Unix timestamp of the last update.
+    </td>
+  </tr>
    </tbody>
 </table>
 

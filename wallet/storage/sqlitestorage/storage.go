@@ -29,6 +29,7 @@ const (
 	keyNetwork    = "network"
 	keyDefaultFee = "default_fee"
 	keyVault      = "vault"
+	keyLastUpdate = "last_update"
 )
 
 // Storage represents the SQLite-based wallet storage implementing IStorage interface.
@@ -99,6 +100,9 @@ func Create(ctx context.Context, path string, network genesis.ChainType, vlt *va
 		createPendingNoIdxSQL,
 		createTxSenderNoIdxSQL,
 		createTxReceiverNoIdxSQL,
+
+		createAddressesLastUpdateTriggerSQL,
+		createTransactionsLastUpdateTriggerSQL,
 	}
 	for _, query := range tables {
 		if _, err := db.ExecContext(ctx, query); err != nil {
@@ -130,6 +134,7 @@ func Create(ctx context.Context, path string, network genesis.ChainType, vlt *va
 		{Key: keyNetwork, Value: fmt.Sprintf("%d", network)},
 		{Key: keyDefaultFee, Value: fmt.Sprintf("%d", amount.Amount(10_000_000))},
 		{Key: keyVault, Value: string(vaultJSON)},
+		{Key: keyLastUpdate, Value: util.RoundNow(1).Format("2006-01-02 15:04:05")},
 	}
 
 	for _, entry := range entries {
@@ -155,6 +160,12 @@ func Open(ctx context.Context, path string) (*Storage, error) {
 
 // open loads wallet info and returns a Storage instance.
 func open(ctx context.Context, db *sql.DB, path string) (*Storage, error) {
+	// Ensure triggers and last_update exist for older wallets.
+	// We use Exec instead of ExecContext here for simplicity as these are idempotent or "OR IGNORE".
+	_, _ = db.Exec(createAddressesLastUpdateTriggerSQL)
+	_, _ = db.Exec(createTransactionsLastUpdateTriggerSQL)
+	_, _ = db.Exec(insertWalletEntrySQL, keyLastUpdate, util.RoundNow(1).Format("2006-01-02 15:04:05"))
+
 	strg := &Storage{
 		ctx:  ctx,
 		db:   db,
@@ -243,6 +254,14 @@ func (s *Storage) loadWalletInfo() error {
 	}
 	s.vlt = &vlt
 
+	lastUpdate := time.Time{}
+	if val, ok := entries[keyLastUpdate]; ok {
+		t, err := time.Parse("2006-01-02 15:04:05", val)
+		if err == nil {
+			lastUpdate = t
+		}
+	}
+
 	s.info = &types.WalletInfo{
 		Path:       s.path,
 		Driver:     "SQLite",
@@ -253,6 +272,7 @@ func (s *Storage) loadWalletInfo() error {
 		Encrypted:  s.vlt.IsEncrypted(),
 		Neutered:   s.vlt.IsNeutered(),
 		CreatedAt:  createdAt,
+		LastUpdate: lastUpdate,
 	}
 
 	return nil
@@ -603,6 +623,11 @@ func (s *Storage) Clone(path string) (storage.IStorage, error) {
 
 func (s *Storage) updateWalletEntry(key, value string) error {
 	_, err := s.db.ExecContext(s.ctx, updateWalletEntrySQL, value, key)
+	if err != nil {
+		return err
+	}
+
+	_, err = s.db.ExecContext(s.ctx, incrementLastUpdateSQL)
 
 	return err
 }
@@ -618,4 +643,19 @@ func (s *Storage) saveVault(vlt *vault.Vault) error {
 
 func (*Storage) IsLegacy() bool {
 	return false
+}
+
+func (s *Storage) LastUpdate() time.Time {
+	var val string
+	err := s.db.QueryRowContext(s.ctx, "SELECT value FROM wallet WHERE name = ?", keyLastUpdate).Scan(&val)
+	if err != nil {
+		return time.Time{}
+	}
+
+	t, err := time.Parse("2006-01-02 15:04:05", val)
+	if err != nil {
+		return time.Time{}
+	}
+
+	return t
 }
