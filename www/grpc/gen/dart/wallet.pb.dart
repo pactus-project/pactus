@@ -16,7 +16,7 @@ import 'dart:core' as $core;
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
-import 'transaction.pb.dart' as $0;
+import 'transaction.pbenum.dart' as $0;
 import 'wallet.pbenum.dart';
 
 export 'package:protobuf/protobuf.dart' show GeneratedMessageGenericExtensions;
@@ -2368,6 +2368,250 @@ class UpdatePasswordResponse extends $pb.GeneratedMessage {
   void clearWalletName() => $_clearField(1);
 }
 
+/// WalletTransactionInfo contains information about a transaction in a wallet.
+class WalletTransactionInfo extends $pb.GeneratedMessage {
+  factory WalletTransactionInfo({
+    $fixnum.Int64? no,
+    $core.String? txId,
+    $core.String? sender,
+    $core.String? receiver,
+    TxDirection? direction,
+    $fixnum.Int64? amount,
+    $fixnum.Int64? fee,
+    $core.String? memo,
+    TransactionStatus? status,
+    $core.int? blockHeight,
+    $0.PayloadType? payloadType,
+    $core.List<$core.int>? data,
+    $core.String? comment,
+    $fixnum.Int64? createdAt,
+    $fixnum.Int64? updatedAt,
+  }) {
+    final result = create();
+    if (no != null) result.no = no;
+    if (txId != null) result.txId = txId;
+    if (sender != null) result.sender = sender;
+    if (receiver != null) result.receiver = receiver;
+    if (direction != null) result.direction = direction;
+    if (amount != null) result.amount = amount;
+    if (fee != null) result.fee = fee;
+    if (memo != null) result.memo = memo;
+    if (status != null) result.status = status;
+    if (blockHeight != null) result.blockHeight = blockHeight;
+    if (payloadType != null) result.payloadType = payloadType;
+    if (data != null) result.data = data;
+    if (comment != null) result.comment = comment;
+    if (createdAt != null) result.createdAt = createdAt;
+    if (updatedAt != null) result.updatedAt = updatedAt;
+    return result;
+  }
+
+  WalletTransactionInfo._();
+
+  factory WalletTransactionInfo.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory WalletTransactionInfo.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'WalletTransactionInfo',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aInt64(1, _omitFieldNames ? '' : 'no')
+    ..aOS(2, _omitFieldNames ? '' : 'txId')
+    ..aOS(3, _omitFieldNames ? '' : 'sender')
+    ..aOS(4, _omitFieldNames ? '' : 'receiver')
+    ..aE<TxDirection>(5, _omitFieldNames ? '' : 'direction',
+        enumValues: TxDirection.values)
+    ..aInt64(6, _omitFieldNames ? '' : 'amount')
+    ..aInt64(7, _omitFieldNames ? '' : 'fee')
+    ..aOS(8, _omitFieldNames ? '' : 'memo')
+    ..aE<TransactionStatus>(9, _omitFieldNames ? '' : 'status',
+        enumValues: TransactionStatus.values)
+    ..aI(10, _omitFieldNames ? '' : 'blockHeight',
+        fieldType: $pb.PbFieldType.OU3)
+    ..aE<$0.PayloadType>(11, _omitFieldNames ? '' : 'payloadType',
+        enumValues: $0.PayloadType.values)
+    ..a<$core.List<$core.int>>(
+        12, _omitFieldNames ? '' : 'data', $pb.PbFieldType.OY)
+    ..aOS(13, _omitFieldNames ? '' : 'comment')
+    ..aInt64(14, _omitFieldNames ? '' : 'createdAt')
+    ..aInt64(15, _omitFieldNames ? '' : 'updatedAt')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  WalletTransactionInfo clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  WalletTransactionInfo copyWith(
+          void Function(WalletTransactionInfo) updates) =>
+      super.copyWith((message) => updates(message as WalletTransactionInfo))
+          as WalletTransactionInfo;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static WalletTransactionInfo create() => WalletTransactionInfo._();
+  @$core.override
+  WalletTransactionInfo createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static WalletTransactionInfo getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<WalletTransactionInfo>(create);
+  static WalletTransactionInfo? _defaultInstance;
+
+  /// A sequence number for the transaction in the wallet.
+  @$pb.TagNumber(1)
+  $fixnum.Int64 get no => $_getI64(0);
+  @$pb.TagNumber(1)
+  set no($fixnum.Int64 value) => $_setInt64(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasNo() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearNo() => $_clearField(1);
+
+  /// The unique ID of the transaction.
+  @$pb.TagNumber(2)
+  $core.String get txId => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set txId($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasTxId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearTxId() => $_clearField(2);
+
+  /// The sender's address.
+  @$pb.TagNumber(3)
+  $core.String get sender => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set sender($core.String value) => $_setString(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasSender() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearSender() => $_clearField(3);
+
+  /// The receiver's address.
+  @$pb.TagNumber(4)
+  $core.String get receiver => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set receiver($core.String value) => $_setString(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasReceiver() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearReceiver() => $_clearField(4);
+
+  /// The direction of the transaction relative to the wallet.
+  @$pb.TagNumber(5)
+  TxDirection get direction => $_getN(4);
+  @$pb.TagNumber(5)
+  set direction(TxDirection value) => $_setField(5, value);
+  @$pb.TagNumber(5)
+  $core.bool hasDirection() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearDirection() => $_clearField(5);
+
+  /// The amount involved in the transaction in NanoPAC.
+  @$pb.TagNumber(6)
+  $fixnum.Int64 get amount => $_getI64(5);
+  @$pb.TagNumber(6)
+  set amount($fixnum.Int64 value) => $_setInt64(5, value);
+  @$pb.TagNumber(6)
+  $core.bool hasAmount() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearAmount() => $_clearField(6);
+
+  /// The transaction fee in NanoPAC.
+  @$pb.TagNumber(7)
+  $fixnum.Int64 get fee => $_getI64(6);
+  @$pb.TagNumber(7)
+  set fee($fixnum.Int64 value) => $_setInt64(6, value);
+  @$pb.TagNumber(7)
+  $core.bool hasFee() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearFee() => $_clearField(7);
+
+  /// A memo string for the transaction.
+  @$pb.TagNumber(8)
+  $core.String get memo => $_getSZ(7);
+  @$pb.TagNumber(8)
+  set memo($core.String value) => $_setString(7, value);
+  @$pb.TagNumber(8)
+  $core.bool hasMemo() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearMemo() => $_clearField(8);
+
+  /// The current status of the transaction.
+  @$pb.TagNumber(9)
+  TransactionStatus get status => $_getN(8);
+  @$pb.TagNumber(9)
+  set status(TransactionStatus value) => $_setField(9, value);
+  @$pb.TagNumber(9)
+  $core.bool hasStatus() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearStatus() => $_clearField(9);
+
+  /// The block height containing the transaction.
+  @$pb.TagNumber(10)
+  $core.int get blockHeight => $_getIZ(9);
+  @$pb.TagNumber(10)
+  set blockHeight($core.int value) => $_setUnsignedInt32(9, value);
+  @$pb.TagNumber(10)
+  $core.bool hasBlockHeight() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearBlockHeight() => $_clearField(10);
+
+  /// The type of transaction payload.
+  @$pb.TagNumber(11)
+  $0.PayloadType get payloadType => $_getN(10);
+  @$pb.TagNumber(11)
+  set payloadType($0.PayloadType value) => $_setField(11, value);
+  @$pb.TagNumber(11)
+  $core.bool hasPayloadType() => $_has(10);
+  @$pb.TagNumber(11)
+  void clearPayloadType() => $_clearField(11);
+
+  /// The raw transaction data.
+  @$pb.TagNumber(12)
+  $core.List<$core.int> get data => $_getN(11);
+  @$pb.TagNumber(12)
+  set data($core.List<$core.int> value) => $_setBytes(11, value);
+  @$pb.TagNumber(12)
+  $core.bool hasData() => $_has(11);
+  @$pb.TagNumber(12)
+  void clearData() => $_clearField(12);
+
+  /// A comment associated with the transaction in the wallet.
+  @$pb.TagNumber(13)
+  $core.String get comment => $_getSZ(12);
+  @$pb.TagNumber(13)
+  set comment($core.String value) => $_setString(12, value);
+  @$pb.TagNumber(13)
+  $core.bool hasComment() => $_has(12);
+  @$pb.TagNumber(13)
+  void clearComment() => $_clearField(13);
+
+  /// Unix timestamp of when the transaction was created.
+  @$pb.TagNumber(14)
+  $fixnum.Int64 get createdAt => $_getI64(13);
+  @$pb.TagNumber(14)
+  set createdAt($fixnum.Int64 value) => $_setInt64(13, value);
+  @$pb.TagNumber(14)
+  $core.bool hasCreatedAt() => $_has(13);
+  @$pb.TagNumber(14)
+  void clearCreatedAt() => $_clearField(14);
+
+  /// Unix timestamp of when the transaction was last updated.
+  @$pb.TagNumber(15)
+  $fixnum.Int64 get updatedAt => $_getI64(14);
+  @$pb.TagNumber(15)
+  set updatedAt($fixnum.Int64 value) => $_setInt64(14, value);
+  @$pb.TagNumber(15)
+  $core.bool hasUpdatedAt() => $_has(14);
+  @$pb.TagNumber(15)
+  void clearUpdatedAt() => $_clearField(15);
+}
+
 /// Request message for listing transactions of a wallet, optionally filtered by a specific address.
 class ListTransactionsRequest extends $pb.GeneratedMessage {
   factory ListTransactionsRequest({
@@ -2486,7 +2730,7 @@ class ListTransactionsRequest extends $pb.GeneratedMessage {
 class ListTransactionsResponse extends $pb.GeneratedMessage {
   factory ListTransactionsResponse({
     $core.String? walletName,
-    $core.Iterable<$0.TransactionInfo>? txs,
+    $core.Iterable<WalletTransactionInfo>? txs,
   }) {
     final result = create();
     if (walletName != null) result.walletName = walletName;
@@ -2508,8 +2752,8 @@ class ListTransactionsResponse extends $pb.GeneratedMessage {
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
-    ..pPM<$0.TransactionInfo>(2, _omitFieldNames ? '' : 'txs',
-        subBuilder: $0.TransactionInfo.create)
+    ..pPM<WalletTransactionInfo>(2, _omitFieldNames ? '' : 'txs',
+        subBuilder: WalletTransactionInfo.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -2544,7 +2788,7 @@ class ListTransactionsResponse extends $pb.GeneratedMessage {
 
   /// List of transactions for the wallet, filtered by the specified address if provided.
   @$pb.TagNumber(2)
-  $pb.PbList<$0.TransactionInfo> get txs => $_getList(1);
+  $pb.PbList<WalletTransactionInfo> get txs => $_getList(1);
 }
 
 /// Wallet service provides RPC methods for wallet management operations.

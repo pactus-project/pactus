@@ -376,6 +376,50 @@ enum TxDirection {
   TX_DIRECTION_OUTGOING = 2;
 }
 
+// TransactionStatus defines the status of a transaction.
+enum TransactionStatus {
+  // Pending status for transactions in the mempool.
+  TRANSACTION_STATUS_PENDING = 0;
+  // Confirmed status for transactions included in a block.
+  TRANSACTION_STATUS_CONFIRMED = 1;
+  // Failed status for transactions that were not successful.
+  TRANSACTION_STATUS_FAILED = -1;
+}
+
+// WalletTransactionInfo contains information about a transaction in a wallet.
+message WalletTransactionInfo {
+  // A sequence number for the transaction in the wallet.
+  int64 no = 1;
+  // The unique ID of the transaction.
+  string tx_id = 2;
+  // The sender's address.
+  string sender = 3;
+  // The receiver's address.
+  string receiver = 4;
+  // The direction of the transaction relative to the wallet.
+  TxDirection direction = 5;
+  // The amount involved in the transaction in NanoPAC.
+  int64 amount = 6;
+  // The transaction fee in NanoPAC.
+  int64 fee = 7;
+  // A memo string for the transaction.
+  string memo = 8;
+  // The current status of the transaction.
+  TransactionStatus status = 9;
+  // The block height containing the transaction.
+  uint32 block_height = 10;
+  // The type of transaction payload.
+  PayloadType payload_type = 11;
+  // The raw transaction data.
+  bytes data = 12;
+  // A comment associated with the transaction in the wallet.
+  string comment = 13;
+  // Unix timestamp of when the transaction was created.
+  int64 created_at = 14;
+  // Unix timestamp of when the transaction was last updated.
+  int64 updated_at = 15;
+}
+
 // Request message for listing transactions of a wallet, optionally filtered by a specific address.
 message ListTransactionsRequest {
   // The name of the wallet to query transactions for.
@@ -404,5 +448,5 @@ message ListTransactionsResponse {
   string wallet_name = 1;
 
   // List of transactions for the wallet, filtered by the specified address if provided.
-  repeated TransactionInfo txs = 2;
+  repeated WalletTransactionInfo txs = 2;
 }

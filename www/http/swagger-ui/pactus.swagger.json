@@ -2529,7 +2529,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/pactusTransactionInfo"
+            "$ref": "#/definitions/pactusWalletTransactionInfo"
           },
           "description": "List of transactions for the wallet, filtered by the specified address if provided."
         }
@@ -3127,6 +3127,16 @@
       },
       "description": "Information about a transaction."
     },
+    "pactusTransactionStatus": {
+      "type": "string",
+      "enum": [
+        "TRANSACTION_STATUS_PENDING",
+        "TRANSACTION_STATUS_CONFIRMED",
+        "TRANSACTION_STATUS_FAILED"
+      ],
+      "default": "TRANSACTION_STATUS_PENDING",
+      "description": "TransactionStatus defines the status of a transaction.\n\n - TRANSACTION_STATUS_PENDING: Pending status for transactions in the mempool.\n - TRANSACTION_STATUS_CONFIRMED: Confirmed status for transactions included in a block.\n - TRANSACTION_STATUS_FAILED: Failed status for transactions that were not successful."
+    },
     "pactusTransactionVerbosity": {
       "type": "string",
       "enum": [
@@ -3324,6 +3334,79 @@
       ],
       "default": "VOTE_TYPE_UNSPECIFIED",
       "description": "Enumeration for types of votes.\n\n - VOTE_TYPE_UNSPECIFIED: Unspecified vote type.\n - VOTE_TYPE_PREPARE: Prepare vote type.\n - VOTE_TYPE_PRECOMMIT: Precommit vote type.\n - VOTE_TYPE_CP_PRE_VOTE: Change-proposer:pre-vote vote type.\n - VOTE_TYPE_CP_MAIN_VOTE: Change-proposer:main-vote vote type.\n - VOTE_TYPE_CP_DECIDED: Change-proposer:decided vote type."
+    },
+    "pactusWalletTransactionInfo": {
+      "type": "object",
+      "properties": {
+        "no": {
+          "type": "string",
+          "format": "int64",
+          "description": "A sequence number for the transaction in the wallet."
+        },
+        "txId": {
+          "type": "string",
+          "description": "The unique ID of the transaction."
+        },
+        "sender": {
+          "type": "string",
+          "description": "The sender's address."
+        },
+        "receiver": {
+          "type": "string",
+          "description": "The receiver's address."
+        },
+        "direction": {
+          "$ref": "#/definitions/pactusTxDirection",
+          "description": "The direction of the transaction relative to the wallet."
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64",
+          "description": "The amount involved in the transaction in NanoPAC."
+        },
+        "fee": {
+          "type": "string",
+          "format": "int64",
+          "description": "The transaction fee in NanoPAC."
+        },
+        "memo": {
+          "type": "string",
+          "description": "A memo string for the transaction."
+        },
+        "status": {
+          "$ref": "#/definitions/pactusTransactionStatus",
+          "description": "The current status of the transaction."
+        },
+        "blockHeight": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The block height containing the transaction."
+        },
+        "payloadType": {
+          "$ref": "#/definitions/pactusPayloadType",
+          "description": "The type of transaction payload."
+        },
+        "data": {
+          "type": "string",
+          "format": "byte",
+          "description": "The raw transaction data."
+        },
+        "comment": {
+          "type": "string",
+          "description": "A comment associated with the transaction in the wallet."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "int64",
+          "description": "Unix timestamp of when the transaction was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "int64",
+          "description": "Unix timestamp of when the transaction was last updated."
+        }
+      },
+      "description": "WalletTransactionInfo contains information about a transaction in a wallet."
     },
     "pactusZMQPublisherInfo": {
       "type": "object",
