@@ -13,9 +13,10 @@ import (
 )
 
 type GUI struct {
-	MainWindow *view.MainWindowView
-	NodeCtrl   *controller.NodeWidgetController
-	WalletCtrl *controller.WalletWidgetController
+	MainWindow    *view.MainWindowView
+	NodeCtrl      *controller.NodeWidgetController
+	WalletCtrl    *controller.WalletWidgetController
+	ValidatorCtrl *controller.ValidatorWidgetController
 }
 
 // Run builds and shows the main window, wiring views/controllers.
@@ -35,7 +36,7 @@ func Run(n *node.Node, gtkApp *gtk.Application) (*GUI, error) {
 		return nil, err
 	}
 
-	walletModel, err := model.NewWalletModel(n, cmd.DefaultWalletName)
+	walletModel, err := model.NewWalletModel(n.WalletManager(), cmd.DefaultWalletName)
 	if err != nil {
 		return nil, err
 	}
@@ -48,6 +49,15 @@ func Run(n *node.Node, gtkApp *gtk.Application) (*GUI, error) {
 	}
 
 	walletCtrl := controller.NewWalletWidgetController(walletView, walletModel)
+
+	validatorView, err := view.NewValidatorWidgetView()
+	if err != nil {
+		return nil, err
+	}
+	validatorCtrl := controller.NewValidatorWidgetController(validatorView, n)
+	if err := validatorCtrl.Bind(); err != nil {
+		return nil, err
+	}
 
 	walletCtrl.Bind(controller.WalletWidgetHandlers{
 		OnNewAddress: func() {
@@ -79,6 +89,7 @@ func Run(n *node.Node, gtkApp *gtk.Application) (*GUI, error) {
 
 	mwView.BoxNode.Add(nodeView.Box)
 	mwView.BoxDefaultWallet.Add(walletView.Box)
+	mwView.BoxValidators.Add(validatorView.Box)
 
 	mwCtrl := controller.NewMainWindowController(mwView)
 	mwCtrl.Bind(&controller.MainWindowHandlers{
@@ -137,14 +148,16 @@ func Run(n *node.Node, gtkApp *gtk.Application) (*GUI, error) {
 	gtkApp.AddWindow(mwView.Window)
 
 	return &GUI{
-		MainWindow: mwView,
-		NodeCtrl:   nodeCtrl,
-		WalletCtrl: walletCtrl,
+		MainWindow:    mwView,
+		NodeCtrl:      nodeCtrl,
+		WalletCtrl:    walletCtrl,
+		ValidatorCtrl: validatorCtrl,
 	}, nil
 }
 
 func (g *GUI) Cleanup() {
 	g.NodeCtrl.Cleanup()
 	g.WalletCtrl.Cleanup()
+	g.ValidatorCtrl.Cleanup()
 	g.MainWindow.Cleanup()
 }

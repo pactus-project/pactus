@@ -59,7 +59,7 @@ func createTextColumn(title string, columnID int) (*gtk.TreeViewColumn, error) {
 	return column, nil
 }
 
-func NewWalletWidgetView(columnTypes ...glib.Type) (*WalletWidgetView, error) {
+func NewWalletWidgetView() (*WalletWidgetView, error) {
 	builder := NewViewBuilder(assets.WalletWidgetUI)
 
 	treeViewWallet := builder.GetTreeViewObj("id_treeview_addresses")
@@ -104,22 +104,18 @@ func NewWalletWidgetView(columnTypes ...glib.Type) (*WalletWidgetView, error) {
 	view.BtnTxNext.SetSensitive(false)
 
 	// Build list store for address table.
-	if len(columnTypes) == 0 {
-		columnTypes = []glib.Type{
-			glib.TYPE_STRING,
-			glib.TYPE_STRING,
-			glib.TYPE_STRING,
-			glib.TYPE_STRING,
-			glib.TYPE_STRING,
-			glib.TYPE_STRING,
-		}
-	}
-	ls, err := gtk.ListStoreNew(columnTypes...)
+	listStore, err := gtk.ListStoreNew(
+		glib.TYPE_STRING, // No
+		glib.TYPE_STRING, // Address
+		glib.TYPE_STRING, // Label
+		glib.TYPE_STRING, // Balance
+		glib.TYPE_STRING, // Stake
+	)
 	if err != nil {
 		return nil, err
 	}
-	view.listStore = ls
-	view.TreeViewWallet.SetModel(ls.ToTreeModel())
+	view.listStore = listStore
+	view.TreeViewWallet.SetModel(listStore.ToTreeModel())
 
 	// Columns.
 	colNo, err := createTextColumn("No", 0)
@@ -142,17 +138,12 @@ func NewWalletWidgetView(columnTypes ...glib.Type) (*WalletWidgetView, error) {
 	if err != nil {
 		return nil, err
 	}
-	colScore, err := createTextColumn("Availability Score", 5)
-	if err != nil {
-		return nil, err
-	}
 
 	view.TreeViewWallet.AppendColumn(colNo)
 	view.TreeViewWallet.AppendColumn(colAddress)
 	view.TreeViewWallet.AppendColumn(colLabel)
 	view.TreeViewWallet.AppendColumn(colBalance)
 	view.TreeViewWallet.AppendColumn(colStake)
-	view.TreeViewWallet.AppendColumn(colScore)
 
 	// Transactions list store and columns.
 	txStore, err := gtk.ListStoreNew(
