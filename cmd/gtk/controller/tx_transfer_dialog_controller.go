@@ -8,21 +8,21 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
-	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/types"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 type TxTransferModel interface {
 	WalletInfo() (*types.WalletInfo, error)
-	ListAddresses(opts ...wallet.ListAddressOption) []*pactus.AddressInfo
+	ListAddresses(addressTypes ...crypto.AddressType) []*pactus.AddressInfo
 	AddressInfo(addr string) *pactus.AddressInfo
 	Balance(addr string) (amount.Amount, error)
 
-	MakeTransferTx(sender, receiver string, amt amount.Amount, opts ...wallet.TxOption) (*tx.Tx, error)
+	MakeTransferTx(sender, receiver string, amt amount.Amount, fee amount.Amount, memo string) (*tx.Tx, error)
 	SignTransaction(password string, trx *tx.Tx) error
 	BroadcastTransaction(trx *tx.Tx) (string, error)
 }
@@ -57,7 +57,7 @@ func (c *TxTransferDialogController) Run() {
 	}
 
 	// Fill sender accounts
-	for _, ai := range c.model.ListAddresses(wallet.OnlyAccountAddresses()) {
+	for _, ai := range c.model.ListAddresses(crypto.AddressTypeBLSAccount, crypto.AddressTypeEd25519Account) {
 		c.view.SenderCombo.Append(ai.Address, ai.Address)
 	}
 	c.view.SenderCombo.SetActive(0)
@@ -109,6 +109,7 @@ func (c *TxTransferDialogController) onSend() {
 	sender := c.view.SenderCombo.GetActiveID()
 	receiver := gtkutil.GetEntryText(c.view.ReceiverEntry)
 	amountStr := gtkutil.GetEntryText(c.view.AmountEntry)
+	feeStr := gtkutil.GetEntryText(c.view.FeeEntry)
 	memo := gtkutil.GetEntryText(c.view.MemoEntry)
 
 	amt, err := amount.FromString(amountStr)
@@ -118,10 +119,14 @@ func (c *TxTransferDialogController) onSend() {
 		return
 	}
 
-	feeStr := gtkutil.GetEntryText(c.view.FeeEntry)
-	opts := []wallet.TxOption{wallet.OptionMemo(memo), wallet.OptionFee(feeStr)}
+	fee, err := amount.FromString(feeStr)
+	if err != nil {
+		gtkutil.ShowError(err)
 
-	trx, err := c.model.MakeTransferTx(sender, receiver, amt, opts...)
+		return
+	}
+
+	trx, err := c.model.MakeTransferTx(sender, receiver, amt, fee, memo)
 	if err != nil {
 		gtkutil.ShowError(err)
 

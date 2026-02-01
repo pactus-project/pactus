@@ -55,6 +55,12 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
       $pb.ServerContext ctx, $1.SignRawTransactionRequest request);
   $async.Future<$1.ListTransactionsResponse> listTransactions(
       $pb.ServerContext ctx, $1.ListTransactionsRequest request);
+  $async.Future<$1.SetDefaultFeeResponse> setDefaultFee(
+      $pb.ServerContext ctx, $1.SetDefaultFeeRequest request);
+  $async.Future<$1.GetMnemonicResponse> getMnemonic(
+      $pb.ServerContext ctx, $1.GetMnemonicRequest request);
+  $async.Future<$1.GetPrivateKeyResponse> getPrivateKey(
+      $pb.ServerContext ctx, $1.GetPrivateKeyRequest request);
 
   $pb.GeneratedMessage createRequest($core.String methodName) {
     switch (methodName) {
@@ -92,6 +98,12 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
         return $1.SignRawTransactionRequest();
       case 'ListTransactions':
         return $1.ListTransactionsRequest();
+      case 'SetDefaultFee':
+        return $1.SetDefaultFeeRequest();
+      case 'GetMnemonic':
+        return $1.GetMnemonicRequest();
+      case 'GetPrivateKey':
+        return $1.GetPrivateKeyRequest();
       default:
         throw $core.ArgumentError('Unknown method: $methodName');
     }
@@ -135,6 +147,12 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
         return signRawTransaction(ctx, request as $1.SignRawTransactionRequest);
       case 'ListTransactions':
         return listTransactions(ctx, request as $1.ListTransactionsRequest);
+      case 'SetDefaultFee':
+        return setDefaultFee(ctx, request as $1.SetDefaultFeeRequest);
+      case 'GetMnemonic':
+        return getMnemonic(ctx, request as $1.GetMnemonicRequest);
+      case 'GetPrivateKey':
+        return getPrivateKey(ctx, request as $1.GetPrivateKeyRequest);
       default:
         throw $core.ArgumentError('Unknown method: $methodName');
     }

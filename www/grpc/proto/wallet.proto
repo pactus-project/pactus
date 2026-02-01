@@ -62,6 +62,15 @@ service Wallet {
   // ListTransactions returns a list of transactions for a wallet,
   // optionally filtered by a specific address, with pagination support.
   rpc ListTransactions(ListTransactionsRequest) returns (ListTransactionsResponse);
+
+  // SetDefaultFee sets the default fee for the wallet.
+  rpc SetDefaultFee(SetDefaultFeeRequest) returns (SetDefaultFeeResponse);
+
+  // GetMnemonic returns the mnemonic (seed phrase) for the wallet.
+  rpc GetMnemonic(GetMnemonicRequest) returns (GetMnemonicResponse);
+
+  // GetPrivateKey returns the private key for a given address.
+  rpc GetPrivateKey(GetPrivateKeyRequest) returns (GetPrivateKeyResponse);
 }
 
 // AddressType defines different types of blockchain addresses.
@@ -449,4 +458,48 @@ message ListTransactionsResponse {
 
   // List of transactions for the wallet, filtered by the specified address if provided.
   repeated WalletTransactionInfo txs = 2;
+}
+
+// Request message for setting default fee.
+message SetDefaultFeeRequest {
+  // The name of the wallet to set the default fee.
+  string wallet_name = 1;
+  // The default fee amount in NanoPAC.
+  int64 amount = 2;
+}
+
+// Response message for updated default fee.
+message SetDefaultFeeResponse {
+  // The name of the wallet where the default fee was updated.
+  string wallet_name = 1;
+}
+
+// Request message for getting mnemonic.
+message GetMnemonicRequest {
+  // The name of the wallet to get the mnemonic.
+  string wallet_name = 1;
+  // Wallet password.
+  string password = 2;
+}
+
+// Response message contains mnemonic.
+message GetMnemonicResponse {
+  // The mnemonic (seed phrase).
+  string mnemonic = 1;
+}
+
+// Request message for getting private key.
+message GetPrivateKeyRequest {
+  // The name of the wallet containing the address.
+  string wallet_name = 1;
+  // Wallet password.
+  string password = 2;
+  // The address to get the private key.
+  string address = 3;
+}
+
+// Response message contains private key.
+message GetPrivateKeyResponse {
+  // The private key in hexadecimal format.
+  string private_key = 1;
 }

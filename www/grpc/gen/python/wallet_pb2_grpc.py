@@ -100,6 +100,21 @@ class WalletStub(object):
                 request_serializer=wallet__pb2.ListTransactionsRequest.SerializeToString,
                 response_deserializer=wallet__pb2.ListTransactionsResponse.FromString,
                 _registered_method=True)
+        self.SetDefaultFee = channel.unary_unary(
+                '/pactus.Wallet/SetDefaultFee',
+                request_serializer=wallet__pb2.SetDefaultFeeRequest.SerializeToString,
+                response_deserializer=wallet__pb2.SetDefaultFeeResponse.FromString,
+                _registered_method=True)
+        self.GetMnemonic = channel.unary_unary(
+                '/pactus.Wallet/GetMnemonic',
+                request_serializer=wallet__pb2.GetMnemonicRequest.SerializeToString,
+                response_deserializer=wallet__pb2.GetMnemonicResponse.FromString,
+                _registered_method=True)
+        self.GetPrivateKey = channel.unary_unary(
+                '/pactus.Wallet/GetPrivateKey',
+                request_serializer=wallet__pb2.GetPrivateKeyRequest.SerializeToString,
+                response_deserializer=wallet__pb2.GetPrivateKeyResponse.FromString,
+                _registered_method=True)
 
 
 class WalletServicer(object):
@@ -229,6 +244,27 @@ class WalletServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def SetDefaultFee(self, request, context):
+        """SetDefaultFee sets the default fee for the wallet.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetMnemonic(self, request, context):
+        """GetMnemonic returns the mnemonic (seed phrase) for the wallet.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetPrivateKey(self, request, context):
+        """GetPrivateKey returns the private key for a given address.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_WalletServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -316,6 +352,21 @@ def add_WalletServicer_to_server(servicer, server):
                     servicer.ListTransactions,
                     request_deserializer=wallet__pb2.ListTransactionsRequest.FromString,
                     response_serializer=wallet__pb2.ListTransactionsResponse.SerializeToString,
+            ),
+            'SetDefaultFee': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetDefaultFee,
+                    request_deserializer=wallet__pb2.SetDefaultFeeRequest.FromString,
+                    response_serializer=wallet__pb2.SetDefaultFeeResponse.SerializeToString,
+            ),
+            'GetMnemonic': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetMnemonic,
+                    request_deserializer=wallet__pb2.GetMnemonicRequest.FromString,
+                    response_serializer=wallet__pb2.GetMnemonicResponse.SerializeToString,
+            ),
+            'GetPrivateKey': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPrivateKey,
+                    request_deserializer=wallet__pb2.GetPrivateKeyRequest.FromString,
+                    response_serializer=wallet__pb2.GetPrivateKeyResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -778,6 +829,87 @@ class Wallet(object):
             '/pactus.Wallet/ListTransactions',
             wallet__pb2.ListTransactionsRequest.SerializeToString,
             wallet__pb2.ListTransactionsResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetDefaultFee(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/pactus.Wallet/SetDefaultFee',
+            wallet__pb2.SetDefaultFeeRequest.SerializeToString,
+            wallet__pb2.SetDefaultFeeResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetMnemonic(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/pactus.Wallet/GetMnemonic',
+            wallet__pb2.GetMnemonicRequest.SerializeToString,
+            wallet__pb2.GetMnemonicResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetPrivateKey(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/pactus.Wallet/GetPrivateKey',
+            wallet__pb2.GetPrivateKeyRequest.SerializeToString,
+            wallet__pb2.GetPrivateKeyResponse.FromString,
             options,
             channel_credentials,
             insecure,

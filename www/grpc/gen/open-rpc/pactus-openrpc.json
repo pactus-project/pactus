@@ -1191,6 +1191,73 @@
 }}
           }
         }
+      },{
+      "name": "pactus.wallet.set_default_fee",
+      "description": "SetDefaultFee sets the default fee for the wallet.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
+      "params": [{
+          "name": "wallet_name",
+          "description": "The name of the wallet to set the default fee.",
+          "schema": { "type": "string" }
+        },{
+          "name": "amount",
+          "description": "The default fee amount in NanoPAC.",
+          "schema": { "type": "integer" }
+        }],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object","required": ["wallet_name"],
+          "properties": {"wallet_name": { "type": "string" }}
+          }
+        }
+      },{
+      "name": "pactus.wallet.get_mnemonic",
+      "description": "GetMnemonic returns the mnemonic (seed phrase) for the wallet.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
+      "params": [{
+          "name": "wallet_name",
+          "description": "The name of the wallet to get the mnemonic.",
+          "schema": { "type": "string" }
+        },{
+          "name": "password",
+          "description": "Wallet password.",
+          "schema": { "type": "string" }
+        }],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object","required": ["mnemonic"],
+          "properties": {"mnemonic": { "type": "string" }}
+          }
+        }
+      },{
+      "name": "pactus.wallet.get_private_key",
+      "description": "GetPrivateKey returns the private key for a given address.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
+      "params": [{
+          "name": "wallet_name",
+          "description": "The name of the wallet containing the address.",
+          "schema": { "type": "string" }
+        },{
+          "name": "password",
+          "description": "Wallet password.",
+          "schema": { "type": "string" }
+        },{
+          "name": "address",
+          "description": "The address to get the private key.",
+          "schema": { "type": "string" }
+        }],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object","required": ["private_key"],
+          "properties": {"private_key": { "type": "string" }}
+          }
+        }
       }]
 }
 

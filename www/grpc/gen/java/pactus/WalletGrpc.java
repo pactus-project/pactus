@@ -542,6 +542,99 @@ public final class WalletGrpc {
     return getListTransactionsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pactus.WalletOuterClass.SetDefaultFeeRequest,
+      pactus.WalletOuterClass.SetDefaultFeeResponse> getSetDefaultFeeMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SetDefaultFee",
+      requestType = pactus.WalletOuterClass.SetDefaultFeeRequest.class,
+      responseType = pactus.WalletOuterClass.SetDefaultFeeResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.WalletOuterClass.SetDefaultFeeRequest,
+      pactus.WalletOuterClass.SetDefaultFeeResponse> getSetDefaultFeeMethod() {
+    io.grpc.MethodDescriptor<pactus.WalletOuterClass.SetDefaultFeeRequest, pactus.WalletOuterClass.SetDefaultFeeResponse> getSetDefaultFeeMethod;
+    if ((getSetDefaultFeeMethod = WalletGrpc.getSetDefaultFeeMethod) == null) {
+      synchronized (WalletGrpc.class) {
+        if ((getSetDefaultFeeMethod = WalletGrpc.getSetDefaultFeeMethod) == null) {
+          WalletGrpc.getSetDefaultFeeMethod = getSetDefaultFeeMethod =
+              io.grpc.MethodDescriptor.<pactus.WalletOuterClass.SetDefaultFeeRequest, pactus.WalletOuterClass.SetDefaultFeeResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SetDefaultFee"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.WalletOuterClass.SetDefaultFeeRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.WalletOuterClass.SetDefaultFeeResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("SetDefaultFee"))
+              .build();
+        }
+      }
+    }
+    return getSetDefaultFeeMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<pactus.WalletOuterClass.GetMnemonicRequest,
+      pactus.WalletOuterClass.GetMnemonicResponse> getGetMnemonicMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetMnemonic",
+      requestType = pactus.WalletOuterClass.GetMnemonicRequest.class,
+      responseType = pactus.WalletOuterClass.GetMnemonicResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.WalletOuterClass.GetMnemonicRequest,
+      pactus.WalletOuterClass.GetMnemonicResponse> getGetMnemonicMethod() {
+    io.grpc.MethodDescriptor<pactus.WalletOuterClass.GetMnemonicRequest, pactus.WalletOuterClass.GetMnemonicResponse> getGetMnemonicMethod;
+    if ((getGetMnemonicMethod = WalletGrpc.getGetMnemonicMethod) == null) {
+      synchronized (WalletGrpc.class) {
+        if ((getGetMnemonicMethod = WalletGrpc.getGetMnemonicMethod) == null) {
+          WalletGrpc.getGetMnemonicMethod = getGetMnemonicMethod =
+              io.grpc.MethodDescriptor.<pactus.WalletOuterClass.GetMnemonicRequest, pactus.WalletOuterClass.GetMnemonicResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetMnemonic"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.WalletOuterClass.GetMnemonicRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.WalletOuterClass.GetMnemonicResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("GetMnemonic"))
+              .build();
+        }
+      }
+    }
+    return getGetMnemonicMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<pactus.WalletOuterClass.GetPrivateKeyRequest,
+      pactus.WalletOuterClass.GetPrivateKeyResponse> getGetPrivateKeyMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetPrivateKey",
+      requestType = pactus.WalletOuterClass.GetPrivateKeyRequest.class,
+      responseType = pactus.WalletOuterClass.GetPrivateKeyResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.WalletOuterClass.GetPrivateKeyRequest,
+      pactus.WalletOuterClass.GetPrivateKeyResponse> getGetPrivateKeyMethod() {
+    io.grpc.MethodDescriptor<pactus.WalletOuterClass.GetPrivateKeyRequest, pactus.WalletOuterClass.GetPrivateKeyResponse> getGetPrivateKeyMethod;
+    if ((getGetPrivateKeyMethod = WalletGrpc.getGetPrivateKeyMethod) == null) {
+      synchronized (WalletGrpc.class) {
+        if ((getGetPrivateKeyMethod = WalletGrpc.getGetPrivateKeyMethod) == null) {
+          WalletGrpc.getGetPrivateKeyMethod = getGetPrivateKeyMethod =
+              io.grpc.MethodDescriptor.<pactus.WalletOuterClass.GetPrivateKeyRequest, pactus.WalletOuterClass.GetPrivateKeyResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetPrivateKey"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.WalletOuterClass.GetPrivateKeyRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.WalletOuterClass.GetPrivateKeyResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("GetPrivateKey"))
+              .build();
+        }
+      }
+    }
+    return getGetPrivateKeyMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -781,6 +874,36 @@ public final class WalletGrpc {
         io.grpc.stub.StreamObserver<pactus.WalletOuterClass.ListTransactionsResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getListTransactionsMethod(), responseObserver);
     }
+
+    /**
+     * <pre>
+     * SetDefaultFee sets the default fee for the wallet.
+     * </pre>
+     */
+    default void setDefaultFee(pactus.WalletOuterClass.SetDefaultFeeRequest request,
+        io.grpc.stub.StreamObserver<pactus.WalletOuterClass.SetDefaultFeeResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSetDefaultFeeMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * GetMnemonic returns the mnemonic (seed phrase) for the wallet.
+     * </pre>
+     */
+    default void getMnemonic(pactus.WalletOuterClass.GetMnemonicRequest request,
+        io.grpc.stub.StreamObserver<pactus.WalletOuterClass.GetMnemonicResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetMnemonicMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * GetPrivateKey returns the private key for a given address.
+     * </pre>
+     */
+    default void getPrivateKey(pactus.WalletOuterClass.GetPrivateKeyRequest request,
+        io.grpc.stub.StreamObserver<pactus.WalletOuterClass.GetPrivateKeyResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetPrivateKeyMethod(), responseObserver);
+    }
   }
 
   /**
@@ -1006,6 +1129,39 @@ public final class WalletGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getListTransactionsMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * SetDefaultFee sets the default fee for the wallet.
+     * </pre>
+     */
+    public void setDefaultFee(pactus.WalletOuterClass.SetDefaultFeeRequest request,
+        io.grpc.stub.StreamObserver<pactus.WalletOuterClass.SetDefaultFeeResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getSetDefaultFeeMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * GetMnemonic returns the mnemonic (seed phrase) for the wallet.
+     * </pre>
+     */
+    public void getMnemonic(pactus.WalletOuterClass.GetMnemonicRequest request,
+        io.grpc.stub.StreamObserver<pactus.WalletOuterClass.GetMnemonicResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetMnemonicMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * GetPrivateKey returns the private key for a given address.
+     * </pre>
+     */
+    public void getPrivateKey(pactus.WalletOuterClass.GetPrivateKeyRequest request,
+        io.grpc.stub.StreamObserver<pactus.WalletOuterClass.GetPrivateKeyResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetPrivateKeyMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -1200,6 +1356,36 @@ public final class WalletGrpc {
       return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getListTransactionsMethod(), getCallOptions(), request);
     }
+
+    /**
+     * <pre>
+     * SetDefaultFee sets the default fee for the wallet.
+     * </pre>
+     */
+    public pactus.WalletOuterClass.SetDefaultFeeResponse setDefaultFee(pactus.WalletOuterClass.SetDefaultFeeRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getSetDefaultFeeMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * GetMnemonic returns the mnemonic (seed phrase) for the wallet.
+     * </pre>
+     */
+    public pactus.WalletOuterClass.GetMnemonicResponse getMnemonic(pactus.WalletOuterClass.GetMnemonicRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getGetMnemonicMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * GetPrivateKey returns the private key for a given address.
+     * </pre>
+     */
+    public pactus.WalletOuterClass.GetPrivateKeyResponse getPrivateKey(pactus.WalletOuterClass.GetPrivateKeyRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getGetPrivateKeyMethod(), getCallOptions(), request);
+    }
   }
 
   /**
@@ -1393,6 +1579,36 @@ public final class WalletGrpc {
     public pactus.WalletOuterClass.ListTransactionsResponse listTransactions(pactus.WalletOuterClass.ListTransactionsRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getListTransactionsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * SetDefaultFee sets the default fee for the wallet.
+     * </pre>
+     */
+    public pactus.WalletOuterClass.SetDefaultFeeResponse setDefaultFee(pactus.WalletOuterClass.SetDefaultFeeRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSetDefaultFeeMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * GetMnemonic returns the mnemonic (seed phrase) for the wallet.
+     * </pre>
+     */
+    public pactus.WalletOuterClass.GetMnemonicResponse getMnemonic(pactus.WalletOuterClass.GetMnemonicRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetMnemonicMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * GetPrivateKey returns the private key for a given address.
+     * </pre>
+     */
+    public pactus.WalletOuterClass.GetPrivateKeyResponse getPrivateKey(pactus.WalletOuterClass.GetPrivateKeyRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetPrivateKeyMethod(), getCallOptions(), request);
     }
   }
 
@@ -1605,6 +1821,39 @@ public final class WalletGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getListTransactionsMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * SetDefaultFee sets the default fee for the wallet.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.WalletOuterClass.SetDefaultFeeResponse> setDefaultFee(
+        pactus.WalletOuterClass.SetDefaultFeeRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getSetDefaultFeeMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     * GetMnemonic returns the mnemonic (seed phrase) for the wallet.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.WalletOuterClass.GetMnemonicResponse> getMnemonic(
+        pactus.WalletOuterClass.GetMnemonicRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetMnemonicMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     * GetPrivateKey returns the private key for a given address.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.WalletOuterClass.GetPrivateKeyResponse> getPrivateKey(
+        pactus.WalletOuterClass.GetPrivateKeyRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetPrivateKeyMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_CREATE_WALLET = 0;
@@ -1624,6 +1873,9 @@ public final class WalletGrpc {
   private static final int METHODID_SIGN_MESSAGE = 14;
   private static final int METHODID_SIGN_RAW_TRANSACTION = 15;
   private static final int METHODID_LIST_TRANSACTIONS = 16;
+  private static final int METHODID_SET_DEFAULT_FEE = 17;
+  private static final int METHODID_GET_MNEMONIC = 18;
+  private static final int METHODID_GET_PRIVATE_KEY = 19;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1709,6 +1961,18 @@ public final class WalletGrpc {
         case METHODID_LIST_TRANSACTIONS:
           serviceImpl.listTransactions((pactus.WalletOuterClass.ListTransactionsRequest) request,
               (io.grpc.stub.StreamObserver<pactus.WalletOuterClass.ListTransactionsResponse>) responseObserver);
+          break;
+        case METHODID_SET_DEFAULT_FEE:
+          serviceImpl.setDefaultFee((pactus.WalletOuterClass.SetDefaultFeeRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.WalletOuterClass.SetDefaultFeeResponse>) responseObserver);
+          break;
+        case METHODID_GET_MNEMONIC:
+          serviceImpl.getMnemonic((pactus.WalletOuterClass.GetMnemonicRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.WalletOuterClass.GetMnemonicResponse>) responseObserver);
+          break;
+        case METHODID_GET_PRIVATE_KEY:
+          serviceImpl.getPrivateKey((pactus.WalletOuterClass.GetPrivateKeyRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.WalletOuterClass.GetPrivateKeyResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -1847,6 +2111,27 @@ public final class WalletGrpc {
               pactus.WalletOuterClass.ListTransactionsRequest,
               pactus.WalletOuterClass.ListTransactionsResponse>(
                 service, METHODID_LIST_TRANSACTIONS)))
+        .addMethod(
+          getSetDefaultFeeMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              pactus.WalletOuterClass.SetDefaultFeeRequest,
+              pactus.WalletOuterClass.SetDefaultFeeResponse>(
+                service, METHODID_SET_DEFAULT_FEE)))
+        .addMethod(
+          getGetMnemonicMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              pactus.WalletOuterClass.GetMnemonicRequest,
+              pactus.WalletOuterClass.GetMnemonicResponse>(
+                service, METHODID_GET_MNEMONIC)))
+        .addMethod(
+          getGetPrivateKeyMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              pactus.WalletOuterClass.GetPrivateKeyRequest,
+              pactus.WalletOuterClass.GetPrivateKeyResponse>(
+                service, METHODID_GET_PRIVATE_KEY)))
         .build();
   }
 
@@ -1912,6 +2197,9 @@ public final class WalletGrpc {
               .addMethod(getSignMessageMethod())
               .addMethod(getSignRawTransactionMethod())
               .addMethod(getListTransactionsMethod())
+              .addMethod(getSetDefaultFeeMethod())
+              .addMethod(getGetMnemonicMethod())
+              .addMethod(getGetPrivateKeyMethod())
               .build();
         }
       }

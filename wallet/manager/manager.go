@@ -225,13 +225,13 @@ func (wm *Manager) MakeBondTx(
 	return wlt.MakeBondTx(sender, receiver, publicKey, amt, opts...)
 }
 
-func (wm *Manager) MakeUnbondTx(walletName, validator string, opts ...wallet.TxOption) (*tx.Tx, error) {
+func (wm *Manager) MakeUnbondTx(walletName, validatorAddr string, opts ...wallet.TxOption) (*tx.Tx, error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
 		return nil, ErrWalletNotLoaded
 	}
 
-	return wlt.MakeUnbondTx(validator, opts...)
+	return wlt.MakeUnbondTx(validatorAddr, opts...)
 }
 
 func (wm *Manager) MakeWithdrawTx(

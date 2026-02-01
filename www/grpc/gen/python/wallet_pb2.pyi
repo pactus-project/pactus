@@ -364,3 +364,47 @@ class ListTransactionsResponse(_message.Message):
     wallet_name: str
     txs: _containers.RepeatedCompositeFieldContainer[WalletTransactionInfo]
     def __init__(self, wallet_name: _Optional[str] = ..., txs: _Optional[_Iterable[_Union[WalletTransactionInfo, _Mapping]]] = ...) -> None: ...
+
+class SetDefaultFeeRequest(_message.Message):
+    __slots__ = ()
+    WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
+    AMOUNT_FIELD_NUMBER: _ClassVar[int]
+    wallet_name: str
+    amount: int
+    def __init__(self, wallet_name: _Optional[str] = ..., amount: _Optional[int] = ...) -> None: ...
+
+class SetDefaultFeeResponse(_message.Message):
+    __slots__ = ()
+    WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
+    wallet_name: str
+    def __init__(self, wallet_name: _Optional[str] = ...) -> None: ...
+
+class GetMnemonicRequest(_message.Message):
+    __slots__ = ()
+    WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
+    PASSWORD_FIELD_NUMBER: _ClassVar[int]
+    wallet_name: str
+    password: str
+    def __init__(self, wallet_name: _Optional[str] = ..., password: _Optional[str] = ...) -> None: ...
+
+class GetMnemonicResponse(_message.Message):
+    __slots__ = ()
+    MNEMONIC_FIELD_NUMBER: _ClassVar[int]
+    mnemonic: str
+    def __init__(self, mnemonic: _Optional[str] = ...) -> None: ...
+
+class GetPrivateKeyRequest(_message.Message):
+    __slots__ = ()
+    WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
+    PASSWORD_FIELD_NUMBER: _ClassVar[int]
+    ADDRESS_FIELD_NUMBER: _ClassVar[int]
+    wallet_name: str
+    password: str
+    address: str
+    def __init__(self, wallet_name: _Optional[str] = ..., password: _Optional[str] = ..., address: _Optional[str] = ...) -> None: ...
+
+class GetPrivateKeyResponse(_message.Message):
+    __slots__ = ()
+    PRIVATE_KEY_FIELD_NUMBER: _ClassVar[int]
+    private_key: str
+    def __init__(self, private_key: _Optional[str] = ...) -> None: ...

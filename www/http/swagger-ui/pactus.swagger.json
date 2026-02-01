@@ -2045,6 +2045,16 @@
       },
       "description": "Response message contains consensus information."
     },
+    "pactusGetMnemonicResponse": {
+      "type": "object",
+      "properties": {
+        "mnemonic": {
+          "type": "string",
+          "description": "The mnemonic (seed phrase)."
+        }
+      },
+      "description": "Response message contains mnemonic."
+    },
     "pactusGetNetworkInfoResponse": {
       "type": "object",
       "properties": {
@@ -2179,6 +2189,16 @@
         }
       },
       "description": "Response message contains information about a specific node in the network."
+    },
+    "pactusGetPrivateKeyResponse": {
+      "type": "object",
+      "properties": {
+        "privateKey": {
+          "type": "string",
+          "description": "The private key in hexadecimal format."
+        }
+      },
+      "description": "Response message contains private key."
     },
     "pactusGetPublicKeyResponse": {
       "type": "object",
@@ -2927,6 +2947,16 @@
         }
       },
       "description": "Response message for updated address label."
+    },
+    "pactusSetDefaultFeeResponse": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name of the wallet where the default fee was updated."
+        }
+      },
+      "description": "Response message for updated default fee."
     },
     "pactusSignMessageRequest": {
       "type": "object",

@@ -5,13 +5,14 @@ package model
 import (
 	"context"
 	"encoding/hex"
-	"errors"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/util/bech32m"
 	"github.com/pactus-project/pactus/wallet/types"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
@@ -127,9 +128,15 @@ func (model *WalletModel) AddressInfo(addr string) *pactus.AddressInfo {
 	return res.Addr
 }
 
-func (model *WalletModel) ListAddresses(opts ...wallet.ListAddressOption) []*pactus.AddressInfo {
+func (model *WalletModel) ListAddresses(addressTypes ...crypto.AddressType) []*pactus.AddressInfo {
+	addressTypesPB := make([]pactus.AddressType, 0, len(addressTypes))
+	for _, at := range addressTypes {
+		addressTypesPB = append(addressTypesPB, pactus.AddressType(at))
+	}
+
 	res, err := model.walletClient.ListAddresses(model.ctx, &pactus.ListAddressesRequest{
-		WalletName: model.walletName,
+		WalletName:   model.walletName,
+		AddressTypes: addressTypesPB,
 	})
 	if err != nil {
 		return nil
@@ -161,11 +168,40 @@ func (model *WalletModel) Stake(addr string) (amount.Amount, error) {
 }
 
 func (model *WalletModel) PrivateKey(password, addr string) (crypto.PrivateKey, error) {
-	return nil, errors.New("not implemented")
+	res, err := model.walletClient.GetPrivateKey(model.ctx, &pactus.GetPrivateKeyRequest{
+		WalletName: model.walletName,
+		Password:   password,
+		Address:    addr,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	_, typ, _, err := bech32m.DecodeToBase256WithTypeNoLimit(res.PrivateKey)
+	if err != nil {
+		return nil, err
+	}
+
+	switch typ {
+	case crypto.SignatureTypeBLS:
+		return bls.PrivateKeyFromString(res.PrivateKey)
+	case crypto.SignatureTypeEd25519:
+		return ed25519.PrivateKeyFromString(res.PrivateKey)
+	default:
+		return nil, crypto.InvalidSignatureTypeError(typ)
+	}
 }
 
 func (model *WalletModel) Mnemonic(password string) (string, error) {
-	return "", errors.New("not implemented")
+	res, err := model.walletClient.GetMnemonic(model.ctx, &pactus.GetMnemonicRequest{
+		WalletName: model.walletName,
+		Password:   password,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	return res.Mnemonic, nil
 }
 
 func (model *WalletModel) UpdatePassword(oldPassword, newPassword string) error {
@@ -179,19 +215,24 @@ func (model *WalletModel) UpdatePassword(oldPassword, newPassword string) error 
 }
 
 func (model *WalletModel) SetDefaultFee(fee amount.Amount) error {
-	return errors.New("not implemented")
+	_, err := model.walletClient.SetDefaultFee(model.ctx, &pactus.SetDefaultFeeRequest{
+		WalletName: model.walletName,
+		Amount:     int64(fee),
+	})
+
+	return err
 }
 
 func (model *WalletModel) NewAddress(
 	addressType crypto.AddressType,
 	label string,
-	opts ...wallet.NewAddressOption,
+	password string,
 ) (*types.AddressInfo, error) {
-	// TODO: handle opts?
 	res, err := model.walletClient.GetNewAddress(model.ctx, &pactus.GetNewAddressRequest{
 		WalletName:  model.walletName,
 		AddressType: pactus.AddressType(addressType),
 		Label:       label,
+		Password:    password,
 	})
 	if err != nil {
 		return nil, err
@@ -257,14 +298,16 @@ func (model *WalletModel) AddressRows() []AddressRow {
 func (model *WalletModel) MakeTransferTx(
 	sender, receiver string,
 	amt amount.Amount,
-	opts ...wallet.TxOption,
+	fee amount.Amount,
+	memo string,
 ) (*tx.Tx, error) {
-	// TODO: handle opts?
 	res, err := model.transactionClient.GetRawTransferTransaction(model.ctx,
 		&pactus.GetRawTransferTransactionRequest{
 			Sender:   sender,
 			Receiver: receiver,
 			Amount:   int64(amt),
+			Fee:      int64(fee),
+			Memo:     memo,
 		})
 	if err != nil {
 		return nil, err
@@ -276,15 +319,17 @@ func (model *WalletModel) MakeTransferTx(
 func (model *WalletModel) MakeBondTx(
 	sender, receiver, publicKey string,
 	amt amount.Amount,
-	opts ...wallet.TxOption,
+	fee amount.Amount,
+	memo string,
 ) (*tx.Tx, error) {
-	// TODO: handle opts?
 	res, err := model.transactionClient.GetRawBondTransaction(model.ctx,
 		&pactus.GetRawBondTransactionRequest{
 			Sender:    sender,
 			Receiver:  receiver,
 			PublicKey: publicKey,
 			Stake:     int64(amt),
+			Fee:       int64(fee),
+			Memo:      memo,
 		})
 	if err != nil {
 		return nil, err
@@ -293,11 +338,11 @@ func (model *WalletModel) MakeBondTx(
 	return tx.FromString(res.RawTransaction)
 }
 
-func (model *WalletModel) MakeUnbondTx(validator string, opts ...wallet.TxOption) (*tx.Tx, error) {
-	// TODO: handle opts?
+func (model *WalletModel) MakeUnbondTx(validatorAddr, memo string) (*tx.Tx, error) {
 	res, err := model.transactionClient.GetRawUnbondTransaction(model.ctx,
 		&pactus.GetRawUnbondTransactionRequest{
-			ValidatorAddress: validator,
+			ValidatorAddress: validatorAddr,
+			Memo:             memo,
 		})
 	if err != nil {
 		return nil, err
@@ -309,14 +354,16 @@ func (model *WalletModel) MakeUnbondTx(validator string, opts ...wallet.TxOption
 func (model *WalletModel) MakeWithdrawTx(
 	sender, receiver string,
 	amt amount.Amount,
-	opts ...wallet.TxOption,
+	fee amount.Amount,
+	memo string,
 ) (*tx.Tx, error) {
-	// TODO: handle opts?
 	res, err := model.transactionClient.GetRawWithdrawTransaction(model.ctx,
 		&pactus.GetRawWithdrawTransactionRequest{
 			ValidatorAddress: sender,
 			AccountAddress:   receiver,
 			Amount:           int64(amt),
+			Fee:              int64(fee),
+			Memo:             memo,
 		})
 	if err != nil {
 		return nil, err

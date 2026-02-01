@@ -8,22 +8,22 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
-	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/types"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 type TxBondModel interface {
 	WalletInfo() (*types.WalletInfo, error)
-	ListAddresses(opts ...wallet.ListAddressOption) []*pactus.AddressInfo
+	ListAddresses(addressTypes ...crypto.AddressType) []*pactus.AddressInfo
 	AddressInfo(addr string) *pactus.AddressInfo
 	Balance(addr string) (amount.Amount, error)
 	Stake(addr string) (amount.Amount, error)
 
-	MakeBondTx(sender, receiver, publicKey string, amt amount.Amount, opts ...wallet.TxOption) (*tx.Tx, error)
+	MakeBondTx(sender, receiver, publicKey string, amt amount.Amount, fee amount.Amount, memo string) (*tx.Tx, error)
 	SignTransaction(password string, trx *tx.Tx) error
 	BroadcastTransaction(trx *tx.Tx) (string, error)
 }
@@ -56,10 +56,10 @@ func (c *TxBondDialogController) Run() {
 		c.view.FeeEntry.SetText(fmt.Sprintf("%g", info.DefaultFee.ToPAC()))
 	}
 
-	for _, ai := range c.model.ListAddresses(wallet.OnlyAccountAddresses()) {
+	for _, ai := range c.model.ListAddresses(crypto.AddressTypeBLSAccount, crypto.AddressTypeEd25519Account) {
 		c.view.SenderCombo.Append(ai.Address, ai.Address)
 	}
-	for _, vi := range c.model.ListAddresses(wallet.OnlyValidatorAddresses()) {
+	for _, vi := range c.model.ListAddresses(crypto.AddressTypeValidator) {
 		c.view.ReceiverCombo.Append(vi.Address, vi.Address)
 	}
 	c.view.SenderCombo.SetActive(0)
@@ -121,6 +121,7 @@ func (c *TxBondDialogController) onSend() {
 	receiver := gtkutil.GetEntryText(receiverEntry)
 	publicKey := gtkutil.GetEntryText(c.view.PublicKeyEntry)
 	amountStr := gtkutil.GetEntryText(c.view.AmountEntry)
+	feeStr := gtkutil.GetEntryText(c.view.FeeEntry)
 	memo := gtkutil.GetEntryText(c.view.MemoEntry)
 
 	amt, err := amount.FromString(amountStr)
@@ -130,10 +131,14 @@ func (c *TxBondDialogController) onSend() {
 		return
 	}
 
-	feeStr := gtkutil.GetEntryText(c.view.FeeEntry)
-	opts := []wallet.TxOption{wallet.OptionMemo(memo), wallet.OptionFee(feeStr)}
+	fee, err := amount.FromString(feeStr)
+	if err != nil {
+		gtkutil.ShowError(err)
 
-	trx, err := c.model.MakeBondTx(sender, receiver, publicKey, amt, opts...)
+		return
+	}
+
+	trx, err := c.model.MakeBondTx(sender, receiver, publicKey, amt, fee, memo)
 	if err != nil {
 		gtkutil.ShowError(err)
 

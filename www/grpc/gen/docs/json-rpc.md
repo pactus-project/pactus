@@ -269,6 +269,18 @@ curl --location 'http://localhost:8545/' \
           <a href="#pactus.wallet.list_transactions">
           <span class="rpc-badge"></span>pactus.wallet.list_transactions</a>
         </li>
+        <li>
+          <a href="#pactus.wallet.set_default_fee">
+          <span class="rpc-badge"></span>pactus.wallet.set_default_fee</a>
+        </li>
+        <li>
+          <a href="#pactus.wallet.get_mnemonic">
+          <span class="rpc-badge"></span>pactus.wallet.get_mnemonic</a>
+        </li>
+        <li>
+          <a href="#pactus.wallet.get_private_key">
+          <span class="rpc-badge"></span>pactus.wallet.get_private_key</a>
+        </li>
       </ul>
     </li>
   </ul>
@@ -4438,6 +4450,139 @@ Defaults to 0 if not set.
     <td> numeric</td>
     <td>
   Unix timestamp of when the transaction was last updated.
+    </td>
+  </tr>
+   </tbody>
+</table>
+
+#### pactus.wallet.set_default_fee <span id="pactus.wallet.set_default_fee" class="rpc-badge"></span>
+
+<p>SetDefaultFee sets the default fee for the wallet.</p>
+
+<h4>Parameters</h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+  The name of the wallet to set the default fee.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">amount</td>
+    <td> numeric</td>
+    <td>
+  The default fee amount in NanoPAC.
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<h4>Result</h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+  <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider"><tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+  The name of the wallet where the default fee was updated.
+    </td>
+  </tr>
+   </tbody>
+</table>
+
+#### pactus.wallet.get_mnemonic <span id="pactus.wallet.get_mnemonic" class="rpc-badge"></span>
+
+<p>GetMnemonic returns the mnemonic (seed phrase) for the wallet.</p>
+
+<h4>Parameters</h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+  The name of the wallet to get the mnemonic.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">password</td>
+    <td> string</td>
+    <td>
+  Wallet password.
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<h4>Result</h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+  <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider"><tr>
+    <td class="fw-bold">mnemonic</td>
+    <td> string</td>
+    <td>
+  The mnemonic (seed phrase).
+    </td>
+  </tr>
+   </tbody>
+</table>
+
+#### pactus.wallet.get_private_key <span id="pactus.wallet.get_private_key" class="rpc-badge"></span>
+
+<p>GetPrivateKey returns the private key for a given address.</p>
+
+<h4>Parameters</h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+  The name of the wallet containing the address.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">password</td>
+    <td> string</td>
+    <td>
+  Wallet password.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">address</td>
+    <td> string</td>
+    <td>
+  The address to get the private key.
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<h4>Result</h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+  <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider"><tr>
+    <td class="fw-bold">private_key</td>
+    <td> string</td>
+    <td>
+  The private key in hexadecimal format.
     </td>
   </tr>
    </tbody>

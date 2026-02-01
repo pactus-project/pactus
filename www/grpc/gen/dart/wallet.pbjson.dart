@@ -685,6 +685,88 @@ final $typed_data.Uint8List listTransactionsResponseDescriptor =
         'ChhMaXN0VHJhbnNhY3Rpb25zUmVzcG9uc2USHwoLd2FsbGV0X25hbWUYASABKAlSCndhbGxldE'
         '5hbWUSLwoDdHhzGAIgAygLMh0ucGFjdHVzLldhbGxldFRyYW5zYWN0aW9uSW5mb1IDdHhz');
 
+@$core.Deprecated('Use setDefaultFeeRequestDescriptor instead')
+const SetDefaultFeeRequest$json = {
+  '1': 'SetDefaultFeeRequest',
+  '2': [
+    {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
+    {'1': 'amount', '3': 2, '4': 1, '5': 3, '10': 'amount'},
+  ],
+};
+
+/// Descriptor for `SetDefaultFeeRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List setDefaultFeeRequestDescriptor = $convert.base64Decode(
+    'ChRTZXREZWZhdWx0RmVlUmVxdWVzdBIfCgt3YWxsZXRfbmFtZRgBIAEoCVIKd2FsbGV0TmFtZR'
+    'IWCgZhbW91bnQYAiABKANSBmFtb3VudA==');
+
+@$core.Deprecated('Use setDefaultFeeResponseDescriptor instead')
+const SetDefaultFeeResponse$json = {
+  '1': 'SetDefaultFeeResponse',
+  '2': [
+    {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
+  ],
+};
+
+/// Descriptor for `SetDefaultFeeResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List setDefaultFeeResponseDescriptor = $convert.base64Decode(
+    'ChVTZXREZWZhdWx0RmVlUmVzcG9uc2USHwoLd2FsbGV0X25hbWUYASABKAlSCndhbGxldE5hbW'
+    'U=');
+
+@$core.Deprecated('Use getMnemonicRequestDescriptor instead')
+const GetMnemonicRequest$json = {
+  '1': 'GetMnemonicRequest',
+  '2': [
+    {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
+    {'1': 'password', '3': 2, '4': 1, '5': 9, '10': 'password'},
+  ],
+};
+
+/// Descriptor for `GetMnemonicRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getMnemonicRequestDescriptor = $convert.base64Decode(
+    'ChJHZXRNbmVtb25pY1JlcXVlc3QSHwoLd2FsbGV0X25hbWUYASABKAlSCndhbGxldE5hbWUSGg'
+    'oIcGFzc3dvcmQYAiABKAlSCHBhc3N3b3Jk');
+
+@$core.Deprecated('Use getMnemonicResponseDescriptor instead')
+const GetMnemonicResponse$json = {
+  '1': 'GetMnemonicResponse',
+  '2': [
+    {'1': 'mnemonic', '3': 1, '4': 1, '5': 9, '10': 'mnemonic'},
+  ],
+};
+
+/// Descriptor for `GetMnemonicResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getMnemonicResponseDescriptor =
+    $convert.base64Decode(
+        'ChNHZXRNbmVtb25pY1Jlc3BvbnNlEhoKCG1uZW1vbmljGAEgASgJUghtbmVtb25pYw==');
+
+@$core.Deprecated('Use getPrivateKeyRequestDescriptor instead')
+const GetPrivateKeyRequest$json = {
+  '1': 'GetPrivateKeyRequest',
+  '2': [
+    {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
+    {'1': 'password', '3': 2, '4': 1, '5': 9, '10': 'password'},
+    {'1': 'address', '3': 3, '4': 1, '5': 9, '10': 'address'},
+  ],
+};
+
+/// Descriptor for `GetPrivateKeyRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getPrivateKeyRequestDescriptor = $convert.base64Decode(
+    'ChRHZXRQcml2YXRlS2V5UmVxdWVzdBIfCgt3YWxsZXRfbmFtZRgBIAEoCVIKd2FsbGV0TmFtZR'
+    'IaCghwYXNzd29yZBgCIAEoCVIIcGFzc3dvcmQSGAoHYWRkcmVzcxgDIAEoCVIHYWRkcmVzcw==');
+
+@$core.Deprecated('Use getPrivateKeyResponseDescriptor instead')
+const GetPrivateKeyResponse$json = {
+  '1': 'GetPrivateKeyResponse',
+  '2': [
+    {'1': 'private_key', '3': 1, '4': 1, '5': 9, '10': 'privateKey'},
+  ],
+};
+
+/// Descriptor for `GetPrivateKeyResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getPrivateKeyResponseDescriptor = $convert.base64Decode(
+    'ChVHZXRQcml2YXRlS2V5UmVzcG9uc2USHwoLcHJpdmF0ZV9rZXkYASABKAlSCnByaXZhdGVLZX'
+    'k=');
+
 const $core.Map<$core.String, $core.dynamic> WalletServiceBase$json = {
   '1': 'Wallet',
   '2': [
@@ -773,6 +855,21 @@ const $core.Map<$core.String, $core.dynamic> WalletServiceBase$json = {
       '2': '.pactus.ListTransactionsRequest',
       '3': '.pactus.ListTransactionsResponse'
     },
+    {
+      '1': 'SetDefaultFee',
+      '2': '.pactus.SetDefaultFeeRequest',
+      '3': '.pactus.SetDefaultFeeResponse'
+    },
+    {
+      '1': 'GetMnemonic',
+      '2': '.pactus.GetMnemonicRequest',
+      '3': '.pactus.GetMnemonicResponse'
+    },
+    {
+      '1': 'GetPrivateKey',
+      '2': '.pactus.GetPrivateKeyRequest',
+      '3': '.pactus.GetPrivateKeyResponse'
+    },
   ],
 };
 
@@ -815,6 +912,12 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>>
   '.pactus.ListTransactionsRequest': ListTransactionsRequest$json,
   '.pactus.ListTransactionsResponse': ListTransactionsResponse$json,
   '.pactus.WalletTransactionInfo': WalletTransactionInfo$json,
+  '.pactus.SetDefaultFeeRequest': SetDefaultFeeRequest$json,
+  '.pactus.SetDefaultFeeResponse': SetDefaultFeeResponse$json,
+  '.pactus.GetMnemonicRequest': GetMnemonicRequest$json,
+  '.pactus.GetMnemonicResponse': GetMnemonicResponse$json,
+  '.pactus.GetPrivateKeyRequest': GetPrivateKeyRequest$json,
+  '.pactus.GetPrivateKeyResponse': GetPrivateKeyResponse$json,
 };
 
 /// Descriptor for `Wallet`. Decode as a `google.protobuf.ServiceDescriptorProto`.
@@ -843,4 +946,8 @@ final $typed_data.Uint8List walletServiceDescriptor = $convert.base64Decode(
     'VzLlNpZ25NZXNzYWdlUmVzcG9uc2USWwoSU2lnblJhd1RyYW5zYWN0aW9uEiEucGFjdHVzLlNp'
     'Z25SYXdUcmFuc2FjdGlvblJlcXVlc3QaIi5wYWN0dXMuU2lnblJhd1RyYW5zYWN0aW9uUmVzcG'
     '9uc2USVQoQTGlzdFRyYW5zYWN0aW9ucxIfLnBhY3R1cy5MaXN0VHJhbnNhY3Rpb25zUmVxdWVz'
-    'dBogLnBhY3R1cy5MaXN0VHJhbnNhY3Rpb25zUmVzcG9uc2U=');
+    'dBogLnBhY3R1cy5MaXN0VHJhbnNhY3Rpb25zUmVzcG9uc2USTAoNU2V0RGVmYXVsdEZlZRIcLn'
+    'BhY3R1cy5TZXREZWZhdWx0RmVlUmVxdWVzdBodLnBhY3R1cy5TZXREZWZhdWx0RmVlUmVzcG9u'
+    'c2USRgoLR2V0TW5lbW9uaWMSGi5wYWN0dXMuR2V0TW5lbW9uaWNSZXF1ZXN0GhsucGFjdHVzLk'
+    'dldE1uZW1vbmljUmVzcG9uc2USTAoNR2V0UHJpdmF0ZUtleRIcLnBhY3R1cy5HZXRQcml2YXRl'
+    'S2V5UmVxdWVzdBodLnBhY3R1cy5HZXRQcml2YXRlS2V5UmVzcG9uc2U=');
