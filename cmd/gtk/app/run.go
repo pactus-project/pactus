@@ -3,6 +3,8 @@
 package app
 
 import (
+	"context"
+
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/cmd/gtk/controller"
@@ -10,6 +12,9 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/node"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type GUI struct {
@@ -17,11 +22,12 @@ type GUI struct {
 	NodeCtrl      *controller.NodeWidgetController
 	WalletCtrl    *controller.WalletWidgetController
 	ValidatorCtrl *controller.ValidatorWidgetController
+	grpcConn      *grpc.ClientConn
 }
 
 // Run builds and shows the main window, wiring views/controllers.
 // It returns a cleanup function that closes the window and stops timers.
-func Run(n *node.Node, gtkApp *gtk.Application) (*GUI, error) {
+func Run(ctx context.Context, n *node.Node, gtkApp *gtk.Application) (*GUI, error) {
 	mwView, err := view.NewMainWindowView()
 	if err != nil {
 		return nil, err
@@ -36,7 +42,17 @@ func Run(n *node.Node, gtkApp *gtk.Application) (*GUI, error) {
 		return nil, err
 	}
 
-	walletModel, err := model.NewWalletModel(n.WalletManager(), cmd.DefaultWalletName)
+	conn, err := grpc.NewClient(n.GRPC().Address(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return nil, err
+	}
+
+	walletModel, err := model.NewWalletModel(
+		ctx,
+		pactus.NewWalletClient(conn),
+		pactus.NewTransactionClient(conn),
+		pactus.NewBlockchainClient(conn),
+		cmd.DefaultWalletName)
 	if err != nil {
 		return nil, err
 	}
@@ -152,6 +168,7 @@ func Run(n *node.Node, gtkApp *gtk.Application) (*GUI, error) {
 		NodeCtrl:      nodeCtrl,
 		WalletCtrl:    walletCtrl,
 		ValidatorCtrl: validatorCtrl,
+		grpcConn:      conn,
 	}, nil
 }
 
@@ -160,4 +177,8 @@ func (g *GUI) Cleanup() {
 	g.WalletCtrl.Cleanup()
 	g.ValidatorCtrl.Cleanup()
 	g.MainWindow.Cleanup()
+
+	if g.grpcConn != nil {
+		_ = g.grpcConn.Close()
+	}
 }
