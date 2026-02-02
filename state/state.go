@@ -722,11 +722,11 @@ func (st *state) CommitteeProtocolVersions() map[protocol.Version]float64 {
 	return st.committee.ProtocolVersions()
 }
 
-func (st *state) Stats() *Stats {
+func (st *state) ChainInfo() *ChainInfo {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
-	return &Stats{
+	return &ChainInfo{
 		LastBlockHeight:  st.lastInfo.BlockHeight(),
 		LastBlockHash:    st.lastInfo.BlockHash(),
 		LastBlockTime:    st.lastInfo.BlockTime(),
