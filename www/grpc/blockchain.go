@@ -24,7 +24,28 @@ func newBlockchainServer(server *Server) *blockchainServer {
 	}
 }
 
-func (s *blockchainServer) buildCommitteeInfo() ([]*pactus.ValidatorInfo, map[int32]float64, int64) {
+func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
+	_ *pactus.GetBlockchainInfoRequest,
+) (*pactus.GetBlockchainInfoResponse, error) {
+	chainInfo := s.state.ChainInfo()
+
+	return &pactus.GetBlockchainInfoResponse{
+		LastBlockHeight:  chainInfo.LastBlockHeight,
+		LastBlockHash:    chainInfo.LastBlockHash.String(),
+		LastBlockTime:    chainInfo.LastBlockTime.Unix(),
+		TotalAccounts:    chainInfo.TotalAccounts,
+		TotalValidators:  chainInfo.TotalValidators,
+		ActiveValidators: chainInfo.ActiveValidators,
+		TotalPower:       chainInfo.TotalPower,
+		CommitteePower:   chainInfo.CommitteePower,
+		IsPruned:         chainInfo.IsPruned,
+		PruningHeight:    chainInfo.PruningHeight,
+	}, nil
+}
+
+func (s *blockchainServer) GetCommitteeInfo(_ context.Context,
+	_ *pactus.GetCommitteeInfoRequest,
+) (*pactus.GetCommitteeInfoResponse, error) {
 	vals := s.state.CommitteeValidators()
 	valInfos := make([]*pactus.ValidatorInfo, 0, len(vals))
 	for _, val := range vals {
@@ -34,26 +55,12 @@ func (s *blockchainServer) buildCommitteeInfo() ([]*pactus.ValidatorInfo, map[in
 	for k, v := range s.state.CommitteeProtocolVersions() {
 		protocolVersions[int32(k)] = v
 	}
-	committeePower := s.state.Stats().CommitteePower
+	committeePower := s.state.ChainInfo().CommitteePower
 
-	return valInfos, protocolVersions, committeePower
-}
-
-	chainInfo := s.state.ChainInfo()
-
-	return &pactus.GetBlockchainInfoResponse{
-		LastBlockHeight:           chainInfo.LastBlockHeight,
-		LastBlockHash:             chainInfo.LastBlockHash.String(),
-		TotalAccounts:             chainInfo.TotalAccounts,
-		TotalValidators:           chainInfo.TotalValidators,
-		ActiveValidators:          chainInfo.ActiveValidators,
-		TotalPower:                chainInfo.TotalPower,
-		CommitteePower:            chainInfo.CommitteePower,
-		IsPruned:                  chainInfo.IsPruned,
-		PruningHeight:             chainInfo.PruningHeight,
-		LastBlockTime:             chainInfo.LastBlockTime.Unix(),
-		CommitteeValidators:       valInfos,
-		CommitteeProtocolVersions: committeeProtocolVersions,
+	return &pactus.GetCommitteeInfoResponse{
+		Validators:       valInfos,
+		ProtocolVersions: protocolVersions,
+		CommitteePower:   committeePower,
 	}, nil
 }
 
