@@ -13,17 +13,18 @@ import (
 	"github.com/ezex-io/gopkg/scheduler"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
-	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
-type NodeWidgetController struct {
-	view *view.NodeWidgetView
-	node *node.Node
+// clockOutOfSyncThreshold is the clock offset above which we show a warning.
+const clockOutOfSyncThreshold = 5 * time.Second
 
-	genesisTime time.Time
+type NodeWidgetController struct {
+	view  *view.NodeWidgetView
+	model *model.NodeModel
 }
 
 type nodeWidgetSnapshot struct {
@@ -38,8 +39,8 @@ type nodeWidgetSnapshot struct {
 	clockOffsetErr   error
 }
 
-func NewNodeWidgetController(view *view.NodeWidgetView, nde *node.Node) *NodeWidgetController {
-	return &NodeWidgetController{view: view, node: nde, genesisTime: nde.State().Genesis().GenesisTime()}
+func NewNodeWidgetController(view *view.NodeWidgetView, m *model.NodeModel) *NodeWidgetController {
+	return &NodeWidgetController{view: view, model: m}
 }
 
 func (c *NodeWidgetController) Bind(ctx context.Context) error {
@@ -49,10 +50,24 @@ func (c *NodeWidgetController) Bind(ctx context.Context) error {
 	}
 
 	c.view.LabelWorkingDirectory.SetText(cwd)
-	c.view.LabelNetwork.SetText(c.node.State().Genesis().ChainType().String())
-	c.view.LabelNetworkID.SetText(c.node.Network().SelfID().String())
-	c.view.LabelMoniker.SetText(c.node.Sync().Moniker())
-	c.view.LabelIsPrune.SetText(strconv.FormatBool(c.node.State().ChainInfo().IsPruned))
+
+	nodeInfo, err := c.model.GetNodeInfo()
+	if err != nil {
+		return err
+	}
+	chainInfo, err := c.model.GetBlockchainInfo()
+	if err != nil {
+		return err
+	}
+	netInfo, err := c.model.GetNetworkInfo()
+	if err != nil {
+		return err
+	}
+
+	c.view.LabelNetwork.SetText(netInfo.NetworkName)
+	c.view.LabelNetworkID.SetText(nodeInfo.PeerId)
+	c.view.LabelMoniker.SetText(nodeInfo.Moniker)
+	c.view.LabelIsPrune.SetText(strconv.FormatBool(chainInfo.IsPruned))
 
 	c.view.ConnectSignals(map[string]any{})
 
@@ -66,9 +81,16 @@ func (c *NodeWidgetController) Bind(ctx context.Context) error {
 	return nil
 }
 
+// syncProgressWindowBlocks is the number of blocks behind that maps to 0% sync progress (~10 min at 10s/block).
+const syncProgressWindowBlocks = 60
+
 func (c *NodeWidgetController) timeout1() {
-	lastBlockTime := c.node.State().LastBlockTime()
-	lastBlockHeight := c.node.State().LastBlockHeight()
+	chainInfo, err := c.model.GetBlockchainInfo()
+	if err != nil {
+		return
+	}
+	lastBlockTime := time.Unix(chainInfo.LastBlockTime, 0)
+	lastBlockHeight := chainInfo.LastBlockHeight
 
 	glib.IdleAdd(func() bool {
 		c.view.LabelLastBlockTime.SetText(lastBlockTime.Format("02 Jan 06 15:04:05 MST"))
@@ -76,37 +98,62 @@ func (c *NodeWidgetController) timeout1() {
 
 		nowUnix := time.Now().Unix()
 		lastBlockTimeUnix := lastBlockTime.Unix()
-		genTimeUnix := c.genesisTime.Unix()
-
-		percentage := float64(lastBlockTimeUnix-genTimeUnix) / float64(nowUnix-genTimeUnix)
-		c.view.ProgressBarSynced.SetFraction(percentage)
-		c.view.ProgressBarSynced.SetText(fmt.Sprintf("%s %%", strconv.FormatFloat(percentage*100, 'f', 2, 64)))
-
 		blocksLeft := (nowUnix - lastBlockTimeUnix) / 10
 		c.view.LabelBlocksLeft.SetText(strconv.FormatInt(blocksLeft, 10))
+
+		// Sync progress: 100% when up-to-date, 0% when syncProgressWindowBlocks behind (no genesis time).
+		percentage := 1.0 - float64(blocksLeft)/float64(syncProgressWindowBlocks)
+		if percentage < 0 {
+			percentage = 0
+		}
+		if percentage > 1 {
+			percentage = 1
+		}
+		c.view.ProgressBarSynced.SetFraction(percentage)
+		c.view.ProgressBarSynced.SetText(fmt.Sprintf("%s %%", strconv.FormatFloat(percentage*100, 'f', 2, 64)))
 
 		return false
 	})
 }
 
 func (c *NodeWidgetController) timeout10() {
-	info := c.node.State().ChainInfo()
-	offset, offsetErr := c.node.Sync().ClockOffset()
+	chainInfo, err := c.model.GetBlockchainInfo()
+	if err != nil {
+		return
+	}
+	committeeInfo, _ := c.model.GetCommitteeInfo()
+	consensusInfo, _ := c.model.GetConsensusInfo()
+	nodeInfo, _ := c.model.GetNodeInfo()
+
+	committeeSize := 0
+	if committeeInfo != nil {
+		committeeSize = len(committeeInfo.Validators)
+	}
+	inCommittee := consensusInfo != nil && len(consensusInfo.Instances) > 0
+
+	var clockOffset time.Duration
+	var clockOffsetErr error
+	if nodeInfo != nil {
+		clockOffset = time.Duration(nodeInfo.ClockOffset * float64(time.Second))
+	}
+	var numConnections, reachability string
+	if nodeInfo != nil && nodeInfo.ConnectionInfo != nil {
+		ci := nodeInfo.ConnectionInfo
+		numConnections = fmt.Sprintf("%v (Inbound: %v, Outbound %v)",
+			ci.Connections, ci.InboundConnections, ci.OutboundConnections)
+		reachability = nodeInfo.Reachability
+	}
 
 	snapshot := nodeWidgetSnapshot{
-		committeeSize:    c.node.State().Params().CommitteeSize,
-		committeeStake:   amount.Amount(info.CommitteePower),
-		totalStake:       amount.Amount(info.TotalPower),
-		activeValidators: info.ActiveValidators,
-		numConnections: fmt.Sprintf("%v (Inbound: %v, Outbound %v)",
-			c.node.Network().NumConnectedPeers(),
-			c.node.Network().NumInbound(),
-			c.node.Network().NumOutbound(),
-		),
-		reachability:   c.node.Network().ReachabilityStatus(),
-		inCommittee:    c.node.ConsManager().HasActiveInstance(),
-		clockOffset:    offset,
-		clockOffsetErr: offsetErr,
+		committeeSize:    committeeSize,
+		committeeStake:   amount.Amount(chainInfo.CommitteePower),
+		totalStake:       amount.Amount(chainInfo.TotalPower),
+		activeValidators: chainInfo.ActiveValidators,
+		numConnections:   numConnections,
+		reachability:     reachability,
+		inCommittee:      inCommittee,
+		clockOffset:      clockOffset,
+		clockOffsetErr:   clockOffsetErr,
 	}
 
 	glib.IdleAdd(func() bool {
@@ -154,7 +201,7 @@ func (c *NodeWidgetController) setClockOffset(styleContext *gtk.StyleContext, of
 	}
 	c.view.LabelClockOffset.SetText(fmt.Sprintf("%v second(s)", o))
 
-	if c.node.Sync().IsClockOutOfSync() {
+	if offset > clockOutOfSyncThreshold || offset < -clockOutOfSyncThreshold {
 		styleContext.AddClass("warning")
 
 		return

@@ -25,6 +25,8 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/version"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 const appID = "com.github.pactus-project.pactus.pactus-gui"
@@ -108,12 +110,16 @@ func main() {
 	})
 
 	var gui *gtkapp.GUI
+	var grpcConn *grpc.ClientConn
 	activateOnce := new(sync.Once)
 	shutdownOnce := new(sync.Once)
 
 	shutdown := func() {
 		shutdownOnce.Do(func() {
 			cancel()
+			if grpcConn != nil {
+				_ = grpcConn.Close()
+			}
 			if gui != nil {
 				gui.Cleanup()
 			}
@@ -166,7 +172,10 @@ func main() {
 					guiNode = n
 					splash.SetStatus("Loading wallet interface...")
 
-					gui, err = gtkapp.Run(ctx, guiNode, app)
+					grpcConn, err = grpc.NewClient(n.GRPC().Address(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+					gtkutil.FatalErrorCheck(err)
+
+					gui, err = gtkapp.Run(ctx, grpcConn, app)
 					gtkutil.FatalErrorCheck(err)
 
 					splash.Destroy()
