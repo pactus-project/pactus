@@ -323,6 +323,67 @@ proto.pactus.BlockchainPromiseClient.prototype.getBlockchainInfo =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.GetCommitteeInfoRequest,
+ *   !proto.pactus.GetCommitteeInfoResponse>}
+ */
+const methodDescriptor_Blockchain_GetCommitteeInfo = new grpc.web.MethodDescriptor(
+  '/pactus.Blockchain/GetCommitteeInfo',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.GetCommitteeInfoRequest,
+  proto.pactus.GetCommitteeInfoResponse,
+  /**
+   * @param {!proto.pactus.GetCommitteeInfoRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.GetCommitteeInfoResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.GetCommitteeInfoRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.GetCommitteeInfoResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.GetCommitteeInfoResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.BlockchainClient.prototype.getCommitteeInfo =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Blockchain/GetCommitteeInfo',
+      request,
+      metadata || {},
+      methodDescriptor_Blockchain_GetCommitteeInfo,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.GetCommitteeInfoRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.GetCommitteeInfoResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.BlockchainPromiseClient.prototype.getCommitteeInfo =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Blockchain/GetCommitteeInfo',
+      request,
+      metadata || {},
+      methodDescriptor_Blockchain_GetCommitteeInfo);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.pactus.GetConsensusInfoRequest,
  *   !proto.pactus.GetConsensusInfoResponse>}
  */

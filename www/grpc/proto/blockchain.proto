@@ -20,6 +20,9 @@ service Blockchain {
   // GetBlockchainInfo retrieves general information about the blockchain.
   rpc GetBlockchainInfo(GetBlockchainInfoRequest) returns (GetBlockchainInfoResponse);
 
+  // GetCommitteeInfo retrieves information about the current committee.
+  rpc GetCommitteeInfo(GetCommitteeInfoRequest) returns (GetCommitteeInfoResponse);
+
   // GetConsensusInfo retrieves information about the consensus instances.
   rpc GetConsensusInfo(GetConsensusInfoRequest) returns (GetConsensusInfoResponse);
 
@@ -153,26 +156,35 @@ message GetBlockchainInfoResponse {
   uint32 last_block_height = 1;
   // The hash of the last block in the blockchain.
   string last_block_hash = 2;
+  // The timestamp of the last block in Unix format.
+  int64 last_block_time = 3;
   // The total number of accounts in the blockchain.
-  int32 total_accounts = 3;
+  int32 total_accounts = 4;
   // The total number of validators in the blockchain.
-  int32 total_validators = 4;
+  int32 total_validators = 5;
   // The number of active (not unbonded) validators in the blockchain.
-  int32 active_validators = 12;
+  int32 active_validators = 6;
   // The total power of the blockchain.
-  int64 total_power = 5;
+  int64 total_power = 7;
   // The power of the committee.
-  int64 committee_power = 6;
-  // List of committee validators.
-  repeated ValidatorInfo committee_validators = 7;
+  int64 committee_power = 8;
   // If the blocks are subject to pruning.
-  bool is_pruned = 8;
+  bool is_pruned = 9;
   // Lowest-height block stored (only present if pruning is enabled)
-  uint32 pruning_height = 9;
-  // Timestamp of the last block in Unix format
-  int64 last_block_time = 10;
+  uint32 pruning_height = 10;
+}
+
+// Request message for retrieving committee information.
+message GetCommitteeInfoRequest {}
+
+// Response message contains committee information.
+message GetCommitteeInfoResponse {
+  // The power of the committee.
+  int64 committee_power = 1;
+  // List of committee validators.
+  repeated ValidatorInfo validators = 2;
   // Map of protocol versions and their percentages in the committee.
-  map<int32, double> committee_protocol_versions = 11;
+  map<int32, double> protocol_versions = 3;
 }
 
 // Request message for retrieving consensus information.

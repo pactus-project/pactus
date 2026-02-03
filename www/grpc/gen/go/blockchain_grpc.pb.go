@@ -23,6 +23,7 @@ const (
 	Blockchain_GetBlockHash_FullMethodName          = "/pactus.Blockchain/GetBlockHash"
 	Blockchain_GetBlockHeight_FullMethodName        = "/pactus.Blockchain/GetBlockHeight"
 	Blockchain_GetBlockchainInfo_FullMethodName     = "/pactus.Blockchain/GetBlockchainInfo"
+	Blockchain_GetCommitteeInfo_FullMethodName      = "/pactus.Blockchain/GetCommitteeInfo"
 	Blockchain_GetConsensusInfo_FullMethodName      = "/pactus.Blockchain/GetConsensusInfo"
 	Blockchain_GetAccount_FullMethodName            = "/pactus.Blockchain/GetAccount"
 	Blockchain_GetValidator_FullMethodName          = "/pactus.Blockchain/GetValidator"
@@ -46,6 +47,8 @@ type BlockchainClient interface {
 	GetBlockHeight(ctx context.Context, in *GetBlockHeightRequest, opts ...grpc.CallOption) (*GetBlockHeightResponse, error)
 	// GetBlockchainInfo retrieves general information about the blockchain.
 	GetBlockchainInfo(ctx context.Context, in *GetBlockchainInfoRequest, opts ...grpc.CallOption) (*GetBlockchainInfoResponse, error)
+	// GetCommitteeInfo retrieves information about the current committee.
+	GetCommitteeInfo(ctx context.Context, in *GetCommitteeInfoRequest, opts ...grpc.CallOption) (*GetCommitteeInfoResponse, error)
 	// GetConsensusInfo retrieves information about the consensus instances.
 	GetConsensusInfo(ctx context.Context, in *GetConsensusInfoRequest, opts ...grpc.CallOption) (*GetConsensusInfoResponse, error)
 	// GetAccount retrieves information about an account based on the provided address.
@@ -104,6 +107,16 @@ func (c *blockchainClient) GetBlockchainInfo(ctx context.Context, in *GetBlockch
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetBlockchainInfoResponse)
 	err := c.cc.Invoke(ctx, Blockchain_GetBlockchainInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *blockchainClient) GetCommitteeInfo(ctx context.Context, in *GetCommitteeInfoRequest, opts ...grpc.CallOption) (*GetCommitteeInfoResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCommitteeInfoResponse)
+	err := c.cc.Invoke(ctx, Blockchain_GetCommitteeInfo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -194,6 +207,8 @@ type BlockchainServer interface {
 	GetBlockHeight(context.Context, *GetBlockHeightRequest) (*GetBlockHeightResponse, error)
 	// GetBlockchainInfo retrieves general information about the blockchain.
 	GetBlockchainInfo(context.Context, *GetBlockchainInfoRequest) (*GetBlockchainInfoResponse, error)
+	// GetCommitteeInfo retrieves information about the current committee.
+	GetCommitteeInfo(context.Context, *GetCommitteeInfoRequest) (*GetCommitteeInfoResponse, error)
 	// GetConsensusInfo retrieves information about the consensus instances.
 	GetConsensusInfo(context.Context, *GetConsensusInfoRequest) (*GetConsensusInfoResponse, error)
 	// GetAccount retrieves information about an account based on the provided address.
@@ -228,6 +243,9 @@ func (UnimplementedBlockchainServer) GetBlockHeight(context.Context, *GetBlockHe
 }
 func (UnimplementedBlockchainServer) GetBlockchainInfo(context.Context, *GetBlockchainInfoRequest) (*GetBlockchainInfoResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetBlockchainInfo not implemented")
+}
+func (UnimplementedBlockchainServer) GetCommitteeInfo(context.Context, *GetCommitteeInfoRequest) (*GetCommitteeInfoResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCommitteeInfo not implemented")
 }
 func (UnimplementedBlockchainServer) GetConsensusInfo(context.Context, *GetConsensusInfoRequest) (*GetConsensusInfoResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetConsensusInfo not implemented")
@@ -338,6 +356,24 @@ func _Blockchain_GetBlockchainInfo_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BlockchainServer).GetBlockchainInfo(ctx, req.(*GetBlockchainInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Blockchain_GetCommitteeInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCommitteeInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockchainServer).GetCommitteeInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Blockchain_GetCommitteeInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockchainServer).GetCommitteeInfo(ctx, req.(*GetCommitteeInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -490,6 +526,10 @@ var Blockchain_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBlockchainInfo",
 			Handler:    _Blockchain_GetBlockchainInfo_Handler,
+		},
+		{
+			MethodName: "GetCommitteeInfo",
+			Handler:    _Blockchain_GetCommitteeInfo_Handler,
 		},
 		{
 			MethodName: "GetConsensusInfo",

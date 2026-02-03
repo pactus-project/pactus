@@ -28,17 +28,37 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
 	tmk := newTableMaker()
 	tmk.addRowBlockHash("Last Block Hash", res.LastBlockHash)
 	tmk.addRowInt("Last Block Height", int(res.LastBlockHeight))
-	tmk.addRowBool("Is Pruned", res.IsPruned)
-	tmk.addRowInt("Pruning Height", int(res.PruningHeight))
+	tmk.addRowString("Last Block Time", time.Unix(res.LastBlockTime, 0).String())
+	tmk.addRowInt("Total Accounts", int(res.TotalAccounts))
 	tmk.addRowInt("Total Validators", int(res.TotalValidators))
 	tmk.addRowInt("Active Validators", int(res.ActiveValidators))
-	tmk.addRowString("--- Committee", "---")
 	tmk.addRowPower("Total Power", res.TotalPower)
+	tmk.addRowBool("Is Pruned", res.IsPruned)
+	tmk.addRowInt("Pruning Height", int(res.PruningHeight))
+
+	s.writeHTML(w, tmk.html())
+}
+
+func (s *Server) CommitteeHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	res, err := s.blockchain.GetCommitteeInfo(ctx,
+		&pactus.GetCommitteeInfoRequest{})
+	if err != nil {
+		s.writeError(w, err)
+
+		return
+	}
+
+	tmk := newTableMaker()
 	tmk.addRowPower("Committee Power", res.CommitteePower)
-	for ver, percentage := range res.CommitteeProtocolVersions {
+	tmk.addRowInt("Validators", len(res.Validators))
+	tmk.addRowString("--- Protocol Versions", "---")
+	for ver, percentage := range res.ProtocolVersions {
 		tmk.addRowDouble(fmt.Sprintf("Version %d", ver), percentage)
 	}
-	for i, val := range res.CommitteeValidators {
+	tmk.addRowString("--- Validators", "---")
+	for i, val := range res.Validators {
 		tmk.addRowInt("--- Validator", i+1)
 		tmVal := s.writeValidatorTable(val)
 		tmk.addRowString("", tmVal.html())

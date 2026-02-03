@@ -996,33 +996,26 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
   factory GetBlockchainInfoResponse({
     $core.int? lastBlockHeight,
     $core.String? lastBlockHash,
+    $fixnum.Int64? lastBlockTime,
     $core.int? totalAccounts,
     $core.int? totalValidators,
+    $core.int? activeValidators,
     $fixnum.Int64? totalPower,
     $fixnum.Int64? committeePower,
-    $core.Iterable<ValidatorInfo>? committeeValidators,
     $core.bool? isPruned,
     $core.int? pruningHeight,
-    $fixnum.Int64? lastBlockTime,
-    $core.Iterable<$core.MapEntry<$core.int, $core.double>>?
-        committeeProtocolVersions,
-    $core.int? activeValidators,
   }) {
     final result = create();
     if (lastBlockHeight != null) result.lastBlockHeight = lastBlockHeight;
     if (lastBlockHash != null) result.lastBlockHash = lastBlockHash;
+    if (lastBlockTime != null) result.lastBlockTime = lastBlockTime;
     if (totalAccounts != null) result.totalAccounts = totalAccounts;
     if (totalValidators != null) result.totalValidators = totalValidators;
+    if (activeValidators != null) result.activeValidators = activeValidators;
     if (totalPower != null) result.totalPower = totalPower;
     if (committeePower != null) result.committeePower = committeePower;
-    if (committeeValidators != null)
-      result.committeeValidators.addAll(committeeValidators);
     if (isPruned != null) result.isPruned = isPruned;
     if (pruningHeight != null) result.pruningHeight = pruningHeight;
-    if (lastBlockTime != null) result.lastBlockTime = lastBlockTime;
-    if (committeeProtocolVersions != null)
-      result.committeeProtocolVersions.addEntries(committeeProtocolVersions);
-    if (activeValidators != null) result.activeValidators = activeValidators;
     return result;
   }
 
@@ -1042,24 +1035,15 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     ..aI(1, _omitFieldNames ? '' : 'lastBlockHeight',
         fieldType: $pb.PbFieldType.OU3)
     ..aOS(2, _omitFieldNames ? '' : 'lastBlockHash')
-    ..aI(3, _omitFieldNames ? '' : 'totalAccounts')
-    ..aI(4, _omitFieldNames ? '' : 'totalValidators')
-    ..aInt64(5, _omitFieldNames ? '' : 'totalPower')
-    ..aInt64(6, _omitFieldNames ? '' : 'committeePower')
-    ..pPM<ValidatorInfo>(7, _omitFieldNames ? '' : 'committeeValidators',
-        subBuilder: ValidatorInfo.create)
-    ..aOB(8, _omitFieldNames ? '' : 'isPruned')
-    ..aI(9, _omitFieldNames ? '' : 'pruningHeight',
+    ..aInt64(3, _omitFieldNames ? '' : 'lastBlockTime')
+    ..aI(4, _omitFieldNames ? '' : 'totalAccounts')
+    ..aI(5, _omitFieldNames ? '' : 'totalValidators')
+    ..aI(6, _omitFieldNames ? '' : 'activeValidators')
+    ..aInt64(7, _omitFieldNames ? '' : 'totalPower')
+    ..aInt64(8, _omitFieldNames ? '' : 'committeePower')
+    ..aOB(9, _omitFieldNames ? '' : 'isPruned')
+    ..aI(10, _omitFieldNames ? '' : 'pruningHeight',
         fieldType: $pb.PbFieldType.OU3)
-    ..aInt64(10, _omitFieldNames ? '' : 'lastBlockTime')
-    ..m<$core.int, $core.double>(
-        11, _omitFieldNames ? '' : 'committeeProtocolVersions',
-        entryClassName:
-            'GetBlockchainInfoResponse.CommitteeProtocolVersionsEntry',
-        keyFieldType: $pb.PbFieldType.O3,
-        valueFieldType: $pb.PbFieldType.OD,
-        packageName: const $pb.PackageName('pactus'))
-    ..aI(12, _omitFieldNames ? '' : 'activeValidators')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1102,94 +1086,202 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(2)
   void clearLastBlockHash() => $_clearField(2);
 
+  /// The timestamp of the last block in Unix format.
+  @$pb.TagNumber(3)
+  $fixnum.Int64 get lastBlockTime => $_getI64(2);
+  @$pb.TagNumber(3)
+  set lastBlockTime($fixnum.Int64 value) => $_setInt64(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasLastBlockTime() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearLastBlockTime() => $_clearField(3);
+
   /// The total number of accounts in the blockchain.
-  @$pb.TagNumber(3)
-  $core.int get totalAccounts => $_getIZ(2);
-  @$pb.TagNumber(3)
-  set totalAccounts($core.int value) => $_setSignedInt32(2, value);
-  @$pb.TagNumber(3)
-  $core.bool hasTotalAccounts() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearTotalAccounts() => $_clearField(3);
+  @$pb.TagNumber(4)
+  $core.int get totalAccounts => $_getIZ(3);
+  @$pb.TagNumber(4)
+  set totalAccounts($core.int value) => $_setSignedInt32(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasTotalAccounts() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearTotalAccounts() => $_clearField(4);
 
   /// The total number of validators in the blockchain.
-  @$pb.TagNumber(4)
-  $core.int get totalValidators => $_getIZ(3);
-  @$pb.TagNumber(4)
-  set totalValidators($core.int value) => $_setSignedInt32(3, value);
-  @$pb.TagNumber(4)
-  $core.bool hasTotalValidators() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearTotalValidators() => $_clearField(4);
-
-  /// The total power of the blockchain.
   @$pb.TagNumber(5)
-  $fixnum.Int64 get totalPower => $_getI64(4);
+  $core.int get totalValidators => $_getIZ(4);
   @$pb.TagNumber(5)
-  set totalPower($fixnum.Int64 value) => $_setInt64(4, value);
+  set totalValidators($core.int value) => $_setSignedInt32(4, value);
   @$pb.TagNumber(5)
-  $core.bool hasTotalPower() => $_has(4);
+  $core.bool hasTotalValidators() => $_has(4);
   @$pb.TagNumber(5)
-  void clearTotalPower() => $_clearField(5);
-
-  /// The power of the committee.
-  @$pb.TagNumber(6)
-  $fixnum.Int64 get committeePower => $_getI64(5);
-  @$pb.TagNumber(6)
-  set committeePower($fixnum.Int64 value) => $_setInt64(5, value);
-  @$pb.TagNumber(6)
-  $core.bool hasCommitteePower() => $_has(5);
-  @$pb.TagNumber(6)
-  void clearCommitteePower() => $_clearField(6);
-
-  /// List of committee validators.
-  @$pb.TagNumber(7)
-  $pb.PbList<ValidatorInfo> get committeeValidators => $_getList(6);
-
-  /// If the blocks are subject to pruning.
-  @$pb.TagNumber(8)
-  $core.bool get isPruned => $_getBF(7);
-  @$pb.TagNumber(8)
-  set isPruned($core.bool value) => $_setBool(7, value);
-  @$pb.TagNumber(8)
-  $core.bool hasIsPruned() => $_has(7);
-  @$pb.TagNumber(8)
-  void clearIsPruned() => $_clearField(8);
-
-  /// Lowest-height block stored (only present if pruning is enabled)
-  @$pb.TagNumber(9)
-  $core.int get pruningHeight => $_getIZ(8);
-  @$pb.TagNumber(9)
-  set pruningHeight($core.int value) => $_setUnsignedInt32(8, value);
-  @$pb.TagNumber(9)
-  $core.bool hasPruningHeight() => $_has(8);
-  @$pb.TagNumber(9)
-  void clearPruningHeight() => $_clearField(9);
-
-  /// Timestamp of the last block in Unix format
-  @$pb.TagNumber(10)
-  $fixnum.Int64 get lastBlockTime => $_getI64(9);
-  @$pb.TagNumber(10)
-  set lastBlockTime($fixnum.Int64 value) => $_setInt64(9, value);
-  @$pb.TagNumber(10)
-  $core.bool hasLastBlockTime() => $_has(9);
-  @$pb.TagNumber(10)
-  void clearLastBlockTime() => $_clearField(10);
-
-  /// Map of protocol versions and their percentages in the committee.
-  @$pb.TagNumber(11)
-  $pb.PbMap<$core.int, $core.double> get committeeProtocolVersions =>
-      $_getMap(10);
+  void clearTotalValidators() => $_clearField(5);
 
   /// The number of active (not unbonded) validators in the blockchain.
-  @$pb.TagNumber(12)
-  $core.int get activeValidators => $_getIZ(11);
-  @$pb.TagNumber(12)
-  set activeValidators($core.int value) => $_setSignedInt32(11, value);
-  @$pb.TagNumber(12)
-  $core.bool hasActiveValidators() => $_has(11);
-  @$pb.TagNumber(12)
-  void clearActiveValidators() => $_clearField(12);
+  @$pb.TagNumber(6)
+  $core.int get activeValidators => $_getIZ(5);
+  @$pb.TagNumber(6)
+  set activeValidators($core.int value) => $_setSignedInt32(5, value);
+  @$pb.TagNumber(6)
+  $core.bool hasActiveValidators() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearActiveValidators() => $_clearField(6);
+
+  /// The total power of the blockchain.
+  @$pb.TagNumber(7)
+  $fixnum.Int64 get totalPower => $_getI64(6);
+  @$pb.TagNumber(7)
+  set totalPower($fixnum.Int64 value) => $_setInt64(6, value);
+  @$pb.TagNumber(7)
+  $core.bool hasTotalPower() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearTotalPower() => $_clearField(7);
+
+  /// The power of the committee.
+  @$pb.TagNumber(8)
+  $fixnum.Int64 get committeePower => $_getI64(7);
+  @$pb.TagNumber(8)
+  set committeePower($fixnum.Int64 value) => $_setInt64(7, value);
+  @$pb.TagNumber(8)
+  $core.bool hasCommitteePower() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearCommitteePower() => $_clearField(8);
+
+  /// If the blocks are subject to pruning.
+  @$pb.TagNumber(9)
+  $core.bool get isPruned => $_getBF(8);
+  @$pb.TagNumber(9)
+  set isPruned($core.bool value) => $_setBool(8, value);
+  @$pb.TagNumber(9)
+  $core.bool hasIsPruned() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearIsPruned() => $_clearField(9);
+
+  /// Lowest-height block stored (only present if pruning is enabled)
+  @$pb.TagNumber(10)
+  $core.int get pruningHeight => $_getIZ(9);
+  @$pb.TagNumber(10)
+  set pruningHeight($core.int value) => $_setUnsignedInt32(9, value);
+  @$pb.TagNumber(10)
+  $core.bool hasPruningHeight() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearPruningHeight() => $_clearField(10);
+}
+
+/// Request message for retrieving committee information.
+class GetCommitteeInfoRequest extends $pb.GeneratedMessage {
+  factory GetCommitteeInfoRequest() => create();
+
+  GetCommitteeInfoRequest._();
+
+  factory GetCommitteeInfoRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetCommitteeInfoRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetCommitteeInfoRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetCommitteeInfoRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetCommitteeInfoRequest copyWith(
+          void Function(GetCommitteeInfoRequest) updates) =>
+      super.copyWith((message) => updates(message as GetCommitteeInfoRequest))
+          as GetCommitteeInfoRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetCommitteeInfoRequest create() => GetCommitteeInfoRequest._();
+  @$core.override
+  GetCommitteeInfoRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static GetCommitteeInfoRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetCommitteeInfoRequest>(create);
+  static GetCommitteeInfoRequest? _defaultInstance;
+}
+
+/// Response message contains committee information.
+class GetCommitteeInfoResponse extends $pb.GeneratedMessage {
+  factory GetCommitteeInfoResponse({
+    $fixnum.Int64? committeePower,
+    $core.Iterable<ValidatorInfo>? validators,
+    $core.Iterable<$core.MapEntry<$core.int, $core.double>>? protocolVersions,
+  }) {
+    final result = create();
+    if (committeePower != null) result.committeePower = committeePower;
+    if (validators != null) result.validators.addAll(validators);
+    if (protocolVersions != null)
+      result.protocolVersions.addEntries(protocolVersions);
+    return result;
+  }
+
+  GetCommitteeInfoResponse._();
+
+  factory GetCommitteeInfoResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetCommitteeInfoResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetCommitteeInfoResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aInt64(1, _omitFieldNames ? '' : 'committeePower')
+    ..pPM<ValidatorInfo>(2, _omitFieldNames ? '' : 'validators',
+        subBuilder: ValidatorInfo.create)
+    ..m<$core.int, $core.double>(3, _omitFieldNames ? '' : 'protocolVersions',
+        entryClassName: 'GetCommitteeInfoResponse.ProtocolVersionsEntry',
+        keyFieldType: $pb.PbFieldType.O3,
+        valueFieldType: $pb.PbFieldType.OD,
+        packageName: const $pb.PackageName('pactus'))
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetCommitteeInfoResponse clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetCommitteeInfoResponse copyWith(
+          void Function(GetCommitteeInfoResponse) updates) =>
+      super.copyWith((message) => updates(message as GetCommitteeInfoResponse))
+          as GetCommitteeInfoResponse;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetCommitteeInfoResponse create() => GetCommitteeInfoResponse._();
+  @$core.override
+  GetCommitteeInfoResponse createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static GetCommitteeInfoResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetCommitteeInfoResponse>(create);
+  static GetCommitteeInfoResponse? _defaultInstance;
+
+  /// The power of the committee.
+  @$pb.TagNumber(1)
+  $fixnum.Int64 get committeePower => $_getI64(0);
+  @$pb.TagNumber(1)
+  set committeePower($fixnum.Int64 value) => $_setInt64(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasCommitteePower() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearCommitteePower() => $_clearField(1);
+
+  /// List of committee validators.
+  @$pb.TagNumber(2)
+  $pb.PbList<ValidatorInfo> get validators => $_getList(1);
+
+  /// Map of protocol versions and their percentages in the committee.
+  @$pb.TagNumber(3)
+  $pb.PbMap<$core.int, $core.double> get protocolVersions => $_getMap(2);
 }
 
 /// Request message for retrieving consensus information.
@@ -2260,6 +2352,12 @@ class BlockchainApi {
           $pb.ClientContext? ctx, GetBlockchainInfoRequest request) =>
       _client.invoke<GetBlockchainInfoResponse>(ctx, 'Blockchain',
           'GetBlockchainInfo', request, GetBlockchainInfoResponse());
+
+  /// GetCommitteeInfo retrieves information about the current committee.
+  $async.Future<GetCommitteeInfoResponse> getCommitteeInfo(
+          $pb.ClientContext? ctx, GetCommitteeInfoRequest request) =>
+      _client.invoke<GetCommitteeInfoResponse>(ctx, 'Blockchain',
+          'GetCommitteeInfo', request, GetCommitteeInfoResponse());
 
   /// GetConsensusInfo retrieves information about the consensus instances.
   $async.Future<GetConsensusInfoResponse> getConsensusInfo(

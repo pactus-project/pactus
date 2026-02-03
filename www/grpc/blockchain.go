@@ -27,32 +27,39 @@ func newBlockchainServer(server *Server) *blockchainServer {
 func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 	_ *pactus.GetBlockchainInfoRequest,
 ) (*pactus.GetBlockchainInfoResponse, error) {
-	vals := s.state.CommitteeValidators()
-	valInfos := make([]*pactus.ValidatorInfo, 0, len(vals))
-	for _, val := range vals {
-		valInfos = append(valInfos, s.validatorToProto(val))
-	}
-
-	committeeProtocolVersions := make(map[int32]float64)
-	for k, v := range s.state.CommitteeProtocolVersions() {
-		committeeProtocolVersions[int32(k)] = v
-	}
-
 	chainInfo := s.state.ChainInfo()
 
 	return &pactus.GetBlockchainInfoResponse{
-		LastBlockHeight:           chainInfo.LastBlockHeight,
-		LastBlockHash:             chainInfo.LastBlockHash.String(),
-		TotalAccounts:             chainInfo.TotalAccounts,
-		TotalValidators:           chainInfo.TotalValidators,
-		ActiveValidators:          chainInfo.ActiveValidators,
-		TotalPower:                chainInfo.TotalPower,
-		CommitteePower:            chainInfo.CommitteePower,
-		IsPruned:                  chainInfo.IsPruned,
-		PruningHeight:             chainInfo.PruningHeight,
-		LastBlockTime:             chainInfo.LastBlockTime.Unix(),
-		CommitteeValidators:       valInfos,
-		CommitteeProtocolVersions: committeeProtocolVersions,
+		LastBlockHeight:  chainInfo.LastBlockHeight,
+		LastBlockHash:    chainInfo.LastBlockHash.String(),
+		LastBlockTime:    chainInfo.LastBlockTime.Unix(),
+		TotalAccounts:    chainInfo.TotalAccounts,
+		TotalValidators:  chainInfo.TotalValidators,
+		ActiveValidators: chainInfo.ActiveValidators,
+		TotalPower:       chainInfo.TotalPower,
+		CommitteePower:   chainInfo.CommitteePower,
+		IsPruned:         chainInfo.IsPruned,
+		PruningHeight:    chainInfo.PruningHeight,
+	}, nil
+}
+
+func (s *blockchainServer) GetCommitteeInfo(_ context.Context,
+	_ *pactus.GetCommitteeInfoRequest,
+) (*pactus.GetCommitteeInfoResponse, error) {
+	info := s.state.CommitteeInfo()
+	valInfos := make([]*pactus.ValidatorInfo, 0, len(info.Validators))
+	for _, val := range info.Validators {
+		valInfos = append(valInfos, s.validatorToProto(val))
+	}
+	protocolVersions := make(map[int32]float64)
+	for k, v := range info.ProtocolVersions {
+		protocolVersions[int32(k)] = v
+	}
+
+	return &pactus.GetCommitteeInfoResponse{
+		Validators:       valInfos,
+		ProtocolVersions: protocolVersions,
+		CommitteePower:   info.CommitteePower,
 	}, nil
 }
 

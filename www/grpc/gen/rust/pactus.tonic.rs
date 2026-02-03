@@ -1139,6 +1139,30 @@ pub mod blockchain_client {
                 .insert(GrpcMethod::new("pactus.Blockchain", "GetBlockchainInfo"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn get_committee_info(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetCommitteeInfoRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetCommitteeInfoResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pactus.Blockchain/GetCommitteeInfo",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pactus.Blockchain", "GetCommitteeInfo"));
+            self.inner.unary(req, path, codec).await
+        }
         pub async fn get_consensus_info(
             &mut self,
             request: impl tonic::IntoRequest<super::GetConsensusInfoRequest>,
@@ -1348,6 +1372,13 @@ pub mod blockchain_server {
             request: tonic::Request<super::GetBlockchainInfoRequest>,
         ) -> std::result::Result<
             tonic::Response<super::GetBlockchainInfoResponse>,
+            tonic::Status,
+        >;
+        async fn get_committee_info(
+            &self,
+            request: tonic::Request<super::GetCommitteeInfoRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetCommitteeInfoResponse>,
             tonic::Status,
         >;
         async fn get_consensus_info(
@@ -1642,6 +1673,51 @@ pub mod blockchain_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = GetBlockchainInfoSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pactus.Blockchain/GetCommitteeInfo" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetCommitteeInfoSvc<T: Blockchain>(pub Arc<T>);
+                    impl<
+                        T: Blockchain,
+                    > tonic::server::UnaryService<super::GetCommitteeInfoRequest>
+                    for GetCommitteeInfoSvc<T> {
+                        type Response = super::GetCommitteeInfoResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetCommitteeInfoRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Blockchain>::get_committee_info(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetCommitteeInfoSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

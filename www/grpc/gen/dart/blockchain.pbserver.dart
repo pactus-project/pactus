@@ -29,6 +29,8 @@ abstract class BlockchainServiceBase extends $pb.GeneratedService {
       $pb.ServerContext ctx, $1.GetBlockHeightRequest request);
   $async.Future<$1.GetBlockchainInfoResponse> getBlockchainInfo(
       $pb.ServerContext ctx, $1.GetBlockchainInfoRequest request);
+  $async.Future<$1.GetCommitteeInfoResponse> getCommitteeInfo(
+      $pb.ServerContext ctx, $1.GetCommitteeInfoRequest request);
   $async.Future<$1.GetConsensusInfoResponse> getConsensusInfo(
       $pb.ServerContext ctx, $1.GetConsensusInfoRequest request);
   $async.Future<$1.GetAccountResponse> getAccount(
@@ -54,6 +56,8 @@ abstract class BlockchainServiceBase extends $pb.GeneratedService {
         return $1.GetBlockHeightRequest();
       case 'GetBlockchainInfo':
         return $1.GetBlockchainInfoRequest();
+      case 'GetCommitteeInfo':
+        return $1.GetCommitteeInfoRequest();
       case 'GetConsensusInfo':
         return $1.GetConsensusInfoRequest();
       case 'GetAccount':
@@ -84,6 +88,8 @@ abstract class BlockchainServiceBase extends $pb.GeneratedService {
         return getBlockHeight(ctx, request as $1.GetBlockHeightRequest);
       case 'GetBlockchainInfo':
         return getBlockchainInfo(ctx, request as $1.GetBlockchainInfoRequest);
+      case 'GetCommitteeInfo':
+        return getCommitteeInfo(ctx, request as $1.GetCommitteeInfoRequest);
       case 'GetConsensusInfo':
         return getConsensusInfo(ctx, request as $1.GetConsensusInfoRequest);
       case 'GetAccount':

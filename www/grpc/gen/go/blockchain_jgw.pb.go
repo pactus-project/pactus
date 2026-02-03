@@ -105,6 +105,23 @@ func (s *BlockchainJsonRPC) Methods() map[string]func(ctx context.Context, messa
 			return s.client.GetBlockchainInfo(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
+		"pactus.blockchain.get_committee_info": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(GetCommitteeInfoRequest)
+
+			var jrpcData paramsAndHeadersBlockchain
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.GetCommitteeInfo(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
+
 		"pactus.blockchain.get_consensus_info": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetConsensusInfoRequest)
 
