@@ -66,11 +66,12 @@ func Run(ctx context.Context, n *node.Node, gtkApp *gtk.Application) (*GUI, erro
 
 	walletCtrl := controller.NewWalletWidgetController(walletView, walletModel)
 
+	validatorModel := model.NewValidatorModel(ctx, pactus.NewBlockchainClient(conn))
 	validatorView, err := view.NewValidatorWidgetView()
 	if err != nil {
 		return nil, err
 	}
-	validatorCtrl := controller.NewValidatorWidgetController(validatorView, n)
+	validatorCtrl := controller.NewValidatorWidgetController(validatorView, validatorModel)
 	if err := validatorCtrl.Bind(); err != nil {
 		return nil, err
 	}
