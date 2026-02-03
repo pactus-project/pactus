@@ -119,7 +119,7 @@ type GetNetworkInfoResponse struct {
 	// Number of connected peers.
 	ConnectedPeersCount uint32 `protobuf:"varint,2,opt,name=connected_peers_count,json=connectedPeersCount,proto3" json:"connected_peers_count,omitempty"`
 	// Metrics related to node activity.
-	MetricInfo    *MetricInfo `protobuf:"bytes,3,opt,name=metric_info,json=metricInfo,proto3" json:"metric_info,omitempty"`
+	MetricInfo    *MetricInfo `protobuf:"bytes,4,opt,name=metric_info,json=metricInfo,proto3" json:"metric_info,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1006,7 +1006,7 @@ const file_network_proto_rawDesc = "" +
 	"\x16GetNetworkInfoResponse\x12!\n" +
 	"\fnetwork_name\x18\x01 \x01(\tR\vnetworkName\x122\n" +
 	"\x15connected_peers_count\x18\x02 \x01(\rR\x13connectedPeersCount\x123\n" +
-	"\vmetric_info\x18\x03 \x01(\v2\x12.pactus.MetricInfoR\n" +
+	"\vmetric_info\x18\x04 \x01(\v2\x12.pactus.MetricInfoR\n" +
 	"metricInfo\"E\n" +
 	"\x10ListPeersRequest\x121\n" +
 	"\x14include_disconnected\x18\x01 \x01(\bR\x13includeDisconnected\";\n" +

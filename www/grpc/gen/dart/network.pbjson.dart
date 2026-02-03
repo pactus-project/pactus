@@ -53,7 +53,7 @@ const GetNetworkInfoResponse$json = {
     },
     {
       '1': 'metric_info',
-      '3': 3,
+      '3': 4,
       '4': 1,
       '5': 11,
       '6': '.pactus.MetricInfo',
@@ -66,7 +66,7 @@ const GetNetworkInfoResponse$json = {
 final $typed_data.Uint8List getNetworkInfoResponseDescriptor = $convert.base64Decode(
     'ChZHZXROZXR3b3JrSW5mb1Jlc3BvbnNlEiEKDG5ldHdvcmtfbmFtZRgBIAEoCVILbmV0d29ya0'
     '5hbWUSMgoVY29ubmVjdGVkX3BlZXJzX2NvdW50GAIgASgNUhNjb25uZWN0ZWRQZWVyc0NvdW50'
-    'EjMKC21ldHJpY19pbmZvGAMgASgLMhIucGFjdHVzLk1ldHJpY0luZm9SCm1ldHJpY0luZm8=');
+    'EjMKC21ldHJpY19pbmZvGAQgASgLMhIucGFjdHVzLk1ldHJpY0luZm9SCm1ldHJpY0luZm8=');
 
 @$core.Deprecated('Use listPeersRequestDescriptor instead')
 const ListPeersRequest$json = {

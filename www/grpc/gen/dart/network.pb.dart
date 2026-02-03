@@ -93,7 +93,7 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
     ..aOS(1, _omitFieldNames ? '' : 'networkName')
     ..aI(2, _omitFieldNames ? '' : 'connectedPeersCount',
         fieldType: $pb.PbFieldType.OU3)
-    ..aOM<MetricInfo>(3, _omitFieldNames ? '' : 'metricInfo',
+    ..aOM<MetricInfo>(4, _omitFieldNames ? '' : 'metricInfo',
         subBuilder: MetricInfo.create)
     ..hasRequiredFields = false;
 
@@ -138,15 +138,15 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
   void clearConnectedPeersCount() => $_clearField(2);
 
   /// Metrics related to node activity.
-  @$pb.TagNumber(3)
+  @$pb.TagNumber(4)
   MetricInfo get metricInfo => $_getN(2);
-  @$pb.TagNumber(3)
-  set metricInfo(MetricInfo value) => $_setField(3, value);
-  @$pb.TagNumber(3)
+  @$pb.TagNumber(4)
+  set metricInfo(MetricInfo value) => $_setField(4, value);
+  @$pb.TagNumber(4)
   $core.bool hasMetricInfo() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearMetricInfo() => $_clearField(3);
-  @$pb.TagNumber(3)
+  @$pb.TagNumber(4)
+  void clearMetricInfo() => $_clearField(4);
+  @$pb.TagNumber(4)
   MetricInfo ensureMetricInfo() => $_ensure(2);
 }
 

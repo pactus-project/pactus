@@ -865,7 +865,7 @@ pub struct GetNetworkInfoResponse {
     #[prost(uint32, tag="2")]
     pub connected_peers_count: u32,
     /// Metrics related to node activity.
-    #[prost(message, optional, tag="3")]
+    #[prost(message, optional, tag="4")]
     pub metric_info: ::core::option::Option<MetricInfo>,
 }
 /// Request message for listing peers.

@@ -582,7 +582,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
      * Metrics related to node activity.
      * </pre>
      *
-     * <code>.pactus.MetricInfo metric_info = 3 [json_name = "metricInfo"];</code>
+     * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
      * @return Whether the metricInfo field is set.
      */
     boolean hasMetricInfo();
@@ -591,7 +591,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
      * Metrics related to node activity.
      * </pre>
      *
-     * <code>.pactus.MetricInfo metric_info = 3 [json_name = "metricInfo"];</code>
+     * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
      * @return The metricInfo.
      */
     pactus.NetworkOuterClass.MetricInfo getMetricInfo();
@@ -600,7 +600,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
      * Metrics related to node activity.
      * </pre>
      *
-     * <code>.pactus.MetricInfo metric_info = 3 [json_name = "metricInfo"];</code>
+     * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
      */
     pactus.NetworkOuterClass.MetricInfoOrBuilder getMetricInfoOrBuilder();
   }
@@ -709,14 +709,14 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
       return connectedPeersCount_;
     }
 
-    public static final int METRIC_INFO_FIELD_NUMBER = 3;
+    public static final int METRIC_INFO_FIELD_NUMBER = 4;
     private pactus.NetworkOuterClass.MetricInfo metricInfo_;
     /**
      * <pre>
      * Metrics related to node activity.
      * </pre>
      *
-     * <code>.pactus.MetricInfo metric_info = 3 [json_name = "metricInfo"];</code>
+     * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
      * @return Whether the metricInfo field is set.
      */
     @java.lang.Override
@@ -728,7 +728,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
      * Metrics related to node activity.
      * </pre>
      *
-     * <code>.pactus.MetricInfo metric_info = 3 [json_name = "metricInfo"];</code>
+     * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
      * @return The metricInfo.
      */
     @java.lang.Override
@@ -740,7 +740,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
      * Metrics related to node activity.
      * </pre>
      *
-     * <code>.pactus.MetricInfo metric_info = 3 [json_name = "metricInfo"];</code>
+     * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
      */
     @java.lang.Override
     public pactus.NetworkOuterClass.MetricInfoOrBuilder getMetricInfoOrBuilder() {
@@ -768,7 +768,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
         output.writeUInt32(2, connectedPeersCount_);
       }
       if (((bitField0_ & 0x00000001) != 0)) {
-        output.writeMessage(3, getMetricInfo());
+        output.writeMessage(4, getMetricInfo());
       }
       getUnknownFields().writeTo(output);
     }
@@ -788,7 +788,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
       }
       if (((bitField0_ & 0x00000001) != 0)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(3, getMetricInfo());
+          .computeMessageSize(4, getMetricInfo());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -1089,13 +1089,13 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
                 bitField0_ |= 0x00000002;
                 break;
               } // case 16
-              case 26: {
+              case 34: {
                 input.readMessage(
                     internalGetMetricInfoFieldBuilder().getBuilder(),
                     extensionRegistry);
                 bitField0_ |= 0x00000004;
                 break;
-              } // case 26
+              } // case 34
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -1257,7 +1257,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
        * Metrics related to node activity.
        * </pre>
        *
-       * <code>.pactus.MetricInfo metric_info = 3 [json_name = "metricInfo"];</code>
+       * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
        * @return Whether the metricInfo field is set.
        */
       public boolean hasMetricInfo() {
@@ -1268,7 +1268,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
        * Metrics related to node activity.
        * </pre>
        *
-       * <code>.pactus.MetricInfo metric_info = 3 [json_name = "metricInfo"];</code>
+       * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
        * @return The metricInfo.
        */
       public pactus.NetworkOuterClass.MetricInfo getMetricInfo() {
@@ -1283,7 +1283,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
        * Metrics related to node activity.
        * </pre>
        *
-       * <code>.pactus.MetricInfo metric_info = 3 [json_name = "metricInfo"];</code>
+       * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
        */
       public Builder setMetricInfo(pactus.NetworkOuterClass.MetricInfo value) {
         if (metricInfoBuilder_ == null) {
@@ -1303,7 +1303,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
        * Metrics related to node activity.
        * </pre>
        *
-       * <code>.pactus.MetricInfo metric_info = 3 [json_name = "metricInfo"];</code>
+       * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
        */
       public Builder setMetricInfo(
           pactus.NetworkOuterClass.MetricInfo.Builder builderForValue) {
@@ -1321,7 +1321,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
        * Metrics related to node activity.
        * </pre>
        *
-       * <code>.pactus.MetricInfo metric_info = 3 [json_name = "metricInfo"];</code>
+       * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
        */
       public Builder mergeMetricInfo(pactus.NetworkOuterClass.MetricInfo value) {
         if (metricInfoBuilder_ == null) {
@@ -1346,7 +1346,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
        * Metrics related to node activity.
        * </pre>
        *
-       * <code>.pactus.MetricInfo metric_info = 3 [json_name = "metricInfo"];</code>
+       * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
        */
       public Builder clearMetricInfo() {
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -1363,7 +1363,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
        * Metrics related to node activity.
        * </pre>
        *
-       * <code>.pactus.MetricInfo metric_info = 3 [json_name = "metricInfo"];</code>
+       * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
        */
       public pactus.NetworkOuterClass.MetricInfo.Builder getMetricInfoBuilder() {
         bitField0_ |= 0x00000004;
@@ -1375,7 +1375,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
        * Metrics related to node activity.
        * </pre>
        *
-       * <code>.pactus.MetricInfo metric_info = 3 [json_name = "metricInfo"];</code>
+       * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
        */
       public pactus.NetworkOuterClass.MetricInfoOrBuilder getMetricInfoOrBuilder() {
         if (metricInfoBuilder_ != null) {
@@ -1390,7 +1390,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
        * Metrics related to node activity.
        * </pre>
        *
-       * <code>.pactus.MetricInfo metric_info = 3 [json_name = "metricInfo"];</code>
+       * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
           pactus.NetworkOuterClass.MetricInfo, pactus.NetworkOuterClass.MetricInfo.Builder, pactus.NetworkOuterClass.MetricInfoOrBuilder> 
@@ -14210,7 +14210,7 @@ pactus.NetworkOuterClass.CounterInfo defaultValue) {
       "oRequest\"\244\001\n\026GetNetworkInfoResponse\022!\n\014n" +
       "etwork_name\030\001 \001(\tR\013networkName\0222\n\025connec" +
       "ted_peers_count\030\002 \001(\rR\023connectedPeersCou" +
-      "nt\0223\n\013metric_info\030\003 \001(\0132\022.pactus.MetricI" +
+      "nt\0223\n\013metric_info\030\004 \001(\0132\022.pactus.MetricI" +
       "nfoR\nmetricInfo\"E\n\020ListPeersRequest\0221\n\024i" +
       "nclude_disconnected\030\001 \001(\010R\023includeDiscon" +
       "nected\";\n\021ListPeersResponse\022&\n\005peers\030\001 \003" +

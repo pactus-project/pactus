@@ -482,7 +482,7 @@ proto.pactus.GetNetworkInfoResponse.deserializeBinaryFromReader = function(msg, 
       var value = /** @type {number} */ (reader.readUint32());
       msg.setConnectedPeersCount(value);
       break;
-    case 3:
+    case 4:
       var value = new proto.pactus.MetricInfo;
       reader.readMessage(value,proto.pactus.MetricInfo.deserializeBinaryFromReader);
       msg.setMetricInfo(value);
@@ -533,7 +533,7 @@ proto.pactus.GetNetworkInfoResponse.serializeBinaryToWriter = function(message, 
   f = message.getMetricInfo();
   if (f != null) {
     writer.writeMessage(
-      3,
+      4,
       f,
       proto.pactus.MetricInfo.serializeBinaryToWriter
     );
@@ -578,12 +578,12 @@ proto.pactus.GetNetworkInfoResponse.prototype.setConnectedPeersCount = function(
 
 
 /**
- * optional MetricInfo metric_info = 3;
+ * optional MetricInfo metric_info = 4;
  * @return {?proto.pactus.MetricInfo}
  */
 proto.pactus.GetNetworkInfoResponse.prototype.getMetricInfo = function() {
   return /** @type{?proto.pactus.MetricInfo} */ (
-    jspb.Message.getWrapperField(this, proto.pactus.MetricInfo, 3));
+    jspb.Message.getWrapperField(this, proto.pactus.MetricInfo, 4));
 };
 
 
@@ -592,7 +592,7 @@ proto.pactus.GetNetworkInfoResponse.prototype.getMetricInfo = function() {
  * @return {!proto.pactus.GetNetworkInfoResponse} returns this
 */
 proto.pactus.GetNetworkInfoResponse.prototype.setMetricInfo = function(value) {
-  return jspb.Message.setWrapperField(this, 3, value);
+  return jspb.Message.setWrapperField(this, 4, value);
 };
 
 
@@ -610,7 +610,7 @@ proto.pactus.GetNetworkInfoResponse.prototype.clearMetricInfo = function() {
  * @return {boolean}
  */
 proto.pactus.GetNetworkInfoResponse.prototype.hasMetricInfo = function() {
-  return jspb.Message.getField(this, 3) != null;
+  return jspb.Message.getField(this, 4) != null;
 };
 
 

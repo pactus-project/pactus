@@ -41,7 +41,7 @@ message GetNetworkInfoResponse {
   // Number of connected peers.
   uint32 connected_peers_count = 2;
   // Metrics related to node activity.
-  MetricInfo metric_info = 3;
+  MetricInfo metric_info = 4;
 }
 
 // Request message for listing peers.
