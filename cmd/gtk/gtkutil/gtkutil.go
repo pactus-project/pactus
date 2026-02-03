@@ -273,20 +273,6 @@ func GetEntryText(entry *gtk.Entry) string {
 	return txt
 }
 
-// IsContextDone checks if a context has been cancelled.
-// Returns true if the context is done and the operation should be aborted.
-func IsContextDone(ctx context.Context) bool {
-	if ctx != nil {
-		select {
-		case <-ctx.Done():
-			return true
-		default:
-		}
-	}
-
-	return false
-}
-
 // Color represents different text colors for UI elements.
 type Color int
 

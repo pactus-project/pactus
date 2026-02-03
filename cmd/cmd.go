@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/ezex-io/gopkg/signal"
 	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -19,7 +20,6 @@ import (
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/signal"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/types"
@@ -138,7 +138,7 @@ func CreateNode(ctx context.Context, numValidators int, chain genesis.ChainType,
 // The passwordFetcher will be used to fetch the password for the default_wallet if it is encrypted.
 // It returns an error if the genesis doc or default_wallet can't be found inside the working directory.
 // TODO: write test for me.
-func StartNode(workingDir string, passwordFetcher func() (string, bool),
+func StartNode(ctx context.Context, workingDir string, passwordFetcher func() (string, bool),
 	configModifier func(cfg *config.Config) *config.Config,
 ) (*node.Node, error) {
 	conf, gen, err := MakeConfig(workingDir)
@@ -151,7 +151,7 @@ func StartNode(workingDir string, passwordFetcher func() (string, bool),
 	}
 
 	defaultWalletPath := PactusDefaultWalletPath(workingDir)
-	wlt, err := wallet.Open(context.Background(), defaultWalletPath)
+	wlt, err := wallet.Open(ctx, defaultWalletPath)
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +178,7 @@ func StartNode(workingDir string, passwordFetcher func() (string, bool),
 
 	wlt.Close()
 
-	node, err := node.NewNode(gen, conf, valKeys, rewardAddrs)
+	node, err := node.NewNode(ctx, gen, conf, valKeys, rewardAddrs)
 	if err != nil {
 		return nil, err
 	}

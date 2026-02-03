@@ -144,8 +144,11 @@ func TestMain(m *testing.M) {
 	genParams.TransactionToLiveInterval = 8
 	tGenDoc = genesis.MakeGenesis(time.Now().Add(10*time.Second), accs, vals, genParams)
 
+	tCtx = context.Background()
+
 	for i := 0; i < tTotalNodes; i++ {
 		tNodes[i], _ = node.NewNode(
+			tCtx,
 			tGenDoc, tConfigs[i],
 			tValKeys[i],
 			[]crypto.Address{
@@ -172,7 +175,6 @@ func TestMain(m *testing.M) {
 
 	time.Sleep(10 * time.Second)
 
-	tCtx = context.Background()
 	grpcConn, err := grpc.NewClient(
 		tGRPCAddress,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),

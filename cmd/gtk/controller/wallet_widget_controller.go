@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/ezex-io/gopkg/scheduler"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -43,12 +44,7 @@ type WalletWidgetHandlers struct {
 type WalletWidgetController struct {
 	view *view.WalletWidgetView
 
-	model     WalletWidgetModel
-	handlers  WalletWidgetHandlers
-	timeoutID glib.SourceHandle
-
-	ctx    context.Context
-	cancel context.CancelFunc
+	model WalletWidgetModel
 
 	txSkip  int
 	txCount int
@@ -62,15 +58,7 @@ func NewWalletWidgetController(view *view.WalletWidgetView, model WalletWidgetMo
 	}
 }
 
-func (c *WalletWidgetController) Bind(h WalletWidgetHandlers) {
-	c.handlers = h
-
-	// Reset lifecycle context (in case Bind is called more than once).
-	if c.cancel != nil {
-		c.cancel()
-	}
-	c.ctx, c.cancel = context.WithCancel(context.Background())
-
+func (c *WalletWidgetController) Bind(ctx context.Context, handlers WalletWidgetHandlers) {
 	info, err := c.model.WalletInfo()
 	if err == nil {
 		c.view.LabelName.SetText(c.model.WalletName())
@@ -82,19 +70,19 @@ func (c *WalletWidgetController) Bind(h WalletWidgetHandlers) {
 	// Toolbar actions via glade signals.
 	c.view.ConnectSignals(map[string]any{
 		"on_new_address": func() {
-			c.handlers.OnNewAddress()
+			handlers.OnNewAddress()
 		},
 		"on_address_refresh": func() {
 			c.RefreshAddresses()
 		},
 		"on_set_default_fee": func() {
-			c.handlers.OnSetDefaultFee()
+			handlers.OnSetDefaultFee()
 		},
 		"on_change_password": func() {
-			c.handlers.OnChangePassword()
+			handlers.OnChangePassword()
 		},
 		"on_show_seed": func() {
-			c.handlers.OnShowSeed()
+			handlers.OnShowSeed()
 		},
 		"on_tx_refresh": func() {
 			c.RefreshTransactions()
@@ -116,20 +104,20 @@ func (c *WalletWidgetController) Bind(h WalletWidgetHandlers) {
 	// Context menu actions.
 	c.view.MenuItemUpdateLabel.Connect("activate", func(_ *gtk.MenuItem) {
 		addr := c.selectedAddress()
-		if addr != "" && c.handlers.OnUpdateLabel != nil {
-			c.handlers.OnUpdateLabel(addr)
+		if addr != "" && handlers.OnUpdateLabel != nil {
+			handlers.OnUpdateLabel(addr)
 		}
 	})
 	c.view.MenuItemDetails.Connect("activate", func(_ *gtk.MenuItem) {
 		addr := c.selectedAddress()
-		if addr != "" && c.handlers.OnShowDetails != nil {
-			c.handlers.OnShowDetails(addr)
+		if addr != "" && handlers.OnShowDetails != nil {
+			handlers.OnShowDetails(addr)
 		}
 	})
 	c.view.MenuItemPrivateKey.Connect("activate", func(_ *gtk.MenuItem) {
 		addr := c.selectedAddress()
-		if addr != "" && c.handlers.OnShowPrivateKey != nil {
-			c.handlers.OnShowPrivateKey(addr)
+		if addr != "" && handlers.OnShowPrivateKey != nil {
+			handlers.OnShowPrivateKey(addr)
 		}
 	})
 
@@ -146,13 +134,13 @@ func (c *WalletWidgetController) Bind(h WalletWidgetHandlers) {
 	// Double-click opens details.
 	c.view.TreeViewWallet.Connect("row-activated", func(_ *gtk.TreeView, _ *gtk.TreePath, _ *gtk.TreeViewColumn) {
 		addr := c.selectedAddress()
-		if addr != "" && c.handlers.OnShowDetails != nil {
-			c.handlers.OnShowDetails(addr)
+		if addr != "" && handlers.OnShowDetails != nil {
+			handlers.OnShowDetails(addr)
 		}
 	})
 
 	totalBalance1, _ := c.model.TotalBalance()
-	c.timeoutID = glib.TimeoutAdd(15000, func() bool {
+	scheduler.Every(ctx, 15*time.Second).Do(func() {
 		totalBalance2, _ := c.model.TotalBalance()
 
 		if totalBalance1 != totalBalance2 {
@@ -160,9 +148,8 @@ func (c *WalletWidgetController) Bind(h WalletWidgetHandlers) {
 
 			totalBalance1 = totalBalance2
 		}
-
-		return true
 	})
+
 	c.Refresh()
 }
 
@@ -196,114 +183,75 @@ func (c *WalletWidgetController) Refresh() {
 }
 
 func (c *WalletWidgetController) RefreshInfo() {
-	go func() {
-		if gtkutil.IsContextDone(c.ctx) {
-			return
-		}
+	// Update info lines.
+	balance, _ := c.model.TotalBalance()
+	stake, _ := c.model.TotalStake()
+	balanceStr := balance.String()
+	stakeStr := stake.String()
 
-		// Update info lines.
-		balance, _ := c.model.TotalBalance()
-		stake, _ := c.model.TotalStake()
-		balanceStr := balance.String()
-		stakeStr := stake.String()
+	info, err := c.model.WalletInfo()
+	if err != nil {
+		return
+	}
 
-		info, err := c.model.WalletInfo()
-		if err != nil {
-			return
-		}
+	glib.IdleAdd(func() bool {
+		c.view.LabelEncrypted.SetText(gtkutil.YesNo(info.Encrypted))
+		c.view.LabelTotalBalance.SetText(balanceStr)
+		c.view.LabelTotalStake.SetText(stakeStr)
+		c.view.LabelDefaultFee.SetText(info.DefaultFee.String())
 
-		glib.IdleAdd(func() bool {
-			c.view.LabelEncrypted.SetText(gtkutil.YesNo(info.Encrypted))
-			c.view.LabelTotalBalance.SetText(balanceStr)
-			c.view.LabelTotalStake.SetText(stakeStr)
-			c.view.LabelDefaultFee.SetText(info.DefaultFee.String())
-
-			return false
-		})
-	}()
+		return false
+	})
 }
 
 func (c *WalletWidgetController) RefreshAddresses() {
-	// Compute in background and then update UI on main loop.
-	go func() {
-		if gtkutil.IsContextDone(c.ctx) {
-			return
+	rows := c.model.AddressRows()
+
+	glib.IdleAdd(func() bool {
+		c.view.ClearRows()
+		for _, item := range rows {
+			c.view.AppendRow(
+				[]int{0, 1, 2, 3, 4},
+				[]any{
+					strconv.Itoa(item.No),
+					item.Address,
+					gtkutil.ImportedLabel(item.Label, item.Imported),
+					item.Balance.String(),
+					item.Stake.String(),
+				},
+			)
 		}
 
-		rows := c.model.AddressRows()
-
-		if gtkutil.IsContextDone(c.ctx) {
-			return
-		}
-
-		glib.IdleAdd(func() bool {
-			c.view.ClearRows()
-			for _, item := range rows {
-				c.view.AppendRow(
-					[]int{0, 1, 2, 3, 4},
-					[]any{
-						strconv.Itoa(item.No),
-						item.Address,
-						gtkutil.ImportedLabel(item.Label, item.Imported),
-						item.Balance.String(),
-						item.Stake.String(),
-					},
-				)
-			}
-
-			return false
-		})
-	}()
+		return false
+	})
 }
 
 func (c *WalletWidgetController) RefreshTransactions() {
-	go func() {
-		if gtkutil.IsContextDone(c.ctx) {
-			return
+	trxs := c.model.Transactions(c.txCount, c.txSkip)
+	hasNext := len(trxs) == c.txCount
+
+	glib.IdleAdd(func() bool {
+		c.view.ClearTxRows()
+
+		for _, trx := range trxs {
+			c.view.AppendTxRow(
+				[]int{0, 1, 2, 3, 4, 5, 6, 7, 8},
+				[]any{
+					trx.No,
+					cmd.ShortHash(trx.TxId),
+					cmd.ShortAddress(trx.Sender),
+					cmd.ShortAddress(trx.Receiver),
+					trx.PayloadType.String(),
+					amount.Amount(trx.Amount).String(),
+					getDirectionTextWithIcon(types.TxDirection(trx.Direction)),
+					trx.Status.String(),
+					trx.Comment,
+				},
+			)
 		}
 
-		trxs := c.model.Transactions(c.txCount, c.txSkip)
-		hasNext := len(trxs) == c.txCount
+		c.view.SetTxPager(c.txSkip > 0, hasNext)
 
-		if gtkutil.IsContextDone(c.ctx) {
-			return
-		}
-
-		glib.IdleAdd(func() bool {
-			c.view.ClearTxRows()
-
-			for _, trx := range trxs {
-				c.view.AppendTxRow(
-					[]int{0, 1, 2, 3, 4, 5, 6, 7, 8},
-					[]any{
-						trx.No,
-						cmd.ShortHash(trx.TxId),
-						cmd.ShortAddress(trx.Sender),
-						cmd.ShortAddress(trx.Receiver),
-						trx.PayloadType.String(),
-						amount.Amount(trx.Amount).String(),
-						getDirectionTextWithIcon(types.TxDirection(trx.Direction)),
-						trx.Status.String(),
-						trx.Comment,
-					},
-				)
-			}
-
-			c.view.SetTxPager(c.txSkip > 0, hasNext)
-
-			return false
-		})
-	}()
-}
-
-func (c *WalletWidgetController) Cleanup() {
-	if c.timeoutID != 0 {
-		glib.SourceRemove(c.timeoutID)
-		c.timeoutID = 0
-	}
-
-	if c.cancel != nil {
-		c.cancel()
-		c.cancel = nil
-	}
+		return false
+	})
 }

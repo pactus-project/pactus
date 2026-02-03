@@ -114,13 +114,14 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		}
 
 		ctx := context.Background()
-		wlt, rewardAddrs, err := cmd.CreateNode(context.Background(),
+		wlt, rewardAddrs, err := cmd.CreateNode(ctx,
 			valNum, chain, workingDir, mnemonic, password)
 		terminal.FatalErrorCheck(err)
 
 		// Recovering addresses
 		if *restoreOpt != "" {
-			provider, err := remote.NewRemoteBlockchainProvider(ctx, chain, remote.WithTimeout(2*time.Second))
+			provider, err := remote.NewRemoteBlockchainProvider(ctx, chain,
+				remote.WithTimeout(2*time.Second))
 			terminal.FatalErrorCheck(err)
 
 			wlt.SetProvider(provider)

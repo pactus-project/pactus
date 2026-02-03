@@ -11,6 +11,7 @@ import (
 	"runtime"
 	"sync"
 
+	"github.com/ezex-io/gopkg/signal"
 	"github.com/gofrs/flock"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -22,7 +23,6 @@ import (
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/signal"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/version"
 )
@@ -75,13 +75,15 @@ func main() {
 		return
 	}
 
+	ctx, cancel := context.WithCancel(context.Background())
+
 	// If node is not initialized yet
 	if util.IsDirNotExistsOrEmpty(workingDir) {
 		network := genesis.Mainnet
 		if *testnetOpt {
 			network = genesis.Testnet
 		}
-		if !startupAssistant(context.Background(), workingDir, network) {
+		if !startupAssistant(ctx, workingDir, network) {
 			return
 		}
 	}
@@ -108,8 +110,6 @@ func main() {
 	var gui *gtkapp.GUI
 	activateOnce := new(sync.Once)
 	shutdownOnce := new(sync.Once)
-
-	ctx, cancel := context.WithCancel(context.Background())
 
 	shutdown := func() {
 		shutdownOnce.Do(func() {
@@ -151,7 +151,7 @@ func main() {
 			}
 
 			go func() {
-				n, err := newNode(workingDir, notify) //nolint:contextcheck // TODO: fix this
+				n, err := newNode(ctx, workingDir, notify) //nolint:contextcheck // TODO: fix this
 
 				glib.IdleAdd(func() bool {
 					if err != nil {
@@ -194,7 +194,7 @@ func reportStatus(cb statusReporter, msg string) {
 	}
 }
 
-func newNode(workingDir string, statusCb statusReporter) (*node.Node, error) {
+func newNode(ctx context.Context, workingDir string, statusCb statusReporter) (*node.Node, error) {
 	// change working directory
 	if err := os.Chdir(workingDir); err != nil {
 		log.Println("Aborted! Unable to changes working directory. " + err.Error())
@@ -225,7 +225,7 @@ func newNode(workingDir string, statusCb statusReporter) (*node.Node, error) {
 	}
 
 	reportStatus(statusCb, "Starting node services...")
-	n, err := cmd.StartNode(workingDir, passwordFetcher, nil)
+	n, err := cmd.StartNode(ctx, workingDir, passwordFetcher, nil)
 	if err != nil {
 		return nil, err
 	}
