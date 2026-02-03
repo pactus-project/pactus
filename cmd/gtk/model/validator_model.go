@@ -49,5 +49,6 @@ func (m *ValidatorModel) Validators() ([]*pactus.ValidatorInfo, error) {
 
 		vals = append(vals, vres.Validator)
 	}
+
 	return vals, nil
 }
