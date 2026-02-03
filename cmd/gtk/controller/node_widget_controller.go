@@ -58,7 +58,7 @@ func (c *NodeWidgetController) Bind() error {
 	c.view.LabelNetwork.SetText(c.node.State().Genesis().ChainType().String())
 	c.view.LabelNetworkID.SetText(c.node.Network().SelfID().String())
 	c.view.LabelMoniker.SetText(c.node.Sync().Moniker())
-	c.view.LabelIsPrune.SetText(strconv.FormatBool(c.node.State().Stats().IsPruned))
+	c.view.LabelIsPrune.SetText(strconv.FormatBool(c.node.State().ChainInfo().IsPruned))
 
 	c.view.ConnectSignals(map[string]any{})
 
@@ -127,14 +127,14 @@ func (c *NodeWidgetController) timeout10() {
 			return
 		}
 
-		stats := c.node.State().Stats()
+		info := c.node.State().ChainInfo()
 		offset, offsetErr := c.node.Sync().ClockOffset()
 
 		snapshot := nodeWidgetSnapshot{
 			committeeSize:    c.node.State().Params().CommitteeSize,
-			committeeStake:   amount.Amount(stats.CommitteePower),
-			totalStake:       amount.Amount(stats.TotalPower),
-			activeValidators: stats.ActiveValidators,
+			committeeStake:   amount.Amount(info.CommitteePower),
+			totalStake:       amount.Amount(info.TotalPower),
+			activeValidators: info.ActiveValidators,
 			numConnections: fmt.Sprintf("%v (Inbound: %v, Outbound %v)",
 				c.node.Network().NumConnectedPeers(),
 				c.node.Network().NumInbound(),
