@@ -151,7 +151,7 @@ func main() {
 			}
 
 			go func() {
-				n, err := newNode(ctx, workingDir, notify) //nolint:contextcheck // TODO: fix this
+				n, err := newNode(ctx, workingDir, notify)
 
 				glib.IdleAdd(func() bool {
 					if err != nil {
