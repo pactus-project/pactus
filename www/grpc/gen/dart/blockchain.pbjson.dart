@@ -314,20 +314,20 @@ const GetBlockchainInfoResponse$json = {
       '10': 'lastBlockHeight'
     },
     {'1': 'last_block_hash', '3': 2, '4': 1, '5': 9, '10': 'lastBlockHash'},
-    {'1': 'last_block_time', '3': 3, '4': 1, '5': 3, '10': 'lastBlockTime'},
-    {'1': 'total_accounts', '3': 4, '4': 1, '5': 5, '10': 'totalAccounts'},
-    {'1': 'total_validators', '3': 5, '4': 1, '5': 5, '10': 'totalValidators'},
+    {'1': 'last_block_time', '3': 10, '4': 1, '5': 3, '10': 'lastBlockTime'},
+    {'1': 'total_accounts', '3': 3, '4': 1, '5': 5, '10': 'totalAccounts'},
+    {'1': 'total_validators', '3': 4, '4': 1, '5': 5, '10': 'totalValidators'},
     {
       '1': 'active_validators',
-      '3': 6,
+      '3': 12,
       '4': 1,
       '5': 5,
       '10': 'activeValidators'
     },
-    {'1': 'total_power', '3': 7, '4': 1, '5': 3, '10': 'totalPower'},
-    {'1': 'committee_power', '3': 8, '4': 1, '5': 3, '10': 'committeePower'},
-    {'1': 'is_pruned', '3': 9, '4': 1, '5': 8, '10': 'isPruned'},
-    {'1': 'pruning_height', '3': 10, '4': 1, '5': 13, '10': 'pruningHeight'},
+    {'1': 'total_power', '3': 5, '4': 1, '5': 3, '10': 'totalPower'},
+    {'1': 'committee_power', '3': 6, '4': 1, '5': 3, '10': 'committeePower'},
+    {'1': 'is_pruned', '3': 8, '4': 1, '5': 8, '10': 'isPruned'},
+    {'1': 'pruning_height', '3': 9, '4': 1, '5': 13, '10': 'pruningHeight'},
   ],
 };
 
@@ -335,12 +335,12 @@ const GetBlockchainInfoResponse$json = {
 final $typed_data.Uint8List getBlockchainInfoResponseDescriptor = $convert.base64Decode(
     'ChlHZXRCbG9ja2NoYWluSW5mb1Jlc3BvbnNlEioKEWxhc3RfYmxvY2tfaGVpZ2h0GAEgASgNUg'
     '9sYXN0QmxvY2tIZWlnaHQSJgoPbGFzdF9ibG9ja19oYXNoGAIgASgJUg1sYXN0QmxvY2tIYXNo'
-    'EiYKD2xhc3RfYmxvY2tfdGltZRgDIAEoA1INbGFzdEJsb2NrVGltZRIlCg50b3RhbF9hY2NvdW'
-    '50cxgEIAEoBVINdG90YWxBY2NvdW50cxIpChB0b3RhbF92YWxpZGF0b3JzGAUgASgFUg90b3Rh'
-    'bFZhbGlkYXRvcnMSKwoRYWN0aXZlX3ZhbGlkYXRvcnMYBiABKAVSEGFjdGl2ZVZhbGlkYXRvcn'
-    'MSHwoLdG90YWxfcG93ZXIYByABKANSCnRvdGFsUG93ZXISJwoPY29tbWl0dGVlX3Bvd2VyGAgg'
-    'ASgDUg5jb21taXR0ZWVQb3dlchIbCglpc19wcnVuZWQYCSABKAhSCGlzUHJ1bmVkEiUKDnBydW'
-    '5pbmdfaGVpZ2h0GAogASgNUg1wcnVuaW5nSGVpZ2h0');
+    'EiYKD2xhc3RfYmxvY2tfdGltZRgKIAEoA1INbGFzdEJsb2NrVGltZRIlCg50b3RhbF9hY2NvdW'
+    '50cxgDIAEoBVINdG90YWxBY2NvdW50cxIpChB0b3RhbF92YWxpZGF0b3JzGAQgASgFUg90b3Rh'
+    'bFZhbGlkYXRvcnMSKwoRYWN0aXZlX3ZhbGlkYXRvcnMYDCABKAVSEGFjdGl2ZVZhbGlkYXRvcn'
+    'MSHwoLdG90YWxfcG93ZXIYBSABKANSCnRvdGFsUG93ZXISJwoPY29tbWl0dGVlX3Bvd2VyGAYg'
+    'ASgDUg5jb21taXR0ZWVQb3dlchIbCglpc19wcnVuZWQYCCABKAhSCGlzUHJ1bmVkEiUKDnBydW'
+    '5pbmdfaGVpZ2h0GAkgASgNUg1wcnVuaW5nSGVpZ2h0');
 
 @$core.Deprecated('Use getCommitteeInfoRequestDescriptor instead')
 const GetCommitteeInfoRequest$json = {

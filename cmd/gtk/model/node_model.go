@@ -51,5 +51,5 @@ func (m *NodeModel) GetNodeInfo() (*pactus.GetNodeInfoResponse, error) {
 
 // GetNetworkInfo returns network info (network name, peers).
 func (m *NodeModel) GetNetworkInfo() (*pactus.GetNetworkInfoResponse, error) {
-	return m.networkClient.GetNetworkInfo(m.ctx, &pactus.GetNetworkInfoRequest{OnlyConnected: true})
+	return m.networkClient.GetNetworkInfo(m.ctx, &pactus.GetNetworkInfoRequest{})
 }

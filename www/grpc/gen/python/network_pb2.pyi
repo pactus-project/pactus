@@ -18,21 +18,29 @@ DIRECTION_OUTBOUND: Direction
 
 class GetNetworkInfoRequest(_message.Message):
     __slots__ = ()
-    ONLY_CONNECTED_FIELD_NUMBER: _ClassVar[int]
-    only_connected: bool
-    def __init__(self, only_connected: _Optional[bool] = ...) -> None: ...
+    def __init__(self) -> None: ...
 
 class GetNetworkInfoResponse(_message.Message):
     __slots__ = ()
     NETWORK_NAME_FIELD_NUMBER: _ClassVar[int]
     CONNECTED_PEERS_COUNT_FIELD_NUMBER: _ClassVar[int]
-    CONNECTED_PEERS_FIELD_NUMBER: _ClassVar[int]
     METRIC_INFO_FIELD_NUMBER: _ClassVar[int]
     network_name: str
     connected_peers_count: int
-    connected_peers: _containers.RepeatedCompositeFieldContainer[PeerInfo]
     metric_info: MetricInfo
-    def __init__(self, network_name: _Optional[str] = ..., connected_peers_count: _Optional[int] = ..., connected_peers: _Optional[_Iterable[_Union[PeerInfo, _Mapping]]] = ..., metric_info: _Optional[_Union[MetricInfo, _Mapping]] = ...) -> None: ...
+    def __init__(self, network_name: _Optional[str] = ..., connected_peers_count: _Optional[int] = ..., metric_info: _Optional[_Union[MetricInfo, _Mapping]] = ...) -> None: ...
+
+class ListPeersRequest(_message.Message):
+    __slots__ = ()
+    INCLUDE_DISCONNECTED_FIELD_NUMBER: _ClassVar[int]
+    include_disconnected: bool
+    def __init__(self, include_disconnected: _Optional[bool] = ...) -> None: ...
+
+class ListPeersResponse(_message.Message):
+    __slots__ = ()
+    PEERS_FIELD_NUMBER: _ClassVar[int]
+    peers: _containers.RepeatedCompositeFieldContainer[PeerInfo]
+    def __init__(self, peers: _Optional[_Iterable[_Union[PeerInfo, _Mapping]]] = ...) -> None: ...
 
 class GetNodeInfoRequest(_message.Message):
     __slots__ = ()

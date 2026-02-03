@@ -553,28 +553,28 @@ pub struct GetBlockchainInfoResponse {
     #[prost(string, tag="2")]
     pub last_block_hash: ::prost::alloc::string::String,
     /// The timestamp of the last block in Unix format.
-    #[prost(int64, tag="3")]
+    #[prost(int64, tag="10")]
     pub last_block_time: i64,
     /// The total number of accounts in the blockchain.
-    #[prost(int32, tag="4")]
+    #[prost(int32, tag="3")]
     pub total_accounts: i32,
     /// The total number of validators in the blockchain.
-    #[prost(int32, tag="5")]
+    #[prost(int32, tag="4")]
     pub total_validators: i32,
     /// The number of active (not unbonded) validators in the blockchain.
-    #[prost(int32, tag="6")]
+    #[prost(int32, tag="12")]
     pub active_validators: i32,
     /// The total power of the blockchain.
-    #[prost(int64, tag="7")]
+    #[prost(int64, tag="5")]
     pub total_power: i64,
     /// The power of the committee.
-    #[prost(int64, tag="8")]
+    #[prost(int64, tag="6")]
     pub committee_power: i64,
     /// If the blocks are subject to pruning.
-    #[prost(bool, tag="9")]
+    #[prost(bool, tag="8")]
     pub is_pruned: bool,
     /// Lowest-height block stored (only present if pruning is enabled)
-    #[prost(uint32, tag="10")]
+    #[prost(uint32, tag="9")]
     pub pruning_height: u32,
 }
 /// Request message for retrieving committee information.
@@ -854,9 +854,6 @@ impl VoteType {
 /// Request message for retrieving overall network information.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct GetNetworkInfoRequest {
-    /// If true, returns only peers that are currently connected.
-    #[prost(bool, tag="1")]
-    pub only_connected: bool,
 }
 /// Response message contains information about the overall network.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -867,12 +864,23 @@ pub struct GetNetworkInfoResponse {
     /// Number of connected peers.
     #[prost(uint32, tag="2")]
     pub connected_peers_count: u32,
-    /// List of connected peers.
-    #[prost(message, repeated, tag="3")]
-    pub connected_peers: ::prost::alloc::vec::Vec<PeerInfo>,
     /// Metrics related to node activity.
-    #[prost(message, optional, tag="4")]
+    #[prost(message, optional, tag="3")]
     pub metric_info: ::core::option::Option<MetricInfo>,
+}
+/// Request message for listing peers.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListPeersRequest {
+    /// If true, includes disconnected peers (default: connected peers only).
+    #[prost(bool, tag="1")]
+    pub include_disconnected: bool,
+}
+/// Response message for listing peers.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListPeersResponse {
+    /// List of peers.
+    #[prost(message, repeated, tag="1")]
+    pub peers: ::prost::alloc::vec::Vec<PeerInfo>,
 }
 /// Request message for retrieving information of the node.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]

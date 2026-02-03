@@ -54,6 +54,23 @@ func (s *NetworkJsonRPC) Methods() map[string]func(ctx context.Context, message 
 			return s.client.GetNetworkInfo(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
+		"pactus.network.list_peers": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(ListPeersRequest)
+
+			var jrpcData paramsAndHeadersNetwork
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.ListPeers(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
+
 		"pactus.network.get_node_info": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetNodeInfoRequest)
 

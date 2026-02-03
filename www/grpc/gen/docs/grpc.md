@@ -124,6 +124,10 @@ For seamless integration with Pactus, you can use these client libraries:
           <span class="rpc-badge"></span>GetNetworkInfo</a>
         </li>
         <li>
+          <a href="#pactus.Network.ListPeers">
+          <span class="rpc-badge"></span>ListPeers</a>
+        </li>
+        <li>
           <a href="#pactus.Network.GetNodeInfo">
           <span class="rpc-badge"></span>GetNodeInfo</a>
         </li>
@@ -2734,20 +2738,7 @@ A value of zero means the transaction is unconfirmed and may still in the transa
 <p>GetNetworkInfo retrieves information about the overall network.</p>
 
 <h4>GetNetworkInfoRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">only_connected</td>
-    <td> bool</td>
-    <td>
-  If true, returns only peers that are currently connected.
-    </td>
-  </tr>
-  </tbody>
-</table>
+Request Message has no fields.
 
 <h4>GetNetworkInfoResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
 <table class="table table-bordered table-responsive table-sm">
@@ -2767,174 +2758,6 @@ A value of zero means the transaction is unconfirmed and may still in the transa
     <td> uint32</td>
     <td>
   Number of connected peers.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">connected_peers</td>
-    <td>repeated PeerInfo</td>
-    <td>
-  List of connected peers.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">connected_peers[].status</td>
-    <td> int32</td>
-    <td>
-  Current status of the peer (e.g., connected, disconnected).
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">connected_peers[].moniker</td>
-    <td> string</td>
-    <td>
-  Moniker or Human-Readable name of the peer.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">connected_peers[].agent</td>
-    <td> string</td>
-    <td>
-  Version and agent details of the peer.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">connected_peers[].peer_id</td>
-    <td> string</td>
-    <td>
-  Peer ID of the peer in P2P network.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">connected_peers[].consensus_keys</td>
-    <td>repeated string</td>
-    <td>
-  List of consensus keys used by the peer.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">connected_peers[].consensus_addresses</td>
-    <td>repeated string</td>
-    <td>
-  List of consensus addresses used by the peer.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">connected_peers[].services</td>
-    <td> uint32</td>
-    <td>
-  Bitfield representing the services provided by the peer.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">connected_peers[].last_block_hash</td>
-    <td> string</td>
-    <td>
-  Hash of the last block the peer knows.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">connected_peers[].height</td>
-    <td> uint32</td>
-    <td>
-  Blockchain height of the peer.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">connected_peers[].last_sent</td>
-    <td> int64</td>
-    <td>
-  Unix timestamp of the last bundle sent to the peer (UTC).
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">connected_peers[].last_received</td>
-    <td> int64</td>
-    <td>
-  Unix timestamp of the last bundle received from the peer (UTC).
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">connected_peers[].address</td>
-    <td> string</td>
-    <td>
-  Network address of the peer.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">connected_peers[].direction</td>
-    <td> Direction</td>
-    <td>
-  (Enum)Connection direction (e.g., inbound, outbound).
-      <br>Available values:<ul>
-      <li>DIRECTION_UNKNOWN = 0 (Unknown direction (default value).)</li>
-      <li>DIRECTION_INBOUND = 1 (Inbound connection - peer connected to us.)</li>
-      <li>DIRECTION_OUTBOUND = 2 (Outbound connection - we connected to peer.)</li>
-      </ul>
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">connected_peers[].protocols</td>
-    <td>repeated string</td>
-    <td>
-  List of protocols supported by the peer.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">connected_peers[].total_sessions</td>
-    <td> int32</td>
-    <td>
-  Total download sessions with the peer.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">connected_peers[].completed_sessions</td>
-    <td> int32</td>
-    <td>
-  Completed download sessions with the peer.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">connected_peers[].metric_info</td>
-    <td> MetricInfo</td>
-    <td>
-  Metrics related to peer activity.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">connected_peers[].metric_info.total_invalid</td>
-    <td> CounterInfo</td>
-    <td>
-  Total number of invalid bundles.
-    </td>
-  </tr><tr>
-    <td class="fw-bold">connected_peers[].metric_info.total_sent</td>
-    <td> CounterInfo</td>
-    <td>
-  Total number of bundles sent.
-    </td>
-  </tr><tr>
-    <td class="fw-bold">connected_peers[].metric_info.total_received</td>
-    <td> CounterInfo</td>
-    <td>
-  Total number of bundles received.
-    </td>
-  </tr><tr>
-    <td class="fw-bold">connected_peers[].metric_info.message_sent</td>
-    <td> map&lt;int32, CounterInfo&gt;</td>
-    <td>
-  Number of sent bundles categorized by message type.
-    </td>
-  </tr><tr>
-    <td class="fw-bold">connected_peers[].metric_info.message_received</td>
-    <td> map&lt;int32, CounterInfo&gt;</td>
-    <td>
-  Number of received bundles categorized by message type.
-    </td>
-  </tr><tr>
-    <td class="fw-bold">connected_peers[].outbound_hello_sent</td>
-    <td> bool</td>
-    <td>
-  Whether the hello message was sent from the outbound connection.
     </td>
   </tr>
    <tr>
@@ -3013,6 +2836,203 @@ A value of zero means the transaction is unconfirmed and may still in the transa
     <td> map&lt;int32, CounterInfo&gt;</td>
     <td>
   Number of received bundles categorized by message type.
+    </td>
+  </tr>
+   </tbody>
+</table>
+
+#### ListPeers <span id="pactus.Network.ListPeers" class="rpc-badge"></span>
+
+<p>ListPeers lists all peers in the network.</p>
+
+<h4>ListPeersRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">include_disconnected</td>
+    <td> bool</td>
+    <td>
+  If true, includes disconnected peers (default: connected peers only).
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<h4>ListPeersResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">peers</td>
+    <td>repeated PeerInfo</td>
+    <td>
+  List of peers.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">peers[].status</td>
+    <td> int32</td>
+    <td>
+  Current status of the peer (e.g., connected, disconnected).
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">peers[].moniker</td>
+    <td> string</td>
+    <td>
+  Moniker or Human-Readable name of the peer.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">peers[].agent</td>
+    <td> string</td>
+    <td>
+  Version and agent details of the peer.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">peers[].peer_id</td>
+    <td> string</td>
+    <td>
+  Peer ID of the peer in P2P network.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">peers[].consensus_keys</td>
+    <td>repeated string</td>
+    <td>
+  List of consensus keys used by the peer.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">peers[].consensus_addresses</td>
+    <td>repeated string</td>
+    <td>
+  List of consensus addresses used by the peer.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">peers[].services</td>
+    <td> uint32</td>
+    <td>
+  Bitfield representing the services provided by the peer.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">peers[].last_block_hash</td>
+    <td> string</td>
+    <td>
+  Hash of the last block the peer knows.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">peers[].height</td>
+    <td> uint32</td>
+    <td>
+  Blockchain height of the peer.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">peers[].last_sent</td>
+    <td> int64</td>
+    <td>
+  Unix timestamp of the last bundle sent to the peer (UTC).
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">peers[].last_received</td>
+    <td> int64</td>
+    <td>
+  Unix timestamp of the last bundle received from the peer (UTC).
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">peers[].address</td>
+    <td> string</td>
+    <td>
+  Network address of the peer.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">peers[].direction</td>
+    <td> Direction</td>
+    <td>
+  (Enum)Connection direction (e.g., inbound, outbound).
+      <br>Available values:<ul>
+      <li>DIRECTION_UNKNOWN = 0 (Unknown direction (default value).)</li>
+      <li>DIRECTION_INBOUND = 1 (Inbound connection - peer connected to us.)</li>
+      <li>DIRECTION_OUTBOUND = 2 (Outbound connection - we connected to peer.)</li>
+      </ul>
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">peers[].protocols</td>
+    <td>repeated string</td>
+    <td>
+  List of protocols supported by the peer.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">peers[].total_sessions</td>
+    <td> int32</td>
+    <td>
+  Total download sessions with the peer.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">peers[].completed_sessions</td>
+    <td> int32</td>
+    <td>
+  Completed download sessions with the peer.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">peers[].metric_info</td>
+    <td> MetricInfo</td>
+    <td>
+  Metrics related to peer activity.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">peers[].metric_info.total_invalid</td>
+    <td> CounterInfo</td>
+    <td>
+  Total number of invalid bundles.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">peers[].metric_info.total_sent</td>
+    <td> CounterInfo</td>
+    <td>
+  Total number of bundles sent.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">peers[].metric_info.total_received</td>
+    <td> CounterInfo</td>
+    <td>
+  Total number of bundles received.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">peers[].metric_info.message_sent</td>
+    <td> map&lt;int32, CounterInfo&gt;</td>
+    <td>
+  Number of sent bundles categorized by message type.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">peers[].metric_info.message_received</td>
+    <td> map&lt;int32, CounterInfo&gt;</td>
+    <td>
+  Number of received bundles categorized by message type.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">peers[].outbound_hello_sent</td>
+    <td> bool</td>
+    <td>
+  Whether the hello message was sent from the outbound connection.
     </td>
   </tr>
    </tbody>

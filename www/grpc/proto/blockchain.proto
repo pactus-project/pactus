@@ -157,21 +157,21 @@ message GetBlockchainInfoResponse {
   // The hash of the last block in the blockchain.
   string last_block_hash = 2;
   // The timestamp of the last block in Unix format.
-  int64 last_block_time = 3;
+  int64 last_block_time = 10;
   // The total number of accounts in the blockchain.
-  int32 total_accounts = 4;
+  int32 total_accounts = 3;
   // The total number of validators in the blockchain.
-  int32 total_validators = 5;
+  int32 total_validators = 4;
   // The number of active (not unbonded) validators in the blockchain.
-  int32 active_validators = 6;
+  int32 active_validators = 12;
   // The total power of the blockchain.
-  int64 total_power = 7;
+  int64 total_power = 5;
   // The power of the committee.
-  int64 committee_power = 8;
+  int64 committee_power = 6;
   // If the blocks are subject to pruning.
-  bool is_pruned = 9;
+  bool is_pruned = 8;
   // Lowest-height block stored (only present if pruning is enabled)
-  uint32 pruning_height = 10;
+  uint32 pruning_height = 9;
 }
 
 // Request message for retrieving committee information.

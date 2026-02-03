@@ -138,6 +138,67 @@ proto.pactus.NetworkPromiseClient.prototype.getNetworkInfo =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.ListPeersRequest,
+ *   !proto.pactus.ListPeersResponse>}
+ */
+const methodDescriptor_Network_ListPeers = new grpc.web.MethodDescriptor(
+  '/pactus.Network/ListPeers',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.ListPeersRequest,
+  proto.pactus.ListPeersResponse,
+  /**
+   * @param {!proto.pactus.ListPeersRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.ListPeersResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.ListPeersRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.ListPeersResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.ListPeersResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.NetworkClient.prototype.listPeers =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Network/ListPeers',
+      request,
+      metadata || {},
+      methodDescriptor_Network_ListPeers,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.ListPeersRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.ListPeersResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.NetworkPromiseClient.prototype.listPeers =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Network/ListPeers',
+      request,
+      metadata || {},
+      methodDescriptor_Network_ListPeers);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.pactus.GetNodeInfoRequest,
  *   !proto.pactus.GetNodeInfoResponse>}
  */

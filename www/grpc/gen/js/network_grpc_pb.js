@@ -48,6 +48,28 @@ function deserialize_pactus_GetNodeInfoResponse(buffer_arg) {
   return network_pb.GetNodeInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_ListPeersRequest(arg) {
+  if (!(arg instanceof network_pb.ListPeersRequest)) {
+    throw new Error('Expected argument of type pactus.ListPeersRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_ListPeersRequest(buffer_arg) {
+  return network_pb.ListPeersRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_ListPeersResponse(arg) {
+  if (!(arg instanceof network_pb.ListPeersResponse)) {
+    throw new Error('Expected argument of type pactus.ListPeersResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_ListPeersResponse(buffer_arg) {
+  return network_pb.ListPeersResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_PingRequest(arg) {
   if (!(arg instanceof network_pb.PingRequest)) {
     throw new Error('Expected argument of type pactus.PingRequest');
@@ -84,6 +106,18 @@ getNetworkInfo: {
     requestDeserialize: deserialize_pactus_GetNetworkInfoRequest,
     responseSerialize: serialize_pactus_GetNetworkInfoResponse,
     responseDeserialize: deserialize_pactus_GetNetworkInfoResponse,
+  },
+  // ListPeers lists all peers in the network.
+listPeers: {
+    path: '/pactus.Network/ListPeers',
+    requestStream: false,
+    responseStream: false,
+    requestType: network_pb.ListPeersRequest,
+    responseType: network_pb.ListPeersResponse,
+    requestSerialize: serialize_pactus_ListPeersRequest,
+    requestDeserialize: deserialize_pactus_ListPeersRequest,
+    responseSerialize: serialize_pactus_ListPeersResponse,
+    responseDeserialize: deserialize_pactus_ListPeersResponse,
   },
   // GetNodeInfo retrieves information about a specific node in the network.
 getNodeInfo: {

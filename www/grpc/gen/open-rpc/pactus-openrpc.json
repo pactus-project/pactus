@@ -621,16 +621,45 @@
       "description": "GetNetworkInfo retrieves information about the overall network.",
       "tags": [{ "name": "network"}],
       "paramStructure": "by-name",
+      "params": [],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object","required": ["network_name","connected_peers_count","metric_info"],
+          "properties": {"network_name": { "type": "string" },"connected_peers_count": { "type": "integer" },"metric_info": {
+  "type": "object","required": ["total_invalid","total_sent","total_received","message_sent","message_received"],
+  "properties": {"total_invalid": {
+  "type": "object","required": ["bytes","bundles"],
+  "properties": {"bytes": { "type": "integer" },"bundles": { "type": "integer" }}
+},"total_sent": {
+  "type": "object","required": ["bytes","bundles"],
+  "properties": {"bytes": { "type": "integer" },"bundles": { "type": "integer" }}
+},"total_received": {
+  "type": "object","required": ["bytes","bundles"],
+  "properties": {"bytes": { "type": "integer" },"bundles": { "type": "integer" }}
+},"message_sent": {
+  "type": "object"
+},"message_received": {
+  "type": "object"
+}}
+}}
+          }
+        }
+      },{
+      "name": "pactus.network.list_peers",
+      "description": "ListPeers lists all peers in the network.",
+      "tags": [{ "name": "network"}],
+      "paramStructure": "by-name",
       "params": [{
-          "name": "only_connected",
-          "description": "If true, returns only peers that are currently connected.",
+          "name": "include_disconnected",
+          "description": "If true, includes disconnected peers (default: connected peers only).",
           "schema": { "type": "boolean" }
         }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object","required": ["network_name","connected_peers_count","connected_peers","metric_info"],
-          "properties": {"network_name": { "type": "string" },"connected_peers_count": { "type": "integer" },"connected_peers": {
+          "type": "object","required": ["peers"],
+          "properties": {"peers": {
   "type": "array",
   "items": {
   "type": "object","required": ["status","moniker","agent","peer_id","consensus_keys","consensus_addresses","services","last_block_hash","height","last_sent","last_received","address","direction","protocols","total_sessions","completed_sessions","metric_info","outbound_hello_sent"],
@@ -661,22 +690,6 @@
 }}
 },"outbound_hello_sent": { "type": "boolean" }}
 }
-},"metric_info": {
-  "type": "object","required": ["total_invalid","total_sent","total_received","message_sent","message_received"],
-  "properties": {"total_invalid": {
-  "type": "object","required": ["bytes","bundles"],
-  "properties": {"bytes": { "type": "integer" },"bundles": { "type": "integer" }}
-},"total_sent": {
-  "type": "object","required": ["bytes","bundles"],
-  "properties": {"bytes": { "type": "integer" },"bundles": { "type": "integer" }}
-},"total_received": {
-  "type": "object","required": ["bytes","bundles"],
-  "properties": {"bytes": { "type": "integer" },"bundles": { "type": "integer" }}
-},"message_sent": {
-  "type": "object"
-},"message_received": {
-  "type": "object"
-}}
 }}
           }
         }

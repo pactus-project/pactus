@@ -570,15 +570,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "onlyConnected",
-            "description": "If true, returns only peers that are currently connected.",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          }
-        ],
         "tags": [
           "Network"
         ]
@@ -2101,14 +2092,6 @@
           "format": "int64",
           "description": "Number of connected peers."
         },
-        "connectedPeers": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/pactusPeerInfo"
-          },
-          "description": "List of connected peers."
-        },
         "metricInfo": {
           "$ref": "#/definitions/pactusMetricInfo",
           "description": "Metrics related to node activity."
@@ -2571,6 +2554,20 @@
         }
       },
       "description": "Response message contains wallet addresses."
+    },
+    "pactusListPeersResponse": {
+      "type": "object",
+      "properties": {
+        "peers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusPeerInfo"
+          },
+          "description": "List of peers."
+        }
+      },
+      "description": "Response message for listing peers."
     },
     "pactusListTransactionsResponse": {
       "type": "object",

@@ -19,6 +19,9 @@ service Network {
   // GetNetworkInfo retrieves information about the overall network.
   rpc GetNetworkInfo(GetNetworkInfoRequest) returns (GetNetworkInfoResponse);
 
+  // ListPeers lists all peers in the network.
+  rpc ListPeers(ListPeersRequest) returns (ListPeersResponse);
+
   // GetNodeInfo retrieves information about a specific node in the network.
   rpc GetNodeInfo(GetNodeInfoRequest) returns (GetNodeInfoResponse);
 
@@ -28,8 +31,7 @@ service Network {
 
 // Request message for retrieving overall network information.
 message GetNetworkInfoRequest {
-  // If true, returns only peers that are currently connected.
-  bool only_connected = 1;
+
 }
 
 // Response message contains information about the overall network.
@@ -38,10 +40,20 @@ message GetNetworkInfoResponse {
   string network_name = 1;
   // Number of connected peers.
   uint32 connected_peers_count = 2;
-  // List of connected peers.
-  repeated PeerInfo connected_peers = 3;
   // Metrics related to node activity.
-  MetricInfo metric_info = 4;
+  MetricInfo metric_info = 3;
+}
+
+// Request message for listing peers.
+message ListPeersRequest {
+  // If true, includes disconnected peers (default: connected peers only).
+  bool include_disconnected = 1;
+}
+
+// Response message for listing peers.
+message ListPeersResponse {
+  // List of peers.
+  repeated PeerInfo peers = 1;
 }
 
 // Request message for retrieving information of the node.

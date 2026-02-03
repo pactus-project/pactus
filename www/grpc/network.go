@@ -67,10 +67,31 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 	req *pactus.GetNetworkInfoRequest,
 ) (*pactus.GetNetworkInfoResponse, error) {
 	peerSet := s.sync.PeerSet()
+	var count uint32
+
+	peerSet.IteratePeers(func(p *peer.Peer) bool {
+		if p.Status.IsConnectedOrKnown() {
+			count++
+		}
+
+		return false
+	})
+
+	return &pactus.GetNetworkInfoResponse{
+		NetworkName:         s.net.Name(),
+		ConnectedPeersCount: count,
+		MetricInfo:          metricToProto(peerSet.Metric()),
+	}, nil
+}
+
+func (s *networkServer) ListPeers(_ context.Context,
+	req *pactus.ListPeersRequest,
+) (*pactus.ListPeersResponse, error) {
+	peerSet := s.sync.PeerSet()
 	peerInfos := make([]*pactus.PeerInfo, 0, peerSet.Len())
 
 	peerSet.IteratePeers(func(peer *peer.Peer) bool {
-		if req.OnlyConnected && !peer.Status.IsConnectedOrKnown() {
+		if !req.IncludeDisconnected && !peer.Status.IsConnectedOrKnown() {
 			return false
 		}
 
@@ -110,12 +131,7 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		return false
 	})
 
-	return &pactus.GetNetworkInfoResponse{
-		NetworkName:         s.net.Name(),
-		ConnectedPeersCount: uint32(len(peerInfos)),
-		ConnectedPeers:      peerInfos,
-		MetricInfo:          metricToProto(peerSet.Metric()),
-	}, nil
+	return &pactus.ListPeersResponse{Peers: peerInfos}, nil
 }
 
 func metricToProto(metric metric.Metric) *pactus.MetricInfo {

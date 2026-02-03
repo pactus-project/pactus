@@ -20,16 +20,35 @@ import (
 func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	onlyConnected := false
+	info, err := s.network.GetNetworkInfo(ctx,
+		&pactus.GetNetworkInfoRequest{})
+	if err != nil {
+		s.writeError(w, err)
 
-	onlyConnectedParam := r.URL.Query().Get("onlyConnected")
-	if onlyConnectedParam == "true" {
-		onlyConnected = true
+		return
 	}
 
-	res, err := s.network.GetNetworkInfo(ctx,
-		&pactus.GetNetworkInfoRequest{
-			OnlyConnected: onlyConnected,
+	tmk := newTableMaker()
+	tmk.addRowString("Network Name", info.NetworkName)
+	tmk.addRowInt("Connected Peers Count", int(info.ConnectedPeersCount))
+	tmk.addRowString("Peers", "/network/peers")
+	metricToTable(tmk, info.MetricInfo)
+
+	s.writeHTML(w, tmk.html())
+}
+
+func (s *Server) PeerListHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	includeDisconnected := false
+
+	if r.URL.Query().Get("includeDisconnected") == "true" {
+		includeDisconnected = true
+	}
+
+	res, err := s.network.ListPeers(ctx,
+		&pactus.ListPeersRequest{
+			IncludeDisconnected: includeDisconnected,
 		})
 	if err != nil {
 		s.writeError(w, err)
@@ -38,18 +57,15 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmk := newTableMaker()
-	tmk.addRowString("Network Name", res.NetworkName)
-	tmk.addRowInt("Connected Peers Count", int(res.ConnectedPeersCount))
-	metricToTable(tmk, res.MetricInfo)
-
 	tmk.addRowString("Peers", "---")
 
-	sort.Slice(res.ConnectedPeers, func(i, j int) bool {
-		return res.ConnectedPeers[i].MetricInfo.TotalReceived.Bundles >
-			res.ConnectedPeers[j].MetricInfo.TotalReceived.Bundles
+	peers := res.Peers
+	sort.Slice(peers, func(i, j int) bool {
+		return peers[i].MetricInfo.TotalReceived.Bundles >
+			peers[j].MetricInfo.TotalReceived.Bundles
 	})
 
-	for index, peer := range res.ConnectedPeers {
+	for index, peer := range peers {
 		id, _ := hex.DecodeString(peer.PeerId)
 		pid, _ := lp2ppeer.IDFromBytes(id)
 		tmk.addRowInt("-- Peer #", index+1)

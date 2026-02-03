@@ -15,21 +15,21 @@ func TestGetNetworkInfo(t *testing.T) {
 	td := setup(t, nil)
 	client := td.networkClient(t)
 
-	t.Run("Should return node PeerID", func(t *testing.T) {
+	t.Run("Should return network info", func(t *testing.T) {
 		res, err := client.GetNetworkInfo(context.Background(),
-			&pactus.GetNetworkInfoRequest{})
+			&pactus.GetNetworkInfoRequest{IncludeDisconnected: true})
 		assert.NoError(t, err)
 		assert.Nil(t, err)
-		assert.Equal(t, 2, len(res.ConnectedPeers))
+		assert.Equal(t, uint32(2), res.ConnectedPeersCount)
 	})
 
 	t.Run("Should return peer info", func(t *testing.T) {
-		res, err := client.GetNetworkInfo(context.Background(),
-			&pactus.GetNetworkInfoRequest{})
+		res, err := client.ListPeers(context.Background(),
+			&pactus.ListPeersRequest{IncludeDisconnected: true})
 		assert.NoError(t, err)
 		assert.Nil(t, err)
-		assert.Equal(t, 2, len(res.ConnectedPeers))
-		for _, peer := range res.ConnectedPeers {
+		assert.Equal(t, 2, len(res.Peers))
+		for _, peer := range res.Peers {
 			assert.NotEmpty(t, peer.PeerId)
 			b, err := hex.DecodeString(peer.PeerId)
 			assert.NoError(t, err)

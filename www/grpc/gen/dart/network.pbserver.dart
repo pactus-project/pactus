@@ -23,6 +23,8 @@ export 'network.pb.dart';
 abstract class NetworkServiceBase extends $pb.GeneratedService {
   $async.Future<$0.GetNetworkInfoResponse> getNetworkInfo(
       $pb.ServerContext ctx, $0.GetNetworkInfoRequest request);
+  $async.Future<$0.ListPeersResponse> listPeers(
+      $pb.ServerContext ctx, $0.ListPeersRequest request);
   $async.Future<$0.GetNodeInfoResponse> getNodeInfo(
       $pb.ServerContext ctx, $0.GetNodeInfoRequest request);
   $async.Future<$0.PingResponse> ping(
@@ -32,6 +34,8 @@ abstract class NetworkServiceBase extends $pb.GeneratedService {
     switch (methodName) {
       case 'GetNetworkInfo':
         return $0.GetNetworkInfoRequest();
+      case 'ListPeers':
+        return $0.ListPeersRequest();
       case 'GetNodeInfo':
         return $0.GetNodeInfoRequest();
       case 'Ping':
@@ -46,6 +50,8 @@ abstract class NetworkServiceBase extends $pb.GeneratedService {
     switch (methodName) {
       case 'GetNetworkInfo':
         return getNetworkInfo(ctx, request as $0.GetNetworkInfoRequest);
+      case 'ListPeers':
+        return listPeers(ctx, request as $0.ListPeersRequest);
       case 'GetNodeInfo':
         return getNodeInfo(ctx, request as $0.GetNodeInfoRequest);
       case 'Ping':

@@ -10358,7 +10358,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * The timestamp of the last block in Unix format.
      * </pre>
      *
-     * <code>int64 last_block_time = 3 [json_name = "lastBlockTime"];</code>
+     * <code>int64 last_block_time = 10 [json_name = "lastBlockTime"];</code>
      * @return The lastBlockTime.
      */
     long getLastBlockTime();
@@ -10368,7 +10368,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * The total number of accounts in the blockchain.
      * </pre>
      *
-     * <code>int32 total_accounts = 4 [json_name = "totalAccounts"];</code>
+     * <code>int32 total_accounts = 3 [json_name = "totalAccounts"];</code>
      * @return The totalAccounts.
      */
     int getTotalAccounts();
@@ -10378,7 +10378,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * The total number of validators in the blockchain.
      * </pre>
      *
-     * <code>int32 total_validators = 5 [json_name = "totalValidators"];</code>
+     * <code>int32 total_validators = 4 [json_name = "totalValidators"];</code>
      * @return The totalValidators.
      */
     int getTotalValidators();
@@ -10388,7 +10388,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * The number of active (not unbonded) validators in the blockchain.
      * </pre>
      *
-     * <code>int32 active_validators = 6 [json_name = "activeValidators"];</code>
+     * <code>int32 active_validators = 12 [json_name = "activeValidators"];</code>
      * @return The activeValidators.
      */
     int getActiveValidators();
@@ -10398,7 +10398,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * The total power of the blockchain.
      * </pre>
      *
-     * <code>int64 total_power = 7 [json_name = "totalPower"];</code>
+     * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
      * @return The totalPower.
      */
     long getTotalPower();
@@ -10408,7 +10408,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * The power of the committee.
      * </pre>
      *
-     * <code>int64 committee_power = 8 [json_name = "committeePower"];</code>
+     * <code>int64 committee_power = 6 [json_name = "committeePower"];</code>
      * @return The committeePower.
      */
     long getCommitteePower();
@@ -10418,7 +10418,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * If the blocks are subject to pruning.
      * </pre>
      *
-     * <code>bool is_pruned = 9 [json_name = "isPruned"];</code>
+     * <code>bool is_pruned = 8 [json_name = "isPruned"];</code>
      * @return The isPruned.
      */
     boolean getIsPruned();
@@ -10428,7 +10428,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * Lowest-height block stored (only present if pruning is enabled)
      * </pre>
      *
-     * <code>uint32 pruning_height = 10 [json_name = "pruningHeight"];</code>
+     * <code>uint32 pruning_height = 9 [json_name = "pruningHeight"];</code>
      * @return The pruningHeight.
      */
     int getPruningHeight();
@@ -10537,14 +10537,14 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       }
     }
 
-    public static final int LAST_BLOCK_TIME_FIELD_NUMBER = 3;
+    public static final int LAST_BLOCK_TIME_FIELD_NUMBER = 10;
     private long lastBlockTime_ = 0L;
     /**
      * <pre>
      * The timestamp of the last block in Unix format.
      * </pre>
      *
-     * <code>int64 last_block_time = 3 [json_name = "lastBlockTime"];</code>
+     * <code>int64 last_block_time = 10 [json_name = "lastBlockTime"];</code>
      * @return The lastBlockTime.
      */
     @java.lang.Override
@@ -10552,14 +10552,14 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       return lastBlockTime_;
     }
 
-    public static final int TOTAL_ACCOUNTS_FIELD_NUMBER = 4;
+    public static final int TOTAL_ACCOUNTS_FIELD_NUMBER = 3;
     private int totalAccounts_ = 0;
     /**
      * <pre>
      * The total number of accounts in the blockchain.
      * </pre>
      *
-     * <code>int32 total_accounts = 4 [json_name = "totalAccounts"];</code>
+     * <code>int32 total_accounts = 3 [json_name = "totalAccounts"];</code>
      * @return The totalAccounts.
      */
     @java.lang.Override
@@ -10567,14 +10567,14 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       return totalAccounts_;
     }
 
-    public static final int TOTAL_VALIDATORS_FIELD_NUMBER = 5;
+    public static final int TOTAL_VALIDATORS_FIELD_NUMBER = 4;
     private int totalValidators_ = 0;
     /**
      * <pre>
      * The total number of validators in the blockchain.
      * </pre>
      *
-     * <code>int32 total_validators = 5 [json_name = "totalValidators"];</code>
+     * <code>int32 total_validators = 4 [json_name = "totalValidators"];</code>
      * @return The totalValidators.
      */
     @java.lang.Override
@@ -10582,14 +10582,14 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       return totalValidators_;
     }
 
-    public static final int ACTIVE_VALIDATORS_FIELD_NUMBER = 6;
+    public static final int ACTIVE_VALIDATORS_FIELD_NUMBER = 12;
     private int activeValidators_ = 0;
     /**
      * <pre>
      * The number of active (not unbonded) validators in the blockchain.
      * </pre>
      *
-     * <code>int32 active_validators = 6 [json_name = "activeValidators"];</code>
+     * <code>int32 active_validators = 12 [json_name = "activeValidators"];</code>
      * @return The activeValidators.
      */
     @java.lang.Override
@@ -10597,14 +10597,14 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       return activeValidators_;
     }
 
-    public static final int TOTAL_POWER_FIELD_NUMBER = 7;
+    public static final int TOTAL_POWER_FIELD_NUMBER = 5;
     private long totalPower_ = 0L;
     /**
      * <pre>
      * The total power of the blockchain.
      * </pre>
      *
-     * <code>int64 total_power = 7 [json_name = "totalPower"];</code>
+     * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
      * @return The totalPower.
      */
     @java.lang.Override
@@ -10612,14 +10612,14 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       return totalPower_;
     }
 
-    public static final int COMMITTEE_POWER_FIELD_NUMBER = 8;
+    public static final int COMMITTEE_POWER_FIELD_NUMBER = 6;
     private long committeePower_ = 0L;
     /**
      * <pre>
      * The power of the committee.
      * </pre>
      *
-     * <code>int64 committee_power = 8 [json_name = "committeePower"];</code>
+     * <code>int64 committee_power = 6 [json_name = "committeePower"];</code>
      * @return The committeePower.
      */
     @java.lang.Override
@@ -10627,14 +10627,14 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       return committeePower_;
     }
 
-    public static final int IS_PRUNED_FIELD_NUMBER = 9;
+    public static final int IS_PRUNED_FIELD_NUMBER = 8;
     private boolean isPruned_ = false;
     /**
      * <pre>
      * If the blocks are subject to pruning.
      * </pre>
      *
-     * <code>bool is_pruned = 9 [json_name = "isPruned"];</code>
+     * <code>bool is_pruned = 8 [json_name = "isPruned"];</code>
      * @return The isPruned.
      */
     @java.lang.Override
@@ -10642,14 +10642,14 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       return isPruned_;
     }
 
-    public static final int PRUNING_HEIGHT_FIELD_NUMBER = 10;
+    public static final int PRUNING_HEIGHT_FIELD_NUMBER = 9;
     private int pruningHeight_ = 0;
     /**
      * <pre>
      * Lowest-height block stored (only present if pruning is enabled)
      * </pre>
      *
-     * <code>uint32 pruning_height = 10 [json_name = "pruningHeight"];</code>
+     * <code>uint32 pruning_height = 9 [json_name = "pruningHeight"];</code>
      * @return The pruningHeight.
      */
     @java.lang.Override
@@ -10677,29 +10677,29 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(lastBlockHash_)) {
         com.google.protobuf.GeneratedMessage.writeString(output, 2, lastBlockHash_);
       }
-      if (lastBlockTime_ != 0L) {
-        output.writeInt64(3, lastBlockTime_);
-      }
       if (totalAccounts_ != 0) {
-        output.writeInt32(4, totalAccounts_);
+        output.writeInt32(3, totalAccounts_);
       }
       if (totalValidators_ != 0) {
-        output.writeInt32(5, totalValidators_);
-      }
-      if (activeValidators_ != 0) {
-        output.writeInt32(6, activeValidators_);
+        output.writeInt32(4, totalValidators_);
       }
       if (totalPower_ != 0L) {
-        output.writeInt64(7, totalPower_);
+        output.writeInt64(5, totalPower_);
       }
       if (committeePower_ != 0L) {
-        output.writeInt64(8, committeePower_);
+        output.writeInt64(6, committeePower_);
       }
       if (isPruned_ != false) {
-        output.writeBool(9, isPruned_);
+        output.writeBool(8, isPruned_);
       }
       if (pruningHeight_ != 0) {
-        output.writeUInt32(10, pruningHeight_);
+        output.writeUInt32(9, pruningHeight_);
+      }
+      if (lastBlockTime_ != 0L) {
+        output.writeInt64(10, lastBlockTime_);
+      }
+      if (activeValidators_ != 0) {
+        output.writeInt32(12, activeValidators_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -10717,37 +10717,37 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(lastBlockHash_)) {
         size += com.google.protobuf.GeneratedMessage.computeStringSize(2, lastBlockHash_);
       }
-      if (lastBlockTime_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(3, lastBlockTime_);
-      }
       if (totalAccounts_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(4, totalAccounts_);
+          .computeInt32Size(3, totalAccounts_);
       }
       if (totalValidators_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(5, totalValidators_);
-      }
-      if (activeValidators_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(6, activeValidators_);
+          .computeInt32Size(4, totalValidators_);
       }
       if (totalPower_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(7, totalPower_);
+          .computeInt64Size(5, totalPower_);
       }
       if (committeePower_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(8, committeePower_);
+          .computeInt64Size(6, committeePower_);
       }
       if (isPruned_ != false) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBoolSize(9, isPruned_);
+          .computeBoolSize(8, isPruned_);
       }
       if (pruningHeight_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeUInt32Size(10, pruningHeight_);
+          .computeUInt32Size(9, pruningHeight_);
+      }
+      if (lastBlockTime_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(10, lastBlockTime_);
+      }
+      if (activeValidators_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(12, activeValidators_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -11110,45 +11110,45 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
                 break;
               } // case 18
               case 24: {
-                lastBlockTime_ = input.readInt64();
-                bitField0_ |= 0x00000004;
-                break;
-              } // case 24
-              case 32: {
                 totalAccounts_ = input.readInt32();
                 bitField0_ |= 0x00000008;
                 break;
-              } // case 32
-              case 40: {
+              } // case 24
+              case 32: {
                 totalValidators_ = input.readInt32();
                 bitField0_ |= 0x00000010;
                 break;
-              } // case 40
-              case 48: {
-                activeValidators_ = input.readInt32();
-                bitField0_ |= 0x00000020;
-                break;
-              } // case 48
-              case 56: {
+              } // case 32
+              case 40: {
                 totalPower_ = input.readInt64();
                 bitField0_ |= 0x00000040;
                 break;
-              } // case 56
-              case 64: {
+              } // case 40
+              case 48: {
                 committeePower_ = input.readInt64();
                 bitField0_ |= 0x00000080;
                 break;
-              } // case 64
-              case 72: {
+              } // case 48
+              case 64: {
                 isPruned_ = input.readBool();
                 bitField0_ |= 0x00000100;
                 break;
-              } // case 72
-              case 80: {
+              } // case 64
+              case 72: {
                 pruningHeight_ = input.readUInt32();
                 bitField0_ |= 0x00000200;
                 break;
+              } // case 72
+              case 80: {
+                lastBlockTime_ = input.readInt64();
+                bitField0_ |= 0x00000004;
+                break;
               } // case 80
+              case 96: {
+                activeValidators_ = input.readInt32();
+                bitField0_ |= 0x00000020;
+                break;
+              } // case 96
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -11308,7 +11308,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * The timestamp of the last block in Unix format.
        * </pre>
        *
-       * <code>int64 last_block_time = 3 [json_name = "lastBlockTime"];</code>
+       * <code>int64 last_block_time = 10 [json_name = "lastBlockTime"];</code>
        * @return The lastBlockTime.
        */
       @java.lang.Override
@@ -11320,7 +11320,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * The timestamp of the last block in Unix format.
        * </pre>
        *
-       * <code>int64 last_block_time = 3 [json_name = "lastBlockTime"];</code>
+       * <code>int64 last_block_time = 10 [json_name = "lastBlockTime"];</code>
        * @param value The lastBlockTime to set.
        * @return This builder for chaining.
        */
@@ -11336,7 +11336,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * The timestamp of the last block in Unix format.
        * </pre>
        *
-       * <code>int64 last_block_time = 3 [json_name = "lastBlockTime"];</code>
+       * <code>int64 last_block_time = 10 [json_name = "lastBlockTime"];</code>
        * @return This builder for chaining.
        */
       public Builder clearLastBlockTime() {
@@ -11352,7 +11352,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * The total number of accounts in the blockchain.
        * </pre>
        *
-       * <code>int32 total_accounts = 4 [json_name = "totalAccounts"];</code>
+       * <code>int32 total_accounts = 3 [json_name = "totalAccounts"];</code>
        * @return The totalAccounts.
        */
       @java.lang.Override
@@ -11364,7 +11364,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * The total number of accounts in the blockchain.
        * </pre>
        *
-       * <code>int32 total_accounts = 4 [json_name = "totalAccounts"];</code>
+       * <code>int32 total_accounts = 3 [json_name = "totalAccounts"];</code>
        * @param value The totalAccounts to set.
        * @return This builder for chaining.
        */
@@ -11380,7 +11380,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * The total number of accounts in the blockchain.
        * </pre>
        *
-       * <code>int32 total_accounts = 4 [json_name = "totalAccounts"];</code>
+       * <code>int32 total_accounts = 3 [json_name = "totalAccounts"];</code>
        * @return This builder for chaining.
        */
       public Builder clearTotalAccounts() {
@@ -11396,7 +11396,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * The total number of validators in the blockchain.
        * </pre>
        *
-       * <code>int32 total_validators = 5 [json_name = "totalValidators"];</code>
+       * <code>int32 total_validators = 4 [json_name = "totalValidators"];</code>
        * @return The totalValidators.
        */
       @java.lang.Override
@@ -11408,7 +11408,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * The total number of validators in the blockchain.
        * </pre>
        *
-       * <code>int32 total_validators = 5 [json_name = "totalValidators"];</code>
+       * <code>int32 total_validators = 4 [json_name = "totalValidators"];</code>
        * @param value The totalValidators to set.
        * @return This builder for chaining.
        */
@@ -11424,7 +11424,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * The total number of validators in the blockchain.
        * </pre>
        *
-       * <code>int32 total_validators = 5 [json_name = "totalValidators"];</code>
+       * <code>int32 total_validators = 4 [json_name = "totalValidators"];</code>
        * @return This builder for chaining.
        */
       public Builder clearTotalValidators() {
@@ -11440,7 +11440,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * The number of active (not unbonded) validators in the blockchain.
        * </pre>
        *
-       * <code>int32 active_validators = 6 [json_name = "activeValidators"];</code>
+       * <code>int32 active_validators = 12 [json_name = "activeValidators"];</code>
        * @return The activeValidators.
        */
       @java.lang.Override
@@ -11452,7 +11452,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * The number of active (not unbonded) validators in the blockchain.
        * </pre>
        *
-       * <code>int32 active_validators = 6 [json_name = "activeValidators"];</code>
+       * <code>int32 active_validators = 12 [json_name = "activeValidators"];</code>
        * @param value The activeValidators to set.
        * @return This builder for chaining.
        */
@@ -11468,7 +11468,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * The number of active (not unbonded) validators in the blockchain.
        * </pre>
        *
-       * <code>int32 active_validators = 6 [json_name = "activeValidators"];</code>
+       * <code>int32 active_validators = 12 [json_name = "activeValidators"];</code>
        * @return This builder for chaining.
        */
       public Builder clearActiveValidators() {
@@ -11484,7 +11484,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * The total power of the blockchain.
        * </pre>
        *
-       * <code>int64 total_power = 7 [json_name = "totalPower"];</code>
+       * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
        * @return The totalPower.
        */
       @java.lang.Override
@@ -11496,7 +11496,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * The total power of the blockchain.
        * </pre>
        *
-       * <code>int64 total_power = 7 [json_name = "totalPower"];</code>
+       * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
        * @param value The totalPower to set.
        * @return This builder for chaining.
        */
@@ -11512,7 +11512,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * The total power of the blockchain.
        * </pre>
        *
-       * <code>int64 total_power = 7 [json_name = "totalPower"];</code>
+       * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
        * @return This builder for chaining.
        */
       public Builder clearTotalPower() {
@@ -11528,7 +11528,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * The power of the committee.
        * </pre>
        *
-       * <code>int64 committee_power = 8 [json_name = "committeePower"];</code>
+       * <code>int64 committee_power = 6 [json_name = "committeePower"];</code>
        * @return The committeePower.
        */
       @java.lang.Override
@@ -11540,7 +11540,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * The power of the committee.
        * </pre>
        *
-       * <code>int64 committee_power = 8 [json_name = "committeePower"];</code>
+       * <code>int64 committee_power = 6 [json_name = "committeePower"];</code>
        * @param value The committeePower to set.
        * @return This builder for chaining.
        */
@@ -11556,7 +11556,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * The power of the committee.
        * </pre>
        *
-       * <code>int64 committee_power = 8 [json_name = "committeePower"];</code>
+       * <code>int64 committee_power = 6 [json_name = "committeePower"];</code>
        * @return This builder for chaining.
        */
       public Builder clearCommitteePower() {
@@ -11572,7 +11572,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * If the blocks are subject to pruning.
        * </pre>
        *
-       * <code>bool is_pruned = 9 [json_name = "isPruned"];</code>
+       * <code>bool is_pruned = 8 [json_name = "isPruned"];</code>
        * @return The isPruned.
        */
       @java.lang.Override
@@ -11584,7 +11584,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * If the blocks are subject to pruning.
        * </pre>
        *
-       * <code>bool is_pruned = 9 [json_name = "isPruned"];</code>
+       * <code>bool is_pruned = 8 [json_name = "isPruned"];</code>
        * @param value The isPruned to set.
        * @return This builder for chaining.
        */
@@ -11600,7 +11600,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * If the blocks are subject to pruning.
        * </pre>
        *
-       * <code>bool is_pruned = 9 [json_name = "isPruned"];</code>
+       * <code>bool is_pruned = 8 [json_name = "isPruned"];</code>
        * @return This builder for chaining.
        */
       public Builder clearIsPruned() {
@@ -11616,7 +11616,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * Lowest-height block stored (only present if pruning is enabled)
        * </pre>
        *
-       * <code>uint32 pruning_height = 10 [json_name = "pruningHeight"];</code>
+       * <code>uint32 pruning_height = 9 [json_name = "pruningHeight"];</code>
        * @return The pruningHeight.
        */
       @java.lang.Override
@@ -11628,7 +11628,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * Lowest-height block stored (only present if pruning is enabled)
        * </pre>
        *
-       * <code>uint32 pruning_height = 10 [json_name = "pruningHeight"];</code>
+       * <code>uint32 pruning_height = 9 [json_name = "pruningHeight"];</code>
        * @param value The pruningHeight to set.
        * @return This builder for chaining.
        */
@@ -11644,7 +11644,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * Lowest-height block stored (only present if pruning is enabled)
        * </pre>
        *
-       * <code>uint32 pruning_height = 10 [json_name = "pruningHeight"];</code>
+       * <code>uint32 pruning_height = 9 [json_name = "pruningHeight"];</code>
        * @return This builder for chaining.
        */
       public Builder clearPruningHeight() {
@@ -25219,13 +25219,13 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       "etBlockchainInfoResponse\022*\n\021last_block_h" +
       "eight\030\001 \001(\rR\017lastBlockHeight\022&\n\017last_blo" +
       "ck_hash\030\002 \001(\tR\rlastBlockHash\022&\n\017last_blo" +
-      "ck_time\030\003 \001(\003R\rlastBlockTime\022%\n\016total_ac" +
-      "counts\030\004 \001(\005R\rtotalAccounts\022)\n\020total_val" +
-      "idators\030\005 \001(\005R\017totalValidators\022+\n\021active" +
-      "_validators\030\006 \001(\005R\020activeValidators\022\037\n\013t" +
-      "otal_power\030\007 \001(\003R\ntotalPower\022\'\n\017committe" +
-      "e_power\030\010 \001(\003R\016committeePower\022\033\n\tis_prun" +
-      "ed\030\t \001(\010R\010isPruned\022%\n\016pruning_height\030\n \001" +
+      "ck_time\030\n \001(\003R\rlastBlockTime\022%\n\016total_ac" +
+      "counts\030\003 \001(\005R\rtotalAccounts\022)\n\020total_val" +
+      "idators\030\004 \001(\005R\017totalValidators\022+\n\021active" +
+      "_validators\030\014 \001(\005R\020activeValidators\022\037\n\013t" +
+      "otal_power\030\005 \001(\003R\ntotalPower\022\'\n\017committe" +
+      "e_power\030\006 \001(\003R\016committeePower\022\033\n\tis_prun" +
+      "ed\030\010 \001(\010R\010isPruned\022%\n\016pruning_height\030\t \001" +
       "(\rR\rpruningHeight\"\031\n\027GetCommitteeInfoReq" +
       "uest\"\244\002\n\030GetCommitteeInfoResponse\022\'\n\017com" +
       "mittee_power\030\001 \001(\003R\016committeePower\0225\n\nva" +

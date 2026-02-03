@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	Network_GetNetworkInfo_FullMethodName = "/pactus.Network/GetNetworkInfo"
+	Network_ListPeers_FullMethodName      = "/pactus.Network/ListPeers"
 	Network_GetNodeInfo_FullMethodName    = "/pactus.Network/GetNodeInfo"
 	Network_Ping_FullMethodName           = "/pactus.Network/Ping"
 )
@@ -32,6 +33,8 @@ const (
 type NetworkClient interface {
 	// GetNetworkInfo retrieves information about the overall network.
 	GetNetworkInfo(ctx context.Context, in *GetNetworkInfoRequest, opts ...grpc.CallOption) (*GetNetworkInfoResponse, error)
+	// ListPeers lists all peers in the network.
+	ListPeers(ctx context.Context, in *ListPeersRequest, opts ...grpc.CallOption) (*ListPeersResponse, error)
 	// GetNodeInfo retrieves information about a specific node in the network.
 	GetNodeInfo(ctx context.Context, in *GetNodeInfoRequest, opts ...grpc.CallOption) (*GetNodeInfoResponse, error)
 	// Ping provides a simple connectivity test and latency measurement.
@@ -50,6 +53,16 @@ func (c *networkClient) GetNetworkInfo(ctx context.Context, in *GetNetworkInfoRe
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetNetworkInfoResponse)
 	err := c.cc.Invoke(ctx, Network_GetNetworkInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *networkClient) ListPeers(ctx context.Context, in *ListPeersRequest, opts ...grpc.CallOption) (*ListPeersResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPeersResponse)
+	err := c.cc.Invoke(ctx, Network_ListPeers_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -84,6 +97,8 @@ func (c *networkClient) Ping(ctx context.Context, in *PingRequest, opts ...grpc.
 type NetworkServer interface {
 	// GetNetworkInfo retrieves information about the overall network.
 	GetNetworkInfo(context.Context, *GetNetworkInfoRequest) (*GetNetworkInfoResponse, error)
+	// ListPeers lists all peers in the network.
+	ListPeers(context.Context, *ListPeersRequest) (*ListPeersResponse, error)
 	// GetNodeInfo retrieves information about a specific node in the network.
 	GetNodeInfo(context.Context, *GetNodeInfoRequest) (*GetNodeInfoResponse, error)
 	// Ping provides a simple connectivity test and latency measurement.
@@ -99,6 +114,9 @@ type UnimplementedNetworkServer struct{}
 
 func (UnimplementedNetworkServer) GetNetworkInfo(context.Context, *GetNetworkInfoRequest) (*GetNetworkInfoResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetNetworkInfo not implemented")
+}
+func (UnimplementedNetworkServer) ListPeers(context.Context, *ListPeersRequest) (*ListPeersResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListPeers not implemented")
 }
 func (UnimplementedNetworkServer) GetNodeInfo(context.Context, *GetNodeInfoRequest) (*GetNodeInfoResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetNodeInfo not implemented")
@@ -140,6 +158,24 @@ func _Network_GetNetworkInfo_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(NetworkServer).GetNetworkInfo(ctx, req.(*GetNetworkInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Network_ListPeers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPeersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NetworkServer).ListPeers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Network_ListPeers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NetworkServer).ListPeers(ctx, req.(*ListPeersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -190,6 +226,10 @@ var Network_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetNetworkInfo",
 			Handler:    _Network_GetNetworkInfo_Handler,
+		},
+		{
+			MethodName: "ListPeers",
+			Handler:    _Network_ListPeers_Handler,
 		},
 		{
 			MethodName: "GetNodeInfo",

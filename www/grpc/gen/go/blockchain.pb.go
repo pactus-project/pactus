@@ -929,21 +929,21 @@ type GetBlockchainInfoResponse struct {
 	// The hash of the last block in the blockchain.
 	LastBlockHash string `protobuf:"bytes,2,opt,name=last_block_hash,json=lastBlockHash,proto3" json:"last_block_hash,omitempty"`
 	// The timestamp of the last block in Unix format.
-	LastBlockTime int64 `protobuf:"varint,3,opt,name=last_block_time,json=lastBlockTime,proto3" json:"last_block_time,omitempty"`
+	LastBlockTime int64 `protobuf:"varint,10,opt,name=last_block_time,json=lastBlockTime,proto3" json:"last_block_time,omitempty"`
 	// The total number of accounts in the blockchain.
-	TotalAccounts int32 `protobuf:"varint,4,opt,name=total_accounts,json=totalAccounts,proto3" json:"total_accounts,omitempty"`
+	TotalAccounts int32 `protobuf:"varint,3,opt,name=total_accounts,json=totalAccounts,proto3" json:"total_accounts,omitempty"`
 	// The total number of validators in the blockchain.
-	TotalValidators int32 `protobuf:"varint,5,opt,name=total_validators,json=totalValidators,proto3" json:"total_validators,omitempty"`
+	TotalValidators int32 `protobuf:"varint,4,opt,name=total_validators,json=totalValidators,proto3" json:"total_validators,omitempty"`
 	// The number of active (not unbonded) validators in the blockchain.
-	ActiveValidators int32 `protobuf:"varint,6,opt,name=active_validators,json=activeValidators,proto3" json:"active_validators,omitempty"`
+	ActiveValidators int32 `protobuf:"varint,12,opt,name=active_validators,json=activeValidators,proto3" json:"active_validators,omitempty"`
 	// The total power of the blockchain.
-	TotalPower int64 `protobuf:"varint,7,opt,name=total_power,json=totalPower,proto3" json:"total_power,omitempty"`
+	TotalPower int64 `protobuf:"varint,5,opt,name=total_power,json=totalPower,proto3" json:"total_power,omitempty"`
 	// The power of the committee.
-	CommitteePower int64 `protobuf:"varint,8,opt,name=committee_power,json=committeePower,proto3" json:"committee_power,omitempty"`
+	CommitteePower int64 `protobuf:"varint,6,opt,name=committee_power,json=committeePower,proto3" json:"committee_power,omitempty"`
 	// If the blocks are subject to pruning.
-	IsPruned bool `protobuf:"varint,9,opt,name=is_pruned,json=isPruned,proto3" json:"is_pruned,omitempty"`
+	IsPruned bool `protobuf:"varint,8,opt,name=is_pruned,json=isPruned,proto3" json:"is_pruned,omitempty"`
 	// Lowest-height block stored (only present if pruning is enabled)
-	PruningHeight uint32 `protobuf:"varint,10,opt,name=pruning_height,json=pruningHeight,proto3" json:"pruning_height,omitempty"`
+	PruningHeight uint32 `protobuf:"varint,9,opt,name=pruning_height,json=pruningHeight,proto3" json:"pruning_height,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2008,16 +2008,16 @@ const file_blockchain_proto_rawDesc = "" +
 	"\x19GetBlockchainInfoResponse\x12*\n" +
 	"\x11last_block_height\x18\x01 \x01(\rR\x0flastBlockHeight\x12&\n" +
 	"\x0flast_block_hash\x18\x02 \x01(\tR\rlastBlockHash\x12&\n" +
-	"\x0flast_block_time\x18\x03 \x01(\x03R\rlastBlockTime\x12%\n" +
-	"\x0etotal_accounts\x18\x04 \x01(\x05R\rtotalAccounts\x12)\n" +
-	"\x10total_validators\x18\x05 \x01(\x05R\x0ftotalValidators\x12+\n" +
-	"\x11active_validators\x18\x06 \x01(\x05R\x10activeValidators\x12\x1f\n" +
-	"\vtotal_power\x18\a \x01(\x03R\n" +
+	"\x0flast_block_time\x18\n" +
+	" \x01(\x03R\rlastBlockTime\x12%\n" +
+	"\x0etotal_accounts\x18\x03 \x01(\x05R\rtotalAccounts\x12)\n" +
+	"\x10total_validators\x18\x04 \x01(\x05R\x0ftotalValidators\x12+\n" +
+	"\x11active_validators\x18\f \x01(\x05R\x10activeValidators\x12\x1f\n" +
+	"\vtotal_power\x18\x05 \x01(\x03R\n" +
 	"totalPower\x12'\n" +
-	"\x0fcommittee_power\x18\b \x01(\x03R\x0ecommitteePower\x12\x1b\n" +
-	"\tis_pruned\x18\t \x01(\bR\bisPruned\x12%\n" +
-	"\x0epruning_height\x18\n" +
-	" \x01(\rR\rpruningHeight\"\x19\n" +
+	"\x0fcommittee_power\x18\x06 \x01(\x03R\x0ecommitteePower\x12\x1b\n" +
+	"\tis_pruned\x18\b \x01(\bR\bisPruned\x12%\n" +
+	"\x0epruning_height\x18\t \x01(\rR\rpruningHeight\"\x19\n" +
 	"\x17GetCommitteeInfoRequest\"\xa4\x02\n" +
 	"\x18GetCommitteeInfoResponse\x12'\n" +
 	"\x0fcommittee_power\x18\x01 \x01(\x03R\x0ecommitteePower\x125\n" +

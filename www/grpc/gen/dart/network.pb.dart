@@ -24,13 +24,7 @@ export 'network.pbenum.dart';
 
 /// Request message for retrieving overall network information.
 class GetNetworkInfoRequest extends $pb.GeneratedMessage {
-  factory GetNetworkInfoRequest({
-    $core.bool? onlyConnected,
-  }) {
-    final result = create();
-    if (onlyConnected != null) result.onlyConnected = onlyConnected;
-    return result;
-  }
+  factory GetNetworkInfoRequest() => create();
 
   GetNetworkInfoRequest._();
 
@@ -45,7 +39,6 @@ class GetNetworkInfoRequest extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'GetNetworkInfoRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
-    ..aOB(1, _omitFieldNames ? '' : 'onlyConnected')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -67,16 +60,6 @@ class GetNetworkInfoRequest extends $pb.GeneratedMessage {
   static GetNetworkInfoRequest getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<GetNetworkInfoRequest>(create);
   static GetNetworkInfoRequest? _defaultInstance;
-
-  /// If true, returns only peers that are currently connected.
-  @$pb.TagNumber(1)
-  $core.bool get onlyConnected => $_getBF(0);
-  @$pb.TagNumber(1)
-  set onlyConnected($core.bool value) => $_setBool(0, value);
-  @$pb.TagNumber(1)
-  $core.bool hasOnlyConnected() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearOnlyConnected() => $_clearField(1);
 }
 
 /// Response message contains information about the overall network.
@@ -84,14 +67,12 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
   factory GetNetworkInfoResponse({
     $core.String? networkName,
     $core.int? connectedPeersCount,
-    $core.Iterable<PeerInfo>? connectedPeers,
     MetricInfo? metricInfo,
   }) {
     final result = create();
     if (networkName != null) result.networkName = networkName;
     if (connectedPeersCount != null)
       result.connectedPeersCount = connectedPeersCount;
-    if (connectedPeers != null) result.connectedPeers.addAll(connectedPeers);
     if (metricInfo != null) result.metricInfo = metricInfo;
     return result;
   }
@@ -112,9 +93,7 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
     ..aOS(1, _omitFieldNames ? '' : 'networkName')
     ..aI(2, _omitFieldNames ? '' : 'connectedPeersCount',
         fieldType: $pb.PbFieldType.OU3)
-    ..pPM<PeerInfo>(3, _omitFieldNames ? '' : 'connectedPeers',
-        subBuilder: PeerInfo.create)
-    ..aOM<MetricInfo>(4, _omitFieldNames ? '' : 'metricInfo',
+    ..aOM<MetricInfo>(3, _omitFieldNames ? '' : 'metricInfo',
         subBuilder: MetricInfo.create)
     ..hasRequiredFields = false;
 
@@ -158,21 +137,125 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(2)
   void clearConnectedPeersCount() => $_clearField(2);
 
-  /// List of connected peers.
-  @$pb.TagNumber(3)
-  $pb.PbList<PeerInfo> get connectedPeers => $_getList(2);
-
   /// Metrics related to node activity.
-  @$pb.TagNumber(4)
-  MetricInfo get metricInfo => $_getN(3);
-  @$pb.TagNumber(4)
-  set metricInfo(MetricInfo value) => $_setField(4, value);
-  @$pb.TagNumber(4)
-  $core.bool hasMetricInfo() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearMetricInfo() => $_clearField(4);
-  @$pb.TagNumber(4)
-  MetricInfo ensureMetricInfo() => $_ensure(3);
+  @$pb.TagNumber(3)
+  MetricInfo get metricInfo => $_getN(2);
+  @$pb.TagNumber(3)
+  set metricInfo(MetricInfo value) => $_setField(3, value);
+  @$pb.TagNumber(3)
+  $core.bool hasMetricInfo() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearMetricInfo() => $_clearField(3);
+  @$pb.TagNumber(3)
+  MetricInfo ensureMetricInfo() => $_ensure(2);
+}
+
+/// Request message for listing peers.
+class ListPeersRequest extends $pb.GeneratedMessage {
+  factory ListPeersRequest({
+    $core.bool? includeDisconnected,
+  }) {
+    final result = create();
+    if (includeDisconnected != null)
+      result.includeDisconnected = includeDisconnected;
+    return result;
+  }
+
+  ListPeersRequest._();
+
+  factory ListPeersRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory ListPeersRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'ListPeersRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOB(1, _omitFieldNames ? '' : 'includeDisconnected')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ListPeersRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ListPeersRequest copyWith(void Function(ListPeersRequest) updates) =>
+      super.copyWith((message) => updates(message as ListPeersRequest))
+          as ListPeersRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ListPeersRequest create() => ListPeersRequest._();
+  @$core.override
+  ListPeersRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static ListPeersRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ListPeersRequest>(create);
+  static ListPeersRequest? _defaultInstance;
+
+  /// If true, includes disconnected peers (default: connected peers only).
+  @$pb.TagNumber(1)
+  $core.bool get includeDisconnected => $_getBF(0);
+  @$pb.TagNumber(1)
+  set includeDisconnected($core.bool value) => $_setBool(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasIncludeDisconnected() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearIncludeDisconnected() => $_clearField(1);
+}
+
+/// Response message for listing peers.
+class ListPeersResponse extends $pb.GeneratedMessage {
+  factory ListPeersResponse({
+    $core.Iterable<PeerInfo>? peers,
+  }) {
+    final result = create();
+    if (peers != null) result.peers.addAll(peers);
+    return result;
+  }
+
+  ListPeersResponse._();
+
+  factory ListPeersResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory ListPeersResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'ListPeersResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..pPM<PeerInfo>(1, _omitFieldNames ? '' : 'peers',
+        subBuilder: PeerInfo.create)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ListPeersResponse clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ListPeersResponse copyWith(void Function(ListPeersResponse) updates) =>
+      super.copyWith((message) => updates(message as ListPeersResponse))
+          as ListPeersResponse;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ListPeersResponse create() => ListPeersResponse._();
+  @$core.override
+  ListPeersResponse createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static ListPeersResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ListPeersResponse>(create);
+  static ListPeersResponse? _defaultInstance;
+
+  /// List of peers.
+  @$pb.TagNumber(1)
+  $pb.PbList<PeerInfo> get peers => $_getList(0);
 }
 
 /// Request message for retrieving information of the node.
@@ -1129,6 +1212,12 @@ class NetworkApi {
           $pb.ClientContext? ctx, GetNetworkInfoRequest request) =>
       _client.invoke<GetNetworkInfoResponse>(
           ctx, 'Network', 'GetNetworkInfo', request, GetNetworkInfoResponse());
+
+  /// ListPeers lists all peers in the network.
+  $async.Future<ListPeersResponse> listPeers(
+          $pb.ClientContext? ctx, ListPeersRequest request) =>
+      _client.invoke<ListPeersResponse>(
+          ctx, 'Network', 'ListPeers', request, ListPeersResponse());
 
   /// GetNodeInfo retrieves information about a specific node in the network.
   $async.Future<GetNodeInfoResponse> getNodeInfo(

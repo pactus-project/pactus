@@ -3085,14 +3085,14 @@ proto.pactus.GetBlockchainInfoResponse.toObject = function(includeInstance, msg)
   var f, obj = {
 lastBlockHeight: jspb.Message.getFieldWithDefault(msg, 1, 0),
 lastBlockHash: jspb.Message.getFieldWithDefault(msg, 2, ""),
-lastBlockTime: jspb.Message.getFieldWithDefault(msg, 3, 0),
-totalAccounts: jspb.Message.getFieldWithDefault(msg, 4, 0),
-totalValidators: jspb.Message.getFieldWithDefault(msg, 5, 0),
-activeValidators: jspb.Message.getFieldWithDefault(msg, 6, 0),
-totalPower: jspb.Message.getFieldWithDefault(msg, 7, 0),
-committeePower: jspb.Message.getFieldWithDefault(msg, 8, 0),
-isPruned: jspb.Message.getBooleanFieldWithDefault(msg, 9, false),
-pruningHeight: jspb.Message.getFieldWithDefault(msg, 10, 0)
+lastBlockTime: jspb.Message.getFieldWithDefault(msg, 10, 0),
+totalAccounts: jspb.Message.getFieldWithDefault(msg, 3, 0),
+totalValidators: jspb.Message.getFieldWithDefault(msg, 4, 0),
+activeValidators: jspb.Message.getFieldWithDefault(msg, 12, 0),
+totalPower: jspb.Message.getFieldWithDefault(msg, 5, 0),
+committeePower: jspb.Message.getFieldWithDefault(msg, 6, 0),
+isPruned: jspb.Message.getBooleanFieldWithDefault(msg, 8, false),
+pruningHeight: jspb.Message.getFieldWithDefault(msg, 9, 0)
   };
 
   if (includeInstance) {
@@ -3137,35 +3137,35 @@ proto.pactus.GetBlockchainInfoResponse.deserializeBinaryFromReader = function(ms
       var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setLastBlockHash(value);
       break;
-    case 3:
+    case 10:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setLastBlockTime(value);
       break;
-    case 4:
+    case 3:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setTotalAccounts(value);
       break;
-    case 5:
+    case 4:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setTotalValidators(value);
       break;
-    case 6:
+    case 12:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setActiveValidators(value);
       break;
-    case 7:
+    case 5:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setTotalPower(value);
       break;
-    case 8:
+    case 6:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setCommitteePower(value);
       break;
-    case 9:
+    case 8:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setIsPruned(value);
       break;
-    case 10:
+    case 9:
       var value = /** @type {number} */ (reader.readUint32());
       msg.setPruningHeight(value);
       break;
@@ -3215,56 +3215,56 @@ proto.pactus.GetBlockchainInfoResponse.serializeBinaryToWriter = function(messag
   f = message.getLastBlockTime();
   if (f !== 0) {
     writer.writeInt64(
-      3,
+      10,
       f
     );
   }
   f = message.getTotalAccounts();
   if (f !== 0) {
     writer.writeInt32(
-      4,
+      3,
       f
     );
   }
   f = message.getTotalValidators();
   if (f !== 0) {
     writer.writeInt32(
-      5,
+      4,
       f
     );
   }
   f = message.getActiveValidators();
   if (f !== 0) {
     writer.writeInt32(
-      6,
+      12,
       f
     );
   }
   f = message.getTotalPower();
   if (f !== 0) {
     writer.writeInt64(
-      7,
+      5,
       f
     );
   }
   f = message.getCommitteePower();
   if (f !== 0) {
     writer.writeInt64(
-      8,
+      6,
       f
     );
   }
   f = message.getIsPruned();
   if (f) {
     writer.writeBool(
-      9,
+      8,
       f
     );
   }
   f = message.getPruningHeight();
   if (f !== 0) {
     writer.writeUint32(
-      10,
+      9,
       f
     );
   }
@@ -3308,136 +3308,10 @@ proto.pactus.GetBlockchainInfoResponse.prototype.setLastBlockHash = function(val
 
 
 /**
- * optional int64 last_block_time = 3;
+ * optional int64 last_block_time = 10;
  * @return {number}
  */
 proto.pactus.GetBlockchainInfoResponse.prototype.getLastBlockTime = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
- */
-proto.pactus.GetBlockchainInfoResponse.prototype.setLastBlockTime = function(value) {
-  return jspb.Message.setProto3IntField(this, 3, value);
-};
-
-
-/**
- * optional int32 total_accounts = 4;
- * @return {number}
- */
-proto.pactus.GetBlockchainInfoResponse.prototype.getTotalAccounts = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
- */
-proto.pactus.GetBlockchainInfoResponse.prototype.setTotalAccounts = function(value) {
-  return jspb.Message.setProto3IntField(this, 4, value);
-};
-
-
-/**
- * optional int32 total_validators = 5;
- * @return {number}
- */
-proto.pactus.GetBlockchainInfoResponse.prototype.getTotalValidators = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
- */
-proto.pactus.GetBlockchainInfoResponse.prototype.setTotalValidators = function(value) {
-  return jspb.Message.setProto3IntField(this, 5, value);
-};
-
-
-/**
- * optional int32 active_validators = 6;
- * @return {number}
- */
-proto.pactus.GetBlockchainInfoResponse.prototype.getActiveValidators = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
- */
-proto.pactus.GetBlockchainInfoResponse.prototype.setActiveValidators = function(value) {
-  return jspb.Message.setProto3IntField(this, 6, value);
-};
-
-
-/**
- * optional int64 total_power = 7;
- * @return {number}
- */
-proto.pactus.GetBlockchainInfoResponse.prototype.getTotalPower = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
- */
-proto.pactus.GetBlockchainInfoResponse.prototype.setTotalPower = function(value) {
-  return jspb.Message.setProto3IntField(this, 7, value);
-};
-
-
-/**
- * optional int64 committee_power = 8;
- * @return {number}
- */
-proto.pactus.GetBlockchainInfoResponse.prototype.getCommitteePower = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
- */
-proto.pactus.GetBlockchainInfoResponse.prototype.setCommitteePower = function(value) {
-  return jspb.Message.setProto3IntField(this, 8, value);
-};
-
-
-/**
- * optional bool is_pruned = 9;
- * @return {boolean}
- */
-proto.pactus.GetBlockchainInfoResponse.prototype.getIsPruned = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 9, false));
-};
-
-
-/**
- * @param {boolean} value
- * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
- */
-proto.pactus.GetBlockchainInfoResponse.prototype.setIsPruned = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 9, value);
-};
-
-
-/**
- * optional uint32 pruning_height = 10;
- * @return {number}
- */
-proto.pactus.GetBlockchainInfoResponse.prototype.getPruningHeight = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
 };
 
@@ -3446,8 +3320,134 @@ proto.pactus.GetBlockchainInfoResponse.prototype.getPruningHeight = function() {
  * @param {number} value
  * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
  */
-proto.pactus.GetBlockchainInfoResponse.prototype.setPruningHeight = function(value) {
+proto.pactus.GetBlockchainInfoResponse.prototype.setLastBlockTime = function(value) {
   return jspb.Message.setProto3IntField(this, 10, value);
+};
+
+
+/**
+ * optional int32 total_accounts = 3;
+ * @return {number}
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.getTotalAccounts = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.setTotalAccounts = function(value) {
+  return jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+/**
+ * optional int32 total_validators = 4;
+ * @return {number}
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.getTotalValidators = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.setTotalValidators = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
+};
+
+
+/**
+ * optional int32 active_validators = 12;
+ * @return {number}
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.getActiveValidators = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 12, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.setActiveValidators = function(value) {
+  return jspb.Message.setProto3IntField(this, 12, value);
+};
+
+
+/**
+ * optional int64 total_power = 5;
+ * @return {number}
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.getTotalPower = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.setTotalPower = function(value) {
+  return jspb.Message.setProto3IntField(this, 5, value);
+};
+
+
+/**
+ * optional int64 committee_power = 6;
+ * @return {number}
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.getCommitteePower = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.setCommitteePower = function(value) {
+  return jspb.Message.setProto3IntField(this, 6, value);
+};
+
+
+/**
+ * optional bool is_pruned = 8;
+ * @return {boolean}
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.getIsPruned = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 8, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.setIsPruned = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 8, value);
+};
+
+
+/**
+ * optional uint32 pruning_height = 9;
+ * @return {number}
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.getPruningHeight = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.setPruningHeight = function(value) {
+  return jspb.Message.setProto3IntField(this, 9, value);
 };
 
 
