@@ -38,7 +38,7 @@ func Run(ctx context.Context, n *node.Node, gtkApp *gtk.Application) (*GUI, erro
 		return nil, err
 	}
 	nodeCtrl := controller.NewNodeWidgetController(nodeView, n)
-	if err := nodeCtrl.Bind(); err != nil {
+	if err := nodeCtrl.Bind(ctx); err != nil {
 		return nil, err
 	}
 
@@ -72,11 +72,11 @@ func Run(ctx context.Context, n *node.Node, gtkApp *gtk.Application) (*GUI, erro
 		return nil, err
 	}
 	validatorCtrl := controller.NewValidatorWidgetController(validatorView, validatorModel)
-	if err := validatorCtrl.Bind(); err != nil {
+	if err := validatorCtrl.Bind(ctx); err != nil {
 		return nil, err
 	}
 
-	walletCtrl.Bind(controller.WalletWidgetHandlers{
+	walletCtrl.Bind(ctx, controller.WalletWidgetHandlers{
 		OnNewAddress: func() {
 			nav.ShowCreateAddress()
 			walletCtrl.RefreshAddresses()
@@ -174,9 +174,6 @@ func Run(ctx context.Context, n *node.Node, gtkApp *gtk.Application) (*GUI, erro
 }
 
 func (g *GUI) Cleanup() {
-	g.NodeCtrl.Cleanup()
-	g.WalletCtrl.Cleanup()
-	g.ValidatorCtrl.Cleanup()
 	g.MainWindow.Cleanup()
 
 	if g.grpcConn != nil {

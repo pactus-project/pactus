@@ -31,7 +31,6 @@ import (
 
 type Node struct {
 	ctx           context.Context
-	cancel        context.CancelFunc
 	genesisDoc    *genesis.Genesis
 	config        *config.Config
 	state         state.Facade
@@ -52,13 +51,11 @@ type Node struct {
 	eventPipe     pipeline.Pipeline[any]
 }
 
-func NewNode(genDoc *genesis.Genesis, conf *config.Config,
+func NewNode(ctx context.Context, genDoc *genesis.Genesis, conf *config.Config,
 	valKeys []*bls.ValidatorKey, rewardAddrs []crypto.Address,
 ) (*Node, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-
 	// Initialize the logger
-	logger.InitGlobalLogger(conf.Logger)
+	logger.InitGlobalLogger(ctx, conf.Logger)
 
 	chainType := genDoc.ChainType()
 
@@ -71,8 +68,6 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 
 	store, err := store.NewStore(conf.Store)
 	if err != nil {
-		cancel()
-
 		return nil, err
 	}
 
@@ -84,15 +79,11 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 
 	state, err := state.LoadOrNewState(genDoc, valKeys, store, txPool, eventPipe)
 	if err != nil {
-		cancel()
-
 		return nil, err
 	}
 
 	net, err := network.NewNetwork(ctx, conf.Network, networkPipe)
 	if err != nil {
-		cancel()
-
 		return nil, err
 	}
 
@@ -105,8 +96,6 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	sync, err := sync.NewSynchronizer(ctx, conf.Sync, valKeys, state,
 		consV1Mgr, consV2Mgr, net, broadcastPipe, networkPipe)
 	if err != nil {
-		cancel()
-
 		return nil, err
 	}
 
@@ -114,8 +103,6 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 
 	zeromqServer, err := zmq.New(ctx, conf.ZeroMq, eventPipe)
 	if err != nil {
-		cancel()
-
 		return nil, err
 	}
 	curConsMgr := consV1Mgr
@@ -126,8 +113,6 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	walletProvider := local.NewLocalBlockchainProvider(state)
 	walletMgr, err := wltmgr.NewManager(ctx, conf.WalletManager, walletProvider, eventPipe)
 	if err != nil {
-		cancel()
-
 		return nil, err
 	}
 
@@ -138,7 +123,6 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 
 	node := &Node{
 		ctx:           ctx,
-		cancel:        cancel,
 		config:        conf,
 		genesisDoc:    genDoc,
 		network:       net,
@@ -217,7 +201,7 @@ func (n *Node) Start() error {
 
 func (n *Node) Stop() {
 	logger.Info("stopping Node")
-	n.cancel()
+
 	n.broadcastPipe.Close()
 	n.networkPipe.Close()
 	n.eventPipe.Close()

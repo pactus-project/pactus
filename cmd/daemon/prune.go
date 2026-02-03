@@ -1,16 +1,17 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
 
+	"github.com/ezex-io/gopkg/signal"
 	"github.com/gofrs/flock"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/prompt"
-	"github.com/pactus-project/pactus/util/signal"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/spf13/cobra"
 )
@@ -50,7 +51,7 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 
 		// Disable logger
 		conf.Logger.Targets = []string{}
-		logger.InitGlobalLogger(conf.Logger)
+		logger.InitGlobalLogger(context.Background(), conf.Logger)
 
 		terminal.PrintLine()
 		terminal.PrintWarnMsgf("⚠️  PRUNE OPERATION WARNING")

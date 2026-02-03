@@ -26,11 +26,6 @@ func NewValidatorModel(
 	}
 }
 
-// Context returns the model's context (e.g. for cancellation).
-func (m *ValidatorModel) Context() context.Context {
-	return m.ctx
-}
-
 // Validators returns validator info for this node's consensus instances.
 // It calls GetConsensusInfo to get instance addresses, then GetValidator for each.
 func (m *ValidatorModel) Validators() ([]*pactus.ValidatorInfo, error) {

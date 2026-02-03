@@ -10,9 +10,9 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/ezex-io/gopkg/scheduler"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/types/amount"
@@ -24,12 +24,6 @@ type NodeWidgetController struct {
 	node *node.Node
 
 	genesisTime time.Time
-
-	timeout1ID  glib.SourceHandle
-	timeout10ID glib.SourceHandle
-
-	ctx    context.Context
-	cancel context.CancelFunc
 }
 
 type nodeWidgetSnapshot struct {
@@ -48,7 +42,7 @@ func NewNodeWidgetController(view *view.NodeWidgetView, nde *node.Node) *NodeWid
 	return &NodeWidgetController{view: view, node: nde, genesisTime: nde.State().Genesis().GenesisTime()}
 }
 
-func (c *NodeWidgetController) Bind() error {
+func (c *NodeWidgetController) Bind(ctx context.Context) error {
 	cwd, err := os.Getwd()
 	if err != nil {
 		return err
@@ -62,24 +56,8 @@ func (c *NodeWidgetController) Bind() error {
 
 	c.view.ConnectSignals(map[string]any{})
 
-	c.timeout1ID = glib.TimeoutAdd(1000, func() bool {
-		if gtkutil.IsContextDone(c.ctx) {
-			return false
-		}
-
-		c.timeout1()
-
-		return true
-	})
-	c.timeout10ID = glib.TimeoutAdd(10000, func() bool {
-		if gtkutil.IsContextDone(c.ctx) {
-			return false
-		}
-
-		c.timeout10()
-
-		return true
-	})
+	scheduler.Every(ctx, time.Second).Do(c.timeout1)
+	scheduler.Every(ctx, 10*time.Second).Do(c.timeout10)
 
 	// Initial refresh.
 	c.timeout1()
@@ -89,75 +67,54 @@ func (c *NodeWidgetController) Bind() error {
 }
 
 func (c *NodeWidgetController) timeout1() {
-	go func() {
-		if gtkutil.IsContextDone(c.ctx) {
-			return
-		}
+	lastBlockTime := c.node.State().LastBlockTime()
+	lastBlockHeight := c.node.State().LastBlockHeight()
 
-		lastBlockTime := c.node.State().LastBlockTime()
-		lastBlockHeight := c.node.State().LastBlockHeight()
+	glib.IdleAdd(func() bool {
+		c.view.LabelLastBlockTime.SetText(lastBlockTime.Format("02 Jan 06 15:04:05 MST"))
+		c.view.LabelLastBlockHeight.SetText(strconv.FormatInt(int64(lastBlockHeight), 10))
 
-		glib.IdleAdd(func() bool {
-			if gtkutil.IsContextDone(c.ctx) {
-				return false
-			}
+		nowUnix := time.Now().Unix()
+		lastBlockTimeUnix := lastBlockTime.Unix()
+		genTimeUnix := c.genesisTime.Unix()
 
-			c.view.LabelLastBlockTime.SetText(lastBlockTime.Format("02 Jan 06 15:04:05 MST"))
-			c.view.LabelLastBlockHeight.SetText(strconv.FormatInt(int64(lastBlockHeight), 10))
+		percentage := float64(lastBlockTimeUnix-genTimeUnix) / float64(nowUnix-genTimeUnix)
+		c.view.ProgressBarSynced.SetFraction(percentage)
+		c.view.ProgressBarSynced.SetText(fmt.Sprintf("%s %%", strconv.FormatFloat(percentage*100, 'f', 2, 64)))
 
-			nowUnix := time.Now().Unix()
-			lastBlockTimeUnix := lastBlockTime.Unix()
-			genTimeUnix := c.genesisTime.Unix()
+		blocksLeft := (nowUnix - lastBlockTimeUnix) / 10
+		c.view.LabelBlocksLeft.SetText(strconv.FormatInt(blocksLeft, 10))
 
-			percentage := float64(lastBlockTimeUnix-genTimeUnix) / float64(nowUnix-genTimeUnix)
-			c.view.ProgressBarSynced.SetFraction(percentage)
-			c.view.ProgressBarSynced.SetText(fmt.Sprintf("%s %%", strconv.FormatFloat(percentage*100, 'f', 2, 64)))
-
-			blocksLeft := (nowUnix - lastBlockTimeUnix) / 10
-			c.view.LabelBlocksLeft.SetText(strconv.FormatInt(blocksLeft, 10))
-
-			return false
-		})
-	}()
+		return false
+	})
 }
 
 func (c *NodeWidgetController) timeout10() {
-	go func() {
-		if gtkutil.IsContextDone(c.ctx) {
-			return
-		}
+	info := c.node.State().ChainInfo()
+	offset, offsetErr := c.node.Sync().ClockOffset()
 
-		info := c.node.State().ChainInfo()
-		offset, offsetErr := c.node.Sync().ClockOffset()
+	snapshot := nodeWidgetSnapshot{
+		committeeSize:    c.node.State().Params().CommitteeSize,
+		committeeStake:   amount.Amount(info.CommitteePower),
+		totalStake:       amount.Amount(info.TotalPower),
+		activeValidators: info.ActiveValidators,
+		numConnections: fmt.Sprintf("%v (Inbound: %v, Outbound %v)",
+			c.node.Network().NumConnectedPeers(),
+			c.node.Network().NumInbound(),
+			c.node.Network().NumOutbound(),
+		),
+		reachability:   c.node.Network().ReachabilityStatus(),
+		inCommittee:    c.node.ConsManager().HasActiveInstance(),
+		clockOffset:    offset,
+		clockOffsetErr: offsetErr,
+	}
 
-		snapshot := nodeWidgetSnapshot{
-			committeeSize:    c.node.State().Params().CommitteeSize,
-			committeeStake:   amount.Amount(info.CommitteePower),
-			totalStake:       amount.Amount(info.TotalPower),
-			activeValidators: info.ActiveValidators,
-			numConnections: fmt.Sprintf("%v (Inbound: %v, Outbound %v)",
-				c.node.Network().NumConnectedPeers(),
-				c.node.Network().NumInbound(),
-				c.node.Network().NumOutbound(),
-			),
-			reachability:   c.node.Network().ReachabilityStatus(),
-			inCommittee:    c.node.ConsManager().HasActiveInstance(),
-			clockOffset:    offset,
-			clockOffsetErr: offsetErr,
-		}
-
-		glib.IdleAdd(func() bool { return c.applyTimeout10Snapshot(&snapshot) })
-	}()
+	glib.IdleAdd(func() bool {
+		return c.applyTimeout10Snapshot(&snapshot)
+	})
 }
 
 func (c *NodeWidgetController) applyTimeout10Snapshot(snapshot *nodeWidgetSnapshot) bool {
-	if gtkutil.IsContextDone(c.ctx) {
-		return false
-	}
-	if snapshot == nil {
-		return false
-	}
-
 	styleContext, err := c.view.LabelClockOffset.GetStyleContext()
 	if err != nil {
 		logger.Error("failed to get style context", "err", err)
@@ -213,19 +170,4 @@ func (c *NodeWidgetController) setInCommittee(inCommittee bool) {
 	}
 
 	c.view.LabelInCommittee.SetText("No")
-}
-
-func (c *NodeWidgetController) Cleanup() {
-	if c.timeout1ID != 0 {
-		glib.SourceRemove(c.timeout1ID)
-		c.timeout1ID = 0
-	}
-	if c.timeout10ID != 0 {
-		glib.SourceRemove(c.timeout10ID)
-		c.timeout10ID = 0
-	}
-	if c.cancel != nil {
-		c.cancel()
-		c.cancel = nil
-	}
 }

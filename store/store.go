@@ -141,7 +141,7 @@ func (s *store) Close() {
 	defer s.lk.Unlock()
 
 	err := s.db.Close()
-	if err != nil {
+	if err != nil && !errors.Is(err, leveldb.ErrClosed) {
 		logger.Error("error on closing store", "error", err)
 	}
 }

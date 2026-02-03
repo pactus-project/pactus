@@ -5,12 +5,12 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/ezex-io/gopkg/signal"
 	"github.com/gofrs/flock"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/downloader"
 	"github.com/pactus-project/pactus/util/prompt"
-	"github.com/pactus-project/pactus/util/signal"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/spf13/cobra"
 )
