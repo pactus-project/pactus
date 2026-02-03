@@ -55,6 +55,7 @@ func (s *blockchainServer) GetCommitteeInfo(_ context.Context,
 	for k, v := range info.ProtocolVersions {
 		protocolVersions[int32(k)] = v
 	}
+
 	return &pactus.GetCommitteeInfoResponse{
 		Validators:       valInfos,
 		ProtocolVersions: protocolVersions,
