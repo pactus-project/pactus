@@ -161,6 +161,27 @@ func local_request_Blockchain_GetBlockchainInfo_0(ctx context.Context, marshaler
 	return msg, metadata, err
 }
 
+func request_Blockchain_GetCommitteeInfo_0(ctx context.Context, marshaler runtime.Marshaler, client BlockchainClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq GetCommitteeInfoRequest
+		metadata runtime.ServerMetadata
+	)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
+	msg, err := client.GetCommitteeInfo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+}
+
+func local_request_Blockchain_GetCommitteeInfo_0(ctx context.Context, marshaler runtime.Marshaler, server BlockchainServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq GetCommitteeInfoRequest
+		metadata runtime.ServerMetadata
+	)
+	msg, err := server.GetCommitteeInfo(ctx, &protoReq)
+	return msg, metadata, err
+}
+
 func request_Blockchain_GetConsensusInfo_0(ctx context.Context, marshaler runtime.Marshaler, client BlockchainClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq GetConsensusInfoRequest
@@ -464,6 +485,26 @@ func RegisterBlockchainHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		}
 		forward_Blockchain_GetBlockchainInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+	mux.Handle(http.MethodGet, pattern_Blockchain_GetCommitteeInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Blockchain/GetCommitteeInfo", runtime.WithHTTPPathPattern("/pactus/blockchain/get_committee_info"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_Blockchain_GetCommitteeInfo_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_Blockchain_GetCommitteeInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
 	mux.Handle(http.MethodGet, pattern_Blockchain_GetConsensusInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -712,6 +753,23 @@ func RegisterBlockchainHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		}
 		forward_Blockchain_GetBlockchainInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+	mux.Handle(http.MethodGet, pattern_Blockchain_GetCommitteeInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.Blockchain/GetCommitteeInfo", runtime.WithHTTPPathPattern("/pactus/blockchain/get_committee_info"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_Blockchain_GetCommitteeInfo_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_Blockchain_GetCommitteeInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
 	mux.Handle(http.MethodGet, pattern_Blockchain_GetConsensusInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -839,6 +897,7 @@ var (
 	pattern_Blockchain_GetBlockHash_0          = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "blockchain", "get_block_hash"}, ""))
 	pattern_Blockchain_GetBlockHeight_0        = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "blockchain", "get_block_height"}, ""))
 	pattern_Blockchain_GetBlockchainInfo_0     = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "blockchain", "get_blockchain_info"}, ""))
+	pattern_Blockchain_GetCommitteeInfo_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "blockchain", "get_committee_info"}, ""))
 	pattern_Blockchain_GetConsensusInfo_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "blockchain", "get_consensus_info"}, ""))
 	pattern_Blockchain_GetAccount_0            = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "blockchain", "get_account"}, ""))
 	pattern_Blockchain_GetValidator_0          = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "blockchain", "get_validator"}, ""))
@@ -853,6 +912,7 @@ var (
 	forward_Blockchain_GetBlockHash_0          = runtime.ForwardResponseMessage
 	forward_Blockchain_GetBlockHeight_0        = runtime.ForwardResponseMessage
 	forward_Blockchain_GetBlockchainInfo_0     = runtime.ForwardResponseMessage
+	forward_Blockchain_GetCommitteeInfo_0      = runtime.ForwardResponseMessage
 	forward_Blockchain_GetConsensusInfo_0      = runtime.ForwardResponseMessage
 	forward_Blockchain_GetAccount_0            = runtime.ForwardResponseMessage
 	forward_Blockchain_GetValidator_0          = runtime.ForwardResponseMessage

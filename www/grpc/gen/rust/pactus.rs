@@ -544,7 +544,7 @@ pub struct GetBlockHeightResponse {
 pub struct GetBlockchainInfoRequest {
 }
 /// Response message contains general blockchain information.
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct GetBlockchainInfoResponse {
     /// The height of the last block in the blockchain.
     #[prost(uint32, tag="1")]
@@ -552,36 +552,47 @@ pub struct GetBlockchainInfoResponse {
     /// The hash of the last block in the blockchain.
     #[prost(string, tag="2")]
     pub last_block_hash: ::prost::alloc::string::String,
+    /// The timestamp of the last block in Unix format.
+    #[prost(int64, tag="3")]
+    pub last_block_time: i64,
     /// The total number of accounts in the blockchain.
-    #[prost(int32, tag="3")]
+    #[prost(int32, tag="4")]
     pub total_accounts: i32,
     /// The total number of validators in the blockchain.
-    #[prost(int32, tag="4")]
+    #[prost(int32, tag="5")]
     pub total_validators: i32,
     /// The number of active (not unbonded) validators in the blockchain.
-    #[prost(int32, tag="12")]
+    #[prost(int32, tag="6")]
     pub active_validators: i32,
     /// The total power of the blockchain.
-    #[prost(int64, tag="5")]
+    #[prost(int64, tag="7")]
     pub total_power: i64,
     /// The power of the committee.
-    #[prost(int64, tag="6")]
+    #[prost(int64, tag="8")]
     pub committee_power: i64,
-    /// List of committee validators.
-    #[prost(message, repeated, tag="7")]
-    pub committee_validators: ::prost::alloc::vec::Vec<ValidatorInfo>,
     /// If the blocks are subject to pruning.
-    #[prost(bool, tag="8")]
+    #[prost(bool, tag="9")]
     pub is_pruned: bool,
     /// Lowest-height block stored (only present if pruning is enabled)
-    #[prost(uint32, tag="9")]
+    #[prost(uint32, tag="10")]
     pub pruning_height: u32,
-    /// Timestamp of the last block in Unix format
-    #[prost(int64, tag="10")]
-    pub last_block_time: i64,
+}
+/// Request message for retrieving committee information.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetCommitteeInfoRequest {
+}
+/// Response message contains committee information.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetCommitteeInfoResponse {
+    /// The power of the committee.
+    #[prost(int64, tag="1")]
+    pub committee_power: i64,
+    /// List of committee validators.
+    #[prost(message, repeated, tag="2")]
+    pub validators: ::prost::alloc::vec::Vec<ValidatorInfo>,
     /// Map of protocol versions and their percentages in the committee.
-    #[prost(map="int32, double", tag="11")]
-    pub committee_protocol_versions: ::std::collections::HashMap<i32, f64>,
+    #[prost(map="int32, double", tag="3")]
+    pub protocol_versions: ::std::collections::HashMap<i32, f64>,
 }
 /// Request message for retrieving consensus information.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]

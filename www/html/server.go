@@ -78,6 +78,7 @@ func (s *Server) StartServer(grpcServer string) error {
 	s.router = mux.NewRouter()
 	s.router.HandleFunc("/", s.RootHandler)
 	s.router.HandleFunc("/blockchain/", s.BlockchainHandler)
+	s.router.HandleFunc("/committee/", s.CommitteeHandler)
 	s.router.HandleFunc("/consensus", s.ConsensusHandler)
 	s.router.HandleFunc("/network", s.NetworkHandler)
 	s.router.HandleFunc("/node", s.NodeHandler)

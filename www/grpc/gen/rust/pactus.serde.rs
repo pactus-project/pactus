@@ -3279,6 +3279,9 @@ impl serde::Serialize for GetBlockchainInfoResponse {
         if !self.last_block_hash.is_empty() {
             len += 1;
         }
+        if self.last_block_time != 0 {
+            len += 1;
+        }
         if self.total_accounts != 0 {
             len += 1;
         }
@@ -3294,19 +3297,10 @@ impl serde::Serialize for GetBlockchainInfoResponse {
         if self.committee_power != 0 {
             len += 1;
         }
-        if !self.committee_validators.is_empty() {
-            len += 1;
-        }
         if self.is_pruned {
             len += 1;
         }
         if self.pruning_height != 0 {
-            len += 1;
-        }
-        if self.last_block_time != 0 {
-            len += 1;
-        }
-        if !self.committee_protocol_versions.is_empty() {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("pactus.GetBlockchainInfoResponse", len)?;
@@ -3315,6 +3309,11 @@ impl serde::Serialize for GetBlockchainInfoResponse {
         }
         if !self.last_block_hash.is_empty() {
             struct_ser.serialize_field("lastBlockHash", &self.last_block_hash)?;
+        }
+        if self.last_block_time != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("lastBlockTime", ToString::to_string(&self.last_block_time).as_str())?;
         }
         if self.total_accounts != 0 {
             struct_ser.serialize_field("totalAccounts", &self.total_accounts)?;
@@ -3335,22 +3334,11 @@ impl serde::Serialize for GetBlockchainInfoResponse {
             #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("committeePower", ToString::to_string(&self.committee_power).as_str())?;
         }
-        if !self.committee_validators.is_empty() {
-            struct_ser.serialize_field("committeeValidators", &self.committee_validators)?;
-        }
         if self.is_pruned {
             struct_ser.serialize_field("isPruned", &self.is_pruned)?;
         }
         if self.pruning_height != 0 {
             struct_ser.serialize_field("pruningHeight", &self.pruning_height)?;
-        }
-        if self.last_block_time != 0 {
-            #[allow(clippy::needless_borrow)]
-            #[allow(clippy::needless_borrows_for_generic_args)]
-            struct_ser.serialize_field("lastBlockTime", ToString::to_string(&self.last_block_time).as_str())?;
-        }
-        if !self.committee_protocol_versions.is_empty() {
-            struct_ser.serialize_field("committeeProtocolVersions", &self.committee_protocol_versions)?;
         }
         struct_ser.end()
     }
@@ -3366,6 +3354,8 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
             "lastBlockHeight",
             "last_block_hash",
             "lastBlockHash",
+            "last_block_time",
+            "lastBlockTime",
             "total_accounts",
             "totalAccounts",
             "total_validators",
@@ -3376,32 +3366,24 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
             "totalPower",
             "committee_power",
             "committeePower",
-            "committee_validators",
-            "committeeValidators",
             "is_pruned",
             "isPruned",
             "pruning_height",
             "pruningHeight",
-            "last_block_time",
-            "lastBlockTime",
-            "committee_protocol_versions",
-            "committeeProtocolVersions",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             LastBlockHeight,
             LastBlockHash,
+            LastBlockTime,
             TotalAccounts,
             TotalValidators,
             ActiveValidators,
             TotalPower,
             CommitteePower,
-            CommitteeValidators,
             IsPruned,
             PruningHeight,
-            LastBlockTime,
-            CommitteeProtocolVersions,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -3425,16 +3407,14 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                         match value {
                             "lastBlockHeight" | "last_block_height" => Ok(GeneratedField::LastBlockHeight),
                             "lastBlockHash" | "last_block_hash" => Ok(GeneratedField::LastBlockHash),
+                            "lastBlockTime" | "last_block_time" => Ok(GeneratedField::LastBlockTime),
                             "totalAccounts" | "total_accounts" => Ok(GeneratedField::TotalAccounts),
                             "totalValidators" | "total_validators" => Ok(GeneratedField::TotalValidators),
                             "activeValidators" | "active_validators" => Ok(GeneratedField::ActiveValidators),
                             "totalPower" | "total_power" => Ok(GeneratedField::TotalPower),
                             "committeePower" | "committee_power" => Ok(GeneratedField::CommitteePower),
-                            "committeeValidators" | "committee_validators" => Ok(GeneratedField::CommitteeValidators),
                             "isPruned" | "is_pruned" => Ok(GeneratedField::IsPruned),
                             "pruningHeight" | "pruning_height" => Ok(GeneratedField::PruningHeight),
-                            "lastBlockTime" | "last_block_time" => Ok(GeneratedField::LastBlockTime),
-                            "committeeProtocolVersions" | "committee_protocol_versions" => Ok(GeneratedField::CommitteeProtocolVersions),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -3456,16 +3436,14 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
             {
                 let mut last_block_height__ = None;
                 let mut last_block_hash__ = None;
+                let mut last_block_time__ = None;
                 let mut total_accounts__ = None;
                 let mut total_validators__ = None;
                 let mut active_validators__ = None;
                 let mut total_power__ = None;
                 let mut committee_power__ = None;
-                let mut committee_validators__ = None;
                 let mut is_pruned__ = None;
                 let mut pruning_height__ = None;
-                let mut last_block_time__ = None;
-                let mut committee_protocol_versions__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::LastBlockHeight => {
@@ -3481,6 +3459,14 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                                 return Err(serde::de::Error::duplicate_field("lastBlockHash"));
                             }
                             last_block_hash__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::LastBlockTime => {
+                            if last_block_time__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("lastBlockTime"));
+                            }
+                            last_block_time__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
                         }
                         GeneratedField::TotalAccounts => {
                             if total_accounts__.is_some() {
@@ -3522,12 +3508,6 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                                 Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
-                        GeneratedField::CommitteeValidators => {
-                            if committee_validators__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("committeeValidators"));
-                            }
-                            committee_validators__ = Some(map_.next_value()?);
-                        }
                         GeneratedField::IsPruned => {
                             if is_pruned__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("isPruned"));
@@ -3542,42 +3522,228 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                                 Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
-                        GeneratedField::LastBlockTime => {
-                            if last_block_time__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("lastBlockTime"));
+                    }
+                }
+                Ok(GetBlockchainInfoResponse {
+                    last_block_height: last_block_height__.unwrap_or_default(),
+                    last_block_hash: last_block_hash__.unwrap_or_default(),
+                    last_block_time: last_block_time__.unwrap_or_default(),
+                    total_accounts: total_accounts__.unwrap_or_default(),
+                    total_validators: total_validators__.unwrap_or_default(),
+                    active_validators: active_validators__.unwrap_or_default(),
+                    total_power: total_power__.unwrap_or_default(),
+                    committee_power: committee_power__.unwrap_or_default(),
+                    is_pruned: is_pruned__.unwrap_or_default(),
+                    pruning_height: pruning_height__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.GetBlockchainInfoResponse", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for GetCommitteeInfoRequest {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let len = 0;
+        let struct_ser = serializer.serialize_struct("pactus.GetCommitteeInfoRequest", len)?;
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for GetCommitteeInfoRequest {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                            Err(serde::de::Error::unknown_field(value, FIELDS))
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = GetCommitteeInfoRequest;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.GetCommitteeInfoRequest")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetCommitteeInfoRequest, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                while map_.next_key::<GeneratedField>()?.is_some() {
+                    let _ = map_.next_value::<serde::de::IgnoredAny>()?;
+                }
+                Ok(GetCommitteeInfoRequest {
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.GetCommitteeInfoRequest", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for GetCommitteeInfoResponse {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.committee_power != 0 {
+            len += 1;
+        }
+        if !self.validators.is_empty() {
+            len += 1;
+        }
+        if !self.protocol_versions.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.GetCommitteeInfoResponse", len)?;
+        if self.committee_power != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("committeePower", ToString::to_string(&self.committee_power).as_str())?;
+        }
+        if !self.validators.is_empty() {
+            struct_ser.serialize_field("validators", &self.validators)?;
+        }
+        if !self.protocol_versions.is_empty() {
+            struct_ser.serialize_field("protocolVersions", &self.protocol_versions)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for GetCommitteeInfoResponse {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "committee_power",
+            "committeePower",
+            "validators",
+            "protocol_versions",
+            "protocolVersions",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            CommitteePower,
+            Validators,
+            ProtocolVersions,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "committeePower" | "committee_power" => Ok(GeneratedField::CommitteePower),
+                            "validators" => Ok(GeneratedField::Validators),
+                            "protocolVersions" | "protocol_versions" => Ok(GeneratedField::ProtocolVersions),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = GetCommitteeInfoResponse;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.GetCommitteeInfoResponse")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetCommitteeInfoResponse, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut committee_power__ = None;
+                let mut validators__ = None;
+                let mut protocol_versions__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::CommitteePower => {
+                            if committee_power__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("committeePower"));
                             }
-                            last_block_time__ = 
+                            committee_power__ = 
                                 Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
-                        GeneratedField::CommitteeProtocolVersions => {
-                            if committee_protocol_versions__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("committeeProtocolVersions"));
+                        GeneratedField::Validators => {
+                            if validators__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("validators"));
                             }
-                            committee_protocol_versions__ = Some(
+                            validators__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::ProtocolVersions => {
+                            if protocol_versions__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("protocolVersions"));
+                            }
+                            protocol_versions__ = Some(
                                 map_.next_value::<std::collections::HashMap<::pbjson::private::NumberDeserialize<i32>, ::pbjson::private::NumberDeserialize<f64>>>()?
                                     .into_iter().map(|(k,v)| (k.0, v.0)).collect()
                             );
                         }
                     }
                 }
-                Ok(GetBlockchainInfoResponse {
-                    last_block_height: last_block_height__.unwrap_or_default(),
-                    last_block_hash: last_block_hash__.unwrap_or_default(),
-                    total_accounts: total_accounts__.unwrap_or_default(),
-                    total_validators: total_validators__.unwrap_or_default(),
-                    active_validators: active_validators__.unwrap_or_default(),
-                    total_power: total_power__.unwrap_or_default(),
+                Ok(GetCommitteeInfoResponse {
                     committee_power: committee_power__.unwrap_or_default(),
-                    committee_validators: committee_validators__.unwrap_or_default(),
-                    is_pruned: is_pruned__.unwrap_or_default(),
-                    pruning_height: pruning_height__.unwrap_or_default(),
-                    last_block_time: last_block_time__.unwrap_or_default(),
-                    committee_protocol_versions: committee_protocol_versions__.unwrap_or_default(),
+                    validators: validators__.unwrap_or_default(),
+                    protocol_versions: protocol_versions__.unwrap_or_default(),
                 })
             }
         }
-        deserializer.deserialize_struct("pactus.GetBlockchainInfoResponse", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("pactus.GetCommitteeInfoResponse", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for GetConsensusInfoRequest {

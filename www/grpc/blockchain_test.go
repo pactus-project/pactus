@@ -164,6 +164,21 @@ func TestGetBlockchainInfo(t *testing.T) {
 	})
 }
 
+func TestGetCommitteeInfo(t *testing.T) {
+	td := setup(t, nil)
+	client := td.blockchainClient(t)
+
+	t.Run("Should return committee info", func(t *testing.T) {
+		res, err := client.GetCommitteeInfo(context.Background(),
+			&pactus.GetCommitteeInfoRequest{})
+		assert.NoError(t, err)
+		assert.NotNil(t, res)
+		assert.GreaterOrEqual(t, res.CommitteePower, int64(0))
+		assert.NotNil(t, res.Validators)
+		assert.NotNil(t, res.ProtocolVersions)
+	})
+}
+
 func TestGetAccount(t *testing.T) {
 	td := setup(t, nil)
 	client := td.blockchainClient(t)

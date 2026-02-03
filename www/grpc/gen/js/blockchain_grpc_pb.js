@@ -115,6 +115,28 @@ function deserialize_pactus_GetBlockchainInfoResponse(buffer_arg) {
   return blockchain_pb.GetBlockchainInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_GetCommitteeInfoRequest(arg) {
+  if (!(arg instanceof blockchain_pb.GetCommitteeInfoRequest)) {
+    throw new Error('Expected argument of type pactus.GetCommitteeInfoRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetCommitteeInfoRequest(buffer_arg) {
+  return blockchain_pb.GetCommitteeInfoRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_GetCommitteeInfoResponse(arg) {
+  if (!(arg instanceof blockchain_pb.GetCommitteeInfoResponse)) {
+    throw new Error('Expected argument of type pactus.GetCommitteeInfoResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetCommitteeInfoResponse(buffer_arg) {
+  return blockchain_pb.GetCommitteeInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_GetConsensusInfoRequest(arg) {
   if (!(arg instanceof blockchain_pb.GetConsensusInfoRequest)) {
     throw new Error('Expected argument of type pactus.GetConsensusInfoRequest');
@@ -286,6 +308,18 @@ getBlockchainInfo: {
     requestDeserialize: deserialize_pactus_GetBlockchainInfoRequest,
     responseSerialize: serialize_pactus_GetBlockchainInfoResponse,
     responseDeserialize: deserialize_pactus_GetBlockchainInfoResponse,
+  },
+  // GetCommitteeInfo retrieves information about the current committee.
+getCommitteeInfo: {
+    path: '/pactus.Blockchain/GetCommitteeInfo',
+    requestStream: false,
+    responseStream: false,
+    requestType: blockchain_pb.GetCommitteeInfoRequest,
+    responseType: blockchain_pb.GetCommitteeInfoResponse,
+    requestSerialize: serialize_pactus_GetCommitteeInfoRequest,
+    requestDeserialize: deserialize_pactus_GetCommitteeInfoRequest,
+    responseSerialize: serialize_pactus_GetCommitteeInfoResponse,
+    responseDeserialize: deserialize_pactus_GetCommitteeInfoResponse,
   },
   // GetConsensusInfo retrieves information about the consensus instances.
 getConsensusInfo: {

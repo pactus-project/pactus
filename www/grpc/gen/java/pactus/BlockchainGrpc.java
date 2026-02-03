@@ -139,6 +139,37 @@ public final class BlockchainGrpc {
     return getGetBlockchainInfoMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pactus.BlockchainOuterClass.GetCommitteeInfoRequest,
+      pactus.BlockchainOuterClass.GetCommitteeInfoResponse> getGetCommitteeInfoMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetCommitteeInfo",
+      requestType = pactus.BlockchainOuterClass.GetCommitteeInfoRequest.class,
+      responseType = pactus.BlockchainOuterClass.GetCommitteeInfoResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.BlockchainOuterClass.GetCommitteeInfoRequest,
+      pactus.BlockchainOuterClass.GetCommitteeInfoResponse> getGetCommitteeInfoMethod() {
+    io.grpc.MethodDescriptor<pactus.BlockchainOuterClass.GetCommitteeInfoRequest, pactus.BlockchainOuterClass.GetCommitteeInfoResponse> getGetCommitteeInfoMethod;
+    if ((getGetCommitteeInfoMethod = BlockchainGrpc.getGetCommitteeInfoMethod) == null) {
+      synchronized (BlockchainGrpc.class) {
+        if ((getGetCommitteeInfoMethod = BlockchainGrpc.getGetCommitteeInfoMethod) == null) {
+          BlockchainGrpc.getGetCommitteeInfoMethod = getGetCommitteeInfoMethod =
+              io.grpc.MethodDescriptor.<pactus.BlockchainOuterClass.GetCommitteeInfoRequest, pactus.BlockchainOuterClass.GetCommitteeInfoResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetCommitteeInfo"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.BlockchainOuterClass.GetCommitteeInfoRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.BlockchainOuterClass.GetCommitteeInfoResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new BlockchainMethodDescriptorSupplier("GetCommitteeInfo"))
+              .build();
+        }
+      }
+    }
+    return getGetCommitteeInfoMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<pactus.BlockchainOuterClass.GetConsensusInfoRequest,
       pactus.BlockchainOuterClass.GetConsensusInfoResponse> getGetConsensusInfoMethod;
 
@@ -464,6 +495,16 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
+     * GetCommitteeInfo retrieves information about the current committee.
+     * </pre>
+     */
+    default void getCommitteeInfo(pactus.BlockchainOuterClass.GetCommitteeInfoRequest request,
+        io.grpc.stub.StreamObserver<pactus.BlockchainOuterClass.GetCommitteeInfoResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetCommitteeInfoMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
      * GetConsensusInfo retrieves information about the consensus instances.
      * </pre>
      */
@@ -612,6 +653,17 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
+     * GetCommitteeInfo retrieves information about the current committee.
+     * </pre>
+     */
+    public void getCommitteeInfo(pactus.BlockchainOuterClass.GetCommitteeInfoRequest request,
+        io.grpc.stub.StreamObserver<pactus.BlockchainOuterClass.GetCommitteeInfoResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetCommitteeInfoMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
      * GetConsensusInfo retrieves information about the consensus instances.
      * </pre>
      */
@@ -749,6 +801,16 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
+     * GetCommitteeInfo retrieves information about the current committee.
+     * </pre>
+     */
+    public pactus.BlockchainOuterClass.GetCommitteeInfoResponse getCommitteeInfo(pactus.BlockchainOuterClass.GetCommitteeInfoRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getGetCommitteeInfoMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
      * GetConsensusInfo retrieves information about the consensus instances.
      * </pre>
      */
@@ -875,6 +937,16 @@ public final class BlockchainGrpc {
     public pactus.BlockchainOuterClass.GetBlockchainInfoResponse getBlockchainInfo(pactus.BlockchainOuterClass.GetBlockchainInfoRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetBlockchainInfoMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * GetCommitteeInfo retrieves information about the current committee.
+     * </pre>
+     */
+    public pactus.BlockchainOuterClass.GetCommitteeInfoResponse getCommitteeInfo(pactus.BlockchainOuterClass.GetCommitteeInfoRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetCommitteeInfoMethod(), getCallOptions(), request);
     }
 
     /**
@@ -1013,6 +1085,17 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
+     * GetCommitteeInfo retrieves information about the current committee.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.BlockchainOuterClass.GetCommitteeInfoResponse> getCommitteeInfo(
+        pactus.BlockchainOuterClass.GetCommitteeInfoRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetCommitteeInfoMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
      * GetConsensusInfo retrieves information about the consensus instances.
      * </pre>
      */
@@ -1093,13 +1176,14 @@ public final class BlockchainGrpc {
   private static final int METHODID_GET_BLOCK_HASH = 1;
   private static final int METHODID_GET_BLOCK_HEIGHT = 2;
   private static final int METHODID_GET_BLOCKCHAIN_INFO = 3;
-  private static final int METHODID_GET_CONSENSUS_INFO = 4;
-  private static final int METHODID_GET_ACCOUNT = 5;
-  private static final int METHODID_GET_VALIDATOR = 6;
-  private static final int METHODID_GET_VALIDATOR_BY_NUMBER = 7;
-  private static final int METHODID_GET_VALIDATOR_ADDRESSES = 8;
-  private static final int METHODID_GET_PUBLIC_KEY = 9;
-  private static final int METHODID_GET_TX_POOL_CONTENT = 10;
+  private static final int METHODID_GET_COMMITTEE_INFO = 4;
+  private static final int METHODID_GET_CONSENSUS_INFO = 5;
+  private static final int METHODID_GET_ACCOUNT = 6;
+  private static final int METHODID_GET_VALIDATOR = 7;
+  private static final int METHODID_GET_VALIDATOR_BY_NUMBER = 8;
+  private static final int METHODID_GET_VALIDATOR_ADDRESSES = 9;
+  private static final int METHODID_GET_PUBLIC_KEY = 10;
+  private static final int METHODID_GET_TX_POOL_CONTENT = 11;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1133,6 +1217,10 @@ public final class BlockchainGrpc {
         case METHODID_GET_BLOCKCHAIN_INFO:
           serviceImpl.getBlockchainInfo((pactus.BlockchainOuterClass.GetBlockchainInfoRequest) request,
               (io.grpc.stub.StreamObserver<pactus.BlockchainOuterClass.GetBlockchainInfoResponse>) responseObserver);
+          break;
+        case METHODID_GET_COMMITTEE_INFO:
+          serviceImpl.getCommitteeInfo((pactus.BlockchainOuterClass.GetCommitteeInfoRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.BlockchainOuterClass.GetCommitteeInfoResponse>) responseObserver);
           break;
         case METHODID_GET_CONSENSUS_INFO:
           serviceImpl.getConsensusInfo((pactus.BlockchainOuterClass.GetConsensusInfoRequest) request,
@@ -1208,6 +1296,13 @@ public final class BlockchainGrpc {
               pactus.BlockchainOuterClass.GetBlockchainInfoRequest,
               pactus.BlockchainOuterClass.GetBlockchainInfoResponse>(
                 service, METHODID_GET_BLOCKCHAIN_INFO)))
+        .addMethod(
+          getGetCommitteeInfoMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              pactus.BlockchainOuterClass.GetCommitteeInfoRequest,
+              pactus.BlockchainOuterClass.GetCommitteeInfoResponse>(
+                service, METHODID_GET_COMMITTEE_INFO)))
         .addMethod(
           getGetConsensusInfoMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -1309,6 +1404,7 @@ public final class BlockchainGrpc {
               .addMethod(getGetBlockHashMethod())
               .addMethod(getGetBlockHeightMethod())
               .addMethod(getGetBlockchainInfoMethod())
+              .addMethod(getGetCommitteeInfoMethod())
               .addMethod(getGetConsensusInfoMethod())
               .addMethod(getGetAccountMethod())
               .addMethod(getGetValidatorMethod())
