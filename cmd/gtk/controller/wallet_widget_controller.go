@@ -104,19 +104,19 @@ func (c *WalletWidgetController) Bind(ctx context.Context, handlers WalletWidget
 	// Context menu actions.
 	c.view.MenuItemUpdateLabel.Connect("activate", func(_ *gtk.MenuItem) {
 		addr := c.selectedAddress()
-		if addr != "" && handlers.OnUpdateLabel != nil {
+		if addr != "" {
 			handlers.OnUpdateLabel(addr)
 		}
 	})
 	c.view.MenuItemDetails.Connect("activate", func(_ *gtk.MenuItem) {
 		addr := c.selectedAddress()
-		if addr != "" && handlers.OnShowDetails != nil {
+		if addr != "" {
 			handlers.OnShowDetails(addr)
 		}
 	})
 	c.view.MenuItemPrivateKey.Connect("activate", func(_ *gtk.MenuItem) {
 		addr := c.selectedAddress()
-		if addr != "" && handlers.OnShowPrivateKey != nil {
+		if addr != "" {
 			handlers.OnShowPrivateKey(addr)
 		}
 	})
@@ -134,7 +134,7 @@ func (c *WalletWidgetController) Bind(ctx context.Context, handlers WalletWidget
 	// Double-click opens details.
 	c.view.TreeViewWallet.Connect("row-activated", func(_ *gtk.TreeView, _ *gtk.TreePath, _ *gtk.TreeViewColumn) {
 		addr := c.selectedAddress()
-		if addr != "" && handlers.OnShowDetails != nil {
+		if addr != "" {
 			handlers.OnShowDetails(addr)
 		}
 	})

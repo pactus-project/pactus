@@ -11,10 +11,8 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
-	"github.com/pactus-project/pactus/node"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 type GUI struct {
@@ -26,38 +24,33 @@ type GUI struct {
 }
 
 // Run builds and shows the main window, wiring views/controllers.
+// It accepts a gRPC connection to the node.
 // It returns a cleanup function that closes the window and stops timers.
-func Run(ctx context.Context, n *node.Node, gtkApp *gtk.Application) (*GUI, error) {
+func Run(ctx context.Context, conn *grpc.ClientConn, gtkApp *gtk.Application) (*GUI, error) {
 	mwView, err := view.NewMainWindowView()
 	if err != nil {
 		return nil, err
 	}
+	blockchainClient := pactus.NewBlockchainClient(conn)
+	transactionClient := pactus.NewTransactionClient(conn)
+	networkClient := pactus.NewNetworkClient(conn)
+	walletClient := pactus.NewWalletClient(conn)
 
+	nodeModel := model.NewNodeModel(ctx, blockchainClient, networkClient)
 	nodeView, err := view.NewNodeWidgetView()
 	if err != nil {
 		return nil, err
 	}
-	nodeCtrl := controller.NewNodeWidgetController(nodeView, n)
+	nodeCtrl := controller.NewNodeWidgetController(nodeView, nodeModel)
 	if err := nodeCtrl.Bind(ctx); err != nil {
 		return nil, err
 	}
 
-	conn, err := grpc.NewClient(n.GRPC().Address(), grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		return nil, err
-	}
-
-	walletModel, err := model.NewWalletModel(
-		ctx,
-		pactus.NewWalletClient(conn),
-		pactus.NewTransactionClient(conn),
-		pactus.NewBlockchainClient(conn),
+	walletModel, err := model.NewWalletModel(ctx, walletClient, transactionClient, blockchainClient,
 		cmd.DefaultWalletName)
 	if err != nil {
 		return nil, err
 	}
-
-	nav := NewNavigator(walletModel)
 
 	walletView, err := view.NewWalletWidgetView()
 	if err != nil {
@@ -65,8 +58,7 @@ func Run(ctx context.Context, n *node.Node, gtkApp *gtk.Application) (*GUI, erro
 	}
 
 	walletCtrl := controller.NewWalletWidgetController(walletView, walletModel)
-
-	validatorModel := model.NewValidatorModel(ctx, pactus.NewBlockchainClient(conn))
+	validatorModel := model.NewValidatorModel(ctx, blockchainClient)
 	validatorView, err := view.NewValidatorWidgetView()
 	if err != nil {
 		return nil, err
@@ -75,6 +67,8 @@ func Run(ctx context.Context, n *node.Node, gtkApp *gtk.Application) (*GUI, erro
 	if err := validatorCtrl.Bind(ctx); err != nil {
 		return nil, err
 	}
+
+	nav := NewNavigator(walletModel)
 
 	walletCtrl.Bind(ctx, controller.WalletWidgetHandlers{
 		OnNewAddress: func() {
@@ -175,8 +169,4 @@ func Run(ctx context.Context, n *node.Node, gtkApp *gtk.Application) (*GUI, erro
 
 func (g *GUI) Cleanup() {
 	g.MainWindow.Cleanup()
-
-	if g.grpcConn != nil {
-		_ = g.grpcConn.Close()
-	}
 }
