@@ -36,6 +36,13 @@ type ChainInfo struct {
 	PruningHeight uint32
 }
 
+// CommitteeInfo holds committee validators, protocol versions, and total power.
+type CommitteeInfo struct {
+	Validators       []*validator.Validator
+	ProtocolVersions map[protocol.Version]float64
+	CommitteePower   int64
+}
+
 type Facade interface {
 	Genesis() *genesis.Genesis
 	Params() *param.Params
@@ -48,7 +55,7 @@ type Facade interface {
 	ValidateBlock(blk *block.Block, round int16) error
 	CommitBlock(blk *block.Block, cert *certificate.Certificate) error
 	CommitteeValidators() []*validator.Validator
-	CommitteeProtocolVersions() map[protocol.Version]float64
+	CommitteeInfo() *CommitteeInfo
 	IsInCommittee(addr crypto.Address) bool
 	Proposer(round int16) *validator.Validator
 	IsProposer(addr crypto.Address, round int16) bool

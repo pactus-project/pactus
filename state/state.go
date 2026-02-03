@@ -715,11 +715,15 @@ func (st *state) UpdateValidatorProtocolVersion(addr crypto.Address, ver protoco
 	st.store.UpdateValidatorProtocolVersion(addr, ver)
 }
 
-func (st *state) CommitteeProtocolVersions() map[protocol.Version]float64 {
+func (st *state) CommitteeInfo() *CommitteeInfo {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
-	return st.committee.ProtocolVersions()
+	return &CommitteeInfo{
+		Validators:       st.committee.Validators(),
+		ProtocolVersions: st.committee.ProtocolVersions(),
+		CommitteePower:   st.committee.TotalPower(),
+	}
 }
 
 func (st *state) ChainInfo() *ChainInfo {

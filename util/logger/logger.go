@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"context"
 	"encoding/hex"
 	"fmt"
 	"io"
@@ -67,7 +68,7 @@ func getLoggersInst() *logger {
 	return globalInst
 }
 
-func InitGlobalLogger(conf *Config) {
+func InitGlobalLogger(ctx context.Context, conf *Config) {
 	if globalInst != nil {
 		return
 	}
@@ -103,7 +104,7 @@ func InitGlobalLogger(conf *Config) {
 		subs:   make(map[string]*SubLogger),
 		writer: io.MultiWriter(writers...),
 	}
-	log.Logger = zerolog.New(globalInst.writer).With().Timestamp().Logger()
+	log.Logger = zerolog.New(globalInst.writer).With().Ctx(ctx).Timestamp().Logger()
 
 	lvl, err := zerolog.ParseLevel(conf.Levels["default"])
 	if err != nil {

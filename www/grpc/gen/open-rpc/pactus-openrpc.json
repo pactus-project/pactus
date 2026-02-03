@@ -423,14 +423,27 @@
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object","required": ["last_block_height","last_block_hash","total_accounts","total_validators","active_validators","total_power","committee_power","committee_validators","is_pruned","pruning_height","last_block_time","committee_protocol_versions"],
-          "properties": {"last_block_height": { "type": "integer" },"last_block_hash": { "type": "string" },"total_accounts": { "type": "integer" },"total_validators": { "type": "integer" },"active_validators": { "type": "integer" },"total_power": { "type": "integer" },"committee_power": { "type": "integer" },"committee_validators": {
+          "type": "object","required": ["last_block_height","last_block_hash","last_block_time","total_accounts","total_validators","active_validators","total_power","committee_power","is_pruned","pruning_height"],
+          "properties": {"last_block_height": { "type": "integer" },"last_block_hash": { "type": "string" },"last_block_time": { "type": "integer" },"total_accounts": { "type": "integer" },"total_validators": { "type": "integer" },"active_validators": { "type": "integer" },"total_power": { "type": "integer" },"committee_power": { "type": "integer" },"is_pruned": { "type": "boolean" },"pruning_height": { "type": "integer" }}
+          }
+        }
+      },{
+      "name": "pactus.blockchain.get_committee_info",
+      "description": "GetCommitteeInfo retrieves information about the current committee.",
+      "tags": [{ "name": "blockchain"}],
+      "paramStructure": "by-name",
+      "params": [],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object","required": ["committee_power","validators","protocol_versions"],
+          "properties": {"committee_power": { "type": "integer" },"validators": {
   "type": "array",
   "items": {
   "type": "object","required": ["hash","data","public_key","number","stake","last_bonding_height","last_sortition_height","unbonding_height","address","availability_score","protocol_version"],
   "properties": {"hash": { "type": "string" },"data": { "type": "string" },"public_key": { "type": "string" },"number": { "type": "integer" },"stake": { "type": "integer" },"last_bonding_height": { "type": "integer" },"last_sortition_height": { "type": "integer" },"unbonding_height": { "type": "integer" },"address": { "type": "string" },"availability_score": { "type": "number" },"protocol_version": { "type": "integer" }}
 }
-},"is_pruned": { "type": "boolean" },"pruning_height": { "type": "integer" },"last_block_time": { "type": "integer" },"committee_protocol_versions": {
+},"protocol_versions": {
   "type": "object"
 }}
           }

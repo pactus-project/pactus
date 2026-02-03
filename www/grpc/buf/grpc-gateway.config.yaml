@@ -28,6 +28,9 @@ http:
     - selector: pactus.Blockchain.GetBlockchainInfo
       get: "/pactus/blockchain/get_blockchain_info"
 
+    - selector: pactus.Blockchain.GetCommitteeInfo
+      get: "/pactus/blockchain/get_committee_info"
+
     - selector: pactus.Blockchain.GetConsensusInfo
       get: "/pactus/blockchain/get_consensus_info"
 

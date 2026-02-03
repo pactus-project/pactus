@@ -7,6 +7,10 @@ require (
 	github.com/beevik/ntp v1.5.0
 	github.com/c-bata/go-prompt v0.2.6
 	github.com/consensys/gnark-crypto v0.19.2
+	github.com/ezex-io/gopkg/pipeline v0.0.0-20260111184558-c198249d6c8c
+	github.com/ezex-io/gopkg/scheduler v0.0.0-20260111143633-dc5f88d98566
+	github.com/ezex-io/gopkg/signal v0.0.0-20260127151556-579a32f19aa7
+	github.com/ezex-io/gopkg/testsuite v0.0.0-20260114174958-d74e6b9e615f
 	github.com/fxamacker/cbor/v2 v2.9.0
 	github.com/glebarez/go-sqlite v1.22.1-0.20250214171204-e6de9fc0c320
 	github.com/go-zeromq/zmq4 v0.17.0
@@ -62,9 +66,6 @@ require (
 	github.com/davidlazar/go-crypto v0.0.0-20200604182044-b73af7476f6c // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
-	github.com/ezex-io/gopkg/pipeline v0.0.0-20260111184558-c198249d6c8c // indirect
-	github.com/ezex-io/gopkg/scheduler v0.0.0-20260111143633-dc5f88d98566 // indirect
-	github.com/ezex-io/gopkg/testsuite v0.0.0-20260114174958-d74e6b9e615f // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/filecoin-project/go-clock v0.1.0 // indirect
 	github.com/flynn/noise v1.1.0 // indirect

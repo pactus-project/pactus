@@ -55,7 +55,7 @@ func TestRunningNode(t *testing.T) {
 
 	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
 	rewardAddrs := []crypto.Address{ts.RandAccAddress(), ts.RandAccAddress()}
-	node, err := NewNode(gen, conf, valKeys, rewardAddrs)
+	node, err := NewNode(t.Context(), gen, conf, valKeys, rewardAddrs)
 	require.NoError(t, err)
 
 	assert.True(t, conf.Sync.Services.IsFullNode())

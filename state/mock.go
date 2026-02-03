@@ -231,8 +231,12 @@ func (m *MockState) UpdateValidatorProtocolVersion(addr crypto.Address, ver prot
 	m.TestStore.UpdateValidatorProtocolVersion(addr, ver)
 }
 
-func (m *MockState) CommitteeProtocolVersions() map[protocol.Version]float64 {
-	return m.TestCommittee.ProtocolVersions()
+func (m *MockState) CommitteeInfo() *CommitteeInfo {
+	return &CommitteeInfo{
+		Validators:       m.TestCommittee.Validators(),
+		ProtocolVersions: m.TestCommittee.ProtocolVersions(),
+		CommitteePower:   m.TestCommittee.TotalPower(),
+	}
 }
 
 func (m *MockState) ChainInfo() *ChainInfo {

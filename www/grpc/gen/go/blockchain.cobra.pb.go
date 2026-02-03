@@ -24,6 +24,7 @@ func BlockchainClientCommand(options ...client.Option) *cobra.Command {
 		_BlockchainGetBlockHashCommand(cfg),
 		_BlockchainGetBlockHeightCommand(cfg),
 		_BlockchainGetBlockchainInfoCommand(cfg),
+		_BlockchainGetCommitteeInfoCommand(cfg),
 		_BlockchainGetConsensusInfoCommand(cfg),
 		_BlockchainGetAccountCommand(cfg),
 		_BlockchainGetValidatorCommand(cfg),
@@ -188,6 +189,46 @@ func _BlockchainGetBlockchainInfoCommand(cfg *client.Config) *cobra.Command {
 				proto.Merge(v, req)
 
 				res, err := cli.GetBlockchainInfo(cmd.Context(), v)
+
+				if err != nil {
+					return err
+				}
+
+				return out(res)
+
+			})
+		},
+	}
+
+	return cmd
+}
+
+func _BlockchainGetCommitteeInfoCommand(cfg *client.Config) *cobra.Command {
+	req := &GetCommitteeInfoRequest{}
+
+	cmd := &cobra.Command{
+		Use:   cfg.CommandNamer("GetCommitteeInfo"),
+		Short: "GetCommitteeInfo RPC client",
+		Long:  "GetCommitteeInfo retrieves information about the current committee.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain", "GetCommitteeInfo"); err != nil {
+					return err
+				}
+			}
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+				cli := NewBlockchainClient(cc)
+				v := &GetCommitteeInfoRequest{}
+
+				if err := in(v); err != nil {
+					return err
+				}
+				proto.Merge(v, req)
+
+				res, err := cli.GetCommitteeInfo(cmd.Context(), v)
 
 				if err != nil {
 					return err

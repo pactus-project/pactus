@@ -140,38 +140,48 @@ class GetBlockchainInfoRequest(_message.Message):
 
 class GetBlockchainInfoResponse(_message.Message):
     __slots__ = ()
-    class CommitteeProtocolVersionsEntry(_message.Message):
+    LAST_BLOCK_HEIGHT_FIELD_NUMBER: _ClassVar[int]
+    LAST_BLOCK_HASH_FIELD_NUMBER: _ClassVar[int]
+    LAST_BLOCK_TIME_FIELD_NUMBER: _ClassVar[int]
+    TOTAL_ACCOUNTS_FIELD_NUMBER: _ClassVar[int]
+    TOTAL_VALIDATORS_FIELD_NUMBER: _ClassVar[int]
+    ACTIVE_VALIDATORS_FIELD_NUMBER: _ClassVar[int]
+    TOTAL_POWER_FIELD_NUMBER: _ClassVar[int]
+    COMMITTEE_POWER_FIELD_NUMBER: _ClassVar[int]
+    IS_PRUNED_FIELD_NUMBER: _ClassVar[int]
+    PRUNING_HEIGHT_FIELD_NUMBER: _ClassVar[int]
+    last_block_height: int
+    last_block_hash: str
+    last_block_time: int
+    total_accounts: int
+    total_validators: int
+    active_validators: int
+    total_power: int
+    committee_power: int
+    is_pruned: bool
+    pruning_height: int
+    def __init__(self, last_block_height: _Optional[int] = ..., last_block_hash: _Optional[str] = ..., last_block_time: _Optional[int] = ..., total_accounts: _Optional[int] = ..., total_validators: _Optional[int] = ..., active_validators: _Optional[int] = ..., total_power: _Optional[int] = ..., committee_power: _Optional[int] = ..., is_pruned: _Optional[bool] = ..., pruning_height: _Optional[int] = ...) -> None: ...
+
+class GetCommitteeInfoRequest(_message.Message):
+    __slots__ = ()
+    def __init__(self) -> None: ...
+
+class GetCommitteeInfoResponse(_message.Message):
+    __slots__ = ()
+    class ProtocolVersionsEntry(_message.Message):
         __slots__ = ()
         KEY_FIELD_NUMBER: _ClassVar[int]
         VALUE_FIELD_NUMBER: _ClassVar[int]
         key: int
         value: float
         def __init__(self, key: _Optional[int] = ..., value: _Optional[float] = ...) -> None: ...
-    LAST_BLOCK_HEIGHT_FIELD_NUMBER: _ClassVar[int]
-    LAST_BLOCK_HASH_FIELD_NUMBER: _ClassVar[int]
-    TOTAL_ACCOUNTS_FIELD_NUMBER: _ClassVar[int]
-    TOTAL_VALIDATORS_FIELD_NUMBER: _ClassVar[int]
-    ACTIVE_VALIDATORS_FIELD_NUMBER: _ClassVar[int]
-    TOTAL_POWER_FIELD_NUMBER: _ClassVar[int]
     COMMITTEE_POWER_FIELD_NUMBER: _ClassVar[int]
-    COMMITTEE_VALIDATORS_FIELD_NUMBER: _ClassVar[int]
-    IS_PRUNED_FIELD_NUMBER: _ClassVar[int]
-    PRUNING_HEIGHT_FIELD_NUMBER: _ClassVar[int]
-    LAST_BLOCK_TIME_FIELD_NUMBER: _ClassVar[int]
-    COMMITTEE_PROTOCOL_VERSIONS_FIELD_NUMBER: _ClassVar[int]
-    last_block_height: int
-    last_block_hash: str
-    total_accounts: int
-    total_validators: int
-    active_validators: int
-    total_power: int
+    VALIDATORS_FIELD_NUMBER: _ClassVar[int]
+    PROTOCOL_VERSIONS_FIELD_NUMBER: _ClassVar[int]
     committee_power: int
-    committee_validators: _containers.RepeatedCompositeFieldContainer[ValidatorInfo]
-    is_pruned: bool
-    pruning_height: int
-    last_block_time: int
-    committee_protocol_versions: _containers.ScalarMap[int, float]
-    def __init__(self, last_block_height: _Optional[int] = ..., last_block_hash: _Optional[str] = ..., total_accounts: _Optional[int] = ..., total_validators: _Optional[int] = ..., active_validators: _Optional[int] = ..., total_power: _Optional[int] = ..., committee_power: _Optional[int] = ..., committee_validators: _Optional[_Iterable[_Union[ValidatorInfo, _Mapping]]] = ..., is_pruned: _Optional[bool] = ..., pruning_height: _Optional[int] = ..., last_block_time: _Optional[int] = ..., committee_protocol_versions: _Optional[_Mapping[int, float]] = ...) -> None: ...
+    validators: _containers.RepeatedCompositeFieldContainer[ValidatorInfo]
+    protocol_versions: _containers.ScalarMap[int, float]
+    def __init__(self, committee_power: _Optional[int] = ..., validators: _Optional[_Iterable[_Union[ValidatorInfo, _Mapping]]] = ..., protocol_versions: _Optional[_Mapping[int, float]] = ...) -> None: ...
 
 class GetConsensusInfoRequest(_message.Message):
     __slots__ = ()

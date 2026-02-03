@@ -314,43 +314,71 @@ const GetBlockchainInfoResponse$json = {
       '10': 'lastBlockHeight'
     },
     {'1': 'last_block_hash', '3': 2, '4': 1, '5': 9, '10': 'lastBlockHash'},
-    {'1': 'total_accounts', '3': 3, '4': 1, '5': 5, '10': 'totalAccounts'},
-    {'1': 'total_validators', '3': 4, '4': 1, '5': 5, '10': 'totalValidators'},
+    {'1': 'last_block_time', '3': 3, '4': 1, '5': 3, '10': 'lastBlockTime'},
+    {'1': 'total_accounts', '3': 4, '4': 1, '5': 5, '10': 'totalAccounts'},
+    {'1': 'total_validators', '3': 5, '4': 1, '5': 5, '10': 'totalValidators'},
     {
       '1': 'active_validators',
-      '3': 12,
+      '3': 6,
       '4': 1,
       '5': 5,
       '10': 'activeValidators'
     },
-    {'1': 'total_power', '3': 5, '4': 1, '5': 3, '10': 'totalPower'},
-    {'1': 'committee_power', '3': 6, '4': 1, '5': 3, '10': 'committeePower'},
+    {'1': 'total_power', '3': 7, '4': 1, '5': 3, '10': 'totalPower'},
+    {'1': 'committee_power', '3': 8, '4': 1, '5': 3, '10': 'committeePower'},
+    {'1': 'is_pruned', '3': 9, '4': 1, '5': 8, '10': 'isPruned'},
+    {'1': 'pruning_height', '3': 10, '4': 1, '5': 13, '10': 'pruningHeight'},
+  ],
+};
+
+/// Descriptor for `GetBlockchainInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getBlockchainInfoResponseDescriptor = $convert.base64Decode(
+    'ChlHZXRCbG9ja2NoYWluSW5mb1Jlc3BvbnNlEioKEWxhc3RfYmxvY2tfaGVpZ2h0GAEgASgNUg'
+    '9sYXN0QmxvY2tIZWlnaHQSJgoPbGFzdF9ibG9ja19oYXNoGAIgASgJUg1sYXN0QmxvY2tIYXNo'
+    'EiYKD2xhc3RfYmxvY2tfdGltZRgDIAEoA1INbGFzdEJsb2NrVGltZRIlCg50b3RhbF9hY2NvdW'
+    '50cxgEIAEoBVINdG90YWxBY2NvdW50cxIpChB0b3RhbF92YWxpZGF0b3JzGAUgASgFUg90b3Rh'
+    'bFZhbGlkYXRvcnMSKwoRYWN0aXZlX3ZhbGlkYXRvcnMYBiABKAVSEGFjdGl2ZVZhbGlkYXRvcn'
+    'MSHwoLdG90YWxfcG93ZXIYByABKANSCnRvdGFsUG93ZXISJwoPY29tbWl0dGVlX3Bvd2VyGAgg'
+    'ASgDUg5jb21taXR0ZWVQb3dlchIbCglpc19wcnVuZWQYCSABKAhSCGlzUHJ1bmVkEiUKDnBydW'
+    '5pbmdfaGVpZ2h0GAogASgNUg1wcnVuaW5nSGVpZ2h0');
+
+@$core.Deprecated('Use getCommitteeInfoRequestDescriptor instead')
+const GetCommitteeInfoRequest$json = {
+  '1': 'GetCommitteeInfoRequest',
+};
+
+/// Descriptor for `GetCommitteeInfoRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getCommitteeInfoRequestDescriptor =
+    $convert.base64Decode('ChdHZXRDb21taXR0ZWVJbmZvUmVxdWVzdA==');
+
+@$core.Deprecated('Use getCommitteeInfoResponseDescriptor instead')
+const GetCommitteeInfoResponse$json = {
+  '1': 'GetCommitteeInfoResponse',
+  '2': [
+    {'1': 'committee_power', '3': 1, '4': 1, '5': 3, '10': 'committeePower'},
     {
-      '1': 'committee_validators',
-      '3': 7,
+      '1': 'validators',
+      '3': 2,
       '4': 3,
       '5': 11,
       '6': '.pactus.ValidatorInfo',
-      '10': 'committeeValidators'
+      '10': 'validators'
     },
-    {'1': 'is_pruned', '3': 8, '4': 1, '5': 8, '10': 'isPruned'},
-    {'1': 'pruning_height', '3': 9, '4': 1, '5': 13, '10': 'pruningHeight'},
-    {'1': 'last_block_time', '3': 10, '4': 1, '5': 3, '10': 'lastBlockTime'},
     {
-      '1': 'committee_protocol_versions',
-      '3': 11,
+      '1': 'protocol_versions',
+      '3': 3,
       '4': 3,
       '5': 11,
-      '6': '.pactus.GetBlockchainInfoResponse.CommitteeProtocolVersionsEntry',
-      '10': 'committeeProtocolVersions'
+      '6': '.pactus.GetCommitteeInfoResponse.ProtocolVersionsEntry',
+      '10': 'protocolVersions'
     },
   ],
-  '3': [GetBlockchainInfoResponse_CommitteeProtocolVersionsEntry$json],
+  '3': [GetCommitteeInfoResponse_ProtocolVersionsEntry$json],
 };
 
-@$core.Deprecated('Use getBlockchainInfoResponseDescriptor instead')
-const GetBlockchainInfoResponse_CommitteeProtocolVersionsEntry$json = {
-  '1': 'CommitteeProtocolVersionsEntry',
+@$core.Deprecated('Use getCommitteeInfoResponseDescriptor instead')
+const GetCommitteeInfoResponse_ProtocolVersionsEntry$json = {
+  '1': 'ProtocolVersionsEntry',
   '2': [
     {'1': 'key', '3': 1, '4': 1, '5': 5, '10': 'key'},
     {'1': 'value', '3': 2, '4': 1, '5': 1, '10': 'value'},
@@ -358,21 +386,14 @@ const GetBlockchainInfoResponse_CommitteeProtocolVersionsEntry$json = {
   '7': {'7': true},
 };
 
-/// Descriptor for `GetBlockchainInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getBlockchainInfoResponseDescriptor = $convert.base64Decode(
-    'ChlHZXRCbG9ja2NoYWluSW5mb1Jlc3BvbnNlEioKEWxhc3RfYmxvY2tfaGVpZ2h0GAEgASgNUg'
-    '9sYXN0QmxvY2tIZWlnaHQSJgoPbGFzdF9ibG9ja19oYXNoGAIgASgJUg1sYXN0QmxvY2tIYXNo'
-    'EiUKDnRvdGFsX2FjY291bnRzGAMgASgFUg10b3RhbEFjY291bnRzEikKEHRvdGFsX3ZhbGlkYX'
-    'RvcnMYBCABKAVSD3RvdGFsVmFsaWRhdG9ycxIrChFhY3RpdmVfdmFsaWRhdG9ycxgMIAEoBVIQ'
-    'YWN0aXZlVmFsaWRhdG9ycxIfCgt0b3RhbF9wb3dlchgFIAEoA1IKdG90YWxQb3dlchInCg9jb2'
-    '1taXR0ZWVfcG93ZXIYBiABKANSDmNvbW1pdHRlZVBvd2VyEkgKFGNvbW1pdHRlZV92YWxpZGF0'
-    'b3JzGAcgAygLMhUucGFjdHVzLlZhbGlkYXRvckluZm9SE2NvbW1pdHRlZVZhbGlkYXRvcnMSGw'
-    'oJaXNfcHJ1bmVkGAggASgIUghpc1BydW5lZBIlCg5wcnVuaW5nX2hlaWdodBgJIAEoDVINcHJ1'
-    'bmluZ0hlaWdodBImCg9sYXN0X2Jsb2NrX3RpbWUYCiABKANSDWxhc3RCbG9ja1RpbWUSgAEKG2'
-    'NvbW1pdHRlZV9wcm90b2NvbF92ZXJzaW9ucxgLIAMoCzJALnBhY3R1cy5HZXRCbG9ja2NoYWlu'
-    'SW5mb1Jlc3BvbnNlLkNvbW1pdHRlZVByb3RvY29sVmVyc2lvbnNFbnRyeVIZY29tbWl0dGVlUH'
-    'JvdG9jb2xWZXJzaW9ucxpMCh5Db21taXR0ZWVQcm90b2NvbFZlcnNpb25zRW50cnkSEAoDa2V5'
-    'GAEgASgFUgNrZXkSFAoFdmFsdWUYAiABKAFSBXZhbHVlOgI4AQ==');
+/// Descriptor for `GetCommitteeInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getCommitteeInfoResponseDescriptor = $convert.base64Decode(
+    'ChhHZXRDb21taXR0ZWVJbmZvUmVzcG9uc2USJwoPY29tbWl0dGVlX3Bvd2VyGAEgASgDUg5jb2'
+    '1taXR0ZWVQb3dlchI1Cgp2YWxpZGF0b3JzGAIgAygLMhUucGFjdHVzLlZhbGlkYXRvckluZm9S'
+    'CnZhbGlkYXRvcnMSYwoRcHJvdG9jb2xfdmVyc2lvbnMYAyADKAsyNi5wYWN0dXMuR2V0Q29tbW'
+    'l0dGVlSW5mb1Jlc3BvbnNlLlByb3RvY29sVmVyc2lvbnNFbnRyeVIQcHJvdG9jb2xWZXJzaW9u'
+    'cxpDChVQcm90b2NvbFZlcnNpb25zRW50cnkSEAoDa2V5GAEgASgFUgNrZXkSFAoFdmFsdWUYAi'
+    'ABKAFSBXZhbHVlOgI4AQ==');
 
 @$core.Deprecated('Use getConsensusInfoRequestDescriptor instead')
 const GetConsensusInfoRequest$json = {
@@ -649,6 +670,11 @@ const $core.Map<$core.String, $core.dynamic> BlockchainServiceBase$json = {
       '3': '.pactus.GetBlockchainInfoResponse'
     },
     {
+      '1': 'GetCommitteeInfo',
+      '2': '.pactus.GetCommitteeInfoRequest',
+      '3': '.pactus.GetCommitteeInfoResponse'
+    },
+    {
       '1': 'GetConsensusInfo',
       '2': '.pactus.GetConsensusInfoRequest',
       '3': '.pactus.GetConsensusInfoResponse'
@@ -707,9 +733,11 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>>
   '.pactus.GetBlockHeightResponse': GetBlockHeightResponse$json,
   '.pactus.GetBlockchainInfoRequest': GetBlockchainInfoRequest$json,
   '.pactus.GetBlockchainInfoResponse': GetBlockchainInfoResponse$json,
+  '.pactus.GetCommitteeInfoRequest': GetCommitteeInfoRequest$json,
+  '.pactus.GetCommitteeInfoResponse': GetCommitteeInfoResponse$json,
   '.pactus.ValidatorInfo': ValidatorInfo$json,
-  '.pactus.GetBlockchainInfoResponse.CommitteeProtocolVersionsEntry':
-      GetBlockchainInfoResponse_CommitteeProtocolVersionsEntry$json,
+  '.pactus.GetCommitteeInfoResponse.ProtocolVersionsEntry':
+      GetCommitteeInfoResponse_ProtocolVersionsEntry$json,
   '.pactus.GetConsensusInfoRequest': GetConsensusInfoRequest$json,
   '.pactus.GetConsensusInfoResponse': GetConsensusInfoResponse$json,
   '.pactus.ProposalInfo': ProposalInfo$json,
@@ -736,15 +764,16 @@ final $typed_data.Uint8List blockchainServiceDescriptor = $convert.base64Decode(
     'c2hSZXF1ZXN0GhwucGFjdHVzLkdldEJsb2NrSGFzaFJlc3BvbnNlEk8KDkdldEJsb2NrSGVpZ2'
     'h0Eh0ucGFjdHVzLkdldEJsb2NrSGVpZ2h0UmVxdWVzdBoeLnBhY3R1cy5HZXRCbG9ja0hlaWdo'
     'dFJlc3BvbnNlElgKEUdldEJsb2NrY2hhaW5JbmZvEiAucGFjdHVzLkdldEJsb2NrY2hhaW5Jbm'
-    'ZvUmVxdWVzdBohLnBhY3R1cy5HZXRCbG9ja2NoYWluSW5mb1Jlc3BvbnNlElUKEEdldENvbnNl'
-    'bnN1c0luZm8SHy5wYWN0dXMuR2V0Q29uc2Vuc3VzSW5mb1JlcXVlc3QaIC5wYWN0dXMuR2V0Q2'
-    '9uc2Vuc3VzSW5mb1Jlc3BvbnNlEkMKCkdldEFjY291bnQSGS5wYWN0dXMuR2V0QWNjb3VudFJl'
-    'cXVlc3QaGi5wYWN0dXMuR2V0QWNjb3VudFJlc3BvbnNlEkkKDEdldFZhbGlkYXRvchIbLnBhY3'
-    'R1cy5HZXRWYWxpZGF0b3JSZXF1ZXN0GhwucGFjdHVzLkdldFZhbGlkYXRvclJlc3BvbnNlElkK'
-    'FEdldFZhbGlkYXRvckJ5TnVtYmVyEiMucGFjdHVzLkdldFZhbGlkYXRvckJ5TnVtYmVyUmVxdW'
-    'VzdBocLnBhY3R1cy5HZXRWYWxpZGF0b3JSZXNwb25zZRJkChVHZXRWYWxpZGF0b3JBZGRyZXNz'
-    'ZXMSJC5wYWN0dXMuR2V0VmFsaWRhdG9yQWRkcmVzc2VzUmVxdWVzdBolLnBhY3R1cy5HZXRWYW'
-    'xpZGF0b3JBZGRyZXNzZXNSZXNwb25zZRJJCgxHZXRQdWJsaWNLZXkSGy5wYWN0dXMuR2V0UHVi'
-    'bGljS2V5UmVxdWVzdBocLnBhY3R1cy5HZXRQdWJsaWNLZXlSZXNwb25zZRJVChBHZXRUeFBvb2'
-    'xDb250ZW50Eh8ucGFjdHVzLkdldFR4UG9vbENvbnRlbnRSZXF1ZXN0GiAucGFjdHVzLkdldFR4'
-    'UG9vbENvbnRlbnRSZXNwb25zZQ==');
+    'ZvUmVxdWVzdBohLnBhY3R1cy5HZXRCbG9ja2NoYWluSW5mb1Jlc3BvbnNlElUKEEdldENvbW1p'
+    'dHRlZUluZm8SHy5wYWN0dXMuR2V0Q29tbWl0dGVlSW5mb1JlcXVlc3QaIC5wYWN0dXMuR2V0Q2'
+    '9tbWl0dGVlSW5mb1Jlc3BvbnNlElUKEEdldENvbnNlbnN1c0luZm8SHy5wYWN0dXMuR2V0Q29u'
+    'c2Vuc3VzSW5mb1JlcXVlc3QaIC5wYWN0dXMuR2V0Q29uc2Vuc3VzSW5mb1Jlc3BvbnNlEkMKCk'
+    'dldEFjY291bnQSGS5wYWN0dXMuR2V0QWNjb3VudFJlcXVlc3QaGi5wYWN0dXMuR2V0QWNjb3Vu'
+    'dFJlc3BvbnNlEkkKDEdldFZhbGlkYXRvchIbLnBhY3R1cy5HZXRWYWxpZGF0b3JSZXF1ZXN0Gh'
+    'wucGFjdHVzLkdldFZhbGlkYXRvclJlc3BvbnNlElkKFEdldFZhbGlkYXRvckJ5TnVtYmVyEiMu'
+    'cGFjdHVzLkdldFZhbGlkYXRvckJ5TnVtYmVyUmVxdWVzdBocLnBhY3R1cy5HZXRWYWxpZGF0b3'
+    'JSZXNwb25zZRJkChVHZXRWYWxpZGF0b3JBZGRyZXNzZXMSJC5wYWN0dXMuR2V0VmFsaWRhdG9y'
+    'QWRkcmVzc2VzUmVxdWVzdBolLnBhY3R1cy5HZXRWYWxpZGF0b3JBZGRyZXNzZXNSZXNwb25zZR'
+    'JJCgxHZXRQdWJsaWNLZXkSGy5wYWN0dXMuR2V0UHVibGljS2V5UmVxdWVzdBocLnBhY3R1cy5H'
+    'ZXRQdWJsaWNLZXlSZXNwb25zZRJVChBHZXRUeFBvb2xDb250ZW50Eh8ucGFjdHVzLkdldFR4UG'
+    '9vbENvbnRlbnRSZXF1ZXN0GiAucGFjdHVzLkdldFR4UG9vbENvbnRlbnRSZXNwb25zZQ==');

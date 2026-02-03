@@ -344,6 +344,29 @@
         ]
       }
     },
+    "/pactus/blockchain/get_committee_info": {
+      "get": {
+        "summary": "GetCommitteeInfo retrieves information about the current committee.",
+        "operationId": "Blockchain_GetCommitteeInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetCommitteeInfoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
     "/pactus/blockchain/get_consensus_info": {
       "get": {
         "summary": "GetConsensusInfo retrieves information about the consensus instances.",
@@ -1969,6 +1992,11 @@
           "type": "string",
           "description": "The hash of the last block in the blockchain."
         },
+        "lastBlockTime": {
+          "type": "string",
+          "format": "int64",
+          "description": "The timestamp of the last block in Unix format."
+        },
         "totalAccounts": {
           "type": "integer",
           "format": "int32",
@@ -1994,14 +2022,6 @@
           "format": "int64",
           "description": "The power of the committee."
         },
-        "committeeValidators": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/pactusValidatorInfo"
-          },
-          "description": "List of committee validators."
-        },
         "isPruned": {
           "type": "boolean",
           "description": "If the blocks are subject to pruning."
@@ -2010,13 +2030,27 @@
           "type": "integer",
           "format": "int64",
           "title": "Lowest-height block stored (only present if pruning is enabled)"
-        },
-        "lastBlockTime": {
+        }
+      },
+      "description": "Response message contains general blockchain information."
+    },
+    "pactusGetCommitteeInfoResponse": {
+      "type": "object",
+      "properties": {
+        "committeePower": {
           "type": "string",
           "format": "int64",
-          "title": "Timestamp of the last block in Unix format"
+          "description": "The power of the committee."
         },
-        "committeeProtocolVersions": {
+        "validators": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusValidatorInfo"
+          },
+          "description": "List of committee validators."
+        },
+        "protocolVersions": {
           "type": "object",
           "additionalProperties": {
             "type": "number",
@@ -2025,7 +2059,7 @@
           "description": "Map of protocol versions and their percentages in the committee."
         }
       },
-      "description": "Response message contains general blockchain information."
+      "description": "Response message contains committee information."
     },
     "pactusGetConsensusInfoResponse": {
       "type": "object",

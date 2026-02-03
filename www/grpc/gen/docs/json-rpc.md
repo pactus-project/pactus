@@ -134,6 +134,10 @@ curl --location 'http://localhost:8545/' \
           <span class="rpc-badge"></span>pactus.blockchain.get_blockchain_info</a>
         </li>
         <li>
+          <a href="#pactus.blockchain.get_committee_info">
+          <span class="rpc-badge"></span>pactus.blockchain.get_committee_info</a>
+        </li>
+        <li>
           <a href="#pactus.blockchain.get_consensus_info">
           <span class="rpc-badge"></span>pactus.blockchain.get_consensus_info</a>
         </li>
@@ -1814,6 +1818,13 @@ Parameters has no fields.
     </td>
   </tr>
    <tr>
+    <td class="fw-bold">last_block_time</td>
+    <td> numeric</td>
+    <td>
+  The timestamp of the last block in Unix format.
+    </td>
+  </tr>
+   <tr>
     <td class="fw-bold">total_accounts</td>
     <td> numeric</td>
     <td>
@@ -1849,90 +1860,6 @@ Parameters has no fields.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">committee_validators</td>
-    <td>repeated object (ValidatorInfo)</td>
-    <td>
-  List of committee validators.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">committee_validators[].hash</td>
-    <td> string</td>
-    <td>
-  The hash of the validator.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">committee_validators[].data</td>
-    <td> string</td>
-    <td>
-  The serialized data of the validator.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">committee_validators[].public_key</td>
-    <td> string</td>
-    <td>
-  The public key of the validator.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">committee_validators[].number</td>
-    <td> numeric</td>
-    <td>
-  The unique number assigned to the validator.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">committee_validators[].stake</td>
-    <td> numeric</td>
-    <td>
-  The stake of the validator in NanoPAC.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">committee_validators[].last_bonding_height</td>
-    <td> numeric</td>
-    <td>
-  The height at which the validator last bonded.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">committee_validators[].last_sortition_height</td>
-    <td> numeric</td>
-    <td>
-  The height at which the validator last participated in sortition.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">committee_validators[].unbonding_height</td>
-    <td> numeric</td>
-    <td>
-  The height at which the validator will unbond.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">committee_validators[].address</td>
-    <td> string</td>
-    <td>
-  The address of the validator.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">committee_validators[].availability_score</td>
-    <td> numeric</td>
-    <td>
-  The availability score of the validator.
-    </td>
-  </tr>
-   <tr>
-    <td class="fw-bold">committee_validators[].protocol_version</td>
-    <td> numeric</td>
-    <td>
-  The protocol version of the validator.
-    </td>
-  </tr>
-   <tr>
     <td class="fw-bold">is_pruned</td>
     <td> boolean</td>
     <td>
@@ -1946,15 +1873,114 @@ Parameters has no fields.
   Lowest-height block stored (only present if pruning is enabled)
     </td>
   </tr>
-   <tr>
-    <td class="fw-bold">last_block_time</td>
+   </tbody>
+</table>
+
+#### pactus.blockchain.get_committee_info <span id="pactus.blockchain.get_committee_info" class="rpc-badge"></span>
+
+<p>GetCommitteeInfo retrieves information about the current committee.</p>
+
+<h4>Parameters</h4>
+Parameters has no fields.
+
+<h4>Result</h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+  <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider"><tr>
+    <td class="fw-bold">committee_power</td>
     <td> numeric</td>
     <td>
-  Timestamp of the last block in Unix format
+  The power of the committee.
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">committee_protocol_versions</td>
+    <td class="fw-bold">validators</td>
+    <td>repeated object (ValidatorInfo)</td>
+    <td>
+  List of committee validators.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">validators[].hash</td>
+    <td> string</td>
+    <td>
+  The hash of the validator.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">validators[].data</td>
+    <td> string</td>
+    <td>
+  The serialized data of the validator.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">validators[].public_key</td>
+    <td> string</td>
+    <td>
+  The public key of the validator.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">validators[].number</td>
+    <td> numeric</td>
+    <td>
+  The unique number assigned to the validator.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">validators[].stake</td>
+    <td> numeric</td>
+    <td>
+  The stake of the validator in NanoPAC.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">validators[].last_bonding_height</td>
+    <td> numeric</td>
+    <td>
+  The height at which the validator last bonded.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">validators[].last_sortition_height</td>
+    <td> numeric</td>
+    <td>
+  The height at which the validator last participated in sortition.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">validators[].unbonding_height</td>
+    <td> numeric</td>
+    <td>
+  The height at which the validator will unbond.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">validators[].address</td>
+    <td> string</td>
+    <td>
+  The address of the validator.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">validators[].availability_score</td>
+    <td> numeric</td>
+    <td>
+  The availability score of the validator.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">validators[].protocol_version</td>
+    <td> numeric</td>
+    <td>
+  The protocol version of the validator.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">protocol_versions</td>
     <td> map&lt;int32, double&gt;</td>
     <td>
   Map of protocol versions and their percentages in the committee.
