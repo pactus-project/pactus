@@ -31,12 +31,12 @@ func Run(ctx context.Context, conn *grpc.ClientConn, gtkApp *gtk.Application) (*
 	if err != nil {
 		return nil, err
 	}
-	blockchainclient := pactus.NewBlockchainClient(conn)
-	transactionclient := pactus.NewTransactionClient(conn)
-	networkclient := pactus.NewNetworkClient(conn)
-	walletclient := pactus.NewWalletClient(conn)
+	blockchainClient := pactus.NewBlockchainClient(conn)
+	transactionClient := pactus.NewTransactionClient(conn)
+	networkClient := pactus.NewNetworkClient(conn)
+	walletClient := pactus.NewWalletClient(conn)
 
-	nodeModel := model.NewNodeModel(ctx, blockchainclient, networkclient)
+	nodeModel := model.NewNodeModel(ctx, blockchainClient, networkClient)
 	nodeView, err := view.NewNodeWidgetView()
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func Run(ctx context.Context, conn *grpc.ClientConn, gtkApp *gtk.Application) (*
 		return nil, err
 	}
 
-	walletModel, err := model.NewWalletModel(ctx, walletclient, transactionclient, blockchainclient,
+	walletModel, err := model.NewWalletModel(ctx, walletClient, transactionClient, blockchainClient,
 		cmd.DefaultWalletName)
 	if err != nil {
 		return nil, err
@@ -58,7 +58,7 @@ func Run(ctx context.Context, conn *grpc.ClientConn, gtkApp *gtk.Application) (*
 	}
 
 	walletCtrl := controller.NewWalletWidgetController(walletView, walletModel)
-	validatorModel := model.NewValidatorModel(ctx, blockchainclient)
+	validatorModel := model.NewValidatorModel(ctx, blockchainClient)
 	validatorView, err := view.NewValidatorWidgetView()
 	if err != nil {
 		return nil, err
@@ -169,6 +169,4 @@ func Run(ctx context.Context, conn *grpc.ClientConn, gtkApp *gtk.Application) (*
 
 func (g *GUI) Cleanup() {
 	g.MainWindow.Cleanup()
-
-	
 }
