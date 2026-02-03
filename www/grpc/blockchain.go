@@ -46,21 +46,19 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 func (s *blockchainServer) GetCommitteeInfo(_ context.Context,
 	_ *pactus.GetCommitteeInfoRequest,
 ) (*pactus.GetCommitteeInfoResponse, error) {
-	vals := s.state.CommitteeValidators()
-	valInfos := make([]*pactus.ValidatorInfo, 0, len(vals))
-	for _, val := range vals {
+	info := s.state.CommitteeInfo()
+	valInfos := make([]*pactus.ValidatorInfo, 0, len(info.Validators))
+	for _, val := range info.Validators {
 		valInfos = append(valInfos, s.validatorToProto(val))
 	}
 	protocolVersions := make(map[int32]float64)
-	for k, v := range s.state.CommitteeProtocolVersions() {
+	for k, v := range info.ProtocolVersions {
 		protocolVersions[int32(k)] = v
 	}
-	committeePower := s.state.ChainInfo().CommitteePower
-
 	return &pactus.GetCommitteeInfoResponse{
 		Validators:       valInfos,
 		ProtocolVersions: protocolVersions,
-		CommitteePower:   committeePower,
+		CommitteePower:   info.CommitteePower,
 	}, nil
 }
 
