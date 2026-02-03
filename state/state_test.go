@@ -379,7 +379,7 @@ func TestSortition(t *testing.T) {
 
 	secValKey := td.state.valKeys[1]
 	assert.False(t, td.state.evaluateSortition()) //  not a validator
-	assert.Equal(t, int64(4), td.state.Stats().CommitteePower)
+	assert.Equal(t, int64(4), td.state.ChainInfo().CommitteePower)
 
 	trx := tx.NewBondTx(1, td.genAccKey.PublicKeyNative().AccountAddress(),
 		secValKey.Address(), secValKey.PublicKey(), 1000000000, 100000)
@@ -389,7 +389,7 @@ func TestSortition(t *testing.T) {
 	td.commitBlocks(t, 1)
 
 	assert.False(t, td.state.evaluateSortition()) // bonding period
-	assert.Equal(t, int64(4), td.state.Stats().CommitteePower)
+	assert.Equal(t, int64(4), td.state.ChainInfo().CommitteePower)
 	assert.False(t, td.state.committee.Contains(secValKey.Address())) // Not in the committee
 
 	// Committing another 10 blocks
@@ -400,7 +400,7 @@ func TestSortition(t *testing.T) {
 
 	td.commitBlocks(t, 1)
 
-	assert.Equal(t, int64(1000000004), td.state.Stats().CommitteePower)
+	assert.Equal(t, int64(1000000004), td.state.ChainInfo().CommitteePower)
 	assert.True(t, td.state.committee.Contains(secValKey.Address())) // In the committee
 }
 
@@ -532,7 +532,7 @@ func TestLoadState(t *testing.T) {
 
 	assert.Equal(t, td.state.Params(), newState.Params())
 	assert.ElementsMatch(t, td.state.ValidatorAddresses(), newState.ValidatorAddresses())
-	assert.Equal(t, td.state.Stats(), newState.Stats())
+	assert.Equal(t, td.state.ChainInfo(), newState.ChainInfo())
 
 	// Try committing the next block
 	require.NoError(t, newState.CommitBlock(blk6, cert6))

@@ -20,7 +20,7 @@ import (
 	"github.com/pactus-project/pactus/types/vote"
 )
 
-type Stats struct {
+type ChainInfo struct {
 	LastBlockHeight uint32
 	LastBlockHash   hash.Hash
 	LastBlockTime   time.Time
@@ -68,7 +68,7 @@ type Facade interface {
 	PublicKey(addr crypto.Address) (crypto.PublicKey, error)
 	AvailabilityScore(valNum int32) float64
 	AllPendingTxs() []*tx.Tx
-	Stats() *Stats
+	ChainInfo() *ChainInfo
 
 	Close()
 }

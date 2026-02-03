@@ -235,8 +235,8 @@ func (m *MockState) CommitteeProtocolVersions() map[protocol.Version]float64 {
 	return m.TestCommittee.ProtocolVersions()
 }
 
-func (m *MockState) Stats() *Stats {
-	return &Stats{
+func (m *MockState) ChainInfo() *ChainInfo {
+	return &ChainInfo{
 		LastBlockHeight:  m.LastBlockHeight(),
 		LastBlockHash:    m.LastBlockHash(),
 		LastBlockTime:    m.LastBlockTime(),
