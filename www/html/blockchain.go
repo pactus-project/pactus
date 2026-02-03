@@ -28,7 +28,7 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
 	tmk := newTableMaker()
 	tmk.addRowBlockHash("Last Block Hash", res.LastBlockHash)
 	tmk.addRowInt("Last Block Height", int(res.LastBlockHeight))
-	tmk.addRowString("Last Block Time", time.Unix(int64(res.LastBlockTime), 0).String())
+	tmk.addRowString("Last Block Time", time.Unix(res.LastBlockTime, 0).String())
 	tmk.addRowInt("Total Accounts", int(res.TotalAccounts))
 	tmk.addRowInt("Total Validators", int(res.TotalValidators))
 	tmk.addRowInt("Active Validators", int(res.ActiveValidators))
