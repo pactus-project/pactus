@@ -37,6 +37,7 @@ func NewValidatorWidgetView() (*ValidatorWidgetView, error) {
 		glib.TYPE_STRING, // stake
 		glib.TYPE_STRING, // last bonding height
 		glib.TYPE_STRING, // last sortition height
+		glib.TYPE_STRING, // unbonding height
 		glib.TYPE_STRING, // availability score
 	)
 	if err != nil {
@@ -70,7 +71,11 @@ func NewValidatorWidgetView() (*ValidatorWidgetView, error) {
 	if err != nil {
 		return nil, err
 	}
-	colScore, err := createTextColumn("Availability Score", 6)
+	colUnbondingHeight, err := createTextColumn("Unbonding Height", 6)
+	if err != nil {
+		return nil, err
+	}
+	colScore, err := createTextColumn("Availability Score", 7)
 	if err != nil {
 		return nil, err
 	}
@@ -81,6 +86,7 @@ func NewValidatorWidgetView() (*ValidatorWidgetView, error) {
 	view.TreeViewValidators.AppendColumn(colStake)
 	view.TreeViewValidators.AppendColumn(colBondingHeight)
 	view.TreeViewValidators.AppendColumn(colSortitionHeight)
+	view.TreeViewValidators.AppendColumn(colUnbondingHeight)
 	view.TreeViewValidators.AppendColumn(colScore)
 
 	return view, nil
