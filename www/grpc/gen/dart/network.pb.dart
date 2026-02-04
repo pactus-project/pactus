@@ -313,6 +313,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     ConnectionInfo? connectionInfo,
     $core.Iterable<ZMQPublisherInfo>? zmqPublishers,
     $fixnum.Int64? currentTime,
+    $core.String? networkName,
   }) {
     final result = create();
     if (moniker != null) result.moniker = moniker;
@@ -328,6 +329,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     if (connectionInfo != null) result.connectionInfo = connectionInfo;
     if (zmqPublishers != null) result.zmqPublishers.addAll(zmqPublishers);
     if (currentTime != null) result.currentTime = currentTime;
+    if (networkName != null) result.networkName = networkName;
     return result;
   }
 
@@ -363,6 +365,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     ..a<$fixnum.Int64>(
         16, _omitFieldNames ? '' : 'currentTime', $pb.PbFieldType.OU6,
         defaultOrMaker: $fixnum.Int64.ZERO)
+    ..aOS(17, _omitFieldNames ? '' : 'networkName')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -497,6 +500,16 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   $core.bool hasCurrentTime() => $_has(12);
   @$pb.TagNumber(16)
   void clearCurrentTime() => $_clearField(16);
+
+  /// Name of the network.
+  @$pb.TagNumber(17)
+  $core.String get networkName => $_getSZ(13);
+  @$pb.TagNumber(17)
+  set networkName($core.String value) => $_setString(13, value);
+  @$pb.TagNumber(17)
+  $core.bool hasNetworkName() => $_has(13);
+  @$pb.TagNumber(17)
+  void clearNetworkName() => $_clearField(17);
 }
 
 /// ZMQPublisherInfo contains information about a ZeroMQ publisher.

@@ -1057,7 +1057,8 @@ clockOffset: jspb.Message.getFloatingPointFieldWithDefault(msg, 13, 0.0),
 connectionInfo: (f = msg.getConnectionInfo()) && proto.pactus.ConnectionInfo.toObject(includeInstance, f),
 zmqPublishersList: jspb.Message.toObjectList(msg.getZmqPublishersList(),
     proto.pactus.ZMQPublisherInfo.toObject, includeInstance),
-currentTime: jspb.Message.getFieldWithDefault(msg, 16, 0)
+currentTime: jspb.Message.getFieldWithDefault(msg, 16, 0),
+networkName: jspb.Message.getFieldWithDefault(msg, 17, "")
   };
 
   if (includeInstance) {
@@ -1147,6 +1148,10 @@ proto.pactus.GetNodeInfoResponse.deserializeBinaryFromReader = function(msg, rea
     case 16:
       var value = /** @type {number} */ (reader.readUint64());
       msg.setCurrentTime(value);
+      break;
+    case 17:
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      msg.setNetworkName(value);
       break;
     default:
       reader.skipField();
@@ -1267,6 +1272,13 @@ proto.pactus.GetNodeInfoResponse.serializeBinaryToWriter = function(message, wri
   if (f !== 0) {
     writer.writeUint64(
       16,
+      f
+    );
+  }
+  f = message.getNetworkName();
+  if (f.length > 0) {
+    writer.writeString(
+      17,
       f
     );
   }
@@ -1581,6 +1593,24 @@ proto.pactus.GetNodeInfoResponse.prototype.getCurrentTime = function() {
  */
 proto.pactus.GetNodeInfoResponse.prototype.setCurrentTime = function(value) {
   return jspb.Message.setProto3IntField(this, 16, value);
+};
+
+
+/**
+ * optional string network_name = 17;
+ * @return {string}
+ */
+proto.pactus.GetNodeInfoResponse.prototype.getNetworkName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 17, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.pactus.GetNodeInfoResponse} returns this
+ */
+proto.pactus.GetNodeInfoResponse.prototype.setNetworkName = function(value) {
+  return jspb.Message.setProto3StringField(this, 17, value);
 };
 
 

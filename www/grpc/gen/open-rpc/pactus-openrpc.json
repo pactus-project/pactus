@@ -702,7 +702,7 @@
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object","required": ["moniker","agent","peer_id","started_at","reachability","services","services_names","local_addrs","protocols","clock_offset","connection_info","zmq_publishers","current_time"],
+          "type": "object","required": ["moniker","agent","peer_id","started_at","reachability","services","services_names","local_addrs","protocols","clock_offset","connection_info","zmq_publishers","current_time","network_name"],
           "properties": {"moniker": { "type": "string" },"agent": { "type": "string" },"peer_id": { "type": "string" },"started_at": { "type": "integer" },"reachability": { "type": "string" },"services": { "type": "integer" },"services_names": { "type": "string" },"local_addrs": {
   "type": "array",
   "items": { "type": "string" }
@@ -718,7 +718,7 @@
   "type": "object","required": ["topic","address","hwm"],
   "properties": {"topic": { "type": "string" },"address": { "type": "string" },"hwm": { "type": "integer" }}
 }
-},"current_time": { "type": "integer" }}
+},"current_time": { "type": "integer" },"network_name": { "type": "string" }}
           }
         }
       },{

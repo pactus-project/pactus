@@ -1,14 +1,12 @@
 package html
 
 import (
-	"encoding/hex"
 	"fmt"
 	"net/http"
 	"sort"
 	"time"
 
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
-	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
@@ -40,11 +38,7 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) PeerListHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	includeDisconnected := false
-
-	if r.URL.Query().Get("includeDisconnected") == "true" {
-		includeDisconnected = true
-	}
+	includeDisconnected := r.URL.Query().Get("includeDisconnected") == "true"
 
 	res, err := s.network.ListPeers(ctx,
 		&pactus.ListPeersRequest{
@@ -66,11 +60,9 @@ func (s *Server) PeerListHandler(w http.ResponseWriter, r *http.Request) {
 	})
 
 	for index, peer := range peers {
-		id, _ := hex.DecodeString(peer.PeerId)
-		pid, _ := lp2ppeer.IDFromBytes(id)
 		tmk.addRowInt("-- Peer #", index+1)
 		tmk.addRowString("Status", status.Status(peer.Status).String())
-		tmk.addRowString("PeerID", pid.String())
+		tmk.addRowString("PeerID", peer.PeerId)
 		tmk.addRowString("Services", service.Services(peer.Services).String())
 		tmk.addRowString("Agent", peer.Agent)
 		tmk.addRowString("Moniker", peer.Moniker)
@@ -106,10 +98,9 @@ func (s *Server) NodeHandler(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-	pid, _ := hex.DecodeString(res.PeerId)
-	sid, _ := lp2ppeer.IDFromBytes(pid)
+
 	tmk := newTableMaker()
-	tmk.addRowString("Peer ID", sid.String())
+	tmk.addRowString("Peer ID", res.PeerId)
 	tmk.addRowString("Agent", res.Agent)
 	tmk.addRowString("Moniker", res.Moniker)
 	tmk.addRowTime("Started at", int64(res.StartedAt))

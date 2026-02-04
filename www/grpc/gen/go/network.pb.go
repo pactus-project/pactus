@@ -332,7 +332,9 @@ type GetNodeInfoResponse struct {
 	// List of active ZeroMQ publishers.
 	ZmqPublishers []*ZMQPublisherInfo `protobuf:"bytes,15,rep,name=zmq_publishers,json=zmqPublishers,proto3" json:"zmq_publishers,omitempty"`
 	// Current Unix timestamp of the node (UTC).
-	CurrentTime   uint64 `protobuf:"varint,16,opt,name=current_time,json=currentTime,proto3" json:"current_time,omitempty"`
+	CurrentTime uint64 `protobuf:"varint,16,opt,name=current_time,json=currentTime,proto3" json:"current_time,omitempty"`
+	// Name of the network.
+	NetworkName   string `protobuf:"bytes,17,opt,name=network_name,json=networkName,proto3" json:"network_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -456,6 +458,13 @@ func (x *GetNodeInfoResponse) GetCurrentTime() uint64 {
 		return x.CurrentTime
 	}
 	return 0
+}
+
+func (x *GetNodeInfoResponse) GetNetworkName() string {
+	if x != nil {
+		return x.NetworkName
+	}
+	return ""
 }
 
 // ZMQPublisherInfo contains information about a ZeroMQ publisher.
@@ -1012,7 +1021,7 @@ const file_network_proto_rawDesc = "" +
 	"\x14include_disconnected\x18\x01 \x01(\bR\x13includeDisconnected\";\n" +
 	"\x11ListPeersResponse\x12&\n" +
 	"\x05peers\x18\x01 \x03(\v2\x10.pactus.PeerInfoR\x05peers\"\x14\n" +
-	"\x12GetNodeInfoRequest\"\xeb\x03\n" +
+	"\x12GetNodeInfoRequest\"\x8e\x04\n" +
 	"\x13GetNodeInfoResponse\x12\x18\n" +
 	"\amoniker\x18\x01 \x01(\tR\amoniker\x12\x14\n" +
 	"\x05agent\x18\x02 \x01(\tR\x05agent\x12\x17\n" +
@@ -1028,7 +1037,8 @@ const file_network_proto_rawDesc = "" +
 	"\fclock_offset\x18\r \x01(\x01R\vclockOffset\x12?\n" +
 	"\x0fconnection_info\x18\x0e \x01(\v2\x16.pactus.ConnectionInfoR\x0econnectionInfo\x12?\n" +
 	"\x0ezmq_publishers\x18\x0f \x03(\v2\x18.pactus.ZMQPublisherInfoR\rzmqPublishers\x12!\n" +
-	"\fcurrent_time\x18\x10 \x01(\x04R\vcurrentTime\"T\n" +
+	"\fcurrent_time\x18\x10 \x01(\x04R\vcurrentTime\x12!\n" +
+	"\fnetwork_name\x18\x11 \x01(\tR\vnetworkName\"T\n" +
 	"\x10ZMQPublisherInfo\x12\x14\n" +
 	"\x05topic\x18\x01 \x01(\tR\x05topic\x12\x18\n" +
 	"\aaddress\x18\x02 \x01(\tR\aaddress\x12\x10\n" +

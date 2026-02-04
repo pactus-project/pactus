@@ -928,6 +928,9 @@ pub struct GetNodeInfoResponse {
     /// Current Unix timestamp of the node (UTC).
     #[prost(uint64, tag="16")]
     pub current_time: u64,
+    /// Name of the network.
+    #[prost(string, tag="17")]
+    pub network_name: ::prost::alloc::string::String,
 }
 /// ZMQPublisherInfo contains information about a ZeroMQ publisher.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]

@@ -3211,6 +3211,13 @@ maximum number of messages to queue before dropping older ones.
   Current Unix timestamp of the node (UTC).
     </td>
   </tr>
+   <tr>
+    <td class="fw-bold">network_name</td>
+    <td> string</td>
+    <td>
+  Name of the network.
+    </td>
+  </tr>
    </tbody>
 </table>
 

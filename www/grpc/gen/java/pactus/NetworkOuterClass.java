@@ -3439,6 +3439,26 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
      * @return The currentTime.
      */
     long getCurrentTime();
+
+    /**
+     * <pre>
+     * Name of the network.
+     * </pre>
+     *
+     * <code>string network_name = 17 [json_name = "networkName"];</code>
+     * @return The networkName.
+     */
+    java.lang.String getNetworkName();
+    /**
+     * <pre>
+     * Name of the network.
+     * </pre>
+     *
+     * <code>string network_name = 17 [json_name = "networkName"];</code>
+     * @return The bytes for networkName.
+     */
+    com.google.protobuf.ByteString
+        getNetworkNameBytes();
   }
   /**
    * <pre>
@@ -3476,6 +3496,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
       protocols_ =
           com.google.protobuf.LazyStringArrayList.emptyList();
       zmqPublishers_ = java.util.Collections.emptyList();
+      networkName_ = "";
     }
 
     public static final com.google.protobuf.Descriptors.Descriptor
@@ -3992,6 +4013,53 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
       return currentTime_;
     }
 
+    public static final int NETWORK_NAME_FIELD_NUMBER = 17;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object networkName_ = "";
+    /**
+     * <pre>
+     * Name of the network.
+     * </pre>
+     *
+     * <code>string network_name = 17 [json_name = "networkName"];</code>
+     * @return The networkName.
+     */
+    @java.lang.Override
+    public java.lang.String getNetworkName() {
+      java.lang.Object ref = networkName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        networkName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Name of the network.
+     * </pre>
+     *
+     * <code>string network_name = 17 [json_name = "networkName"];</code>
+     * @return The bytes for networkName.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getNetworkNameBytes() {
+      java.lang.Object ref = networkName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        networkName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -4044,6 +4112,9 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
       }
       if (currentTime_ != 0L) {
         output.writeUInt64(16, currentTime_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(networkName_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 17, networkName_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -4109,6 +4180,9 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
         size += com.google.protobuf.CodedOutputStream
           .computeUInt64Size(16, currentTime_);
       }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(networkName_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(17, networkName_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -4154,6 +4228,8 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
           .equals(other.getZmqPublishersList())) return false;
       if (getCurrentTime()
           != other.getCurrentTime()) return false;
+      if (!getNetworkName()
+          .equals(other.getNetworkName())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -4202,6 +4278,8 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
       hash = (37 * hash) + CURRENT_TIME_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getCurrentTime());
+      hash = (37 * hash) + NETWORK_NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getNetworkName().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -4369,6 +4447,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
         }
         bitField0_ = (bitField0_ & ~0x00000800);
         currentTime_ = 0L;
+        networkName_ = "";
         return this;
       }
 
@@ -4456,6 +4535,9 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
         }
         if (((from_bitField0_ & 0x00001000) != 0)) {
           result.currentTime_ = currentTime_;
+        }
+        if (((from_bitField0_ & 0x00002000) != 0)) {
+          result.networkName_ = networkName_;
         }
         result.bitField0_ |= to_bitField0_;
       }
@@ -4557,6 +4639,11 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
         }
         if (other.getCurrentTime() != 0L) {
           setCurrentTime(other.getCurrentTime());
+        }
+        if (!other.getNetworkName().isEmpty()) {
+          networkName_ = other.networkName_;
+          bitField0_ |= 0x00002000;
+          onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -4661,6 +4748,11 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
                 bitField0_ |= 0x00001000;
                 break;
               } // case 128
+              case 138: {
+                networkName_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00002000;
+                break;
+              } // case 138
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -6073,6 +6165,98 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
       public Builder clearCurrentTime() {
         bitField0_ = (bitField0_ & ~0x00001000);
         currentTime_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object networkName_ = "";
+      /**
+       * <pre>
+       * Name of the network.
+       * </pre>
+       *
+       * <code>string network_name = 17 [json_name = "networkName"];</code>
+       * @return The networkName.
+       */
+      public java.lang.String getNetworkName() {
+        java.lang.Object ref = networkName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          networkName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Name of the network.
+       * </pre>
+       *
+       * <code>string network_name = 17 [json_name = "networkName"];</code>
+       * @return The bytes for networkName.
+       */
+      public com.google.protobuf.ByteString
+          getNetworkNameBytes() {
+        java.lang.Object ref = networkName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          networkName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Name of the network.
+       * </pre>
+       *
+       * <code>string network_name = 17 [json_name = "networkName"];</code>
+       * @param value The networkName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNetworkName(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        networkName_ = value;
+        bitField0_ |= 0x00002000;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Name of the network.
+       * </pre>
+       *
+       * <code>string network_name = 17 [json_name = "networkName"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearNetworkName() {
+        networkName_ = getDefaultInstance().getNetworkName();
+        bitField0_ = (bitField0_ & ~0x00002000);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Name of the network.
+       * </pre>
+       *
+       * <code>string network_name = 17 [json_name = "networkName"];</code>
+       * @param value The bytes for networkName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNetworkNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        networkName_ = value;
+        bitField0_ |= 0x00002000;
         onChanged();
         return this;
       }
@@ -14215,7 +14399,7 @@ pactus.NetworkOuterClass.CounterInfo defaultValue) {
       "nclude_disconnected\030\001 \001(\010R\023includeDiscon" +
       "nected\";\n\021ListPeersResponse\022&\n\005peers\030\001 \003" +
       "(\0132\020.pactus.PeerInfoR\005peers\"\024\n\022GetNodeIn" +
-      "foRequest\"\353\003\n\023GetNodeInfoResponse\022\030\n\007mon" +
+      "foRequest\"\216\004\n\023GetNodeInfoResponse\022\030\n\007mon" +
       "iker\030\001 \001(\tR\007moniker\022\024\n\005agent\030\002 \001(\tR\005agen" +
       "t\022\027\n\007peer_id\030\003 \001(\tR\006peerId\022\035\n\nstarted_at" +
       "\030\004 \001(\004R\tstartedAt\022\"\n\014reachability\030\005 \001(\tR" +
@@ -14227,55 +14411,56 @@ pactus.NetworkOuterClass.CounterInfo defaultValue) {
       "\001(\0132\026.pactus.ConnectionInfoR\016connectionI" +
       "nfo\022?\n\016zmq_publishers\030\017 \003(\0132\030.pactus.ZMQ" +
       "PublisherInfoR\rzmqPublishers\022!\n\014current_" +
-      "time\030\020 \001(\004R\013currentTime\"T\n\020ZMQPublisherI" +
-      "nfo\022\024\n\005topic\030\001 \001(\tR\005topic\022\030\n\007address\030\002 \001" +
-      "(\tR\007address\022\020\n\003hwm\030\003 \001(\005R\003hwm\"\205\005\n\010PeerIn" +
-      "fo\022\026\n\006status\030\001 \001(\005R\006status\022\030\n\007moniker\030\002 " +
-      "\001(\tR\007moniker\022\024\n\005agent\030\003 \001(\tR\005agent\022\027\n\007pe" +
-      "er_id\030\004 \001(\tR\006peerId\022%\n\016consensus_keys\030\005 " +
-      "\003(\tR\rconsensusKeys\022/\n\023consensus_addresse" +
-      "s\030\006 \003(\tR\022consensusAddresses\022\032\n\010services\030" +
-      "\007 \001(\rR\010services\022&\n\017last_block_hash\030\010 \001(\t" +
-      "R\rlastBlockHash\022\026\n\006height\030\t \001(\rR\006height\022" +
-      "\033\n\tlast_sent\030\n \001(\003R\010lastSent\022#\n\rlast_rec" +
-      "eived\030\013 \001(\003R\014lastReceived\022\030\n\007address\030\014 \001" +
-      "(\tR\007address\022/\n\tdirection\030\r \001(\0162\021.pactus." +
-      "DirectionR\tdirection\022\034\n\tprotocols\030\016 \003(\tR" +
-      "\tprotocols\022%\n\016total_sessions\030\017 \001(\005R\rtota" +
-      "lSessions\022-\n\022completed_sessions\030\020 \001(\005R\021c" +
-      "ompletedSessions\0223\n\013metric_info\030\021 \001(\0132\022." +
-      "pactus.MetricInfoR\nmetricInfo\022.\n\023outboun" +
-      "d_hello_sent\030\022 \001(\010R\021outboundHelloSent\"\226\001" +
-      "\n\016ConnectionInfo\022 \n\013connections\030\001 \001(\004R\013c" +
-      "onnections\022/\n\023inbound_connections\030\002 \001(\004R" +
-      "\022inboundConnections\0221\n\024outbound_connecti" +
-      "ons\030\003 \001(\004R\023outboundConnections\"\200\004\n\nMetri" +
-      "cInfo\0228\n\rtotal_invalid\030\001 \001(\0132\023.pactus.Co" +
-      "unterInfoR\014totalInvalid\0222\n\ntotal_sent\030\002 " +
-      "\001(\0132\023.pactus.CounterInfoR\ttotalSent\022:\n\016t" +
-      "otal_received\030\003 \001(\0132\023.pactus.CounterInfo" +
-      "R\rtotalReceived\022F\n\014message_sent\030\004 \003(\0132#." +
-      "pactus.MetricInfo.MessageSentEntryR\013mess" +
-      "ageSent\022R\n\020message_received\030\005 \003(\0132\'.pact" +
-      "us.MetricInfo.MessageReceivedEntryR\017mess" +
-      "ageReceived\032S\n\020MessageSentEntry\022\020\n\003key\030\001" +
-      " \001(\005R\003key\022)\n\005value\030\002 \001(\0132\023.pactus.Counte" +
-      "rInfoR\005value:\0028\001\032W\n\024MessageReceivedEntry" +
-      "\022\020\n\003key\030\001 \001(\005R\003key\022)\n\005value\030\002 \001(\0132\023.pact" +
-      "us.CounterInfoR\005value:\0028\001\"=\n\013CounterInfo" +
-      "\022\024\n\005bytes\030\001 \001(\004R\005bytes\022\030\n\007bundles\030\002 \001(\004R" +
-      "\007bundles\"\r\n\013PingRequest\"\016\n\014PingResponse*" +
-      "Q\n\tDirection\022\025\n\021DIRECTION_UNKNOWN\020\000\022\025\n\021D" +
-      "IRECTION_INBOUND\020\001\022\026\n\022DIRECTION_OUTBOUND" +
-      "\020\0022\227\002\n\007Network\022O\n\016GetNetworkInfo\022\035.pactu" +
-      "s.GetNetworkInfoRequest\032\036.pactus.GetNetw" +
-      "orkInfoResponse\022@\n\tListPeers\022\030.pactus.Li" +
-      "stPeersRequest\032\031.pactus.ListPeersRespons" +
-      "e\022F\n\013GetNodeInfo\022\032.pactus.GetNodeInfoReq" +
-      "uest\032\033.pactus.GetNodeInfoResponse\0221\n\004Pin" +
-      "g\022\023.pactus.PingRequest\032\024.pactus.PingResp" +
-      "onseB:\n\006pactusZ0github.com/pactus-projec" +
-      "t/pactus/www/grpc/pactusb\006proto3"
+      "time\030\020 \001(\004R\013currentTime\022!\n\014network_name\030" +
+      "\021 \001(\tR\013networkName\"T\n\020ZMQPublisherInfo\022\024" +
+      "\n\005topic\030\001 \001(\tR\005topic\022\030\n\007address\030\002 \001(\tR\007a" +
+      "ddress\022\020\n\003hwm\030\003 \001(\005R\003hwm\"\205\005\n\010PeerInfo\022\026\n" +
+      "\006status\030\001 \001(\005R\006status\022\030\n\007moniker\030\002 \001(\tR\007" +
+      "moniker\022\024\n\005agent\030\003 \001(\tR\005agent\022\027\n\007peer_id" +
+      "\030\004 \001(\tR\006peerId\022%\n\016consensus_keys\030\005 \003(\tR\r" +
+      "consensusKeys\022/\n\023consensus_addresses\030\006 \003" +
+      "(\tR\022consensusAddresses\022\032\n\010services\030\007 \001(\r" +
+      "R\010services\022&\n\017last_block_hash\030\010 \001(\tR\rlas" +
+      "tBlockHash\022\026\n\006height\030\t \001(\rR\006height\022\033\n\tla" +
+      "st_sent\030\n \001(\003R\010lastSent\022#\n\rlast_received" +
+      "\030\013 \001(\003R\014lastReceived\022\030\n\007address\030\014 \001(\tR\007a" +
+      "ddress\022/\n\tdirection\030\r \001(\0162\021.pactus.Direc" +
+      "tionR\tdirection\022\034\n\tprotocols\030\016 \003(\tR\tprot" +
+      "ocols\022%\n\016total_sessions\030\017 \001(\005R\rtotalSess" +
+      "ions\022-\n\022completed_sessions\030\020 \001(\005R\021comple" +
+      "tedSessions\0223\n\013metric_info\030\021 \001(\0132\022.pactu" +
+      "s.MetricInfoR\nmetricInfo\022.\n\023outbound_hel" +
+      "lo_sent\030\022 \001(\010R\021outboundHelloSent\"\226\001\n\016Con" +
+      "nectionInfo\022 \n\013connections\030\001 \001(\004R\013connec" +
+      "tions\022/\n\023inbound_connections\030\002 \001(\004R\022inbo" +
+      "undConnections\0221\n\024outbound_connections\030\003" +
+      " \001(\004R\023outboundConnections\"\200\004\n\nMetricInfo" +
+      "\0228\n\rtotal_invalid\030\001 \001(\0132\023.pactus.Counter" +
+      "InfoR\014totalInvalid\0222\n\ntotal_sent\030\002 \001(\0132\023" +
+      ".pactus.CounterInfoR\ttotalSent\022:\n\016total_" +
+      "received\030\003 \001(\0132\023.pactus.CounterInfoR\rtot" +
+      "alReceived\022F\n\014message_sent\030\004 \003(\0132#.pactu" +
+      "s.MetricInfo.MessageSentEntryR\013messageSe" +
+      "nt\022R\n\020message_received\030\005 \003(\0132\'.pactus.Me" +
+      "tricInfo.MessageReceivedEntryR\017messageRe" +
+      "ceived\032S\n\020MessageSentEntry\022\020\n\003key\030\001 \001(\005R" +
+      "\003key\022)\n\005value\030\002 \001(\0132\023.pactus.CounterInfo" +
+      "R\005value:\0028\001\032W\n\024MessageReceivedEntry\022\020\n\003k" +
+      "ey\030\001 \001(\005R\003key\022)\n\005value\030\002 \001(\0132\023.pactus.Co" +
+      "unterInfoR\005value:\0028\001\"=\n\013CounterInfo\022\024\n\005b" +
+      "ytes\030\001 \001(\004R\005bytes\022\030\n\007bundles\030\002 \001(\004R\007bund" +
+      "les\"\r\n\013PingRequest\"\016\n\014PingResponse*Q\n\tDi" +
+      "rection\022\025\n\021DIRECTION_UNKNOWN\020\000\022\025\n\021DIRECT" +
+      "ION_INBOUND\020\001\022\026\n\022DIRECTION_OUTBOUND\020\0022\227\002" +
+      "\n\007Network\022O\n\016GetNetworkInfo\022\035.pactus.Get" +
+      "NetworkInfoRequest\032\036.pactus.GetNetworkIn" +
+      "foResponse\022@\n\tListPeers\022\030.pactus.ListPee" +
+      "rsRequest\032\031.pactus.ListPeersResponse\022F\n\013" +
+      "GetNodeInfo\022\032.pactus.GetNodeInfoRequest\032" +
+      "\033.pactus.GetNodeInfoResponse\0221\n\004Ping\022\023.p" +
+      "actus.PingRequest\032\024.pactus.PingResponseB" +
+      ":\n\006pactusZ0github.com/pactus-project/pac" +
+      "tus/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -14316,7 +14501,7 @@ pactus.NetworkOuterClass.CounterInfo defaultValue) {
     internal_static_pactus_GetNodeInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetNodeInfoResponse_descriptor,
-        new java.lang.String[] { "Moniker", "Agent", "PeerId", "StartedAt", "Reachability", "Services", "ServicesNames", "LocalAddrs", "Protocols", "ClockOffset", "ConnectionInfo", "ZmqPublishers", "CurrentTime", });
+        new java.lang.String[] { "Moniker", "Agent", "PeerId", "StartedAt", "Reachability", "Services", "ServicesNames", "LocalAddrs", "Protocols", "ClockOffset", "ConnectionInfo", "ZmqPublishers", "CurrentTime", "NetworkName", });
     internal_static_pactus_ZMQPublisherInfo_descriptor =
       getDescriptor().getMessageType(6);
     internal_static_pactus_ZMQPublisherInfo_fieldAccessorTable = new

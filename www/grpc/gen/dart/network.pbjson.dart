@@ -147,6 +147,7 @@ const GetNodeInfoResponse$json = {
       '10': 'zmqPublishers'
     },
     {'1': 'current_time', '3': 16, '4': 1, '5': 4, '10': 'currentTime'},
+    {'1': 'network_name', '3': 17, '4': 1, '5': 9, '10': 'networkName'},
   ],
 };
 
@@ -160,7 +161,8 @@ final $typed_data.Uint8List getNodeInfoResponseDescriptor = $convert.base64Decod
     'MoCVIJcHJvdG9jb2xzEiEKDGNsb2NrX29mZnNldBgNIAEoAVILY2xvY2tPZmZzZXQSPwoPY29u'
     'bmVjdGlvbl9pbmZvGA4gASgLMhYucGFjdHVzLkNvbm5lY3Rpb25JbmZvUg5jb25uZWN0aW9uSW'
     '5mbxI/Cg56bXFfcHVibGlzaGVycxgPIAMoCzIYLnBhY3R1cy5aTVFQdWJsaXNoZXJJbmZvUg16'
-    'bXFQdWJsaXNoZXJzEiEKDGN1cnJlbnRfdGltZRgQIAEoBFILY3VycmVudFRpbWU=');
+    'bXFQdWJsaXNoZXJzEiEKDGN1cnJlbnRfdGltZRgQIAEoBFILY3VycmVudFRpbWUSIQoMbmV0d2'
+    '9ya19uYW1lGBEgASgJUgtuZXR3b3JrTmFtZQ==');
 
 @$core.Deprecated('Use zMQPublisherInfoDescriptor instead')
 const ZMQPublisherInfo$json = {

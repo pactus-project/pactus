@@ -61,6 +61,7 @@ class GetNodeInfoResponse(_message.Message):
     CONNECTION_INFO_FIELD_NUMBER: _ClassVar[int]
     ZMQ_PUBLISHERS_FIELD_NUMBER: _ClassVar[int]
     CURRENT_TIME_FIELD_NUMBER: _ClassVar[int]
+    NETWORK_NAME_FIELD_NUMBER: _ClassVar[int]
     moniker: str
     agent: str
     peer_id: str
@@ -74,7 +75,8 @@ class GetNodeInfoResponse(_message.Message):
     connection_info: ConnectionInfo
     zmq_publishers: _containers.RepeatedCompositeFieldContainer[ZMQPublisherInfo]
     current_time: int
-    def __init__(self, moniker: _Optional[str] = ..., agent: _Optional[str] = ..., peer_id: _Optional[str] = ..., started_at: _Optional[int] = ..., reachability: _Optional[str] = ..., services: _Optional[int] = ..., services_names: _Optional[str] = ..., local_addrs: _Optional[_Iterable[str]] = ..., protocols: _Optional[_Iterable[str]] = ..., clock_offset: _Optional[float] = ..., connection_info: _Optional[_Union[ConnectionInfo, _Mapping]] = ..., zmq_publishers: _Optional[_Iterable[_Union[ZMQPublisherInfo, _Mapping]]] = ..., current_time: _Optional[int] = ...) -> None: ...
+    network_name: str
+    def __init__(self, moniker: _Optional[str] = ..., agent: _Optional[str] = ..., peer_id: _Optional[str] = ..., started_at: _Optional[int] = ..., reachability: _Optional[str] = ..., services: _Optional[int] = ..., services_names: _Optional[str] = ..., local_addrs: _Optional[_Iterable[str]] = ..., protocols: _Optional[_Iterable[str]] = ..., clock_offset: _Optional[float] = ..., connection_info: _Optional[_Union[ConnectionInfo, _Mapping]] = ..., zmq_publishers: _Optional[_Iterable[_Union[ZMQPublisherInfo, _Mapping]]] = ..., current_time: _Optional[int] = ..., network_name: _Optional[str] = ...) -> None: ...
 
 class ZMQPublisherInfo(_message.Message):
     __slots__ = ()

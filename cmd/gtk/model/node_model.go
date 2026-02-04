@@ -48,8 +48,3 @@ func (m *NodeModel) GetConsensusInfo() (*pactus.GetConsensusInfoResponse, error)
 func (m *NodeModel) GetNodeInfo() (*pactus.GetNodeInfoResponse, error) {
 	return m.networkClient.GetNodeInfo(m.ctx, &pactus.GetNodeInfoRequest{})
 }
-
-// GetNetworkInfo returns network info (network name, peers).
-func (m *NodeModel) GetNetworkInfo() (*pactus.GetNetworkInfoResponse, error) {
-	return m.networkClient.GetNetworkInfo(m.ctx, &pactus.GetNetworkInfoRequest{})
-}

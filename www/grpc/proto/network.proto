@@ -87,6 +87,8 @@ message GetNodeInfoResponse {
   repeated ZMQPublisherInfo zmq_publishers = 15;
   // Current Unix timestamp of the node (UTC).
   uint64 current_time = 16;
+  // Name of the network.
+  string network_name = 17;
 }
 
 // ZMQPublisherInfo contains information about a ZeroMQ publisher.

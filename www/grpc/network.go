@@ -2,7 +2,6 @@ package grpc
 
 import (
 	"context"
-	"encoding/hex"
 	"time"
 
 	"github.com/fxamacker/cbor/v2"
@@ -33,9 +32,10 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 	}
 
 	resp := &pactus.GetNodeInfoResponse{
+		NetworkName:   s.net.Name(),
 		Moniker:       s.sync.Moniker(),
 		Agent:         version.NodeAgent.String(),
-		PeerId:        hex.EncodeToString([]byte(s.sync.SelfID())),
+		PeerId:        s.sync.SelfID().String(),
 		Reachability:  s.net.ReachabilityStatus(),
 		LocalAddrs:    s.net.HostAddrs(),
 		StartedAt:     uint64(peerSet.StartedAt().Unix()),
@@ -64,7 +64,7 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 }
 
 func (s *networkServer) GetNetworkInfo(_ context.Context,
-	req *pactus.GetNetworkInfoRequest,
+	_ *pactus.GetNetworkInfoRequest,
 ) (*pactus.GetNetworkInfoResponse, error) {
 	peerSet := s.sync.PeerSet()
 	var count uint32
@@ -106,7 +106,7 @@ func (s *networkServer) ListPeers(_ context.Context,
 		}
 		peerInfo.Agent = string(data)
 
-		peerInfo.PeerId = hex.EncodeToString([]byte(peer.PeerID))
+		peerInfo.PeerId = peer.PeerID.String()
 		peerInfo.Moniker = peer.Moniker
 		peerInfo.Agent = peer.Agent
 		peerInfo.Address = peer.Address

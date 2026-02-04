@@ -2203,6 +2203,10 @@
           "type": "string",
           "format": "uint64",
           "description": "Current Unix timestamp of the node (UTC)."
+        },
+        "networkName": {
+          "type": "string",
+          "description": "Name of the network."
         }
       },
       "description": "Response message contains information about a specific node in the network."
