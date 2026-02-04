@@ -36,7 +36,7 @@ message GetNetworkInfoRequest {
 
 // Response message contains information about the overall network.
 message GetNetworkInfoResponse {
-  // Name of the network.
+  // Name of the P2P network.
   string network_name = 1;
   // Number of connected peers.
   uint32 connected_peers_count = 2;
@@ -87,7 +87,7 @@ message GetNodeInfoResponse {
   repeated ZMQPublisherInfo zmq_publishers = 15;
   // Current Unix timestamp of the node (UTC).
   uint64 current_time = 16;
-  // Name of the network.
+  // Name of the P2P network.
   string network_name = 17;
 }
 
