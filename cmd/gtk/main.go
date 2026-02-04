@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"sync"
+	"time"
 
 	"github.com/ezex-io/gopkg/signal"
 	"github.com/gofrs/flock"
@@ -35,12 +36,14 @@ var (
 	workingDirOpt *string
 	passwordOpt   *string
 	testnetOpt    *bool
+	grpcAddrOpt   *string
 )
 
 func init() {
 	workingDirOpt = flag.String("working-dir", cmd.PactusDefaultHomeDir(), "working directory path")
 	passwordOpt = flag.String("password", "", "wallet password")
 	testnetOpt = flag.Bool("testnet", false, "initializing for the testnet")
+	grpcAddrOpt = flag.String("grpc-addr", "", "connect to remote gRPC server instead of starting local node")
 	version.NodeAgent.AppType = "gui"
 
 	if runtime.GOOS == "darwin" {
@@ -79,28 +82,31 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	// If node is not initialized yet
-	if util.IsDirNotExistsOrEmpty(workingDir) {
-		network := genesis.Mainnet
-		if *testnetOpt {
-			network = genesis.Testnet
+	var fileLock *flock.Flock
+	if *grpcAddrOpt == "" {
+		// If node is not initialized yet
+		if util.IsDirNotExistsOrEmpty(workingDir) {
+			network := genesis.Mainnet
+			if *testnetOpt {
+				network = genesis.Testnet
+			}
+			if !startupAssistant(ctx, workingDir, network) {
+				return
+			}
 		}
-		if !startupAssistant(ctx, workingDir, network) {
+
+		// Define the lock file path
+		lockFilePath := filepath.Join(workingDir, ".pactus.lock")
+		fileLock = flock.New(lockFilePath)
+
+		locked, err := fileLock.TryLock()
+		gtkutil.FatalErrorCheck(err)
+
+		if !locked {
+			terminal.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)
+
 			return
 		}
-	}
-
-	// Define the lock file path
-	lockFilePath := filepath.Join(workingDir, ".pactus.lock")
-	fileLock := flock.New(lockFilePath)
-
-	locked, err := fileLock.TryLock()
-	gtkutil.FatalErrorCheck(err)
-
-	if !locked {
-		terminal.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)
-
-		return
 	}
 	var guiNode *node.Node
 
@@ -126,7 +132,9 @@ func main() {
 			if guiNode != nil {
 				guiNode.Stop()
 			}
-			_ = fileLock.Unlock()
+			if fileLock != nil {
+				_ = fileLock.Unlock()
+			}
 		})
 	}
 
@@ -157,22 +165,20 @@ func main() {
 			}
 
 			go func() {
-				n, err := newNode(ctx, workingDir, notify)
+				grpcAddr := *grpcAddrOpt
+				if grpcAddr == "" {
+					time.Sleep(1 * time.Second)
+					reportStatus(notify, "Starting local node...")
+					guiNode, err = newNode(ctx, workingDir, notify)
+
+					grpcAddr = guiNode.GRPC().Address()
+				} else {
+					time.Sleep(1 * time.Second)
+					reportStatus(notify, "Connecting to remote node...")
+				}
 
 				glib.IdleAdd(func() bool {
-					if err != nil {
-						splash.Destroy()
-						shutdown()
-						gtkutil.ShowError(err)
-						app.Quit()
-
-						return false
-					}
-
-					guiNode = n
-					splash.SetStatus("Loading wallet interface...")
-
-					grpcConn, err = grpc.NewClient(n.GRPC().Address(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+					grpcConn, err = grpc.NewClient(grpcAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 					gtkutil.FatalErrorCheck(err)
 
 					gui, err = gtkapp.Run(ctx, grpcConn, app)
