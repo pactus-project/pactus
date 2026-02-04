@@ -4132,14 +4132,8 @@ impl serde::Serialize for GetNetworkInfoRequest {
         S: serde::Serializer,
     {
         use serde::ser::SerializeStruct;
-        let mut len = 0;
-        if self.only_connected {
-            len += 1;
-        }
-        let mut struct_ser = serializer.serialize_struct("pactus.GetNetworkInfoRequest", len)?;
-        if self.only_connected {
-            struct_ser.serialize_field("onlyConnected", &self.only_connected)?;
-        }
+        let len = 0;
+        let struct_ser = serializer.serialize_struct("pactus.GetNetworkInfoRequest", len)?;
         struct_ser.end()
     }
 }
@@ -4150,13 +4144,10 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoRequest {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "only_connected",
-            "onlyConnected",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
-            OnlyConnected,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -4177,10 +4168,7 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoRequest {
                     where
                         E: serde::de::Error,
                     {
-                        match value {
-                            "onlyConnected" | "only_connected" => Ok(GeneratedField::OnlyConnected),
-                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
-                        }
+                            Err(serde::de::Error::unknown_field(value, FIELDS))
                     }
                 }
                 deserializer.deserialize_identifier(GeneratedVisitor)
@@ -4198,19 +4186,10 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoRequest {
                 where
                     V: serde::de::MapAccess<'de>,
             {
-                let mut only_connected__ = None;
-                while let Some(k) = map_.next_key()? {
-                    match k {
-                        GeneratedField::OnlyConnected => {
-                            if only_connected__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("onlyConnected"));
-                            }
-                            only_connected__ = Some(map_.next_value()?);
-                        }
-                    }
+                while map_.next_key::<GeneratedField>()?.is_some() {
+                    let _ = map_.next_value::<serde::de::IgnoredAny>()?;
                 }
                 Ok(GetNetworkInfoRequest {
-                    only_connected: only_connected__.unwrap_or_default(),
                 })
             }
         }
@@ -4231,9 +4210,6 @@ impl serde::Serialize for GetNetworkInfoResponse {
         if self.connected_peers_count != 0 {
             len += 1;
         }
-        if !self.connected_peers.is_empty() {
-            len += 1;
-        }
         if self.metric_info.is_some() {
             len += 1;
         }
@@ -4243,9 +4219,6 @@ impl serde::Serialize for GetNetworkInfoResponse {
         }
         if self.connected_peers_count != 0 {
             struct_ser.serialize_field("connectedPeersCount", &self.connected_peers_count)?;
-        }
-        if !self.connected_peers.is_empty() {
-            struct_ser.serialize_field("connectedPeers", &self.connected_peers)?;
         }
         if let Some(v) = self.metric_info.as_ref() {
             struct_ser.serialize_field("metricInfo", v)?;
@@ -4264,8 +4237,6 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoResponse {
             "networkName",
             "connected_peers_count",
             "connectedPeersCount",
-            "connected_peers",
-            "connectedPeers",
             "metric_info",
             "metricInfo",
         ];
@@ -4274,7 +4245,6 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoResponse {
         enum GeneratedField {
             NetworkName,
             ConnectedPeersCount,
-            ConnectedPeers,
             MetricInfo,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
@@ -4299,7 +4269,6 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoResponse {
                         match value {
                             "networkName" | "network_name" => Ok(GeneratedField::NetworkName),
                             "connectedPeersCount" | "connected_peers_count" => Ok(GeneratedField::ConnectedPeersCount),
-                            "connectedPeers" | "connected_peers" => Ok(GeneratedField::ConnectedPeers),
                             "metricInfo" | "metric_info" => Ok(GeneratedField::MetricInfo),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
@@ -4322,7 +4291,6 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoResponse {
             {
                 let mut network_name__ = None;
                 let mut connected_peers_count__ = None;
-                let mut connected_peers__ = None;
                 let mut metric_info__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
@@ -4340,12 +4308,6 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoResponse {
                                 Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
-                        GeneratedField::ConnectedPeers => {
-                            if connected_peers__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("connectedPeers"));
-                            }
-                            connected_peers__ = Some(map_.next_value()?);
-                        }
                         GeneratedField::MetricInfo => {
                             if metric_info__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("metricInfo"));
@@ -4357,7 +4319,6 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoResponse {
                 Ok(GetNetworkInfoResponse {
                     network_name: network_name__.unwrap_or_default(),
                     connected_peers_count: connected_peers_count__.unwrap_or_default(),
-                    connected_peers: connected_peers__.unwrap_or_default(),
                     metric_info: metric_info__,
                 })
             }
@@ -4738,6 +4699,9 @@ impl serde::Serialize for GetNodeInfoResponse {
         if self.current_time != 0 {
             len += 1;
         }
+        if !self.network_name.is_empty() {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.GetNodeInfoResponse", len)?;
         if !self.moniker.is_empty() {
             struct_ser.serialize_field("moniker", &self.moniker)?;
@@ -4782,6 +4746,9 @@ impl serde::Serialize for GetNodeInfoResponse {
             #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("currentTime", ToString::to_string(&self.current_time).as_str())?;
         }
+        if !self.network_name.is_empty() {
+            struct_ser.serialize_field("networkName", &self.network_name)?;
+        }
         struct_ser.end()
     }
 }
@@ -4813,6 +4780,8 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
             "zmqPublishers",
             "current_time",
             "currentTime",
+            "network_name",
+            "networkName",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -4830,6 +4799,7 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
             ConnectionInfo,
             ZmqPublishers,
             CurrentTime,
+            NetworkName,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -4864,6 +4834,7 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                             "connectionInfo" | "connection_info" => Ok(GeneratedField::ConnectionInfo),
                             "zmqPublishers" | "zmq_publishers" => Ok(GeneratedField::ZmqPublishers),
                             "currentTime" | "current_time" => Ok(GeneratedField::CurrentTime),
+                            "networkName" | "network_name" => Ok(GeneratedField::NetworkName),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -4896,6 +4867,7 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                 let mut connection_info__ = None;
                 let mut zmq_publishers__ = None;
                 let mut current_time__ = None;
+                let mut network_name__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Moniker => {
@@ -4984,6 +4956,12 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                                 Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
+                        GeneratedField::NetworkName => {
+                            if network_name__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("networkName"));
+                            }
+                            network_name__ = Some(map_.next_value()?);
+                        }
                     }
                 }
                 Ok(GetNodeInfoResponse {
@@ -5000,6 +4978,7 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                     connection_info: connection_info__,
                     zmq_publishers: zmq_publishers__.unwrap_or_default(),
                     current_time: current_time__.unwrap_or_default(),
+                    network_name: network_name__.unwrap_or_default(),
                 })
             }
         }
@@ -8403,6 +8382,189 @@ impl<'de> serde::Deserialize<'de> for ListAddressesResponse {
             }
         }
         deserializer.deserialize_struct("pactus.ListAddressesResponse", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for ListPeersRequest {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.include_disconnected {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.ListPeersRequest", len)?;
+        if self.include_disconnected {
+            struct_ser.serialize_field("includeDisconnected", &self.include_disconnected)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for ListPeersRequest {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "include_disconnected",
+            "includeDisconnected",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            IncludeDisconnected,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "includeDisconnected" | "include_disconnected" => Ok(GeneratedField::IncludeDisconnected),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = ListPeersRequest;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.ListPeersRequest")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListPeersRequest, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut include_disconnected__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::IncludeDisconnected => {
+                            if include_disconnected__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("includeDisconnected"));
+                            }
+                            include_disconnected__ = Some(map_.next_value()?);
+                        }
+                    }
+                }
+                Ok(ListPeersRequest {
+                    include_disconnected: include_disconnected__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.ListPeersRequest", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for ListPeersResponse {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.peers.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.ListPeersResponse", len)?;
+        if !self.peers.is_empty() {
+            struct_ser.serialize_field("peers", &self.peers)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for ListPeersResponse {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "peers",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Peers,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "peers" => Ok(GeneratedField::Peers),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = ListPeersResponse;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.ListPeersResponse")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListPeersResponse, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut peers__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::Peers => {
+                            if peers__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("peers"));
+                            }
+                            peers__ = Some(map_.next_value()?);
+                        }
+                    }
+                }
+                Ok(ListPeersResponse {
+                    peers: peers__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.ListPeersResponse", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for ListTransactionsRequest {

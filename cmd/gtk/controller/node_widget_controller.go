@@ -59,12 +59,8 @@ func (c *NodeWidgetController) Bind(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	netInfo, err := c.model.GetNetworkInfo()
-	if err != nil {
-		return err
-	}
 
-	c.view.LabelNetwork.SetText(netInfo.NetworkName)
+	c.view.LabelNetwork.SetText(nodeInfo.NetworkName)
 	c.view.LabelNetworkID.SetText(nodeInfo.PeerId)
 	c.view.LabelMoniker.SetText(nodeInfo.Moniker)
 	c.view.LabelIsPrune.SetText(strconv.FormatBool(chainInfo.IsPruned))

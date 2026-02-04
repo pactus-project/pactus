@@ -21,6 +21,7 @@ func NetworkClientCommand(options ...client.Option) *cobra.Command {
 	cfg.BindFlags(cmd.PersistentFlags())
 	cmd.AddCommand(
 		_NetworkGetNetworkInfoCommand(cfg),
+		_NetworkListPeersCommand(cfg),
 		_NetworkGetNodeInfoCommand(cfg),
 		_NetworkPingCommand(cfg),
 	)
@@ -64,7 +65,47 @@ func _NetworkGetNetworkInfoCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().BoolVar(&req.OnlyConnected, cfg.FlagNamer("OnlyConnected"), false, "If true, returns only peers that are currently connected.")
+	return cmd
+}
+
+func _NetworkListPeersCommand(cfg *client.Config) *cobra.Command {
+	req := &ListPeersRequest{}
+
+	cmd := &cobra.Command{
+		Use:   cfg.CommandNamer("ListPeers"),
+		Short: "ListPeers RPC client",
+		Long:  "ListPeers lists all peers in the network.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Network"); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Network", "ListPeers"); err != nil {
+					return err
+				}
+			}
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+				cli := NewNetworkClient(cc)
+				v := &ListPeersRequest{}
+
+				if err := in(v); err != nil {
+					return err
+				}
+				proto.Merge(v, req)
+
+				res, err := cli.ListPeers(cmd.Context(), v)
+
+				if err != nil {
+					return err
+				}
+
+				return out(res)
+
+			})
+		},
+	}
+
+	cmd.PersistentFlags().BoolVar(&req.IncludeDisconnected, cfg.FlagNamer("IncludeDisconnected"), false, "If true, includes disconnected peers (default: connected peers only).")
 
 	return cmd
 }

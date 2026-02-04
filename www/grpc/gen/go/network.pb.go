@@ -76,9 +76,7 @@ func (Direction) EnumDescriptor() ([]byte, []int) {
 
 // Request message for retrieving overall network information.
 type GetNetworkInfoRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// If true, returns only peers that are currently connected.
-	OnlyConnected bool `protobuf:"varint,1,opt,name=only_connected,json=onlyConnected,proto3" json:"only_connected,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -113,13 +111,6 @@ func (*GetNetworkInfoRequest) Descriptor() ([]byte, []int) {
 	return file_network_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *GetNetworkInfoRequest) GetOnlyConnected() bool {
-	if x != nil {
-		return x.OnlyConnected
-	}
-	return false
-}
-
 // Response message contains information about the overall network.
 type GetNetworkInfoResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -127,8 +118,6 @@ type GetNetworkInfoResponse struct {
 	NetworkName string `protobuf:"bytes,1,opt,name=network_name,json=networkName,proto3" json:"network_name,omitempty"`
 	// Number of connected peers.
 	ConnectedPeersCount uint32 `protobuf:"varint,2,opt,name=connected_peers_count,json=connectedPeersCount,proto3" json:"connected_peers_count,omitempty"`
-	// List of connected peers.
-	ConnectedPeers []*PeerInfo `protobuf:"bytes,3,rep,name=connected_peers,json=connectedPeers,proto3" json:"connected_peers,omitempty"`
 	// Metrics related to node activity.
 	MetricInfo    *MetricInfo `protobuf:"bytes,4,opt,name=metric_info,json=metricInfo,proto3" json:"metric_info,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -179,16 +168,101 @@ func (x *GetNetworkInfoResponse) GetConnectedPeersCount() uint32 {
 	return 0
 }
 
-func (x *GetNetworkInfoResponse) GetConnectedPeers() []*PeerInfo {
+func (x *GetNetworkInfoResponse) GetMetricInfo() *MetricInfo {
 	if x != nil {
-		return x.ConnectedPeers
+		return x.MetricInfo
 	}
 	return nil
 }
 
-func (x *GetNetworkInfoResponse) GetMetricInfo() *MetricInfo {
+// Request message for listing peers.
+type ListPeersRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// If true, includes disconnected peers (default: connected peers only).
+	IncludeDisconnected bool `protobuf:"varint,1,opt,name=include_disconnected,json=includeDisconnected,proto3" json:"include_disconnected,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *ListPeersRequest) Reset() {
+	*x = ListPeersRequest{}
+	mi := &file_network_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListPeersRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListPeersRequest) ProtoMessage() {}
+
+func (x *ListPeersRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_network_proto_msgTypes[2]
 	if x != nil {
-		return x.MetricInfo
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListPeersRequest.ProtoReflect.Descriptor instead.
+func (*ListPeersRequest) Descriptor() ([]byte, []int) {
+	return file_network_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *ListPeersRequest) GetIncludeDisconnected() bool {
+	if x != nil {
+		return x.IncludeDisconnected
+	}
+	return false
+}
+
+// Response message for listing peers.
+type ListPeersResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// List of peers.
+	Peers         []*PeerInfo `protobuf:"bytes,1,rep,name=peers,proto3" json:"peers,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListPeersResponse) Reset() {
+	*x = ListPeersResponse{}
+	mi := &file_network_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListPeersResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListPeersResponse) ProtoMessage() {}
+
+func (x *ListPeersResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_network_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListPeersResponse.ProtoReflect.Descriptor instead.
+func (*ListPeersResponse) Descriptor() ([]byte, []int) {
+	return file_network_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ListPeersResponse) GetPeers() []*PeerInfo {
+	if x != nil {
+		return x.Peers
 	}
 	return nil
 }
@@ -202,7 +276,7 @@ type GetNodeInfoRequest struct {
 
 func (x *GetNodeInfoRequest) Reset() {
 	*x = GetNodeInfoRequest{}
-	mi := &file_network_proto_msgTypes[2]
+	mi := &file_network_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -214,7 +288,7 @@ func (x *GetNodeInfoRequest) String() string {
 func (*GetNodeInfoRequest) ProtoMessage() {}
 
 func (x *GetNodeInfoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_network_proto_msgTypes[2]
+	mi := &file_network_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -227,7 +301,7 @@ func (x *GetNodeInfoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetNodeInfoRequest.ProtoReflect.Descriptor instead.
 func (*GetNodeInfoRequest) Descriptor() ([]byte, []int) {
-	return file_network_proto_rawDescGZIP(), []int{2}
+	return file_network_proto_rawDescGZIP(), []int{4}
 }
 
 // Response message contains information about a specific node in the network.
@@ -258,14 +332,16 @@ type GetNodeInfoResponse struct {
 	// List of active ZeroMQ publishers.
 	ZmqPublishers []*ZMQPublisherInfo `protobuf:"bytes,15,rep,name=zmq_publishers,json=zmqPublishers,proto3" json:"zmq_publishers,omitempty"`
 	// Current Unix timestamp of the node (UTC).
-	CurrentTime   uint64 `protobuf:"varint,16,opt,name=current_time,json=currentTime,proto3" json:"current_time,omitempty"`
+	CurrentTime uint64 `protobuf:"varint,16,opt,name=current_time,json=currentTime,proto3" json:"current_time,omitempty"`
+	// Name of the network.
+	NetworkName   string `protobuf:"bytes,17,opt,name=network_name,json=networkName,proto3" json:"network_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetNodeInfoResponse) Reset() {
 	*x = GetNodeInfoResponse{}
-	mi := &file_network_proto_msgTypes[3]
+	mi := &file_network_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -277,7 +353,7 @@ func (x *GetNodeInfoResponse) String() string {
 func (*GetNodeInfoResponse) ProtoMessage() {}
 
 func (x *GetNodeInfoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_network_proto_msgTypes[3]
+	mi := &file_network_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -290,7 +366,7 @@ func (x *GetNodeInfoResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetNodeInfoResponse.ProtoReflect.Descriptor instead.
 func (*GetNodeInfoResponse) Descriptor() ([]byte, []int) {
-	return file_network_proto_rawDescGZIP(), []int{3}
+	return file_network_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetNodeInfoResponse) GetMoniker() string {
@@ -384,6 +460,13 @@ func (x *GetNodeInfoResponse) GetCurrentTime() uint64 {
 	return 0
 }
 
+func (x *GetNodeInfoResponse) GetNetworkName() string {
+	if x != nil {
+		return x.NetworkName
+	}
+	return ""
+}
+
 // ZMQPublisherInfo contains information about a ZeroMQ publisher.
 type ZMQPublisherInfo struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -400,7 +483,7 @@ type ZMQPublisherInfo struct {
 
 func (x *ZMQPublisherInfo) Reset() {
 	*x = ZMQPublisherInfo{}
-	mi := &file_network_proto_msgTypes[4]
+	mi := &file_network_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -412,7 +495,7 @@ func (x *ZMQPublisherInfo) String() string {
 func (*ZMQPublisherInfo) ProtoMessage() {}
 
 func (x *ZMQPublisherInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_network_proto_msgTypes[4]
+	mi := &file_network_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -425,7 +508,7 @@ func (x *ZMQPublisherInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ZMQPublisherInfo.ProtoReflect.Descriptor instead.
 func (*ZMQPublisherInfo) Descriptor() ([]byte, []int) {
-	return file_network_proto_rawDescGZIP(), []int{4}
+	return file_network_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ZMQPublisherInfo) GetTopic() string {
@@ -494,7 +577,7 @@ type PeerInfo struct {
 
 func (x *PeerInfo) Reset() {
 	*x = PeerInfo{}
-	mi := &file_network_proto_msgTypes[5]
+	mi := &file_network_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -506,7 +589,7 @@ func (x *PeerInfo) String() string {
 func (*PeerInfo) ProtoMessage() {}
 
 func (x *PeerInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_network_proto_msgTypes[5]
+	mi := &file_network_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -519,7 +602,7 @@ func (x *PeerInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PeerInfo.ProtoReflect.Descriptor instead.
 func (*PeerInfo) Descriptor() ([]byte, []int) {
-	return file_network_proto_rawDescGZIP(), []int{5}
+	return file_network_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *PeerInfo) GetStatus() int32 {
@@ -663,7 +746,7 @@ type ConnectionInfo struct {
 
 func (x *ConnectionInfo) Reset() {
 	*x = ConnectionInfo{}
-	mi := &file_network_proto_msgTypes[6]
+	mi := &file_network_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -675,7 +758,7 @@ func (x *ConnectionInfo) String() string {
 func (*ConnectionInfo) ProtoMessage() {}
 
 func (x *ConnectionInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_network_proto_msgTypes[6]
+	mi := &file_network_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -688,7 +771,7 @@ func (x *ConnectionInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConnectionInfo.ProtoReflect.Descriptor instead.
 func (*ConnectionInfo) Descriptor() ([]byte, []int) {
-	return file_network_proto_rawDescGZIP(), []int{6}
+	return file_network_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ConnectionInfo) GetConnections() uint64 {
@@ -731,7 +814,7 @@ type MetricInfo struct {
 
 func (x *MetricInfo) Reset() {
 	*x = MetricInfo{}
-	mi := &file_network_proto_msgTypes[7]
+	mi := &file_network_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -743,7 +826,7 @@ func (x *MetricInfo) String() string {
 func (*MetricInfo) ProtoMessage() {}
 
 func (x *MetricInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_network_proto_msgTypes[7]
+	mi := &file_network_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -756,7 +839,7 @@ func (x *MetricInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MetricInfo.ProtoReflect.Descriptor instead.
 func (*MetricInfo) Descriptor() ([]byte, []int) {
-	return file_network_proto_rawDescGZIP(), []int{7}
+	return file_network_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *MetricInfo) GetTotalInvalid() *CounterInfo {
@@ -807,7 +890,7 @@ type CounterInfo struct {
 
 func (x *CounterInfo) Reset() {
 	*x = CounterInfo{}
-	mi := &file_network_proto_msgTypes[8]
+	mi := &file_network_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -819,7 +902,7 @@ func (x *CounterInfo) String() string {
 func (*CounterInfo) ProtoMessage() {}
 
 func (x *CounterInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_network_proto_msgTypes[8]
+	mi := &file_network_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -832,7 +915,7 @@ func (x *CounterInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CounterInfo.ProtoReflect.Descriptor instead.
 func (*CounterInfo) Descriptor() ([]byte, []int) {
-	return file_network_proto_rawDescGZIP(), []int{8}
+	return file_network_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *CounterInfo) GetBytes() uint64 {
@@ -858,7 +941,7 @@ type PingRequest struct {
 
 func (x *PingRequest) Reset() {
 	*x = PingRequest{}
-	mi := &file_network_proto_msgTypes[9]
+	mi := &file_network_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -870,7 +953,7 @@ func (x *PingRequest) String() string {
 func (*PingRequest) ProtoMessage() {}
 
 func (x *PingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_network_proto_msgTypes[9]
+	mi := &file_network_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -883,7 +966,7 @@ func (x *PingRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PingRequest.ProtoReflect.Descriptor instead.
 func (*PingRequest) Descriptor() ([]byte, []int) {
-	return file_network_proto_rawDescGZIP(), []int{9}
+	return file_network_proto_rawDescGZIP(), []int{11}
 }
 
 // Response message for ping - intentionally empty for measuring round-trip time.
@@ -895,7 +978,7 @@ type PingResponse struct {
 
 func (x *PingResponse) Reset() {
 	*x = PingResponse{}
-	mi := &file_network_proto_msgTypes[10]
+	mi := &file_network_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -907,7 +990,7 @@ func (x *PingResponse) String() string {
 func (*PingResponse) ProtoMessage() {}
 
 func (x *PingResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_network_proto_msgTypes[10]
+	mi := &file_network_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -920,23 +1003,25 @@ func (x *PingResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PingResponse.ProtoReflect.Descriptor instead.
 func (*PingResponse) Descriptor() ([]byte, []int) {
-	return file_network_proto_rawDescGZIP(), []int{10}
+	return file_network_proto_rawDescGZIP(), []int{12}
 }
 
 var File_network_proto protoreflect.FileDescriptor
 
 const file_network_proto_rawDesc = "" +
 	"\n" +
-	"\rnetwork.proto\x12\x06pactus\">\n" +
-	"\x15GetNetworkInfoRequest\x12%\n" +
-	"\x0eonly_connected\x18\x01 \x01(\bR\ronlyConnected\"\xdf\x01\n" +
+	"\rnetwork.proto\x12\x06pactus\"\x17\n" +
+	"\x15GetNetworkInfoRequest\"\xa4\x01\n" +
 	"\x16GetNetworkInfoResponse\x12!\n" +
 	"\fnetwork_name\x18\x01 \x01(\tR\vnetworkName\x122\n" +
-	"\x15connected_peers_count\x18\x02 \x01(\rR\x13connectedPeersCount\x129\n" +
-	"\x0fconnected_peers\x18\x03 \x03(\v2\x10.pactus.PeerInfoR\x0econnectedPeers\x123\n" +
+	"\x15connected_peers_count\x18\x02 \x01(\rR\x13connectedPeersCount\x123\n" +
 	"\vmetric_info\x18\x04 \x01(\v2\x12.pactus.MetricInfoR\n" +
-	"metricInfo\"\x14\n" +
-	"\x12GetNodeInfoRequest\"\xeb\x03\n" +
+	"metricInfo\"E\n" +
+	"\x10ListPeersRequest\x121\n" +
+	"\x14include_disconnected\x18\x01 \x01(\bR\x13includeDisconnected\";\n" +
+	"\x11ListPeersResponse\x12&\n" +
+	"\x05peers\x18\x01 \x03(\v2\x10.pactus.PeerInfoR\x05peers\"\x14\n" +
+	"\x12GetNodeInfoRequest\"\x8e\x04\n" +
 	"\x13GetNodeInfoResponse\x12\x18\n" +
 	"\amoniker\x18\x01 \x01(\tR\amoniker\x12\x14\n" +
 	"\x05agent\x18\x02 \x01(\tR\x05agent\x12\x17\n" +
@@ -952,7 +1037,8 @@ const file_network_proto_rawDesc = "" +
 	"\fclock_offset\x18\r \x01(\x01R\vclockOffset\x12?\n" +
 	"\x0fconnection_info\x18\x0e \x01(\v2\x16.pactus.ConnectionInfoR\x0econnectionInfo\x12?\n" +
 	"\x0ezmq_publishers\x18\x0f \x03(\v2\x18.pactus.ZMQPublisherInfoR\rzmqPublishers\x12!\n" +
-	"\fcurrent_time\x18\x10 \x01(\x04R\vcurrentTime\"T\n" +
+	"\fcurrent_time\x18\x10 \x01(\x04R\vcurrentTime\x12!\n" +
+	"\fnetwork_name\x18\x11 \x01(\tR\vnetworkName\"T\n" +
 	"\x10ZMQPublisherInfo\x12\x14\n" +
 	"\x05topic\x18\x01 \x01(\tR\x05topic\x12\x18\n" +
 	"\aaddress\x18\x02 \x01(\tR\aaddress\x12\x10\n" +
@@ -1004,9 +1090,10 @@ const file_network_proto_rawDesc = "" +
 	"\tDirection\x12\x15\n" +
 	"\x11DIRECTION_UNKNOWN\x10\x00\x12\x15\n" +
 	"\x11DIRECTION_INBOUND\x10\x01\x12\x16\n" +
-	"\x12DIRECTION_OUTBOUND\x10\x022\xd5\x01\n" +
+	"\x12DIRECTION_OUTBOUND\x10\x022\x97\x02\n" +
 	"\aNetwork\x12O\n" +
-	"\x0eGetNetworkInfo\x12\x1d.pactus.GetNetworkInfoRequest\x1a\x1e.pactus.GetNetworkInfoResponse\x12F\n" +
+	"\x0eGetNetworkInfo\x12\x1d.pactus.GetNetworkInfoRequest\x1a\x1e.pactus.GetNetworkInfoResponse\x12@\n" +
+	"\tListPeers\x12\x18.pactus.ListPeersRequest\x1a\x19.pactus.ListPeersResponse\x12F\n" +
 	"\vGetNodeInfo\x12\x1a.pactus.GetNodeInfoRequest\x1a\x1b.pactus.GetNodeInfoResponse\x121\n" +
 	"\x04Ping\x12\x13.pactus.PingRequest\x1a\x14.pactus.PingResponseB:\n" +
 	"\x06pactusZ0github.com/pactus-project/pactus/www/grpc/pactusb\x06proto3"
@@ -1024,45 +1111,49 @@ func file_network_proto_rawDescGZIP() []byte {
 }
 
 var file_network_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_network_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_network_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_network_proto_goTypes = []any{
 	(Direction)(0),                 // 0: pactus.Direction
 	(*GetNetworkInfoRequest)(nil),  // 1: pactus.GetNetworkInfoRequest
 	(*GetNetworkInfoResponse)(nil), // 2: pactus.GetNetworkInfoResponse
-	(*GetNodeInfoRequest)(nil),     // 3: pactus.GetNodeInfoRequest
-	(*GetNodeInfoResponse)(nil),    // 4: pactus.GetNodeInfoResponse
-	(*ZMQPublisherInfo)(nil),       // 5: pactus.ZMQPublisherInfo
-	(*PeerInfo)(nil),               // 6: pactus.PeerInfo
-	(*ConnectionInfo)(nil),         // 7: pactus.ConnectionInfo
-	(*MetricInfo)(nil),             // 8: pactus.MetricInfo
-	(*CounterInfo)(nil),            // 9: pactus.CounterInfo
-	(*PingRequest)(nil),            // 10: pactus.PingRequest
-	(*PingResponse)(nil),           // 11: pactus.PingResponse
-	nil,                            // 12: pactus.MetricInfo.MessageSentEntry
-	nil,                            // 13: pactus.MetricInfo.MessageReceivedEntry
+	(*ListPeersRequest)(nil),       // 3: pactus.ListPeersRequest
+	(*ListPeersResponse)(nil),      // 4: pactus.ListPeersResponse
+	(*GetNodeInfoRequest)(nil),     // 5: pactus.GetNodeInfoRequest
+	(*GetNodeInfoResponse)(nil),    // 6: pactus.GetNodeInfoResponse
+	(*ZMQPublisherInfo)(nil),       // 7: pactus.ZMQPublisherInfo
+	(*PeerInfo)(nil),               // 8: pactus.PeerInfo
+	(*ConnectionInfo)(nil),         // 9: pactus.ConnectionInfo
+	(*MetricInfo)(nil),             // 10: pactus.MetricInfo
+	(*CounterInfo)(nil),            // 11: pactus.CounterInfo
+	(*PingRequest)(nil),            // 12: pactus.PingRequest
+	(*PingResponse)(nil),           // 13: pactus.PingResponse
+	nil,                            // 14: pactus.MetricInfo.MessageSentEntry
+	nil,                            // 15: pactus.MetricInfo.MessageReceivedEntry
 }
 var file_network_proto_depIdxs = []int32{
-	6,  // 0: pactus.GetNetworkInfoResponse.connected_peers:type_name -> pactus.PeerInfo
-	8,  // 1: pactus.GetNetworkInfoResponse.metric_info:type_name -> pactus.MetricInfo
-	7,  // 2: pactus.GetNodeInfoResponse.connection_info:type_name -> pactus.ConnectionInfo
-	5,  // 3: pactus.GetNodeInfoResponse.zmq_publishers:type_name -> pactus.ZMQPublisherInfo
+	10, // 0: pactus.GetNetworkInfoResponse.metric_info:type_name -> pactus.MetricInfo
+	8,  // 1: pactus.ListPeersResponse.peers:type_name -> pactus.PeerInfo
+	9,  // 2: pactus.GetNodeInfoResponse.connection_info:type_name -> pactus.ConnectionInfo
+	7,  // 3: pactus.GetNodeInfoResponse.zmq_publishers:type_name -> pactus.ZMQPublisherInfo
 	0,  // 4: pactus.PeerInfo.direction:type_name -> pactus.Direction
-	8,  // 5: pactus.PeerInfo.metric_info:type_name -> pactus.MetricInfo
-	9,  // 6: pactus.MetricInfo.total_invalid:type_name -> pactus.CounterInfo
-	9,  // 7: pactus.MetricInfo.total_sent:type_name -> pactus.CounterInfo
-	9,  // 8: pactus.MetricInfo.total_received:type_name -> pactus.CounterInfo
-	12, // 9: pactus.MetricInfo.message_sent:type_name -> pactus.MetricInfo.MessageSentEntry
-	13, // 10: pactus.MetricInfo.message_received:type_name -> pactus.MetricInfo.MessageReceivedEntry
-	9,  // 11: pactus.MetricInfo.MessageSentEntry.value:type_name -> pactus.CounterInfo
-	9,  // 12: pactus.MetricInfo.MessageReceivedEntry.value:type_name -> pactus.CounterInfo
+	10, // 5: pactus.PeerInfo.metric_info:type_name -> pactus.MetricInfo
+	11, // 6: pactus.MetricInfo.total_invalid:type_name -> pactus.CounterInfo
+	11, // 7: pactus.MetricInfo.total_sent:type_name -> pactus.CounterInfo
+	11, // 8: pactus.MetricInfo.total_received:type_name -> pactus.CounterInfo
+	14, // 9: pactus.MetricInfo.message_sent:type_name -> pactus.MetricInfo.MessageSentEntry
+	15, // 10: pactus.MetricInfo.message_received:type_name -> pactus.MetricInfo.MessageReceivedEntry
+	11, // 11: pactus.MetricInfo.MessageSentEntry.value:type_name -> pactus.CounterInfo
+	11, // 12: pactus.MetricInfo.MessageReceivedEntry.value:type_name -> pactus.CounterInfo
 	1,  // 13: pactus.Network.GetNetworkInfo:input_type -> pactus.GetNetworkInfoRequest
-	3,  // 14: pactus.Network.GetNodeInfo:input_type -> pactus.GetNodeInfoRequest
-	10, // 15: pactus.Network.Ping:input_type -> pactus.PingRequest
-	2,  // 16: pactus.Network.GetNetworkInfo:output_type -> pactus.GetNetworkInfoResponse
-	4,  // 17: pactus.Network.GetNodeInfo:output_type -> pactus.GetNodeInfoResponse
-	11, // 18: pactus.Network.Ping:output_type -> pactus.PingResponse
-	16, // [16:19] is the sub-list for method output_type
-	13, // [13:16] is the sub-list for method input_type
+	3,  // 14: pactus.Network.ListPeers:input_type -> pactus.ListPeersRequest
+	5,  // 15: pactus.Network.GetNodeInfo:input_type -> pactus.GetNodeInfoRequest
+	12, // 16: pactus.Network.Ping:input_type -> pactus.PingRequest
+	2,  // 17: pactus.Network.GetNetworkInfo:output_type -> pactus.GetNetworkInfoResponse
+	4,  // 18: pactus.Network.ListPeers:output_type -> pactus.ListPeersResponse
+	6,  // 19: pactus.Network.GetNodeInfo:output_type -> pactus.GetNodeInfoResponse
+	13, // 20: pactus.Network.Ping:output_type -> pactus.PingResponse
+	17, // [17:21] is the sub-list for method output_type
+	13, // [13:17] is the sub-list for method input_type
 	13, // [13:13] is the sub-list for extension type_name
 	13, // [13:13] is the sub-list for extension extendee
 	0,  // [0:13] is the sub-list for field type_name
@@ -1079,7 +1170,7 @@ func file_network_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_network_proto_rawDesc), len(file_network_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   13,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

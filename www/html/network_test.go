@@ -29,8 +29,7 @@ func TestNetworkInfo(t *testing.T) {
 	td := setup(t)
 
 	w := httptest.NewRecorder()
-	r, err := http.NewRequestWithContext(context.Background(), http.MethodGet,
-		"localhost:80?onlyConnected=false", http.NoBody)
+	r, err := http.NewRequestWithContext(context.Background(), http.MethodGet, "/network/info", http.NoBody)
 	assert.NoError(t, err)
 
 	td.httpServer.NetworkHandler(w, r)
@@ -38,6 +37,22 @@ func TestNetworkInfo(t *testing.T) {
 	assert.Equal(t, 200, w.Code)
 	assert.Contains(t, w.Body.String(), "Network Name")
 	assert.Contains(t, w.Body.String(), "Connected Peers Count")
+	assert.Contains(t, w.Body.String(), "/network/peers")
+
+	td.StopServers()
+}
+
+func TestPeerList(t *testing.T) {
+	td := setup(t)
+
+	w := httptest.NewRecorder()
+	r, err := http.NewRequestWithContext(context.Background(), http.MethodGet, "/network/peers", http.NoBody)
+	assert.NoError(t, err)
+
+	td.httpServer.PeerListHandler(w, r)
+
+	assert.Equal(t, 200, w.Code)
+	assert.Contains(t, w.Body.String(), "Peers")
 
 	td.StopServers()
 }

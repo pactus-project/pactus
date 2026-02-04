@@ -20,6 +20,11 @@ class NetworkStub(object):
                 request_serializer=network__pb2.GetNetworkInfoRequest.SerializeToString,
                 response_deserializer=network__pb2.GetNetworkInfoResponse.FromString,
                 _registered_method=True)
+        self.ListPeers = channel.unary_unary(
+                '/pactus.Network/ListPeers',
+                request_serializer=network__pb2.ListPeersRequest.SerializeToString,
+                response_deserializer=network__pb2.ListPeersResponse.FromString,
+                _registered_method=True)
         self.GetNodeInfo = channel.unary_unary(
                 '/pactus.Network/GetNodeInfo',
                 request_serializer=network__pb2.GetNodeInfoRequest.SerializeToString,
@@ -38,6 +43,13 @@ class NetworkServicer(object):
 
     def GetNetworkInfo(self, request, context):
         """GetNetworkInfo retrieves information about the overall network.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ListPeers(self, request, context):
+        """ListPeers lists all peers in the network.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -64,6 +76,11 @@ def add_NetworkServicer_to_server(servicer, server):
                     servicer.GetNetworkInfo,
                     request_deserializer=network__pb2.GetNetworkInfoRequest.FromString,
                     response_serializer=network__pb2.GetNetworkInfoResponse.SerializeToString,
+            ),
+            'ListPeers': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListPeers,
+                    request_deserializer=network__pb2.ListPeersRequest.FromString,
+                    response_serializer=network__pb2.ListPeersResponse.SerializeToString,
             ),
             'GetNodeInfo': grpc.unary_unary_rpc_method_handler(
                     servicer.GetNodeInfo,
@@ -104,6 +121,33 @@ class Network(object):
             '/pactus.Network/GetNetworkInfo',
             network__pb2.GetNetworkInfoRequest.SerializeToString,
             network__pb2.GetNetworkInfoResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ListPeers(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/pactus.Network/ListPeers',
+            network__pb2.ListPeersRequest.SerializeToString,
+            network__pb2.ListPeersResponse.FromString,
             options,
             channel_credentials,
             insecure,
