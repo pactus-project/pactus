@@ -4,6 +4,7 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"flag"
 	"log"
 	"os"
@@ -21,22 +22,25 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/assets"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
+	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/version"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 const appID = "com.github.pactus-project.pactus.pactus-gui"
 
 var (
-	workingDirOpt *string
-	passwordOpt   *string
-	testnetOpt    *bool
-	grpcAddrOpt   *string
+	workingDirOpt   *string
+	passwordOpt     *string
+	testnetOpt      *bool
+	grpcAddrOpt     *string
+	grpcInsecureOpt *bool
 )
 
 func init() {
@@ -44,6 +48,7 @@ func init() {
 	passwordOpt = flag.String("password", "", "wallet password")
 	testnetOpt = flag.Bool("testnet", false, "initializing for the testnet")
 	grpcAddrOpt = flag.String("grpc-addr", "", "connect to remote gRPC server instead of starting local node")
+	grpcInsecureOpt = flag.Bool("grpc-insecure", false, "use insecure connection to gRPC server")
 	version.NodeAgent.AppType = "gui"
 
 	if runtime.GOOS == "darwin" {
@@ -165,23 +170,31 @@ func main() {
 			}
 
 			go func() {
-				grpcAddr := *grpcAddrOpt
-				if grpcAddr == "" {
-					time.Sleep(1 * time.Second)
+				grpcAddr := ""
+				grpcInsecure := false
+
+				if *grpcAddrOpt == "" {
 					reportStatus(notify, "Starting local node...")
-					guiNode, err = newNode(ctx, workingDir, notify)
-
-					grpcAddr = guiNode.GRPC().Address()
-				} else {
 					time.Sleep(1 * time.Second)
-					reportStatus(notify, "Connecting to remote node...")
-				}
 
-				glib.IdleAdd(func() bool {
-					grpcConn, err = grpc.NewClient(grpcAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+					guiNode, err = newNode(ctx, workingDir, notify)
 					gtkutil.FatalErrorCheck(err)
 
-					gui, err = gtkapp.Run(ctx, grpcConn, app)
+					grpcAddr = guiNode.GRPC().Address()
+					grpcInsecure = true
+				} else {
+					reportStatus(notify, "Connecting to remote node...")
+					time.Sleep(1 * time.Second)
+
+					grpcAddr = *grpcAddrOpt
+					grpcInsecure = *grpcInsecureOpt
+				}
+
+				grpcConn, err = newRemoteGRPCConn(grpcAddr, grpcInsecure)
+				gtkutil.FatalErrorCheck(err)
+
+				glib.IdleAdd(func() bool {
+					gui, err = gtkapp.Run(ctx, grpcConn, app, notify)
 					gtkutil.FatalErrorCheck(err)
 
 					splash.Destroy()
@@ -206,6 +219,41 @@ type statusReporter func(string)
 func reportStatus(cb statusReporter, msg string) {
 	if cb != nil {
 		cb(msg)
+	}
+}
+
+// newRemoteGRPCConn creates a gRPC client for a remote URL.
+func newRemoteGRPCConn(addr string, insecureCredentials bool) (*grpc.ClientConn, error) {
+	target, prefix, err := util.ParseGRPCAddr(addr, insecureCredentials)
+	if err != nil {
+		return nil, err
+	}
+	var creds credentials.TransportCredentials
+	if insecureCredentials {
+		log.Printf("Connecting to node using insecure credentials. target: %s, prefix: %s", target, prefix)
+		creds = insecure.NewCredentials()
+	} else {
+		log.Printf("Connecting to node using TLS. target: %s, prefix: %s", target, prefix)
+		creds = credentials.NewTLS(&tls.Config{MinVersion: tls.VersionTLS11})
+	}
+
+	opts := []grpc.DialOption{
+		grpc.WithTransportCredentials(creds),
+		grpc.WithUnaryInterceptor(methodPrefixUnaryInterceptor(prefix)),
+		grpc.WithStreamInterceptor(methodPrefixStreamInterceptor(prefix)),
+	}
+	return grpc.NewClient(target, opts...)
+}
+
+func methodPrefixUnaryInterceptor(prefix string) grpc.UnaryClientInterceptor {
+	return func(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+		return invoker(ctx, prefix+method, req, reply, cc, opts...)
+	}
+}
+
+func methodPrefixStreamInterceptor(prefix string) grpc.StreamClientInterceptor {
+	return func(ctx context.Context, desc *grpc.StreamDesc, cc *grpc.ClientConn, method string, streamer grpc.Streamer, opts ...grpc.CallOption) (grpc.ClientStream, error) {
+		return streamer(ctx, desc, cc, prefix+method, opts...)
 	}
 }
 
@@ -239,8 +287,18 @@ func newNode(ctx context.Context, workingDir string, statusCb statusReporter) (*
 		return pwd, ok
 	}
 
+	configModifier := func(cfg *config.Config) *config.Config {
+		if cfg.GRPC.Enable == false {
+			cfg.GRPC.Enable = true
+			cfg.GRPC.EnableWallet = true
+			cfg.GRPC.Listen = "localhost:0"
+		}
+
+		return cfg
+	}
+
 	reportStatus(statusCb, "Starting node services...")
-	n, err := cmd.StartNode(ctx, workingDir, passwordFetcher, nil)
+	n, err := cmd.StartNode(ctx, workingDir, passwordFetcher, configModifier)
 	if err != nil {
 		return nil, err
 	}

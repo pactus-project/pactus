@@ -95,6 +95,9 @@ jobs:
       - name: Build the GUI binary
         run: make build_gui
 
+      - name: Test the GUI binary
+        run: go test -tags gtk ./cmd/gtk/...
+
       - name: Lint check (Linux only)
         if: runner.os == 'Linux'
         uses: golangci/golangci-lint-action@v9
