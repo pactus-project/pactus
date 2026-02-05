@@ -164,7 +164,7 @@ func FormatBytesToHumanReadable(bytes uint64) string {
 	return fmt.Sprintf("%.2f %s", value, unit)
 }
 
-func ParseGRPCAddr(addr string, insecureCredentials bool) (target string, prefix string, error error) {
+func ParseGRPCAddr(addr string, insecureCredentials bool) (target, prefix string, err error) {
 	if insecureCredentials {
 		if strings.HasPrefix(addr, "https://") {
 			return "", "", errors.New("insecure credentials are not supported for HTTPS addresses")

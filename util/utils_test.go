@@ -148,17 +148,50 @@ func TestParseGRPCAddr(t *testing.T) {
 		wantPrefix string
 		wantError  bool
 	}{
-		{addr: "localhost:50051", insecure: true, wantTarget: "localhost:50051", wantPrefix: "", wantError: false},
-		{addr: "example.com:50051", insecure: true, wantTarget: "example.com:50051", wantPrefix: "", wantError: false},
-		{addr: "http://example.com:50051", insecure: true, wantTarget: "example.com:50051", wantPrefix: "", wantError: false},
-		{addr: "https://example.com:50051", insecure: false, wantTarget: "example.com:50051", wantPrefix: "", wantError: false},
-		{addr: "https://example.com:50051/path", insecure: false, wantTarget: "example.com:50051", wantPrefix: "/path", wantError: false},
-		{addr: "https://example.com/path", insecure: false, wantTarget: "example.com:443", wantPrefix: "/path", wantError: false},
-		{addr: "https://example.com/path1/path2", insecure: false, wantTarget: "example.com:443", wantPrefix: "/path1/path2", wantError: false},
-		{addr: "example.com/path", insecure: false, wantTarget: "example.com:443", wantPrefix: "/path", wantError: false},
-		{addr: "https://example.com:50051", insecure: true, wantTarget: "", wantPrefix: "", wantError: true},
-		{addr: "http://example.com:50051", insecure: false, wantTarget: "", wantPrefix: "", wantError: true},
-		{addr: "\x00", insecure: false, wantTarget: "", wantPrefix: "", wantError: true},
+		{
+			addr: "localhost:50051", insecure: true,
+			wantTarget: "localhost:50051", wantPrefix: "", wantError: false,
+		},
+		{
+			addr: "example.com:50051", insecure: true,
+			wantTarget: "example.com:50051", wantPrefix: "", wantError: false,
+		},
+		{
+			addr: "http://example.com:50051", insecure: true,
+			wantTarget: "example.com:50051", wantPrefix: "", wantError: false,
+		},
+		{
+			addr: "https://example.com:50051", insecure: false,
+			wantTarget: "example.com:50051", wantPrefix: "", wantError: false,
+		},
+		{
+			addr: "https://example.com:50051/path", insecure: false,
+			wantTarget: "example.com:50051", wantPrefix: "/path", wantError: false,
+		},
+		{
+			addr: "https://example.com/path", insecure: false,
+			wantTarget: "example.com:443", wantPrefix: "/path", wantError: false,
+		},
+		{
+			addr: "https://example.com/path1/path2", insecure: false,
+			wantTarget: "example.com:443", wantPrefix: "/path1/path2", wantError: false,
+		},
+		{
+			addr: "example.com/path", insecure: false,
+			wantTarget: "example.com:443", wantPrefix: "/path", wantError: false,
+		},
+		{
+			addr: "https://example.com:50051", insecure: true,
+			wantTarget: "", wantPrefix: "", wantError: true,
+		},
+		{
+			addr: "http://example.com:50051", insecure: false,
+			wantTarget: "", wantPrefix: "", wantError: true,
+		},
+		{
+			addr: "\x00", insecure: false,
+			wantTarget: "", wantPrefix: "", wantError: true,
+		},
 	}
 
 	for _, tt := range tests {
