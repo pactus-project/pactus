@@ -26,7 +26,9 @@ type GUI struct {
 // Run builds and shows the main window, wiring views/controllers.
 // It accepts a gRPC connection to the node (standard grpc.ClientConn or gRPC-Web).
 // It returns a cleanup function that closes the window and stops timers.
-func Run(ctx context.Context, conn grpc.ClientConnInterface, gtkApp *gtk.Application, notify func(string)) (*GUI, error) {
+func Run(ctx context.Context, conn grpc.ClientConnInterface,
+	gtkApp *gtk.Application, notify func(string),
+) (*GUI, error) {
 	mwView, err := view.NewMainWindowView()
 	if err != nil {
 		return nil, err

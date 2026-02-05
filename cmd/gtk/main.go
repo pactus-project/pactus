@@ -88,6 +88,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	var fileLock *flock.Flock
+	//nolint:nestif // complexity acceptable here
 	if *grpcAddrOpt == "" {
 		// If node is not initialized yet
 		if util.IsDirNotExistsOrEmpty(workingDir) {
@@ -170,8 +171,8 @@ func main() {
 			}
 
 			go func() {
-				grpcAddr := ""
-				grpcInsecure := false
+				var grpcAddr string
+				var grpcInsecure bool
 
 				if *grpcAddrOpt == "" {
 					reportStatus(notify, "Starting local node...")
@@ -234,7 +235,7 @@ func newRemoteGRPCConn(addr string, insecureCredentials bool) (*grpc.ClientConn,
 		creds = insecure.NewCredentials()
 	} else {
 		log.Printf("Connecting to node using TLS. target: %s, prefix: %s", target, prefix)
-		creds = credentials.NewTLS(&tls.Config{MinVersion: tls.VersionTLS11})
+		creds = credentials.NewTLS(&tls.Config{MinVersion: tls.VersionTLS12})
 	}
 
 	opts := []grpc.DialOption{
@@ -242,17 +243,22 @@ func newRemoteGRPCConn(addr string, insecureCredentials bool) (*grpc.ClientConn,
 		grpc.WithUnaryInterceptor(methodPrefixUnaryInterceptor(prefix)),
 		grpc.WithStreamInterceptor(methodPrefixStreamInterceptor(prefix)),
 	}
+
 	return grpc.NewClient(target, opts...)
 }
 
 func methodPrefixUnaryInterceptor(prefix string) grpc.UnaryClientInterceptor {
-	return func(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+	return func(ctx context.Context, method string, req, reply any,
+		cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption,
+	) error {
 		return invoker(ctx, prefix+method, req, reply, cc, opts...)
 	}
 }
 
 func methodPrefixStreamInterceptor(prefix string) grpc.StreamClientInterceptor {
-	return func(ctx context.Context, desc *grpc.StreamDesc, cc *grpc.ClientConn, method string, streamer grpc.Streamer, opts ...grpc.CallOption) (grpc.ClientStream, error) {
+	return func(ctx context.Context, desc *grpc.StreamDesc,
+		cc *grpc.ClientConn, method string, streamer grpc.Streamer, opts ...grpc.CallOption,
+	) (grpc.ClientStream, error) {
 		return streamer(ctx, desc, cc, prefix+method, opts...)
 	}
 }
@@ -288,7 +294,7 @@ func newNode(ctx context.Context, workingDir string, statusCb statusReporter) (*
 	}
 
 	configModifier := func(cfg *config.Config) *config.Config {
-		if cfg.GRPC.Enable == false {
+		if !cfg.GRPC.Enable {
 			cfg.GRPC.Enable = true
 			cfg.GRPC.EnableWallet = true
 			cfg.GRPC.Listen = "localhost:0"
