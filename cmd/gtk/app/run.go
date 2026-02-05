@@ -20,13 +20,15 @@ type GUI struct {
 	NodeCtrl      *controller.NodeWidgetController
 	WalletCtrl    *controller.WalletWidgetController
 	ValidatorCtrl *controller.ValidatorWidgetController
-	grpcConn      *grpc.ClientConn
+	grpcConn      grpc.ClientConnInterface
 }
 
 // Run builds and shows the main window, wiring views/controllers.
-// It accepts a gRPC connection to the node.
+// It accepts a gRPC connection to the node (standard grpc.ClientConn or gRPC-Web).
 // It returns a cleanup function that closes the window and stops timers.
-func Run(ctx context.Context, conn *grpc.ClientConn, gtkApp *gtk.Application) (*GUI, error) {
+func Run(ctx context.Context, conn grpc.ClientConnInterface,
+	gtkApp *gtk.Application, notify func(string),
+) (*GUI, error) {
 	mwView, err := view.NewMainWindowView()
 	if err != nil {
 		return nil, err
@@ -36,6 +38,7 @@ func Run(ctx context.Context, conn *grpc.ClientConn, gtkApp *gtk.Application) (*
 	networkClient := pactus.NewNetworkClient(conn)
 	walletClient := pactus.NewWalletClient(conn)
 
+	notify("Building node model...")
 	nodeModel := model.NewNodeModel(ctx, blockchainClient, networkClient)
 	nodeView, err := view.NewNodeWidgetView()
 	if err != nil {
@@ -46,6 +49,7 @@ func Run(ctx context.Context, conn *grpc.ClientConn, gtkApp *gtk.Application) (*
 		return nil, err
 	}
 
+	notify("Building wallet model...")
 	walletModel, err := model.NewWalletModel(ctx, walletClient, transactionClient, blockchainClient,
 		cmd.DefaultWalletName)
 	if err != nil {
@@ -56,13 +60,14 @@ func Run(ctx context.Context, conn *grpc.ClientConn, gtkApp *gtk.Application) (*
 	if err != nil {
 		return nil, err
 	}
-
 	walletCtrl := controller.NewWalletWidgetController(walletView, walletModel)
 	validatorModel := model.NewValidatorModel(ctx, blockchainClient)
 	validatorView, err := view.NewValidatorWidgetView()
 	if err != nil {
 		return nil, err
 	}
+
+	notify("Building validator model...")
 	validatorCtrl := controller.NewValidatorWidgetController(validatorView, validatorModel)
 	if err := validatorCtrl.Bind(ctx); err != nil {
 		return nil, err

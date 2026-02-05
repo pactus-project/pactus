@@ -38,18 +38,6 @@ func buildStartCmd(parentCmd *cobra.Command) {
 
 	gRPCWalletOpt := startCmd.Flags().Bool("grpc-wallet", false, "enable gRPC wallet service")
 
-	zmqBlockInfoOpt := startCmd.Flags().String("zmq-block-info", "",
-		"enable zeromq block info publisher, example: tcp://127.0.0.1:28332")
-
-	zmqTxInfoOpt := startCmd.Flags().String("zmq-tx-info", "",
-		"enable zeromq transaction info publisher, example: tcp://127.0.0.1:28332")
-
-	zmqRawBlockOpt := startCmd.Flags().String("zmq-raw-block", "",
-		"enable zeromq raw block publisher, example: tcp://127.0.0.1:28332")
-
-	zmqRawTxOpt := startCmd.Flags().String("zmq-raw-tx", "",
-		"enable zeromq raw transaction publisher, example: tcp://127.0.0.1:28332")
-
 	startCmd.Run = func(_ *cobra.Command, _ []string) {
 		workingDir, _ := filepath.Abs(*workingDirOpt)
 		// change working directory
@@ -91,22 +79,6 @@ func buildStartCmd(parentCmd *cobra.Command) {
 				cfg.GRPC.Enable = true
 				cfg.GRPC.EnableWallet = *gRPCWalletOpt
 				cfg.GRPC.Listen = *gRPCOpt
-			}
-
-			if *zmqBlockInfoOpt != "" {
-				cfg.ZeroMq.ZmqPubBlockInfo = *zmqBlockInfoOpt
-			}
-
-			if *zmqTxInfoOpt != "" {
-				cfg.ZeroMq.ZmqPubTxInfo = *zmqTxInfoOpt
-			}
-
-			if *zmqRawBlockOpt != "" {
-				cfg.ZeroMq.ZmqPubRawBlock = *zmqRawBlockOpt
-			}
-
-			if *zmqRawTxOpt != "" {
-				cfg.ZeroMq.ZmqPubRawTx = *zmqRawTxOpt
 			}
 
 			return cfg

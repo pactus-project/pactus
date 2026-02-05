@@ -2,9 +2,12 @@ package util
 
 import (
 	crand "crypto/rand"
+	"errors"
 	"fmt"
 	"math/big"
 	"math/bits"
+	"net/url"
+	"strings"
 
 	"golang.org/x/exp/constraints"
 )
@@ -159,4 +162,36 @@ func FormatBytesToHumanReadable(bytes uint64) string {
 	}
 
 	return fmt.Sprintf("%.2f %s", value, unit)
+}
+
+func ParseGRPCAddr(addr string, insecureCredentials bool) (target, prefix string, err error) {
+	if insecureCredentials {
+		if strings.HasPrefix(addr, "https://") {
+			return "", "", errors.New("insecure credentials are not supported for HTTPS addresses")
+		}
+		addr = strings.TrimPrefix(addr, "http://")
+
+		return addr, "", nil
+	}
+
+	if strings.HasPrefix(addr, "http://") {
+		return "", "", errors.New("insecure credentials are not supported for HTTP addresses")
+	}
+	if !strings.HasPrefix(addr, "https://") {
+		addr = "https://" + addr
+	}
+
+	parsed, err := url.Parse(addr)
+	if err != nil {
+		return "", "", err
+	}
+	target = parsed.Host
+	prefix = parsed.Path
+	if parsed.Port() == "" {
+		if parsed.Scheme == "https" {
+			target = parsed.Host + ":443"
+		}
+	}
+
+	return target, prefix, nil
 }
