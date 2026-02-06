@@ -315,48 +315,40 @@ func SetColoredText(label *gtk.Label, str string, color Color) {
 	label.SetMarkup(formattedText)
 }
 
-func IdleAddAsync(f func()) {
+func IdleAddAsync(fun func()) {
 	go func() {
 		glib.IdleAdd(func() bool {
-			f()
+			fun()
 
 			return false
 		})
 	}()
 }
 
-func IdleAddSync(f func()) {
+func IdleAddSync(fun func()) {
 	IdleAddSyncT(func() bool {
-		f()
+		fun()
 
 		return false
 	})
 }
 
-func IdleAddSyncT[T any](f func() T) T {
+func IdleAddSyncT[T any](fun func() T) T {
 	res, _ := IdleAddSyncTT(func() (T, bool) {
-		return f(), false
+		return fun(), false
 	})
 
 	return res
 }
 
-func IdleAddSyncTT[T1, T2 any](f func() (T1, T2)) (T1, T2) {
-	type pair struct {
-		A T1
-		B T2
-	}
-
+func IdleAddSyncTT[T1, T2 any](fun func() (T1, T2)) (T1, T2) {
 	done := make(chan bool)
-	var a T1
-	var b T2
+	var va1l T1
+	var val2 T2
 
 	go func() {
-		fmt.Print("\n.")
 		glib.IdleAdd(func() bool {
-			fmt.Print("-")
-			a, b = f()
-			fmt.Print("+")
+			va1l, val2 = fun()
 
 			done <- true
 
@@ -365,5 +357,5 @@ func IdleAddSyncTT[T1, T2 any](f func() (T1, T2)) (T1, T2) {
 	}()
 	<-done
 
-	return a, b
+	return va1l, val2
 }
