@@ -4,27 +4,21 @@ package controller
 
 import (
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
+	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/wallet/types"
 )
 
-type WalletCreateAddressModel interface {
-	NewAddress(addressType crypto.AddressType, label string, password string) (*types.AddressInfo, error)
-}
-
 type WalletCreateAddressDialogController struct {
-	view   *view.WalletCreateAddressDialogView
-	model  WalletCreateAddressModel
-	getPwd PasswordProvider
+	view  *view.WalletCreateAddressDialogView
+	model *model.WalletModel
 }
 
 func NewWalletCreateAddressDialogController(
 	view *view.WalletCreateAddressDialogView,
-	model WalletCreateAddressModel,
-	getPwd PasswordProvider,
+	model *model.WalletModel,
 ) *WalletCreateAddressDialogController {
-	return &WalletCreateAddressDialogController{view: view, model: model, getPwd: getPwd}
+	return &WalletCreateAddressDialogController{view: view, model: model}
 }
 
 func (c *WalletCreateAddressDialogController) Run() {
@@ -44,7 +38,7 @@ func (c *WalletCreateAddressDialogController) Run() {
 		var err error
 		switch typ {
 		case crypto.AddressTypeEd25519Account.String():
-			password, ok := c.getPwd()
+			password, ok := PasswordProvider(c.model)
 			if !ok {
 				return
 			}

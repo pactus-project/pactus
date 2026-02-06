@@ -32,7 +32,7 @@ type NodeWidgetView struct {
 	LabelReachability    *gtk.Label
 }
 
-func NewNodeWidgetView() (*NodeWidgetView, error) {
+func NewNodeWidgetView() *NodeWidgetView {
 	builder := NewViewBuilder(assets.NodeWidgetUI)
 
 	view := &NodeWidgetView{
@@ -59,5 +59,5 @@ func NewNodeWidgetView() (*NodeWidgetView, error) {
 		LabelReachability:    builder.GetLabelObj("id_label_reachability"),
 	}
 
-	return view, nil
+	return view
 }

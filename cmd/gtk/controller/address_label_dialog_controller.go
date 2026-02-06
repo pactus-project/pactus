@@ -4,22 +4,18 @@ package controller
 
 import (
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
+	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 )
 
-type AddressLabelModel interface {
-	AddressLabel(address string) string
-	SetAddressLabel(address string, label string) error
-}
-
 type AddressLabelDialogController struct {
 	view  *view.AddressLabelDialogView
-	model AddressLabelModel
+	model *model.WalletModel
 }
 
 func NewAddressLabelDialogController(
 	view *view.AddressLabelDialogView,
-	model AddressLabelModel,
+	model *model.WalletModel,
 ) *AddressLabelDialogController {
 	return &AddressLabelDialogController{view: view, model: model}
 }

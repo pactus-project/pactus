@@ -6,6 +6,7 @@ import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd/gtk/assets"
+	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 )
 
 type ValidatorWidgetView struct {
@@ -17,7 +18,7 @@ type ValidatorWidgetView struct {
 	listStore          *gtk.ListStore
 }
 
-func NewValidatorWidgetView() (*ValidatorWidgetView, error) {
+func NewValidatorWidgetView() *ValidatorWidgetView {
 	builder := NewViewBuilder(assets.ValidatorWidgetUI)
 
 	treeViewValidators := builder.GetTreeViewObj("id_treeview_validators")
@@ -40,45 +41,20 @@ func NewValidatorWidgetView() (*ValidatorWidgetView, error) {
 		glib.TYPE_STRING, // unbonding height
 		glib.TYPE_STRING, // availability score
 	)
-	if err != nil {
-		return nil, err
-	}
+	gtkutil.FatalErrorCheck(err)
+
 	view.listStore = listStore
 	view.TreeViewValidators.SetModel(listStore.ToTreeModel())
 
 	// Columns.
-	colNo, err := createTextColumn("No", 0)
-	if err != nil {
-		return nil, err
-	}
-	colAddress, err := createTextColumn("Address", 1)
-	if err != nil {
-		return nil, err
-	}
-	colNumber, err := createTextColumn("Number", 2)
-	if err != nil {
-		return nil, err
-	}
-	colStake, err := createTextColumn("Stake", 3)
-	if err != nil {
-		return nil, err
-	}
-	colBondingHeight, err := createTextColumn("Bonding Height", 4)
-	if err != nil {
-		return nil, err
-	}
-	colSortitionHeight, err := createTextColumn("Last Sortition Height", 5)
-	if err != nil {
-		return nil, err
-	}
-	colUnbondingHeight, err := createTextColumn("Unbonding Height", 6)
-	if err != nil {
-		return nil, err
-	}
-	colScore, err := createTextColumn("Availability Score", 7)
-	if err != nil {
-		return nil, err
-	}
+	colNo := createTextColumn("No", 0)
+	colAddress := createTextColumn("Address", 1)
+	colNumber := createTextColumn("Number", 2)
+	colStake := createTextColumn("Stake", 3)
+	colBondingHeight := createTextColumn("Bonding Height", 4)
+	colSortitionHeight := createTextColumn("Last Sortition Height", 5)
+	colUnbondingHeight := createTextColumn("Unbonding Height", 6)
+	colScore := createTextColumn("Availability Score", 7)
 
 	view.TreeViewValidators.AppendColumn(colNo)
 	view.TreeViewValidators.AppendColumn(colAddress)
@@ -89,7 +65,7 @@ func NewValidatorWidgetView() (*ValidatorWidgetView, error) {
 	view.TreeViewValidators.AppendColumn(colUnbondingHeight)
 	view.TreeViewValidators.AppendColumn(colScore)
 
-	return view, nil
+	return view
 }
 
 func (view *ValidatorWidgetView) ClearRows() {

@@ -29,139 +29,53 @@ type GUI struct {
 func Run(ctx context.Context, conn grpc.ClientConnInterface,
 	gtkApp *gtk.Application, notify func(string),
 ) (*GUI, error) {
-	mwView, err := view.NewMainWindowView()
-	if err != nil {
-		return nil, err
-	}
+	mwView := view.NewMainWindowView()
+
 	blockchainClient := pactus.NewBlockchainClient(conn)
 	transactionClient := pactus.NewTransactionClient(conn)
 	networkClient := pactus.NewNetworkClient(conn)
 	walletClient := pactus.NewWalletClient(conn)
 
-	notify("Building node model...")
 	nodeModel := model.NewNodeModel(ctx, blockchainClient, networkClient)
-	nodeView, err := view.NewNodeWidgetView()
-	if err != nil {
-		return nil, err
-	}
-	nodeCtrl := controller.NewNodeWidgetController(nodeView, nodeModel)
-	if err := nodeCtrl.Bind(ctx); err != nil {
-		return nil, err
-	}
-
-	notify("Building wallet model...")
-	walletModel, err := model.NewWalletModel(ctx, walletClient, transactionClient, blockchainClient,
-		cmd.DefaultWalletName)
-	if err != nil {
-		return nil, err
-	}
-
-	walletView, err := view.NewWalletWidgetView()
-	if err != nil {
-		return nil, err
-	}
-	walletCtrl := controller.NewWalletWidgetController(walletView, walletModel)
 	validatorModel := model.NewValidatorModel(ctx, blockchainClient)
-	validatorView, err := view.NewValidatorWidgetView()
-	if err != nil {
-		return nil, err
-	}
+	walletModel := model.NewWalletModel(ctx, walletClient, transactionClient, blockchainClient, cmd.DefaultWalletName)
 
-	notify("Building validator model...")
+	nodeView := view.NewNodeWidgetView()
+	walletView := view.NewWalletWidgetView()
+	validatorView := view.NewValidatorWidgetView()
+
+	nodeCtrl := controller.NewNodeWidgetController(nodeView, nodeModel)
+	walletCtrl := controller.NewWalletWidgetController(walletView, walletModel)
 	validatorCtrl := controller.NewValidatorWidgetController(validatorView, validatorModel)
-	if err := validatorCtrl.Bind(ctx); err != nil {
+
+	nav := controller.NewNavigator(gtkApp, walletModel, walletCtrl)
+
+	notify("Gathering Node info...")
+	if err := nodeCtrl.BuildView(ctx); err != nil {
 		return nil, err
 	}
 
-	nav := NewNavigator(walletModel)
+	notify("Gathering Validators info...")
+	if err := validatorCtrl.BuildView(ctx); err != nil {
+		return nil, err
+	}
 
-	walletCtrl.Bind(ctx, controller.WalletWidgetHandlers{
-		OnNewAddress: func() {
-			nav.ShowCreateAddress()
-			walletCtrl.RefreshAddresses()
-		},
-		OnSetDefaultFee: func() {
-			nav.ShowSetDefaultFee()
-			walletCtrl.RefreshInfo()
-		},
-		OnChangePassword: func() {
-			nav.ShowChangePassword()
-			walletCtrl.RefreshInfo()
-		},
-		OnShowSeed: func() {
-			nav.ShowSeed()
-		},
-		OnUpdateLabel: func(address string) {
-			nav.ShowUpdateLabel(address)
-			walletCtrl.RefreshAddresses()
-		},
-		OnShowDetails: func(address string) {
-			nav.ShowAddressDetails(address)
-		},
-		OnShowPrivateKey: func(address string) {
-			nav.ShowPrivateKey(address)
-		},
-	})
+	notify("Gathering Wallet info...")
+	if err := walletCtrl.BuildView(ctx, nav); err != nil {
+		return nil, err
+	}
 
 	mwView.BoxNode.Add(nodeView.Box)
 	mwView.BoxDefaultWallet.Add(walletView.Box)
 	mwView.BoxValidators.Add(validatorView.Box)
 
 	mwCtrl := controller.NewMainWindowController(mwView)
-	mwCtrl.Bind(&controller.MainWindowHandlers{
-		OnAboutGtk: func() {
-			nav.ShowAboutGTK()
-		},
-		OnAbout: func() {
-			nav.ShowAbout()
-		},
-		OnQuit: func() {
-			gtkApp.Quit()
-		},
-		OnTransactionTransfer: func() {
-			nav.ShowTransferTx()
-			walletCtrl.RefreshTransactions()
-		},
-		OnTransactionBond: func() {
-			nav.ShowBondTx()
-			walletCtrl.RefreshTransactions()
-		},
-		OnTransactionUnbond: func() {
-			nav.ShowUnbondTx()
-			walletCtrl.RefreshTransactions()
-		},
-		OnTransactionWithdraw: func() {
-			nav.ShowWithdrawTx()
-			walletCtrl.RefreshTransactions()
-		},
-		OnWalletNewAddress: func() {
-			nav.ShowCreateAddress()
-			walletCtrl.RefreshAddresses()
-		},
-		OnWalletChangePassword: func() {
-			nav.ShowChangePassword()
-			walletCtrl.RefreshInfo()
-		},
-		OnWalletShowSeed: func() {
-			nav.ShowSeed()
-		},
-		OnWalletSetDefaultFee: func() {
-			nav.ShowSetDefaultFee()
-			walletCtrl.RefreshInfo()
-		},
-		OnMenuActivateWebsite: func() {
-			_ = gtkutil.OpenURLInBrowser("https://pactus.org/")
-		},
-		OnMenuActivateExplorer: func() {
-			_ = gtkutil.OpenURLInBrowser("https://pacviewer.com/")
-		},
-		OnMenuActivateDocs: func() {
-			_ = gtkutil.OpenURLInBrowser("https://docs.pactus.org/")
-		},
-	})
+	mwCtrl.BuildView(nav)
 
-	mwView.Window.ShowAll()
-	gtkApp.AddWindow(mwView.Window)
+	gtkutil.IdleAddSync(func() {
+		mwView.Window.ShowAll()
+		gtkApp.AddWindow(mwView.Window)
+	})
 
 	return &GUI{
 		MainWindow:    mwView,

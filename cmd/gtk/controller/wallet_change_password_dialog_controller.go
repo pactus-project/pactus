@@ -4,22 +4,18 @@ package controller
 
 import (
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
+	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 )
 
-type WalletChangePasswordModel interface {
-	IsEncrypted() bool
-	UpdatePassword(oldPassword, newPassword string) error
-}
-
 type WalletChangePasswordDialogController struct {
 	view  *view.WalletChangePasswordDialogView
-	model WalletChangePasswordModel
+	model *model.WalletModel
 }
 
 func NewWalletChangePasswordDialogController(
 	view *view.WalletChangePasswordDialogView,
-	model WalletChangePasswordModel,
+	model *model.WalletModel,
 ) *WalletChangePasswordDialogController {
 	return &WalletChangePasswordDialogController{view: view, model: model}
 }

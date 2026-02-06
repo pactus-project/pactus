@@ -4,22 +4,18 @@ package controller
 
 import (
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
+	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
-	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
-
-type AddressDetailsModel interface {
-	AddressInfo(addr string) *pactus.AddressInfo
-}
 
 type AddressDetailsDialogController struct {
 	view  *view.AddressDetailsDialogView
-	model AddressDetailsModel
+	model *model.WalletModel
 }
 
 func NewAddressDetailsDialogController(
 	view *view.AddressDetailsDialogView,
-	model AddressDetailsModel,
+	model *model.WalletModel,
 ) *AddressDetailsDialogController {
 	return &AddressDetailsDialogController{view: view, model: model}
 }

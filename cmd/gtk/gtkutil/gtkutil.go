@@ -12,6 +12,7 @@ import (
 	"runtime"
 
 	"github.com/gotk3/gotk3/gdk"
+	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 )
 
@@ -312,4 +313,49 @@ func SetColoredText(label *gtk.Label, str string, color Color) {
 	colorHex := getColorHex(color)
 	formattedText := fmt.Sprintf("<span color='%s'>%s</span>", colorHex, str)
 	label.SetMarkup(formattedText)
+}
+
+func IdleAddAsync(fun func()) {
+	go func() {
+		glib.IdleAdd(func() bool {
+			fun()
+
+			return false
+		})
+	}()
+}
+
+func IdleAddSync(fun func()) {
+	IdleAddSyncT(func() bool {
+		fun()
+
+		return false
+	})
+}
+
+func IdleAddSyncT[T any](fun func() T) T {
+	res, _ := IdleAddSyncTT(func() (T, bool) {
+		return fun(), false
+	})
+
+	return res
+}
+
+func IdleAddSyncTT[T1, T2 any](fun func() (T1, T2)) (T1, T2) {
+	done := make(chan bool)
+	var va1l T1
+	var val2 T2
+
+	go func() {
+		glib.IdleAdd(func() bool {
+			va1l, val2 = fun()
+
+			done <- true
+
+			return false
+		})
+	}()
+	<-done
+
+	return va1l, val2
 }

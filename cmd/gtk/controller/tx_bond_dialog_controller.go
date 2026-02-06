@@ -7,39 +7,23 @@ import (
 
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
+	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
-	"github.com/pactus-project/pactus/wallet/types"
-	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
-type TxBondModel interface {
-	WalletInfo() (*types.WalletInfo, error)
-	ListAddresses(addressTypes ...crypto.AddressType) []*pactus.AddressInfo
-	AddressInfo(addr string) *pactus.AddressInfo
-	Balance(addr string) (amount.Amount, error)
-	Stake(addr string) (amount.Amount, error)
-
-	MakeBondTx(sender, receiver, publicKey string, amt amount.Amount, fee amount.Amount, memo string) (*tx.Tx, error)
-	SignTransaction(password string, trx *tx.Tx) error
-	BroadcastTransaction(trx *tx.Tx) (string, error)
-}
-
 type TxBondDialogController struct {
-	view   *view.TxBondDialogView
-	model  TxBondModel
-	getPwd PasswordProvider
+	view  *view.TxBondDialogView
+	model *model.WalletModel
 }
 
 func NewTxBondDialogController(
 	view *view.TxBondDialogView,
-	model TxBondModel,
-	getPwd PasswordProvider,
+	model *model.WalletModel,
 ) *TxBondDialogController {
-	return &TxBondDialogController{view: view, model: model, getPwd: getPwd}
+	return &TxBondDialogController{view: view, model: model}
 }
 
 func setHint(lbl *gtk.Label, hint string) {
@@ -164,7 +148,7 @@ Do you want to continue with this transaction?`, sender, receiver, amt, trx.Fee(
 		return
 	}
 
-	password, ok := c.getPwd()
+	password, ok := PasswordProvider(c.model)
 	if !ok {
 		return
 	}

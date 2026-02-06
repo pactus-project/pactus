@@ -6,38 +6,23 @@ import (
 	"fmt"
 
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
+	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
-	"github.com/pactus-project/pactus/wallet/types"
-	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
-type TxWithdrawModel interface {
-	WalletInfo() (*types.WalletInfo, error)
-	ListAddresses(addressTypes ...crypto.AddressType) []*pactus.AddressInfo
-	AddressInfo(addr string) *pactus.AddressInfo
-	Stake(addr string) (amount.Amount, error)
-
-	MakeWithdrawTx(sender, receiver string, amt amount.Amount, fee amount.Amount, memo string) (*tx.Tx, error)
-	SignTransaction(password string, trx *tx.Tx) error
-	BroadcastTransaction(trx *tx.Tx) (string, error)
-}
-
 type TxWithdrawDialogController struct {
-	view   *view.TxWithdrawDialogView
-	model  TxWithdrawModel
-	getPwd PasswordProvider
+	view  *view.TxWithdrawDialogView
+	model *model.WalletModel
 }
 
 func NewTxWithdrawDialogController(
 	view *view.TxWithdrawDialogView,
-	model TxWithdrawModel,
-	getPwd PasswordProvider,
+	model *model.WalletModel,
 ) *TxWithdrawDialogController {
-	return &TxWithdrawDialogController{view: view, model: model, getPwd: getPwd}
+	return &TxWithdrawDialogController{view: view, model: model}
 }
 
 func (c *TxWithdrawDialogController) Run() {
@@ -162,7 +147,7 @@ Do you want to continue with this transaction?`, sender, receiver, amt, trx.Fee(
 		return
 	}
 
-	password, ok := c.getPwd()
+	password, ok := PasswordProvider(c.model)
 	if !ok {
 		return
 	}

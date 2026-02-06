@@ -7,24 +7,19 @@ import (
 	"strings"
 
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
+	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/wallet/types"
 )
-
-type WalletDefaultFeeModel interface {
-	WalletInfo() (*types.WalletInfo, error)
-	SetDefaultFee(fee amount.Amount) error
-}
 
 type WalletDefaultFeeDialogController struct {
 	view  *view.WalletDefaultFeeDialogView
-	model WalletDefaultFeeModel
+	model *model.WalletModel
 }
 
 func NewWalletDefaultFeeDialogController(
 	view *view.WalletDefaultFeeDialogView,
-	model WalletDefaultFeeModel,
+	model *model.WalletModel,
 ) *WalletDefaultFeeDialogController {
 	return &WalletDefaultFeeDialogController{view: view, model: model}
 }

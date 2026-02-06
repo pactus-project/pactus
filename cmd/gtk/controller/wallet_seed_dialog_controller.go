@@ -8,38 +8,33 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 )
 
-type AddressPrivateKeyDialogController struct {
-	view  *view.AddressPrivateKeyDialogView
+type WalletSeedDialogController struct {
+	view  *view.WalletSeedDialogView
 	model *model.WalletModel
 }
 
-func NewAddressPrivateKeyDialogController(
-	view *view.AddressPrivateKeyDialogView,
+func NewWalletSeedDialogController(
+	view *view.WalletSeedDialogView,
 	model *model.WalletModel,
-) *AddressPrivateKeyDialogController {
-	return &AddressPrivateKeyDialogController{view: view, model: model}
+) *WalletSeedDialogController {
+	return &WalletSeedDialogController{view: view, model: model}
 }
 
-func (c *AddressPrivateKeyDialogController) Run(addr string) {
+func (c *WalletSeedDialogController) Run() {
 	password, ok := PasswordProvider(c.model)
 	if !ok {
 		return
 	}
-
-	prv, err := c.model.PrivateKey(password, addr)
+	seed, err := c.model.Mnemonic(password)
 	if err != nil {
 		gtkutil.ShowError(err)
 
 		return
 	}
-
-	c.view.AddressEntry.SetText(addr)
-	c.view.PrvKeyEntry.SetText(prv.String())
-
+	gtkutil.SetTextViewContent(c.view.TextView, seed)
 	c.view.ConnectSignals(map[string]any{
 		"on_close": func() { c.view.Dialog.Close() },
 	})
-
 	c.view.Dialog.SetModal(true)
 	gtkutil.RunDialog(c.view.Dialog)
 }

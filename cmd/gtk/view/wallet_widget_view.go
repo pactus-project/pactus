@@ -43,23 +43,19 @@ type WalletWidgetView struct {
 	txListStore *gtk.ListStore
 }
 
-func createTextColumn(title string, columnID int) (*gtk.TreeViewColumn, error) {
+func createTextColumn(title string, columnID int) *gtk.TreeViewColumn {
 	cellRenderer, err := gtk.CellRendererTextNew()
-	if err != nil {
-		return nil, err
-	}
+	gtkutil.FatalErrorCheck(err)
 
 	column, err := gtk.TreeViewColumnNewWithAttribute(title, cellRenderer, "text", columnID)
-	if err != nil {
-		return nil, err
-	}
+	gtkutil.FatalErrorCheck(err)
 
 	column.SetResizable(true)
 
-	return column, nil
+	return column
 }
 
-func NewWalletWidgetView() (*WalletWidgetView, error) {
+func NewWalletWidgetView() *WalletWidgetView {
 	builder := NewViewBuilder(assets.WalletWidgetUI)
 
 	treeViewWallet := builder.GetTreeViewObj("id_treeview_addresses")
@@ -111,33 +107,17 @@ func NewWalletWidgetView() (*WalletWidgetView, error) {
 		glib.TYPE_STRING, // Balance
 		glib.TYPE_STRING, // Stake
 	)
-	if err != nil {
-		return nil, err
-	}
+	gtkutil.FatalErrorCheck(err)
+
 	view.listStore = listStore
 	view.TreeViewWallet.SetModel(listStore.ToTreeModel())
 
 	// Columns.
-	colNo, err := createTextColumn("No", 0)
-	if err != nil {
-		return nil, err
-	}
-	colAddress, err := createTextColumn("Address", 1)
-	if err != nil {
-		return nil, err
-	}
-	colLabel, err := createTextColumn("Label", 2)
-	if err != nil {
-		return nil, err
-	}
-	colBalance, err := createTextColumn("Balance", 3)
-	if err != nil {
-		return nil, err
-	}
-	colStake, err := createTextColumn("Stake", 4)
-	if err != nil {
-		return nil, err
-	}
+	colNo := createTextColumn("No", 0)
+	colAddress := createTextColumn("Address", 1)
+	colLabel := createTextColumn("Label", 2)
+	colBalance := createTextColumn("Balance", 3)
+	colStake := createTextColumn("Stake", 4)
 
 	view.TreeViewWallet.AppendColumn(colNo)
 	view.TreeViewWallet.AppendColumn(colAddress)
@@ -157,48 +137,20 @@ func NewWalletWidgetView() (*WalletWidgetView, error) {
 		glib.TYPE_STRING, // status
 		glib.TYPE_STRING, // comment
 	)
-	if err != nil {
-		return nil, err
-	}
+	gtkutil.FatalErrorCheck(err)
+
 	view.txListStore = txStore
 	view.TreeViewTransactions.SetModel(txStore.ToTreeModel())
 
-	colTxNo, err := createTextColumn("#", 0)
-	if err != nil {
-		return nil, err
-	}
-	colTxID, err := createTextColumn("ID", 1)
-	if err != nil {
-		return nil, err
-	}
-	colTxSender, err := createTextColumn("Sender", 2)
-	if err != nil {
-		return nil, err
-	}
-	colTxReceiver, err := createTextColumn("Receiver", 3)
-	if err != nil {
-		return nil, err
-	}
-	colTxType, err := createTextColumn("Type", 4)
-	if err != nil {
-		return nil, err
-	}
-	colTxAmount, err := createTextColumn("Amount", 5)
-	if err != nil {
-		return nil, err
-	}
-	colTxDir, err := createTextColumn("Direction", 6)
-	if err != nil {
-		return nil, err
-	}
-	colTxStatus, err := createTextColumn("Status", 7)
-	if err != nil {
-		return nil, err
-	}
-	colTxComment, err := createTextColumn("Comment", 8)
-	if err != nil {
-		return nil, err
-	}
+	colTxNo := createTextColumn("#", 0)
+	colTxID := createTextColumn("ID", 1)
+	colTxSender := createTextColumn("Sender", 2)
+	colTxReceiver := createTextColumn("Receiver", 3)
+	colTxType := createTextColumn("Type", 4)
+	colTxAmount := createTextColumn("Amount", 5)
+	colTxDir := createTextColumn("Direction", 6)
+	colTxStatus := createTextColumn("Status", 7)
+	colTxComment := createTextColumn("Comment", 8)
 
 	view.TreeViewTransactions.AppendColumn(colTxNo)
 	view.TreeViewTransactions.AppendColumn(colTxID)
@@ -212,39 +164,35 @@ func NewWalletWidgetView() (*WalletWidgetView, error) {
 
 	// Context menu (actions are wired by controller).
 	menu, err := gtk.MenuNew()
-	if err != nil {
-		return nil, err
-	}
+	gtkutil.FatalErrorCheck(err)
+
 	view.ContextMenu = menu
 
 	item, err := gtk.MenuItemNewWithLabel("Update _Label")
-	if err != nil {
-		return nil, err
-	}
+	gtkutil.FatalErrorCheck(err)
+
 	item.SetUseUnderline(true)
 	item.Show()
 	menu.Append(item)
 	view.MenuItemUpdateLabel = item
 
 	item, err = gtk.MenuItemNewWithLabel("_Details")
-	if err != nil {
-		return nil, err
-	}
+	gtkutil.FatalErrorCheck(err)
+
 	item.SetUseUnderline(true)
 	item.Show()
 	menu.Append(item)
 	view.MenuItemDetails = item
 
 	item, err = gtk.MenuItemNewWithLabel("_Private key")
-	if err != nil {
-		return nil, err
-	}
+	gtkutil.FatalErrorCheck(err)
+
 	item.SetUseUnderline(true)
 	item.Show()
 	menu.Append(item)
 	view.MenuItemPrivateKey = item
 
-	return view, nil
+	return view
 }
 
 func (view *WalletWidgetView) ClearRows() {
