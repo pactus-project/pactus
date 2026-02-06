@@ -39,11 +39,11 @@ type nodeWidgetSnapshot struct {
 	clockOffsetErr   error
 }
 
-func NewNodeWidgetController(view *view.NodeWidgetView, m *model.NodeModel) *NodeWidgetController {
-	return &NodeWidgetController{view: view, model: m}
+func NewNodeWidgetController(view *view.NodeWidgetView, model *model.NodeModel) *NodeWidgetController {
+	return &NodeWidgetController{view: view, model: model}
 }
 
-func (c *NodeWidgetController) Bind(ctx context.Context) error {
+func (c *NodeWidgetController) BuildView(ctx context.Context) error {
 	cwd, err := os.Getwd()
 	if err != nil {
 		return err

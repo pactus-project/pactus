@@ -43,14 +43,14 @@ func NewWalletModel(
 	transactionClient pactus.TransactionClient,
 	blockchainClient pactus.BlockchainClient,
 	walletName string,
-) (*WalletModel, error) {
+) *WalletModel {
 	return &WalletModel{
 		ctx:               ctx,
 		walletClient:      walletClient,
 		transactionClient: transactionClient,
 		blockchainClient:  blockchainClient,
 		walletName:        walletName,
-	}, nil
+	}
 }
 
 // WalletName returns the display name used in the UI.

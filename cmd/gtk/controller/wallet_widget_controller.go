@@ -17,40 +17,17 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/wallet/types"
-	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
-type WalletWidgetModel interface {
-	WalletName() string
-	IsEncrypted() bool
-	WalletInfo() (*types.WalletInfo, error)
-	TotalBalance() (amount.Amount, error)
-	TotalStake() (amount.Amount, error)
-	AddressRows() []model.AddressRow
-	Transactions(count, skip int) []*pactus.WalletTransactionInfo
-}
-
-type WalletWidgetHandlers struct {
-	OnNewAddress     func()
-	OnSetDefaultFee  func()
-	OnChangePassword func()
-	OnShowSeed       func()
-
-	OnUpdateLabel    func(address string)
-	OnShowDetails    func(address string)
-	OnShowPrivateKey func(address string)
-}
-
 type WalletWidgetController struct {
-	view *view.WalletWidgetView
-
-	model WalletWidgetModel
+	view  *view.WalletWidgetView
+	model *model.WalletModel
 
 	txSkip  int
 	txCount int
 }
 
-func NewWalletWidgetController(view *view.WalletWidgetView, model WalletWidgetModel) *WalletWidgetController {
+func NewWalletWidgetController(view *view.WalletWidgetView, model *model.WalletModel) *WalletWidgetController {
 	return &WalletWidgetController{
 		view:    view,
 		model:   model,
@@ -58,7 +35,7 @@ func NewWalletWidgetController(view *view.WalletWidgetView, model WalletWidgetMo
 	}
 }
 
-func (c *WalletWidgetController) Bind(ctx context.Context, handlers WalletWidgetHandlers) {
+func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) {
 	info, err := c.model.WalletInfo()
 	if err == nil {
 		c.view.LabelName.SetText(c.model.WalletName())
@@ -67,57 +44,37 @@ func (c *WalletWidgetController) Bind(ctx context.Context, handlers WalletWidget
 		c.view.LabelLocation.SetText(info.Path)
 	}
 
-	// Toolbar actions via glade signals.
-	c.view.ConnectSignals(map[string]any{
-		"on_new_address": func() {
-			handlers.OnNewAddress()
-		},
-		"on_address_refresh": func() {
-			c.RefreshAddresses()
-		},
-		"on_set_default_fee": func() {
-			handlers.OnSetDefaultFee()
-		},
-		"on_change_password": func() {
-			handlers.OnChangePassword()
-		},
-		"on_show_seed": func() {
-			handlers.OnShowSeed()
-		},
-		"on_tx_refresh": func() {
-			c.RefreshTransactions()
-		},
-		"on_tx_prev": func() {
-			if c.txSkip >= c.txCount {
-				c.txSkip -= c.txCount
-			} else {
-				c.txSkip = 0
-			}
-			c.RefreshTransactions()
-		},
-		"on_tx_next": func() {
-			c.txSkip += c.txCount
-			c.RefreshTransactions()
-		},
-	})
+	signals := map[string]any{
+		"on_new_address":     nav.ShowWalletNewAddress,
+		"on_set_default_fee": nav.ShowWalletSetDefaultFee,
+		"on_change_password": nav.ShowWalletChangePassword,
+		"on_show_seed":       nav.ShowWalletShowSeed,
+
+		"on_address_refresh": c.RefreshAddresses,
+		"on_tx_refresh":      c.RefreshTransactions,
+		"on_tx_prev":         c.prevTransactionsPage,
+		"on_tx_next":         c.nextTransactionsPage,
+	}
+
+	c.view.ConnectSignals(signals)
 
 	// Context menu actions.
 	c.view.MenuItemUpdateLabel.Connect("activate", func(_ *gtk.MenuItem) {
 		addr := c.selectedAddress()
 		if addr != "" {
-			handlers.OnUpdateLabel(addr)
+			c.ShowUpdateLabel(addr)
 		}
 	})
 	c.view.MenuItemDetails.Connect("activate", func(_ *gtk.MenuItem) {
 		addr := c.selectedAddress()
 		if addr != "" {
-			handlers.OnShowDetails(addr)
+			c.ShowAddressDetails(addr)
 		}
 	})
 	c.view.MenuItemPrivateKey.Connect("activate", func(_ *gtk.MenuItem) {
 		addr := c.selectedAddress()
 		if addr != "" {
-			handlers.OnShowPrivateKey(addr)
+			c.ShowPrivateKey(addr)
 		}
 	})
 
@@ -135,7 +92,7 @@ func (c *WalletWidgetController) Bind(ctx context.Context, handlers WalletWidget
 	c.view.TreeViewWallet.Connect("row-activated", func(_ *gtk.TreeView, _ *gtk.TreePath, _ *gtk.TreeViewColumn) {
 		addr := c.selectedAddress()
 		if addr != "" {
-			handlers.OnShowDetails(addr)
+			c.ShowAddressDetails(addr)
 		}
 	})
 
@@ -254,4 +211,38 @@ func (c *WalletWidgetController) RefreshTransactions() {
 
 		return false
 	})
+}
+
+func (c *WalletWidgetController) ShowUpdateLabel(address string) {
+	dlgView := view.NewAddressLabelDialogView()
+	dlgCtrl := NewAddressLabelDialogController(dlgView, c.model)
+	dlgCtrl.Run(address)
+
+	c.RefreshAddresses()
+}
+
+func (c *WalletWidgetController) ShowAddressDetails(address string) {
+	dlgView := view.NewAddressDetailsDialogView()
+	dlgCtrl := NewAddressDetailsDialogController(dlgView, c.model)
+	dlgCtrl.Run(address)
+}
+
+func (c *WalletWidgetController) ShowPrivateKey(address string) {
+	dlgView := view.NewAddressPrivateKeyDialogView()
+	dlgCtrl := NewAddressPrivateKeyDialogController(dlgView, c.model)
+	dlgCtrl.Run(address)
+}
+
+func (c *WalletWidgetController) prevTransactionsPage() {
+	if c.txSkip >= c.txCount {
+		c.txSkip -= c.txCount
+	} else {
+		c.txSkip = 0
+	}
+	c.RefreshTransactions()
+}
+
+func (c *WalletWidgetController) nextTransactionsPage() {
+	c.txSkip += c.txCount
+	c.RefreshTransactions()
 }

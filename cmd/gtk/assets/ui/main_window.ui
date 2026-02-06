@@ -168,27 +168,30 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <child>
-                      <object class="GtkMenuItem" id="id_website_menu">
+                      <object class="GtkMenuItem">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes">_Website</property>
                         <property name="use-underline">True</property>
+                        <signal name="activate" handler="on_open_website" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="id_explorer_menu">
+                      <object class="GtkMenuItem">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes">_Explorer</property>
                         <property name="use-underline">True</property>
+                        <signal name="activate" handler="on_open_explorer" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="id_documentation_menu">
+                      <object class="GtkMenuItem">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes">_Documentation</property>
                         <property name="use-underline">True</property>
+                        <signal name="activate" handler="on_open_docs" swapped="no"/>
                       </object>
                     </child>
                     <child>

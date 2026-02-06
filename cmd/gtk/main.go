@@ -20,6 +20,7 @@ import (
 	"github.com/pactus-project/pactus/cmd"
 	gtkapp "github.com/pactus-project/pactus/cmd/gtk/app"
 	"github.com/pactus-project/pactus/cmd/gtk/assets"
+	"github.com/pactus-project/pactus/cmd/gtk/controller"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/config"
@@ -283,7 +284,7 @@ func newNode(ctx context.Context, workingDir string, statusCb statusReporter) (*
 		)
 		done := make(chan struct{})
 		glib.IdleAdd(func() bool {
-			pwd, ok = gtkapp.PromptWalletPassword()
+			pwd, ok = controller.PromptWalletPassword()
 			close(done)
 
 			return false

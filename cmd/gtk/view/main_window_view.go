@@ -16,10 +16,6 @@ type MainWindowView struct {
 	BoxNode          *gtk.Box
 	BoxDefaultWallet *gtk.Box
 	BoxValidators    *gtk.Box
-
-	ExplorerMenuItem      *gtk.MenuItem
-	WebsiteMenuItem       *gtk.MenuItem
-	DocumentationMenuItem *gtk.MenuItem
 }
 
 func NewMainWindowView() (*MainWindowView, error) {
@@ -36,10 +32,6 @@ func NewMainWindowView() (*MainWindowView, error) {
 		BoxNode:          boxNode,
 		BoxDefaultWallet: boxDefaultWallet,
 		BoxValidators:    boxValidators,
-
-		ExplorerMenuItem:      builder.GetMenuItem("id_explorer_menu"),
-		WebsiteMenuItem:       builder.GetMenuItem("id_website_menu"),
-		DocumentationMenuItem: builder.GetMenuItem("id_documentation_menu"),
 	}
 
 	// apply custom css

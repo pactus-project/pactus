@@ -10,26 +10,23 @@ import (
 
 	"github.com/ezex-io/gopkg/scheduler"
 	"github.com/gotk3/gotk3/glib"
+	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/types/amount"
-	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
-
-// ValidatorWidgetModel is the interface used by the validator widget controller.
-type ValidatorWidgetModel interface {
-	Validators() ([]*pactus.ValidatorInfo, error)
-}
 
 type ValidatorWidgetController struct {
 	view  *view.ValidatorWidgetView
-	model ValidatorWidgetModel
+	model *model.ValidatorModel
 }
 
-func NewValidatorWidgetController(view *view.ValidatorWidgetView, m ValidatorWidgetModel) *ValidatorWidgetController {
-	return &ValidatorWidgetController{view: view, model: m}
+func NewValidatorWidgetController(
+	view *view.ValidatorWidgetView, model *model.ValidatorModel,
+) *ValidatorWidgetController {
+	return &ValidatorWidgetController{view: view, model: model}
 }
 
-func (c *ValidatorWidgetController) Bind(ctx context.Context) error {
+func (c *ValidatorWidgetController) BuildView(ctx context.Context) error {
 	scheduler.Every(ctx, 10*time.Second).Do(c.refresh)
 
 	// Initial refresh.

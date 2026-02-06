@@ -6,35 +6,21 @@ import (
 	"fmt"
 
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
+	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/types/tx"
-	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
-type TxUnbondModel interface {
-	ListAddresses(addressTypes ...crypto.AddressType) []*pactus.AddressInfo
-	AddressInfo(addr string) *pactus.AddressInfo
-	Stake(addr string) (amount.Amount, error)
-
-	MakeUnbondTx(validatorAddr, memo string) (*tx.Tx, error)
-	SignTransaction(password string, trx *tx.Tx) error
-	BroadcastTransaction(trx *tx.Tx) (string, error)
-}
-
 type TxUnbondDialogController struct {
-	view   *view.TxUnbondDialogView
-	model  TxUnbondModel
-	getPwd PasswordProvider
+	view  *view.TxUnbondDialogView
+	model *model.WalletModel
 }
 
 func NewTxUnbondDialogController(
 	view *view.TxUnbondDialogView,
-	model TxUnbondModel,
-	getPwd PasswordProvider,
+	model *model.WalletModel,
 ) *TxUnbondDialogController {
-	return &TxUnbondDialogController{view: view, model: model, getPwd: getPwd}
+	return &TxUnbondDialogController{view: view, model: model}
 }
 
 func (c *TxUnbondDialogController) Run() {
@@ -103,7 +89,7 @@ Do you want to continue with this transaction?`, validatorAddr, trx.Fee(), trx.M
 		return
 	}
 
-	password, ok := c.getPwd()
+	password, ok := PasswordProvider(c.model)
 	if !ok {
 		return
 	}

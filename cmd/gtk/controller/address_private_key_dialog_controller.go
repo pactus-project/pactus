@@ -4,30 +4,24 @@ package controller
 
 import (
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
+	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
-	"github.com/pactus-project/pactus/crypto"
 )
 
-type AddressPrivateKeyModel interface {
-	PrivateKey(password, addr string) (crypto.PrivateKey, error)
-}
-
 type AddressPrivateKeyDialogController struct {
-	view   *view.AddressPrivateKeyDialogView
-	model  AddressPrivateKeyModel
-	getPwd PasswordProvider
+	view  *view.AddressPrivateKeyDialogView
+	model *model.WalletModel
 }
 
 func NewAddressPrivateKeyDialogController(
 	view *view.AddressPrivateKeyDialogView,
-	model AddressPrivateKeyModel,
-	getPwd PasswordProvider,
+	model *model.WalletModel,
 ) *AddressPrivateKeyDialogController {
-	return &AddressPrivateKeyDialogController{view: view, model: model, getPwd: getPwd}
+	return &AddressPrivateKeyDialogController{view: view, model: model}
 }
 
 func (c *AddressPrivateKeyDialogController) Run(addr string) {
-	password, ok := c.getPwd()
+	password, ok := PasswordProvider(c.model)
 	if !ok {
 		return
 	}
