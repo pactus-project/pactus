@@ -48,14 +48,13 @@ func (c *TxBondDialogController) Run() {
 	}
 	c.view.SenderCombo.SetActive(0)
 
-	signals := map[string]any{
+	c.view.ConnectSignals(map[string]any{
 		"on_sender_changed":   c.onSenderChanged,
 		"on_receiver_changed": c.onReceiverChanged,
 		"on_fee_changed":      c.onFeeChanged,
 		"on_send":             c.onSend,
 		"on_cancel":           c.onCancel,
-	}
-	c.view.ConnectSignals(signals)
+	})
 
 	c.onSenderChanged()
 	gtkutil.RunDialog(c.view.Dialog)

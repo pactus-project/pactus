@@ -40,29 +40,19 @@ func (*Navigator) ShowAboutGtk() {
 }
 
 func (n *Navigator) ShowWalletShowSeed() {
-	password, ok := PasswordProvider(n.walletModel)
-	if !ok {
-		return
-	}
-	seed, err := n.walletModel.Mnemonic(password)
-	if err != nil {
-		gtkutil.ShowError(err)
-
-		return
-	}
 	dlgView := view.NewWalletSeedDialogView()
-	gtkutil.SetTextViewContent(dlgView.TextView, seed)
-	dlgView.ConnectSignals(map[string]any{"on_close": func() { dlgView.Dialog.Close() }})
-	dlgView.Dialog.SetModal(true)
-	gtkutil.RunDialog(dlgView.Dialog)
+	dlgCtrl := NewWalletSeedDialogController(dlgView, n.walletModel)
+	dlgCtrl.Run()
 }
 
 func (n *Navigator) ShowWalletNewAddress() {
-	dlgView := view.NewWalletCreateAddressDialogView()
-	dlgCtrl := NewWalletCreateAddressDialogController(dlgView, n.walletModel)
-	dlgCtrl.Run()
+	gtkutil.IdleAddAsync(func() {
+		dlgView := view.NewWalletCreateAddressDialogView()
+		dlgCtrl := NewWalletCreateAddressDialogController(dlgView, n.walletModel)
+		dlgCtrl.Run()
 
-	n.walletCtrl.RefreshAddresses()
+		n.walletCtrl.RefreshAddresses()
+	})
 }
 
 func (n *Navigator) ShowWalletSetDefaultFee() {

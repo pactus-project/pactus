@@ -8,6 +8,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/cmd/gtk/controller"
+	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -28,10 +29,8 @@ type GUI struct {
 func Run(ctx context.Context, conn grpc.ClientConnInterface,
 	gtkApp *gtk.Application, notify func(string),
 ) (*GUI, error) {
-	mwView, err := view.NewMainWindowView()
-	if err != nil {
-		return nil, err
-	}
+	mwView := view.NewMainWindowView()
+
 	blockchainClient := pactus.NewBlockchainClient(conn)
 	transactionClient := pactus.NewTransactionClient(conn)
 	networkClient := pactus.NewNetworkClient(conn)
@@ -45,22 +44,26 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 	walletView := view.NewWalletWidgetView()
 	validatorView := view.NewValidatorWidgetView()
 
-	notify("Building GUI...")
 	nodeCtrl := controller.NewNodeWidgetController(nodeView, nodeModel)
 	walletCtrl := controller.NewWalletWidgetController(walletView, walletModel)
 	validatorCtrl := controller.NewValidatorWidgetController(validatorView, validatorModel)
 
 	nav := controller.NewNavigator(gtkApp, walletModel, walletCtrl)
 
+	notify("Gathering Node info...")
 	if err := nodeCtrl.BuildView(ctx); err != nil {
 		return nil, err
 	}
 
+	notify("Gathering Validators info...")
 	if err := validatorCtrl.BuildView(ctx); err != nil {
 		return nil, err
 	}
 
-	walletCtrl.BuildView(ctx, nav)
+	notify("Gathering Wallet info...")
+	if err := walletCtrl.BuildView(ctx, nav); err != nil {
+		return nil, err
+	}
 
 	mwView.BoxNode.Add(nodeView.Box)
 	mwView.BoxDefaultWallet.Add(walletView.Box)
@@ -69,8 +72,10 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 	mwCtrl := controller.NewMainWindowController(mwView)
 	mwCtrl.BuildView(nav)
 
-	mwView.Window.ShowAll()
-	gtkApp.AddWindow(mwView.Window)
+	gtkutil.IdleAddSync(func() {
+		mwView.Window.ShowAll()
+		gtkApp.AddWindow(mwView.Window)
+	})
 
 	return &GUI{
 		MainWindow:    mwView,

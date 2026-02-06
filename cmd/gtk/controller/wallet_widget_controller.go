@@ -9,7 +9,6 @@ import (
 
 	"github.com/ezex-io/gopkg/scheduler"
 	"github.com/gotk3/gotk3/gdk"
-	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
@@ -35,7 +34,7 @@ func NewWalletWidgetController(view *view.WalletWidgetView, model *model.WalletM
 	}
 }
 
-func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) {
+func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) error {
 	info, err := c.model.WalletInfo()
 	if err == nil {
 		c.view.LabelName.SetText(c.model.WalletName())
@@ -44,7 +43,7 @@ func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) 
 		c.view.LabelLocation.SetText(info.Path)
 	}
 
-	signals := map[string]any{
+	c.view.ConnectSignals(map[string]any{
 		"on_new_address":     nav.ShowWalletNewAddress,
 		"on_set_default_fee": nav.ShowWalletSetDefaultFee,
 		"on_change_password": nav.ShowWalletChangePassword,
@@ -54,9 +53,7 @@ func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) 
 		"on_tx_refresh":      c.RefreshTransactions,
 		"on_tx_prev":         c.prevTransactionsPage,
 		"on_tx_next":         c.nextTransactionsPage,
-	}
-
-	c.view.ConnectSignals(signals)
+	})
 
 	// Context menu actions.
 	c.view.MenuItemUpdateLabel.Connect("activate", func(_ *gtk.MenuItem) {
@@ -108,6 +105,8 @@ func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) 
 	})
 
 	c.Refresh()
+
+	return nil
 }
 
 func (c *WalletWidgetController) selectedAddress() string {
@@ -151,20 +150,18 @@ func (c *WalletWidgetController) RefreshInfo() {
 		return
 	}
 
-	glib.IdleAdd(func() bool {
+	gtkutil.IdleAddAsync(func() {
 		c.view.LabelEncrypted.SetText(gtkutil.YesNo(info.Encrypted))
 		c.view.LabelTotalBalance.SetText(balanceStr)
 		c.view.LabelTotalStake.SetText(stakeStr)
 		c.view.LabelDefaultFee.SetText(info.DefaultFee.String())
-
-		return false
 	})
 }
 
 func (c *WalletWidgetController) RefreshAddresses() {
 	rows := c.model.AddressRows()
 
-	glib.IdleAdd(func() bool {
+	gtkutil.IdleAddAsync(func() {
 		c.view.ClearRows()
 		for _, item := range rows {
 			c.view.AppendRow(
@@ -178,8 +175,6 @@ func (c *WalletWidgetController) RefreshAddresses() {
 				},
 			)
 		}
-
-		return false
 	})
 }
 
@@ -187,7 +182,7 @@ func (c *WalletWidgetController) RefreshTransactions() {
 	trxs := c.model.Transactions(c.txCount, c.txSkip)
 	hasNext := len(trxs) == c.txCount
 
-	glib.IdleAdd(func() bool {
+	gtkutil.IdleAddAsync(func() {
 		c.view.ClearTxRows()
 
 		for _, trx := range trxs {
@@ -208,8 +203,6 @@ func (c *WalletWidgetController) RefreshTransactions() {
 		}
 
 		c.view.SetTxPager(c.txSkip > 0, hasNext)
-
-		return false
 	})
 }
 

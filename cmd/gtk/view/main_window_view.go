@@ -6,6 +6,7 @@ import (
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd/gtk/assets"
+	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 )
 
 type MainWindowView struct {
@@ -18,7 +19,7 @@ type MainWindowView struct {
 	BoxValidators    *gtk.Box
 }
 
-func NewMainWindowView() (*MainWindowView, error) {
+func NewMainWindowView() *MainWindowView {
 	builder := NewViewBuilder(assets.MainWindowUI)
 
 	boxNode := builder.GetBoxObj("id_box_node")
@@ -36,20 +37,17 @@ func NewMainWindowView() (*MainWindowView, error) {
 
 	// apply custom css
 	provider, err := gtk.CssProviderNew()
-	if err != nil {
-		return nil, err
-	}
-	if err := provider.LoadFromData(assets.MainWindowCSS); err != nil {
-		return nil, err
-	}
+	gtkutil.FatalErrorCheck(err)
+
+	err = provider.LoadFromData(assets.MainWindowCSS)
+	gtkutil.FatalErrorCheck(err)
 
 	screen, err := gdk.ScreenGetDefault()
-	if err != nil {
-		return nil, err
-	}
+	gtkutil.FatalErrorCheck(err)
+
 	gtk.AddProviderForScreen(screen, provider, gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
-	return view, nil
+	return view
 }
 
 func (v *MainWindowView) Cleanup() {

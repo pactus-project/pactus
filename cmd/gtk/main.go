@@ -164,10 +164,10 @@ func main() {
 			app.AddWindow(splash.Window())
 
 			notify := func(msg string) {
-				glib.IdleAdd(func() bool {
-					splash.SetStatus(msg)
+				log.Println(msg)
 
-					return false
+				gtkutil.IdleAddAsync(func() {
+					splash.SetStatus(msg)
 				})
 			}
 
@@ -195,13 +195,11 @@ func main() {
 				grpcConn, err = newRemoteGRPCConn(grpcAddr, grpcInsecure)
 				gtkutil.FatalErrorCheck(err)
 
-				glib.IdleAdd(func() bool {
-					gui, err = gtkapp.Run(ctx, grpcConn, app, notify)
-					gtkutil.FatalErrorCheck(err)
+				gui, err = gtkapp.Run(ctx, grpcConn, app, notify)
+				gtkutil.FatalErrorCheck(err)
 
+				gtkutil.IdleAddAsync(func() {
 					splash.Destroy()
-
-					return false
 				})
 			}()
 		})
@@ -278,20 +276,7 @@ func newNode(ctx context.Context, workingDir string, statusCb statusReporter) (*
 			return *passwordOpt, true
 		}
 
-		var (
-			pwd string
-			ok  bool
-		)
-		done := make(chan struct{})
-		glib.IdleAdd(func() bool {
-			pwd, ok = controller.PromptWalletPassword()
-			close(done)
-
-			return false
-		})
-		<-done
-
-		return pwd, ok
+		return gtkutil.IdleAddSyncTT(controller.PromptWalletPassword)
 	}
 
 	configModifier := func(cfg *config.Config) *config.Config {

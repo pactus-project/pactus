@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/ezex-io/gopkg/scheduler"
-	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/types/amount"
@@ -25,18 +25,6 @@ const clockOutOfSyncThreshold = 5 * time.Second
 type NodeWidgetController struct {
 	view  *view.NodeWidgetView
 	model *model.NodeModel
-}
-
-type nodeWidgetSnapshot struct {
-	committeeSize    int
-	committeeStake   amount.Amount
-	totalStake       amount.Amount
-	activeValidators int32
-	numConnections   string
-	reachability     string
-	inCommittee      bool
-	clockOffset      time.Duration
-	clockOffsetErr   error
 }
 
 func NewNodeWidgetController(view *view.NodeWidgetView, model *model.NodeModel) *NodeWidgetController {
@@ -67,7 +55,7 @@ func (c *NodeWidgetController) BuildView(ctx context.Context) error {
 
 	c.view.ConnectSignals(map[string]any{})
 
-	scheduler.Every(ctx, time.Second).Do(c.timeout1)
+	scheduler.Every(ctx, 10*time.Second).Do(c.timeout1)
 	scheduler.Every(ctx, 10*time.Second).Do(c.timeout10)
 
 	// Initial refresh.
@@ -88,7 +76,7 @@ func (c *NodeWidgetController) timeout1() {
 	lastBlockTime := time.Unix(chainInfo.LastBlockTime, 0)
 	lastBlockHeight := chainInfo.LastBlockHeight
 
-	glib.IdleAdd(func() bool {
+	gtkutil.IdleAddAsync(func() {
 		c.view.LabelLastBlockTime.SetText(lastBlockTime.Format("02 Jan 06 15:04:05 MST"))
 		c.view.LabelLastBlockHeight.SetText(strconv.FormatInt(int64(lastBlockHeight), 10))
 
@@ -107,8 +95,6 @@ func (c *NodeWidgetController) timeout1() {
 		}
 		c.view.ProgressBarSynced.SetFraction(percentage)
 		c.view.ProgressBarSynced.SetText(fmt.Sprintf("%s %%", strconv.FormatFloat(percentage*100, 'f', 2, 64)))
-
-		return false
 	})
 }
 
@@ -139,48 +125,32 @@ func (c *NodeWidgetController) timeout10() {
 			ci.Connections, ci.InboundConnections, ci.OutboundConnections)
 		reachability = nodeInfo.Reachability
 	}
+	committeeStake := amount.Amount(chainInfo.CommitteePower)
+	totalStake := amount.Amount(chainInfo.TotalPower)
 
-	snapshot := nodeWidgetSnapshot{
-		committeeSize:    committeeSize,
-		committeeStake:   amount.Amount(chainInfo.CommitteePower),
-		totalStake:       amount.Amount(chainInfo.TotalPower),
-		activeValidators: chainInfo.ActiveValidators,
-		numConnections:   numConnections,
-		reachability:     reachability,
-		inCommittee:      inCommittee,
-		clockOffset:      clockOffset,
-		clockOffsetErr:   clockOffsetErr,
-	}
+	gtkutil.IdleAddAsync(func() {
+		styleContext, err := c.view.LabelClockOffset.GetStyleContext()
+		if err != nil {
+			logger.Error("failed to get style context", "err", err)
 
-	glib.IdleAdd(func() bool {
-		return c.applyTimeout10Snapshot(&snapshot)
+			return
+		}
+
+		c.view.LabelClockOffset.SetTooltipText(
+			"Difference between time of your machine and network time (NTP) " +
+				"for synchronization.",
+		)
+
+		c.setClockOffset(styleContext, clockOffset, clockOffsetErr)
+
+		c.view.LabelCommitteeSize.SetText(fmt.Sprintf("%v", committeeSize))
+		c.view.LabelActiveValidator.SetText(fmt.Sprintf("%v", chainInfo.ActiveValidators))
+		c.view.LabelCommitteeStake.SetText(committeeStake.String())
+		c.view.LabelTotalStake.SetText(totalStake.String())
+		c.setInCommittee(inCommittee)
+		c.view.LabelNumConnections.SetText(numConnections)
+		c.view.LabelReachability.SetText(reachability)
 	})
-}
-
-func (c *NodeWidgetController) applyTimeout10Snapshot(snapshot *nodeWidgetSnapshot) bool {
-	styleContext, err := c.view.LabelClockOffset.GetStyleContext()
-	if err != nil {
-		logger.Error("failed to get style context", "err", err)
-
-		return false
-	}
-
-	c.view.LabelClockOffset.SetTooltipText(
-		"Difference between time of your machine and network time (NTP) " +
-			"for synchronization.",
-	)
-
-	c.setClockOffset(styleContext, snapshot.clockOffset, snapshot.clockOffsetErr)
-
-	c.view.LabelCommitteeSize.SetText(fmt.Sprintf("%v", snapshot.committeeSize))
-	c.view.LabelActiveValidator.SetText(fmt.Sprintf("%v", snapshot.activeValidators))
-	c.view.LabelCommitteeStake.SetText(snapshot.committeeStake.String())
-	c.view.LabelTotalStake.SetText(snapshot.totalStake.String())
-	c.setInCommittee(snapshot.inCommittee)
-	c.view.LabelNumConnections.SetText(snapshot.numConnections)
-	c.view.LabelReachability.SetText(snapshot.reachability)
-
-	return false
 }
 
 func (c *NodeWidgetController) setClockOffset(styleContext *gtk.StyleContext, offset time.Duration, offsetErr error) {
