@@ -20,7 +20,6 @@ type GUI struct {
 	NodeCtrl      *controller.NodeWidgetController
 	WalletCtrl    *controller.WalletWidgetController
 	ValidatorCtrl *controller.ValidatorWidgetController
-	grpcConn      grpc.ClientConnInterface
 }
 
 // Run builds and shows the main window, wiring views/controllers.
@@ -29,8 +28,6 @@ type GUI struct {
 func Run(ctx context.Context, conn grpc.ClientConnInterface,
 	gtkApp *gtk.Application, notify func(string),
 ) (*GUI, error) {
-	mwView := view.NewMainWindowView()
-
 	blockchainClient := pactus.NewBlockchainClient(conn)
 	transactionClient := pactus.NewTransactionClient(conn)
 	networkClient := pactus.NewNetworkClient(conn)
@@ -40,9 +37,9 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 	validatorModel := model.NewValidatorModel(ctx, blockchainClient)
 	walletModel := model.NewWalletModel(ctx, walletClient, transactionClient, blockchainClient, cmd.DefaultWalletName)
 
-	nodeView := view.NewNodeWidgetView()
-	walletView := view.NewWalletWidgetView()
-	validatorView := view.NewValidatorWidgetView()
+	nodeView := gtkutil.IdleAddSyncT(view.NewNodeWidgetView)
+	walletView := gtkutil.IdleAddSyncT(view.NewWalletWidgetView)
+	validatorView := gtkutil.IdleAddSyncT(view.NewValidatorWidgetView)
 
 	nodeCtrl := controller.NewNodeWidgetController(nodeView, nodeModel)
 	walletCtrl := controller.NewWalletWidgetController(walletView, walletModel)
@@ -50,31 +47,38 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 
 	nav := controller.NewNavigator(gtkApp, walletModel, walletCtrl)
 
-	notify("Gathering Node info...")
-	if err := nodeCtrl.BuildView(ctx); err != nil {
+	notify("Fetching Node info...")
+	err := nodeCtrl.BuildView(ctx)
+	if err != nil {
 		return nil, err
 	}
 
-	notify("Gathering Validators info...")
-	if err := validatorCtrl.BuildView(ctx); err != nil {
+	notify("Fetching Validators info...")
+	err = validatorCtrl.BuildView(ctx)
+	if err != nil {
 		return nil, err
 	}
 
-	notify("Gathering Wallet info...")
-	if err := walletCtrl.BuildView(ctx, nav); err != nil {
+	notify("Fetching Wallet info...")
+	err = walletCtrl.BuildView(ctx, nav)
+	if err != nil {
 		return nil, err
 	}
 
-	mwView.BoxNode.Add(nodeView.Box)
-	mwView.BoxDefaultWallet.Add(walletView.Box)
-	mwView.BoxValidators.Add(validatorView.Box)
+	mwView := gtkutil.IdleAddSyncT(func() *view.MainWindowView {
+		mwView := view.NewMainWindowView()
 
-	mwCtrl := controller.NewMainWindowController(mwView)
-	mwCtrl.BuildView(nav)
+		mwView.BoxNode.Add(nodeView.Box)
+		mwView.BoxDefaultWallet.Add(walletView.Box)
+		mwView.BoxValidators.Add(validatorView.Box)
 
-	gtkutil.IdleAddSync(func() {
+		mwCtrl := controller.NewMainWindowController(mwView)
+		mwCtrl.BuildView(nav)
+
 		mwView.Window.ShowAll()
 		gtkApp.AddWindow(mwView.Window)
+
+		return mwView
 	})
 
 	return &GUI{
@@ -82,7 +86,6 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 		NodeCtrl:      nodeCtrl,
 		WalletCtrl:    walletCtrl,
 		ValidatorCtrl: validatorCtrl,
-		grpcConn:      conn,
 	}, nil
 }
 

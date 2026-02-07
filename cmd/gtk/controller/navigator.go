@@ -28,79 +28,111 @@ func NewNavigator(gtkApp *gtk.Application,
 }
 
 func (*Navigator) ShowAbout() {
-	dlg := view.NewAboutDialog()
-	dlg.SetVersion(version.NodeVersion().StringWithAlias())
-	gtkutil.RunDialog(&dlg.Dialog)
-}
-
-func (*Navigator) ShowAboutGtk() {
-	dlg := view.NewAboutGTKDialog()
-	dlg.Dialog.SetModal(true)
-	gtkutil.RunDialog(&dlg.Dialog)
-}
-
-func (n *Navigator) ShowWalletShowSeed() {
-	dlgView := view.NewWalletSeedDialogView()
-	dlgCtrl := NewWalletSeedDialogController(dlgView, n.walletModel)
-	dlgCtrl.Run()
-}
-
-func (n *Navigator) ShowWalletNewAddress() {
-	gtkutil.IdleAddAsync(func() {
-		dlgView := view.NewWalletCreateAddressDialogView()
-		dlgCtrl := NewWalletCreateAddressDialogController(dlgView, n.walletModel)
-		dlgCtrl.Run()
-
-		n.walletCtrl.RefreshAddresses()
+	gtkutil.IdleAddSync(func() {
+		dlg := view.NewAboutDialog()
+		dlg.SetVersion(version.NodeVersion().StringWithAlias())
+		gtkutil.RunDialog(&dlg.Dialog)
 	})
 }
 
-func (n *Navigator) ShowWalletSetDefaultFee() {
-	dlgView := view.NewWalletDefaultFeeDialogView()
-	dlgCtrl := NewWalletDefaultFeeDialogController(dlgView, n.walletModel)
-	dlgCtrl.Run()
+func (*Navigator) ShowAboutGtk() {
+	gtkutil.IdleAddSync(func() {
+		dlg := view.NewAboutGTKDialog()
+		dlg.Dialog.SetModal(true)
+		gtkutil.RunDialog(&dlg.Dialog)
+	})
+}
 
-	n.walletCtrl.RefreshInfo()
+func (n *Navigator) ShowWalletShowSeed() {
+	gtkutil.IdleAddSync(func() {
+		dlgView := view.NewWalletSeedDialogView()
+		dlgCtrl := NewWalletSeedDialogController(dlgView, n.walletModel)
+		dlgCtrl.Run()
+	})
+}
+
+func (n *Navigator) ShowWalletNewAddress() {
+	gtkutil.IdleAddSync(func() {
+		dlgView := view.NewWalletCreateAddressDialogView()
+		dlgCtrl := NewWalletCreateAddressDialogController(dlgView, n.walletModel)
+		dlgCtrl.Run()
+	})
+
+	go func() {
+		n.walletCtrl.RefreshAddresses()
+	}()
+}
+
+func (n *Navigator) ShowWalletSetDefaultFee() {
+	gtkutil.IdleAddSync(func() {
+		dlgView := view.NewWalletDefaultFeeDialogView()
+		dlgCtrl := NewWalletDefaultFeeDialogController(dlgView, n.walletModel)
+		dlgCtrl.Run()
+	})
+
+	go func() {
+		n.walletCtrl.RefreshInfo()
+	}()
 }
 
 func (n *Navigator) ShowWalletChangePassword() {
-	dlgView := view.NewWalletChangePasswordDialogView()
-	dlgCtrl := NewWalletChangePasswordDialogController(dlgView, n.walletModel)
-	dlgCtrl.Run()
+	gtkutil.IdleAddSync(func() {
+		dlgView := view.NewWalletChangePasswordDialogView()
+		dlgCtrl := NewWalletChangePasswordDialogController(dlgView, n.walletModel)
+		dlgCtrl.Run()
+	})
 
-	n.walletCtrl.RefreshInfo()
+	go func() {
+		n.walletCtrl.RefreshInfo()
+	}()
 }
 
 func (n *Navigator) ShowTransactionTransfer() {
-	dialogView := view.NewTxTransferDialogView()
-	ctrl := NewTxTransferDialogController(dialogView, n.walletModel)
-	ctrl.Run()
+	gtkutil.IdleAddSync(func() {
+		dialogView := view.NewTxTransferDialogView()
+		ctrl := NewTxTransferDialogController(dialogView, n.walletModel)
+		ctrl.Run()
+	})
 
-	n.walletCtrl.RefreshTransactions()
+	go func() {
+		n.walletCtrl.RefreshTransactions()
+	}()
 }
 
 func (n *Navigator) ShowTransactionBond() {
-	dialogView := view.NewTxBondDialogView()
-	ctrl := NewTxBondDialogController(dialogView, n.walletModel)
-	ctrl.Run()
+	gtkutil.IdleAddSync(func() {
+		dialogView := view.NewTxBondDialogView()
+		ctrl := NewTxBondDialogController(dialogView, n.walletModel)
+		ctrl.Run()
+	})
 
-	n.walletCtrl.RefreshTransactions()
+	go func() {
+		n.walletCtrl.RefreshTransactions()
+	}()
 }
 
 func (n *Navigator) ShowTransactionUnbond() {
-	dialogView := view.NewTxUnbondDialogView()
-	ctrl := NewTxUnbondDialogController(dialogView, n.walletModel)
-	ctrl.Run()
+	gtkutil.IdleAddSync(func() {
+		dialogView := view.NewTxUnbondDialogView()
+		ctrl := NewTxUnbondDialogController(dialogView, n.walletModel)
+		ctrl.Run()
+	})
 
-	n.walletCtrl.RefreshTransactions()
+	go func() {
+		n.walletCtrl.RefreshTransactions()
+	}()
 }
 
 func (n *Navigator) ShowTransactionWithdraw() {
-	dialogView := view.NewTxWithdrawDialogView()
-	ctrl := NewTxWithdrawDialogController(dialogView, n.walletModel)
-	ctrl.Run()
+	gtkutil.IdleAddSync(func() {
+		dialogView := view.NewTxWithdrawDialogView()
+		ctrl := NewTxWithdrawDialogController(dialogView, n.walletModel)
+		ctrl.Run()
+	})
 
-	n.walletCtrl.RefreshTransactions()
+	go func() {
+		n.walletCtrl.RefreshTransactions()
+	}()
 }
 
 func (n *Navigator) BrowseWebsite() {

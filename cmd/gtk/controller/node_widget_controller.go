@@ -48,12 +48,14 @@ func (c *NodeWidgetController) BuildView(ctx context.Context) error {
 		return err
 	}
 
-	c.view.LabelNetwork.SetText(nodeInfo.NetworkName)
-	c.view.LabelNetworkID.SetText(nodeInfo.PeerId)
-	c.view.LabelMoniker.SetText(nodeInfo.Moniker)
-	c.view.LabelIsPrune.SetText(strconv.FormatBool(chainInfo.IsPruned))
+	gtkutil.IdleAddSync(func() {
+		c.view.LabelNetwork.SetText(nodeInfo.NetworkName)
+		c.view.LabelNetworkID.SetText(nodeInfo.PeerId)
+		c.view.LabelMoniker.SetText(nodeInfo.Moniker)
+		c.view.LabelIsPrune.SetText(strconv.FormatBool(chainInfo.IsPruned))
 
-	c.view.ConnectSignals(map[string]any{})
+		c.view.ConnectSignals(map[string]any{})
+	})
 
 	scheduler.Every(ctx, 10*time.Second).Do(c.timeout1)
 	scheduler.Every(ctx, 10*time.Second).Do(c.timeout10)
@@ -76,7 +78,7 @@ func (c *NodeWidgetController) timeout1() {
 	lastBlockTime := time.Unix(chainInfo.LastBlockTime, 0)
 	lastBlockHeight := chainInfo.LastBlockHeight
 
-	gtkutil.IdleAddAsync(func() {
+	gtkutil.IdleAddSync(func() {
 		c.view.LabelLastBlockTime.SetText(lastBlockTime.Format("02 Jan 06 15:04:05 MST"))
 		c.view.LabelLastBlockHeight.SetText(strconv.FormatInt(int64(lastBlockHeight), 10))
 
@@ -128,7 +130,7 @@ func (c *NodeWidgetController) timeout10() {
 	committeeStake := amount.Amount(chainInfo.CommitteePower)
 	totalStake := amount.Amount(chainInfo.TotalPower)
 
-	gtkutil.IdleAddAsync(func() {
+	gtkutil.IdleAddSync(func() {
 		styleContext, err := c.view.LabelClockOffset.GetStyleContext()
 		if err != nil {
 			logger.Error("failed to get style context", "err", err)

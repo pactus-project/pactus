@@ -10,15 +10,16 @@ import (
 	"net/url"
 	"os/exec"
 	"runtime"
+	"time"
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 )
 
-// UpdateMessageDialog makes MessageDialog labels selectable and markup-enabled.
+// updateMessageDialog makes MessageDialog labels selectable and markup-enabled.
 // https://stackoverflow.com/questions/3249053/copying-the-text-from-a-gtk-messagedialog
-func UpdateMessageDialog(dlg *gtk.MessageDialog) {
+func updateMessageDialog(dlg *gtk.MessageDialog) {
 	area, err := dlg.GetMessageArea()
 	if err == nil {
 		children := area.GetChildren()
@@ -33,33 +34,41 @@ func UpdateMessageDialog(dlg *gtk.MessageDialog) {
 }
 
 func ShowQuestionDialog(parent gtk.IWindow, msg string) bool {
-	dlg := gtk.MessageDialogNew(parent,
-		gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, "%s", msg)
-	UpdateMessageDialog(dlg)
-	res := RunDialog(&dlg.Dialog)
+	return IdleAddSyncT(func() bool {
+		dlg := gtk.MessageDialogNew(parent,
+			gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, "%s", msg)
+		updateMessageDialog(dlg)
+		res := RunDialog(&dlg.Dialog)
 
-	return res == gtk.RESPONSE_YES
+		return res == gtk.RESPONSE_YES
+	})
 }
 
 func ShowInfoDialog(parent gtk.IWindow, msg string) {
-	dlg := gtk.MessageDialogNew(parent,
-		gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, "%s", msg)
-	UpdateMessageDialog(dlg)
-	RunDialog(&dlg.Dialog)
+	IdleAddSync(func() {
+		dlg := gtk.MessageDialogNew(parent,
+			gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, "%s", msg)
+		updateMessageDialog(dlg)
+		RunDialog(&dlg.Dialog)
+	})
 }
 
 func ShowWarningDialog(parent gtk.IWindow, msg string) {
-	dlg := gtk.MessageDialogNew(parent,
-		gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, "%s", msg)
-	UpdateMessageDialog(dlg)
-	RunDialog(&dlg.Dialog)
+	IdleAddSync(func() {
+		dlg := gtk.MessageDialogNew(parent,
+			gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, "%s", msg)
+		updateMessageDialog(dlg)
+		RunDialog(&dlg.Dialog)
+	})
 }
 
 func ShowErrorDialog(parent gtk.IWindow, msg string) {
-	dlg := gtk.MessageDialogNew(parent,
-		gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, "%s", msg)
-	UpdateMessageDialog(dlg)
-	RunDialog(&dlg.Dialog)
+	IdleAddSync(func() {
+		dlg := gtk.MessageDialogNew(parent,
+			gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, "%s", msg)
+		updateMessageDialog(dlg)
+		RunDialog(&dlg.Dialog)
+	})
 }
 
 // ShowError displays an error dialog and logs the error message.
@@ -242,13 +251,15 @@ func SetCSSClass(widget *gtk.Widget, name string) {
 }
 
 func RunDialog(dlg *gtk.Dialog) gtk.ResponseType {
-	response := dlg.Run()
+	return IdleAddSyncT(func() gtk.ResponseType {
+		response := dlg.Run()
 
-	// Destroy should be done after the dialog is closed
-	// Read more here: https://docs.gtk.org/gtk3/method.Dialog.run.html
-	dlg.Destroy()
+		// Destroy should be done after the dialog is closed
+		// Read more here: https://docs.gtk.org/gtk3/method.Dialog.run.html
+		dlg.Destroy()
 
-	return response
+		return response
+	})
 }
 
 func ComboBoxActiveValue(combo *gtk.ComboBox) int {
@@ -342,7 +353,7 @@ func IdleAddSyncT[T any](fun func() T) T {
 }
 
 func IdleAddSyncTT[T1, T2 any](fun func() (T1, T2)) (T1, T2) {
-	done := make(chan bool)
+	done := make(chan bool, 1)
 	var va1l T1
 	var val2 T2
 
@@ -355,9 +366,17 @@ func IdleAddSyncTT[T1, T2 any](fun func() (T1, T2)) (T1, T2) {
 			return false
 		})
 	}()
-	<-done
 
-	return va1l, val2
+	glibContext := glib.MainContextDefault()
+	for {
+		select {
+		case <-done:
+			return va1l, val2
+		default:
+			time.Sleep(10 * time.Millisecond)
+			glibContext.Iteration(false)
+		}
+	}
 }
 
 func Logf(msg string, args ...any) {
