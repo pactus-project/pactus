@@ -461,7 +461,9 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 
 	gtk.Main()
 
-	nodeWallet.Close()
+	if nodeWallet != nil {
+		nodeWallet.Close()
+	}
 
 	return successful
 }

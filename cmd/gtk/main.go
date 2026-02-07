@@ -6,7 +6,6 @@ import (
 	"context"
 	"crypto/tls"
 	"flag"
-	"log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -27,7 +26,6 @@ import (
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/version"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -63,9 +61,11 @@ func init() {
 func main() {
 	flag.Parse()
 
+	gtkutil.Logf("Starting Pactus GUI")
 	// The gtk should run on main thread.
 	runtime.UnlockOSThread()
 	runtime.LockOSThread()
+	gtkutil.Logf("Locking main thread")
 
 	// Create a new app.
 	app, err := gtk.ApplicationNew(appID, glib.APPLICATION_NON_UNIQUE)
@@ -81,7 +81,7 @@ func main() {
 
 	workingDir, err := filepath.Abs(*workingDirOpt)
 	if err != nil {
-		terminal.PrintErrorMsgf("Aborted! %v", err)
+		gtkutil.Logf("Aborted! %v", err)
 
 		return
 	}
@@ -110,7 +110,7 @@ func main() {
 		gtkutil.FatalErrorCheck(err)
 
 		if !locked {
-			terminal.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)
+			gtkutil.Logf("Could not lock '%s', another instance is running?", lockFilePath)
 
 			return
 		}
@@ -119,7 +119,7 @@ func main() {
 
 	// Connect function to application startup event, this is not required.
 	app.Connect("startup", func() {
-		log.Println("application startup")
+		gtkutil.Logf("application startup")
 	})
 
 	var gui *gtkapp.GUI
@@ -147,14 +147,14 @@ func main() {
 
 	// Connect function to application shutdown event, this is not required.
 	app.Connect("shutdown", func() {
-		log.Println("Application shutdown")
+		gtkutil.Logf("Application shutdown")
 		shutdown()
 	})
 
 	// Connect function to application activate event
 	app.Connect("activate", func() {
 		activateOnce.Do(func() {
-			log.Println("application activate")
+			gtkutil.Logf("application activate")
 
 			splash := view.NewSplashWindow(app)
 			splash.SetVersion(version.NodeVersion().StringWithAlias())
@@ -164,7 +164,7 @@ func main() {
 			app.AddWindow(splash.Window())
 
 			notify := func(msg string) {
-				log.Println(msg)
+				gtkutil.Logf("Splash msg: %s", msg)
 
 				gtkutil.IdleAddAsync(func() {
 					splash.SetStatus(msg)
@@ -198,15 +198,13 @@ func main() {
 				gui, err = gtkapp.Run(ctx, grpcConn, app, notify)
 				gtkutil.FatalErrorCheck(err)
 
-				gtkutil.IdleAddAsync(func() {
-					splash.Destroy()
-				})
+				splash.Destroy()
 			}()
 		})
 	})
 
 	signal.HandleInterrupt(func() {
-		terminal.PrintInfoMsgf("Exiting...")
+		gtkutil.Logf("Exiting...")
 		shutdown()
 	})
 
@@ -230,10 +228,10 @@ func newRemoteGRPCConn(addr string, insecureCredentials bool) (*grpc.ClientConn,
 	}
 	var creds credentials.TransportCredentials
 	if insecureCredentials {
-		log.Printf("Connecting to node using insecure credentials. target: %s, prefix: %s", target, prefix)
+		gtkutil.Logf("Connecting to node using insecure credentials. target: %s, prefix: %s", target, prefix)
 		creds = insecure.NewCredentials()
 	} else {
-		log.Printf("Connecting to node using TLS. target: %s, prefix: %s", target, prefix)
+		gtkutil.Logf("Connecting to node using TLS. target: %s, prefix: %s", target, prefix)
 		creds = credentials.NewTLS(&tls.Config{MinVersion: tls.VersionTLS12})
 	}
 
@@ -265,13 +263,15 @@ func methodPrefixStreamInterceptor(prefix string) grpc.StreamClientInterceptor {
 func newNode(ctx context.Context, workingDir string, statusCb statusReporter) (*node.Node, error) {
 	// change working directory
 	if err := os.Chdir(workingDir); err != nil {
-		log.Println("Aborted! Unable to changes working directory. " + err.Error())
+		gtkutil.Logf("Aborted! Unable to changes working directory. %v", err)
 
 		return nil, err
 	}
 
 	reportStatus(statusCb, "Opening wallet...")
 	passwordFetcher := func() (string, bool) {
+		gtkutil.Logf("Fetching wallet password")
+
 		if *passwordOpt != "" {
 			return *passwordOpt, true
 		}

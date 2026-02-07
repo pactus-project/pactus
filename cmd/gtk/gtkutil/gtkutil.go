@@ -108,7 +108,7 @@ func PixbufFromBytes(data []byte, opts ...PixbufOption) (*gdk.Pixbuf, error) {
 	defer func() {
 		err = loader.Close()
 		if err != nil {
-			log.Println("error closing pixbuf loader:", err)
+			Logf("error closing pixbuf loader: %v", err)
 		}
 	}()
 
@@ -358,4 +358,17 @@ func IdleAddSyncTT[T1, T2 any](fun func() (T1, T2)) (T1, T2) {
 	<-done
 
 	return va1l, val2
+}
+
+func Logf(msg string, args ...any) {
+	log.Printf("(Go Routine ID %d) %s", GoroutineID(), fmt.Sprintf(msg, args...))
+}
+
+func GoroutineID() int64 {
+	var buf [64]byte
+	n := runtime.Stack(buf[:], false)
+	var id int64
+	_, _ = fmt.Sscanf(string(buf[:n]), "goroutine %d ", &id)
+
+	return id
 }
