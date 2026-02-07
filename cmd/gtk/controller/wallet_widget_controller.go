@@ -36,72 +36,75 @@ func NewWalletWidgetController(view *view.WalletWidgetView, model *model.WalletM
 
 func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) error {
 	info, err := c.model.WalletInfo()
-	if err == nil {
-		c.view.LabelName.SetText(c.model.WalletName())
-		c.view.LabelDriver.SetText(info.Driver)
-		c.view.LabelCreatedAt.SetText(info.CreatedAt.Format(time.RFC1123))
-		c.view.LabelLocation.SetText(info.Path)
-	}
 
-	c.view.ConnectSignals(map[string]any{
-		"on_new_address":     nav.ShowWalletNewAddress,
-		"on_set_default_fee": nav.ShowWalletSetDefaultFee,
-		"on_change_password": nav.ShowWalletChangePassword,
-		"on_show_seed":       nav.ShowWalletShowSeed,
-
-		"on_address_refresh": c.RefreshAddresses,
-		"on_tx_refresh":      c.RefreshTransactions,
-		"on_tx_prev":         c.prevTransactionsPage,
-		"on_tx_next":         c.nextTransactionsPage,
-	})
-
-	// Context menu actions.
-	c.view.MenuItemUpdateLabel.Connect("activate", func(_ *gtk.MenuItem) {
-		addr := c.selectedAddress()
-		if addr != "" {
-			c.ShowUpdateLabel(addr)
-		}
-	})
-	c.view.MenuItemDetails.Connect("activate", func(_ *gtk.MenuItem) {
-		addr := c.selectedAddress()
-		if addr != "" {
-			c.ShowAddressDetails(addr)
-		}
-	})
-	c.view.MenuItemPrivateKey.Connect("activate", func(_ *gtk.MenuItem) {
-		addr := c.selectedAddress()
-		if addr != "" {
-			c.ShowPrivateKey(addr)
-		}
-	})
-
-	// Right-click popup.
-	c.view.TreeViewWallet.Connect("button-press-event", func(_ *gtk.TreeView, event *gdk.Event) bool {
-		eventButton := gdk.EventButtonNewFromEvent(event)
-		if eventButton.Type() == gdk.EVENT_BUTTON_PRESS && eventButton.Button() == gdk.BUTTON_SECONDARY {
-			c.view.ContextMenu.PopupAtPointer(event)
+	gtkutil.IdleAddSync(func() {
+		if err == nil {
+			c.view.LabelName.SetText(c.model.WalletName())
+			c.view.LabelDriver.SetText(info.Driver)
+			c.view.LabelCreatedAt.SetText(info.CreatedAt.Format(time.RFC1123))
+			c.view.LabelLocation.SetText(info.Path)
 		}
 
-		return false
-	})
+		c.view.ConnectSignals(map[string]any{
+			"on_new_address":     nav.ShowWalletNewAddress,
+			"on_set_default_fee": nav.ShowWalletSetDefaultFee,
+			"on_change_password": nav.ShowWalletChangePassword,
+			"on_show_seed":       nav.ShowWalletShowSeed,
 
-	// Double-click opens details.
-	c.view.TreeViewWallet.Connect("row-activated", func(_ *gtk.TreeView, _ *gtk.TreePath, _ *gtk.TreeViewColumn) {
-		addr := c.selectedAddress()
-		if addr != "" {
-			c.ShowAddressDetails(addr)
-		}
-	})
+			"on_address_refresh": c.RefreshAddresses,
+			"on_tx_refresh":      c.RefreshTransactions,
+			"on_tx_prev":         c.prevTransactionsPage,
+			"on_tx_next":         c.nextTransactionsPage,
+		})
 
-	totalBalance1, _ := c.model.TotalBalance()
-	scheduler.Every(ctx, 15*time.Second).Do(func() {
-		totalBalance2, _ := c.model.TotalBalance()
+		// Context menu actions.
+		c.view.MenuItemUpdateLabel.Connect("activate", func(_ *gtk.MenuItem) {
+			addr := c.selectedAddress()
+			if addr != "" {
+				c.ShowUpdateLabel(addr)
+			}
+		})
+		c.view.MenuItemDetails.Connect("activate", func(_ *gtk.MenuItem) {
+			addr := c.selectedAddress()
+			if addr != "" {
+				c.ShowAddressDetails(addr)
+			}
+		})
+		c.view.MenuItemPrivateKey.Connect("activate", func(_ *gtk.MenuItem) {
+			addr := c.selectedAddress()
+			if addr != "" {
+				c.ShowPrivateKey(addr)
+			}
+		})
 
-		if totalBalance1 != totalBalance2 {
-			c.Refresh()
+		// Right-click popup.
+		c.view.TreeViewWallet.Connect("button-press-event", func(_ *gtk.TreeView, event *gdk.Event) bool {
+			eventButton := gdk.EventButtonNewFromEvent(event)
+			if eventButton.Type() == gdk.EVENT_BUTTON_PRESS && eventButton.Button() == gdk.BUTTON_SECONDARY {
+				c.view.ContextMenu.PopupAtPointer(event)
+			}
 
-			totalBalance1 = totalBalance2
-		}
+			return false
+		})
+
+		// Double-click opens details.
+		c.view.TreeViewWallet.Connect("row-activated", func(_ *gtk.TreeView, _ *gtk.TreePath, _ *gtk.TreeViewColumn) {
+			addr := c.selectedAddress()
+			if addr != "" {
+				c.ShowAddressDetails(addr)
+			}
+		})
+
+		totalBalance1, _ := c.model.TotalBalance()
+		scheduler.Every(ctx, 15*time.Second).Do(func() {
+			totalBalance2, _ := c.model.TotalBalance()
+
+			if totalBalance1 != totalBalance2 {
+				c.Refresh()
+
+				totalBalance1 = totalBalance2
+			}
+		})
 	})
 
 	c.Refresh()
@@ -150,7 +153,7 @@ func (c *WalletWidgetController) RefreshInfo() {
 		return
 	}
 
-	gtkutil.IdleAddAsync(func() {
+	gtkutil.IdleAddSync(func() {
 		c.view.LabelEncrypted.SetText(gtkutil.YesNo(info.Encrypted))
 		c.view.LabelTotalBalance.SetText(balanceStr)
 		c.view.LabelTotalStake.SetText(stakeStr)
@@ -161,7 +164,7 @@ func (c *WalletWidgetController) RefreshInfo() {
 func (c *WalletWidgetController) RefreshAddresses() {
 	rows := c.model.AddressRows()
 
-	gtkutil.IdleAddAsync(func() {
+	gtkutil.IdleAddSync(func() {
 		c.view.ClearRows()
 		for _, item := range rows {
 			c.view.AppendRow(
@@ -182,7 +185,7 @@ func (c *WalletWidgetController) RefreshTransactions() {
 	trxs := c.model.Transactions(c.txCount, c.txSkip)
 	hasNext := len(trxs) == c.txCount
 
-	gtkutil.IdleAddAsync(func() {
+	gtkutil.IdleAddSync(func() {
 		c.view.ClearTxRows()
 
 		for _, trx := range trxs {

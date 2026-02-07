@@ -198,7 +198,9 @@ func main() {
 				gui, err = gtkapp.Run(ctx, grpcConn, app, notify)
 				gtkutil.FatalErrorCheck(err)
 
-				splash.Destroy()
+				gtkutil.IdleAddSync(func() {
+					splash.Destroy()
+				})
 			}()
 		})
 	})
