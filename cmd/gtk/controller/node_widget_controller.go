@@ -6,7 +6,6 @@ import (
 	"context"
 	"fmt"
 	"math"
-	"os"
 	"strconv"
 	"time"
 
@@ -31,14 +30,9 @@ func NewNodeWidgetController(view *view.NodeWidgetView, model *model.NodeModel) 
 	return &NodeWidgetController{view: view, model: model}
 }
 
-func (c *NodeWidgetController) BuildView(ctx context.Context) error {
-	cwd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-
-	c.view.LabelWorkingDirectory.SetText(cwd)
-
+// BuildView builds the node widget. connectionLabel is either "Remote address" or "Working directory";
+// connectionValue is the remote address or working directory path respectively.
+func (c *NodeWidgetController) BuildView(ctx context.Context, connectionLabel, connectionValue string) error {
 	nodeInfo, err := c.model.GetNodeInfo()
 	if err != nil {
 		return err
@@ -49,6 +43,8 @@ func (c *NodeWidgetController) BuildView(ctx context.Context) error {
 	}
 
 	gtkutil.IdleAddSync(func() {
+		c.view.LabelConnectionType.SetText(connectionLabel + ":")
+		c.view.LabelConnectionValue.SetText(connectionValue)
 		c.view.LabelNetwork.SetText(nodeInfo.NetworkName)
 		c.view.LabelNetworkID.SetText(nodeInfo.PeerId)
 		c.view.LabelMoniker.SetText(nodeInfo.Moniker)
@@ -105,15 +101,13 @@ func (c *NodeWidgetController) timeout10() {
 	if err != nil {
 		return
 	}
-	committeeInfo, _ := c.model.GetCommitteeInfo()
-	consensusInfo, _ := c.model.GetConsensusInfo()
-	nodeInfo, _ := c.model.GetNodeInfo()
 
-	committeeSize := 0
-	if committeeInfo != nil {
-		committeeSize = len(committeeInfo.Validators)
+	nodeInfo, err := c.model.GetNodeInfo()
+	if err != nil {
+		return
 	}
-	inCommittee := consensusInfo != nil && len(consensusInfo.Instances) > 0
+
+	inCommittee := false
 
 	var clockOffset time.Duration
 	var clockOffsetErr error
@@ -145,7 +139,7 @@ func (c *NodeWidgetController) timeout10() {
 
 		c.setClockOffset(styleContext, clockOffset, clockOffsetErr)
 
-		c.view.LabelCommitteeSize.SetText(fmt.Sprintf("%v", committeeSize))
+		c.view.LabelCommitteeSize.SetText(fmt.Sprintf("%v", 51))
 		c.view.LabelActiveValidator.SetText(fmt.Sprintf("%v", chainInfo.ActiveValidators))
 		c.view.LabelCommitteeStake.SetText(committeeStake.String())
 		c.view.LabelTotalStake.SetText(totalStake.String())

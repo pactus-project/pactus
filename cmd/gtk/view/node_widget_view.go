@@ -12,11 +12,12 @@ type NodeWidgetView struct {
 
 	Box *gtk.Box
 
-	LabelWorkingDirectory *gtk.Label
-	LabelNetwork          *gtk.Label
-	LabelNetworkID        *gtk.Label
-	LabelMoniker          *gtk.Label
-	LabelIsPrune          *gtk.Label
+	LabelConnectionType  *gtk.Label
+	LabelConnectionValue *gtk.Label
+	LabelNetwork         *gtk.Label
+	LabelNetworkID       *gtk.Label
+	LabelMoniker         *gtk.Label
+	LabelIsPrune         *gtk.Label
 
 	LabelClockOffset     *gtk.Label
 	LabelLastBlockTime   *gtk.Label
@@ -39,11 +40,12 @@ func NewNodeWidgetView() *NodeWidgetView {
 		ViewBuilder: builder,
 		Box:         builder.GetBoxObj("id_box_node"),
 
-		LabelWorkingDirectory: builder.GetLabelObj("id_label_working_directory"),
-		LabelNetwork:          builder.GetLabelObj("id_label_network"),
-		LabelNetworkID:        builder.GetLabelObj("id_label_network_id"),
-		LabelMoniker:          builder.GetLabelObj("id_label_moniker"),
-		LabelIsPrune:          builder.GetLabelObj("id_label_is_prune"),
+		LabelConnectionType:  builder.GetLabelObj("id_label_connection_type"),
+		LabelConnectionValue: builder.GetLabelObj("id_label_connection_value"),
+		LabelNetwork:         builder.GetLabelObj("id_label_network"),
+		LabelNetworkID:       builder.GetLabelObj("id_label_network_id"),
+		LabelMoniker:         builder.GetLabelObj("id_label_moniker"),
+		LabelIsPrune:         builder.GetLabelObj("id_label_is_prune"),
 
 		LabelClockOffset:     builder.GetLabelObj("id_label_clock_offset"),
 		LabelLastBlockTime:   builder.GetLabelObj("id_label_last_block_time"),
