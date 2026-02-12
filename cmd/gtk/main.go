@@ -58,6 +58,7 @@ func init() {
 	gtk.Init(nil)
 }
 
+//nolint:gocognit // needs refactoring
 func main() {
 	flag.Parse()
 
@@ -195,7 +196,15 @@ func main() {
 				grpcConn, err = newRemoteGRPCConn(grpcAddr, grpcInsecure)
 				gtkutil.FatalErrorCheck(err)
 
-				gui, err = gtkapp.Run(ctx, grpcConn, app, notify)
+				var connectionLabel, connectionValue string
+				if *grpcAddrOpt == "" {
+					connectionLabel = "Working directory"
+					connectionValue = workingDir
+				} else {
+					connectionLabel = "Remote address"
+					connectionValue = *grpcAddrOpt
+				}
+				gui, err = gtkapp.Run(ctx, grpcConn, app, notify, connectionLabel, connectionValue)
 				gtkutil.FatalErrorCheck(err)
 
 				gtkutil.IdleAddSync(func() {

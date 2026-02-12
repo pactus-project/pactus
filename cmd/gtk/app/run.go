@@ -24,9 +24,11 @@ type GUI struct {
 
 // Run builds and shows the main window, wiring views/controllers.
 // It accepts a gRPC connection to the node (standard grpc.ClientConn or gRPC-Web).
+// connectionLabel is "Remote address" or "Working directory"; connectionValue is the address or path.
 // It returns a cleanup function that closes the window and stops timers.
 func Run(ctx context.Context, conn grpc.ClientConnInterface,
 	gtkApp *gtk.Application, notify func(string),
+	connectionLabel, connectionValue string,
 ) (*GUI, error) {
 	blockchainClient := pactus.NewBlockchainClient(conn)
 	transactionClient := pactus.NewTransactionClient(conn)
@@ -48,7 +50,7 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 	nav := controller.NewNavigator(gtkApp, walletModel, walletCtrl)
 
 	notify("Fetching Node info...")
-	err := nodeCtrl.BuildView(ctx)
+	err := nodeCtrl.BuildView(ctx, connectionLabel, connectionValue)
 	if err != nil {
 		return nil, err
 	}
