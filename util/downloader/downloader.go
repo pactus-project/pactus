@@ -270,7 +270,7 @@ func (d *Downloader) finalizeDownload() error {
 
 	sum := hex.EncodeToString(hasher.Sum(nil))
 	if sum != d.sha256Sum {
-		return &Error{Message: "sha256 mismatch", Reason: err}
+		return &Error{Message: "sha256 mismatch", Reason: fmt.Errorf("expected %s, got %s", d.sha256Sum, sum)}
 	}
 
 	d.updateStats(0, 0, true)
