@@ -35,6 +35,7 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 		for _, val := range committeeVals {
 			if cons.ConsensusKey().EqualsTo(val.PublicKey()) {
 				inCommittee = true
+
 				break
 			}
 		}
