@@ -107,8 +107,6 @@ func (c *NodeWidgetController) timeout10() {
 		return
 	}
 
-	inCommittee := chainInfo.InCommittee
-
 	var clockOffset time.Duration
 	var clockOffsetErr error
 	if nodeInfo != nil {
@@ -143,9 +141,10 @@ func (c *NodeWidgetController) timeout10() {
 		c.view.LabelActiveValidator.SetText(fmt.Sprintf("%v", chainInfo.ActiveValidators))
 		c.view.LabelCommitteeStake.SetText(committeeStake.String())
 		c.view.LabelTotalStake.SetText(totalStake.String())
-		c.setInCommittee(inCommittee)
 		c.view.LabelNumConnections.SetText(numConnections)
 		c.view.LabelReachability.SetText(reachability)
+
+		c.setInCommittee(chainInfo.InCommittee)
 	})
 }
 
