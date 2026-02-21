@@ -198,10 +198,10 @@ func main() {
 
 				var connectionLabel, connectionValue string
 				if *grpcAddrOpt == "" {
-					connectionLabel = "Working directory"
+					connectionLabel = "📁 Working directory"
 					connectionValue = workingDir
 				} else {
-					connectionLabel = "Remote address"
+					connectionLabel = "📡 Remote address"
 					connectionValue = *grpcAddrOpt
 				}
 				gui, err = gtkapp.Run(ctx, grpcConn, app, notify, connectionLabel, connectionValue)

@@ -16,6 +16,7 @@ type NodeWidgetView struct {
 	LabelConnectionValue *gtk.Label
 	LabelNetwork         *gtk.Label
 	LabelNetworkID       *gtk.Label
+	LabelAgent           *gtk.Label
 	LabelMoniker         *gtk.Label
 	LabelIsPrune         *gtk.Label
 
@@ -44,6 +45,7 @@ func NewNodeWidgetView() *NodeWidgetView {
 		LabelConnectionValue: builder.GetLabelObj("id_label_connection_value"),
 		LabelNetwork:         builder.GetLabelObj("id_label_network"),
 		LabelNetworkID:       builder.GetLabelObj("id_label_network_id"),
+		LabelAgent:           builder.GetLabelObj("id_label_agent"),
 		LabelMoniker:         builder.GetLabelObj("id_label_moniker"),
 		LabelIsPrune:         builder.GetLabelObj("id_label_is_prune"),
 
