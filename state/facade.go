@@ -27,6 +27,7 @@ type ChainInfo struct {
 
 	TotalPower     int64
 	CommitteePower int64
+	CommitteeSize  int
 
 	TotalAccounts    int32
 	TotalValidators  int32

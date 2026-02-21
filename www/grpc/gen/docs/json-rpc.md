@@ -1853,7 +1853,7 @@ Parameters has no fields.
     <td class="fw-bold">total_power</td>
     <td> numeric</td>
     <td>
-  The total power of the blockchain.
+  The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
     </td>
   </tr>
    <tr>
@@ -1885,6 +1885,13 @@ Parameters has no fields.
 of its running validators is a member of the current committee.
     </td>
   </tr>
+   <tr>
+    <td class="fw-bold">committee_size</td>
+    <td> numeric</td>
+    <td>
+  The number of validators in the current committee.
+    </td>
+  </tr>
    </tbody>
 </table>
 
@@ -1901,10 +1908,24 @@ Parameters has no fields.
   <tr><td>Field</td><td>Type</td><td>Description</td></tr>
   </thead>
   <tbody class="table-group-divider"><tr>
+    <td class="fw-bold">committee_size</td>
+    <td> numeric</td>
+    <td>
+  The number of validators in the committee.
+    </td>
+  </tr>
+   <tr>
     <td class="fw-bold">committee_power</td>
     <td> numeric</td>
     <td>
   The power of the committee.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">total_power</td>
+    <td> numeric</td>
+    <td>
+  The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
     </td>
   </tr>
    <tr>

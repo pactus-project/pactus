@@ -151,6 +151,7 @@ class GetBlockchainInfoResponse(_message.Message):
     IS_PRUNED_FIELD_NUMBER: _ClassVar[int]
     PRUNING_HEIGHT_FIELD_NUMBER: _ClassVar[int]
     IN_COMMITTEE_FIELD_NUMBER: _ClassVar[int]
+    COMMITTEE_SIZE_FIELD_NUMBER: _ClassVar[int]
     last_block_height: int
     last_block_hash: str
     last_block_time: int
@@ -162,7 +163,8 @@ class GetBlockchainInfoResponse(_message.Message):
     is_pruned: bool
     pruning_height: int
     in_committee: bool
-    def __init__(self, last_block_height: _Optional[int] = ..., last_block_hash: _Optional[str] = ..., last_block_time: _Optional[int] = ..., total_accounts: _Optional[int] = ..., total_validators: _Optional[int] = ..., active_validators: _Optional[int] = ..., total_power: _Optional[int] = ..., committee_power: _Optional[int] = ..., is_pruned: _Optional[bool] = ..., pruning_height: _Optional[int] = ..., in_committee: _Optional[bool] = ...) -> None: ...
+    committee_size: int
+    def __init__(self, last_block_height: _Optional[int] = ..., last_block_hash: _Optional[str] = ..., last_block_time: _Optional[int] = ..., total_accounts: _Optional[int] = ..., total_validators: _Optional[int] = ..., active_validators: _Optional[int] = ..., total_power: _Optional[int] = ..., committee_power: _Optional[int] = ..., is_pruned: _Optional[bool] = ..., pruning_height: _Optional[int] = ..., in_committee: _Optional[bool] = ..., committee_size: _Optional[int] = ...) -> None: ...
 
 class GetCommitteeInfoRequest(_message.Message):
     __slots__ = ()
@@ -177,13 +179,17 @@ class GetCommitteeInfoResponse(_message.Message):
         key: int
         value: float
         def __init__(self, key: _Optional[int] = ..., value: _Optional[float] = ...) -> None: ...
+    COMMITTEE_SIZE_FIELD_NUMBER: _ClassVar[int]
     COMMITTEE_POWER_FIELD_NUMBER: _ClassVar[int]
+    TOTAL_POWER_FIELD_NUMBER: _ClassVar[int]
     VALIDATORS_FIELD_NUMBER: _ClassVar[int]
     PROTOCOL_VERSIONS_FIELD_NUMBER: _ClassVar[int]
+    committee_size: int
     committee_power: int
+    total_power: int
     validators: _containers.RepeatedCompositeFieldContainer[ValidatorInfo]
     protocol_versions: _containers.ScalarMap[int, float]
-    def __init__(self, committee_power: _Optional[int] = ..., validators: _Optional[_Iterable[_Union[ValidatorInfo, _Mapping]]] = ..., protocol_versions: _Optional[_Mapping[int, float]] = ...) -> None: ...
+    def __init__(self, committee_size: _Optional[int] = ..., committee_power: _Optional[int] = ..., total_power: _Optional[int] = ..., validators: _Optional[_Iterable[_Union[ValidatorInfo, _Mapping]]] = ..., protocol_versions: _Optional[_Mapping[int, float]] = ...) -> None: ...
 
 class GetConsensusInfoRequest(_message.Message):
     __slots__ = ()

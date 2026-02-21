@@ -216,7 +216,9 @@ func main() {
 
 	signal.HandleInterrupt(func() {
 		gtkutil.Logf("Exiting...")
-		shutdown()
+		gtkutil.IdleAddSync(func() {
+			shutdown()
+		})
 	})
 
 	// Launch the application

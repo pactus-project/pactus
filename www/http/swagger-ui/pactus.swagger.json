@@ -2006,7 +2006,7 @@
         "totalPower": {
           "type": "string",
           "format": "int64",
-          "description": "The total power of the blockchain."
+          "description": "The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC."
         },
         "committeePower": {
           "type": "string",
@@ -2025,6 +2025,11 @@
         "inCommittee": {
           "type": "boolean",
           "description": "Indicates whether this node participates in consensus: true if at least one\nof its running validators is a member of the current committee."
+        },
+        "committeeSize": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The number of validators in the current committee."
         }
       },
       "description": "Response message contains general blockchain information."
@@ -2032,10 +2037,20 @@
     "pactusGetCommitteeInfoResponse": {
       "type": "object",
       "properties": {
+        "committeeSize": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The number of validators in the committee."
+        },
         "committeePower": {
           "type": "string",
           "format": "int64",
           "description": "The power of the committee."
+        },
+        "totalPower": {
+          "type": "string",
+          "format": "int64",
+          "description": "The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC."
         },
         "validators": {
           "type": "array",

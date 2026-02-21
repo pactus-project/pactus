@@ -564,7 +564,7 @@ pub struct GetBlockchainInfoResponse {
     /// The number of active (not unbonded) validators in the blockchain.
     #[prost(int32, tag="12")]
     pub active_validators: i32,
-    /// The total power of the blockchain.
+    /// The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
     #[prost(int64, tag="5")]
     pub total_power: i64,
     /// The power of the committee.
@@ -580,6 +580,9 @@ pub struct GetBlockchainInfoResponse {
     /// of its running validators is a member of the current committee.
     #[prost(bool, tag="13")]
     pub in_committee: bool,
+    /// The number of validators in the current committee.
+    #[prost(int32, tag="14")]
+    pub committee_size: i32,
 }
 /// Request message for retrieving committee information.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
@@ -588,14 +591,20 @@ pub struct GetCommitteeInfoRequest {
 /// Response message contains committee information.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetCommitteeInfoResponse {
+    /// The number of validators in the committee.
+    #[prost(int32, tag="1")]
+    pub committee_size: i32,
     /// The power of the committee.
-    #[prost(int64, tag="1")]
+    #[prost(int64, tag="2")]
     pub committee_power: i64,
+    /// The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
+    #[prost(int64, tag="3")]
+    pub total_power: i64,
     /// List of committee validators.
-    #[prost(message, repeated, tag="2")]
+    #[prost(message, repeated, tag="4")]
     pub validators: ::prost::alloc::vec::Vec<ValidatorInfo>,
     /// Map of protocol versions and their percentages in the committee.
-    #[prost(map="int32, double", tag="3")]
+    #[prost(map="int32, double", tag="5")]
     pub protocol_versions: ::std::collections::HashMap<i32, f64>,
 }
 /// Request message for retrieving consensus information.

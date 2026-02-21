@@ -936,7 +936,7 @@ type GetBlockchainInfoResponse struct {
 	TotalValidators int32 `protobuf:"varint,4,opt,name=total_validators,json=totalValidators,proto3" json:"total_validators,omitempty"`
 	// The number of active (not unbonded) validators in the blockchain.
 	ActiveValidators int32 `protobuf:"varint,12,opt,name=active_validators,json=activeValidators,proto3" json:"active_validators,omitempty"`
-	// The total power of the blockchain.
+	// The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
 	TotalPower int64 `protobuf:"varint,5,opt,name=total_power,json=totalPower,proto3" json:"total_power,omitempty"`
 	// The power of the committee.
 	CommitteePower int64 `protobuf:"varint,6,opt,name=committee_power,json=committeePower,proto3" json:"committee_power,omitempty"`
@@ -946,7 +946,9 @@ type GetBlockchainInfoResponse struct {
 	PruningHeight uint32 `protobuf:"varint,9,opt,name=pruning_height,json=pruningHeight,proto3" json:"pruning_height,omitempty"`
 	// Indicates whether this node participates in consensus: true if at least one
 	// of its running validators is a member of the current committee.
-	InCommittee   bool `protobuf:"varint,13,opt,name=in_committee,json=inCommittee,proto3" json:"in_committee,omitempty"`
+	InCommittee bool `protobuf:"varint,13,opt,name=in_committee,json=inCommittee,proto3" json:"in_committee,omitempty"`
+	// The number of validators in the current committee.
+	CommitteeSize int32 `protobuf:"varint,14,opt,name=committee_size,json=committeeSize,proto3" json:"committee_size,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1058,6 +1060,13 @@ func (x *GetBlockchainInfoResponse) GetInCommittee() bool {
 	return false
 }
 
+func (x *GetBlockchainInfoResponse) GetCommitteeSize() int32 {
+	if x != nil {
+		return x.CommitteeSize
+	}
+	return 0
+}
+
 // Request message for retrieving committee information.
 type GetCommitteeInfoRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -1098,12 +1107,16 @@ func (*GetCommitteeInfoRequest) Descriptor() ([]byte, []int) {
 // Response message contains committee information.
 type GetCommitteeInfoResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
+	// The number of validators in the committee.
+	CommitteeSize int32 `protobuf:"varint,1,opt,name=committee_size,json=committeeSize,proto3" json:"committee_size,omitempty"`
 	// The power of the committee.
-	CommitteePower int64 `protobuf:"varint,1,opt,name=committee_power,json=committeePower,proto3" json:"committee_power,omitempty"`
+	CommitteePower int64 `protobuf:"varint,2,opt,name=committee_power,json=committeePower,proto3" json:"committee_power,omitempty"`
+	// The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
+	TotalPower int64 `protobuf:"varint,3,opt,name=total_power,json=totalPower,proto3" json:"total_power,omitempty"`
 	// List of committee validators.
-	Validators []*ValidatorInfo `protobuf:"bytes,2,rep,name=validators,proto3" json:"validators,omitempty"`
+	Validators []*ValidatorInfo `protobuf:"bytes,4,rep,name=validators,proto3" json:"validators,omitempty"`
 	// Map of protocol versions and their percentages in the committee.
-	ProtocolVersions map[int32]float64 `protobuf:"bytes,3,rep,name=protocol_versions,json=protocolVersions,proto3" json:"protocol_versions,omitempty" protobuf_key:"varint,1,opt,name=key" protobuf_val:"fixed64,2,opt,name=value"`
+	ProtocolVersions map[int32]float64 `protobuf:"bytes,5,rep,name=protocol_versions,json=protocolVersions,proto3" json:"protocol_versions,omitempty" protobuf_key:"varint,1,opt,name=key" protobuf_val:"fixed64,2,opt,name=value"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -1138,9 +1151,23 @@ func (*GetCommitteeInfoResponse) Descriptor() ([]byte, []int) {
 	return file_blockchain_proto_rawDescGZIP(), []int{18}
 }
 
+func (x *GetCommitteeInfoResponse) GetCommitteeSize() int32 {
+	if x != nil {
+		return x.CommitteeSize
+	}
+	return 0
+}
+
 func (x *GetCommitteeInfoResponse) GetCommitteePower() int64 {
 	if x != nil {
 		return x.CommitteePower
+	}
+	return 0
+}
+
+func (x *GetCommitteeInfoResponse) GetTotalPower() int64 {
+	if x != nil {
+		return x.TotalPower
 	}
 	return 0
 }
@@ -2014,7 +2041,7 @@ const file_blockchain_proto_rawDesc = "" +
 	"\x04hash\x18\x01 \x01(\tR\x04hash\"0\n" +
 	"\x16GetBlockHeightResponse\x12\x16\n" +
 	"\x06height\x18\x01 \x01(\rR\x06height\"\x1a\n" +
-	"\x18GetBlockchainInfoRequest\"\xc7\x03\n" +
+	"\x18GetBlockchainInfoRequest\"\xee\x03\n" +
 	"\x19GetBlockchainInfoResponse\x12*\n" +
 	"\x11last_block_height\x18\x01 \x01(\rR\x0flastBlockHeight\x12&\n" +
 	"\x0flast_block_hash\x18\x02 \x01(\tR\rlastBlockHash\x12&\n" +
@@ -2028,14 +2055,18 @@ const file_blockchain_proto_rawDesc = "" +
 	"\x0fcommittee_power\x18\x06 \x01(\x03R\x0ecommitteePower\x12\x1b\n" +
 	"\tis_pruned\x18\b \x01(\bR\bisPruned\x12%\n" +
 	"\x0epruning_height\x18\t \x01(\rR\rpruningHeight\x12!\n" +
-	"\fin_committee\x18\r \x01(\bR\vinCommittee\"\x19\n" +
-	"\x17GetCommitteeInfoRequest\"\xa4\x02\n" +
-	"\x18GetCommitteeInfoResponse\x12'\n" +
-	"\x0fcommittee_power\x18\x01 \x01(\x03R\x0ecommitteePower\x125\n" +
+	"\fin_committee\x18\r \x01(\bR\vinCommittee\x12%\n" +
+	"\x0ecommittee_size\x18\x0e \x01(\x05R\rcommitteeSize\"\x19\n" +
+	"\x17GetCommitteeInfoRequest\"\xec\x02\n" +
+	"\x18GetCommitteeInfoResponse\x12%\n" +
+	"\x0ecommittee_size\x18\x01 \x01(\x05R\rcommitteeSize\x12'\n" +
+	"\x0fcommittee_power\x18\x02 \x01(\x03R\x0ecommitteePower\x12\x1f\n" +
+	"\vtotal_power\x18\x03 \x01(\x03R\n" +
+	"totalPower\x125\n" +
 	"\n" +
-	"validators\x18\x02 \x03(\v2\x15.pactus.ValidatorInfoR\n" +
+	"validators\x18\x04 \x03(\v2\x15.pactus.ValidatorInfoR\n" +
 	"validators\x12c\n" +
-	"\x11protocol_versions\x18\x03 \x03(\v26.pactus.GetCommitteeInfoResponse.ProtocolVersionsEntryR\x10protocolVersions\x1aC\n" +
+	"\x11protocol_versions\x18\x05 \x03(\v26.pactus.GetCommitteeInfoResponse.ProtocolVersionsEntryR\x10protocolVersions\x1aC\n" +
 	"\x15ProtocolVersionsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\x05R\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\x01R\x05value:\x028\x01\"\x19\n" +

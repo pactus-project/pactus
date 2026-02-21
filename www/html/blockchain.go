@@ -33,8 +33,11 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
 	tmk.addRowInt("Total Validators", int(res.TotalValidators))
 	tmk.addRowInt("Active Validators", int(res.ActiveValidators))
 	tmk.addRowPower("Total Power", res.TotalPower)
+	tmk.addRowPower("Committee Power", res.CommitteePower)
+	tmk.addRowInt("Committee Size", int(res.CommitteeSize))
 	tmk.addRowBool("Is Pruned", res.IsPruned)
 	tmk.addRowInt("Pruning Height", int(res.PruningHeight))
+	tmk.addRowBool("In Committee", res.InCommittee)
 
 	s.writeHTML(w, tmk.html())
 }
@@ -52,6 +55,8 @@ func (s *Server) CommitteeHandler(w http.ResponseWriter, r *http.Request) {
 
 	tmk := newTableMaker()
 	tmk.addRowPower("Committee Power", res.CommitteePower)
+	tmk.addRowPower("Total Power", res.TotalPower)
+	tmk.addRowInt("Committee Size", int(res.CommitteeSize))
 	tmk.addRowInt("Validators", len(res.Validators))
 	tmk.addRowString("--- Protocol Versions", "---")
 	for ver, percentage := range res.ProtocolVersions {

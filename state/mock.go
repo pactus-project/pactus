@@ -246,6 +246,7 @@ func (m *MockState) ChainInfo() *ChainInfo {
 		LastBlockTime:    m.LastBlockTime(),
 		TotalPower:       m.TestCommittee.TotalPower(),
 		CommitteePower:   m.TestCommittee.TotalPower(),
+		CommitteeSize:    m.TestCommittee.Size(),
 		TotalAccounts:    m.TestStore.TotalAccounts(),
 		TotalValidators:  m.TestStore.TotalValidators(),
 		ActiveValidators: m.TestStore.ActiveValidators(),
