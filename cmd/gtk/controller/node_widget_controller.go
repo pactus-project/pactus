@@ -47,6 +47,7 @@ func (c *NodeWidgetController) BuildView(ctx context.Context, connectionLabel, c
 		c.view.LabelConnectionValue.SetText(connectionValue)
 		c.view.LabelNetwork.SetText(nodeInfo.NetworkName)
 		c.view.LabelNetworkID.SetText(nodeInfo.PeerId)
+		c.view.LabelAgent.SetText(nodeInfo.Agent)
 		c.view.LabelMoniker.SetText(nodeInfo.Moniker)
 		c.view.LabelIsPrune.SetText(strconv.FormatBool(chainInfo.IsPruned))
 
