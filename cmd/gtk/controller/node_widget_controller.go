@@ -107,7 +107,7 @@ func (c *NodeWidgetController) timeout10() {
 		return
 	}
 
-	inCommittee := false
+	inCommittee := chainInfo.InCommittee
 
 	var clockOffset time.Duration
 	var clockOffsetErr error

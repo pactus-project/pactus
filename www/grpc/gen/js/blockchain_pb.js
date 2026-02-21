@@ -3092,7 +3092,8 @@ activeValidators: jspb.Message.getFieldWithDefault(msg, 12, 0),
 totalPower: jspb.Message.getFieldWithDefault(msg, 5, 0),
 committeePower: jspb.Message.getFieldWithDefault(msg, 6, 0),
 isPruned: jspb.Message.getBooleanFieldWithDefault(msg, 8, false),
-pruningHeight: jspb.Message.getFieldWithDefault(msg, 9, 0)
+pruningHeight: jspb.Message.getFieldWithDefault(msg, 9, 0),
+inCommittee: jspb.Message.getBooleanFieldWithDefault(msg, 13, false)
   };
 
   if (includeInstance) {
@@ -3168,6 +3169,10 @@ proto.pactus.GetBlockchainInfoResponse.deserializeBinaryFromReader = function(ms
     case 9:
       var value = /** @type {number} */ (reader.readUint32());
       msg.setPruningHeight(value);
+      break;
+    case 13:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setInCommittee(value);
       break;
     default:
       reader.skipField();
@@ -3265,6 +3270,13 @@ proto.pactus.GetBlockchainInfoResponse.serializeBinaryToWriter = function(messag
   if (f !== 0) {
     writer.writeUint32(
       9,
+      f
+    );
+  }
+  f = message.getInCommittee();
+  if (f) {
+    writer.writeBool(
+      13,
       f
     );
   }
@@ -3448,6 +3460,24 @@ proto.pactus.GetBlockchainInfoResponse.prototype.getPruningHeight = function() {
  */
 proto.pactus.GetBlockchainInfoResponse.prototype.setPruningHeight = function(value) {
   return jspb.Message.setProto3IntField(this, 9, value);
+};
+
+
+/**
+ * optional bool in_committee = 13;
+ * @return {boolean}
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.getInCommittee = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 13, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.setInCommittee = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 13, value);
 };
 
 

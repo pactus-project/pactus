@@ -117,7 +117,7 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
       $pb.GeneratedMessage.$_defaultFor<GetNetworkInfoResponse>(create);
   static GetNetworkInfoResponse? _defaultInstance;
 
-  /// Name of the network.
+  /// Name of the P2P network.
   @$pb.TagNumber(1)
   $core.String get networkName => $_getSZ(0);
   @$pb.TagNumber(1)
@@ -501,7 +501,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(16)
   void clearCurrentTime() => $_clearField(16);
 
-  /// Name of the network.
+  /// Name of the P2P network.
   @$pb.TagNumber(17)
   $core.String get networkName => $_getSZ(13);
   @$pb.TagNumber(17)

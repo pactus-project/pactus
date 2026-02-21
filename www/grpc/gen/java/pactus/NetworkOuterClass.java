@@ -549,7 +549,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
 
     /**
      * <pre>
-     * Name of the network.
+     * Name of the P2P network.
      * </pre>
      *
      * <code>string network_name = 1 [json_name = "networkName"];</code>
@@ -558,7 +558,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
     java.lang.String getNetworkName();
     /**
      * <pre>
-     * Name of the network.
+     * Name of the P2P network.
      * </pre>
      *
      * <code>string network_name = 1 [json_name = "networkName"];</code>
@@ -652,7 +652,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
     private volatile java.lang.Object networkName_ = "";
     /**
      * <pre>
-     * Name of the network.
+     * Name of the P2P network.
      * </pre>
      *
      * <code>string network_name = 1 [json_name = "networkName"];</code>
@@ -673,7 +673,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
     }
     /**
      * <pre>
-     * Name of the network.
+     * Name of the P2P network.
      * </pre>
      *
      * <code>string network_name = 1 [json_name = "networkName"];</code>
@@ -1116,7 +1116,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
       private java.lang.Object networkName_ = "";
       /**
        * <pre>
-       * Name of the network.
+       * Name of the P2P network.
        * </pre>
        *
        * <code>string network_name = 1 [json_name = "networkName"];</code>
@@ -1136,7 +1136,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
       }
       /**
        * <pre>
-       * Name of the network.
+       * Name of the P2P network.
        * </pre>
        *
        * <code>string network_name = 1 [json_name = "networkName"];</code>
@@ -1157,7 +1157,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
       }
       /**
        * <pre>
-       * Name of the network.
+       * Name of the P2P network.
        * </pre>
        *
        * <code>string network_name = 1 [json_name = "networkName"];</code>
@@ -1174,7 +1174,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
       }
       /**
        * <pre>
-       * Name of the network.
+       * Name of the P2P network.
        * </pre>
        *
        * <code>string network_name = 1 [json_name = "networkName"];</code>
@@ -1188,7 +1188,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
       }
       /**
        * <pre>
-       * Name of the network.
+       * Name of the P2P network.
        * </pre>
        *
        * <code>string network_name = 1 [json_name = "networkName"];</code>
@@ -3442,7 +3442,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
 
     /**
      * <pre>
-     * Name of the network.
+     * Name of the P2P network.
      * </pre>
      *
      * <code>string network_name = 17 [json_name = "networkName"];</code>
@@ -3451,7 +3451,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
     java.lang.String getNetworkName();
     /**
      * <pre>
-     * Name of the network.
+     * Name of the P2P network.
      * </pre>
      *
      * <code>string network_name = 17 [json_name = "networkName"];</code>
@@ -4018,7 +4018,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
     private volatile java.lang.Object networkName_ = "";
     /**
      * <pre>
-     * Name of the network.
+     * Name of the P2P network.
      * </pre>
      *
      * <code>string network_name = 17 [json_name = "networkName"];</code>
@@ -4039,7 +4039,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
     }
     /**
      * <pre>
-     * Name of the network.
+     * Name of the P2P network.
      * </pre>
      *
      * <code>string network_name = 17 [json_name = "networkName"];</code>
@@ -6172,7 +6172,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
       private java.lang.Object networkName_ = "";
       /**
        * <pre>
-       * Name of the network.
+       * Name of the P2P network.
        * </pre>
        *
        * <code>string network_name = 17 [json_name = "networkName"];</code>
@@ -6192,7 +6192,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
       }
       /**
        * <pre>
-       * Name of the network.
+       * Name of the P2P network.
        * </pre>
        *
        * <code>string network_name = 17 [json_name = "networkName"];</code>
@@ -6213,7 +6213,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
       }
       /**
        * <pre>
-       * Name of the network.
+       * Name of the P2P network.
        * </pre>
        *
        * <code>string network_name = 17 [json_name = "networkName"];</code>
@@ -6230,7 +6230,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
       }
       /**
        * <pre>
-       * Name of the network.
+       * Name of the P2P network.
        * </pre>
        *
        * <code>string network_name = 17 [json_name = "networkName"];</code>
@@ -6244,7 +6244,7 @@ public final class NetworkOuterClass extends com.google.protobuf.GeneratedFile {
       }
       /**
        * <pre>
-       * Name of the network.
+       * Name of the P2P network.
        * </pre>
        *
        * <code>string network_name = 17 [json_name = "networkName"];</code>

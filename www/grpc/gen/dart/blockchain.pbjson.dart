@@ -328,6 +328,7 @@ const GetBlockchainInfoResponse$json = {
     {'1': 'committee_power', '3': 6, '4': 1, '5': 3, '10': 'committeePower'},
     {'1': 'is_pruned', '3': 8, '4': 1, '5': 8, '10': 'isPruned'},
     {'1': 'pruning_height', '3': 9, '4': 1, '5': 13, '10': 'pruningHeight'},
+    {'1': 'in_committee', '3': 13, '4': 1, '5': 8, '10': 'inCommittee'},
   ],
 };
 
@@ -340,7 +341,8 @@ final $typed_data.Uint8List getBlockchainInfoResponseDescriptor = $convert.base6
     'bFZhbGlkYXRvcnMSKwoRYWN0aXZlX3ZhbGlkYXRvcnMYDCABKAVSEGFjdGl2ZVZhbGlkYXRvcn'
     'MSHwoLdG90YWxfcG93ZXIYBSABKANSCnRvdGFsUG93ZXISJwoPY29tbWl0dGVlX3Bvd2VyGAYg'
     'ASgDUg5jb21taXR0ZWVQb3dlchIbCglpc19wcnVuZWQYCCABKAhSCGlzUHJ1bmVkEiUKDnBydW'
-    '5pbmdfaGVpZ2h0GAkgASgNUg1wcnVuaW5nSGVpZ2h0');
+    '5pbmdfaGVpZ2h0GAkgASgNUg1wcnVuaW5nSGVpZ2h0EiEKDGluX2NvbW1pdHRlZRgNIAEoCFIL'
+    'aW5Db21taXR0ZWU=');
 
 @$core.Deprecated('Use getCommitteeInfoRequestDescriptor instead')
 const GetCommitteeInfoRequest$json = {

@@ -1004,6 +1004,7 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     $core.int? pruningHeight,
     $fixnum.Int64? lastBlockTime,
     $core.int? activeValidators,
+    $core.bool? inCommittee,
   }) {
     final result = create();
     if (lastBlockHeight != null) result.lastBlockHeight = lastBlockHeight;
@@ -1016,6 +1017,7 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     if (pruningHeight != null) result.pruningHeight = pruningHeight;
     if (lastBlockTime != null) result.lastBlockTime = lastBlockTime;
     if (activeValidators != null) result.activeValidators = activeValidators;
+    if (inCommittee != null) result.inCommittee = inCommittee;
     return result;
   }
 
@@ -1044,6 +1046,7 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
         fieldType: $pb.PbFieldType.OU3)
     ..aInt64(10, _omitFieldNames ? '' : 'lastBlockTime')
     ..aI(12, _omitFieldNames ? '' : 'activeValidators')
+    ..aOB(13, _omitFieldNames ? '' : 'inCommittee')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1165,6 +1168,17 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
   $core.bool hasActiveValidators() => $_has(9);
   @$pb.TagNumber(12)
   void clearActiveValidators() => $_clearField(12);
+
+  /// Indicates whether this node participates in consensus: true if at least one
+  /// of its running validators is a member of the current committee.
+  @$pb.TagNumber(13)
+  $core.bool get inCommittee => $_getBF(10);
+  @$pb.TagNumber(13)
+  set inCommittee($core.bool value) => $_setBool(10, value);
+  @$pb.TagNumber(13)
+  $core.bool hasInCommittee() => $_has(10);
+  @$pb.TagNumber(13)
+  void clearInCommittee() => $_clearField(13);
 }
 
 /// Request message for retrieving committee information.

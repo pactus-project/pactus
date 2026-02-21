@@ -29,6 +29,17 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 ) (*pactus.GetBlockchainInfoResponse, error) {
 	chainInfo := s.state.ChainInfo()
 
+	inCommittee := false
+	committeeVals := s.state.CommitteeValidators()
+	for _, cons := range s.consMgr.Instances() {
+		for _, val := range committeeVals {
+			if cons.ConsensusKey().EqualsTo(val.PublicKey()) {
+				inCommittee = true
+				break
+			}
+		}
+	}
+
 	return &pactus.GetBlockchainInfoResponse{
 		LastBlockHeight:  chainInfo.LastBlockHeight,
 		LastBlockHash:    chainInfo.LastBlockHash.String(),
@@ -40,6 +51,7 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 		CommitteePower:   chainInfo.CommitteePower,
 		IsPruned:         chainInfo.IsPruned,
 		PruningHeight:    chainInfo.PruningHeight,
+		InCommittee:      inCommittee,
 	}, nil
 }
 

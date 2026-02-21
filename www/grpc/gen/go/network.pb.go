@@ -114,7 +114,7 @@ func (*GetNetworkInfoRequest) Descriptor() ([]byte, []int) {
 // Response message contains information about the overall network.
 type GetNetworkInfoResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Name of the network.
+	// Name of the P2P network.
 	NetworkName string `protobuf:"bytes,1,opt,name=network_name,json=networkName,proto3" json:"network_name,omitempty"`
 	// Number of connected peers.
 	ConnectedPeersCount uint32 `protobuf:"varint,2,opt,name=connected_peers_count,json=connectedPeersCount,proto3" json:"connected_peers_count,omitempty"`
@@ -333,7 +333,7 @@ type GetNodeInfoResponse struct {
 	ZmqPublishers []*ZMQPublisherInfo `protobuf:"bytes,15,rep,name=zmq_publishers,json=zmqPublishers,proto3" json:"zmq_publishers,omitempty"`
 	// Current Unix timestamp of the node (UTC).
 	CurrentTime uint64 `protobuf:"varint,16,opt,name=current_time,json=currentTime,proto3" json:"current_time,omitempty"`
-	// Name of the network.
+	// Name of the P2P network.
 	NetworkName   string `protobuf:"bytes,17,opt,name=network_name,json=networkName,proto3" json:"network_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
