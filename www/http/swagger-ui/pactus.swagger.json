@@ -2021,6 +2021,10 @@
           "type": "integer",
           "format": "int64",
           "title": "Lowest-height block stored (only present if pruning is enabled)"
+        },
+        "inCommittee": {
+          "type": "boolean",
+          "description": "Indicates whether this node participates in consensus: true if at least one\nof its running validators is a member of the current committee."
         }
       },
       "description": "Response message contains general blockchain information."
@@ -2085,7 +2089,7 @@
       "properties": {
         "networkName": {
           "type": "string",
-          "description": "Name of the network."
+          "description": "Name of the P2P network."
         },
         "connectedPeersCount": {
           "type": "integer",
@@ -2206,7 +2210,7 @@
         },
         "networkName": {
           "type": "string",
-          "description": "Name of the network."
+          "description": "Name of the P2P network."
         }
       },
       "description": "Response message contains information about a specific node in the network."

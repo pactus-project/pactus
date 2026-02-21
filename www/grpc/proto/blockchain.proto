@@ -172,6 +172,10 @@ message GetBlockchainInfoResponse {
   bool is_pruned = 8;
   // Lowest-height block stored (only present if pruning is enabled)
   uint32 pruning_height = 9;
+
+  // Indicates whether this node participates in consensus: true if at least one
+  // of its running validators is a member of the current committee.
+  bool in_committee = 13;
 }
 
 // Request message for retrieving committee information.
