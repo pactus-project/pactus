@@ -1,5 +1,34 @@
 # Changelog
 
+## [1.12.0](https://github.com/pactus-project/pactus/compare/v1.11.0...v1.12.0) (2026-02-21)
+
+### Feat
+
+- **grpc**: add committee_size to blockchain_info ([#2091](https://github.com/pactus-project/pactus/pull/2091))
+- **gtk**: add node-agent field ([#2090](https://github.com/pactus-project/pactus/pull/2090))
+- **gtk**: connect to remote node ([#2079](https://github.com/pactus-project/pactus/pull/2079))
+- **grpc**: decouple peer list API ([#2078](https://github.com/pactus-project/pactus/pull/2078))
+- **gtk**: add validator page ([#2068](https://github.com/pactus-project/pactus/pull/2068))
+
+### Fix
+
+- **grpc**: add in_committee field to blockchain info ([#2089](https://github.com/pactus-project/pactus/pull/2089))
+- **util**: prevent panic on sha256 mismatch error ([#2088](https://github.com/pactus-project/pactus/pull/2088))
+- **gtk**: set connection label ([#2085](https://github.com/pactus-project/pactus/pull/2085))
+- **gtk**: update view asynchronously ([#2082](https://github.com/pactus-project/pactus/pull/2082))
+- **gtk**: ensure GTK UIs run on main thread ([#2081](https://github.com/pactus-project/pactus/pull/2081))
+- **gtk**: define validator model ([#2075](https://github.com/pactus-project/pactus/pull/2075))
+- **gtk**: close wallet on node startup ([#2057](https://github.com/pactus-project/pactus/pull/2057))
+
+### Refactor
+
+- **gtk**: refactor controllers ([#2080](https://github.com/pactus-project/pactus/pull/2080))
+- **gtk**: use gRPC connection for node model ([#2077](https://github.com/pactus-project/pactus/pull/2077))
+- **node**: set global context ([#2076](https://github.com/pactus-project/pactus/pull/2076))
+- **grpc**: update blockchain info API ([#2073](https://github.com/pactus-project/pactus/pull/2073))
+- **gtk**: use gRPC for wallet model ([#2070](https://github.com/pactus-project/pactus/pull/2070))
+- **grpc**: define wallet transaction info ([#2071](https://github.com/pactus-project/pactus/pull/2071))
+
 ## [1.11.0](https://github.com/pactus-project/pactus/compare/v1.10.0...v1.11.0) (2026-01-25)
 
 ### Feat
