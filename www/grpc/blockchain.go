@@ -76,7 +76,7 @@ func (s *blockchainServer) GetCommitteeInfo(_ context.Context,
 		ProtocolVersions: protocolVersions,
 		CommitteePower:   info.CommitteePower,
 		CommitteeSize:    int32(len(info.Validators)),
-		TotalPower:      chainInfo.TotalPower,
+		TotalPower:       chainInfo.TotalPower,
 	}, nil
 }
 
