@@ -138,7 +138,7 @@ func (c *NodeWidgetController) timeout10() {
 
 		c.setClockOffset(styleContext, clockOffset, clockOffsetErr)
 
-		c.view.LabelCommitteeSize.SetText(fmt.Sprintf("%v", 51))
+		c.view.LabelCommitteeSize.SetText(fmt.Sprintf("%v", chainInfo.CommitteeSize))
 		c.view.LabelActiveValidator.SetText(fmt.Sprintf("%v", chainInfo.ActiveValidators))
 		c.view.LabelCommitteeStake.SetText(committeeStake.String())
 		c.view.LabelTotalStake.SetText(totalStake.String())

@@ -1005,6 +1005,7 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     $fixnum.Int64? lastBlockTime,
     $core.int? activeValidators,
     $core.bool? inCommittee,
+    $core.int? committeeSize,
   }) {
     final result = create();
     if (lastBlockHeight != null) result.lastBlockHeight = lastBlockHeight;
@@ -1018,6 +1019,7 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     if (lastBlockTime != null) result.lastBlockTime = lastBlockTime;
     if (activeValidators != null) result.activeValidators = activeValidators;
     if (inCommittee != null) result.inCommittee = inCommittee;
+    if (committeeSize != null) result.committeeSize = committeeSize;
     return result;
   }
 
@@ -1047,6 +1049,7 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     ..aInt64(10, _omitFieldNames ? '' : 'lastBlockTime')
     ..aI(12, _omitFieldNames ? '' : 'activeValidators')
     ..aOB(13, _omitFieldNames ? '' : 'inCommittee')
+    ..aI(14, _omitFieldNames ? '' : 'committeeSize')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1109,7 +1112,7 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(4)
   void clearTotalValidators() => $_clearField(4);
 
-  /// The total power of the blockchain.
+  /// The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
   @$pb.TagNumber(5)
   $fixnum.Int64 get totalPower => $_getI64(4);
   @$pb.TagNumber(5)
@@ -1179,6 +1182,16 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
   $core.bool hasInCommittee() => $_has(10);
   @$pb.TagNumber(13)
   void clearInCommittee() => $_clearField(13);
+
+  /// The number of validators in the current committee.
+  @$pb.TagNumber(14)
+  $core.int get committeeSize => $_getIZ(11);
+  @$pb.TagNumber(14)
+  set committeeSize($core.int value) => $_setSignedInt32(11, value);
+  @$pb.TagNumber(14)
+  $core.bool hasCommitteeSize() => $_has(11);
+  @$pb.TagNumber(14)
+  void clearCommitteeSize() => $_clearField(14);
 }
 
 /// Request message for retrieving committee information.
@@ -1224,12 +1237,16 @@ class GetCommitteeInfoRequest extends $pb.GeneratedMessage {
 /// Response message contains committee information.
 class GetCommitteeInfoResponse extends $pb.GeneratedMessage {
   factory GetCommitteeInfoResponse({
+    $core.int? committeeSize,
     $fixnum.Int64? committeePower,
+    $fixnum.Int64? totalPower,
     $core.Iterable<ValidatorInfo>? validators,
     $core.Iterable<$core.MapEntry<$core.int, $core.double>>? protocolVersions,
   }) {
     final result = create();
+    if (committeeSize != null) result.committeeSize = committeeSize;
     if (committeePower != null) result.committeePower = committeePower;
+    if (totalPower != null) result.totalPower = totalPower;
     if (validators != null) result.validators.addAll(validators);
     if (protocolVersions != null)
       result.protocolVersions.addEntries(protocolVersions);
@@ -1249,10 +1266,12 @@ class GetCommitteeInfoResponse extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'GetCommitteeInfoResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
-    ..aInt64(1, _omitFieldNames ? '' : 'committeePower')
-    ..pPM<ValidatorInfo>(2, _omitFieldNames ? '' : 'validators',
+    ..aI(1, _omitFieldNames ? '' : 'committeeSize')
+    ..aInt64(2, _omitFieldNames ? '' : 'committeePower')
+    ..aInt64(3, _omitFieldNames ? '' : 'totalPower')
+    ..pPM<ValidatorInfo>(4, _omitFieldNames ? '' : 'validators',
         subBuilder: ValidatorInfo.create)
-    ..m<$core.int, $core.double>(3, _omitFieldNames ? '' : 'protocolVersions',
+    ..m<$core.int, $core.double>(5, _omitFieldNames ? '' : 'protocolVersions',
         entryClassName: 'GetCommitteeInfoResponse.ProtocolVersionsEntry',
         keyFieldType: $pb.PbFieldType.O3,
         valueFieldType: $pb.PbFieldType.OD,
@@ -1279,23 +1298,43 @@ class GetCommitteeInfoResponse extends $pb.GeneratedMessage {
       $pb.GeneratedMessage.$_defaultFor<GetCommitteeInfoResponse>(create);
   static GetCommitteeInfoResponse? _defaultInstance;
 
+  /// The number of validators in the committee.
+  @$pb.TagNumber(1)
+  $core.int get committeeSize => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set committeeSize($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasCommitteeSize() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearCommitteeSize() => $_clearField(1);
+
   /// The power of the committee.
-  @$pb.TagNumber(1)
-  $fixnum.Int64 get committeePower => $_getI64(0);
-  @$pb.TagNumber(1)
-  set committeePower($fixnum.Int64 value) => $_setInt64(0, value);
-  @$pb.TagNumber(1)
-  $core.bool hasCommitteePower() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearCommitteePower() => $_clearField(1);
+  @$pb.TagNumber(2)
+  $fixnum.Int64 get committeePower => $_getI64(1);
+  @$pb.TagNumber(2)
+  set committeePower($fixnum.Int64 value) => $_setInt64(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasCommitteePower() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearCommitteePower() => $_clearField(2);
+
+  /// The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
+  @$pb.TagNumber(3)
+  $fixnum.Int64 get totalPower => $_getI64(2);
+  @$pb.TagNumber(3)
+  set totalPower($fixnum.Int64 value) => $_setInt64(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasTotalPower() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearTotalPower() => $_clearField(3);
 
   /// List of committee validators.
-  @$pb.TagNumber(2)
-  $pb.PbList<ValidatorInfo> get validators => $_getList(1);
+  @$pb.TagNumber(4)
+  $pb.PbList<ValidatorInfo> get validators => $_getList(3);
 
   /// Map of protocol versions and their percentages in the committee.
-  @$pb.TagNumber(3)
-  $pb.PbMap<$core.int, $core.double> get protocolVersions => $_getMap(2);
+  @$pb.TagNumber(5)
+  $pb.PbMap<$core.int, $core.double> get protocolVersions => $_getMap(4);
 }
 
 /// Request message for retrieving consensus information.

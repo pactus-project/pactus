@@ -736,6 +736,7 @@ func (st *state) ChainInfo() *ChainInfo {
 		LastBlockTime:    st.lastInfo.BlockTime(),
 		TotalPower:       st.totalPower,
 		CommitteePower:   st.committee.TotalPower(),
+		CommitteeSize:    st.committee.Size(),
 		TotalAccounts:    st.store.TotalAccounts(),
 		TotalValidators:  st.store.TotalValidators(),
 		ActiveValidators: st.store.ActiveValidators(),

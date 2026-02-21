@@ -10395,7 +10395,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
 
     /**
      * <pre>
-     * The total power of the blockchain.
+     * The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
      * </pre>
      *
      * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
@@ -10443,6 +10443,16 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * @return The inCommittee.
      */
     boolean getInCommittee();
+
+    /**
+     * <pre>
+     * The number of validators in the current committee.
+     * </pre>
+     *
+     * <code>int32 committee_size = 14 [json_name = "committeeSize"];</code>
+     * @return The committeeSize.
+     */
+    int getCommitteeSize();
   }
   /**
    * <pre>
@@ -10612,7 +10622,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
     private long totalPower_ = 0L;
     /**
      * <pre>
-     * The total power of the blockchain.
+     * The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
      * </pre>
      *
      * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
@@ -10684,6 +10694,21 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       return inCommittee_;
     }
 
+    public static final int COMMITTEE_SIZE_FIELD_NUMBER = 14;
+    private int committeeSize_ = 0;
+    /**
+     * <pre>
+     * The number of validators in the current committee.
+     * </pre>
+     *
+     * <code>int32 committee_size = 14 [json_name = "committeeSize"];</code>
+     * @return The committeeSize.
+     */
+    @java.lang.Override
+    public int getCommitteeSize() {
+      return committeeSize_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -10730,6 +10755,9 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       }
       if (inCommittee_ != false) {
         output.writeBool(13, inCommittee_);
+      }
+      if (committeeSize_ != 0) {
+        output.writeInt32(14, committeeSize_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -10783,6 +10811,10 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(13, inCommittee_);
       }
+      if (committeeSize_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(14, committeeSize_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -10820,6 +10852,8 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
           != other.getPruningHeight()) return false;
       if (getInCommittee()
           != other.getInCommittee()) return false;
+      if (getCommitteeSize()
+          != other.getCommitteeSize()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -10858,6 +10892,8 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       hash = (37 * hash) + IN_COMMITTEE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
           getInCommittee());
+      hash = (37 * hash) + COMMITTEE_SIZE_FIELD_NUMBER;
+      hash = (53 * hash) + getCommitteeSize();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -11004,6 +11040,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         isPruned_ = false;
         pruningHeight_ = 0;
         inCommittee_ = false;
+        committeeSize_ = 0;
         return this;
       }
 
@@ -11070,6 +11107,9 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         if (((from_bitField0_ & 0x00000400) != 0)) {
           result.inCommittee_ = inCommittee_;
         }
+        if (((from_bitField0_ & 0x00000800) != 0)) {
+          result.committeeSize_ = committeeSize_;
+        }
       }
 
       @java.lang.Override
@@ -11118,6 +11158,9 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         }
         if (other.getInCommittee() != false) {
           setInCommittee(other.getInCommittee());
+        }
+        if (other.getCommitteeSize() != 0) {
+          setCommitteeSize(other.getCommitteeSize());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -11200,6 +11243,11 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
                 bitField0_ |= 0x00000400;
                 break;
               } // case 104
+              case 112: {
+                committeeSize_ = input.readInt32();
+                bitField0_ |= 0x00000800;
+                break;
+              } // case 112
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -11532,7 +11580,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       private long totalPower_ ;
       /**
        * <pre>
-       * The total power of the blockchain.
+       * The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
        * </pre>
        *
        * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
@@ -11544,7 +11592,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       }
       /**
        * <pre>
-       * The total power of the blockchain.
+       * The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
        * </pre>
        *
        * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
@@ -11560,7 +11608,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       }
       /**
        * <pre>
-       * The total power of the blockchain.
+       * The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
        * </pre>
        *
        * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
@@ -11748,6 +11796,50 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       public Builder clearInCommittee() {
         bitField0_ = (bitField0_ & ~0x00000400);
         inCommittee_ = false;
+        onChanged();
+        return this;
+      }
+
+      private int committeeSize_ ;
+      /**
+       * <pre>
+       * The number of validators in the current committee.
+       * </pre>
+       *
+       * <code>int32 committee_size = 14 [json_name = "committeeSize"];</code>
+       * @return The committeeSize.
+       */
+      @java.lang.Override
+      public int getCommitteeSize() {
+        return committeeSize_;
+      }
+      /**
+       * <pre>
+       * The number of validators in the current committee.
+       * </pre>
+       *
+       * <code>int32 committee_size = 14 [json_name = "committeeSize"];</code>
+       * @param value The committeeSize to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCommitteeSize(int value) {
+
+        committeeSize_ = value;
+        bitField0_ |= 0x00000800;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The number of validators in the current committee.
+       * </pre>
+       *
+       * <code>int32 committee_size = 14 [json_name = "committeeSize"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearCommitteeSize() {
+        bitField0_ = (bitField0_ & ~0x00000800);
+        committeeSize_ = 0;
         onChanged();
         return this;
       }
@@ -12172,20 +12264,40 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
 
     /**
      * <pre>
+     * The number of validators in the committee.
+     * </pre>
+     *
+     * <code>int32 committee_size = 1 [json_name = "committeeSize"];</code>
+     * @return The committeeSize.
+     */
+    int getCommitteeSize();
+
+    /**
+     * <pre>
      * The power of the committee.
      * </pre>
      *
-     * <code>int64 committee_power = 1 [json_name = "committeePower"];</code>
+     * <code>int64 committee_power = 2 [json_name = "committeePower"];</code>
      * @return The committeePower.
      */
     long getCommitteePower();
 
     /**
      * <pre>
+     * The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
+     * </pre>
+     *
+     * <code>int64 total_power = 3 [json_name = "totalPower"];</code>
+     * @return The totalPower.
+     */
+    long getTotalPower();
+
+    /**
+     * <pre>
      * List of committee validators.
      * </pre>
      *
-     * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+     * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
      */
     java.util.List<pactus.BlockchainOuterClass.ValidatorInfo> 
         getValidatorsList();
@@ -12194,7 +12306,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * List of committee validators.
      * </pre>
      *
-     * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+     * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
      */
     pactus.BlockchainOuterClass.ValidatorInfo getValidators(int index);
     /**
@@ -12202,7 +12314,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * List of committee validators.
      * </pre>
      *
-     * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+     * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
      */
     int getValidatorsCount();
     /**
@@ -12210,7 +12322,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * List of committee validators.
      * </pre>
      *
-     * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+     * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
      */
     java.util.List<? extends pactus.BlockchainOuterClass.ValidatorInfoOrBuilder> 
         getValidatorsOrBuilderList();
@@ -12219,7 +12331,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * List of committee validators.
      * </pre>
      *
-     * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+     * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
      */
     pactus.BlockchainOuterClass.ValidatorInfoOrBuilder getValidatorsOrBuilder(
         int index);
@@ -12229,7 +12341,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * Map of protocol versions and their percentages in the committee.
      * </pre>
      *
-     * <code>map&lt;int32, double&gt; protocol_versions = 3 [json_name = "protocolVersions"];</code>
+     * <code>map&lt;int32, double&gt; protocol_versions = 5 [json_name = "protocolVersions"];</code>
      */
     int getProtocolVersionsCount();
     /**
@@ -12237,7 +12349,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * Map of protocol versions and their percentages in the committee.
      * </pre>
      *
-     * <code>map&lt;int32, double&gt; protocol_versions = 3 [json_name = "protocolVersions"];</code>
+     * <code>map&lt;int32, double&gt; protocol_versions = 5 [json_name = "protocolVersions"];</code>
      */
     boolean containsProtocolVersions(
         int key);
@@ -12252,7 +12364,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * Map of protocol versions and their percentages in the committee.
      * </pre>
      *
-     * <code>map&lt;int32, double&gt; protocol_versions = 3 [json_name = "protocolVersions"];</code>
+     * <code>map&lt;int32, double&gt; protocol_versions = 5 [json_name = "protocolVersions"];</code>
      */
     java.util.Map<java.lang.Integer, java.lang.Double>
     getProtocolVersionsMap();
@@ -12261,7 +12373,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * Map of protocol versions and their percentages in the committee.
      * </pre>
      *
-     * <code>map&lt;int32, double&gt; protocol_versions = 3 [json_name = "protocolVersions"];</code>
+     * <code>map&lt;int32, double&gt; protocol_versions = 5 [json_name = "protocolVersions"];</code>
      */
     double getProtocolVersionsOrDefault(
         int key,
@@ -12271,7 +12383,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * Map of protocol versions and their percentages in the committee.
      * </pre>
      *
-     * <code>map&lt;int32, double&gt; protocol_versions = 3 [json_name = "protocolVersions"];</code>
+     * <code>map&lt;int32, double&gt; protocol_versions = 5 [json_name = "protocolVersions"];</code>
      */
     double getProtocolVersionsOrThrow(
         int key);
@@ -12315,7 +12427,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
     protected com.google.protobuf.MapFieldReflectionAccessor internalGetMapFieldReflection(
         int number) {
       switch (number) {
-        case 3:
+        case 5:
           return internalGetProtocolVersions();
         default:
           throw new RuntimeException(
@@ -12330,14 +12442,29 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
               pactus.BlockchainOuterClass.GetCommitteeInfoResponse.class, pactus.BlockchainOuterClass.GetCommitteeInfoResponse.Builder.class);
     }
 
-    public static final int COMMITTEE_POWER_FIELD_NUMBER = 1;
+    public static final int COMMITTEE_SIZE_FIELD_NUMBER = 1;
+    private int committeeSize_ = 0;
+    /**
+     * <pre>
+     * The number of validators in the committee.
+     * </pre>
+     *
+     * <code>int32 committee_size = 1 [json_name = "committeeSize"];</code>
+     * @return The committeeSize.
+     */
+    @java.lang.Override
+    public int getCommitteeSize() {
+      return committeeSize_;
+    }
+
+    public static final int COMMITTEE_POWER_FIELD_NUMBER = 2;
     private long committeePower_ = 0L;
     /**
      * <pre>
      * The power of the committee.
      * </pre>
      *
-     * <code>int64 committee_power = 1 [json_name = "committeePower"];</code>
+     * <code>int64 committee_power = 2 [json_name = "committeePower"];</code>
      * @return The committeePower.
      */
     @java.lang.Override
@@ -12345,7 +12472,22 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       return committeePower_;
     }
 
-    public static final int VALIDATORS_FIELD_NUMBER = 2;
+    public static final int TOTAL_POWER_FIELD_NUMBER = 3;
+    private long totalPower_ = 0L;
+    /**
+     * <pre>
+     * The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
+     * </pre>
+     *
+     * <code>int64 total_power = 3 [json_name = "totalPower"];</code>
+     * @return The totalPower.
+     */
+    @java.lang.Override
+    public long getTotalPower() {
+      return totalPower_;
+    }
+
+    public static final int VALIDATORS_FIELD_NUMBER = 4;
     @SuppressWarnings("serial")
     private java.util.List<pactus.BlockchainOuterClass.ValidatorInfo> validators_;
     /**
@@ -12353,7 +12495,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * List of committee validators.
      * </pre>
      *
-     * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+     * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
      */
     @java.lang.Override
     public java.util.List<pactus.BlockchainOuterClass.ValidatorInfo> getValidatorsList() {
@@ -12364,7 +12506,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * List of committee validators.
      * </pre>
      *
-     * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+     * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
      */
     @java.lang.Override
     public java.util.List<? extends pactus.BlockchainOuterClass.ValidatorInfoOrBuilder> 
@@ -12376,7 +12518,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * List of committee validators.
      * </pre>
      *
-     * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+     * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
      */
     @java.lang.Override
     public int getValidatorsCount() {
@@ -12387,7 +12529,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * List of committee validators.
      * </pre>
      *
-     * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+     * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
      */
     @java.lang.Override
     public pactus.BlockchainOuterClass.ValidatorInfo getValidators(int index) {
@@ -12398,7 +12540,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * List of committee validators.
      * </pre>
      *
-     * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+     * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
      */
     @java.lang.Override
     public pactus.BlockchainOuterClass.ValidatorInfoOrBuilder getValidatorsOrBuilder(
@@ -12406,7 +12548,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       return validators_.get(index);
     }
 
-    public static final int PROTOCOL_VERSIONS_FIELD_NUMBER = 3;
+    public static final int PROTOCOL_VERSIONS_FIELD_NUMBER = 5;
     private static final class ProtocolVersionsDefaultEntryHolder {
       static final com.google.protobuf.MapEntry<
           java.lang.Integer, java.lang.Double> defaultEntry =
@@ -12437,7 +12579,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * Map of protocol versions and their percentages in the committee.
      * </pre>
      *
-     * <code>map&lt;int32, double&gt; protocol_versions = 3 [json_name = "protocolVersions"];</code>
+     * <code>map&lt;int32, double&gt; protocol_versions = 5 [json_name = "protocolVersions"];</code>
      */
     @java.lang.Override
     public boolean containsProtocolVersions(
@@ -12458,7 +12600,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * Map of protocol versions and their percentages in the committee.
      * </pre>
      *
-     * <code>map&lt;int32, double&gt; protocol_versions = 3 [json_name = "protocolVersions"];</code>
+     * <code>map&lt;int32, double&gt; protocol_versions = 5 [json_name = "protocolVersions"];</code>
      */
     @java.lang.Override
     public java.util.Map<java.lang.Integer, java.lang.Double> getProtocolVersionsMap() {
@@ -12469,7 +12611,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * Map of protocol versions and their percentages in the committee.
      * </pre>
      *
-     * <code>map&lt;int32, double&gt; protocol_versions = 3 [json_name = "protocolVersions"];</code>
+     * <code>map&lt;int32, double&gt; protocol_versions = 5 [json_name = "protocolVersions"];</code>
      */
     @java.lang.Override
     public double getProtocolVersionsOrDefault(
@@ -12485,7 +12627,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * Map of protocol versions and their percentages in the committee.
      * </pre>
      *
-     * <code>map&lt;int32, double&gt; protocol_versions = 3 [json_name = "protocolVersions"];</code>
+     * <code>map&lt;int32, double&gt; protocol_versions = 5 [json_name = "protocolVersions"];</code>
      */
     @java.lang.Override
     public double getProtocolVersionsOrThrow(
@@ -12513,18 +12655,24 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      if (committeeSize_ != 0) {
+        output.writeInt32(1, committeeSize_);
+      }
       if (committeePower_ != 0L) {
-        output.writeInt64(1, committeePower_);
+        output.writeInt64(2, committeePower_);
+      }
+      if (totalPower_ != 0L) {
+        output.writeInt64(3, totalPower_);
       }
       for (int i = 0; i < validators_.size(); i++) {
-        output.writeMessage(2, validators_.get(i));
+        output.writeMessage(4, validators_.get(i));
       }
       com.google.protobuf.GeneratedMessage
         .serializeIntegerMapTo(
           output,
           internalGetProtocolVersions(),
           ProtocolVersionsDefaultEntryHolder.defaultEntry,
-          3);
+          5);
       getUnknownFields().writeTo(output);
     }
 
@@ -12534,13 +12682,21 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       if (size != -1) return size;
 
       size = 0;
+      if (committeeSize_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, committeeSize_);
+      }
       if (committeePower_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(1, committeePower_);
+          .computeInt64Size(2, committeePower_);
+      }
+      if (totalPower_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(3, totalPower_);
       }
       for (int i = 0; i < validators_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(2, validators_.get(i));
+          .computeMessageSize(4, validators_.get(i));
       }
       for (java.util.Map.Entry<java.lang.Integer, java.lang.Double> entry
            : internalGetProtocolVersions().getMap().entrySet()) {
@@ -12550,7 +12706,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
             .setValue(entry.getValue())
             .build();
         size += com.google.protobuf.CodedOutputStream
-            .computeMessageSize(3, protocolVersions__);
+            .computeMessageSize(5, protocolVersions__);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -12567,8 +12723,12 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       }
       pactus.BlockchainOuterClass.GetCommitteeInfoResponse other = (pactus.BlockchainOuterClass.GetCommitteeInfoResponse) obj;
 
+      if (getCommitteeSize()
+          != other.getCommitteeSize()) return false;
       if (getCommitteePower()
           != other.getCommitteePower()) return false;
+      if (getTotalPower()
+          != other.getTotalPower()) return false;
       if (!getValidatorsList()
           .equals(other.getValidatorsList())) return false;
       if (!internalGetProtocolVersions().equals(
@@ -12584,9 +12744,14 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + COMMITTEE_SIZE_FIELD_NUMBER;
+      hash = (53 * hash) + getCommitteeSize();
       hash = (37 * hash) + COMMITTEE_POWER_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getCommitteePower());
+      hash = (37 * hash) + TOTAL_POWER_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getTotalPower());
       if (getValidatorsCount() > 0) {
         hash = (37 * hash) + VALIDATORS_FIELD_NUMBER;
         hash = (53 * hash) + getValidatorsList().hashCode();
@@ -12712,7 +12877,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       protected com.google.protobuf.MapFieldReflectionAccessor internalGetMapFieldReflection(
           int number) {
         switch (number) {
-          case 3:
+          case 5:
             return internalGetProtocolVersions();
           default:
             throw new RuntimeException(
@@ -12723,7 +12888,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       protected com.google.protobuf.MapFieldReflectionAccessor internalGetMutableMapFieldReflection(
           int number) {
         switch (number) {
-          case 3:
+          case 5:
             return internalGetMutableProtocolVersions();
           default:
             throw new RuntimeException(
@@ -12752,14 +12917,16 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       public Builder clear() {
         super.clear();
         bitField0_ = 0;
+        committeeSize_ = 0;
         committeePower_ = 0L;
+        totalPower_ = 0L;
         if (validatorsBuilder_ == null) {
           validators_ = java.util.Collections.emptyList();
         } else {
           validators_ = null;
           validatorsBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000008);
         internalGetMutableProtocolVersions().clear();
         return this;
       }
@@ -12795,9 +12962,9 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
 
       private void buildPartialRepeatedFields(pactus.BlockchainOuterClass.GetCommitteeInfoResponse result) {
         if (validatorsBuilder_ == null) {
-          if (((bitField0_ & 0x00000002) != 0)) {
+          if (((bitField0_ & 0x00000008) != 0)) {
             validators_ = java.util.Collections.unmodifiableList(validators_);
-            bitField0_ = (bitField0_ & ~0x00000002);
+            bitField0_ = (bitField0_ & ~0x00000008);
           }
           result.validators_ = validators_;
         } else {
@@ -12808,9 +12975,15 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       private void buildPartial0(pactus.BlockchainOuterClass.GetCommitteeInfoResponse result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.committeeSize_ = committeeSize_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
           result.committeePower_ = committeePower_;
         }
         if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.totalPower_ = totalPower_;
+        }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
           result.protocolVersions_ = internalGetProtocolVersions();
           result.protocolVersions_.makeImmutable();
         }
@@ -12828,14 +13001,20 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
 
       public Builder mergeFrom(pactus.BlockchainOuterClass.GetCommitteeInfoResponse other) {
         if (other == pactus.BlockchainOuterClass.GetCommitteeInfoResponse.getDefaultInstance()) return this;
+        if (other.getCommitteeSize() != 0) {
+          setCommitteeSize(other.getCommitteeSize());
+        }
         if (other.getCommitteePower() != 0L) {
           setCommitteePower(other.getCommitteePower());
+        }
+        if (other.getTotalPower() != 0L) {
+          setTotalPower(other.getTotalPower());
         }
         if (validatorsBuilder_ == null) {
           if (!other.validators_.isEmpty()) {
             if (validators_.isEmpty()) {
               validators_ = other.validators_;
-              bitField0_ = (bitField0_ & ~0x00000002);
+              bitField0_ = (bitField0_ & ~0x00000008);
             } else {
               ensureValidatorsIsMutable();
               validators_.addAll(other.validators_);
@@ -12848,7 +13027,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
               validatorsBuilder_.dispose();
               validatorsBuilder_ = null;
               validators_ = other.validators_;
-              bitField0_ = (bitField0_ & ~0x00000002);
+              bitField0_ = (bitField0_ & ~0x00000008);
               validatorsBuilder_ = 
                 com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    internalGetValidatorsFieldBuilder() : null;
@@ -12859,7 +13038,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         }
         internalGetMutableProtocolVersions().mergeFrom(
             other.internalGetProtocolVersions());
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000010;
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -12887,11 +13066,21 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
                 done = true;
                 break;
               case 8: {
-                committeePower_ = input.readInt64();
+                committeeSize_ = input.readInt32();
                 bitField0_ |= 0x00000001;
                 break;
               } // case 8
-              case 18: {
+              case 16: {
+                committeePower_ = input.readInt64();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 16
+              case 24: {
+                totalPower_ = input.readInt64();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 24
+              case 34: {
                 pactus.BlockchainOuterClass.ValidatorInfo m =
                     input.readMessage(
                         pactus.BlockchainOuterClass.ValidatorInfo.parser(),
@@ -12903,16 +13092,16 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
                   validatorsBuilder_.addMessage(m);
                 }
                 break;
-              } // case 18
-              case 26: {
+              } // case 34
+              case 42: {
                 com.google.protobuf.MapEntry<java.lang.Integer, java.lang.Double>
                 protocolVersions__ = input.readMessage(
                     ProtocolVersionsDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
                 internalGetMutableProtocolVersions().getMutableMap().put(
                     protocolVersions__.getKey(), protocolVersions__.getValue());
-                bitField0_ |= 0x00000004;
+                bitField0_ |= 0x00000010;
                 break;
-              } // case 26
+              } // case 42
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -12930,13 +13119,57 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       }
       private int bitField0_;
 
+      private int committeeSize_ ;
+      /**
+       * <pre>
+       * The number of validators in the committee.
+       * </pre>
+       *
+       * <code>int32 committee_size = 1 [json_name = "committeeSize"];</code>
+       * @return The committeeSize.
+       */
+      @java.lang.Override
+      public int getCommitteeSize() {
+        return committeeSize_;
+      }
+      /**
+       * <pre>
+       * The number of validators in the committee.
+       * </pre>
+       *
+       * <code>int32 committee_size = 1 [json_name = "committeeSize"];</code>
+       * @param value The committeeSize to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCommitteeSize(int value) {
+
+        committeeSize_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The number of validators in the committee.
+       * </pre>
+       *
+       * <code>int32 committee_size = 1 [json_name = "committeeSize"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearCommitteeSize() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        committeeSize_ = 0;
+        onChanged();
+        return this;
+      }
+
       private long committeePower_ ;
       /**
        * <pre>
        * The power of the committee.
        * </pre>
        *
-       * <code>int64 committee_power = 1 [json_name = "committeePower"];</code>
+       * <code>int64 committee_power = 2 [json_name = "committeePower"];</code>
        * @return The committeePower.
        */
       @java.lang.Override
@@ -12948,14 +13181,14 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * The power of the committee.
        * </pre>
        *
-       * <code>int64 committee_power = 1 [json_name = "committeePower"];</code>
+       * <code>int64 committee_power = 2 [json_name = "committeePower"];</code>
        * @param value The committeePower to set.
        * @return This builder for chaining.
        */
       public Builder setCommitteePower(long value) {
 
         committeePower_ = value;
-        bitField0_ |= 0x00000001;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -12964,12 +13197,56 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * The power of the committee.
        * </pre>
        *
-       * <code>int64 committee_power = 1 [json_name = "committeePower"];</code>
+       * <code>int64 committee_power = 2 [json_name = "committeePower"];</code>
        * @return This builder for chaining.
        */
       public Builder clearCommitteePower() {
-        bitField0_ = (bitField0_ & ~0x00000001);
+        bitField0_ = (bitField0_ & ~0x00000002);
         committeePower_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long totalPower_ ;
+      /**
+       * <pre>
+       * The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
+       * </pre>
+       *
+       * <code>int64 total_power = 3 [json_name = "totalPower"];</code>
+       * @return The totalPower.
+       */
+      @java.lang.Override
+      public long getTotalPower() {
+        return totalPower_;
+      }
+      /**
+       * <pre>
+       * The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
+       * </pre>
+       *
+       * <code>int64 total_power = 3 [json_name = "totalPower"];</code>
+       * @param value The totalPower to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTotalPower(long value) {
+
+        totalPower_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
+       * </pre>
+       *
+       * <code>int64 total_power = 3 [json_name = "totalPower"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTotalPower() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        totalPower_ = 0L;
         onChanged();
         return this;
       }
@@ -12977,9 +13254,9 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       private java.util.List<pactus.BlockchainOuterClass.ValidatorInfo> validators_ =
         java.util.Collections.emptyList();
       private void ensureValidatorsIsMutable() {
-        if (!((bitField0_ & 0x00000002) != 0)) {
+        if (!((bitField0_ & 0x00000008) != 0)) {
           validators_ = new java.util.ArrayList<pactus.BlockchainOuterClass.ValidatorInfo>(validators_);
-          bitField0_ |= 0x00000002;
+          bitField0_ |= 0x00000008;
          }
       }
 
@@ -12991,7 +13268,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * List of committee validators.
        * </pre>
        *
-       * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+       * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
        */
       public java.util.List<pactus.BlockchainOuterClass.ValidatorInfo> getValidatorsList() {
         if (validatorsBuilder_ == null) {
@@ -13005,7 +13282,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * List of committee validators.
        * </pre>
        *
-       * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+       * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
        */
       public int getValidatorsCount() {
         if (validatorsBuilder_ == null) {
@@ -13019,7 +13296,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * List of committee validators.
        * </pre>
        *
-       * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+       * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
        */
       public pactus.BlockchainOuterClass.ValidatorInfo getValidators(int index) {
         if (validatorsBuilder_ == null) {
@@ -13033,7 +13310,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * List of committee validators.
        * </pre>
        *
-       * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+       * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
        */
       public Builder setValidators(
           int index, pactus.BlockchainOuterClass.ValidatorInfo value) {
@@ -13054,7 +13331,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * List of committee validators.
        * </pre>
        *
-       * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+       * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
        */
       public Builder setValidators(
           int index, pactus.BlockchainOuterClass.ValidatorInfo.Builder builderForValue) {
@@ -13072,7 +13349,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * List of committee validators.
        * </pre>
        *
-       * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+       * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
        */
       public Builder addValidators(pactus.BlockchainOuterClass.ValidatorInfo value) {
         if (validatorsBuilder_ == null) {
@@ -13092,7 +13369,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * List of committee validators.
        * </pre>
        *
-       * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+       * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
        */
       public Builder addValidators(
           int index, pactus.BlockchainOuterClass.ValidatorInfo value) {
@@ -13113,7 +13390,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * List of committee validators.
        * </pre>
        *
-       * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+       * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
        */
       public Builder addValidators(
           pactus.BlockchainOuterClass.ValidatorInfo.Builder builderForValue) {
@@ -13131,7 +13408,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * List of committee validators.
        * </pre>
        *
-       * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+       * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
        */
       public Builder addValidators(
           int index, pactus.BlockchainOuterClass.ValidatorInfo.Builder builderForValue) {
@@ -13149,7 +13426,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * List of committee validators.
        * </pre>
        *
-       * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+       * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
        */
       public Builder addAllValidators(
           java.lang.Iterable<? extends pactus.BlockchainOuterClass.ValidatorInfo> values) {
@@ -13168,12 +13445,12 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * List of committee validators.
        * </pre>
        *
-       * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+       * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
        */
       public Builder clearValidators() {
         if (validatorsBuilder_ == null) {
           validators_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000002);
+          bitField0_ = (bitField0_ & ~0x00000008);
           onChanged();
         } else {
           validatorsBuilder_.clear();
@@ -13185,7 +13462,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * List of committee validators.
        * </pre>
        *
-       * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+       * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
        */
       public Builder removeValidators(int index) {
         if (validatorsBuilder_ == null) {
@@ -13202,7 +13479,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * List of committee validators.
        * </pre>
        *
-       * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+       * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
        */
       public pactus.BlockchainOuterClass.ValidatorInfo.Builder getValidatorsBuilder(
           int index) {
@@ -13213,7 +13490,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * List of committee validators.
        * </pre>
        *
-       * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+       * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
        */
       public pactus.BlockchainOuterClass.ValidatorInfoOrBuilder getValidatorsOrBuilder(
           int index) {
@@ -13227,7 +13504,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * List of committee validators.
        * </pre>
        *
-       * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+       * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
        */
       public java.util.List<? extends pactus.BlockchainOuterClass.ValidatorInfoOrBuilder> 
            getValidatorsOrBuilderList() {
@@ -13242,7 +13519,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * List of committee validators.
        * </pre>
        *
-       * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+       * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
        */
       public pactus.BlockchainOuterClass.ValidatorInfo.Builder addValidatorsBuilder() {
         return internalGetValidatorsFieldBuilder().addBuilder(
@@ -13253,7 +13530,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * List of committee validators.
        * </pre>
        *
-       * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+       * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
        */
       public pactus.BlockchainOuterClass.ValidatorInfo.Builder addValidatorsBuilder(
           int index) {
@@ -13265,7 +13542,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * List of committee validators.
        * </pre>
        *
-       * <code>repeated .pactus.ValidatorInfo validators = 2 [json_name = "validators"];</code>
+       * <code>repeated .pactus.ValidatorInfo validators = 4 [json_name = "validators"];</code>
        */
       public java.util.List<pactus.BlockchainOuterClass.ValidatorInfo.Builder> 
            getValidatorsBuilderList() {
@@ -13278,7 +13555,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
           validatorsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
               pactus.BlockchainOuterClass.ValidatorInfo, pactus.BlockchainOuterClass.ValidatorInfo.Builder, pactus.BlockchainOuterClass.ValidatorInfoOrBuilder>(
                   validators_,
-                  ((bitField0_ & 0x00000002) != 0),
+                  ((bitField0_ & 0x00000008) != 0),
                   getParentForChildren(),
                   isClean());
           validators_ = null;
@@ -13305,7 +13582,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         if (!protocolVersions_.isMutable()) {
           protocolVersions_ = protocolVersions_.copy();
         }
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000010;
         onChanged();
         return protocolVersions_;
       }
@@ -13317,7 +13594,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * Map of protocol versions and their percentages in the committee.
        * </pre>
        *
-       * <code>map&lt;int32, double&gt; protocol_versions = 3 [json_name = "protocolVersions"];</code>
+       * <code>map&lt;int32, double&gt; protocol_versions = 5 [json_name = "protocolVersions"];</code>
        */
       @java.lang.Override
       public boolean containsProtocolVersions(
@@ -13338,7 +13615,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * Map of protocol versions and their percentages in the committee.
        * </pre>
        *
-       * <code>map&lt;int32, double&gt; protocol_versions = 3 [json_name = "protocolVersions"];</code>
+       * <code>map&lt;int32, double&gt; protocol_versions = 5 [json_name = "protocolVersions"];</code>
        */
       @java.lang.Override
       public java.util.Map<java.lang.Integer, java.lang.Double> getProtocolVersionsMap() {
@@ -13349,7 +13626,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * Map of protocol versions and their percentages in the committee.
        * </pre>
        *
-       * <code>map&lt;int32, double&gt; protocol_versions = 3 [json_name = "protocolVersions"];</code>
+       * <code>map&lt;int32, double&gt; protocol_versions = 5 [json_name = "protocolVersions"];</code>
        */
       @java.lang.Override
       public double getProtocolVersionsOrDefault(
@@ -13365,7 +13642,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * Map of protocol versions and their percentages in the committee.
        * </pre>
        *
-       * <code>map&lt;int32, double&gt; protocol_versions = 3 [json_name = "protocolVersions"];</code>
+       * <code>map&lt;int32, double&gt; protocol_versions = 5 [json_name = "protocolVersions"];</code>
        */
       @java.lang.Override
       public double getProtocolVersionsOrThrow(
@@ -13379,7 +13656,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         return map.get(key);
       }
       public Builder clearProtocolVersions() {
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000010);
         internalGetMutableProtocolVersions().getMutableMap()
             .clear();
         return this;
@@ -13389,7 +13666,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * Map of protocol versions and their percentages in the committee.
        * </pre>
        *
-       * <code>map&lt;int32, double&gt; protocol_versions = 3 [json_name = "protocolVersions"];</code>
+       * <code>map&lt;int32, double&gt; protocol_versions = 5 [json_name = "protocolVersions"];</code>
        */
       public Builder removeProtocolVersions(
           int key) {
@@ -13404,7 +13681,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       @java.lang.Deprecated
       public java.util.Map<java.lang.Integer, java.lang.Double>
           getMutableProtocolVersions() {
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000010;
         return internalGetMutableProtocolVersions().getMutableMap();
       }
       /**
@@ -13412,7 +13689,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * Map of protocol versions and their percentages in the committee.
        * </pre>
        *
-       * <code>map&lt;int32, double&gt; protocol_versions = 3 [json_name = "protocolVersions"];</code>
+       * <code>map&lt;int32, double&gt; protocol_versions = 5 [json_name = "protocolVersions"];</code>
        */
       public Builder putProtocolVersions(
           int key,
@@ -13421,7 +13698,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
 
         internalGetMutableProtocolVersions().getMutableMap()
             .put(key, value);
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000010;
         return this;
       }
       /**
@@ -13429,13 +13706,13 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
        * Map of protocol versions and their percentages in the committee.
        * </pre>
        *
-       * <code>map&lt;int32, double&gt; protocol_versions = 3 [json_name = "protocolVersions"];</code>
+       * <code>map&lt;int32, double&gt; protocol_versions = 5 [json_name = "protocolVersions"];</code>
        */
       public Builder putAllProtocolVersions(
           java.util.Map<java.lang.Integer, java.lang.Double> values) {
         internalGetMutableProtocolVersions().getMutableMap()
             .putAll(values);
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000010;
         return this;
       }
 
@@ -25313,7 +25590,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       "ashResponse\022\022\n\004hash\030\001 \001(\tR\004hash\"+\n\025GetBl" +
       "ockHeightRequest\022\022\n\004hash\030\001 \001(\tR\004hash\"0\n\026" +
       "GetBlockHeightResponse\022\026\n\006height\030\001 \001(\rR\006" +
-      "height\"\032\n\030GetBlockchainInfoRequest\"\307\003\n\031G" +
+      "height\"\032\n\030GetBlockchainInfoRequest\"\356\003\n\031G" +
       "etBlockchainInfoResponse\022*\n\021last_block_h" +
       "eight\030\001 \001(\rR\017lastBlockHeight\022&\n\017last_blo" +
       "ck_hash\030\002 \001(\tR\rlastBlockHash\022&\n\017last_blo" +
@@ -25325,90 +25602,92 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       "e_power\030\006 \001(\003R\016committeePower\022\033\n\tis_prun" +
       "ed\030\010 \001(\010R\010isPruned\022%\n\016pruning_height\030\t \001" +
       "(\rR\rpruningHeight\022!\n\014in_committee\030\r \001(\010R" +
-      "\013inCommittee\"\031\n\027GetCommitteeInfoRequest\"" +
-      "\244\002\n\030GetCommitteeInfoResponse\022\'\n\017committe" +
-      "e_power\030\001 \001(\003R\016committeePower\0225\n\nvalidat" +
-      "ors\030\002 \003(\0132\025.pactus.ValidatorInfoR\nvalida" +
-      "tors\022c\n\021protocol_versions\030\003 \003(\01326.pactus" +
-      ".GetCommitteeInfoResponse.ProtocolVersio" +
-      "nsEntryR\020protocolVersions\032C\n\025ProtocolVer" +
-      "sionsEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value\030\002 " +
-      "\001(\001R\005value:\0028\001\"\031\n\027GetConsensusInfoReques" +
-      "t\"\201\001\n\030GetConsensusInfoResponse\0220\n\010propos" +
-      "al\030\001 \001(\0132\024.pactus.ProposalInfoR\010proposal" +
-      "\0223\n\tinstances\030\002 \003(\0132\025.pactus.ConsensusIn" +
-      "foR\tinstances\"Q\n\027GetTxPoolContentRequest" +
-      "\0226\n\014payload_type\030\001 \001(\0162\023.pactus.PayloadT" +
-      "ypeR\013payloadType\"E\n\030GetTxPoolContentResp" +
-      "onse\022)\n\003txs\030\001 \003(\0132\027.pactus.TransactionIn" +
-      "foR\003txs\"\207\003\n\rValidatorInfo\022\022\n\004hash\030\001 \001(\tR" +
-      "\004hash\022\022\n\004data\030\002 \001(\tR\004data\022\035\n\npublic_key\030" +
-      "\003 \001(\tR\tpublicKey\022\026\n\006number\030\004 \001(\005R\006number" +
-      "\022\024\n\005stake\030\005 \001(\003R\005stake\022.\n\023last_bonding_h" +
-      "eight\030\006 \001(\rR\021lastBondingHeight\0222\n\025last_s" +
-      "ortition_height\030\007 \001(\rR\023lastSortitionHeig" +
-      "ht\022)\n\020unbonding_height\030\010 \001(\rR\017unbondingH" +
-      "eight\022\030\n\007address\030\t \001(\tR\007address\022-\n\022avail" +
-      "ability_score\030\n \001(\001R\021availabilityScore\022)" +
-      "\n\020protocol_version\030\013 \001(\005R\017protocolVersio" +
-      "n\"\201\001\n\013AccountInfo\022\022\n\004hash\030\001 \001(\tR\004hash\022\022\n" +
-      "\004data\030\002 \001(\tR\004data\022\026\n\006number\030\003 \001(\005R\006numbe" +
-      "r\022\030\n\007balance\030\004 \001(\003R\007balance\022\030\n\007address\030\005" +
-      " \001(\tR\007address\"\304\001\n\017BlockHeaderInfo\022\030\n\007ver" +
-      "sion\030\001 \001(\005R\007version\022&\n\017prev_block_hash\030\002" +
-      " \001(\tR\rprevBlockHash\022\035\n\nstate_root\030\003 \001(\tR" +
-      "\tstateRoot\022%\n\016sortition_seed\030\004 \001(\tR\rsort" +
-      "itionSeed\022)\n\020proposer_address\030\005 \001(\tR\017pro" +
-      "poserAddress\"\227\001\n\017CertificateInfo\022\022\n\004hash" +
-      "\030\001 \001(\tR\004hash\022\024\n\005round\030\002 \001(\005R\005round\022\036\n\nco" +
-      "mmitters\030\003 \003(\005R\ncommitters\022\034\n\tabsentees\030" +
-      "\004 \003(\005R\tabsentees\022\034\n\tsignature\030\005 \001(\tR\tsig" +
-      "nature\"\261\001\n\010VoteInfo\022$\n\004type\030\001 \001(\0162\020.pact" +
-      "us.VoteTypeR\004type\022\024\n\005voter\030\002 \001(\tR\005voter\022" +
-      "\035\n\nblock_hash\030\003 \001(\tR\tblockHash\022\024\n\005round\030" +
-      "\004 \001(\005R\005round\022\031\n\010cp_round\030\005 \001(\005R\007cpRound\022" +
-      "\031\n\010cp_value\030\006 \001(\005R\007cpValue\"\227\001\n\rConsensus" +
-      "Info\022\030\n\007address\030\001 \001(\tR\007address\022\026\n\006active" +
-      "\030\002 \001(\010R\006active\022\026\n\006height\030\003 \001(\rR\006height\022\024" +
-      "\n\005round\030\004 \001(\005R\005round\022&\n\005votes\030\005 \003(\0132\020.pa" +
-      "ctus.VoteInfoR\005votes\"y\n\014ProposalInfo\022\026\n\006" +
-      "height\030\001 \001(\rR\006height\022\024\n\005round\030\002 \001(\005R\005rou" +
-      "nd\022\035\n\nblock_data\030\003 \001(\tR\tblockData\022\034\n\tsig" +
-      "nature\030\004 \001(\tR\tsignature*f\n\016BlockVerbosit" +
-      "y\022\030\n\024BLOCK_VERBOSITY_DATA\020\000\022\030\n\024BLOCK_VER" +
-      "BOSITY_INFO\020\001\022 \n\034BLOCK_VERBOSITY_TRANSAC" +
-      "TIONS\020\002*\246\001\n\010VoteType\022\031\n\025VOTE_TYPE_UNSPEC" +
-      "IFIED\020\000\022\025\n\021VOTE_TYPE_PREPARE\020\001\022\027\n\023VOTE_T" +
-      "YPE_PRECOMMIT\020\002\022\031\n\025VOTE_TYPE_CP_PRE_VOTE" +
-      "\020\003\022\032\n\026VOTE_TYPE_CP_MAIN_VOTE\020\004\022\030\n\024VOTE_T" +
-      "YPE_CP_DECIDED\020\0052\342\007\n\nBlockchain\022=\n\010GetBl" +
-      "ock\022\027.pactus.GetBlockRequest\032\030.pactus.Ge" +
-      "tBlockResponse\022I\n\014GetBlockHash\022\033.pactus." +
-      "GetBlockHashRequest\032\034.pactus.GetBlockHas" +
-      "hResponse\022O\n\016GetBlockHeight\022\035.pactus.Get" +
-      "BlockHeightRequest\032\036.pactus.GetBlockHeig" +
-      "htResponse\022X\n\021GetBlockchainInfo\022 .pactus" +
-      ".GetBlockchainInfoRequest\032!.pactus.GetBl" +
-      "ockchainInfoResponse\022U\n\020GetCommitteeInfo" +
-      "\022\037.pactus.GetCommitteeInfoRequest\032 .pact" +
-      "us.GetCommitteeInfoResponse\022U\n\020GetConsen" +
-      "susInfo\022\037.pactus.GetConsensusInfoRequest" +
-      "\032 .pactus.GetConsensusInfoResponse\022C\n\nGe" +
-      "tAccount\022\031.pactus.GetAccountRequest\032\032.pa" +
-      "ctus.GetAccountResponse\022I\n\014GetValidator\022" +
-      "\033.pactus.GetValidatorRequest\032\034.pactus.Ge" +
-      "tValidatorResponse\022Y\n\024GetValidatorByNumb" +
-      "er\022#.pactus.GetValidatorByNumberRequest\032" +
-      "\034.pactus.GetValidatorResponse\022d\n\025GetVali" +
-      "datorAddresses\022$.pactus.GetValidatorAddr" +
-      "essesRequest\032%.pactus.GetValidatorAddres" +
-      "sesResponse\022I\n\014GetPublicKey\022\033.pactus.Get" +
-      "PublicKeyRequest\032\034.pactus.GetPublicKeyRe" +
-      "sponse\022U\n\020GetTxPoolContent\022\037.pactus.GetT" +
-      "xPoolContentRequest\032 .pactus.GetTxPoolCo" +
-      "ntentResponseB:\n\006pactusZ0github.com/pact" +
-      "us-project/pactus/www/grpc/pactusb\006proto" +
-      "3"
+      "\013inCommittee\022%\n\016committee_size\030\016 \001(\005R\rco" +
+      "mmitteeSize\"\031\n\027GetCommitteeInfoRequest\"\354" +
+      "\002\n\030GetCommitteeInfoResponse\022%\n\016committee" +
+      "_size\030\001 \001(\005R\rcommitteeSize\022\'\n\017committee_" +
+      "power\030\002 \001(\003R\016committeePower\022\037\n\013total_pow" +
+      "er\030\003 \001(\003R\ntotalPower\0225\n\nvalidators\030\004 \003(\013" +
+      "2\025.pactus.ValidatorInfoR\nvalidators\022c\n\021p" +
+      "rotocol_versions\030\005 \003(\01326.pactus.GetCommi" +
+      "tteeInfoResponse.ProtocolVersionsEntryR\020" +
+      "protocolVersions\032C\n\025ProtocolVersionsEntr" +
+      "y\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value\030\002 \001(\001R\005valu" +
+      "e:\0028\001\"\031\n\027GetConsensusInfoRequest\"\201\001\n\030Get" +
+      "ConsensusInfoResponse\0220\n\010proposal\030\001 \001(\0132" +
+      "\024.pactus.ProposalInfoR\010proposal\0223\n\tinsta" +
+      "nces\030\002 \003(\0132\025.pactus.ConsensusInfoR\tinsta" +
+      "nces\"Q\n\027GetTxPoolContentRequest\0226\n\014paylo" +
+      "ad_type\030\001 \001(\0162\023.pactus.PayloadTypeR\013payl" +
+      "oadType\"E\n\030GetTxPoolContentResponse\022)\n\003t" +
+      "xs\030\001 \003(\0132\027.pactus.TransactionInfoR\003txs\"\207" +
+      "\003\n\rValidatorInfo\022\022\n\004hash\030\001 \001(\tR\004hash\022\022\n\004" +
+      "data\030\002 \001(\tR\004data\022\035\n\npublic_key\030\003 \001(\tR\tpu" +
+      "blicKey\022\026\n\006number\030\004 \001(\005R\006number\022\024\n\005stake" +
+      "\030\005 \001(\003R\005stake\022.\n\023last_bonding_height\030\006 \001" +
+      "(\rR\021lastBondingHeight\0222\n\025last_sortition_" +
+      "height\030\007 \001(\rR\023lastSortitionHeight\022)\n\020unb" +
+      "onding_height\030\010 \001(\rR\017unbondingHeight\022\030\n\007" +
+      "address\030\t \001(\tR\007address\022-\n\022availability_s" +
+      "core\030\n \001(\001R\021availabilityScore\022)\n\020protoco" +
+      "l_version\030\013 \001(\005R\017protocolVersion\"\201\001\n\013Acc" +
+      "ountInfo\022\022\n\004hash\030\001 \001(\tR\004hash\022\022\n\004data\030\002 \001" +
+      "(\tR\004data\022\026\n\006number\030\003 \001(\005R\006number\022\030\n\007bala" +
+      "nce\030\004 \001(\003R\007balance\022\030\n\007address\030\005 \001(\tR\007add" +
+      "ress\"\304\001\n\017BlockHeaderInfo\022\030\n\007version\030\001 \001(" +
+      "\005R\007version\022&\n\017prev_block_hash\030\002 \001(\tR\rpre" +
+      "vBlockHash\022\035\n\nstate_root\030\003 \001(\tR\tstateRoo" +
+      "t\022%\n\016sortition_seed\030\004 \001(\tR\rsortitionSeed" +
+      "\022)\n\020proposer_address\030\005 \001(\tR\017proposerAddr" +
+      "ess\"\227\001\n\017CertificateInfo\022\022\n\004hash\030\001 \001(\tR\004h" +
+      "ash\022\024\n\005round\030\002 \001(\005R\005round\022\036\n\ncommitters\030" +
+      "\003 \003(\005R\ncommitters\022\034\n\tabsentees\030\004 \003(\005R\tab" +
+      "sentees\022\034\n\tsignature\030\005 \001(\tR\tsignature\"\261\001" +
+      "\n\010VoteInfo\022$\n\004type\030\001 \001(\0162\020.pactus.VoteTy" +
+      "peR\004type\022\024\n\005voter\030\002 \001(\tR\005voter\022\035\n\nblock_" +
+      "hash\030\003 \001(\tR\tblockHash\022\024\n\005round\030\004 \001(\005R\005ro" +
+      "und\022\031\n\010cp_round\030\005 \001(\005R\007cpRound\022\031\n\010cp_val" +
+      "ue\030\006 \001(\005R\007cpValue\"\227\001\n\rConsensusInfo\022\030\n\007a" +
+      "ddress\030\001 \001(\tR\007address\022\026\n\006active\030\002 \001(\010R\006a" +
+      "ctive\022\026\n\006height\030\003 \001(\rR\006height\022\024\n\005round\030\004" +
+      " \001(\005R\005round\022&\n\005votes\030\005 \003(\0132\020.pactus.Vote" +
+      "InfoR\005votes\"y\n\014ProposalInfo\022\026\n\006height\030\001 " +
+      "\001(\rR\006height\022\024\n\005round\030\002 \001(\005R\005round\022\035\n\nblo" +
+      "ck_data\030\003 \001(\tR\tblockData\022\034\n\tsignature\030\004 " +
+      "\001(\tR\tsignature*f\n\016BlockVerbosity\022\030\n\024BLOC" +
+      "K_VERBOSITY_DATA\020\000\022\030\n\024BLOCK_VERBOSITY_IN" +
+      "FO\020\001\022 \n\034BLOCK_VERBOSITY_TRANSACTIONS\020\002*\246" +
+      "\001\n\010VoteType\022\031\n\025VOTE_TYPE_UNSPECIFIED\020\000\022\025" +
+      "\n\021VOTE_TYPE_PREPARE\020\001\022\027\n\023VOTE_TYPE_PRECO" +
+      "MMIT\020\002\022\031\n\025VOTE_TYPE_CP_PRE_VOTE\020\003\022\032\n\026VOT" +
+      "E_TYPE_CP_MAIN_VOTE\020\004\022\030\n\024VOTE_TYPE_CP_DE" +
+      "CIDED\020\0052\342\007\n\nBlockchain\022=\n\010GetBlock\022\027.pac" +
+      "tus.GetBlockRequest\032\030.pactus.GetBlockRes" +
+      "ponse\022I\n\014GetBlockHash\022\033.pactus.GetBlockH" +
+      "ashRequest\032\034.pactus.GetBlockHashResponse" +
+      "\022O\n\016GetBlockHeight\022\035.pactus.GetBlockHeig" +
+      "htRequest\032\036.pactus.GetBlockHeightRespons" +
+      "e\022X\n\021GetBlockchainInfo\022 .pactus.GetBlock" +
+      "chainInfoRequest\032!.pactus.GetBlockchainI" +
+      "nfoResponse\022U\n\020GetCommitteeInfo\022\037.pactus" +
+      ".GetCommitteeInfoRequest\032 .pactus.GetCom" +
+      "mitteeInfoResponse\022U\n\020GetConsensusInfo\022\037" +
+      ".pactus.GetConsensusInfoRequest\032 .pactus" +
+      ".GetConsensusInfoResponse\022C\n\nGetAccount\022" +
+      "\031.pactus.GetAccountRequest\032\032.pactus.GetA" +
+      "ccountResponse\022I\n\014GetValidator\022\033.pactus." +
+      "GetValidatorRequest\032\034.pactus.GetValidato" +
+      "rResponse\022Y\n\024GetValidatorByNumber\022#.pact" +
+      "us.GetValidatorByNumberRequest\032\034.pactus." +
+      "GetValidatorResponse\022d\n\025GetValidatorAddr" +
+      "esses\022$.pactus.GetValidatorAddressesRequ" +
+      "est\032%.pactus.GetValidatorAddressesRespon" +
+      "se\022I\n\014GetPublicKey\022\033.pactus.GetPublicKey" +
+      "Request\032\034.pactus.GetPublicKeyResponse\022U\n" +
+      "\020GetTxPoolContent\022\037.pactus.GetTxPoolCont" +
+      "entRequest\032 .pactus.GetTxPoolContentResp" +
+      "onseB:\n\006pactusZ0github.com/pactus-projec" +
+      "t/pactus/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -25516,7 +25795,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
     internal_static_pactus_GetBlockchainInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetBlockchainInfoResponse_descriptor,
-        new java.lang.String[] { "LastBlockHeight", "LastBlockHash", "LastBlockTime", "TotalAccounts", "TotalValidators", "ActiveValidators", "TotalPower", "CommitteePower", "IsPruned", "PruningHeight", "InCommittee", });
+        new java.lang.String[] { "LastBlockHeight", "LastBlockHash", "LastBlockTime", "TotalAccounts", "TotalValidators", "ActiveValidators", "TotalPower", "CommitteePower", "IsPruned", "PruningHeight", "InCommittee", "CommitteeSize", });
     internal_static_pactus_GetCommitteeInfoRequest_descriptor =
       getDescriptor().getMessageType(17);
     internal_static_pactus_GetCommitteeInfoRequest_fieldAccessorTable = new
@@ -25528,7 +25807,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
     internal_static_pactus_GetCommitteeInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetCommitteeInfoResponse_descriptor,
-        new java.lang.String[] { "CommitteePower", "Validators", "ProtocolVersions", });
+        new java.lang.String[] { "CommitteeSize", "CommitteePower", "TotalPower", "Validators", "ProtocolVersions", });
     internal_static_pactus_GetCommitteeInfoResponse_ProtocolVersionsEntry_descriptor =
       internal_static_pactus_GetCommitteeInfoResponse_descriptor.getNestedType(0);
     internal_static_pactus_GetCommitteeInfoResponse_ProtocolVersionsEntry_fieldAccessorTable = new

@@ -164,7 +164,7 @@ message GetBlockchainInfoResponse {
   int32 total_validators = 4;
   // The number of active (not unbonded) validators in the blockchain.
   int32 active_validators = 12;
-  // The total power of the blockchain.
+  // The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
   int64 total_power = 5;
   // The power of the committee.
   int64 committee_power = 6;
@@ -172,10 +172,11 @@ message GetBlockchainInfoResponse {
   bool is_pruned = 8;
   // Lowest-height block stored (only present if pruning is enabled)
   uint32 pruning_height = 9;
-
   // Indicates whether this node participates in consensus: true if at least one
   // of its running validators is a member of the current committee.
   bool in_committee = 13;
+  // The number of validators in the current committee.
+  int32 committee_size = 14;
 }
 
 // Request message for retrieving committee information.
@@ -183,12 +184,16 @@ message GetCommitteeInfoRequest {}
 
 // Response message contains committee information.
 message GetCommitteeInfoResponse {
+  // The number of validators in the committee.
+  int32 committee_size = 1;
   // The power of the committee.
-  int64 committee_power = 1;
+  int64 committee_power = 2;
+  // The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
+  int64 total_power = 3;
   // List of committee validators.
-  repeated ValidatorInfo validators = 2;
+  repeated ValidatorInfo validators = 4;
   // Map of protocol versions and their percentages in the committee.
-  map<int32, double> protocol_versions = 3;
+  map<int32, double> protocol_versions = 5;
 }
 
 // Request message for retrieving consensus information.

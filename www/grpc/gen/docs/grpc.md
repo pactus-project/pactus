@@ -1816,7 +1816,7 @@ Request Message has no fields.
     <td class="fw-bold">total_power</td>
     <td> int64</td>
     <td>
-  The total power of the blockchain.
+  The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
     </td>
   </tr>
    <tr>
@@ -1848,6 +1848,13 @@ Request Message has no fields.
 of its running validators is a member of the current committee.
     </td>
   </tr>
+   <tr>
+    <td class="fw-bold">committee_size</td>
+    <td> int32</td>
+    <td>
+  The number of validators in the current committee.
+    </td>
+  </tr>
    </tbody>
 </table>
 
@@ -1865,10 +1872,24 @@ Request Message has no fields.
   </thead>
   <tbody class="table-group-divider">
   <tr>
+    <td class="fw-bold">committee_size</td>
+    <td> int32</td>
+    <td>
+  The number of validators in the committee.
+    </td>
+  </tr>
+   <tr>
     <td class="fw-bold">committee_power</td>
     <td> int64</td>
     <td>
   The power of the committee.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">total_power</td>
+    <td> int64</td>
+    <td>
+  The total power of the blockchain that is the sum of all validators' stakes, in NanoPAC.
     </td>
   </tr>
    <tr>

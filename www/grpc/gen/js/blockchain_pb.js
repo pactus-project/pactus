@@ -3093,7 +3093,8 @@ totalPower: jspb.Message.getFieldWithDefault(msg, 5, 0),
 committeePower: jspb.Message.getFieldWithDefault(msg, 6, 0),
 isPruned: jspb.Message.getBooleanFieldWithDefault(msg, 8, false),
 pruningHeight: jspb.Message.getFieldWithDefault(msg, 9, 0),
-inCommittee: jspb.Message.getBooleanFieldWithDefault(msg, 13, false)
+inCommittee: jspb.Message.getBooleanFieldWithDefault(msg, 13, false),
+committeeSize: jspb.Message.getFieldWithDefault(msg, 14, 0)
   };
 
   if (includeInstance) {
@@ -3173,6 +3174,10 @@ proto.pactus.GetBlockchainInfoResponse.deserializeBinaryFromReader = function(ms
     case 13:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setInCommittee(value);
+      break;
+    case 14:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setCommitteeSize(value);
       break;
     default:
       reader.skipField();
@@ -3277,6 +3282,13 @@ proto.pactus.GetBlockchainInfoResponse.serializeBinaryToWriter = function(messag
   if (f) {
     writer.writeBool(
       13,
+      f
+    );
+  }
+  f = message.getCommitteeSize();
+  if (f !== 0) {
+    writer.writeInt32(
+      14,
       f
     );
   }
@@ -3481,6 +3493,24 @@ proto.pactus.GetBlockchainInfoResponse.prototype.setInCommittee = function(value
 };
 
 
+/**
+ * optional int32 committee_size = 14;
+ * @return {number}
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.getCommitteeSize = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 14, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.setCommitteeSize = function(value) {
+  return jspb.Message.setProto3IntField(this, 14, value);
+};
+
+
 
 
 
@@ -3588,7 +3618,7 @@ proto.pactus.GetCommitteeInfoRequest.serializeBinaryToWriter = function(message,
  * @private {!Array<number>}
  * @const
  */
-proto.pactus.GetCommitteeInfoResponse.repeatedFields_ = [2];
+proto.pactus.GetCommitteeInfoResponse.repeatedFields_ = [4];
 
 
 
@@ -3621,7 +3651,9 @@ proto.pactus.GetCommitteeInfoResponse.prototype.toObject = function(opt_includeI
  */
 proto.pactus.GetCommitteeInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-committeePower: jspb.Message.getFieldWithDefault(msg, 1, 0),
+committeeSize: jspb.Message.getFieldWithDefault(msg, 1, 0),
+committeePower: jspb.Message.getFieldWithDefault(msg, 2, 0),
+totalPower: jspb.Message.getFieldWithDefault(msg, 3, 0),
 validatorsList: jspb.Message.toObjectList(msg.getValidatorsList(),
     proto.pactus.ValidatorInfo.toObject, includeInstance),
 protocolVersionsMap: (f = msg.getProtocolVersionsMap()) ? f.toObject(includeInstance, undefined) : []
@@ -3662,15 +3694,23 @@ proto.pactus.GetCommitteeInfoResponse.deserializeBinaryFromReader = function(msg
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setCommitteeSize(value);
+      break;
+    case 2:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setCommitteePower(value);
       break;
-    case 2:
+    case 3:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setTotalPower(value);
+      break;
+    case 4:
       var value = new proto.pactus.ValidatorInfo;
       reader.readMessage(value,proto.pactus.ValidatorInfo.deserializeBinaryFromReader);
       msg.addValidators(value);
       break;
-    case 3:
+    case 5:
       var value = msg.getProtocolVersionsMap();
       reader.readMessage(value, function(message, reader) {
         jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readInt32, jspb.BinaryReader.prototype.readDouble, null, 0, 0.0);
@@ -3705,17 +3745,31 @@ proto.pactus.GetCommitteeInfoResponse.prototype.serializeBinary = function() {
  */
 proto.pactus.GetCommitteeInfoResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getCommitteeSize();
+  if (f !== 0) {
+    writer.writeInt32(
+      1,
+      f
+    );
+  }
   f = message.getCommitteePower();
   if (f !== 0) {
     writer.writeInt64(
-      1,
+      2,
+      f
+    );
+  }
+  f = message.getTotalPower();
+  if (f !== 0) {
+    writer.writeInt64(
+      3,
       f
     );
   }
   f = message.getValidatorsList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
-      2,
+      4,
       f,
       proto.pactus.ValidatorInfo.serializeBinaryToWriter
     );
@@ -3724,7 +3778,7 @@ proto.pactus.GetCommitteeInfoResponse.serializeBinaryToWriter = function(message
   if (f && f.getLength() > 0) {
 jspb.internal.public_for_gencode.serializeMapToBinary(
     message.getProtocolVersionsMap(true),
-    3,
+    5,
     writer,
     jspb.BinaryWriter.prototype.writeInt32,
     jspb.BinaryWriter.prototype.writeDouble);
@@ -3733,10 +3787,10 @@ jspb.internal.public_for_gencode.serializeMapToBinary(
 
 
 /**
- * optional int64 committee_power = 1;
+ * optional int32 committee_size = 1;
  * @return {number}
  */
-proto.pactus.GetCommitteeInfoResponse.prototype.getCommitteePower = function() {
+proto.pactus.GetCommitteeInfoResponse.prototype.getCommitteeSize = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -3745,18 +3799,54 @@ proto.pactus.GetCommitteeInfoResponse.prototype.getCommitteePower = function() {
  * @param {number} value
  * @return {!proto.pactus.GetCommitteeInfoResponse} returns this
  */
-proto.pactus.GetCommitteeInfoResponse.prototype.setCommitteePower = function(value) {
+proto.pactus.GetCommitteeInfoResponse.prototype.setCommitteeSize = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
 /**
- * repeated ValidatorInfo validators = 2;
+ * optional int64 committee_power = 2;
+ * @return {number}
+ */
+proto.pactus.GetCommitteeInfoResponse.prototype.getCommitteePower = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetCommitteeInfoResponse} returns this
+ */
+proto.pactus.GetCommitteeInfoResponse.prototype.setCommitteePower = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * optional int64 total_power = 3;
+ * @return {number}
+ */
+proto.pactus.GetCommitteeInfoResponse.prototype.getTotalPower = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetCommitteeInfoResponse} returns this
+ */
+proto.pactus.GetCommitteeInfoResponse.prototype.setTotalPower = function(value) {
+  return jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+/**
+ * repeated ValidatorInfo validators = 4;
  * @return {!Array<!proto.pactus.ValidatorInfo>}
  */
 proto.pactus.GetCommitteeInfoResponse.prototype.getValidatorsList = function() {
   return /** @type{!Array<!proto.pactus.ValidatorInfo>} */ (
-    jspb.Message.getRepeatedWrapperField(this, proto.pactus.ValidatorInfo, 2));
+    jspb.Message.getRepeatedWrapperField(this, proto.pactus.ValidatorInfo, 4));
 };
 
 
@@ -3765,7 +3855,7 @@ proto.pactus.GetCommitteeInfoResponse.prototype.getValidatorsList = function() {
  * @return {!proto.pactus.GetCommitteeInfoResponse} returns this
 */
 proto.pactus.GetCommitteeInfoResponse.prototype.setValidatorsList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 2, value);
+  return jspb.Message.setRepeatedWrapperField(this, 4, value);
 };
 
 
@@ -3775,7 +3865,7 @@ proto.pactus.GetCommitteeInfoResponse.prototype.setValidatorsList = function(val
  * @return {!proto.pactus.ValidatorInfo}
  */
 proto.pactus.GetCommitteeInfoResponse.prototype.addValidators = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.pactus.ValidatorInfo, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 4, opt_value, proto.pactus.ValidatorInfo, opt_index);
 };
 
 
@@ -3789,14 +3879,14 @@ proto.pactus.GetCommitteeInfoResponse.prototype.clearValidatorsList = function()
 
 
 /**
- * map<int32, double> protocol_versions = 3;
+ * map<int32, double> protocol_versions = 5;
  * @param {boolean=} opt_noLazyCreate Do not create the map if
  * empty, instead returning `undefined`
  * @return {!jspb.Map<number,number>}
  */
 proto.pactus.GetCommitteeInfoResponse.prototype.getProtocolVersionsMap = function(opt_noLazyCreate) {
   return /** @type {!jspb.Map<number,number>} */ (
-      jspb.Message.getMapField(this, 3, opt_noLazyCreate,
+      jspb.Message.getMapField(this, 5, opt_noLazyCreate,
       null));
 };
 
