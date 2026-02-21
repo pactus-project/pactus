@@ -150,6 +150,7 @@ class GetBlockchainInfoResponse(_message.Message):
     COMMITTEE_POWER_FIELD_NUMBER: _ClassVar[int]
     IS_PRUNED_FIELD_NUMBER: _ClassVar[int]
     PRUNING_HEIGHT_FIELD_NUMBER: _ClassVar[int]
+    IN_COMMITTEE_FIELD_NUMBER: _ClassVar[int]
     last_block_height: int
     last_block_hash: str
     last_block_time: int
@@ -160,7 +161,8 @@ class GetBlockchainInfoResponse(_message.Message):
     committee_power: int
     is_pruned: bool
     pruning_height: int
-    def __init__(self, last_block_height: _Optional[int] = ..., last_block_hash: _Optional[str] = ..., last_block_time: _Optional[int] = ..., total_accounts: _Optional[int] = ..., total_validators: _Optional[int] = ..., active_validators: _Optional[int] = ..., total_power: _Optional[int] = ..., committee_power: _Optional[int] = ..., is_pruned: _Optional[bool] = ..., pruning_height: _Optional[int] = ...) -> None: ...
+    in_committee: bool
+    def __init__(self, last_block_height: _Optional[int] = ..., last_block_hash: _Optional[str] = ..., last_block_time: _Optional[int] = ..., total_accounts: _Optional[int] = ..., total_validators: _Optional[int] = ..., active_validators: _Optional[int] = ..., total_power: _Optional[int] = ..., committee_power: _Optional[int] = ..., is_pruned: _Optional[bool] = ..., pruning_height: _Optional[int] = ..., in_committee: _Optional[bool] = ...) -> None: ...
 
 class GetCommitteeInfoRequest(_message.Message):
     __slots__ = ()

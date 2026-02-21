@@ -576,6 +576,10 @@ pub struct GetBlockchainInfoResponse {
     /// Lowest-height block stored (only present if pruning is enabled)
     #[prost(uint32, tag="9")]
     pub pruning_height: u32,
+    /// Indicates whether this node participates in consensus: true if at least one
+    /// of its running validators is a member of the current committee.
+    #[prost(bool, tag="13")]
+    pub in_committee: bool,
 }
 /// Request message for retrieving committee information.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
@@ -858,7 +862,7 @@ pub struct GetNetworkInfoRequest {
 /// Response message contains information about the overall network.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetNetworkInfoResponse {
-    /// Name of the network.
+    /// Name of the P2P network.
     #[prost(string, tag="1")]
     pub network_name: ::prost::alloc::string::String,
     /// Number of connected peers.
@@ -928,7 +932,7 @@ pub struct GetNodeInfoResponse {
     /// Current Unix timestamp of the node (UTC).
     #[prost(uint64, tag="16")]
     pub current_time: u64,
-    /// Name of the network.
+    /// Name of the P2P network.
     #[prost(string, tag="17")]
     pub network_name: ::prost::alloc::string::String,
 }

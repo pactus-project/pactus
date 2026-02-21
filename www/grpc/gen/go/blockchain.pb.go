@@ -944,6 +944,9 @@ type GetBlockchainInfoResponse struct {
 	IsPruned bool `protobuf:"varint,8,opt,name=is_pruned,json=isPruned,proto3" json:"is_pruned,omitempty"`
 	// Lowest-height block stored (only present if pruning is enabled)
 	PruningHeight uint32 `protobuf:"varint,9,opt,name=pruning_height,json=pruningHeight,proto3" json:"pruning_height,omitempty"`
+	// Indicates whether this node participates in consensus: true if at least one
+	// of its running validators is a member of the current committee.
+	InCommittee   bool `protobuf:"varint,13,opt,name=in_committee,json=inCommittee,proto3" json:"in_committee,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1046,6 +1049,13 @@ func (x *GetBlockchainInfoResponse) GetPruningHeight() uint32 {
 		return x.PruningHeight
 	}
 	return 0
+}
+
+func (x *GetBlockchainInfoResponse) GetInCommittee() bool {
+	if x != nil {
+		return x.InCommittee
+	}
+	return false
 }
 
 // Request message for retrieving committee information.
@@ -2004,7 +2014,7 @@ const file_blockchain_proto_rawDesc = "" +
 	"\x04hash\x18\x01 \x01(\tR\x04hash\"0\n" +
 	"\x16GetBlockHeightResponse\x12\x16\n" +
 	"\x06height\x18\x01 \x01(\rR\x06height\"\x1a\n" +
-	"\x18GetBlockchainInfoRequest\"\xa4\x03\n" +
+	"\x18GetBlockchainInfoRequest\"\xc7\x03\n" +
 	"\x19GetBlockchainInfoResponse\x12*\n" +
 	"\x11last_block_height\x18\x01 \x01(\rR\x0flastBlockHeight\x12&\n" +
 	"\x0flast_block_hash\x18\x02 \x01(\tR\rlastBlockHash\x12&\n" +
@@ -2017,7 +2027,8 @@ const file_blockchain_proto_rawDesc = "" +
 	"totalPower\x12'\n" +
 	"\x0fcommittee_power\x18\x06 \x01(\x03R\x0ecommitteePower\x12\x1b\n" +
 	"\tis_pruned\x18\b \x01(\bR\bisPruned\x12%\n" +
-	"\x0epruning_height\x18\t \x01(\rR\rpruningHeight\"\x19\n" +
+	"\x0epruning_height\x18\t \x01(\rR\rpruningHeight\x12!\n" +
+	"\fin_committee\x18\r \x01(\bR\vinCommittee\"\x19\n" +
 	"\x17GetCommitteeInfoRequest\"\xa4\x02\n" +
 	"\x18GetCommitteeInfoResponse\x12'\n" +
 	"\x0fcommittee_power\x18\x01 \x01(\x03R\x0ecommitteePower\x125\n" +

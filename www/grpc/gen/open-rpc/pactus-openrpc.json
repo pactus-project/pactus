@@ -423,8 +423,8 @@
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object","required": ["last_block_height","last_block_hash","last_block_time","total_accounts","total_validators","active_validators","total_power","committee_power","is_pruned","pruning_height"],
-          "properties": {"last_block_height": { "type": "integer" },"last_block_hash": { "type": "string" },"last_block_time": { "type": "integer" },"total_accounts": { "type": "integer" },"total_validators": { "type": "integer" },"active_validators": { "type": "integer" },"total_power": { "type": "integer" },"committee_power": { "type": "integer" },"is_pruned": { "type": "boolean" },"pruning_height": { "type": "integer" }}
+          "type": "object","required": ["last_block_height","last_block_hash","last_block_time","total_accounts","total_validators","active_validators","total_power","committee_power","is_pruned","pruning_height","in_committee"],
+          "properties": {"last_block_height": { "type": "integer" },"last_block_hash": { "type": "string" },"last_block_time": { "type": "integer" },"total_accounts": { "type": "integer" },"total_validators": { "type": "integer" },"active_validators": { "type": "integer" },"total_power": { "type": "integer" },"committee_power": { "type": "integer" },"is_pruned": { "type": "boolean" },"pruning_height": { "type": "integer" },"in_committee": { "type": "boolean" }}
           }
         }
       },{

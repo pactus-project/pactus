@@ -1877,6 +1877,14 @@ Parameters has no fields.
   Lowest-height block stored (only present if pruning is enabled)
     </td>
   </tr>
+   <tr>
+    <td class="fw-bold">in_committee</td>
+    <td> boolean</td>
+    <td>
+  Indicates whether this node participates in consensus: true if at least one
+of its running validators is a member of the current committee.
+    </td>
+  </tr>
    </tbody>
 </table>
 
@@ -2778,7 +2786,7 @@ Parameters has no fields.
     <td class="fw-bold">network_name</td>
     <td> string</td>
     <td>
-  Name of the network.
+  Name of the P2P network.
     </td>
   </tr>
    <tr>
@@ -3215,7 +3223,7 @@ maximum number of messages to queue before dropping older ones.
     <td class="fw-bold">network_name</td>
     <td> string</td>
     <td>
-  Name of the network.
+  Name of the P2P network.
     </td>
   </tr>
    </tbody>
