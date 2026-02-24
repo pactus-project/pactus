@@ -30,7 +30,7 @@ func TestMessageCompress(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	blocksData := [][]byte{}
-	for i := 0; i < ts.RandInt(40); i++ {
+	for i := 0; i < ts.RandIntMax(40); i++ {
 		blk, _ := ts.GenerateTestBlock(ts.RandHeight())
 		data, _ := blk.Bytes()
 		blocksData = append(blocksData, data)

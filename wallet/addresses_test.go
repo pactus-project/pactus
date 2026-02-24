@@ -29,7 +29,7 @@ func TestPrivateKey(t *testing.T) {
 func TestAddressCount(t *testing.T) {
 	td := setup(t)
 
-	count := td.RandInt(100)
+	count := td.RandIntMax(100)
 	td.mockStorage.EXPECT().AddressCount().Return(count)
 	assert.Equal(t, count, td.wallet.AddressCount())
 }

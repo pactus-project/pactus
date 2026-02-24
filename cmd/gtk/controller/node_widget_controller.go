@@ -54,8 +54,8 @@ func (c *NodeWidgetController) BuildView(ctx context.Context, connectionLabel, c
 		c.view.ConnectSignals(map[string]any{})
 	})
 
-	scheduler.Every(ctx, 10*time.Second).Do(c.timeout1)
-	scheduler.Every(ctx, 10*time.Second).Do(c.timeout10)
+	scheduler.Every(10*time.Second).Do(ctx, func(context.Context) { c.timeout1() })
+	scheduler.Every(10*time.Second).Do(ctx, func(context.Context) { c.timeout10() })
 
 	// Initial refresh.
 	c.timeout1()

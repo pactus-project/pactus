@@ -437,8 +437,8 @@ func (td *testData) makeChangeProposerJusts(t *testing.T, propBlockHash hash.Has
 
 	if propBlockHash != hash.UndefHash {
 		cpValue = vote.CPValueNo
-		committers := []int32{}
-		sigs := []*bls.Signature{}
+		committers := make([]int32, 0, len(td.consP.validators))
+		sigs := make([]*bls.Signature, 0, len(td.consP.validators))
 		for i, val := range td.consP.validators {
 			vote := vote.NewPrecommitVote(propBlockHash, height, round, val.Address())
 			signBytes := vote.SignBytes()
@@ -459,8 +459,8 @@ func (td *testData) makeChangeProposerJusts(t *testing.T, propBlockHash hash.Has
 	}
 
 	// Create MainVote Justification
-	preVoteCommitters := []int32{}
-	preVoteSigs := []*bls.Signature{}
+	preVoteCommitters := make([]int32, 0, len(td.consP.validators))
+	preVoteSigs := make([]*bls.Signature, 0, len(td.consP.validators))
 	for i, val := range td.consP.validators {
 		preVote := vote.NewCPPreVote(propBlockHash, height, round,
 			cpRound, cpValue, preVoteJust, val.Address())
@@ -475,8 +475,8 @@ func (td *testData) makeChangeProposerJusts(t *testing.T, propBlockHash hash.Has
 	mainVoteJust = &vote.JustMainVoteNoConflict{QCert: certPreVote}
 
 	// Create Decided Justification
-	mainVoteCommitters := []int32{}
-	mainVoteSigs := []*bls.Signature{}
+	mainVoteCommitters := make([]int32, 0, len(td.consP.validators))
+	mainVoteSigs := make([]*bls.Signature, 0, len(td.consP.validators))
 	for i, val := range td.consP.validators {
 		mainVote := vote.NewCPMainVote(propBlockHash, height, round,
 			cpRound, cpValue, mainVoteJust, val.Address())
@@ -1072,7 +1072,7 @@ func executeConsensus(td *testData, withoutByzantineNode bool) (
 
 	blockAnnounces := map[crypto.Address]*message.BlockAnnounceMessage{}
 	for len(td.network) > 0 {
-		rndIndex := td.RandInt(len(td.network))
+		rndIndex := td.RandIntMax(len(td.network))
 		rndMsg := td.network[rndIndex]
 		td.network = slices.Delete(td.network, rndIndex, rndIndex+1)
 
@@ -1123,7 +1123,7 @@ func executeConsensus(td *testData, withoutByzantineNode bool) (
 		}
 
 		for _, cons := range instances {
-			rnd := td.RandInt(100)
+			rnd := td.RandIntMax(100)
 			if rnd < changeProposerChance ||
 				len(td.network) == 0 {
 				td.changeProposerTimeout(cons)

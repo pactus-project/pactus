@@ -251,7 +251,7 @@ func (s *walletServer) GetWalletInfo(_ context.Context,
 func (s *walletServer) ListAddresses(_ context.Context,
 	req *pactus.ListAddressesRequest,
 ) (*pactus.ListAddressesResponse, error) {
-	addressTypes := make([]crypto.AddressType, 0)
+	addressTypes := make([]crypto.AddressType, 0, len(req.AddressTypes))
 	for _, addrType := range req.AddressTypes {
 		addressTypes = append(addressTypes, crypto.AddressType(addrType))
 	}

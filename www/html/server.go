@@ -57,7 +57,7 @@ func (s *Server) StartServer(grpcServer string) error {
 		return nil
 	}
 
-	dialOpts := make([]grpc.DialOption, 0)
+	dialOpts := make([]grpc.DialOption, 0, 2)
 	dialOpts = append(dialOpts,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithUnaryInterceptor(ret.UnaryClientInterceptor()),

@@ -21,7 +21,7 @@ func TestEvaluation(t *testing.T) {
 	valKey := bls.NewValidatorKey(prv)
 
 	t.Run("Total stake is zero", func(t *testing.T) {
-		threshold := ts.RandInt64(1 * 1e14)
+		threshold := ts.RandInt64Max(int64(1e14))
 		ok, proof := sortition.EvaluateSortition(seed, valKey.PrivateKey(), 0, threshold)
 		require.True(t, ok)
 		ok = sortition.VerifyProof(seed, proof, valKey.PublicKey(), 0, threshold)
@@ -29,7 +29,7 @@ func TestEvaluation(t *testing.T) {
 	})
 
 	t.Run("Total stake is not zero, but validator stake is zero", func(t *testing.T) {
-		total := ts.RandInt64(1 * 1e14)
+		total := ts.RandInt64Max(int64(1e14))
 
 		ok, _ := sortition.EvaluateSortition(seed, valKey.PrivateKey(), total, 0)
 		require.False(t, ok)
@@ -56,7 +56,7 @@ func TestInvalidProof(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("Invalid proof (Zero proof)", func(t *testing.T) {
-		total := ts.RandInt64(1 * 1e14)
+		total := ts.RandInt64Max(int64(1e14))
 		seed := ts.RandSeed()
 		pub, _ := ts.RandBLSKeyPair()
 		proof, _ := sortition.ProofFromString(
@@ -66,7 +66,7 @@ func TestInvalidProof(t *testing.T) {
 	})
 
 	t.Run("Invalid proof (Infinity proof)", func(t *testing.T) {
-		total := ts.RandInt64(1 * 1e14)
+		total := ts.RandInt64Max(int64(1e14))
 		seed := ts.RandSeed()
 		pub, _ := ts.RandBLSKeyPair()
 		proof, _ := sortition.ProofFromString(

@@ -83,9 +83,10 @@ func (s *blockchainServer) GetCommitteeInfo(_ context.Context,
 func (s *blockchainServer) GetConsensusInfo(_ context.Context,
 	_ *pactus.GetConsensusInfoRequest,
 ) (*pactus.GetConsensusInfoResponse, error) {
-	instances := make([]*pactus.ConsensusInfo, 0)
+	consInstances := s.consMgr.Instances()
+	instances := make([]*pactus.ConsensusInfo, 0, len(consInstances))
 
-	for _, cons := range s.consMgr.Instances() {
+	for _, cons := range consInstances {
 		height, round := cons.HeightRound()
 		votes := cons.AllVotes()
 		voteInfos := make([]*pactus.VoteInfo, 0, len(votes))

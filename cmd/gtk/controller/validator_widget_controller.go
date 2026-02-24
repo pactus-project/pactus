@@ -27,7 +27,7 @@ func NewValidatorWidgetController(
 }
 
 func (c *ValidatorWidgetController) BuildView(ctx context.Context) error {
-	scheduler.Every(ctx, 10*time.Second).Do(c.refresh)
+	scheduler.Every(10*time.Second).Do(ctx, func(context.Context) { c.refresh() })
 
 	// Initial refresh.
 	c.refresh()

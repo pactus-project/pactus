@@ -75,7 +75,7 @@ func (td *testData) InsertRandomAddressInfo(t *testing.T) *types.AddressInfo {
 func (td *testData) RandomDirection(t *testing.T) types.TxDirection {
 	t.Helper()
 
-	return types.TxDirection(td.RandInt(2) + 1)
+	return types.TxDirection(td.RandIntMax(2) + 1)
 }
 
 func (td *testData) RandomTransactionInfo(t *testing.T, direction types.TxDirection,

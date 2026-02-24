@@ -78,7 +78,7 @@ func newPeerMgr(ctx context.Context, host lp2phost.Host,
 func (mgr *peerMgr) Start() {
 	mgr.CheckConnectivity()
 
-	scheduler.Every(mgr.ctx, mgr.checkInterval).Do(mgr.CheckConnectivity)
+	scheduler.Every(mgr.checkInterval).Do(mgr.ctx, func(context.Context) { mgr.CheckConnectivity() })
 }
 
 func (mgr *peerMgr) Stop() {
@@ -221,7 +221,7 @@ func (mgr *peerMgr) savePeerStore() error {
 	mgr.lk.RLock()
 	defer mgr.lk.RUnlock()
 
-	ps := make([]string, 0)
+	ps := make([]string, 0, len(mgr.peers))
 	for id, info := range mgr.peers {
 		ps = append(ps, fmt.Sprintf("%s/p2p/%s", info.MultiAddress.String(), id.String()))
 	}

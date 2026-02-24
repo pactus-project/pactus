@@ -16,7 +16,7 @@ import (
 func setupCommittee(ts *testsuite.TestSuite, stakes ...amount.Amount) (
 	map[crypto.Address]*validator.Validator, []*bls.ValidatorKey, int64,
 ) {
-	valKeys := []*bls.ValidatorKey{}
+	valKeys := make([]*bls.ValidatorKey, 0, len(stakes))
 	valsMap := map[crypto.Address]*validator.Validator{}
 	totalPower := int64(0)
 	for i, s := range stakes {
@@ -84,7 +84,7 @@ func TestAddBinaryVote(t *testing.T) {
 	height := ts.RandHeight()
 	round := ts.RandRound()
 	cpRound := ts.RandRound()
-	cpVal := ts.RandInt(2)
+	cpVal := ts.RandIntMax(2)
 	just := &vote.JustInitYes{}
 	invKey := ts.RandValKey()
 	valKey := valKeys[0]

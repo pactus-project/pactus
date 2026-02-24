@@ -94,7 +94,7 @@ func NewNtpChecker(ctx context.Context, opts ...CheckerOption) *Checker {
 }
 
 func (c *Checker) Start() {
-	scheduler.Every(c.ctx, c.interval).Do(func() {
+	scheduler.Every(c.interval).Do(c.ctx, func(_ context.Context) {
 		offset, _ := c.queryClockOffset()
 
 		c.lk.Lock()

@@ -96,7 +96,7 @@ func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) 
 		})
 
 		totalBalance1, _ := c.model.TotalBalance()
-		scheduler.Every(ctx, 15*time.Second).Do(func() {
+		scheduler.Every(15*time.Second).Do(ctx, func(context.Context) {
 			totalBalance2, _ := c.model.TotalBalance()
 
 			if totalBalance1 != totalBalance2 {

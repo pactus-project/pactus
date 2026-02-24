@@ -74,12 +74,42 @@ func (ts *TestSuite) MockingController() *gomock.Controller {
 
 // RandHeight returns a random number between [1000, 1000000] for block height.
 func (ts *TestSuite) RandHeight() uint32 {
-	return ts.RandUint32NonZero(1e6-1000) + 1000
+	return ts.RandUint32(testsuite.WithMin(uint32(1000)), testsuite.WithMax(uint32(1e6)))
 }
 
 // RandRound returns a random number between [0, 10) for block round.
 func (ts *TestSuite) RandRound() int16 {
-	return ts.RandInt16(10)
+	return ts.RandInt16(testsuite.WithMax(int16(10)))
+}
+
+// RandInt32NonZero returns a random int32 in [1, max].
+func (ts *TestSuite) RandInt32NonZero(max int32) int32 {
+	return ts.RandInt32(testsuite.WithMin(int32(1)), testsuite.WithMax(max))
+}
+
+// RandUint32Max returns a random uint32 in [0, max).
+func (ts *TestSuite) RandUint32Max(max uint32) uint32 {
+	return ts.RandUint32(testsuite.WithMax(max))
+}
+
+// RandInt32Max returns a random int32 in [0, max).
+func (ts *TestSuite) RandInt32Max(max int32) int32 {
+	return ts.RandInt32(testsuite.WithMax(max))
+}
+
+// RandIntMax returns a random int in [0, max).
+func (ts *TestSuite) RandIntMax(max int) int {
+	return ts.RandInt(testsuite.WithMax(max))
+}
+
+// RandInt64Max returns a random int64 in [0, max).
+func (ts *TestSuite) RandInt64Max(max int64) int64 {
+	return ts.RandInt64(testsuite.WithMax(max))
+}
+
+// RandIntNonZero returns a random int in [1, max].
+func (ts *TestSuite) RandIntNonZero(max int) int {
+	return ts.RandInt(testsuite.WithMin(1), testsuite.WithMax(max))
 }
 
 // RandAmount returns a random amount between [1e9, max).
@@ -95,7 +125,7 @@ func (ts *TestSuite) RandAmount(max ...amount.Amount) amount.Amount {
 
 // RandAmountRange returns a random amount between [min, max).
 func (ts *TestSuite) RandAmountRange(min, max amount.Amount) amount.Amount {
-	return amount.Amount(ts.RandInt64Range(min.ToNanoPAC(), max.ToNanoPAC()))
+	return amount.Amount(ts.RandInt64(testsuite.WithMin(min.ToNanoPAC()), testsuite.WithMax(max.ToNanoPAC())))
 }
 
 // RandFee returns a random fee between [1e7, max).
@@ -121,7 +151,7 @@ func (ts *TestSuite) RandBytes(length int) []byte {
 func (ts *TestSuite) RandSlice(length int) []int32 {
 	slice := []int32{}
 	for {
-		randInt := ts.RandInt32(1000)
+		randInt := ts.RandInt32(testsuite.WithMax(int32(1000)))
 		if !slices.Contains(slice, randInt) {
 			slice = append(slice, randInt)
 		}
@@ -138,7 +168,7 @@ func (ts *TestSuite) RandString(length int) string {
 
 	b := make([]byte, length)
 	for i := range b {
-		b[i] = letterBytes[ts.RandInt(52)]
+		b[i] = letterBytes[ts.RandInt(testsuite.WithMax(52))]
 	}
 
 	return string(b)
@@ -152,7 +182,7 @@ func (*TestSuite) DecodingHex(in string) []byte {
 }
 
 func (ts *TestSuite) RandKeyPair() (crypto.PublicKey, crypto.PrivateKey) {
-	switch ts.RandInt(2) {
+	switch ts.RandInt(testsuite.WithMax(2)) {
 	case 0:
 		return ts.RandBLSKeyPair()
 	case 1:
@@ -204,7 +234,7 @@ func (ts *TestSuite) RandEd25519Signature() *ed25519.Signature {
 
 // RandHash generates a random hash for testing purposes.
 func (ts *TestSuite) RandHash() hash.Hash {
-	return hash.CalcHash(util.Int64ToSlice(ts.RandInt64(util.MaxInt64)))
+	return hash.CalcHash(util.Int64ToSlice(ts.RandInt64(testsuite.WithMax(util.MaxInt64))))
 }
 
 // RandAccAddress generates a random account address for testing purposes.
@@ -266,7 +296,7 @@ type AccountMakerOption func(*AccountMaker)
 // NewAccountMaker creates a new instance of AccountMaker with random values.
 func (ts *TestSuite) NewAccountMaker() *AccountMaker {
 	return &AccountMaker{
-		Number:  ts.RandInt32NonZero(100000),
+		Number:  ts.RandInt32(testsuite.WithMin(int32(1)), testsuite.WithMax(int32(100000))),
 		Balance: ts.RandAmountRange(100e9, 1000e9),
 		Address: ts.RandAccAddress(),
 	}
@@ -316,7 +346,7 @@ type ValidatorMakerOption func(*ValidatorMaker)
 // NewValidatorMaker creates a new instance of ValidatorMaker with random values.
 func (ts *TestSuite) NewValidatorMaker() *ValidatorMaker {
 	return &ValidatorMaker{
-		Number:    ts.RandInt32(100000),
+		Number:    ts.RandInt32(testsuite.WithMax(int32(100000))),
 		Stake:     ts.RandAmountRange(100e9, 1000e9),
 		PublicKey: ts.RandValKey().PublicKey(),
 	}
@@ -555,7 +585,7 @@ func (tm *TransactionMaker) SignerValidatorAddress() crypto.Address {
 
 // NewTransactionMaker creates a new TransactionMaker instance.
 func (ts *TestSuite) NewTransactionMaker() *TransactionMaker {
-	numOfRecipients := ts.RandInt(6) + 2
+	numOfRecipients := ts.RandInt(testsuite.WithMax(6)) + 2
 	recipients := make([]payload.BatchRecipient, numOfRecipients)
 
 	for i := 0; i < numOfRecipients; i++ {
@@ -670,7 +700,7 @@ func (ts *TestSuite) GenerateTestBatchTransferTx(opts ...TransactionMakerOption)
 		}
 	}
 
-	numOfRecip := ts.RandInt(6) + 2
+	numOfRecip := ts.RandInt(testsuite.WithMax(6)) + 2
 	recipients := make([]payload.BatchRecipient, numOfRecip)
 
 	for i := 0; i < numOfRecip; i++ {

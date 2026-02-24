@@ -47,12 +47,17 @@ func (m *Messages) HasVote(h hash.Hash) bool {
 }
 
 func (m *Messages) AllVotes() []*vote.Vote {
-	votes := []*vote.Vote{}
-	votes = append(votes, m.prepareVotes.AllVotes()...)
-	votes = append(votes, m.precommitVotes.AllVotes()...)
-	votes = append(votes, m.cpPreVotes.AllVotes()...)
-	votes = append(votes, m.cpMainVotes.AllVotes()...)
-	votes = append(votes, m.cpDecidedVotes.AllVotes()...)
+	prepare := m.prepareVotes.AllVotes()
+	precommit := m.precommitVotes.AllVotes()
+	cpPre := m.cpPreVotes.AllVotes()
+	cpMain := m.cpMainVotes.AllVotes()
+	cpDecided := m.cpDecidedVotes.AllVotes()
+	votes := make([]*vote.Vote, 0, len(prepare)+len(precommit)+len(cpPre)+len(cpMain)+len(cpDecided))
+	votes = append(votes, prepare...)
+	votes = append(votes, precommit...)
+	votes = append(votes, cpPre...)
+	votes = append(votes, cpMain...)
+	votes = append(votes, cpDecided...)
 
 	return votes
 }

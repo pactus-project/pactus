@@ -185,7 +185,7 @@ func (cs *consensusV2) scheduleTimeout(duration time.Duration, height uint32, ro
 	cs.logger.Trace("new timer scheduled ⏱️", "duration", duration, "height", height, "round", round, "target", target)
 
 	ticker := &ticker{duration, height, round, target}
-	scheduler.After(cs.ctx, duration).Do(func() {
+	scheduler.After(duration).Do(cs.ctx, func(context.Context) {
 		cs.handleTimeout(ticker)
 	})
 }

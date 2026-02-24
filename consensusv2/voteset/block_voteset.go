@@ -53,7 +53,7 @@ func (vs *BlockVoteSet) mustGetBlockVotes(blockHash hash.Hash) *voteBox {
 
 // AllVotes returns a list of all votes in the VoteSet.
 func (vs *BlockVoteSet) AllVotes() []*vote.Vote {
-	votes := make([]*vote.Vote, 0)
+	votes := make([]*vote.Vote, 0, len(vs.allVotes))
 	for _, v := range vs.allVotes {
 		votes = append(votes, v)
 	}
