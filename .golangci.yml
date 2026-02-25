@@ -81,8 +81,6 @@ linters:
         - G204
         - G115
         - G704  # SSRF via taint analysis - ignore (URLs are validated/trusted)
-        - G101  # Potential hardcoded credentials - ignore (test fixtures, bcrypt hashes)
-        - G117  # Exported struct field matches secret pattern - ignore (config field)
         - G705  # XSS via taint analysis - ignore (internal HTML, values escaped)
     govet:
       disable:
@@ -194,6 +192,7 @@ linters:
           - gocognit
           - maintidx
           - nestif
+          - gosec
         path: _test.go
       - path: (.+)\.go$
         text: 'shadow: declaration of "err" shadows'

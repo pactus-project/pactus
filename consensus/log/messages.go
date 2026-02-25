@@ -52,6 +52,7 @@ func (m *Messages) AllVotes() []*vote.Vote {
 	cpPre := m.cpPreVotes.AllVotes()
 	cpMain := m.cpMainVotes.AllVotes()
 	cpDecided := m.cpDecidedVotes.AllVotes()
+
 	votes := make([]*vote.Vote, 0, len(prepare)+len(precommit)+len(cpPre)+len(cpMain)+len(cpDecided))
 	votes = append(votes, prepare...)
 	votes = append(votes, precommit...)
