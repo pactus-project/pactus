@@ -38,7 +38,7 @@ func TestHandlerBlocksResponseInvalidBlockData(t *testing.T) {
 
 	for _, tt := range tests {
 		pid := td.RandPeerID()
-		sid := td.RandInt(1000)
+		sid := td.RandIntMax(1000)
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks,
 			message.ResponseCodeMoreBlocks.String(),
 			sid, lastHeight+1, [][]byte{tt.data}, cert)
@@ -58,7 +58,7 @@ func TestHandlerBlocksResponseOneBlockShorter(t *testing.T) {
 	d1, _ := blk1.Bytes()
 	pid := td.addPeer(t, status.StatusKnown, service.New(service.None))
 
-	sid := td.RandInt(1000)
+	sid := td.RandIntMax(1000)
 	msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, t.Name(), sid,
 		lastHeight+1, [][]byte{d1}, cert1)
 	td.receivingNewMessage(td.sync, msg, pid)
@@ -113,7 +113,7 @@ func TestHandlerBlocksResponseStrippedPublicKey(t *testing.T) {
 
 	for _, tt := range tests {
 		blkData, _ := tt.receivedBlock.Bytes()
-		sid := td.RandInt(1000)
+		sid := td.RandIntMax(1000)
 		cert := td.GenerateTestCertificate(lastHeight + 1)
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeMoreBlocks.String(), sid,
 			lastHeight+1, [][]byte{blkData}, cert)

@@ -83,7 +83,7 @@ func (m *MockConsensus) HandleQueryVote(_ uint32, _ int16) *vote.Vote {
 	if len(m.Votes) == 0 {
 		return nil
 	}
-	r := m.ts.RandInt32(int32(len(m.Votes)))
+	r := m.ts.RandInt32Max(int32(len(m.Votes)))
 
 	return m.Votes[r]
 }

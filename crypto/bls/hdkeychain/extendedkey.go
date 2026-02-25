@@ -223,7 +223,8 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 			break
 		}
 
-		data = []byte{0x01}
+		data = make([]byte, 0, 1+len(childChainCode)+len(indexData))
+		data = append(data, 0x01)
 		data = append(data, childChainCode...)
 		data = append(data, indexData...)
 	}

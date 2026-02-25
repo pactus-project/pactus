@@ -15,7 +15,7 @@ func TestDoubleVote(t *testing.T) {
 	height := ts.RandHeight()
 	round := ts.RandRound()
 	signer := ts.RandValAddress()
-	power := ts.RandInt64(1000)
+	power := ts.RandInt64Max(1000)
 
 	v := vote.NewPrecommitVote(hash, height, round, signer)
 

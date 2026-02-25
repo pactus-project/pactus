@@ -15,7 +15,7 @@ func TestHandlerBlocksRequestParsingMessages(t *testing.T) {
 		config.Services = service.Services(service.PrunedNode)
 
 		td := setup(t, config)
-		sid := td.RandInt(100)
+		sid := td.RandIntMax(100)
 
 		td.state.CommitTestBlocks(31)
 		curHeight := td.state.LastBlockHeight()
@@ -112,7 +112,7 @@ func TestHandlerBlocksRequestParsingMessages(t *testing.T) {
 		config.Services = service.New(service.FullNode)
 
 		td := setup(t, config)
-		sid := td.RandInt(100)
+		sid := td.RandIntMax(100)
 
 		td.state.CommitTestBlocks(31)
 		pid := td.addPeer(t, status.StatusKnown, service.New(service.None))

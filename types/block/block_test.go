@@ -349,7 +349,7 @@ func TestBlockHash(t *testing.T) {
 	certData := data[headerSize : headerSize+certSize]
 	certHash := hash.CalcHash(certData)
 
-	txHashes := make([]hash.Hash, 0)
+	txHashes := make([]hash.Hash, 0, blk.Transactions().Len())
 	for _, trx := range blk.Transactions() {
 		txHashes = append(txHashes, trx.ID())
 	}

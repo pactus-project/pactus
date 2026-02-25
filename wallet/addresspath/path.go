@@ -78,9 +78,9 @@ func (p Path) String() string {
 	builder.WriteString("m")
 	for _, i := range p {
 		if i >= hardenedKeyStart {
-			builder.WriteString(fmt.Sprintf("/%d'", i-hardenedKeyStart))
+			fmt.Fprintf(&builder, "/%d'", i-hardenedKeyStart)
 		} else {
-			builder.WriteString(fmt.Sprintf("/%d", i))
+			fmt.Fprintf(&builder, "/%d", i)
 		}
 	}
 

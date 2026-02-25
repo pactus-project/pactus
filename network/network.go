@@ -431,8 +431,9 @@ func (n *network) Name() string {
 }
 
 func (n *network) Protocols() []string {
-	protocols := []string{}
-	for _, p := range n.host.Mux().Protocols() {
+	protocolIDs := n.host.Mux().Protocols()
+	protocols := make([]string, 0, len(protocolIDs))
+	for _, p := range protocolIDs {
 		protocols = append(protocols, string(p))
 	}
 

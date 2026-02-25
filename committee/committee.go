@@ -192,7 +192,7 @@ func (c *committee) String() string {
 
 	builder.WriteString("[ ")
 	for _, v := range c.Validators() {
-		builder.WriteString(fmt.Sprintf("%v(%v)", v.Number(), v.LastSortitionHeight()))
+		fmt.Fprintf(&builder, "%v(%v)", v.Number(), v.LastSortitionHeight())
 		if c.IsProposer(v.Address(), 0) {
 			builder.WriteString("*")
 		}

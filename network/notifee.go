@@ -125,7 +125,7 @@ func (s *NotifeeService) ListenClose(_ lp2pnetwork.Network, ma multiaddr.Multiad
 
 func (s *NotifeeService) sendProtocolsEvent(pid lp2pcore.PeerID) {
 	protocols, _ := s.host.Peerstore().GetProtocols(pid)
-	protocolsStr := []string{}
+	protocolsStr := make([]string, 0, len(protocols))
 	for _, p := range protocols {
 		protocolsStr = append(protocolsStr, string(p))
 	}

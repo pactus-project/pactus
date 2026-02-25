@@ -232,8 +232,8 @@ func TestAddSignature(t *testing.T) {
 	cert := certificate.NewCertificate(height, round)
 	signBytes := cert.SignBytesPrecommit(blockHash)
 	committers := ts.RandSlice(4)
-	sigs := []*bls.Signature{}
-	validators := []*validator.Validator{}
+	sigs := make([]*bls.Signature, 0, len(committers))
+	validators := make([]*validator.Validator, 0, len(committers))
 
 	for _, committer := range committers {
 		valKey := ts.RandValKey()
@@ -282,8 +282,8 @@ func TestCertificateValidatePrepare(t *testing.T) {
 	cert := certificate.NewCertificate(height, round)
 	signBytes := cert.SignBytesPrepare(blockHash)
 	committers := ts.RandSlice(4)
-	sigs := []*bls.Signature{}
-	validators := []*validator.Validator{}
+	sigs := make([]*bls.Signature, 0, len(committers))
+	validators := make([]*validator.Validator, 0, len(committers))
 
 	for _, committer := range committers {
 		valKey := ts.RandValKey()
@@ -327,8 +327,8 @@ func TestCertificateValidatePrecommit(t *testing.T) {
 	cert := certificate.NewCertificate(height, round)
 	signBytes := cert.SignBytesPrecommit(blockHash)
 	committers := ts.RandSlice(4)
-	sigs := []*bls.Signature{}
-	validators := []*validator.Validator{}
+	sigs := make([]*bls.Signature, 0, len(committers))
+	validators := make([]*validator.Validator, 0, len(committers))
 
 	for _, committer := range committers {
 		valKey := ts.RandValKey()
@@ -422,8 +422,8 @@ func TestCertificateValidateCPPreVote(t *testing.T) {
 	cert := certificate.NewCertificate(height, round)
 	signBytes := cert.SignBytesCPPreVote(blockHash, cpRound, cpValue)
 	committers := ts.RandSlice(4)
-	sigs := []*bls.Signature{}
-	validators := []*validator.Validator{}
+	sigs := make([]*bls.Signature, 0, len(committers))
+	validators := make([]*validator.Validator, 0, len(committers))
 
 	for _, committer := range committers {
 		valKey := ts.RandValKey()
@@ -479,8 +479,8 @@ func TestCertificateValidateCPMainVote(t *testing.T) {
 	cert := certificate.NewCertificate(height, round)
 	signBytes := cert.SignBytesCPMainVote(blockHash, cpRound, cpValue)
 	committers := ts.RandSlice(4)
-	sigs := []*bls.Signature{}
-	validators := []*validator.Validator{}
+	sigs := make([]*bls.Signature, 0, len(committers))
+	validators := make([]*validator.Validator, 0, len(committers))
 
 	for _, committer := range committers {
 		valKey := ts.RandValKey()

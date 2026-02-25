@@ -174,7 +174,7 @@ func SetTextViewContent(tv *gtk.TextView, content string) {
 // OpenURLInBrowser opens a URL in the OS default browser.
 func OpenURLInBrowser(address string) error {
 	var cmd string
-	args := make([]string, 0)
+	args := make([]string, 0, 2)
 
 	addr, err := url.Parse(address)
 	if err != nil {

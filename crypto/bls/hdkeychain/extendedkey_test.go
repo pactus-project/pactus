@@ -19,10 +19,10 @@ func TestNonHardenedDerivation(t *testing.T) {
 
 	testSeed := ts.RandBytes(32)
 	path := []uint32{
-		ts.RandUint32(hardenedKeyStart),
-		ts.RandUint32(hardenedKeyStart),
-		ts.RandUint32(hardenedKeyStart),
-		ts.RandUint32(hardenedKeyStart),
+		ts.RandUint32Max(hardenedKeyStart),
+		ts.RandUint32Max(hardenedKeyStart),
+		ts.RandUint32Max(hardenedKeyStart),
+		ts.RandUint32Max(hardenedKeyStart),
 	}
 
 	checkPublicKeyDerivation := func(masterKey *ExtendedKey, path []uint32) {
@@ -51,10 +51,10 @@ func TestHardenedDerivation(t *testing.T) {
 
 	testSeed := ts.RandBytes(32)
 	path := []uint32{
-		ts.RandUint32(hardenedKeyStart) + hardenedKeyStart,
-		ts.RandUint32(hardenedKeyStart) + hardenedKeyStart,
-		ts.RandUint32(hardenedKeyStart) + hardenedKeyStart,
-		ts.RandUint32(hardenedKeyStart) + hardenedKeyStart,
+		ts.RandUint32Max(hardenedKeyStart) + hardenedKeyStart,
+		ts.RandUint32Max(hardenedKeyStart) + hardenedKeyStart,
+		ts.RandUint32Max(hardenedKeyStart) + hardenedKeyStart,
+		ts.RandUint32Max(hardenedKeyStart) + hardenedKeyStart,
 	}
 
 	masterKey, _ := NewMaster(testSeed, false)

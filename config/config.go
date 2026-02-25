@@ -121,7 +121,7 @@ func DefaultConfigMainnet() *Config {
 		panic(err)
 	}
 
-	bootstrapAddrs := []string{}
+	bootstrapAddrs := make([]string, 0, len(bootstrapNodes))
 	for _, node := range bootstrapNodes {
 		bootstrapAddrs = append(bootstrapAddrs, node.Address)
 	}

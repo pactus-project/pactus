@@ -402,8 +402,8 @@ func (td *testData) makeMainCertificate(t *testing.T,
 	t.Helper()
 
 	// === make valid certificate
-	preVoteCommitters := []int32{}
-	preVoteSigs := []*bls.Signature{}
+	preVoteCommitters := make([]int32, 0, len(td.consP.validators))
+	preVoteSigs := make([]*bls.Signature, 0, len(td.consP.validators))
 	for i, val := range td.consP.validators {
 		preVoteJust := &vote.JustInitYes{}
 		preVote := vote.NewCPPreVote(hash.UndefHash, height, round,
@@ -417,8 +417,8 @@ func (td *testData) makeMainCertificate(t *testing.T,
 	certPreVote := certificate.NewCertificate(height, round)
 	certPreVote.SetSignature(preVoteCommitters, []int32{}, preVoteAggSig)
 
-	mainVoteCommitters := []int32{}
-	mainVoteSigs := []*bls.Signature{}
+	mainVoteCommitters := make([]int32, 0, len(td.consP.validators))
+	mainVoteSigs := make([]*bls.Signature, 0, len(td.consP.validators))
 	for i, val := range td.consP.validators {
 		mainVoteJust := &vote.JustMainVoteNoConflict{
 			QCert: certPreVote,
@@ -1006,7 +1006,7 @@ func checkConsensus(td *testData, height uint32, byzVotes []*vote.Vote) (
 
 	blockAnnounces := map[crypto.Address]*message.BlockAnnounceMessage{}
 	for len(td.consMessages) > 0 {
-		rndIndex := td.RandInt(len(td.consMessages))
+		rndIndex := td.RandIntMax(len(td.consMessages))
 		rndMsg := td.consMessages[rndIndex]
 		td.consMessages = slices.Delete(td.consMessages, rndIndex, rndIndex+1)
 
@@ -1056,7 +1056,7 @@ func checkConsensus(td *testData, height uint32, byzVotes []*vote.Vote) (
 		}
 
 		for _, cons := range instances {
-			rnd := td.RandInt(100)
+			rnd := td.RandIntMax(100)
 			if rnd < changeProposerChance ||
 				len(td.consMessages) == 0 {
 				td.changeProposerTimeout(cons)

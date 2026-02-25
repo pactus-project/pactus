@@ -18,7 +18,7 @@ func TestNonHardenedDerivation(t *testing.T) {
 
 	testSeed := ts.RandBytes(32)
 	path := []uint32{
-		ts.RandUint32(hardenedKeyStart),
+		ts.RandUint32Max(hardenedKeyStart),
 	}
 
 	masterKey, _ := NewMaster(testSeed)
@@ -32,7 +32,7 @@ func TestHardenedDerivation(t *testing.T) {
 
 	testSeed := ts.RandBytes(32)
 	path := []uint32{
-		ts.RandUint32(hardenedKeyStart) + hardenedKeyStart,
+		ts.RandUint32Max(hardenedKeyStart) + hardenedKeyStart,
 	}
 
 	masterKey, err := NewMaster(testSeed)

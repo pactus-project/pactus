@@ -52,9 +52,9 @@ func (m *TransactionsMessage) LogString() string {
 	var builder strings.Builder
 
 	for _, trx := range m.Transactions {
-		builder.WriteString(fmt.Sprintf("%v ", trx.ID().LogString()))
+		fmt.Fprintf(&builder, "%v ", trx.ID().LogString())
 	}
-	builder.WriteString(fmt.Sprintf("{%v: ⌘ [%v]}", len(m.Transactions), builder.String()))
+	fmt.Fprintf(&builder, "{%v: ⌘ [%v]}", len(m.Transactions), builder.String())
 
 	return builder.String()
 }

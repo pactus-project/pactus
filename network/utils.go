@@ -113,7 +113,7 @@ func PrivateSubnets() []*net.IPNet {
 		"fe80::/10",
 	}
 
-	subnets := []*net.IPNet{}
+	subnets := make([]*net.IPNet, 0, len(privateCIDRs))
 	for _, cidr := range privateCIDRs {
 		_, sn, err := net.ParseCIDR(cidr)
 		if err != nil {

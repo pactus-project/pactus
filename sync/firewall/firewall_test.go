@@ -82,7 +82,7 @@ func (td *testData) testGossipBundle() []byte {
 }
 
 func (td *testData) testStreamBundle() []byte {
-	bdl := bundle.NewBundle(message.NewBlocksRequestMessage(td.RandInt(100), 1, 100))
+	bdl := bundle.NewBundle(message.NewBlocksRequestMessage(td.RandIntMax(100), 1, 100))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 	d, _ := bdl.Encode()
 

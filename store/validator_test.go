@@ -103,7 +103,7 @@ func TestValidatorByNumber(t *testing.T) {
 	})
 
 	t.Run("Get a random Validator", func(t *testing.T) {
-		num := td.RandInt32(total)
+		num := td.RandInt32Max(total)
 		val, err := td.store.ValidatorByNumber(num)
 		assert.NoError(t, err)
 		require.NotNil(t, val)
@@ -130,7 +130,7 @@ func TestValidatorByNumber(t *testing.T) {
 		td.store.Close()
 		store, _ := NewStore(td.store.config)
 
-		num := td.RandInt32(total)
+		num := td.RandInt32Max(total)
 		val, err := store.ValidatorByNumber(num)
 		assert.NoError(t, err)
 		require.NotNil(t, val)
@@ -156,7 +156,7 @@ func TestValidatorByAddress(t *testing.T) {
 	})
 
 	t.Run("Get random validator", func(t *testing.T) {
-		num := td.RandInt32(total)
+		num := td.RandInt32Max(total)
 		val0, _ := td.store.ValidatorByNumber(num)
 		val, err := td.store.Validator(val0.Address())
 		assert.NoError(t, err)
@@ -174,7 +174,7 @@ func TestValidatorByAddress(t *testing.T) {
 		td.store.Close()
 		store, _ := NewStore(td.store.config)
 
-		num := td.RandInt32(total)
+		num := td.RandInt32Max(total)
 		val0, _ := store.ValidatorByNumber(num)
 		val, err := store.Validator(val0.Address())
 		assert.NoError(t, err)

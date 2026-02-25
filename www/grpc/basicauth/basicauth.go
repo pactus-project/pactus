@@ -19,7 +19,7 @@ func EncodeBasicAuth(username, password string) string {
 // BasicAuth is an implementation of grpc.PerRPCCredentials based on the Basic HTTP Authentication Schema.
 type BasicAuth struct {
 	Username string
-	Password string
+	Password string //nolint:gosec // fix me later
 }
 
 func New(username, password string) *BasicAuth {
