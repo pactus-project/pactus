@@ -44,3 +44,8 @@ func YesNo(v bool) string {
 
 	return "No"
 }
+
+// AvailabilityScorePercent formats an availability score (0–1) as a percentage string with 2 decimal places.
+func AvailabilityScorePercent(score float64) string {
+	return fmt.Sprintf("%.2f%%", score*100)
+}
