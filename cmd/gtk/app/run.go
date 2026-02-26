@@ -16,11 +16,11 @@ import (
 )
 
 type GUI struct {
-	MainWindow     *view.MainWindowView
-	NodeCtrl       *controller.NodeWidgetController
-	WalletCtrl     *controller.WalletWidgetController
-	ValidatorCtrl  *controller.ValidatorWidgetController
-	CommitteeCtrl  *controller.CommitteeWidgetController
+	MainWindow    *view.MainWindowView
+	NodeCtrl      *controller.NodeWidgetController
+	WalletCtrl    *controller.WalletWidgetController
+	ValidatorCtrl *controller.ValidatorWidgetController
+	CommitteeCtrl *controller.CommitteeWidgetController
 }
 
 // Run builds and shows the main window, wiring views/controllers.
