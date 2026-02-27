@@ -34,7 +34,6 @@ jobs:
           go-version: "1.26.0"
 
       - name: Import macOS Certificates
-        if: ${{ secrets.MACOS_CERTIFICATE != '' }}
         uses: apple-actions/import-codesign-certs@v6
         with:
           p12-file-base64: ${{ secrets.MACOS_CERTIFICATE }}
