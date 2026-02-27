@@ -16,10 +16,13 @@ import (
 
 func peerDirectionString(d pactus.Direction) string {
 	switch d {
+	case pactus.Direction_DIRECTION_UNKNOWN:
+		return "Unknown"
 	case pactus.Direction_DIRECTION_INBOUND:
 		return "Inbound"
 	case pactus.Direction_DIRECTION_OUTBOUND:
 		return "Outbound"
+
 	default:
 		return "Unknown"
 	}
