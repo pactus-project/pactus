@@ -30,8 +30,8 @@ jobs:
 
       - name: Debug Secrets (Safe)
         run: |
-          if [ -z "${MACOS_CERTIFICATE}" ]; then echo "❌ MACOS_CERTIFICATE is MISSING"; else echo "✅ MACOS_CERTIFICATE is present (length: ${#MACOS_CERTIFICATE})"; fi
-          if [ -z "${APPLE_ID}" ]; then echo "❌ APPLE_ID is MISSING"; else echo "✅ APPLE_ID is present"; fi
+          if [ -z "${secrets.MACOS_CE}" ]; then echo "❌ secrets.MACOS_CE is MISSING"; else echo "✅ MACOS_CERTIFICATE is present (length: ${#MACOS_CERTIFICATE})"; fi
+          if [ -z "${secrets.MACOS_CERTIFICATE_PWD}" ]; then echo "❌ secrets.MACOS_CERTIFICATE_PWD is MISSING"; else echo "✅ APPLE_ID is present"; fi
 
       - name: Install Dependencies
         run: brew install gtk+3 librsvg create-dmg coreutils gdk-pixbuf glib-networking pkg-config
@@ -42,7 +42,6 @@ jobs:
           go-version: "1.26.0"
 
       - name: Import macOS Certificates
-        if: env.MACOS_CERTIFICATE != ''
         uses: apple-actions/import-codesign-certs@v6
         with:
           p12-file-base64: ${{ secrets.MACOS_CERTIFICATE }}
