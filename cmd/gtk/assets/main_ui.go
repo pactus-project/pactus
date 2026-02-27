@@ -22,3 +22,6 @@ var ValidatorWidgetUI []byte
 
 //go:embed ui/widget_committee.ui
 var CommitteeWidgetUI []byte
+
+//go:embed ui/widget_network.ui
+var NetworkWidgetUI []byte
