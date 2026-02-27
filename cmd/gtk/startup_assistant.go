@@ -20,7 +20,6 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/downloader"
 	"github.com/pactus-project/pactus/wallet"
-	"github.com/pactus-project/pactus/wallet/provider/remote"
 )
 
 type assistantFunc func(assistant *gtk.Assistant, content gtk.IWidget, name,
@@ -394,10 +393,6 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 
 				go func() {
 					walletPassword := gtkutil.GetEntryText(entryPassword)
-
-					provider, err := remote.NewRemoteBlockchainProvider(ctx, chain, remote.WithTimeout(2*time.Second))
-					gtkutil.FatalErrorCheck(err)
-					nodeWallet.SetProvider(provider)
 
 					recoveryIndex := 0
 					err = nodeWallet.RecoveryAddresses(recoveryCtx, walletPassword, func(addr string) {

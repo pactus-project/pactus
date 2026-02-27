@@ -14,7 +14,7 @@ import (
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/pactus-project/pactus/wallet/provider"
-	offlineprovider "github.com/pactus-project/pactus/wallet/provider/offline"
+	"github.com/pactus-project/pactus/wallet/provider/remote"
 	"github.com/pactus-project/pactus/wallet/storage"
 	"github.com/pactus-project/pactus/wallet/storage/jsonstorage"
 	"github.com/pactus-project/pactus/wallet/storage/sqlitestorage"
@@ -75,7 +75,7 @@ func Create(ctx context.Context, walletPath, mnemonic, password string,
 		return nil, err
 	}
 
-	return New(storage, opts...)
+	return New(ctx, storage, opts...)
 }
 
 // Open tries to open a wallet at the given path.
@@ -90,7 +90,7 @@ func Open(ctx context.Context, walletPath string, opts ...OpenWalletOption) (*Wa
 			return nil, err
 		}
 
-		return New(sqliteStrg, opts...)
+		return New(ctx, sqliteStrg, opts...)
 	}
 
 	// Fallback to JSON storage for legacy wallets
@@ -103,7 +103,7 @@ func Open(ctx context.Context, walletPath string, opts ...OpenWalletOption) (*Wa
 		return nil, err
 	}
 
-	return New(jsonStrg, opts...)
+	return New(ctx, jsonStrg, opts...)
 }
 
 type openWalletConfig struct {
@@ -113,7 +113,7 @@ type openWalletConfig struct {
 
 var defaultOpenWalletConfig = openWalletConfig{
 	eventPipe: nil,
-	provider:  offlineprovider.NewOfflineBlockchainProvider(),
+	provider:  nil,
 }
 
 type OpenWalletOption func(*openWalletConfig)
@@ -130,7 +130,7 @@ func WithBlockchainProvider(provider provider.IBlockchainProvider) OpenWalletOpt
 	}
 }
 
-func New(storage storage.IStorage, opts ...OpenWalletOption) (*Wallet, error) {
+func New(ctx context.Context, storage storage.IStorage, opts ...OpenWalletOption) (*Wallet, error) {
 	if storage.Vault().CoinType != addresspath.CoinTypePactusMainnet {
 		crypto.ToTestnetHRP()
 	}
@@ -138,6 +138,14 @@ func New(storage storage.IStorage, opts ...OpenWalletOption) (*Wallet, error) {
 	cfg := defaultOpenWalletConfig
 	for _, opt := range opts {
 		opt(&cfg)
+	}
+
+	if cfg.provider == nil {
+		provider, err := remote.NewRemoteBlockchainProvider(ctx, storage.WalletInfo().Network)
+		if err != nil {
+			return nil, err
+		}
+		cfg.provider = provider
 	}
 
 	wlt := &Wallet{

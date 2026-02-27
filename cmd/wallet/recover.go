@@ -34,6 +34,7 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 			chainType = genesis.Testnet
 		}
 		ctx := context.Background()
+
 		wlt, err := wallet.Create(ctx, *pathOpt, mnemonic, *passOpt, chainType)
 		terminal.FatalErrorCheck(err)
 
