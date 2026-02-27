@@ -21,6 +21,7 @@ type GUI struct {
 	WalletCtrl    *controller.WalletWidgetController
 	ValidatorCtrl *controller.ValidatorWidgetController
 	CommitteeCtrl *controller.CommitteeWidgetController
+	NetworkCtrl   *controller.NetworkWidgetController
 }
 
 // Run builds and shows the main window, wiring views/controllers.
@@ -40,16 +41,19 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 	validatorModel := model.NewValidatorModel(ctx, blockchainClient)
 	walletModel := model.NewWalletModel(ctx, walletClient, transactionClient, blockchainClient, cmd.DefaultWalletName)
 	committeeModel := model.NewCommitteeModel(ctx, blockchainClient)
+	networkModel := model.NewNetworkModel(ctx, networkClient)
 
 	nodeView := gtkutil.IdleAddSyncT(view.NewNodeWidgetView)
 	walletView := gtkutil.IdleAddSyncT(view.NewWalletWidgetView)
 	validatorView := gtkutil.IdleAddSyncT(view.NewValidatorWidgetView)
 	committeeView := gtkutil.IdleAddSyncT(view.NewCommitteeWidgetView)
+	networkView := gtkutil.IdleAddSyncT(view.NewNetworkWidgetView)
 
 	nodeCtrl := controller.NewNodeWidgetController(nodeView, nodeModel)
 	walletCtrl := controller.NewWalletWidgetController(walletView, walletModel)
 	validatorCtrl := controller.NewValidatorWidgetController(validatorView, validatorModel)
 	committeeCtrl := controller.NewCommitteeWidgetController(committeeView, committeeModel)
+	networkCtrl := controller.NewNetworkWidgetController(networkView, networkModel)
 
 	nav := controller.NewNavigator(gtkApp, walletModel, walletCtrl)
 
@@ -77,6 +81,12 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 		return nil, err
 	}
 
+	notify("Fetching Network info...")
+	err = networkCtrl.BuildView(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	mwView := gtkutil.IdleAddSyncT(func() *view.MainWindowView {
 		mwView := view.NewMainWindowView()
 
@@ -84,6 +94,7 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 		mwView.BoxDefaultWallet.Add(walletView.Box)
 		mwView.BoxValidators.Add(validatorView.Box)
 		mwView.BoxCommittee.Add(committeeView.Box)
+		mwView.BoxNetwork.Add(networkView.Box)
 
 		mwCtrl := controller.NewMainWindowController(mwView)
 		mwCtrl.BuildView(nav)
@@ -100,6 +111,7 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 		WalletCtrl:    walletCtrl,
 		ValidatorCtrl: validatorCtrl,
 		CommitteeCtrl: committeeCtrl,
+		NetworkCtrl:   networkCtrl,
 	}, nil
 }
 

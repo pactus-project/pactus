@@ -18,6 +18,7 @@ type MainWindowView struct {
 	BoxDefaultWallet *gtk.Box
 	BoxValidators    *gtk.Box
 	BoxCommittee     *gtk.Box
+	BoxNetwork       *gtk.Box
 }
 
 func NewMainWindowView() *MainWindowView {
@@ -27,6 +28,7 @@ func NewMainWindowView() *MainWindowView {
 	boxDefaultWallet := builder.GetBoxObj("id_box_default_wallet")
 	boxValidators := builder.GetBoxObj("id_box_validators")
 	boxCommittee := builder.GetBoxObj("id_box_committee")
+	boxNetwork := builder.GetBoxObj("id_box_network")
 
 	view := &MainWindowView{
 		ViewBuilder: builder,
@@ -36,6 +38,7 @@ func NewMainWindowView() *MainWindowView {
 		BoxDefaultWallet: boxDefaultWallet,
 		BoxValidators:    boxValidators,
 		BoxCommittee:     boxCommittee,
+		BoxNetwork:       boxNetwork,
 	}
 
 	// apply custom css
