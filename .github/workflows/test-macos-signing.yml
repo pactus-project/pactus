@@ -20,8 +20,6 @@ jobs:
 
     env:
       LIB_HOME: ${{ matrix.lib_home }}
-      MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
-      APPLE_ID: ${{ secrets.APPLE_ID }}
 
     steps:
       - uses: actions/checkout@v6
@@ -30,8 +28,9 @@ jobs:
 
       - name: Debug Secrets (Safe)
         run: |
-          if [ -z "${{secrets.MACOS_CERTIFICATE}}" ]; then echo "❌ secrets.MACOS_CERTIFICATE is MISSING"; else echo "✅ MACOS_CERTIFICATE is present (length: ${#MACOS_CERTIFICATE})"; fi
-          if [ -z "${{secrets.MACOS_CERTIFICATE_PWD}}" ]; then echo "❌ secrets.MACOS_CERTIFICATE_PWD is MISSING"; else echo "✅ APPLE_ID is present"; fi
+          if [ -z "${{ secrets.MACOS_CERTIFICATE }}" ]; then echo "❌ secrets.MACOS_CERTIFICATE is MISSING"; else echo "✅ MACOS_CERTIFICATE is present"; fi
+          if [ -z "${{ secrets.MACOS_CERTIFICATE_PWD }}" ]; then echo "❌ secrets.MACOS_CERTIFICATE_PWD is MISSING"; else echo "✅ MACOS_CERTIFICATE_PWD is present"; fi
+          if [ -z "${{ secrets.APPLE_ID }}" ]; then echo "❌ secrets.APPLE_ID is MISSING"; else echo "✅ APPLE_ID is present"; fi
 
       - name: Install Dependencies
         run: brew install gtk+3 librsvg create-dmg coreutils gdk-pixbuf glib-networking pkg-config
