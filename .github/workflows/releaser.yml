@@ -121,8 +121,19 @@ jobs:
         with:
           go-version: "1.26.0"
 
+      - name: Import macOS Certificates
+        uses: apple-actions/import-codesign-certs@v1
+        with:
+          p12-file-base64: ${{ secrets.MACOS_CERTIFICATE }}
+          p12-password: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+
       - name: Create release files
         run: bash ./.github/releasers/releaser_gui_macos.sh
+        env:
+          MACOS_CERT_IDENTITY: ${{ secrets.MACOS_CERT_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
       - name: Calculate sha256sum
         run: sha256sum pactus-*.dmg pactus-*.tar.gz > checksum-${{ matrix.name }}.txt
