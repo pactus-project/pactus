@@ -30,8 +30,8 @@ jobs:
 
       - name: Debug Secrets (Safe)
         run: |
-          if [ -z "${secrets.MACOS_CERTIFICATE}" ]; then echo "❌ secrets.MACOS_CERTIFICATE is MISSING"; else echo "✅ MACOS_CERTIFICATE is present (length: ${#MACOS_CERTIFICATE})"; fi
-          if [ -z "${secrets.MACOS_CERTIFICATE_PWD}" ]; then echo "❌ secrets.MACOS_CERTIFICATE_PWD is MISSING"; else echo "✅ APPLE_ID is present"; fi
+          if [ -z "${{secrets.MACOS_CERTIFICATE}}" ]; then echo "❌ secrets.MACOS_CERTIFICATE is MISSING"; else echo "✅ MACOS_CERTIFICATE is present (length: ${#MACOS_CERTIFICATE})"; fi
+          if [ -z "${{secrets.MACOS_CERTIFICATE_PWD}}" ]; then echo "❌ secrets.MACOS_CERTIFICATE_PWD is MISSING"; else echo "✅ APPLE_ID is present"; fi
 
       - name: Install Dependencies
         run: brew install gtk+3 librsvg create-dmg coreutils gdk-pixbuf glib-networking pkg-config
