@@ -19,3 +19,6 @@ var WalletWidgetUI []byte
 
 //go:embed ui/widget_validator.ui
 var ValidatorWidgetUI []byte
+
+//go:embed ui/widget_committee.ui
+var CommitteeWidgetUI []byte

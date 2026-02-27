@@ -4,7 +4,6 @@ package controller
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 	"time"
 
@@ -55,7 +54,7 @@ func (c *ValidatorWidgetController) refresh() {
 					strconv.Itoa(int(val.GetLastBondingHeight())),
 					strconv.Itoa(int(val.GetLastSortitionHeight())),
 					strconv.Itoa(int(val.GetUnbondingHeight())),
-					fmt.Sprintf("%.2f", val.GetAvailabilityScore()),
+					gtkutil.AvailabilityScorePercent(val.GetAvailabilityScore()),
 				},
 			)
 		}

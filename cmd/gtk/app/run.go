@@ -20,6 +20,7 @@ type GUI struct {
 	NodeCtrl      *controller.NodeWidgetController
 	WalletCtrl    *controller.WalletWidgetController
 	ValidatorCtrl *controller.ValidatorWidgetController
+	CommitteeCtrl *controller.CommitteeWidgetController
 }
 
 // Run builds and shows the main window, wiring views/controllers.
@@ -38,14 +39,17 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 	nodeModel := model.NewNodeModel(ctx, blockchainClient, networkClient)
 	validatorModel := model.NewValidatorModel(ctx, blockchainClient)
 	walletModel := model.NewWalletModel(ctx, walletClient, transactionClient, blockchainClient, cmd.DefaultWalletName)
+	committeeModel := model.NewCommitteeModel(ctx, blockchainClient)
 
 	nodeView := gtkutil.IdleAddSyncT(view.NewNodeWidgetView)
 	walletView := gtkutil.IdleAddSyncT(view.NewWalletWidgetView)
 	validatorView := gtkutil.IdleAddSyncT(view.NewValidatorWidgetView)
+	committeeView := gtkutil.IdleAddSyncT(view.NewCommitteeWidgetView)
 
 	nodeCtrl := controller.NewNodeWidgetController(nodeView, nodeModel)
 	walletCtrl := controller.NewWalletWidgetController(walletView, walletModel)
 	validatorCtrl := controller.NewValidatorWidgetController(validatorView, validatorModel)
+	committeeCtrl := controller.NewCommitteeWidgetController(committeeView, committeeModel)
 
 	nav := controller.NewNavigator(gtkApp, walletModel, walletCtrl)
 
@@ -67,12 +71,19 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 		return nil, err
 	}
 
+	notify("Fetching Committee info...")
+	err = committeeCtrl.BuildView(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	mwView := gtkutil.IdleAddSyncT(func() *view.MainWindowView {
 		mwView := view.NewMainWindowView()
 
 		mwView.BoxNode.Add(nodeView.Box)
 		mwView.BoxDefaultWallet.Add(walletView.Box)
 		mwView.BoxValidators.Add(validatorView.Box)
+		mwView.BoxCommittee.Add(committeeView.Box)
 
 		mwCtrl := controller.NewMainWindowController(mwView)
 		mwCtrl.BuildView(nav)
@@ -88,6 +99,7 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 		NodeCtrl:      nodeCtrl,
 		WalletCtrl:    walletCtrl,
 		ValidatorCtrl: validatorCtrl,
+		CommitteeCtrl: committeeCtrl,
 	}, nil
 }
 
