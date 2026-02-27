@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/wallet/provider/offline"
 	"github.com/pactus-project/pactus/wallet/provider/remote"
 	"github.com/spf13/cobra"
 )
@@ -39,6 +40,8 @@ func openWallet(ctx context.Context) (*wallet.Wallet, error) {
 
 func setProvider(ctx context.Context, wlt *wallet.Wallet) error {
 	if *offlineOpt {
+		wlt.SetProvider(offline.NewOfflineBlockchainProvider())
+
 		return nil
 	}
 
