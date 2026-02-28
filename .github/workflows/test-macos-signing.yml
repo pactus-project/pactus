@@ -2,6 +2,7 @@ name: Test macOS Signing
 
 on:
   pull_request:
+  workflow_dispatch:
 
 jobs:
   test-gui-macos:
@@ -34,11 +35,13 @@ jobs:
           go-version: "1.26.0"
 
       - name: Import macOS Certificates
-        if: ${{ secrets.MACOS_CERTIFICATE != '' }}
-        uses: apple-actions/import-codesign-certs@v1
+        uses: apple-actions/import-codesign-certs@v6
         with:
           p12-file-base64: ${{ secrets.MACOS_CERTIFICATE }}
           p12-password: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+
+      - name: List Identities
+        run: security find-identity -v -p codesigning
 
       - name: Create release files
         run: bash ./.github/releasers/releaser_gui_macos.sh
