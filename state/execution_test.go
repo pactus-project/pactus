@@ -181,7 +181,7 @@ func TestSubsidyTransaction(t *testing.T) {
 	t.Run("Legacy Reward", func(t *testing.T) {
 		trx := tx.NewTransferTx(td.RandHeight(), crypto.TreasuryAddress, td.RandAccAddress(), td.RandAmount(), 0)
 
-		err := td.state.checkSubsidy(trx, true)
+		err := td.state.checkSubsidy(trx, td.RandValAddress(), true)
 		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
@@ -194,7 +194,7 @@ func TestSubsidyTransaction(t *testing.T) {
 		}
 		trx := td.GenerateTestSubsidyTx(testsuite.TransactionWithRecipients(recipients))
 
-		err := td.state.checkSubsidy(trx, true)
+		err := td.state.checkSubsidy(trx, td.RandValAddress(), true)
 		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
@@ -211,7 +211,7 @@ func TestSubsidyTransaction(t *testing.T) {
 		}
 		trx := td.GenerateTestSubsidyTx(testsuite.TransactionWithRecipients(recipients))
 
-		err := td.state.checkSubsidy(trx, true)
+		err := td.state.checkSubsidy(trx, td.RandValAddress(), true)
 		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
@@ -231,7 +231,7 @@ func TestSubsidyTransaction(t *testing.T) {
 			testsuite.TransactionWithLockTime(lockTime),
 			testsuite.TransactionWithRecipients(recipients))
 
-		err := td.state.checkSubsidy(trx, true)
+		err := td.state.checkSubsidy(trx, td.RandValAddress(), true)
 		assert.NoError(t, err)
 	})
 }

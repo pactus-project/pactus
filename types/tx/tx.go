@@ -21,6 +21,7 @@ const (
 	versionLatest        = 0x01
 	flagStripedPublicKey = 0x01
 	flagNotSigned        = 0x02
+	flagBondDelegation   = 0x04
 	maxMemoLength        = 64
 )
 
@@ -316,7 +317,11 @@ func (tx *Tx) Encode(w io.Writer) error {
 }
 
 func (tx *Tx) encodeWithNoSignatory(w io.Writer) error {
-	err := encoding.WriteElements(w, tx.data.Flags, tx.data.Version, tx.data.LockTime)
+	flags := tx.data.Flags
+	if pld, ok := tx.data.Payload.(*payload.BondPayload); ok && pld.IsDelegated() {
+		flags = util.SetFlag(flags, flagBondDelegation)
+	}
+	err := encoding.WriteElements(w, flags, tx.data.Version, tx.data.LockTime)
 	if err != nil {
 		return err
 	}
@@ -336,7 +341,6 @@ func (tx *Tx) encodeWithNoSignatory(w io.Writer) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -383,7 +387,10 @@ func (tx *Tx) Decode(r io.Reader) error {
 		}
 	}
 
-	err = tx.data.Payload.Decode(r)
+	ctx := payload.DecodeContext{
+		BondDelegation: util.IsFlagSet(tx.data.Flags, flagBondDelegation),
+	}
+	err = tx.data.Payload.Decode(ctx, r)
 	if err != nil {
 		return err
 	}

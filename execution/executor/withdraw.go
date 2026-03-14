@@ -4,6 +4,7 @@ import (
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
@@ -50,6 +51,13 @@ func (e *WithdrawExecutor) Check(_ bool) error {
 
 	if e.sbx.CurrentHeight() < e.sender.UnbondingHeight()+e.sbx.Params().UnbondInterval {
 		return ErrUnbondingPeriod
+	}
+
+	// For delegated validators (PIP-49), only the stake owner can receive withdrawn principal.
+	if e.sbx.Params().BlockVersion >= protocol.ProtocolVersion3 && e.sender.IsDelegated() {
+		if e.pld.To != e.sender.DelegateOwner() {
+			return ErrWithdrawMustGoToStakeOwner
+		}
 	}
 
 	return nil

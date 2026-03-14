@@ -26,10 +26,17 @@ type validatorData struct {
 	UnbondingHeight     uint32
 	LastSortitionHeight uint32
 
+	// Optional delegation (PIP-49). Zero DelegateOwner means not delegated.
+	DelegateOwner  crypto.Address
+	DelegateShare  amount.Amount
+	DelegateExpiry uint32
+
 	// The protocol version of the validator.
 	// This is in memory and not saved to the blockchain.
 	ProtocolVersion protocol.Version
 }
+
+const delegationPayloadSize = 21 + 8 + 4 // owner + share + expiry
 
 // NewValidator constructs a new validator from the given public key and number.
 func NewValidator(publicKey *bls.PublicKey, number int32) *Validator {
@@ -45,26 +52,36 @@ func NewValidator(publicKey *bls.PublicKey, number int32) *Validator {
 
 // FromBytes constructs a new validator from raw byte data.
 func FromBytes(data []byte) (*Validator, error) {
-	acc := new(Validator)
+	val := new(Validator)
 	reader := bytes.NewReader(data)
 
-	acc.data.PublicKey = new(bls.PublicKey)
-	if err := acc.data.PublicKey.Decode(reader); err != nil {
+	val.data.PublicKey = new(bls.PublicKey)
+	if err := val.data.PublicKey.Decode(reader); err != nil {
 		return nil, err
 	}
 
 	err := encoding.ReadElements(reader,
-		&acc.data.Number,
-		&acc.data.Stake,
-		&acc.data.LastBondingHeight,
-		&acc.data.UnbondingHeight,
-		&acc.data.LastSortitionHeight,
+		&val.data.Number,
+		&val.data.Stake,
+		&val.data.LastBondingHeight,
+		&val.data.UnbondingHeight,
+		&val.data.LastSortitionHeight,
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	return acc, nil
+	// Optional delegation (PIP-49)
+	if reader.Len() >= delegationPayloadSize {
+		if err := (&val.data.DelegateOwner).Decode(reader); err != nil {
+			return nil, err
+		}
+		if err := encoding.ReadElements(reader, &val.data.DelegateShare, &val.data.DelegateExpiry); err != nil {
+			return nil, err
+		}
+	}
+
+	return val, nil
 }
 
 // PublicKey returns the public key of the validator.
@@ -100,6 +117,42 @@ func (val *Validator) UnbondingHeight() uint32 {
 // IsUnbonded returns true if the validator is unbonded.
 func (val *Validator) IsUnbonded() bool {
 	return val.data.UnbondingHeight > 0
+}
+
+// IsDelegated returns true if the validator has delegation (stake owner != operator).
+func (val *Validator) IsDelegated() bool {
+	return val.data.DelegateOwner != crypto.TreasuryAddress
+}
+
+// DelegateOwner returns the stake owner account address for delegated validators.
+func (val *Validator) DelegateOwner() crypto.Address {
+	return val.data.DelegateOwner
+}
+
+// DelegateShare returns the stake owner's reward share (in nano PAC) for delegated validators.
+func (val *Validator) DelegateShare() amount.Amount {
+	return val.data.DelegateShare
+}
+
+// DelegateExpiry returns the block height at which delegation expires (0 = no expiry).
+func (val *Validator) DelegateExpiry() uint32 {
+	return val.data.DelegateExpiry
+}
+
+// DelegateExpired returns true if delegation has expired at the given height.
+func (val *Validator) DelegateExpired(height uint32) bool {
+	if !val.IsDelegated() {
+		return false
+	}
+
+	return val.data.DelegateExpiry <= height
+}
+
+// SetDelegation sets the delegation fields (PIP-49). Use zero owner to clear delegation.
+func (val *Validator) SetDelegation(owner crypto.Address, share amount.Amount, expiry uint32) {
+	val.data.DelegateOwner = owner
+	val.data.DelegateShare = share
+	val.data.DelegateExpiry = expiry
 }
 
 // LastSortitionHeight returns the last height in which the validator evaluated sortition.
@@ -156,8 +209,12 @@ func (val *Validator) Hash() hash.Hash {
 }
 
 // SerializeSize returns the size in bytes required to serialize the validator.
-func (*Validator) SerializeSize() int {
-	return 120 // 96+4+4+8+4+4
+func (val *Validator) SerializeSize() int {
+	size := 120 // 96+4+4+8+4+4
+	if val.IsDelegated() {
+		size += delegationPayloadSize
+	}
+	return size
 }
 
 // Bytes returns the serialized byte representation of the validator.
@@ -176,6 +233,15 @@ func (val *Validator) Bytes() ([]byte, error) {
 		val.data.LastSortitionHeight)
 	if err != nil {
 		return nil, err
+	}
+
+	if val.IsDelegated() {
+		if err := val.data.DelegateOwner.Encode(buf); err != nil {
+			return nil, err
+		}
+		if err := encoding.WriteElements(buf, val.data.DelegateShare, val.data.DelegateExpiry); err != nil {
+			return nil, err
+		}
 	}
 
 	return buf.Bytes(), nil

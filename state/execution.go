@@ -5,16 +5,18 @@ import (
 	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 )
 
 func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool) error {
+	proposerAddr := blk.Header().ProposerAddress()
 	for i, trx := range blk.Transactions() {
 		if check {
 			// The first transaction should be subsidy transaction
 			shouldBeSubsidyTx := (i == 0)
-			err := st.checkSubsidy(trx, shouldBeSubsidyTx)
+			err := st.checkSubsidy(trx, proposerAddr, shouldBeSubsidyTx)
 			if err != nil {
 				return err
 			}
@@ -49,7 +51,7 @@ func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool)
 	return nil
 }
 
-func (st *state) checkSubsidy(trx *tx.Tx, shouldBeSubsidyTx bool) error {
+func (st *state) checkSubsidy(trx *tx.Tx, proposerAddr crypto.Address, shouldBeSubsidyTx bool) error {
 	if !shouldBeSubsidyTx {
 		if trx.IsSubsidyTx() {
 			return ErrDuplicatedSubsidyTransaction
@@ -78,5 +80,30 @@ func (st *state) checkSubsidy(trx *tx.Tx, shouldBeSubsidyTx bool) error {
 		return ErrInvalidSubsidyTransaction
 	}
 
+	// PIP-49: allow 3 recipients (foundation + operator + owner) when proposer is delegated
+	if st.params.BlockVersion >= protocol.ProtocolVersion3 {
+		if len(batchTrx.Recipients) == 3 {
+			val, err := st.store.Validator(proposerAddr)
+			if err != nil {
+				return ErrInvalidSubsidyTransaction
+			}
+
+			if !val.IsDelegated() {
+				return ErrInvalidSubsidyTransaction
+			}
+
+			// Recipients: [foundation, operator, owner]; validate owner amount and address
+			if batchTrx.Recipients[2].Amount != val.DelegateShare() || batchTrx.Recipients[2].To != val.DelegateOwner() {
+				return ErrInvalidSubsidyTransaction
+			}
+
+			return nil
+		}
+	}
+
+	// 2 recipients: foundation + validator
+	if len(batchTrx.Recipients) != 2 {
+		return ErrInvalidSubsidyTransaction
+	}
 	return nil
 }

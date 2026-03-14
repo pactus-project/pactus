@@ -43,7 +43,7 @@ func (p *UnbondPayload) Encode(w io.Writer) error {
 	return p.Validator.Encode(w)
 }
 
-func (p *UnbondPayload) Decode(r io.Reader) error {
+func (p *UnbondPayload) Decode(_ DecodeContext, r io.Reader) error {
 	return p.Validator.Decode(r)
 }
 

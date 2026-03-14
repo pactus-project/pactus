@@ -63,7 +63,7 @@ func (p *WithdrawPayload) Encode(w io.Writer) error {
 	return encoding.WriteVarInt(w, uint64(p.Amount))
 }
 
-func (p *WithdrawPayload) Decode(r io.Reader) error {
+func (p *WithdrawPayload) Decode(_ DecodeContext, r io.Reader) error {
 	err := p.From.Decode(r)
 	if err != nil {
 		return err
