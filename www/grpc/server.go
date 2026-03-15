@@ -14,7 +14,7 @@ import (
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/pactus-project/pactus/www/zmq"
 	"google.golang.org/grpc"
-	grpcHealth "google.golang.org/grpc/health"
+	grpchealth "google.golang.org/grpc/health"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 )
 
@@ -30,7 +30,7 @@ type Server struct {
 	consMgr       consmgr.ManagerReader
 	walletMgr     wltmgr.IManager
 	zmqPublishers []zmq.Publisher
-	healthServer  *grpcHealth.Server
+	healthServer  *grpchealth.Server
 	logger        *logger.SubLogger
 }
 
@@ -90,7 +90,7 @@ func (s *Server) startListening(listener net.Listener) error {
 	transactionServer := newTransactionServer(s)
 	networkServer := newNetworkServer(s)
 	utilServer := newUtilsServer(s)
-	healthServer := grpcHealth.NewServer()
+	healthServer := grpchealth.NewServer()
 
 	pactus.RegisterBlockchainServer(grpcServer, blockchainServer)
 	pactus.RegisterTransactionServer(grpcServer, transactionServer)

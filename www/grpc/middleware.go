@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func authenticate(storedCredential string, ctx context.Context) error {
+func authenticate(ctx context.Context, storedCredential string) error {
 	user, password, err := htpasswd.ExtractBasicAuthFromContext(ctx)
 	if err != nil {
 		return status.Error(codes.Unauthenticated, "failed to extract basic auth from header")
@@ -28,7 +28,7 @@ func BasicAuth(storedCredential string) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (
 		any, error,
 	) {
-		if err := authenticate(storedCredential, ctx); err != nil {
+		if err := authenticate(ctx, storedCredential); err != nil {
 			return nil, err
 		}
 
@@ -38,7 +38,7 @@ func BasicAuth(storedCredential string) grpc.UnaryServerInterceptor {
 
 func BasicAuthStream(storedCredential string) grpc.StreamServerInterceptor {
 	return func(srv any, ss grpc.ServerStream, _ *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
-		if err := authenticate(storedCredential, ss.Context()); err != nil {
+		if err := authenticate(ss.Context(), storedCredential); err != nil {
 			return err
 		}
 
