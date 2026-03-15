@@ -14,6 +14,8 @@ import (
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/pactus-project/pactus/www/zmq"
 	"google.golang.org/grpc"
+	grpcHealth "google.golang.org/grpc/health"
+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 )
 
 type Server struct {
@@ -28,6 +30,7 @@ type Server struct {
 	consMgr       consmgr.ManagerReader
 	walletMgr     wltmgr.IManager
 	zmqPublishers []zmq.Publisher
+	healthServer  *grpcHealth.Server
 	logger        *logger.SubLogger
 }
 
@@ -67,35 +70,51 @@ func (s *Server) StartServer() error {
 }
 
 func (s *Server) startListening(listener net.Listener) error {
-	opts := make([]grpc.UnaryServerInterceptor, 0)
+	opts := make([]grpc.UnaryServerInterceptor, 0, 2)
+	streamOpts := make([]grpc.StreamServerInterceptor, 0, 2)
 
 	if s.config.BasicAuth != "" {
 		opts = append(opts, BasicAuth(s.config.BasicAuth))
+		streamOpts = append(streamOpts, BasicAuthStream(s.config.BasicAuth))
 	}
 
 	opts = append(opts, s.Recovery())
+	streamOpts = append(streamOpts, s.RecoveryStream())
 
-	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(opts...))
+	grpcServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(opts...),
+		grpc.ChainStreamInterceptor(streamOpts...),
+	)
 
 	blockchainServer := newBlockchainServer(s)
 	transactionServer := newTransactionServer(s)
 	networkServer := newNetworkServer(s)
 	utilServer := newUtilsServer(s)
+	healthServer := grpcHealth.NewServer()
 
 	pactus.RegisterBlockchainServer(grpcServer, blockchainServer)
 	pactus.RegisterTransactionServer(grpcServer, transactionServer)
 	pactus.RegisterNetworkServer(grpcServer, networkServer)
 	pactus.RegisterUtilsServer(grpcServer, utilServer)
+	healthpb.RegisterHealthServer(grpcServer, healthServer)
+
+	healthServer.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)
+	healthServer.SetServingStatus(pactus.Blockchain_ServiceDesc.ServiceName, healthpb.HealthCheckResponse_SERVING)
+	healthServer.SetServingStatus(pactus.Transaction_ServiceDesc.ServiceName, healthpb.HealthCheckResponse_SERVING)
+	healthServer.SetServingStatus(pactus.Network_ServiceDesc.ServiceName, healthpb.HealthCheckResponse_SERVING)
+	healthServer.SetServingStatus(pactus.Utils_ServiceDesc.ServiceName, healthpb.HealthCheckResponse_SERVING)
 
 	if s.config.EnableWallet {
 		walletServer := newWalletServer(s, s.walletMgr)
 
 		pactus.RegisterWalletServer(grpcServer, walletServer)
+		healthServer.SetServingStatus(pactus.Wallet_ServiceDesc.ServiceName, healthpb.HealthCheckResponse_SERVING)
 	}
 
 	s.listener = listener
 	s.address = listener.Addr().String()
 	s.server = grpcServer
+	s.healthServer = healthServer
 
 	go func() {
 		s.logger.Info("gRPC server start listening", "address", listener.Addr())
@@ -108,6 +127,10 @@ func (s *Server) startListening(listener net.Listener) error {
 }
 
 func (s *Server) StopServer() {
+	if s.healthServer != nil {
+		s.healthServer.Shutdown()
+	}
+
 	if s.server != nil {
 		s.server.Stop()
 		_ = s.listener.Close()
