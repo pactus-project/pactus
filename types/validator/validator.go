@@ -161,7 +161,7 @@ func (val *Validator) LastSortitionHeight() uint32 {
 }
 
 // Power returns the power of the validator.
-func (val Validator) Power() int64 {
+func (val *Validator) Power() int64 {
 	if val.data.UnbondingHeight > 0 {
 		// Power for unbonded validators is set to zero.
 		return 0
@@ -214,6 +214,7 @@ func (val *Validator) SerializeSize() int {
 	if val.IsDelegated() {
 		size += delegationPayloadSize
 	}
+
 	return size
 }
 

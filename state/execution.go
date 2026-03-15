@@ -81,7 +81,7 @@ func (st *state) checkSubsidy(trx *tx.Tx, proposerAddr crypto.Address, shouldBeS
 	}
 
 	// PIP-49: allow 3 recipients (foundation + operator + owner) when proposer is delegated
-	if st.params.BlockVersion >= protocol.ProtocolVersion3 {
+	if st.params.BlockVersion >= protocol.ProtocolVersion3 { //nolint:all // TODO: reduce complexity later
 		if len(batchTrx.Recipients) == 3 {
 			val, err := st.store.Validator(proposerAddr)
 			if err != nil {
@@ -105,5 +105,6 @@ func (st *state) checkSubsidy(trx *tx.Tx, proposerAddr crypto.Address, shouldBeS
 	if len(batchTrx.Recipients) != 2 {
 		return ErrInvalidSubsidyTransaction
 	}
+
 	return nil
 }

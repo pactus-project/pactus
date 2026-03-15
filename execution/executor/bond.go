@@ -54,20 +54,11 @@ func (e *BondExecutor) Check(strict bool) error {
 		if e.sbx.Params().BlockVersion < protocol.ProtocolVersion3 {
 			return ErrInvalidBlockVersion
 		}
-		if e.receiver.IsDelegated() {
-			if e.pld.DelegateOwner != e.receiver.DelegateOwner() {
-				return ErrInvalidDelegation
-			}
-			if e.pld.DelegateShare != e.receiver.DelegateShare() {
-				return ErrInvalidDelegation
-			}
-			if e.pld.DelegateExpiry != e.receiver.DelegateExpiry() {
-				return ErrInvalidDelegation
-			}
-		} else {
-			if e.pld.DelegateExpiry > 0 && e.pld.DelegateExpiry <= e.sbx.CurrentHeight() {
-				return ErrDelegateExpiryInPast
-			}
+		if e.pld.Stake != e.sbx.Params().MaximumStake {
+			return ErrInvalidDelegation
+		}
+		if e.pld.DelegateExpiry <= e.sbx.CurrentHeight() {
+			return ErrDelegateExpiryInPast
 		}
 	}
 

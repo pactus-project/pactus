@@ -341,6 +341,7 @@ func (tx *Tx) encodeWithNoSignatory(w io.Writer) error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
