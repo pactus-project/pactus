@@ -36,6 +36,14 @@ CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-wallet 
 CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-shell ./cmd/shell
 CGO_ENABLED=1 go build -ldflags "-s -w -extldflags -headerpad_max_install_names" -trimpath -tags gtk -o ${BUILD_DIR}/pactus-gui ./cmd/gtk
 
+if [ ! -z "${MACOS_CERT_IDENTITY}" ]; then
+    echo "Signing binaries... ${MACOS_CERT_IDENTITY}"
+    codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-daemon
+    codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-wallet
+    codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-shell
+    codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-gui
+fi
+
 
 echo "Installing gtk-mac-bundler"
 git clone https://gitlab.gnome.org/GNOME/gtk-mac-bundler.git
@@ -77,17 +85,33 @@ ${BUNDLER} ${GUI_BUNDLE}/gui.bundle
 # Removing Cellar as workaround
 rm -rf ${ROOT_DIR}/pactus-gui.app/Contents/Resources/Cellar
 
+if [ ! -z "${MACOS_CERT_IDENTITY}" ]; then
+    echo "Signing app bundle..."
+    codesign --force --options runtime --timestamp --deep --sign "${MACOS_CERT_IDENTITY}" ${ROOT_DIR}/pactus-gui.app
+fi
+
 echo "Creating dmg"
 # https://github.com/create-dmg/create-dmg
-
 create-dmg --version
-
 create-dmg --skip-jenkins \
   --volname "Pactus GUI" \
   "${FILE_NAME}.dmg" \
   "${ROOT_DIR}/pactus-gui.app"
 
-echo "Creating archive"
+if [ ! -z "${APPLE_ID}" ]; then
+    echo "Submitting for notarization..."
+    xcrun notarytool submit "${FILE_NAME}.dmg" \
+        --apple-id "${APPLE_ID}" \
+        --password "${APPLE_PASSWORD}" \
+        --team-id "${APPLE_TEAM_ID}" \
+        --wait
+
+    echo "Stapling..."
+    xcrun stapler staple "${ROOT_DIR}/pactus-gui.app"
+    xcrun stapler staple "${FILE_NAME}.dmg"
+fi
+
+echo "Creating tar.gz archive"
 cp ${BUILD_DIR}/pactus-daemon     ${PACKAGE_DIR}
 cp ${BUILD_DIR}/pactus-wallet     ${PACKAGE_DIR}
 cp ${BUILD_DIR}/pactus-shell      ${PACKAGE_DIR}
