@@ -4,6 +4,7 @@ import (
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
@@ -47,6 +48,18 @@ func newBondExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*BondExecutor, error) {
 func (e *BondExecutor) Check(strict bool) error {
 	if e.receiver.IsUnbonded() {
 		return ErrValidatorUnbonded
+	}
+
+	if e.pld.IsDelegated() {
+		if e.sbx.Params().BlockVersion < protocol.ProtocolVersion3 {
+			return ErrInvalidBlockVersion
+		}
+		if e.pld.Stake != e.sbx.Params().MaximumStake {
+			return ErrInvalidDelegation
+		}
+		if e.pld.DelegateExpiry <= e.sbx.CurrentHeight() {
+			return ErrDelegateExpiryInPast
+		}
 	}
 
 	if e.sender.Balance() < e.pld.Value()+e.fee {
@@ -95,6 +108,10 @@ func (e *BondExecutor) Execute() {
 	e.sender.SubtractFromBalance(e.pld.Stake + e.fee)
 	e.receiver.AddToStake(e.pld.Stake)
 	e.receiver.UpdateLastBondingHeight(e.sbx.CurrentHeight())
+
+	if e.pld.IsDelegated() {
+		e.receiver.SetDelegation(e.pld.DelegateOwner, e.pld.DelegateShare, e.pld.DelegateExpiry)
+	}
 
 	e.sbx.UpdatePowerDelta(int64(e.pld.Stake))
 	e.sbx.UpdateAccount(e.pld.From, e.sender)

@@ -137,7 +137,7 @@ func (p *BatchTransferPayload) Encode(w io.Writer) error {
 	return nil
 }
 
-func (p *BatchTransferPayload) Decode(r io.Reader) error {
+func (p *BatchTransferPayload) Decode(_ DecodeContext, r io.Reader) error {
 	err := p.From.Decode(r)
 	if err != nil {
 		return err

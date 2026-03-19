@@ -15,6 +15,10 @@ type BondPayload struct {
 	To        crypto.Address
 	PublicKey *bls.PublicKey
 	Stake     amount.Amount
+
+	DelegateOwner  crypto.Address
+	DelegateShare  amount.Amount
+	DelegateExpiry uint32
 }
 
 func (*BondPayload) Type() Type {
@@ -27,6 +31,10 @@ func (p *BondPayload) Signer() crypto.Address {
 
 func (p *BondPayload) Value() amount.Amount {
 	return p.Stake
+}
+
+func (p *BondPayload) IsDelegated() bool {
+	return p.DelegateOwner != crypto.TreasuryAddress
 }
 
 // BasicCheck performs basic checks on the Bond payload.
@@ -49,15 +57,33 @@ func (p *BondPayload) BasicCheck() error {
 		}
 	}
 
+	if p.IsDelegated() {
+		if !p.DelegateOwner.IsAccountAddress() {
+			return BasicCheckError{
+				Reason: "delegate owner is not an account address: " + p.DelegateOwner.String(),
+			}
+		}
+
+		if p.DelegateShare <= 0 || p.DelegateShare > 7e8 {
+			return BasicCheckError{
+				Reason: "delegate share must be between 0 and 0.7 PAC",
+			}
+		}
+	}
+
 	return nil
 }
 
 func (p *BondPayload) SerializeSize() int {
+	size := 43 + encoding.VarIntSerializeSize(uint64(p.Stake))
 	if p.PublicKey != nil {
-		return 139 + encoding.VarIntSerializeSize(uint64(p.Stake))
+		size += 96 // pubkey size
+	}
+	if p.IsDelegated() {
+		size += 21 + 8 + 4 // delegate owner size + delegate share size + delegate expiry size
 	}
 
-	return 43 + encoding.VarIntSerializeSize(uint64(p.Stake))
+	return size
 }
 
 func (p *BondPayload) Encode(w io.Writer) error {
@@ -87,10 +113,23 @@ func (p *BondPayload) Encode(w io.Writer) error {
 		}
 	}
 
-	return encoding.WriteVarInt(w, uint64(p.Stake))
+	if err := encoding.WriteVarInt(w, uint64(p.Stake)); err != nil {
+		return err
+	}
+
+	if p.IsDelegated() {
+		if err := p.DelegateOwner.Encode(w); err != nil {
+			return err
+		}
+		if err := encoding.WriteElements(w, p.DelegateShare, p.DelegateExpiry); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
-func (p *BondPayload) Decode(r io.Reader) error {
+func (p *BondPayload) Decode(ctx DecodeContext, r io.Reader) error {
 	err := p.From.Decode(r)
 	if err != nil {
 		return err
@@ -120,6 +159,15 @@ func (p *BondPayload) Decode(r io.Reader) error {
 		return err
 	}
 	p.Stake = amount.Amount(stake)
+
+	if ctx.BondDelegation {
+		if err := (&p.DelegateOwner).Decode(r); err != nil {
+			return err
+		}
+		if err := encoding.ReadElements(r, &p.DelegateShare, &p.DelegateExpiry); err != nil {
+			return err
+		}
+	}
 
 	return nil
 }
