@@ -64,7 +64,7 @@ func (p *BondPayload) BasicCheck() error {
 			}
 		}
 
-		if p.DelegateShare <= 0 || p.DelegateShare > 7e8 {
+		if p.DelegateShare < 0 || p.DelegateShare > 7e8 {
 			return BasicCheckError{
 				Reason: "delegate share must be between 0 and 0.7 PAC",
 			}
@@ -80,7 +80,8 @@ func (p *BondPayload) SerializeSize() int {
 		size += 96 // pubkey size
 	}
 	if p.IsDelegated() {
-		size += 21 + 8 + 4 // delegate owner size + delegate share size + delegate expiry size
+		// delegate owner size (21) + delegate share size (var) + delegate expiry size (4)
+		size += 21 + encoding.VarIntSerializeSize(uint64(p.DelegateShare)) + 4
 	}
 
 	return size
@@ -121,7 +122,10 @@ func (p *BondPayload) Encode(w io.Writer) error {
 		if err := p.DelegateOwner.Encode(w); err != nil {
 			return err
 		}
-		if err := encoding.WriteElements(w, p.DelegateShare, p.DelegateExpiry); err != nil {
+		if err := encoding.WriteVarInt(w, uint64(p.DelegateShare)); err != nil {
+			return err
+		}
+		if err := encoding.WriteElement(w, p.DelegateExpiry); err != nil {
 			return err
 		}
 	}
@@ -161,10 +165,17 @@ func (p *BondPayload) Decode(ctx DecodeContext, r io.Reader) error {
 	p.Stake = amount.Amount(stake)
 
 	if ctx.BondDelegation {
-		if err := (&p.DelegateOwner).Decode(r); err != nil {
+		if err := p.DelegateOwner.Decode(r); err != nil {
 			return err
 		}
-		if err := encoding.ReadElements(r, &p.DelegateShare, &p.DelegateExpiry); err != nil {
+
+		share, err := encoding.ReadVarInt(r)
+		if err != nil {
+			return err
+		}
+		p.DelegateShare = amount.Amount(share)
+
+		if err := encoding.ReadElement(r, &p.DelegateExpiry); err != nil {
 			return err
 		}
 	}
