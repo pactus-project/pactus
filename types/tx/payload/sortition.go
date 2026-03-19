@@ -51,7 +51,7 @@ func (p *SortitionPayload) Encode(w io.Writer) error {
 	return encoding.WriteElements(w, &p.Proof)
 }
 
-func (p *SortitionPayload) Decode(r io.Reader) error {
+func (p *SortitionPayload) Decode(_ DecodeContext, r io.Reader) error {
 	return encoding.ReadElements(r, &p.Validator, &p.Proof)
 }
 

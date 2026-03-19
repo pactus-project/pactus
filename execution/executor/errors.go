@@ -52,6 +52,18 @@ var ErrCommitteeLeaveLimitExceeded = errors.New(
 // ErrOldestValidatorNotProposed indicates that the oldest validator has not proposed any block yet.
 var ErrOldestValidatorNotProposed = errors.New("oldest validator has not proposed any block yet")
 
+// ErrInvalidBlockVersion is returned when the block version is invalid.
+var ErrInvalidBlockVersion = errors.New("invalid block version")
+
+// ErrInvalidDelegation is returned when the delegation parameters are invalid.
+var ErrInvalidDelegation = errors.New("invalid delegation")
+
+// ErrDelegateExpiryInPast is returned when the delegate expiry is in the past.
+var ErrDelegateExpiryInPast = errors.New("delegate expiry must be in the future")
+
+// ErrWithdrawMustGoToStakeOwner is returned when the withdrawal is not going to the stake owner.
+var ErrWithdrawMustGoToStakeOwner = errors.New("delegated validator withdraw must go to stake owner")
+
 // SmallStakeError is returned when the stake amount is less than the minimum stake.
 type SmallStakeError struct {
 	Minimum amount.Amount

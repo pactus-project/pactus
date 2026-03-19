@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -120,4 +121,45 @@ func TestIsUnbonded(t *testing.T) {
 
 	val.UpdateUnbondingHeight(ts.RandHeight())
 	assert.True(t, val.IsUnbonded())
+}
+
+func TestDelegation(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	val := ts.GenerateTestValidator()
+	assert.False(t, val.IsDelegated())
+
+	owner := ts.RandAccAddress()
+	share := amount.Amount(350_000_000) // 0.35 PAC
+	expiry := uint32(1000)
+	val.SetDelegation(owner, share, expiry)
+
+	assert.True(t, val.IsDelegated())
+	assert.Equal(t, owner, val.DelegateOwner())
+	assert.Equal(t, share, val.DelegateShare())
+	assert.Equal(t, expiry, val.DelegateExpiry())
+	assert.False(t, val.DelegateExpired(999))
+	assert.True(t, val.DelegateExpired(1000))
+	assert.True(t, val.DelegateExpired(1001))
+
+	// Round-trip serialization with delegation
+	data, err := val.Bytes()
+	require.NoError(t, err)
+	assert.Equal(t, 120+21+8+4, len(data))
+	val2, err := validator.FromBytes(data)
+	require.NoError(t, err)
+	assert.True(t, val2.IsDelegated())
+	assert.Equal(t, val.DelegateOwner(), val2.DelegateOwner())
+	assert.Equal(t, val.DelegateShare(), val2.DelegateShare())
+	assert.Equal(t, val.DelegateExpiry(), val2.DelegateExpiry())
+}
+
+func TestUpdateProtocolVersion(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	val := ts.GenerateTestValidator()
+	assert.Equal(t, protocol.Version(0), val.ProtocolVersion())
+
+	val.UpdateProtocolVersion(1)
+	assert.Equal(t, protocol.Version(1), val.ProtocolVersion())
 }

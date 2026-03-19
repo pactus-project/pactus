@@ -14,7 +14,8 @@ func TestParseVersion(t *testing.T) {
 	}{
 		{"1", ProtocolVersion1, false},
 		{"2", ProtocolVersion2, false},
-		{"2", ProtocolVersionLatest, false},
+		{"3", ProtocolVersion3, false},
+		{"3", ProtocolVersionLatest, false},
 		{"invalid", 0, true},
 		{"0", 0, false},
 		{"-1", Version(255), false},
@@ -40,7 +41,8 @@ func TestVersionString(t *testing.T) {
 	}{
 		{ProtocolVersion1, "1"},
 		{ProtocolVersion2, "2"},
-		{ProtocolVersionLatest, "2"},
+		{ProtocolVersion3, "3"},
+		{ProtocolVersionLatest, "3"},
 		{0, "0"},
 		{127, "127"},
 		{255, "255"},

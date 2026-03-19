@@ -98,7 +98,7 @@ func TestSortitionDecoding(t *testing.T) {
 	for no, tt := range tests {
 		pld := SortitionPayload{}
 		r := util.NewFixedReader(len(tt.raw), tt.raw)
-		err := pld.Decode(r)
+		err := pld.Decode(DecodeContext{}, r)
 		if tt.readErr != nil {
 			assert.ErrorIs(t, err, tt.readErr)
 		} else {

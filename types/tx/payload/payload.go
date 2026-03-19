@@ -38,13 +38,23 @@ func (t Type) String() string {
 	return fmt.Sprintf("%d", t)
 }
 
+// DecodeContext holds options passed when decoding a payload.
+type DecodeContext struct {
+	BondDelegation bool
+}
+
+// WithBondDelegation passes the bond delegation flag so payloads can decode extended fields (e.g. bond delegation).
+func (d *DecodeContext) WithBondDelegation(bondDelegation bool) {
+	d.BondDelegation = bondDelegation
+}
+
 type Payload interface {
 	Signer() crypto.Address
 	Value() amount.Amount
 	Type() Type
 	SerializeSize() int
 	Encode(io.Writer) error
-	Decode(io.Reader) error
+	Decode(DecodeContext, io.Reader) error
 	BasicCheck() error
 	LogString() string
 }
