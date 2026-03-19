@@ -1,4 +1,4 @@
-package payload
+package payload_test
 
 import (
 	"io"
@@ -6,32 +6,32 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestUnbondType(t *testing.T) {
-	pld := UnbondPayload{}
-	assert.Equal(t, TypeUnbond, pld.Type())
+	pld := payload.UnbondPayload{}
+	assert.Equal(t, payload.TypeUnbond, pld.Type())
 }
 
 func TestUnbondString(t *testing.T) {
-	pld := UnbondPayload{}
+	pld := payload.UnbondPayload{}
 	assert.Contains(t, pld.LogString(), "{Unbond ")
 }
 
 func TestUnbondDecoding(t *testing.T) {
 	tests := []struct {
-		raw      []byte
-		value    amount.Amount
-		readErr  error
-		basicErr error
+		raw     []byte
+		value   amount.Amount
+		readErr error
 	}{
 		{
-			raw:      []byte{},
-			value:    0,
-			readErr:  io.EOF,
-			basicErr: nil,
+			raw:     []byte{},
+			value:   0,
+			readErr: io.EOF,
 		},
 		{
 			raw: []byte{
@@ -39,21 +39,8 @@ func TestUnbondDecoding(t *testing.T) {
 				0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20,
 				0x21, 0x12, 0x23, 0x24,
 			},
-			value:    0,
-			readErr:  io.ErrUnexpectedEOF,
-			basicErr: nil,
-		},
-		{
-			raw: []byte{
-				0x02, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
-				0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20,
-				0x21, 0x12, 0x23, 0x24, 0x25, // account as validator address
-			},
 			value:   0,
-			readErr: nil,
-			basicErr: BasicCheckError{
-				Reason: "address is not a validator address",
-			},
+			readErr: io.ErrUnexpectedEOF,
 		},
 		{
 			raw: []byte{
@@ -61,16 +48,15 @@ func TestUnbondDecoding(t *testing.T) {
 				0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20,
 				0x21, 0x12, 0x23, 0x24, 0x25, // validator
 			},
-			value:    0,
-			readErr:  nil,
-			basicErr: nil,
+			value:   0,
+			readErr: nil,
 		},
 	}
 
 	for no, tt := range tests {
-		pld := UnbondPayload{}
+		pld := payload.UnbondPayload{}
 		r := util.NewFixedReader(len(tt.raw), tt.raw)
-		err := pld.Decode(DecodeContext{}, r)
+		err := pld.Decode(payload.DecodeContext{}, r)
 		if tt.readErr != nil {
 			assert.ErrorIs(t, err, tt.readErr)
 		} else {
@@ -86,19 +72,36 @@ func TestUnbondDecoding(t *testing.T) {
 			assert.Equal(t, tt.raw, w.Bytes())
 
 			// Basic check
-			if tt.basicErr != nil {
-				assert.ErrorIs(t, pld.BasicCheck(), tt.basicErr)
-			} else {
-				assert.NoError(t, pld.BasicCheck())
 
-				// Check signer
-				if tt.raw[0] != 0 {
-					assert.Equal(t, crypto.Address(tt.raw[:21]), pld.Signer())
-				} else {
-					assert.Equal(t, crypto.TreasuryAddress, pld.Signer())
-				}
-				assert.Equal(t, tt.value, pld.Value())
+			assert.NoError(t, pld.BasicCheck())
+
+			// Check signer
+			if tt.raw[0] != 0 {
+				assert.Equal(t, crypto.Address(tt.raw[:21]), pld.Signer())
+			} else {
+				assert.Equal(t, crypto.TreasuryAddress, pld.Signer())
 			}
+			assert.Equal(t, tt.value, pld.Value())
 		}
+	}
+}
+
+func TestUnbondBasicCheck(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	tests := []struct {
+		pld payload.UnbondPayload
+		err string
+	}{
+		{
+			pld: payload.UnbondPayload{
+				Validator: ts.RandAccAddress(),
+			},
+			err: "address is not a validator address",
+		},
+	}
+
+	for no, tt := range tests {
+		assert.ErrorContains(t, tt.pld.BasicCheck(), tt.err, "test %v failed", no)
 	}
 }
