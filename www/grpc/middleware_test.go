@@ -12,12 +12,29 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+type mockServerStream struct {
+	grpc.ServerStream
+	ctx context.Context
+}
+
+func (m *mockServerStream) Context() context.Context {
+	return m.ctx
+}
+
 // mockUnaryHandler simulates a gRPC method handler.
 func mockUnaryHandler(_ context.Context, _ any) (any, error) {
 	return "response", nil
 }
 
 func mockUnaryPanicHandler(_ context.Context, _ any) (any, error) {
+	panic("panic happen!!!")
+}
+
+func mockStreamHandler(_ any, _ grpc.ServerStream) error {
+	return nil
+}
+
+func mockStreamPanicHandler(_ any, _ grpc.ServerStream) error {
 	panic("panic happen!!!")
 }
 
@@ -77,5 +94,64 @@ func TestGrpcRecovery(t *testing.T) {
 	interceptor := s.server.Recovery()
 
 	_, err := interceptor(context.Background(), nil, &grpc.UnaryServerInfo{}, mockUnaryPanicHandler)
+	assert.Equal(t, codes.Unknown, status.Code(err))
+}
+
+func TestBasicAuthStream(t *testing.T) {
+	auth := "Basic " + base64.StdEncoding.EncodeToString([]byte("user:password"))
+	invalidAuth := "Basic " + base64.StdEncoding.EncodeToString([]byte("invalid:invalid"))
+	malformedAuth := "Malformed"
+
+	tests := []struct {
+		name          string
+		authHeader    string
+		expectedError codes.Code
+	}{
+		{
+			name:          "ValidCredentials",
+			authHeader:    auth,
+			expectedError: codes.OK,
+		},
+		{
+			name:          "InvalidCredentials",
+			authHeader:    invalidAuth,
+			expectedError: codes.Unauthenticated,
+		},
+		{
+			name:          "NoMetadata",
+			authHeader:    "",
+			expectedError: codes.Unauthenticated,
+		},
+		{
+			name:          "MalformedAuthHeader",
+			authHeader:    malformedAuth,
+			expectedError: codes.Unauthenticated,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx := context.Background()
+			if tt.authHeader != "" {
+				md := metadata.New(map[string]string{"authorization": tt.authHeader})
+				ctx = metadata.NewIncomingContext(ctx, md)
+			}
+
+			interceptor := BasicAuthStream("user:$2y$10$5Kjd955BDWLouqckHzBjKuCF6hFOUD61lhm8QpjDVHTUwMIrYUdq2")
+
+			err := interceptor(nil, &mockServerStream{ctx: ctx}, &grpc.StreamServerInfo{}, mockStreamHandler)
+
+			got, want := status.Code(err), tt.expectedError
+			assert.Equal(t, want, got)
+		})
+	}
+}
+
+func TestGrpcRecoveryStream(t *testing.T) {
+	s := setup(t, nil)
+
+	interceptor := s.server.RecoveryStream()
+
+	err := interceptor(nil, &mockServerStream{ctx: context.Background()}, &grpc.StreamServerInfo{}, mockStreamPanicHandler)
 	assert.Equal(t, codes.Unknown, status.Code(err))
 }
