@@ -16,6 +16,7 @@ type BondPayload struct {
 	PublicKey *bls.PublicKey
 	Stake     amount.Amount
 
+	// Delegation fields
 	DelegateOwner  crypto.Address
 	DelegateShare  amount.Amount
 	DelegateExpiry uint32
@@ -164,7 +165,7 @@ func (p *BondPayload) Decode(ctx DecodeContext, r io.Reader) error {
 	}
 	p.Stake = amount.Amount(stake)
 
-	if ctx.BondDelegation {
+	if ctx.WithDelegation {
 		if err := p.DelegateOwner.Decode(r); err != nil {
 			return err
 		}

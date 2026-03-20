@@ -190,7 +190,7 @@ func TestBondDecoding(t *testing.T) {
 	}
 }
 
-func TestBondDelegateDecoding(t *testing.T) {
+func TestBondWithDelegateDecoding(t *testing.T) {
 	tests := []struct {
 		raw      []byte
 		value    amount.Amount
@@ -269,11 +269,8 @@ func TestBondDelegateDecoding(t *testing.T) {
 
 	for no, tt := range tests {
 		pld := payload.BondPayload{}
-		ctx := payload.DecodeContext{}
-		ctx.WithBondDelegation(true)
-
 		r := util.NewFixedReader(len(tt.raw), tt.raw)
-		err := pld.Decode(ctx, r)
+		err := pld.Decode(payload.DecodeContext{WithDelegation: true}, r)
 		if tt.readErr != nil {
 			assert.ErrorIs(t, err, tt.readErr)
 		} else {
