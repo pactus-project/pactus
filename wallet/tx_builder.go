@@ -49,17 +49,55 @@ func OptionMemo(memo string) func(builder *txBuilder) error {
 	}
 }
 
+// OptionDelegateOwner sets delegation owner address for bond/unbond transactions.
+func OptionDelegateOwner(owner string) func(builder *txBuilder) error {
+	return func(builder *txBuilder) error {
+		delegateOwner, err := crypto.AddressFromString(owner)
+		if err != nil {
+			return err
+		}
+		builder.delegateOwner = &delegateOwner
+
+		return nil
+	}
+}
+
+// OptionDelegateShare sets delegation owner reward share for delegated bond transactions.
+func OptionDelegateShare(shareStr string) func(builder *txBuilder) error {
+	return func(builder *txBuilder) error {
+		share, err := amount.FromString(shareStr)
+		if err != nil {
+			return err
+		}
+		builder.delegateShare = share
+
+		return nil
+	}
+}
+
+// OptionDelegateExpiry sets delegation expiry height for delegated bond transactions.
+func OptionDelegateExpiry(expiry uint32) func(builder *txBuilder) error {
+	return func(builder *txBuilder) error {
+		builder.delegateExpiry = expiry
+
+		return nil
+	}
+}
+
 // txBuilder helps build and configure a transaction before submitting it.
 type txBuilder struct {
-	provider provider.IBlockchainProvider
-	sender   *crypto.Address
-	receiver *crypto.Address
-	pub      *bls.PublicKey
-	typ      payload.Type
-	lockTime uint32
-	amount   amount.Amount
-	fee      amount.Amount
-	memo     string
+	provider       provider.IBlockchainProvider
+	sender         *crypto.Address
+	receiver       *crypto.Address
+	pub            *bls.PublicKey
+	delegateOwner  *crypto.Address
+	delegateShare  amount.Amount
+	delegateExpiry uint32
+	typ            payload.Type
+	lockTime       uint32
+	amount         amount.Amount
+	fee            amount.Amount
+	memo           string
 }
 
 // setSenderAddr sets the sender's address for the transaction.
@@ -113,9 +151,19 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 			pub = nil
 		}
 		trx = tx.NewBondTx(m.lockTime, *m.sender, *m.receiver, pub, m.amount, m.fee, tx.WithMemo(m.memo))
+		if m.delegateOwner != nil {
+			bondPld := trx.Payload().(*payload.BondPayload)
+			bondPld.DelegateOwner = *m.delegateOwner
+			bondPld.DelegateShare = m.delegateShare
+			bondPld.DelegateExpiry = m.delegateExpiry
+		}
 
 	case payload.TypeUnbond:
 		trx = tx.NewUnbondTx(m.lockTime, *m.sender, tx.WithMemo(m.memo))
+		if m.delegateOwner != nil {
+			unbondPld := trx.Payload().(*payload.UnbondPayload)
+			unbondPld.DelegateOwner = *m.delegateOwner
+		}
 
 	case payload.TypeWithdraw:
 		trx = tx.NewWithdrawTx(m.lockTime, *m.sender, *m.receiver, m.amount, m.fee, tx.WithMemo(m.memo))
