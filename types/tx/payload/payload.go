@@ -40,12 +40,7 @@ func (t Type) String() string {
 
 // DecodeContext holds options passed when decoding a payload.
 type DecodeContext struct {
-	BondDelegation bool
-}
-
-// WithBondDelegation passes the bond delegation flag so payloads can decode extended fields (e.g. bond delegation).
-func (d *DecodeContext) WithBondDelegation(bondDelegation bool) {
-	d.BondDelegation = bondDelegation
+	WithDelegation bool
 }
 
 type Payload interface {
