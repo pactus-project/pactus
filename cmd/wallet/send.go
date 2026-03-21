@@ -79,6 +79,12 @@ func buildSendBondCmd(parentCmd *cobra.Command) {
 	parentCmd.AddCommand(bondCmd)
 
 	pubKeyOpt := bondCmd.Flags().String("pub", "", "validator's public key")
+	delegateOwnerOpt := bondCmd.Flags().String("delegate-owner", "",
+		"delegation stake owner account address")
+	delegateShareOpt := bondCmd.Flags().String("delegate-share", "",
+		"delegation owner share in PAC (0 to 0.7)")
+	delegateExpiryOpt := bondCmd.Flags().Uint32("delegate-expiry", 0,
+		"delegation expiry block height")
 	lockTime, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(bondCmd)
 	passOpt := addPasswordOption(bondCmd)
 
@@ -96,6 +102,9 @@ func buildSendBondCmd(parentCmd *cobra.Command) {
 			wallet.OptionFee(*feeOpt),
 			wallet.OptionLockTime(uint32(*lockTime)),
 			wallet.OptionMemo(*memoOpt),
+			wallet.OptionDelegateOwner(*delegateOwnerOpt),
+			wallet.OptionDelegateShare(*delegateShareOpt),
+			wallet.OptionDelegateExpiry(*delegateExpiryOpt),
 		}
 
 		trx, err := wlt.MakeBondTx(sender, receiver, *pubKeyOpt, amt, opts...)
@@ -124,6 +133,8 @@ func buildSendUnbondCmd(parentCmd *cobra.Command) {
 	parentCmd.AddCommand(unbondCmd)
 
 	lockTime, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(unbondCmd)
+	delegateOwnerOpt := unbondCmd.Flags().String("delegate-owner", "",
+		"delegation stake owner account address")
 	passOpt := addPasswordOption(unbondCmd)
 
 	unbondCmd.Run = func(_ *cobra.Command, args []string) {
@@ -137,6 +148,7 @@ func buildSendUnbondCmd(parentCmd *cobra.Command) {
 			wallet.OptionFee(*feeOpt),
 			wallet.OptionLockTime(uint32(*lockTime)),
 			wallet.OptionMemo(*memoOpt),
+			wallet.OptionDelegateOwner(*delegateOwnerOpt),
 		}
 
 		trx, err := wlt.MakeUnbondTx(from, opts...)
