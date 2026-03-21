@@ -64,6 +64,9 @@ var ErrDelegateExpiryInPast = errors.New("delegate expiry must be in the future"
 // ErrWithdrawMustGoToStakeOwner is returned when the withdrawal is not going to the stake owner.
 var ErrWithdrawMustGoToStakeOwner = errors.New("delegated validator withdraw must go to stake owner")
 
+// ErrInvalidDelegateOwner is returned when the delegate owner is invalid.
+var ErrInvalidDelegateOwner = errors.New("invalid delegate owner")
+
 // SmallStakeError is returned when the stake amount is less than the minimum stake.
 type SmallStakeError struct {
 	Minimum amount.Amount
