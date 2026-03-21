@@ -16,7 +16,7 @@ type UnbondExecutor struct {
 func newUnbondExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*UnbondExecutor, error) {
 	pld := trx.Payload().(*payload.UnbondPayload)
 
-	val := sbx.Validator(pld.Signer())
+	val := sbx.Validator(pld.Validator)
 	if val == nil {
 		return nil, ValidatorNotFoundError{Address: pld.Validator}
 	}
@@ -31,6 +31,12 @@ func newUnbondExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*UnbondExecutor, error)
 func (e *UnbondExecutor) Check(strict bool) error {
 	if e.validator.IsUnbonded() {
 		return ErrValidatorUnbonded
+	}
+
+	if e.validator.IsDelegated() {
+		if e.pld.DelegateOwner != e.validator.DelegateOwner() {
+			return ErrInvalidDelegateOwner
+		}
 	}
 
 	if strict {

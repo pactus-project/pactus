@@ -3,7 +3,9 @@ package executor
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -92,4 +94,39 @@ func TestPowerDeltaUnbond(t *testing.T) {
 	td.execute(t, trx)
 
 	assert.Equal(t, int64(-amt), td.sbx.PowerDelta())
+}
+
+func TestExecuteDelegatedUnbondTx(t *testing.T) {
+	td := setup(t)
+
+	valPub, _ := td.RandBLSKeyPair()
+	valAddr := valPub.ValidatorAddress()
+	val := td.sbx.MakeNewValidator(valPub)
+	val.AddToStake(td.sbx.TestParams.MaximumStake)
+	owner := td.RandAccAddress()
+	val.SetDelegation(owner, amount.Amount(2e8), td.sbx.CurrentHeight()+10)
+	td.sbx.UpdateValidator(val)
+	lockTime := td.sbx.CurrentHeight()
+
+	t.Run("Should fail, invalid delegate owner", func(t *testing.T) {
+		trx := tx.NewUnbondTx(lockTime, valAddr)
+		pld := trx.Payload().(*payload.UnbondPayload)
+		pld.DelegateOwner = td.RandAccAddress()
+
+		td.check(t, trx, true, ErrInvalidDelegateOwner)
+		td.check(t, trx, false, ErrInvalidDelegateOwner)
+	})
+
+	t.Run("Ok", func(t *testing.T) {
+		trx := tx.NewUnbondTx(lockTime, valAddr)
+		pld := trx.Payload().(*payload.UnbondPayload)
+		pld.DelegateOwner = owner
+
+		td.check(t, trx, true, nil)
+		td.check(t, trx, false, nil)
+		td.execute(t, trx)
+	})
+
+	updatedVal := td.sbx.Validator(valAddr)
+	assert.Equal(t, lockTime, updatedVal.UnbondingHeight())
 }
