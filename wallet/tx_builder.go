@@ -52,6 +52,10 @@ func OptionMemo(memo string) func(builder *txBuilder) error {
 // OptionDelegateOwner sets delegation owner address for bond/unbond transactions.
 func OptionDelegateOwner(owner string) func(builder *txBuilder) error {
 	return func(builder *txBuilder) error {
+		if owner == "" {
+			return nil
+		}
+
 		delegateOwner, err := crypto.AddressFromString(owner)
 		if err != nil {
 			return err
@@ -65,6 +69,10 @@ func OptionDelegateOwner(owner string) func(builder *txBuilder) error {
 // OptionDelegateShare sets delegation owner reward share for delegated bond transactions.
 func OptionDelegateShare(shareStr string) func(builder *txBuilder) error {
 	return func(builder *txBuilder) error {
+		if shareStr == "" {
+			return nil
+		}
+
 		share, err := amount.FromString(shareStr)
 		if err != nil {
 			return err
