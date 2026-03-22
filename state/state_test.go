@@ -10,9 +10,11 @@ import (
 	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/state/param"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/protocol"
@@ -156,7 +158,7 @@ func TestBlockSubsidyTx(t *testing.T) {
 	// Without reward address in config
 	rewardAddr := td.RandAccAddress()
 	randAccumulatedFee := td.RandFee()
-	trx := td.state.createSubsidyTx(rewardAddr, randAccumulatedFee)
+	trx := td.state.createSubsidyTx(td.genValKeys[0].Address(), rewardAddr, randAccumulatedFee)
 	payload := trx.Payload().(*payload.BatchTransferPayload)
 	assert.True(t, trx.IsSubsidyTx())
 	assert.Equal(t, td.state.params.BlockReward+randAccumulatedFee, payload.Value())
@@ -165,6 +167,65 @@ func TestBlockSubsidyTx(t *testing.T) {
 	assert.Equal(t, td.state.params.FoundationReward, payload.Recipients[0].Amount)
 	assert.Equal(t, td.state.params.BlockReward-td.state.params.FoundationReward+randAccumulatedFee,
 		payload.Recipients[1].Amount)
+}
+
+func TestBlockSubsidyDelegatedTx(t *testing.T) {
+	td := setup(t)
+
+	rewardAddr := td.RandAccAddress()
+	randAccumulatedFee := td.RandFee()
+	dlgOwner := td.RandAccAddress()
+
+	tests := []struct {
+		name     string
+		dlgShare amount.Amount
+	}{
+		{name: "delegate_share_zero", dlgShare: 0},
+		{name: "delegate_share_0_7_PAC", dlgShare: param.MaxDelegateOwnerRewardShare},
+		{name: "delegate_share_partial", dlgShare: 2e8},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			val := td.GenerateTestValidator()
+			val.SetDelegation(dlgOwner, tt.dlgShare, td.RandHeight())
+			td.state.store.UpdateValidator(val)
+
+			trx := td.state.createSubsidyTx(val.Address(), rewardAddr, randAccumulatedFee)
+			payload := trx.Payload().(*payload.BatchTransferPayload)
+
+			assert.True(t, trx.IsSubsidyTx())
+			assert.Equal(t, crypto.TreasuryAddress, payload.Signer())
+			assert.Equal(t, td.state.params.FoundationReward, payload.Recipients[0].Amount)
+
+			switch tt.dlgShare {
+			case 0:
+				// PIP-49: no owner output when share is 0; 2 recipients (foundation + operator).
+				assert.Equal(t, td.state.params.BlockReward+randAccumulatedFee, payload.Value())
+				require.Len(t, payload.Recipients, 2)
+				assert.Equal(t, rewardAddr, payload.Recipients[1].To)
+				assert.Equal(t,
+					td.state.params.BlockReward-td.state.params.FoundationReward+randAccumulatedFee,
+					payload.Recipients[1].Amount)
+			case param.MaxDelegateOwnerRewardShare:
+				// PIP-49: at max owner share there is no operator output; fees are not split to recipients here.
+				assert.Equal(t, td.state.params.BlockReward, payload.Value())
+				require.Len(t, payload.Recipients, 2)
+				assert.Equal(t, dlgOwner, payload.Recipients[1].To)
+				assert.Equal(t, param.MaxDelegateOwnerRewardShare, payload.Recipients[1].Amount)
+			default:
+				// Intermediate share: foundation + owner + operator (reward address).
+				assert.Equal(t, td.state.params.BlockReward+randAccumulatedFee, payload.Value())
+				require.Len(t, payload.Recipients, 3)
+				assert.Equal(t, dlgOwner, payload.Recipients[1].To)
+				assert.Equal(t, tt.dlgShare, payload.Recipients[1].Amount)
+				assert.Equal(t, rewardAddr, payload.Recipients[2].To)
+				assert.Equal(t,
+					td.state.params.BlockReward-tt.dlgShare-td.state.params.FoundationReward+randAccumulatedFee,
+					payload.Recipients[2].Amount)
+			}
+		})
+	}
 }
 
 func TestTryCommitInvalidCertificate(t *testing.T) {
@@ -336,19 +397,19 @@ func TestBlockProposal(t *testing.T) {
 	td := setup(t)
 
 	t.Run("validity of the proposed block", func(t *testing.T) {
-		b, err := td.state.ProposeBlock(td.state.valKeys[0], td.RandAccAddress())
+		blk, err := td.state.ProposeBlock(td.state.valKeys[0], td.RandAccAddress())
 		assert.NoError(t, err)
-		assert.NoError(t, td.state.ValidateBlock(b, 0))
+		assert.NoError(t, td.state.ValidateBlock(blk, 0))
 	})
 
 	t.Run("Tx pool has two subsidy transactions", func(t *testing.T) {
-		trx := td.state.createSubsidyTx(td.RandAccAddress(), 0)
+		trx := td.state.createSubsidyTx(td.genValKeys[0].Address(), td.RandAccAddress(), 0)
 		assert.NoError(t, td.state.AddPendingTx(trx))
 
-		b, err := td.state.ProposeBlock(td.state.valKeys[0], td.RandAccAddress())
+		blk, err := td.state.ProposeBlock(td.state.valKeys[0], td.RandAccAddress())
 		assert.NoError(t, err)
-		assert.NoError(t, td.state.ValidateBlock(b, 0))
-		assert.Equal(t, 1, b.Transactions().Len())
+		assert.NoError(t, td.state.ValidateBlock(blk, 0))
+		assert.Equal(t, 1, blk.Transactions().Len())
 	})
 }
 

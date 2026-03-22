@@ -308,20 +308,46 @@ func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
 	return nil
 }
 
-func (st *state) createSubsidyTx(rewardAddr crypto.Address, accumulatedFee amount.Amount) *tx.Tx {
+func (st *state) createSubsidyTx(valAddr, rewardAddr crypto.Address, accumulatedFee amount.Amount) *tx.Tx {
 	lockTime := st.lastInfo.BlockHeight() + 1
 
 	addressIndex := int(lockTime) % len(st.params.FoundationAddress)
 	foundationAddress := st.params.FoundationAddress[addressIndex]
-	recipients := []payload.BatchRecipient{
-		{
-			To:     foundationAddress,
-			Amount: st.params.FoundationReward,
-		},
-		{
-			To:     rewardAddr,
-			Amount: st.params.BlockReward - st.params.FoundationReward + accumulatedFee,
-		},
+	recipients := make([]payload.BatchRecipient, 0, 3)
+	recipients = append(recipients, payload.BatchRecipient{
+		To:     foundationAddress,
+		Amount: st.params.FoundationReward,
+	})
+
+	val, _ := st.store.Validator(valAddr)
+
+	if val.IsDelegated() {
+		dlgOwner := val.DelegateOwner()
+		dlgShare := val.DelegateShare()
+
+		if dlgShare > 0 {
+			recipients = append(recipients,
+				payload.BatchRecipient{
+					To:     dlgOwner,
+					Amount: dlgShare,
+				})
+		}
+
+		// Base on PIP-49, the maximum delegate share is 0.7 PAC.
+		// If the delegate share is equal to 0.7 PAC, the reward address should not receive any reward.
+		if dlgShare < param.MaxDelegateOwnerRewardShare {
+			recipients = append(recipients,
+				payload.BatchRecipient{
+					To:     rewardAddr,
+					Amount: st.params.BlockReward + accumulatedFee - st.params.FoundationReward - dlgShare,
+				})
+		}
+	} else {
+		recipients = append(recipients,
+			payload.BatchRecipient{
+				To:     rewardAddr,
+				Amount: st.params.BlockReward + accumulatedFee - st.params.FoundationReward,
+			})
 	}
 
 	return tx.NewSubsidyTx(lockTime, recipients)
@@ -354,7 +380,8 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 		}
 	}
 
-	subsidyTx := st.createSubsidyTx(rewardAddr, sbx.AccumulatedFee())
+	valAddr := valKey.Address()
+	subsidyTx := st.createSubsidyTx(valAddr, rewardAddr, sbx.AccumulatedFee())
 	txs.Prepend(subsidyTx)
 	prevSeed := st.lastInfo.SortitionSeed()
 
@@ -366,7 +393,7 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 		st.stateRoot(),
 		st.lastInfo.Certificate(),
 		prevSeed.GenerateNext(valKey.PrivateKey()),
-		valKey.Address())
+		valAddr)
 
 	return blk, nil
 }

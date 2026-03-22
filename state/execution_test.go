@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/execution/executor"
+	"github.com/pactus-project/pactus/state/param"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/protocol"
@@ -64,8 +65,8 @@ func TestExecuteBlock(t *testing.T) {
 		testsuite.TransactionWithLockTime(1),
 		testsuite.TransactionWithSigner(td.genAccKey))
 
-	invSubsidyTx := td.state.createSubsidyTx(td.RandAccAddress(), validTx1.Fee()+1)
-	validSubsidyTx := td.state.createSubsidyTx(td.RandAccAddress(), validTx1.Fee())
+	invSubsidyTx := td.state.createSubsidyTx(td.genValKeys[0].Address(), td.RandAccAddress(), validTx1.Fee()+1)
+	validSubsidyTx := td.state.createSubsidyTx(td.genValKeys[0].Address(), td.RandAccAddress(), validTx1.Fee())
 
 	assert.NoError(t, td.state.AddPendingTx(invTransferTx))
 	assert.NoError(t, td.state.AddPendingTx(validSubsidyTx))
@@ -344,7 +345,7 @@ func TestSubsidyTransaction(t *testing.T) {
 		val, err := td.state.store.Validator(proposerAddr)
 		require.NoError(t, err)
 
-		for _, share := range []amount.Amount{0, 7e8} {
+		for _, share := range []amount.Amount{0, param.MaxDelegateOwnerRewardShare} {
 			val.SetDelegation(td.RandAccAddress(), share, lockTime+10)
 			td.state.store.UpdateValidator(val)
 

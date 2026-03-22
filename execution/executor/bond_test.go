@@ -3,6 +3,7 @@ package executor
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/state/param"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
@@ -194,7 +195,7 @@ func TestExecuteDelegatedBondTx(t *testing.T) {
 	lockTime := td.sbx.CurrentHeight()
 	fee := td.RandFee()
 	owner := td.RandAccAddress()
-	delegateShare := td.RandAmountRange(0, 7e8)
+	delegateShare := td.RandAmountRange(0, param.MaxDelegateOwnerRewardShare)
 	delegateExpiry := td.sbx.CurrentHeight() + 1
 
 	makeDelegatedBond := func(stake amount.Amount) *tx.Tx {
