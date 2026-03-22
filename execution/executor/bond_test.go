@@ -3,7 +3,10 @@ package executor
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -179,4 +182,72 @@ func TestSmallBond(t *testing.T) {
 
 	receiverValAfterExecution, _ := td.sbx.TestStore.Validator(receiverVal.Address())
 	assert.Equal(t, td.sbx.Params().MaximumStake, receiverValAfterExecution.Stake())
+}
+
+func TestExecuteDelegatedBondTx(t *testing.T) {
+	td := setup(t)
+
+	senderAddr, senderAcc := td.sbx.TestStore.RandomTestAcc()
+	senderBalance := senderAcc.Balance()
+	valPub, _ := td.RandBLSKeyPair()
+	receiverAddr := valPub.ValidatorAddress()
+	lockTime := td.sbx.CurrentHeight()
+	fee := td.RandFee()
+	owner := td.RandAccAddress()
+	delegateShare := td.RandAmountRange(0, 7e8)
+	delegateExpiry := td.sbx.CurrentHeight() + 1
+
+	makeDelegatedBond := func(stake amount.Amount) *tx.Tx {
+		trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, valPub, stake, fee)
+		pld := trx.Payload().(*payload.BondPayload)
+		pld.DelegateOwner = owner
+		pld.DelegateShare = delegateShare
+		pld.DelegateExpiry = delegateExpiry
+
+		return trx
+	}
+
+	t.Run("Should fail, invalid block version", func(t *testing.T) {
+		td.sbx.TestParams.BlockVersion = protocol.ProtocolVersion2
+		trx := makeDelegatedBond(td.sbx.TestParams.MaximumStake)
+
+		td.check(t, trx, true, ErrInvalidBlockVersion)
+		td.check(t, trx, false, ErrInvalidBlockVersion)
+	})
+
+	t.Run("Should fail, delegation stake must equal maximum", func(t *testing.T) {
+		td.sbx.TestParams.BlockVersion = protocol.ProtocolVersion3
+		trx := makeDelegatedBond(td.sbx.TestParams.MaximumStake - 1)
+
+		td.check(t, trx, true, ErrInvalidDelegation)
+		td.check(t, trx, false, ErrInvalidDelegation)
+	})
+
+	t.Run("Should fail, delegate expiry is in past/current height", func(t *testing.T) {
+		td.sbx.TestParams.BlockVersion = protocol.ProtocolVersion3
+		trx := makeDelegatedBond(td.sbx.TestParams.MaximumStake)
+		pld := trx.Payload().(*payload.BondPayload)
+		pld.DelegateExpiry = td.sbx.CurrentHeight()
+
+		td.check(t, trx, true, ErrDelegateExpiryInPast)
+		td.check(t, trx, false, ErrDelegateExpiryInPast)
+	})
+
+	t.Run("Ok", func(t *testing.T) {
+		td.sbx.TestParams.BlockVersion = protocol.ProtocolVersion3
+		trx := makeDelegatedBond(td.sbx.TestParams.MaximumStake)
+
+		td.check(t, trx, true, nil)
+		td.check(t, trx, false, nil)
+		td.execute(t, trx)
+	})
+
+	updatedSenderAcc := td.sbx.Account(senderAddr)
+	updatedReceiverVal := td.sbx.Validator(receiverAddr)
+	assert.Equal(t, senderBalance-(td.sbx.TestParams.MaximumStake+fee), updatedSenderAcc.Balance())
+	assert.Equal(t, td.sbx.TestParams.MaximumStake, updatedReceiverVal.Stake())
+	assert.Equal(t, owner, updatedReceiverVal.DelegateOwner())
+	assert.Equal(t, delegateShare, updatedReceiverVal.DelegateShare())
+	assert.Equal(t, delegateExpiry, updatedReceiverVal.DelegateExpiry())
+	assert.True(t, updatedReceiverVal.IsDelegated())
 }
