@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/execution/executor"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
@@ -233,5 +234,136 @@ func TestSubsidyTransaction(t *testing.T) {
 
 		err := td.state.checkSubsidy(trx, td.RandValAddress(), true)
 		assert.NoError(t, err)
+	})
+
+	t.Run("Delegated proposer accepts valid 3-recipient subsidy", func(t *testing.T) {
+		td.state.params.BlockVersion = protocol.ProtocolVersion3
+		proposerAddr := td.genValKeys[0].Address()
+		delegateOwner := td.RandAccAddress()
+		delegateShare := amount.Amount(2e8)
+		lockTime := td.RandHeight()
+
+		val, err := td.state.store.Validator(proposerAddr)
+		require.NoError(t, err)
+		val.SetDelegation(delegateOwner, delegateShare, lockTime+10)
+		td.state.store.UpdateValidator(val)
+
+		recipients := []payload.BatchRecipient{
+			{
+				To:     td.state.params.FoundationAddress[lockTime%100],
+				Amount: td.state.params.FoundationReward,
+			},
+			{
+				To:     td.RandAccAddress(),
+				Amount: td.state.params.BlockReward - td.state.params.FoundationReward - delegateShare,
+			},
+			{
+				To:     delegateOwner,
+				Amount: delegateShare,
+			},
+		}
+		trx := td.GenerateTestSubsidyTx(
+			testsuite.TransactionWithLockTime(lockTime),
+			testsuite.TransactionWithRecipients(recipients))
+
+		err = td.state.checkSubsidy(trx, proposerAddr, true)
+		assert.NoError(t, err)
+	})
+
+	t.Run("Delegated proposer rejects invalid owner amount/address in 3-recipient subsidy", func(t *testing.T) {
+		td.state.params.BlockVersion = protocol.ProtocolVersion3
+		proposerAddr := td.genValKeys[1].Address()
+		delegateOwner := td.RandAccAddress()
+		delegateShare := amount.Amount(3e8)
+		lockTime := td.RandHeight()
+
+		val, err := td.state.store.Validator(proposerAddr)
+		require.NoError(t, err)
+		val.SetDelegation(delegateOwner, delegateShare, lockTime+10)
+		td.state.store.UpdateValidator(val)
+
+		badRecipients := []payload.BatchRecipient{
+			{
+				To:     td.state.params.FoundationAddress[lockTime%100],
+				Amount: td.state.params.FoundationReward,
+			},
+			{
+				To:     td.RandAccAddress(),
+				Amount: td.state.params.BlockReward - td.state.params.FoundationReward - delegateShare,
+			},
+			{
+				To:     td.RandAccAddress(),
+				Amount: delegateShare + 1,
+			},
+		}
+		trx := td.GenerateTestSubsidyTx(
+			testsuite.TransactionWithLockTime(lockTime),
+			testsuite.TransactionWithRecipients(badRecipients))
+
+		err = td.state.checkSubsidy(trx, proposerAddr, true)
+		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
+	})
+
+	t.Run("Non-delegated proposer rejects 3-recipient subsidy", func(t *testing.T) {
+		td.state.params.BlockVersion = protocol.ProtocolVersion3
+		lockTime := td.RandHeight()
+		proposerAddr := td.genValKeys[2].Address()
+
+		val, err := td.state.store.Validator(proposerAddr)
+		require.NoError(t, err)
+		val.SetDelegation(crypto.TreasuryAddress, 0, 0)
+		td.state.store.UpdateValidator(val)
+
+		recipients := []payload.BatchRecipient{
+			{
+				To:     td.state.params.FoundationAddress[lockTime%100],
+				Amount: td.state.params.FoundationReward,
+			},
+			{
+				To:     td.RandAccAddress(),
+				Amount: td.RandAmount(),
+			},
+			{
+				To:     td.RandAccAddress(),
+				Amount: 0,
+			},
+		}
+		trx := td.GenerateTestSubsidyTx(
+			testsuite.TransactionWithLockTime(lockTime),
+			testsuite.TransactionWithRecipients(recipients))
+
+		err = td.state.checkSubsidy(trx, proposerAddr, true)
+		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
+	})
+
+	t.Run("Delegated proposer share boundaries allow 2-recipient subsidy", func(t *testing.T) {
+		td.state.params.BlockVersion = protocol.ProtocolVersion3
+		proposerAddr := td.genValKeys[3].Address()
+		lockTime := td.RandHeight()
+
+		val, err := td.state.store.Validator(proposerAddr)
+		require.NoError(t, err)
+
+		for _, share := range []amount.Amount{0, 7e8} {
+			val.SetDelegation(td.RandAccAddress(), share, lockTime+10)
+			td.state.store.UpdateValidator(val)
+
+			recipients := []payload.BatchRecipient{
+				{
+					To:     td.state.params.FoundationAddress[lockTime%100],
+					Amount: td.state.params.FoundationReward,
+				},
+				{
+					To:     td.RandAccAddress(),
+					Amount: td.RandAmount(),
+				},
+			}
+			trx := td.GenerateTestSubsidyTx(
+				testsuite.TransactionWithLockTime(lockTime),
+				testsuite.TransactionWithRecipients(recipients))
+
+			err := td.state.checkSubsidy(trx, proposerAddr, true)
+			assert.NoError(t, err)
+		}
 	})
 }

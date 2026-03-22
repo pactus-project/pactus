@@ -3,6 +3,7 @@ package executor
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/stretchr/testify/assert"
 )
@@ -80,4 +81,44 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	assert.Equal(t, amt, updatedReceiverAcc.Balance())
 
 	td.checkTotalCoin(t, fee)
+}
+
+func TestExecuteDelegatedWithdrawTx(t *testing.T) {
+	td := setup(t)
+
+	valPub, _ := td.RandBLSKeyPair()
+	val := td.sbx.MakeNewValidator(valPub)
+	totalStake := td.sbx.TestParams.MaximumStake
+	val.AddToStake(totalStake)
+	owner := td.RandAccAddress()
+	val.SetDelegation(owner, amount.Amount(3e8), td.sbx.CurrentHeight()+10)
+	val.UpdateUnbondingHeight(td.sbx.CurrentHeight() - td.sbx.Params().UnbondInterval + 1)
+	td.sbx.UpdateValidator(val)
+
+	fee := td.RandFee()
+	amt := td.RandAmountRange(0, totalStake-fee)
+	lockTime := td.sbx.CurrentHeight()
+
+	curHeight := td.sbx.CurrentHeight()
+	td.sbx.TestStore.AddTestBlock(curHeight + 1)
+
+	t.Run("Should fail, receiver must be stake owner", func(t *testing.T) {
+		trx := tx.NewWithdrawTx(lockTime, val.Address(), td.RandAccAddress(), amt, fee)
+
+		td.check(t, trx, true, ErrWithdrawMustGoToStakeOwner)
+		td.check(t, trx, false, ErrWithdrawMustGoToStakeOwner)
+	})
+
+	t.Run("Ok", func(t *testing.T) {
+		trx := tx.NewWithdrawTx(lockTime, val.Address(), owner, amt, fee)
+
+		td.check(t, trx, true, nil)
+		td.check(t, trx, false, nil)
+		td.execute(t, trx)
+	})
+
+	updatedVal := td.sbx.Validator(val.Address())
+	updatedOwner := td.sbx.Account(owner)
+	assert.Equal(t, totalStake-amt-fee, updatedVal.Stake())
+	assert.Equal(t, amt, updatedOwner.Balance())
 }
