@@ -19,6 +19,10 @@ var foundationTestnetBytes []byte
 //go:embed foundation_mainnet.json
 var foundationMainnetBytes []byte
 
+// MaxDelegateOwnerRewardShare is the maximum stake-owner share of the block reward
+// under PIP-49 validator delegation (0.7 PAC in nano PAC).
+const MaxDelegateOwnerRewardShare = amount.Amount(0.7 * amount.NanoPACPerPAC)
+
 // Params is the parameters of the Pactus protocol.
 // These parameters are fixed among all the nodes in the network.
 // TODO: Save them in DB and load them on startng the node.

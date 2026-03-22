@@ -6,6 +6,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/state/param"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util/encoding"
 )
@@ -65,7 +66,7 @@ func (p *BondPayload) BasicCheck() error {
 			}
 		}
 
-		if p.DelegateShare < 0 || p.DelegateShare > 7e8 {
+		if p.DelegateShare < 0 || p.DelegateShare > param.MaxDelegateOwnerRewardShare {
 			return BasicCheckError{
 				Reason: "delegate share must be between 0 and 0.7 PAC",
 			}

@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/state/param"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
@@ -358,7 +359,7 @@ func TestBondBasicCheck(t *testing.T) {
 				To:            ts.RandValAddress(),
 				Stake:         ts.RandAmount(),
 				DelegateOwner: ts.RandAccAddress(),
-				DelegateShare: 8e8, // 0.8 PAC
+				DelegateShare: param.MaxDelegateOwnerRewardShare + 1,
 			},
 			err: "delegate share must be between 0 and 0.7 PAC",
 		},
