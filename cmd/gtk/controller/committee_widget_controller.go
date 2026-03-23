@@ -14,6 +14,7 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/protocol"
 )
 
 type CommitteeWidgetController struct {
@@ -46,8 +47,8 @@ func (c *CommitteeWidgetController) refresh(_ context.Context) {
 
 	// Protocol versions: map[int32]float64 -> "v1: 80%, v2: 20%"
 	protocolLines := make([]string, 0, len(res.ProtocolVersions))
-	for ver, pct := range res.ProtocolVersions {
-		protocolLines = append(protocolLines, fmt.Sprintf("v%d: %.1f%%", ver, pct*100))
+	for ver, percentage := range res.ProtocolVersions {
+		protocolLines = append(protocolLines, fmt.Sprintf("%s: %.2f%%", protocol.Version(ver), percentage))
 	}
 	sort.Slice(protocolLines, func(i, j int) bool { return protocolLines[i] < protocolLines[j] })
 	protocolStr := ""
