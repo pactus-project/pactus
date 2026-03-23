@@ -167,6 +167,17 @@ func (model *WalletModel) Stake(addr string) (amount.Amount, error) {
 	return amount.Amount(res.Validator.Stake), nil
 }
 
+func (model *WalletModel) ValidatorInfo(addr string) *pactus.ValidatorInfo {
+	res, err := model.blockchainClient.GetValidator(model.ctx, &pactus.GetValidatorRequest{
+		Address: addr,
+	})
+	if err != nil {
+		return nil
+	}
+
+	return res.Validator
+}
+
 func (model *WalletModel) PrivateKey(password, addr string) (crypto.PrivateKey, error) {
 	res, err := model.walletClient.GetPrivateKey(model.ctx, &pactus.GetPrivateKeyRequest{
 		WalletName: model.walletName,
@@ -322,6 +333,16 @@ func (model *WalletModel) MakeBondTx(
 	fee amount.Amount,
 	memo string,
 ) (*tx.Tx, error) {
+	if publicKey == "" {
+		valInfo := model.ValidatorInfo(receiver)
+		if valInfo == nil {
+			// Let's check if we can get public key from the wallet
+			info := model.AddressInfo(receiver)
+			if info != nil {
+				publicKey = info.PublicKey
+			}
+		}
+	}
 	res, err := model.transactionClient.GetRawBondTransaction(model.ctx,
 		&pactus.GetRawBondTransactionRequest{
 			Sender:    sender,
