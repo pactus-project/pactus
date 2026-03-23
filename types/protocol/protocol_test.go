@@ -39,13 +39,13 @@ func TestVersionString(t *testing.T) {
 		version  Version
 		expected string
 	}{
-		{ProtocolVersion1, "1"},
-		{ProtocolVersion2, "2"},
-		{ProtocolVersion3, "3"},
-		{ProtocolVersionLatest, "3"},
-		{0, "0"},
-		{127, "127"},
-		{255, "255"},
+		{ProtocolVersion1, "v1"},
+		{ProtocolVersion2, "v2"},
+		{ProtocolVersion3, "v3"},
+		{ProtocolVersionLatest, "v3"},
+		{0, "unknown"},
+		{127, "v127"},
+		{255, "v255"},
 	}
 
 	for _, test := range tests {
