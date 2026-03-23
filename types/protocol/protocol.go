@@ -26,5 +26,9 @@ func ParseVersion(s string) (Version, error) {
 }
 
 func (v Version) String() string {
-	return fmt.Sprintf("%d", v)
+	if v == ProtocolVersionUnknown {
+		return "unknown"
+	}
+
+	return fmt.Sprintf("v%d", v)
 }
