@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/protocol"
@@ -17,28 +16,76 @@ import (
 func TestFromBytes(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	val := ts.GenerateTestValidator()
-	val.UpdateLastBondingHeight(ts.RandHeight())
-	val.UpdateLastSortitionHeight(ts.RandHeight())
-	val.UpdateUnbondingHeight(ts.RandHeight())
-	data, err := val.Bytes()
+	val1 := ts.GenerateTestValidator()
+	assert.False(t, val1.IsDelegated())
+	assert.False(t, val1.DelegateExpired(ts.RandHeight()))
+
+	// Round-trip serialization
+	data, err := val1.Bytes()
 	require.NoError(t, err)
-	require.Equal(t, val.SerializeSize(), len(data))
+	assert.Equal(t, 120, len(data))
+
+	for i := range len(data) {
+		_, err := validator.FromBytes(data[:i])
+		require.Error(t, err)
+	}
+
 	val2, err := validator.FromBytes(data)
 	require.NoError(t, err)
-	assert.Equal(t, val.Address(), val2.Address())
-	assert.Equal(t, val.Number(), val2.Number())
-	assert.Equal(t, val.Stake(), val2.Stake())
-	assert.Equal(t, val.LastBondingHeight(), val2.LastBondingHeight())
-	assert.Equal(t, val.LastSortitionHeight(), val2.LastSortitionHeight())
-	assert.Equal(t, val.UnbondingHeight(), val2.UnbondingHeight())
+	assert.Equal(t, val1.Hash(), val2.Hash())
+	assert.Equal(t, val1.Address(), val2.Address())
+	assert.Equal(t, val1.Number(), val2.Number())
+}
 
-	_, err = validator.FromBytes([]byte("asdfghjkl"))
-	require.Error(t, err)
+func TestFromBytesDelegation(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
 
-	data = data[:len(data)-1]
-	_, err = validator.FromBytes(data)
-	require.Error(t, err)
+	val1 := ts.GenerateTestValidator()
+
+	owner := ts.RandAccAddress()
+	share := amount.Amount(350_000_000) // 0.35 PAC
+	expiry := uint32(1000)
+	val1.SetDelegation(owner, share, expiry)
+
+	assert.True(t, val1.IsDelegated())
+	assert.Equal(t, owner, val1.DelegateOwner())
+	assert.Equal(t, share, val1.DelegateShare())
+	assert.Equal(t, expiry, val1.DelegateExpiry())
+	assert.False(t, val1.DelegateExpired(999))
+	assert.True(t, val1.DelegateExpired(1000))
+	assert.True(t, val1.DelegateExpired(1001))
+
+	// Round-trip serialization with delegation
+	data, err := val1.Bytes()
+	require.NoError(t, err)
+	assert.Equal(t, 120+21+8+4, len(data))
+
+	for i := range 32 {
+		_, err := validator.FromBytes(data[0 : 121+i])
+		require.Error(t, err)
+	}
+
+	val2, err := validator.FromBytes(data)
+	require.NoError(t, err)
+	assert.Equal(t, val1.Hash(), val2.Hash())
+}
+
+func TestUpdateValidator(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	val := ts.GenerateTestValidator()
+
+	bondingHeight := ts.RandHeight()
+	sortitionHeight := ts.RandHeight()
+	unbondingHeight := ts.RandHeight()
+
+	val.UpdateLastBondingHeight(bondingHeight)
+	val.UpdateLastSortitionHeight(sortitionHeight)
+	val.UpdateUnbondingHeight(unbondingHeight)
+
+	assert.Equal(t, bondingHeight, val.LastBondingHeight())
+	assert.Equal(t, sortitionHeight, val.LastSortitionHeight())
+	assert.Equal(t, unbondingHeight, val.UnbondingHeight())
 }
 
 func TestDecoding(t *testing.T) {
@@ -53,19 +100,20 @@ func TestDecoding(t *testing.T) {
 
 	val, err := validator.FromBytes(data)
 	require.NoError(t, err)
+
 	assert.Equal(t, int32(1), val.Number())
 	assert.Equal(t, amount.Amount(2), val.Stake())
 	assert.Equal(t, uint32(3), val.LastBondingHeight())
 	assert.Equal(t, uint32(4), val.UnbondingHeight())
 	assert.Equal(t, uint32(5), val.LastSortitionHeight())
+
 	d2, _ := val.Bytes()
 	assert.Equal(t, data, d2)
+	assert.Equal(t, len(data), val.SerializeSize())
+
 	assert.Equal(t, hash.CalcHash(data), val.Hash())
 	expected, _ := hash.FromString("243e65ae04727f21d5f7618cea9ff8d4bc82fded1179cf8bd9e11a6b99ac42b2")
 	assert.Equal(t, expected, val.Hash())
-	pub, _ := bls.PublicKeyFromBytes(data[:96])
-	assert.True(t, val.PublicKey().EqualsTo(pub))
-	assert.Equal(t, len(data), val.SerializeSize())
 }
 
 func TestPower(t *testing.T) {
@@ -121,37 +169,6 @@ func TestIsUnbonded(t *testing.T) {
 
 	val.UpdateUnbondingHeight(ts.RandHeight())
 	assert.True(t, val.IsUnbonded())
-}
-
-func TestDelegation(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	val := ts.GenerateTestValidator()
-	assert.False(t, val.IsDelegated())
-
-	owner := ts.RandAccAddress()
-	share := amount.Amount(350_000_000) // 0.35 PAC
-	expiry := uint32(1000)
-	val.SetDelegation(owner, share, expiry)
-
-	assert.True(t, val.IsDelegated())
-	assert.Equal(t, owner, val.DelegateOwner())
-	assert.Equal(t, share, val.DelegateShare())
-	assert.Equal(t, expiry, val.DelegateExpiry())
-	assert.False(t, val.DelegateExpired(999))
-	assert.True(t, val.DelegateExpired(1000))
-	assert.True(t, val.DelegateExpired(1001))
-
-	// Round-trip serialization with delegation
-	data, err := val.Bytes()
-	require.NoError(t, err)
-	assert.Equal(t, 120+21+8+4, len(data))
-	val2, err := validator.FromBytes(data)
-	require.NoError(t, err)
-	assert.True(t, val2.IsDelegated())
-	assert.Equal(t, val.DelegateOwner(), val2.DelegateOwner())
-	assert.Equal(t, val.DelegateShare(), val2.DelegateShare())
-	assert.Equal(t, val.DelegateExpiry(), val2.DelegateExpiry())
 }
 
 func TestUpdateProtocolVersion(t *testing.T) {

@@ -72,8 +72,8 @@ func FromBytes(data []byte) (*Validator, error) {
 	}
 
 	// Optional delegation (PIP-49)
-	if reader.Len() >= delegationPayloadSize {
-		if err := (&val.data.DelegateOwner).Decode(reader); err != nil {
+	if reader.Len() > 0 {
+		if err := val.data.DelegateOwner.Decode(reader); err != nil {
 			return nil, err
 		}
 		if err := encoding.ReadElements(reader, &val.data.DelegateShare, &val.data.DelegateExpiry); err != nil {
