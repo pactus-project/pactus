@@ -35,7 +35,6 @@ func TestFromBytes(t *testing.T) {
 	assert.Equal(t, val1.Hash(), val2.Hash())
 	assert.Equal(t, val1.Address(), val2.Address())
 	assert.Equal(t, val1.Number(), val2.Number())
-
 }
 
 func TestFromBytesDelegation(t *testing.T) {
