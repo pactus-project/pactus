@@ -1977,6 +1977,34 @@ Request Message has no fields.
     </td>
   </tr>
    <tr>
+    <td class="fw-bold">validators[].is_delegated</td>
+    <td> bool</td>
+    <td>
+  Whether the validator is delegated.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">validators[].delegate_owner</td>
+    <td> string</td>
+    <td>
+  The address of the stake owner of the validator.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">validators[].delegate_share</td>
+    <td> int64</td>
+    <td>
+  The share of the stake owner of the validator.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">validators[].delegate_expiry</td>
+    <td> uint32</td>
+    <td>
+  The expiry of the stake owner of the validator.
+    </td>
+  </tr>
+   <tr>
     <td class="fw-bold">protocol_versions</td>
     <td> map&lt;int32, double&gt;</td>
     <td>
@@ -2304,6 +2332,34 @@ Request Message has no fields.
   The protocol version of the validator.
     </td>
   </tr>
+   <tr>
+    <td class="fw-bold">validator.is_delegated</td>
+    <td> bool</td>
+    <td>
+  Whether the validator is delegated.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">validator.delegate_owner</td>
+    <td> string</td>
+    <td>
+  The address of the stake owner of the validator.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">validator.delegate_share</td>
+    <td> int64</td>
+    <td>
+  The share of the stake owner of the validator.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">validator.delegate_expiry</td>
+    <td> uint32</td>
+    <td>
+  The expiry of the stake owner of the validator.
+    </td>
+  </tr>
    </tbody>
 </table>
 
@@ -2415,6 +2471,34 @@ Request Message has no fields.
     <td> int32</td>
     <td>
   The protocol version of the validator.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">validator.is_delegated</td>
+    <td> bool</td>
+    <td>
+  Whether the validator is delegated.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">validator.delegate_owner</td>
+    <td> string</td>
+    <td>
+  The address of the stake owner of the validator.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">validator.delegate_share</td>
+    <td> int64</td>
+    <td>
+  The share of the stake owner of the validator.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">validator.delegate_expiry</td>
+    <td> uint32</td>
+    <td>
+  The expiry of the stake owner of the validator.
     </td>
   </tr>
    </tbody>

@@ -242,6 +242,27 @@ func TestGetValidator(t *testing.T) {
 		assert.NotNil(t, res)
 		assert.Equal(t, val1.PublicKey().String(), res.GetValidator().PublicKey)
 	})
+
+	t.Run("Should return delegation info for delegated validators", func(t *testing.T) {
+		dlgOwner := td.RandAccAddress()
+		dlgShare := td.RandAmount()
+		dlgExpiry := td.RandHeight()
+
+		val1.SetDelegation(dlgOwner, dlgShare, dlgExpiry)
+		td.mockState.TestStore.UpdateValidator(val1)
+
+		res, err := client.GetValidator(context.Background(),
+			&pactus.GetValidatorRequest{Address: val1.Address().String()})
+
+		assert.NoError(t, err)
+		assert.NotNil(t, res)
+
+		v := res.GetValidator()
+		assert.True(t, v.IsDelegated)
+		assert.Equal(t, dlgOwner.String(), v.DelegateOwner)
+		assert.Equal(t, dlgShare.ToNanoPAC(), v.DelegateShare)
+		assert.Equal(t, dlgExpiry, v.DelegateExpiry)
+	})
 }
 
 func TestGetValidatorByNumber(t *testing.T) {

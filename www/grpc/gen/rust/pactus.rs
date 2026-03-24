@@ -671,6 +671,18 @@ pub struct ValidatorInfo {
     /// The protocol version of the validator.
     #[prost(int32, tag="11")]
     pub protocol_version: i32,
+    /// Whether the validator is delegated.
+    #[prost(bool, tag="12")]
+    pub is_delegated: bool,
+    /// The address of the stake owner of the validator.
+    #[prost(string, tag="13")]
+    pub delegate_owner: ::prost::alloc::string::String,
+    /// The share of the stake owner of the validator.
+    #[prost(int64, tag="14")]
+    pub delegate_share: i64,
+    /// The expiry of the stake owner of the validator.
+    #[prost(uint32, tag="15")]
+    pub delegate_expiry: u32,
 }
 /// Message contains information about an account.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]

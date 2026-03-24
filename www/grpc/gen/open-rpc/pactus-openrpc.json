@@ -440,8 +440,8 @@
           "properties": {"committee_size": { "type": "integer" },"committee_power": { "type": "integer" },"total_power": { "type": "integer" },"validators": {
   "type": "array",
   "items": {
-  "type": "object","required": ["hash","data","public_key","number","stake","last_bonding_height","last_sortition_height","unbonding_height","address","availability_score","protocol_version"],
-  "properties": {"hash": { "type": "string" },"data": { "type": "string" },"public_key": { "type": "string" },"number": { "type": "integer" },"stake": { "type": "integer" },"last_bonding_height": { "type": "integer" },"last_sortition_height": { "type": "integer" },"unbonding_height": { "type": "integer" },"address": { "type": "string" },"availability_score": { "type": "number" },"protocol_version": { "type": "integer" }}
+  "type": "object","required": ["hash","data","public_key","number","stake","last_bonding_height","last_sortition_height","unbonding_height","address","availability_score","protocol_version","is_delegated","delegate_owner","delegate_share","delegate_expiry"],
+  "properties": {"hash": { "type": "string" },"data": { "type": "string" },"public_key": { "type": "string" },"number": { "type": "integer" },"stake": { "type": "integer" },"last_bonding_height": { "type": "integer" },"last_sortition_height": { "type": "integer" },"unbonding_height": { "type": "integer" },"address": { "type": "string" },"availability_score": { "type": "number" },"protocol_version": { "type": "integer" },"is_delegated": { "type": "boolean" },"delegate_owner": { "type": "string" },"delegate_share": { "type": "integer" },"delegate_expiry": { "type": "integer" }}
 }
 },"protocol_versions": {
   "type": "object"
@@ -511,8 +511,8 @@
         "schema": {
           "type": "object","required": ["validator"],
           "properties": {"validator": {
-  "type": "object","required": ["hash","data","public_key","number","stake","last_bonding_height","last_sortition_height","unbonding_height","address","availability_score","protocol_version"],
-  "properties": {"hash": { "type": "string" },"data": { "type": "string" },"public_key": { "type": "string" },"number": { "type": "integer" },"stake": { "type": "integer" },"last_bonding_height": { "type": "integer" },"last_sortition_height": { "type": "integer" },"unbonding_height": { "type": "integer" },"address": { "type": "string" },"availability_score": { "type": "number" },"protocol_version": { "type": "integer" }}
+  "type": "object","required": ["hash","data","public_key","number","stake","last_bonding_height","last_sortition_height","unbonding_height","address","availability_score","protocol_version","is_delegated","delegate_owner","delegate_share","delegate_expiry"],
+  "properties": {"hash": { "type": "string" },"data": { "type": "string" },"public_key": { "type": "string" },"number": { "type": "integer" },"stake": { "type": "integer" },"last_bonding_height": { "type": "integer" },"last_sortition_height": { "type": "integer" },"unbonding_height": { "type": "integer" },"address": { "type": "string" },"availability_score": { "type": "number" },"protocol_version": { "type": "integer" },"is_delegated": { "type": "boolean" },"delegate_owner": { "type": "string" },"delegate_share": { "type": "integer" },"delegate_expiry": { "type": "integer" }}
 }}
           }
         }
@@ -531,8 +531,8 @@
         "schema": {
           "type": "object","required": ["validator"],
           "properties": {"validator": {
-  "type": "object","required": ["hash","data","public_key","number","stake","last_bonding_height","last_sortition_height","unbonding_height","address","availability_score","protocol_version"],
-  "properties": {"hash": { "type": "string" },"data": { "type": "string" },"public_key": { "type": "string" },"number": { "type": "integer" },"stake": { "type": "integer" },"last_bonding_height": { "type": "integer" },"last_sortition_height": { "type": "integer" },"unbonding_height": { "type": "integer" },"address": { "type": "string" },"availability_score": { "type": "number" },"protocol_version": { "type": "integer" }}
+  "type": "object","required": ["hash","data","public_key","number","stake","last_bonding_height","last_sortition_height","unbonding_height","address","availability_score","protocol_version","is_delegated","delegate_owner","delegate_share","delegate_expiry"],
+  "properties": {"hash": { "type": "string" },"data": { "type": "string" },"public_key": { "type": "string" },"number": { "type": "integer" },"stake": { "type": "integer" },"last_bonding_height": { "type": "integer" },"last_sortition_height": { "type": "integer" },"unbonding_height": { "type": "integer" },"address": { "type": "string" },"availability_score": { "type": "number" },"protocol_version": { "type": "integer" },"is_delegated": { "type": "boolean" },"delegate_owner": { "type": "string" },"delegate_share": { "type": "integer" },"delegate_expiry": { "type": "integer" }}
 }}
           }
         }

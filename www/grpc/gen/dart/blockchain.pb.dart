@@ -1569,6 +1569,10 @@ class ValidatorInfo extends $pb.GeneratedMessage {
     $core.String? address,
     $core.double? availabilityScore,
     $core.int? protocolVersion,
+    $core.bool? isDelegated,
+    $core.String? delegateOwner,
+    $fixnum.Int64? delegateShare,
+    $core.int? delegateExpiry,
   }) {
     final result = create();
     if (hash != null) result.hash = hash;
@@ -1583,6 +1587,10 @@ class ValidatorInfo extends $pb.GeneratedMessage {
     if (address != null) result.address = address;
     if (availabilityScore != null) result.availabilityScore = availabilityScore;
     if (protocolVersion != null) result.protocolVersion = protocolVersion;
+    if (isDelegated != null) result.isDelegated = isDelegated;
+    if (delegateOwner != null) result.delegateOwner = delegateOwner;
+    if (delegateShare != null) result.delegateShare = delegateShare;
+    if (delegateExpiry != null) result.delegateExpiry = delegateExpiry;
     return result;
   }
 
@@ -1613,6 +1621,11 @@ class ValidatorInfo extends $pb.GeneratedMessage {
     ..aOS(9, _omitFieldNames ? '' : 'address')
     ..aD(10, _omitFieldNames ? '' : 'availabilityScore')
     ..aI(11, _omitFieldNames ? '' : 'protocolVersion')
+    ..aOB(12, _omitFieldNames ? '' : 'isDelegated')
+    ..aOS(13, _omitFieldNames ? '' : 'delegateOwner')
+    ..aInt64(14, _omitFieldNames ? '' : 'delegateShare')
+    ..aI(15, _omitFieldNames ? '' : 'delegateExpiry',
+        fieldType: $pb.PbFieldType.OU3)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1743,6 +1756,46 @@ class ValidatorInfo extends $pb.GeneratedMessage {
   $core.bool hasProtocolVersion() => $_has(10);
   @$pb.TagNumber(11)
   void clearProtocolVersion() => $_clearField(11);
+
+  /// Whether the validator is delegated.
+  @$pb.TagNumber(12)
+  $core.bool get isDelegated => $_getBF(11);
+  @$pb.TagNumber(12)
+  set isDelegated($core.bool value) => $_setBool(11, value);
+  @$pb.TagNumber(12)
+  $core.bool hasIsDelegated() => $_has(11);
+  @$pb.TagNumber(12)
+  void clearIsDelegated() => $_clearField(12);
+
+  /// The address of the stake owner of the validator.
+  @$pb.TagNumber(13)
+  $core.String get delegateOwner => $_getSZ(12);
+  @$pb.TagNumber(13)
+  set delegateOwner($core.String value) => $_setString(12, value);
+  @$pb.TagNumber(13)
+  $core.bool hasDelegateOwner() => $_has(12);
+  @$pb.TagNumber(13)
+  void clearDelegateOwner() => $_clearField(13);
+
+  /// The share of the stake owner of the validator.
+  @$pb.TagNumber(14)
+  $fixnum.Int64 get delegateShare => $_getI64(13);
+  @$pb.TagNumber(14)
+  set delegateShare($fixnum.Int64 value) => $_setInt64(13, value);
+  @$pb.TagNumber(14)
+  $core.bool hasDelegateShare() => $_has(13);
+  @$pb.TagNumber(14)
+  void clearDelegateShare() => $_clearField(14);
+
+  /// The expiry of the stake owner of the validator.
+  @$pb.TagNumber(15)
+  $core.int get delegateExpiry => $_getIZ(14);
+  @$pb.TagNumber(15)
+  set delegateExpiry($core.int value) => $_setUnsignedInt32(14, value);
+  @$pb.TagNumber(15)
+  $core.bool hasDelegateExpiry() => $_has(14);
+  @$pb.TagNumber(15)
+  void clearDelegateExpiry() => $_clearField(15);
 }
 
 /// Message contains information about an account.

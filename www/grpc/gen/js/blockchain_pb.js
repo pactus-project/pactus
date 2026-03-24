@@ -4545,7 +4545,11 @@ lastSortitionHeight: jspb.Message.getFieldWithDefault(msg, 7, 0),
 unbondingHeight: jspb.Message.getFieldWithDefault(msg, 8, 0),
 address: jspb.Message.getFieldWithDefault(msg, 9, ""),
 availabilityScore: jspb.Message.getFloatingPointFieldWithDefault(msg, 10, 0.0),
-protocolVersion: jspb.Message.getFieldWithDefault(msg, 11, 0)
+protocolVersion: jspb.Message.getFieldWithDefault(msg, 11, 0),
+isDelegated: jspb.Message.getBooleanFieldWithDefault(msg, 12, false),
+delegateOwner: jspb.Message.getFieldWithDefault(msg, 13, ""),
+delegateShare: jspb.Message.getFieldWithDefault(msg, 14, 0),
+delegateExpiry: jspb.Message.getFieldWithDefault(msg, 15, 0)
   };
 
   if (includeInstance) {
@@ -4625,6 +4629,22 @@ proto.pactus.ValidatorInfo.deserializeBinaryFromReader = function(msg, reader) {
     case 11:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setProtocolVersion(value);
+      break;
+    case 12:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setIsDelegated(value);
+      break;
+    case 13:
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      msg.setDelegateOwner(value);
+      break;
+    case 14:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setDelegateShare(value);
+      break;
+    case 15:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setDelegateExpiry(value);
       break;
     default:
       reader.skipField();
@@ -4729,6 +4749,34 @@ proto.pactus.ValidatorInfo.serializeBinaryToWriter = function(message, writer) {
   if (f !== 0) {
     writer.writeInt32(
       11,
+      f
+    );
+  }
+  f = message.getIsDelegated();
+  if (f) {
+    writer.writeBool(
+      12,
+      f
+    );
+  }
+  f = message.getDelegateOwner();
+  if (f.length > 0) {
+    writer.writeString(
+      13,
+      f
+    );
+  }
+  f = message.getDelegateShare();
+  if (f !== 0) {
+    writer.writeInt64(
+      14,
+      f
+    );
+  }
+  f = message.getDelegateExpiry();
+  if (f !== 0) {
+    writer.writeUint32(
+      15,
       f
     );
   }
@@ -4930,6 +4978,78 @@ proto.pactus.ValidatorInfo.prototype.getProtocolVersion = function() {
  */
 proto.pactus.ValidatorInfo.prototype.setProtocolVersion = function(value) {
   return jspb.Message.setProto3IntField(this, 11, value);
+};
+
+
+/**
+ * optional bool is_delegated = 12;
+ * @return {boolean}
+ */
+proto.pactus.ValidatorInfo.prototype.getIsDelegated = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 12, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.pactus.ValidatorInfo} returns this
+ */
+proto.pactus.ValidatorInfo.prototype.setIsDelegated = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 12, value);
+};
+
+
+/**
+ * optional string delegate_owner = 13;
+ * @return {string}
+ */
+proto.pactus.ValidatorInfo.prototype.getDelegateOwner = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 13, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.pactus.ValidatorInfo} returns this
+ */
+proto.pactus.ValidatorInfo.prototype.setDelegateOwner = function(value) {
+  return jspb.Message.setProto3StringField(this, 13, value);
+};
+
+
+/**
+ * optional int64 delegate_share = 14;
+ * @return {number}
+ */
+proto.pactus.ValidatorInfo.prototype.getDelegateShare = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 14, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.ValidatorInfo} returns this
+ */
+proto.pactus.ValidatorInfo.prototype.setDelegateShare = function(value) {
+  return jspb.Message.setProto3IntField(this, 14, value);
+};
+
+
+/**
+ * optional uint32 delegate_expiry = 15;
+ * @return {number}
+ */
+proto.pactus.ValidatorInfo.prototype.getDelegateExpiry = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 15, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.ValidatorInfo} returns this
+ */
+proto.pactus.ValidatorInfo.prototype.setDelegateExpiry = function(value) {
+  return jspb.Message.setProto3IntField(this, 15, value);
 };
 
 

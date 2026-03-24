@@ -247,6 +247,14 @@ func (*Server) writeValidatorTable(val *pactus.ValidatorInfo) *tableMaker {
 	tmk.addRowInt("UnbondingHeight", int(val.UnbondingHeight))
 	tmk.addRowDouble("AvailabilityScore", val.AvailabilityScore)
 	tmk.addRowInt("ProtocolVersion", int(val.ProtocolVersion))
+
+	tmk.addRowBool("IsDelegated", val.IsDelegated)
+	if val.IsDelegated {
+		tmk.addRowAccAddress("DelegateOwner", val.DelegateOwner)
+		tmk.addRowAmount("DelegateShare", amount.Amount(val.DelegateShare))
+		tmk.addRowInt("DelegateExpiry", int(val.DelegateExpiry))
+	}
+
 	tmk.addRowString("Hash", val.Hash)
 
 	return tmk

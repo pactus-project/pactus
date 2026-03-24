@@ -514,6 +514,10 @@ const ValidatorInfo$json = {
       '10': 'availabilityScore'
     },
     {'1': 'protocol_version', '3': 11, '4': 1, '5': 5, '10': 'protocolVersion'},
+    {'1': 'is_delegated', '3': 12, '4': 1, '5': 8, '10': 'isDelegated'},
+    {'1': 'delegate_owner', '3': 13, '4': 1, '5': 9, '10': 'delegateOwner'},
+    {'1': 'delegate_share', '3': 14, '4': 1, '5': 3, '10': 'delegateShare'},
+    {'1': 'delegate_expiry', '3': 15, '4': 1, '5': 13, '10': 'delegateExpiry'},
   ],
 };
 
@@ -526,7 +530,9 @@ final $typed_data.Uint8List validatorInfoDescriptor = $convert.base64Decode(
     'dGlvbkhlaWdodBIpChB1bmJvbmRpbmdfaGVpZ2h0GAggASgNUg91bmJvbmRpbmdIZWlnaHQSGA'
     'oHYWRkcmVzcxgJIAEoCVIHYWRkcmVzcxItChJhdmFpbGFiaWxpdHlfc2NvcmUYCiABKAFSEWF2'
     'YWlsYWJpbGl0eVNjb3JlEikKEHByb3RvY29sX3ZlcnNpb24YCyABKAVSD3Byb3RvY29sVmVyc2'
-    'lvbg==');
+    'lvbhIhCgxpc19kZWxlZ2F0ZWQYDCABKAhSC2lzRGVsZWdhdGVkEiUKDmRlbGVnYXRlX293bmVy'
+    'GA0gASgJUg1kZWxlZ2F0ZU93bmVyEiUKDmRlbGVnYXRlX3NoYXJlGA4gASgDUg1kZWxlZ2F0ZV'
+    'NoYXJlEicKD2RlbGVnYXRlX2V4cGlyeRgPIAEoDVIOZGVsZWdhdGVFeHBpcnk=');
 
 @$core.Deprecated('Use accountInfoDescriptor instead')
 const AccountInfo$json = {
