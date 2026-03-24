@@ -350,6 +350,12 @@ func (st *state) createSubsidyTx(valAddr, rewardAddr crypto.Address, accumulated
 			})
 	}
 
+	if st.params.BlockVersion < protocol.ProtocolVersion3 &&
+		st.committee.SupportProtocolVersion(protocol.ProtocolVersion3) {
+		st.logger.Info("upgrading block version to v3 since the committee supports it")
+		st.params.BlockVersion = protocol.ProtocolVersion3
+	}
+
 	return tx.NewSubsidyTx(lockTime, recipients)
 }
 

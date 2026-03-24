@@ -5,7 +5,6 @@ import (
 	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/block"
-	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 )
@@ -80,30 +79,22 @@ func (st *state) checkSubsidy(trx *tx.Tx, proposerAddr crypto.Address, shouldBeS
 		return ErrInvalidSubsidyTransaction
 	}
 
-	// PIP-49: allow 3 recipients (foundation + operator + owner) when proposer is delegated
-	if st.params.BlockVersion >= protocol.ProtocolVersion3 { //nolint:all // TODO: reduce complexity later
-		if len(batchTrx.Recipients) == 3 {
-			val, err := st.store.Validator(proposerAddr)
-			if err != nil {
-				return ErrInvalidSubsidyTransaction
-			}
-
-			if !val.IsDelegated() {
-				return ErrInvalidSubsidyTransaction
-			}
-
-			// Recipients: [foundation, operator, owner]; validate owner amount and address
-			if batchTrx.Recipients[2].Amount != val.DelegateShare() || batchTrx.Recipients[2].To != val.DelegateOwner() {
-				return ErrInvalidSubsidyTransaction
-			}
-
-			return nil
-		}
+	val, err := st.store.Validator(proposerAddr)
+	if err != nil {
+		return ErrInvalidSubsidyTransaction
 	}
 
-	// 2 recipients: foundation + validator
-	if len(batchTrx.Recipients) != 2 {
-		return ErrInvalidSubsidyTransaction
+	if val.IsDelegated() {
+		if val.DelegateShare() > 0 {
+			if batchTrx.Recipients[1].To != val.DelegateOwner() || batchTrx.Recipients[1].Amount < val.DelegateShare() {
+				return ErrInvalidSubsidyTransaction
+			}
+		}
+	} else {
+		// 2 recipients: foundation + validator
+		if len(batchTrx.Recipients) != 2 {
+			return ErrInvalidSubsidyTransaction
+		}
 	}
 
 	return nil
