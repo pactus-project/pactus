@@ -17,6 +17,7 @@ import (
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
@@ -137,6 +138,7 @@ func TestMain(m *testing.M) {
 	vals[3] = validator.NewValidator(tValKeys[tNodeIdx4][0].PublicKey(), 3)
 
 	genParams := genesis.DefaultGenesisParams()
+	genParams.BlockVersion = protocol.ProtocolVersionLatest
 	genParams.MinimumStake = 1000
 	genParams.BlockIntervalInSecond = 2
 	genParams.BondInterval = 8
