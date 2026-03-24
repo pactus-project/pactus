@@ -243,6 +243,14 @@ message ValidatorInfo {
   double availability_score = 10;
   // The protocol version of the validator.
   int32 protocol_version = 11;
+  // Whether the validator is delegated.
+  bool is_delegated = 12;
+  // The address of the stake owner of the validator.
+  string delegate_owner = 13;
+  // The share of the stake owner of the validator.
+  int64 delegate_share = 14;
+  // The expiry of the stake owner of the validator.
+  uint32 delegate_expiry = 15;
 }
 
 // Message contains information about an account.

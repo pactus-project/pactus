@@ -332,6 +332,18 @@ func (s *blockchainServer) GetTxPoolContent(_ context.Context,
 func (s *blockchainServer) validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {
 	data, _ := val.Bytes()
 
+	isDelegated := val.IsDelegated()
+	var delegateOwner string
+	var delegateShare int64
+	var delegateExpiry uint32
+	if isDelegated {
+		// For non-delegated validators these fields are left empty/zero.
+		// This makes the response consistent with the intent of PIP-49 delegation.
+		delegateOwner = val.DelegateOwner().String()
+		delegateShare = val.DelegateShare().ToNanoPAC()
+		delegateExpiry = val.DelegateExpiry()
+	}
+
 	return &pactus.ValidatorInfo{
 		Hash:                val.Hash().String(),
 		Data:                hex.EncodeToString(data),
@@ -344,6 +356,10 @@ func (s *blockchainServer) validatorToProto(val *validator.Validator) *pactus.Va
 		UnbondingHeight:     val.UnbondingHeight(),
 		AvailabilityScore:   s.state.AvailabilityScore(val.Number()),
 		ProtocolVersion:     int32(val.ProtocolVersion()),
+		IsDelegated:         isDelegated,
+		DelegateOwner:       delegateOwner,
+		DelegateShare:       delegateShare,
+		DelegateExpiry:      delegateExpiry,
 	}
 }
 

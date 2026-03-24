@@ -1395,8 +1395,16 @@ type ValidatorInfo struct {
 	AvailabilityScore float64 `protobuf:"fixed64,10,opt,name=availability_score,json=availabilityScore,proto3" json:"availability_score,omitempty"`
 	// The protocol version of the validator.
 	ProtocolVersion int32 `protobuf:"varint,11,opt,name=protocol_version,json=protocolVersion,proto3" json:"protocol_version,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// Whether the validator is delegated.
+	IsDelegated bool `protobuf:"varint,12,opt,name=is_delegated,json=isDelegated,proto3" json:"is_delegated,omitempty"`
+	// The address of the stake owner of the validator.
+	DelegateOwner string `protobuf:"bytes,13,opt,name=delegate_owner,json=delegateOwner,proto3" json:"delegate_owner,omitempty"`
+	// The share of the stake owner of the validator.
+	DelegateShare int64 `protobuf:"varint,14,opt,name=delegate_share,json=delegateShare,proto3" json:"delegate_share,omitempty"`
+	// The expiry of the stake owner of the validator.
+	DelegateExpiry uint32 `protobuf:"varint,15,opt,name=delegate_expiry,json=delegateExpiry,proto3" json:"delegate_expiry,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *ValidatorInfo) Reset() {
@@ -1502,6 +1510,34 @@ func (x *ValidatorInfo) GetAvailabilityScore() float64 {
 func (x *ValidatorInfo) GetProtocolVersion() int32 {
 	if x != nil {
 		return x.ProtocolVersion
+	}
+	return 0
+}
+
+func (x *ValidatorInfo) GetIsDelegated() bool {
+	if x != nil {
+		return x.IsDelegated
+	}
+	return false
+}
+
+func (x *ValidatorInfo) GetDelegateOwner() string {
+	if x != nil {
+		return x.DelegateOwner
+	}
+	return ""
+}
+
+func (x *ValidatorInfo) GetDelegateShare() int64 {
+	if x != nil {
+		return x.DelegateShare
+	}
+	return 0
+}
+
+func (x *ValidatorInfo) GetDelegateExpiry() uint32 {
+	if x != nil {
+		return x.DelegateExpiry
 	}
 	return 0
 }
@@ -2077,7 +2113,7 @@ const file_blockchain_proto_rawDesc = "" +
 	"\x17GetTxPoolContentRequest\x126\n" +
 	"\fpayload_type\x18\x01 \x01(\x0e2\x13.pactus.PayloadTypeR\vpayloadType\"E\n" +
 	"\x18GetTxPoolContentResponse\x12)\n" +
-	"\x03txs\x18\x01 \x03(\v2\x17.pactus.TransactionInfoR\x03txs\"\x87\x03\n" +
+	"\x03txs\x18\x01 \x03(\v2\x17.pactus.TransactionInfoR\x03txs\"\xa1\x04\n" +
 	"\rValidatorInfo\x12\x12\n" +
 	"\x04hash\x18\x01 \x01(\tR\x04hash\x12\x12\n" +
 	"\x04data\x18\x02 \x01(\tR\x04data\x12\x1d\n" +
@@ -2091,7 +2127,11 @@ const file_blockchain_proto_rawDesc = "" +
 	"\aaddress\x18\t \x01(\tR\aaddress\x12-\n" +
 	"\x12availability_score\x18\n" +
 	" \x01(\x01R\x11availabilityScore\x12)\n" +
-	"\x10protocol_version\x18\v \x01(\x05R\x0fprotocolVersion\"\x81\x01\n" +
+	"\x10protocol_version\x18\v \x01(\x05R\x0fprotocolVersion\x12!\n" +
+	"\fis_delegated\x18\f \x01(\bR\visDelegated\x12%\n" +
+	"\x0edelegate_owner\x18\r \x01(\tR\rdelegateOwner\x12%\n" +
+	"\x0edelegate_share\x18\x0e \x01(\x03R\rdelegateShare\x12'\n" +
+	"\x0fdelegate_expiry\x18\x0f \x01(\rR\x0edelegateExpiry\"\x81\x01\n" +
 	"\vAccountInfo\x12\x12\n" +
 	"\x04hash\x18\x01 \x01(\tR\x04hash\x12\x12\n" +
 	"\x04data\x18\x02 \x01(\tR\x04data\x12\x16\n" +

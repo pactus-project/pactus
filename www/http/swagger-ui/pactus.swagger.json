@@ -1876,16 +1876,6 @@
       },
       "description": "Response message contains the decoded transaction."
     },
-    "pactusDirection": {
-      "type": "string",
-      "enum": [
-        "DIRECTION_UNKNOWN",
-        "DIRECTION_INBOUND",
-        "DIRECTION_OUTBOUND"
-      ],
-      "default": "DIRECTION_UNKNOWN",
-      "description": "Direction represents the connection direction between peers.\n\n - DIRECTION_UNKNOWN: Unknown direction (default value).\n - DIRECTION_INBOUND: Inbound connection - peer connected to us.\n - DIRECTION_OUTBOUND: Outbound connection - we connected to peer."
-    },
     "pactusGetAccountResponse": {
       "type": "object",
       "properties": {
@@ -2089,16 +2079,6 @@
       },
       "description": "Response message contains consensus information."
     },
-    "pactusGetMnemonicResponse": {
-      "type": "object",
-      "properties": {
-        "mnemonic": {
-          "type": "string",
-          "description": "The mnemonic (seed phrase)."
-        }
-      },
-      "description": "Response message contains mnemonic."
-    },
     "pactusGetNetworkInfoResponse": {
       "type": "object",
       "properties": {
@@ -2229,16 +2209,6 @@
         }
       },
       "description": "Response message contains information about a specific node in the network."
-    },
-    "pactusGetPrivateKeyResponse": {
-      "type": "object",
-      "properties": {
-        "privateKey": {
-          "type": "string",
-          "description": "The private key in hexadecimal format."
-        }
-      },
-      "description": "Response message contains private key."
     },
     "pactusGetPublicKeyResponse": {
       "type": "object",
@@ -2578,20 +2548,6 @@
       },
       "description": "Response message contains wallet addresses."
     },
-    "pactusListPeersResponse": {
-      "type": "object",
-      "properties": {
-        "peers": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/pactusPeerInfo"
-          },
-          "description": "List of peers."
-        }
-      },
-      "description": "Response message for listing peers."
-    },
     "pactusListTransactionsResponse": {
       "type": "object",
       "properties": {
@@ -2792,100 +2748,6 @@
       },
       "description": "Payload for a withdraw transaction."
     },
-    "pactusPeerInfo": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "integer",
-          "format": "int32",
-          "description": "Current status of the peer (e.g., connected, disconnected)."
-        },
-        "moniker": {
-          "type": "string",
-          "description": "Moniker or Human-Readable name of the peer."
-        },
-        "agent": {
-          "type": "string",
-          "description": "Version and agent details of the peer."
-        },
-        "peerId": {
-          "type": "string",
-          "description": "Peer ID of the peer in P2P network."
-        },
-        "consensusKeys": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "List of consensus keys used by the peer."
-        },
-        "consensusAddresses": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "List of consensus addresses used by the peer."
-        },
-        "services": {
-          "type": "integer",
-          "format": "int64",
-          "description": "Bitfield representing the services provided by the peer."
-        },
-        "lastBlockHash": {
-          "type": "string",
-          "description": "Hash of the last block the peer knows."
-        },
-        "height": {
-          "type": "integer",
-          "format": "int64",
-          "description": "Blockchain height of the peer."
-        },
-        "lastSent": {
-          "type": "string",
-          "format": "int64",
-          "description": "Unix timestamp of the last bundle sent to the peer (UTC)."
-        },
-        "lastReceived": {
-          "type": "string",
-          "format": "int64",
-          "description": "Unix timestamp of the last bundle received from the peer (UTC)."
-        },
-        "address": {
-          "type": "string",
-          "description": "Network address of the peer."
-        },
-        "direction": {
-          "$ref": "#/definitions/pactusDirection",
-          "description": "Connection direction (e.g., inbound, outbound)."
-        },
-        "protocols": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "List of protocols supported by the peer."
-        },
-        "totalSessions": {
-          "type": "integer",
-          "format": "int32",
-          "description": "Total download sessions with the peer."
-        },
-        "completedSessions": {
-          "type": "integer",
-          "format": "int32",
-          "description": "Completed download sessions with the peer."
-        },
-        "metricInfo": {
-          "$ref": "#/definitions/pactusMetricInfo",
-          "description": "Metrics related to peer activity."
-        },
-        "outboundHelloSent": {
-          "type": "boolean",
-          "description": "Whether the hello message was sent from the outbound connection."
-        }
-      },
-      "description": "PeerInfo contains information about a peer in the network."
-    },
     "pactusPingResponse": {
       "type": "object",
       "description": "Response message for ping - intentionally empty for measuring round-trip time.\n\nEmpty response payload for measuring round-trip time"
@@ -3001,16 +2863,6 @@
         }
       },
       "description": "Response message for updated address label."
-    },
-    "pactusSetDefaultFeeResponse": {
-      "type": "object",
-      "properties": {
-        "walletName": {
-          "type": "string",
-          "description": "The name of the wallet where the default fee was updated."
-        }
-      },
-      "description": "Response message for updated default fee."
     },
     "pactusSignMessageRequest": {
       "type": "object",
@@ -3341,6 +3193,24 @@
           "type": "integer",
           "format": "int32",
           "description": "The protocol version of the validator."
+        },
+        "isDelegated": {
+          "type": "boolean",
+          "description": "Whether the validator is delegated."
+        },
+        "delegateOwner": {
+          "type": "string",
+          "description": "The address of the stake owner of the validator."
+        },
+        "delegateShare": {
+          "type": "string",
+          "format": "int64",
+          "description": "The share of the stake owner of the validator."
+        },
+        "delegateExpiry": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The expiry of the stake owner of the validator."
         }
       },
       "description": "Message contains information about a validator."

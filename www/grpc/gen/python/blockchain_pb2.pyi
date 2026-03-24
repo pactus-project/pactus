@@ -228,6 +228,10 @@ class ValidatorInfo(_message.Message):
     ADDRESS_FIELD_NUMBER: _ClassVar[int]
     AVAILABILITY_SCORE_FIELD_NUMBER: _ClassVar[int]
     PROTOCOL_VERSION_FIELD_NUMBER: _ClassVar[int]
+    IS_DELEGATED_FIELD_NUMBER: _ClassVar[int]
+    DELEGATE_OWNER_FIELD_NUMBER: _ClassVar[int]
+    DELEGATE_SHARE_FIELD_NUMBER: _ClassVar[int]
+    DELEGATE_EXPIRY_FIELD_NUMBER: _ClassVar[int]
     hash: str
     data: str
     public_key: str
@@ -239,7 +243,11 @@ class ValidatorInfo(_message.Message):
     address: str
     availability_score: float
     protocol_version: int
-    def __init__(self, hash: _Optional[str] = ..., data: _Optional[str] = ..., public_key: _Optional[str] = ..., number: _Optional[int] = ..., stake: _Optional[int] = ..., last_bonding_height: _Optional[int] = ..., last_sortition_height: _Optional[int] = ..., unbonding_height: _Optional[int] = ..., address: _Optional[str] = ..., availability_score: _Optional[float] = ..., protocol_version: _Optional[int] = ...) -> None: ...
+    is_delegated: bool
+    delegate_owner: str
+    delegate_share: int
+    delegate_expiry: int
+    def __init__(self, hash: _Optional[str] = ..., data: _Optional[str] = ..., public_key: _Optional[str] = ..., number: _Optional[int] = ..., stake: _Optional[int] = ..., last_bonding_height: _Optional[int] = ..., last_sortition_height: _Optional[int] = ..., unbonding_height: _Optional[int] = ..., address: _Optional[str] = ..., availability_score: _Optional[float] = ..., protocol_version: _Optional[int] = ..., is_delegated: _Optional[bool] = ..., delegate_owner: _Optional[str] = ..., delegate_share: _Optional[int] = ..., delegate_expiry: _Optional[int] = ...) -> None: ...
 
 class AccountInfo(_message.Message):
     __slots__ = ()

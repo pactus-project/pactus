@@ -13864,6 +13864,18 @@ impl serde::Serialize for ValidatorInfo {
         if self.protocol_version != 0 {
             len += 1;
         }
+        if self.is_delegated {
+            len += 1;
+        }
+        if !self.delegate_owner.is_empty() {
+            len += 1;
+        }
+        if self.delegate_share != 0 {
+            len += 1;
+        }
+        if self.delegate_expiry != 0 {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.ValidatorInfo", len)?;
         if !self.hash.is_empty() {
             struct_ser.serialize_field("hash", &self.hash)?;
@@ -13900,6 +13912,20 @@ impl serde::Serialize for ValidatorInfo {
         if self.protocol_version != 0 {
             struct_ser.serialize_field("protocolVersion", &self.protocol_version)?;
         }
+        if self.is_delegated {
+            struct_ser.serialize_field("isDelegated", &self.is_delegated)?;
+        }
+        if !self.delegate_owner.is_empty() {
+            struct_ser.serialize_field("delegateOwner", &self.delegate_owner)?;
+        }
+        if self.delegate_share != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("delegateShare", ToString::to_string(&self.delegate_share).as_str())?;
+        }
+        if self.delegate_expiry != 0 {
+            struct_ser.serialize_field("delegateExpiry", &self.delegate_expiry)?;
+        }
         struct_ser.end()
     }
 }
@@ -13927,6 +13953,14 @@ impl<'de> serde::Deserialize<'de> for ValidatorInfo {
             "availabilityScore",
             "protocol_version",
             "protocolVersion",
+            "is_delegated",
+            "isDelegated",
+            "delegate_owner",
+            "delegateOwner",
+            "delegate_share",
+            "delegateShare",
+            "delegate_expiry",
+            "delegateExpiry",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -13942,6 +13976,10 @@ impl<'de> serde::Deserialize<'de> for ValidatorInfo {
             Address,
             AvailabilityScore,
             ProtocolVersion,
+            IsDelegated,
+            DelegateOwner,
+            DelegateShare,
+            DelegateExpiry,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -13974,6 +14012,10 @@ impl<'de> serde::Deserialize<'de> for ValidatorInfo {
                             "address" => Ok(GeneratedField::Address),
                             "availabilityScore" | "availability_score" => Ok(GeneratedField::AvailabilityScore),
                             "protocolVersion" | "protocol_version" => Ok(GeneratedField::ProtocolVersion),
+                            "isDelegated" | "is_delegated" => Ok(GeneratedField::IsDelegated),
+                            "delegateOwner" | "delegate_owner" => Ok(GeneratedField::DelegateOwner),
+                            "delegateShare" | "delegate_share" => Ok(GeneratedField::DelegateShare),
+                            "delegateExpiry" | "delegate_expiry" => Ok(GeneratedField::DelegateExpiry),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -14004,6 +14046,10 @@ impl<'de> serde::Deserialize<'de> for ValidatorInfo {
                 let mut address__ = None;
                 let mut availability_score__ = None;
                 let mut protocol_version__ = None;
+                let mut is_delegated__ = None;
+                let mut delegate_owner__ = None;
+                let mut delegate_share__ = None;
+                let mut delegate_expiry__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Hash => {
@@ -14086,6 +14132,34 @@ impl<'de> serde::Deserialize<'de> for ValidatorInfo {
                                 Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
+                        GeneratedField::IsDelegated => {
+                            if is_delegated__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("isDelegated"));
+                            }
+                            is_delegated__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::DelegateOwner => {
+                            if delegate_owner__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("delegateOwner"));
+                            }
+                            delegate_owner__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::DelegateShare => {
+                            if delegate_share__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("delegateShare"));
+                            }
+                            delegate_share__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::DelegateExpiry => {
+                            if delegate_expiry__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("delegateExpiry"));
+                            }
+                            delegate_expiry__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
                     }
                 }
                 Ok(ValidatorInfo {
@@ -14100,6 +14174,10 @@ impl<'de> serde::Deserialize<'de> for ValidatorInfo {
                     address: address__.unwrap_or_default(),
                     availability_score: availability_score__.unwrap_or_default(),
                     protocol_version: protocol_version__.unwrap_or_default(),
+                    is_delegated: is_delegated__.unwrap_or_default(),
+                    delegate_owner: delegate_owner__.unwrap_or_default(),
+                    delegate_share: delegate_share__.unwrap_or_default(),
+                    delegate_expiry: delegate_expiry__.unwrap_or_default(),
                 })
             }
         }

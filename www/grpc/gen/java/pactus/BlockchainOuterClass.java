@@ -16781,6 +16781,56 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * @return The protocolVersion.
      */
     int getProtocolVersion();
+
+    /**
+     * <pre>
+     * Whether the validator is delegated.
+     * </pre>
+     *
+     * <code>bool is_delegated = 12 [json_name = "isDelegated"];</code>
+     * @return The isDelegated.
+     */
+    boolean getIsDelegated();
+
+    /**
+     * <pre>
+     * The address of the stake owner of the validator.
+     * </pre>
+     *
+     * <code>string delegate_owner = 13 [json_name = "delegateOwner"];</code>
+     * @return The delegateOwner.
+     */
+    java.lang.String getDelegateOwner();
+    /**
+     * <pre>
+     * The address of the stake owner of the validator.
+     * </pre>
+     *
+     * <code>string delegate_owner = 13 [json_name = "delegateOwner"];</code>
+     * @return The bytes for delegateOwner.
+     */
+    com.google.protobuf.ByteString
+        getDelegateOwnerBytes();
+
+    /**
+     * <pre>
+     * The share of the stake owner of the validator.
+     * </pre>
+     *
+     * <code>int64 delegate_share = 14 [json_name = "delegateShare"];</code>
+     * @return The delegateShare.
+     */
+    long getDelegateShare();
+
+    /**
+     * <pre>
+     * The expiry of the stake owner of the validator.
+     * </pre>
+     *
+     * <code>uint32 delegate_expiry = 15 [json_name = "delegateExpiry"];</code>
+     * @return The delegateExpiry.
+     */
+    int getDelegateExpiry();
   }
   /**
    * <pre>
@@ -16812,6 +16862,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       data_ = "";
       publicKey_ = "";
       address_ = "";
+      delegateOwner_ = "";
     }
 
     public static final com.google.protobuf.Descriptors.Descriptor
@@ -17120,6 +17171,98 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       return protocolVersion_;
     }
 
+    public static final int IS_DELEGATED_FIELD_NUMBER = 12;
+    private boolean isDelegated_ = false;
+    /**
+     * <pre>
+     * Whether the validator is delegated.
+     * </pre>
+     *
+     * <code>bool is_delegated = 12 [json_name = "isDelegated"];</code>
+     * @return The isDelegated.
+     */
+    @java.lang.Override
+    public boolean getIsDelegated() {
+      return isDelegated_;
+    }
+
+    public static final int DELEGATE_OWNER_FIELD_NUMBER = 13;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object delegateOwner_ = "";
+    /**
+     * <pre>
+     * The address of the stake owner of the validator.
+     * </pre>
+     *
+     * <code>string delegate_owner = 13 [json_name = "delegateOwner"];</code>
+     * @return The delegateOwner.
+     */
+    @java.lang.Override
+    public java.lang.String getDelegateOwner() {
+      java.lang.Object ref = delegateOwner_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        delegateOwner_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The address of the stake owner of the validator.
+     * </pre>
+     *
+     * <code>string delegate_owner = 13 [json_name = "delegateOwner"];</code>
+     * @return The bytes for delegateOwner.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getDelegateOwnerBytes() {
+      java.lang.Object ref = delegateOwner_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        delegateOwner_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int DELEGATE_SHARE_FIELD_NUMBER = 14;
+    private long delegateShare_ = 0L;
+    /**
+     * <pre>
+     * The share of the stake owner of the validator.
+     * </pre>
+     *
+     * <code>int64 delegate_share = 14 [json_name = "delegateShare"];</code>
+     * @return The delegateShare.
+     */
+    @java.lang.Override
+    public long getDelegateShare() {
+      return delegateShare_;
+    }
+
+    public static final int DELEGATE_EXPIRY_FIELD_NUMBER = 15;
+    private int delegateExpiry_ = 0;
+    /**
+     * <pre>
+     * The expiry of the stake owner of the validator.
+     * </pre>
+     *
+     * <code>uint32 delegate_expiry = 15 [json_name = "delegateExpiry"];</code>
+     * @return The delegateExpiry.
+     */
+    @java.lang.Override
+    public int getDelegateExpiry() {
+      return delegateExpiry_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -17166,6 +17309,18 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       }
       if (protocolVersion_ != 0) {
         output.writeInt32(11, protocolVersion_);
+      }
+      if (isDelegated_ != false) {
+        output.writeBool(12, isDelegated_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(delegateOwner_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 13, delegateOwner_);
+      }
+      if (delegateShare_ != 0L) {
+        output.writeInt64(14, delegateShare_);
+      }
+      if (delegateExpiry_ != 0) {
+        output.writeUInt32(15, delegateExpiry_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -17216,6 +17371,21 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(11, protocolVersion_);
       }
+      if (isDelegated_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(12, isDelegated_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(delegateOwner_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(13, delegateOwner_);
+      }
+      if (delegateShare_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(14, delegateShare_);
+      }
+      if (delegateExpiry_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(15, delegateExpiry_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -17254,6 +17424,14 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
               other.getAvailabilityScore())) return false;
       if (getProtocolVersion()
           != other.getProtocolVersion()) return false;
+      if (getIsDelegated()
+          != other.getIsDelegated()) return false;
+      if (!getDelegateOwner()
+          .equals(other.getDelegateOwner())) return false;
+      if (getDelegateShare()
+          != other.getDelegateShare()) return false;
+      if (getDelegateExpiry()
+          != other.getDelegateExpiry()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -17289,6 +17467,16 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
           java.lang.Double.doubleToLongBits(getAvailabilityScore()));
       hash = (37 * hash) + PROTOCOL_VERSION_FIELD_NUMBER;
       hash = (53 * hash) + getProtocolVersion();
+      hash = (37 * hash) + IS_DELEGATED_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getIsDelegated());
+      hash = (37 * hash) + DELEGATE_OWNER_FIELD_NUMBER;
+      hash = (53 * hash) + getDelegateOwner().hashCode();
+      hash = (37 * hash) + DELEGATE_SHARE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getDelegateShare());
+      hash = (37 * hash) + DELEGATE_EXPIRY_FIELD_NUMBER;
+      hash = (53 * hash) + getDelegateExpiry();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -17435,6 +17623,10 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         address_ = "";
         availabilityScore_ = 0D;
         protocolVersion_ = 0;
+        isDelegated_ = false;
+        delegateOwner_ = "";
+        delegateShare_ = 0L;
+        delegateExpiry_ = 0;
         return this;
       }
 
@@ -17501,6 +17693,18 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         if (((from_bitField0_ & 0x00000400) != 0)) {
           result.protocolVersion_ = protocolVersion_;
         }
+        if (((from_bitField0_ & 0x00000800) != 0)) {
+          result.isDelegated_ = isDelegated_;
+        }
+        if (((from_bitField0_ & 0x00001000) != 0)) {
+          result.delegateOwner_ = delegateOwner_;
+        }
+        if (((from_bitField0_ & 0x00002000) != 0)) {
+          result.delegateShare_ = delegateShare_;
+        }
+        if (((from_bitField0_ & 0x00004000) != 0)) {
+          result.delegateExpiry_ = delegateExpiry_;
+        }
       }
 
       @java.lang.Override
@@ -17555,6 +17759,20 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         }
         if (other.getProtocolVersion() != 0) {
           setProtocolVersion(other.getProtocolVersion());
+        }
+        if (other.getIsDelegated() != false) {
+          setIsDelegated(other.getIsDelegated());
+        }
+        if (!other.getDelegateOwner().isEmpty()) {
+          delegateOwner_ = other.delegateOwner_;
+          bitField0_ |= 0x00001000;
+          onChanged();
+        }
+        if (other.getDelegateShare() != 0L) {
+          setDelegateShare(other.getDelegateShare());
+        }
+        if (other.getDelegateExpiry() != 0) {
+          setDelegateExpiry(other.getDelegateExpiry());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -17637,6 +17855,26 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
                 bitField0_ |= 0x00000400;
                 break;
               } // case 88
+              case 96: {
+                isDelegated_ = input.readBool();
+                bitField0_ |= 0x00000800;
+                break;
+              } // case 96
+              case 106: {
+                delegateOwner_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00001000;
+                break;
+              } // case 106
+              case 112: {
+                delegateShare_ = input.readInt64();
+                bitField0_ |= 0x00002000;
+                break;
+              } // case 112
+              case 120: {
+                delegateExpiry_ = input.readUInt32();
+                bitField0_ |= 0x00004000;
+                break;
+              } // case 120
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -18326,6 +18564,230 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       public Builder clearProtocolVersion() {
         bitField0_ = (bitField0_ & ~0x00000400);
         protocolVersion_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private boolean isDelegated_ ;
+      /**
+       * <pre>
+       * Whether the validator is delegated.
+       * </pre>
+       *
+       * <code>bool is_delegated = 12 [json_name = "isDelegated"];</code>
+       * @return The isDelegated.
+       */
+      @java.lang.Override
+      public boolean getIsDelegated() {
+        return isDelegated_;
+      }
+      /**
+       * <pre>
+       * Whether the validator is delegated.
+       * </pre>
+       *
+       * <code>bool is_delegated = 12 [json_name = "isDelegated"];</code>
+       * @param value The isDelegated to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsDelegated(boolean value) {
+
+        isDelegated_ = value;
+        bitField0_ |= 0x00000800;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Whether the validator is delegated.
+       * </pre>
+       *
+       * <code>bool is_delegated = 12 [json_name = "isDelegated"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearIsDelegated() {
+        bitField0_ = (bitField0_ & ~0x00000800);
+        isDelegated_ = false;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object delegateOwner_ = "";
+      /**
+       * <pre>
+       * The address of the stake owner of the validator.
+       * </pre>
+       *
+       * <code>string delegate_owner = 13 [json_name = "delegateOwner"];</code>
+       * @return The delegateOwner.
+       */
+      public java.lang.String getDelegateOwner() {
+        java.lang.Object ref = delegateOwner_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          delegateOwner_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The address of the stake owner of the validator.
+       * </pre>
+       *
+       * <code>string delegate_owner = 13 [json_name = "delegateOwner"];</code>
+       * @return The bytes for delegateOwner.
+       */
+      public com.google.protobuf.ByteString
+          getDelegateOwnerBytes() {
+        java.lang.Object ref = delegateOwner_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          delegateOwner_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The address of the stake owner of the validator.
+       * </pre>
+       *
+       * <code>string delegate_owner = 13 [json_name = "delegateOwner"];</code>
+       * @param value The delegateOwner to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDelegateOwner(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        delegateOwner_ = value;
+        bitField0_ |= 0x00001000;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The address of the stake owner of the validator.
+       * </pre>
+       *
+       * <code>string delegate_owner = 13 [json_name = "delegateOwner"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDelegateOwner() {
+        delegateOwner_ = getDefaultInstance().getDelegateOwner();
+        bitField0_ = (bitField0_ & ~0x00001000);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The address of the stake owner of the validator.
+       * </pre>
+       *
+       * <code>string delegate_owner = 13 [json_name = "delegateOwner"];</code>
+       * @param value The bytes for delegateOwner to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDelegateOwnerBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        delegateOwner_ = value;
+        bitField0_ |= 0x00001000;
+        onChanged();
+        return this;
+      }
+
+      private long delegateShare_ ;
+      /**
+       * <pre>
+       * The share of the stake owner of the validator.
+       * </pre>
+       *
+       * <code>int64 delegate_share = 14 [json_name = "delegateShare"];</code>
+       * @return The delegateShare.
+       */
+      @java.lang.Override
+      public long getDelegateShare() {
+        return delegateShare_;
+      }
+      /**
+       * <pre>
+       * The share of the stake owner of the validator.
+       * </pre>
+       *
+       * <code>int64 delegate_share = 14 [json_name = "delegateShare"];</code>
+       * @param value The delegateShare to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDelegateShare(long value) {
+
+        delegateShare_ = value;
+        bitField0_ |= 0x00002000;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The share of the stake owner of the validator.
+       * </pre>
+       *
+       * <code>int64 delegate_share = 14 [json_name = "delegateShare"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDelegateShare() {
+        bitField0_ = (bitField0_ & ~0x00002000);
+        delegateShare_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private int delegateExpiry_ ;
+      /**
+       * <pre>
+       * The expiry of the stake owner of the validator.
+       * </pre>
+       *
+       * <code>uint32 delegate_expiry = 15 [json_name = "delegateExpiry"];</code>
+       * @return The delegateExpiry.
+       */
+      @java.lang.Override
+      public int getDelegateExpiry() {
+        return delegateExpiry_;
+      }
+      /**
+       * <pre>
+       * The expiry of the stake owner of the validator.
+       * </pre>
+       *
+       * <code>uint32 delegate_expiry = 15 [json_name = "delegateExpiry"];</code>
+       * @param value The delegateExpiry to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDelegateExpiry(int value) {
+
+        delegateExpiry_ = value;
+        bitField0_ |= 0x00004000;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The expiry of the stake owner of the validator.
+       * </pre>
+       *
+       * <code>uint32 delegate_expiry = 15 [json_name = "delegateExpiry"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDelegateExpiry() {
+        bitField0_ = (bitField0_ & ~0x00004000);
+        delegateExpiry_ = 0;
         onChanged();
         return this;
       }
@@ -25620,8 +26082,8 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       "nces\"Q\n\027GetTxPoolContentRequest\0226\n\014paylo" +
       "ad_type\030\001 \001(\0162\023.pactus.PayloadTypeR\013payl" +
       "oadType\"E\n\030GetTxPoolContentResponse\022)\n\003t" +
-      "xs\030\001 \003(\0132\027.pactus.TransactionInfoR\003txs\"\207" +
-      "\003\n\rValidatorInfo\022\022\n\004hash\030\001 \001(\tR\004hash\022\022\n\004" +
+      "xs\030\001 \003(\0132\027.pactus.TransactionInfoR\003txs\"\241" +
+      "\004\n\rValidatorInfo\022\022\n\004hash\030\001 \001(\tR\004hash\022\022\n\004" +
       "data\030\002 \001(\tR\004data\022\035\n\npublic_key\030\003 \001(\tR\tpu" +
       "blicKey\022\026\n\006number\030\004 \001(\005R\006number\022\024\n\005stake" +
       "\030\005 \001(\003R\005stake\022.\n\023last_bonding_height\030\006 \001" +
@@ -25630,64 +26092,68 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       "onding_height\030\010 \001(\rR\017unbondingHeight\022\030\n\007" +
       "address\030\t \001(\tR\007address\022-\n\022availability_s" +
       "core\030\n \001(\001R\021availabilityScore\022)\n\020protoco" +
-      "l_version\030\013 \001(\005R\017protocolVersion\"\201\001\n\013Acc" +
-      "ountInfo\022\022\n\004hash\030\001 \001(\tR\004hash\022\022\n\004data\030\002 \001" +
-      "(\tR\004data\022\026\n\006number\030\003 \001(\005R\006number\022\030\n\007bala" +
-      "nce\030\004 \001(\003R\007balance\022\030\n\007address\030\005 \001(\tR\007add" +
-      "ress\"\304\001\n\017BlockHeaderInfo\022\030\n\007version\030\001 \001(" +
-      "\005R\007version\022&\n\017prev_block_hash\030\002 \001(\tR\rpre" +
-      "vBlockHash\022\035\n\nstate_root\030\003 \001(\tR\tstateRoo" +
-      "t\022%\n\016sortition_seed\030\004 \001(\tR\rsortitionSeed" +
-      "\022)\n\020proposer_address\030\005 \001(\tR\017proposerAddr" +
-      "ess\"\227\001\n\017CertificateInfo\022\022\n\004hash\030\001 \001(\tR\004h" +
-      "ash\022\024\n\005round\030\002 \001(\005R\005round\022\036\n\ncommitters\030" +
-      "\003 \003(\005R\ncommitters\022\034\n\tabsentees\030\004 \003(\005R\tab" +
-      "sentees\022\034\n\tsignature\030\005 \001(\tR\tsignature\"\261\001" +
-      "\n\010VoteInfo\022$\n\004type\030\001 \001(\0162\020.pactus.VoteTy" +
-      "peR\004type\022\024\n\005voter\030\002 \001(\tR\005voter\022\035\n\nblock_" +
-      "hash\030\003 \001(\tR\tblockHash\022\024\n\005round\030\004 \001(\005R\005ro" +
-      "und\022\031\n\010cp_round\030\005 \001(\005R\007cpRound\022\031\n\010cp_val" +
-      "ue\030\006 \001(\005R\007cpValue\"\227\001\n\rConsensusInfo\022\030\n\007a" +
-      "ddress\030\001 \001(\tR\007address\022\026\n\006active\030\002 \001(\010R\006a" +
-      "ctive\022\026\n\006height\030\003 \001(\rR\006height\022\024\n\005round\030\004" +
-      " \001(\005R\005round\022&\n\005votes\030\005 \003(\0132\020.pactus.Vote" +
-      "InfoR\005votes\"y\n\014ProposalInfo\022\026\n\006height\030\001 " +
-      "\001(\rR\006height\022\024\n\005round\030\002 \001(\005R\005round\022\035\n\nblo" +
-      "ck_data\030\003 \001(\tR\tblockData\022\034\n\tsignature\030\004 " +
-      "\001(\tR\tsignature*f\n\016BlockVerbosity\022\030\n\024BLOC" +
-      "K_VERBOSITY_DATA\020\000\022\030\n\024BLOCK_VERBOSITY_IN" +
-      "FO\020\001\022 \n\034BLOCK_VERBOSITY_TRANSACTIONS\020\002*\246" +
-      "\001\n\010VoteType\022\031\n\025VOTE_TYPE_UNSPECIFIED\020\000\022\025" +
-      "\n\021VOTE_TYPE_PREPARE\020\001\022\027\n\023VOTE_TYPE_PRECO" +
-      "MMIT\020\002\022\031\n\025VOTE_TYPE_CP_PRE_VOTE\020\003\022\032\n\026VOT" +
-      "E_TYPE_CP_MAIN_VOTE\020\004\022\030\n\024VOTE_TYPE_CP_DE" +
-      "CIDED\020\0052\342\007\n\nBlockchain\022=\n\010GetBlock\022\027.pac" +
-      "tus.GetBlockRequest\032\030.pactus.GetBlockRes" +
-      "ponse\022I\n\014GetBlockHash\022\033.pactus.GetBlockH" +
-      "ashRequest\032\034.pactus.GetBlockHashResponse" +
-      "\022O\n\016GetBlockHeight\022\035.pactus.GetBlockHeig" +
-      "htRequest\032\036.pactus.GetBlockHeightRespons" +
-      "e\022X\n\021GetBlockchainInfo\022 .pactus.GetBlock" +
-      "chainInfoRequest\032!.pactus.GetBlockchainI" +
-      "nfoResponse\022U\n\020GetCommitteeInfo\022\037.pactus" +
-      ".GetCommitteeInfoRequest\032 .pactus.GetCom" +
-      "mitteeInfoResponse\022U\n\020GetConsensusInfo\022\037" +
-      ".pactus.GetConsensusInfoRequest\032 .pactus" +
-      ".GetConsensusInfoResponse\022C\n\nGetAccount\022" +
-      "\031.pactus.GetAccountRequest\032\032.pactus.GetA" +
-      "ccountResponse\022I\n\014GetValidator\022\033.pactus." +
-      "GetValidatorRequest\032\034.pactus.GetValidato" +
-      "rResponse\022Y\n\024GetValidatorByNumber\022#.pact" +
-      "us.GetValidatorByNumberRequest\032\034.pactus." +
-      "GetValidatorResponse\022d\n\025GetValidatorAddr" +
-      "esses\022$.pactus.GetValidatorAddressesRequ" +
-      "est\032%.pactus.GetValidatorAddressesRespon" +
-      "se\022I\n\014GetPublicKey\022\033.pactus.GetPublicKey" +
-      "Request\032\034.pactus.GetPublicKeyResponse\022U\n" +
-      "\020GetTxPoolContent\022\037.pactus.GetTxPoolCont" +
-      "entRequest\032 .pactus.GetTxPoolContentResp" +
-      "onseB:\n\006pactusZ0github.com/pactus-projec" +
-      "t/pactus/www/grpc/pactusb\006proto3"
+      "l_version\030\013 \001(\005R\017protocolVersion\022!\n\014is_d" +
+      "elegated\030\014 \001(\010R\013isDelegated\022%\n\016delegate_" +
+      "owner\030\r \001(\tR\rdelegateOwner\022%\n\016delegate_s" +
+      "hare\030\016 \001(\003R\rdelegateShare\022\'\n\017delegate_ex" +
+      "piry\030\017 \001(\rR\016delegateExpiry\"\201\001\n\013AccountIn" +
+      "fo\022\022\n\004hash\030\001 \001(\tR\004hash\022\022\n\004data\030\002 \001(\tR\004da" +
+      "ta\022\026\n\006number\030\003 \001(\005R\006number\022\030\n\007balance\030\004 " +
+      "\001(\003R\007balance\022\030\n\007address\030\005 \001(\tR\007address\"\304" +
+      "\001\n\017BlockHeaderInfo\022\030\n\007version\030\001 \001(\005R\007ver" +
+      "sion\022&\n\017prev_block_hash\030\002 \001(\tR\rprevBlock" +
+      "Hash\022\035\n\nstate_root\030\003 \001(\tR\tstateRoot\022%\n\016s" +
+      "ortition_seed\030\004 \001(\tR\rsortitionSeed\022)\n\020pr" +
+      "oposer_address\030\005 \001(\tR\017proposerAddress\"\227\001" +
+      "\n\017CertificateInfo\022\022\n\004hash\030\001 \001(\tR\004hash\022\024\n" +
+      "\005round\030\002 \001(\005R\005round\022\036\n\ncommitters\030\003 \003(\005R" +
+      "\ncommitters\022\034\n\tabsentees\030\004 \003(\005R\tabsentee" +
+      "s\022\034\n\tsignature\030\005 \001(\tR\tsignature\"\261\001\n\010Vote" +
+      "Info\022$\n\004type\030\001 \001(\0162\020.pactus.VoteTypeR\004ty" +
+      "pe\022\024\n\005voter\030\002 \001(\tR\005voter\022\035\n\nblock_hash\030\003" +
+      " \001(\tR\tblockHash\022\024\n\005round\030\004 \001(\005R\005round\022\031\n" +
+      "\010cp_round\030\005 \001(\005R\007cpRound\022\031\n\010cp_value\030\006 \001" +
+      "(\005R\007cpValue\"\227\001\n\rConsensusInfo\022\030\n\007address" +
+      "\030\001 \001(\tR\007address\022\026\n\006active\030\002 \001(\010R\006active\022" +
+      "\026\n\006height\030\003 \001(\rR\006height\022\024\n\005round\030\004 \001(\005R\005" +
+      "round\022&\n\005votes\030\005 \003(\0132\020.pactus.VoteInfoR\005" +
+      "votes\"y\n\014ProposalInfo\022\026\n\006height\030\001 \001(\rR\006h" +
+      "eight\022\024\n\005round\030\002 \001(\005R\005round\022\035\n\nblock_dat" +
+      "a\030\003 \001(\tR\tblockData\022\034\n\tsignature\030\004 \001(\tR\ts" +
+      "ignature*f\n\016BlockVerbosity\022\030\n\024BLOCK_VERB" +
+      "OSITY_DATA\020\000\022\030\n\024BLOCK_VERBOSITY_INFO\020\001\022 " +
+      "\n\034BLOCK_VERBOSITY_TRANSACTIONS\020\002*\246\001\n\010Vot" +
+      "eType\022\031\n\025VOTE_TYPE_UNSPECIFIED\020\000\022\025\n\021VOTE" +
+      "_TYPE_PREPARE\020\001\022\027\n\023VOTE_TYPE_PRECOMMIT\020\002" +
+      "\022\031\n\025VOTE_TYPE_CP_PRE_VOTE\020\003\022\032\n\026VOTE_TYPE" +
+      "_CP_MAIN_VOTE\020\004\022\030\n\024VOTE_TYPE_CP_DECIDED\020" +
+      "\0052\342\007\n\nBlockchain\022=\n\010GetBlock\022\027.pactus.Ge" +
+      "tBlockRequest\032\030.pactus.GetBlockResponse\022" +
+      "I\n\014GetBlockHash\022\033.pactus.GetBlockHashReq" +
+      "uest\032\034.pactus.GetBlockHashResponse\022O\n\016Ge" +
+      "tBlockHeight\022\035.pactus.GetBlockHeightRequ" +
+      "est\032\036.pactus.GetBlockHeightResponse\022X\n\021G" +
+      "etBlockchainInfo\022 .pactus.GetBlockchainI" +
+      "nfoRequest\032!.pactus.GetBlockchainInfoRes" +
+      "ponse\022U\n\020GetCommitteeInfo\022\037.pactus.GetCo" +
+      "mmitteeInfoRequest\032 .pactus.GetCommittee" +
+      "InfoResponse\022U\n\020GetConsensusInfo\022\037.pactu" +
+      "s.GetConsensusInfoRequest\032 .pactus.GetCo" +
+      "nsensusInfoResponse\022C\n\nGetAccount\022\031.pact" +
+      "us.GetAccountRequest\032\032.pactus.GetAccount" +
+      "Response\022I\n\014GetValidator\022\033.pactus.GetVal" +
+      "idatorRequest\032\034.pactus.GetValidatorRespo" +
+      "nse\022Y\n\024GetValidatorByNumber\022#.pactus.Get" +
+      "ValidatorByNumberRequest\032\034.pactus.GetVal" +
+      "idatorResponse\022d\n\025GetValidatorAddresses\022" +
+      "$.pactus.GetValidatorAddressesRequest\032%." +
+      "pactus.GetValidatorAddressesResponse\022I\n\014" +
+      "GetPublicKey\022\033.pactus.GetPublicKeyReques" +
+      "t\032\034.pactus.GetPublicKeyResponse\022U\n\020GetTx" +
+      "PoolContent\022\037.pactus.GetTxPoolContentReq" +
+      "uest\032 .pactus.GetTxPoolContentResponseB:" +
+      "\n\006pactusZ0github.com/pactus-project/pact" +
+      "us/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -25843,7 +26309,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
     internal_static_pactus_ValidatorInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_ValidatorInfo_descriptor,
-        new java.lang.String[] { "Hash", "Data", "PublicKey", "Number", "Stake", "LastBondingHeight", "LastSortitionHeight", "UnbondingHeight", "Address", "AvailabilityScore", "ProtocolVersion", });
+        new java.lang.String[] { "Hash", "Data", "PublicKey", "Number", "Stake", "LastBondingHeight", "LastSortitionHeight", "UnbondingHeight", "Address", "AvailabilityScore", "ProtocolVersion", "IsDelegated", "DelegateOwner", "DelegateShare", "DelegateExpiry", });
     internal_static_pactus_AccountInfo_descriptor =
       getDescriptor().getMessageType(24);
     internal_static_pactus_AccountInfo_fieldAccessorTable = new
