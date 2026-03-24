@@ -18,6 +18,7 @@ import (
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/terminal"
@@ -211,6 +212,7 @@ func makeLocalGenesis(wlt *wallet.Wallet) *genesis.Genesis {
 
 	// create genesis
 	params := genesis.DefaultGenesisParams()
+	params.BlockVersion = protocol.ProtocolVersionLatest
 	gen := genesis.MakeGenesis(util.RoundNow(60), accs, vals, params)
 
 	return gen
