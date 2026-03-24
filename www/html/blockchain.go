@@ -218,7 +218,7 @@ func (s *Server) GetValidatorByNumberHandler(w http.ResponseWriter, r *http.Requ
 	s.writeHTML(w, tm.html())
 }
 
-func (s *Server) GetTxPoolContentHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Server) GetTxPoolHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	res, err := s.blockchain.GetTxPoolContent(ctx, &pactus.GetTxPoolContentRequest{})
