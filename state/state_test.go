@@ -62,7 +62,7 @@ func setup(t *testing.T) *testData {
 	genParams := genesis.DefaultGenesisParams()
 	genParams.CommitteeSize = 7
 	genParams.BondInterval = 10
-	genParams.BlockVersion = protocol.ProtocolVersion2
+	genParams.BlockVersion = protocol.ProtocolVersionLatest
 
 	genAcc1 := account.NewAccount(0)
 	genAcc1.AddToBalance(21 * 1e15) // 21,000,000.000,000,000
