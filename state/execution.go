@@ -86,7 +86,7 @@ func (st *state) checkSubsidy(trx *tx.Tx, proposerAddr crypto.Address, shouldBeS
 
 	if val.IsDelegated() {
 		if val.DelegateShare() > 0 {
-			if batchTrx.Recipients[1].Amount != val.DelegateShare() || batchTrx.Recipients[1].To != val.DelegateOwner() {
+			if batchTrx.Recipients[1].Amount < val.DelegateShare() || batchTrx.Recipients[1].To != val.DelegateOwner() {
 				return ErrInvalidSubsidyTransaction
 			}
 		}
