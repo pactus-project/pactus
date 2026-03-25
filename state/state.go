@@ -324,7 +324,8 @@ func (st *state) createSubsidyTx(valAddr, rewardAddr crypto.Address, accumulated
 	if val.IsDelegated() {
 		// Base on PIP-49, the maximum delegate share is 0.7 PAC.
 		// If the delegate share is equal to 0 PAC, the delegate owner should not receive any reward.
-		// If the delegate share is equal to 0.7 PAC, the delegate owner receives all the remaining reward, and transaction fee.
+		// If the delegate share is equal to 0.7 PAC, the delegate owner receives
+		// all the remaining reward, and transaction fee.
 
 		dlgOwnerAddr := val.DelegateOwner()
 		dlgOwnerShare := val.DelegateShare()
