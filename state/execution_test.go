@@ -329,7 +329,7 @@ func TestSubsidyTransaction(t *testing.T) {
 	t.Run("Delegated proposer rejects invalid owner amount/address in 3-recipient subsidy", func(t *testing.T) {
 		td.state.params.BlockVersion = protocol.ProtocolVersion3
 		delegateOwner := td.RandAccAddress()
-		delegateShare := amount.Amount(3e8)
+		delegateShare := amount.Amount(0.3e9)
 		lockTime := td.RandHeight()
 
 		val, err := td.state.store.Validator(proposerAddr)

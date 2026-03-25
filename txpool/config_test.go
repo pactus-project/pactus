@@ -17,7 +17,7 @@ func TestDefaultConfig(t *testing.T) {
 	assert.Equal(t, 100, conf.withdrawPoolSize())
 	assert.Equal(t, 100, conf.sortitionPoolSize())
 	assert.Equal(t, 100, conf.batchTransferPoolSize())
-	assert.Equal(t, amount.Amount(0.1e8), conf.fixedFee())
+	assert.Equal(t, amount.Amount(0.01e9), conf.fixedFee())
 
 	assert.Equal(t,
 		conf.transferPoolSize()+

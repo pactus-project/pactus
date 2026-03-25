@@ -322,24 +322,30 @@ func (st *state) createSubsidyTx(valAddr, rewardAddr crypto.Address, accumulated
 	val, _ := st.store.Validator(valAddr)
 
 	if val.IsDelegated() {
-		dlgOwner := val.DelegateOwner()
-		dlgShare := val.DelegateShare()
+		// Base on PIP-49, the maximum delegate share is 0.7 PAC.
+		// If the delegate share is equal to 0 PAC, the delegate owner should not receive any reward.
+		// If the delegate share is equal to 0.7 PAC, the delegate owner receives all the remaining reward, and transaction fee.
 
-		if dlgShare > 0 {
+		dlgOwnerAddr := val.DelegateOwner()
+		dlgOwnerShare := val.DelegateShare()
+
+		if dlgOwnerShare > 0 {
+			amount := dlgOwnerShare
+			if dlgOwnerShare == param.MaxDelegateOwnerRewardShare {
+				amount += accumulatedFee
+			}
 			recipients = append(recipients,
 				payload.BatchRecipient{
-					To:     dlgOwner,
-					Amount: dlgShare,
+					To:     dlgOwnerAddr,
+					Amount: amount,
 				})
 		}
 
-		// Base on PIP-49, the maximum delegate share is 0.7 PAC.
-		// If the delegate share is equal to 0.7 PAC, the reward address should not receive any reward.
-		if dlgShare < param.MaxDelegateOwnerRewardShare {
+		if dlgOwnerShare < param.MaxDelegateOwnerRewardShare {
 			recipients = append(recipients,
 				payload.BatchRecipient{
 					To:     rewardAddr,
-					Amount: st.params.BlockReward + accumulatedFee - st.params.FoundationReward - dlgShare,
+					Amount: st.params.BlockReward + accumulatedFee - st.params.FoundationReward - dlgOwnerShare,
 				})
 		}
 	} else {
