@@ -244,11 +244,11 @@ func TestGetValidator(t *testing.T) {
 	})
 
 	t.Run("Should return delegation info for delegated validators", func(t *testing.T) {
-		dlgOwner := td.RandAccAddress()
-		dlgShare := td.RandAmount()
+		dlgOwnerAddr := td.RandAccAddress()
+		dlgOwnerShare := td.RandAmount()
 		dlgExpiry := td.RandHeight()
 
-		val1.SetDelegation(dlgOwner, dlgShare, dlgExpiry)
+		val1.SetDelegation(dlgOwnerAddr, dlgOwnerShare, dlgExpiry)
 		td.mockState.TestStore.UpdateValidator(val1)
 
 		res, err := client.GetValidator(context.Background(),
@@ -259,8 +259,8 @@ func TestGetValidator(t *testing.T) {
 
 		v := res.GetValidator()
 		assert.True(t, v.IsDelegated)
-		assert.Equal(t, dlgOwner.String(), v.DelegateOwner)
-		assert.Equal(t, dlgShare.ToNanoPAC(), v.DelegateShare)
+		assert.Equal(t, dlgOwnerAddr.String(), v.DelegateOwner)
+		assert.Equal(t, dlgOwnerShare.ToNanoPAC(), v.DelegateShare)
 		assert.Equal(t, dlgExpiry, v.DelegateExpiry)
 	})
 }

@@ -91,7 +91,7 @@ func TestExecuteDelegatedWithdrawTx(t *testing.T) {
 	totalStake := td.sbx.TestParams.MaximumStake
 	val.AddToStake(totalStake)
 	owner := td.RandAccAddress()
-	val.SetDelegation(owner, amount.Amount(3e8), td.sbx.CurrentHeight()+10)
+	val.SetDelegation(owner, amount.Amount(0.3e9), td.sbx.CurrentHeight()+10)
 	val.UpdateUnbondingHeight(td.sbx.CurrentHeight() - td.sbx.Params().UnbondInterval + 1)
 	td.sbx.UpdateValidator(val)
 

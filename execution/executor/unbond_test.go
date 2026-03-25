@@ -104,7 +104,7 @@ func TestExecuteDelegatedUnbondTx(t *testing.T) {
 	val := td.sbx.MakeNewValidator(valPub)
 	val.AddToStake(td.sbx.TestParams.MaximumStake)
 	owner := td.RandAccAddress()
-	val.SetDelegation(owner, amount.Amount(2e8), td.sbx.CurrentHeight()+10)
+	val.SetDelegation(owner, amount.Amount(0.2e9), td.sbx.CurrentHeight()+10)
 	td.sbx.UpdateValidator(val)
 	lockTime := td.sbx.CurrentHeight()
 

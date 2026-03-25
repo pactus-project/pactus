@@ -10,7 +10,6 @@ import (
 	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
-	"github.com/pactus-project/pactus/state/param"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/types/account"
@@ -157,72 +156,139 @@ func TestBlockSubsidyTx(t *testing.T) {
 
 	// Without reward address in config
 	rewardAddr := td.RandAccAddress()
-	randAccumulatedFee := td.RandFee()
-	trx := td.state.createSubsidyTx(td.genValKeys[0].Address(), rewardAddr, randAccumulatedFee)
-	payload := trx.Payload().(*payload.BatchTransferPayload)
-	assert.True(t, trx.IsSubsidyTx())
-	assert.Equal(t, td.state.params.BlockReward+randAccumulatedFee, payload.Value())
-	assert.Equal(t, crypto.TreasuryAddress, payload.Signer())
-	assert.Equal(t, rewardAddr, payload.Recipients[1].To)
-	assert.Equal(t, td.state.params.FoundationReward, payload.Recipients[0].Amount)
-	assert.Equal(t, td.state.params.BlockReward-td.state.params.FoundationReward+randAccumulatedFee,
-		payload.Recipients[1].Amount)
-}
-
-func TestBlockSubsidyDelegatedTx(t *testing.T) {
-	td := setup(t)
-
-	rewardAddr := td.RandAccAddress()
-	randAccumulatedFee := td.RandFee()
-	dlgOwner := td.RandAccAddress()
+	proposerAddr := td.state.Proposer(0).Address()
+	foundationAddr := td.state.params.FoundationAddress[td.state.LastBlockHeight()+1]
 
 	tests := []struct {
-		name     string
-		dlgShare amount.Amount
+		name               string
+		accumulatedFee     amount.Amount
+		expectedRecipients []payload.BatchRecipient
 	}{
-		{name: "delegate_share_zero", dlgShare: 0},
-		{name: "delegate_share_0_7_PAC", dlgShare: param.MaxDelegateOwnerRewardShare},
-		{name: "delegate_share_partial", dlgShare: 2e8},
+		{
+			name:           "subsidy with zero transaction fee",
+			accumulatedFee: 0,
+			expectedRecipients: []payload.BatchRecipient{
+				{To: foundationAddr, Amount: 0.3e9},
+				{To: rewardAddr, Amount: 0.7e9},
+			},
+		},
+
+		{
+			name:           "subsidy with transaction fee",
+			accumulatedFee: 0.01e9, // 0.1 PAC
+			expectedRecipients: []payload.BatchRecipient{
+				{To: foundationAddr, Amount: 0.3e9},
+				{To: rewardAddr, Amount: 0.71e9},
+			},
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			val := td.GenerateTestValidator()
-			val.SetDelegation(dlgOwner, tt.dlgShare, td.RandHeight())
-			td.state.store.UpdateValidator(val)
+			trx := td.state.createSubsidyTx(proposerAddr, rewardAddr, tt.accumulatedFee)
 
-			trx := td.state.createSubsidyTx(val.Address(), rewardAddr, randAccumulatedFee)
+			err := td.state.checkSubsidy(trx, td.genValKeys[0].Address(), true)
+			assert.NoError(t, err)
+
 			payload := trx.Payload().(*payload.BatchTransferPayload)
 
-			assert.True(t, trx.IsSubsidyTx())
-			assert.Equal(t, crypto.TreasuryAddress, payload.Signer())
-			assert.Equal(t, td.state.params.FoundationReward, payload.Recipients[0].Amount)
+			for i, recipient := range payload.Recipients {
+				assert.Equal(t, tt.expectedRecipients[i].To, recipient.To)
+				assert.Equal(t, tt.expectedRecipients[i].Amount, recipient.Amount)
+			}
+		})
+	}
+}
 
-			switch tt.dlgShare {
-			case 0:
-				// PIP-49: no owner output when share is 0; 2 recipients (foundation + operator).
-				assert.Equal(t, td.state.params.BlockReward+randAccumulatedFee, payload.Value())
-				require.Len(t, payload.Recipients, 2)
-				assert.Equal(t, rewardAddr, payload.Recipients[1].To)
-				assert.Equal(t,
-					td.state.params.BlockReward-td.state.params.FoundationReward+randAccumulatedFee,
-					payload.Recipients[1].Amount)
-			case param.MaxDelegateOwnerRewardShare:
-				// PIP-49: at max owner share there is no operator output; fees are not split to recipients here.
-				assert.Equal(t, td.state.params.BlockReward, payload.Value())
-				require.Len(t, payload.Recipients, 2)
-				assert.Equal(t, dlgOwner, payload.Recipients[1].To)
-				assert.Equal(t, param.MaxDelegateOwnerRewardShare, payload.Recipients[1].Amount)
-			default:
-				// Intermediate share: foundation + owner + operator (reward address).
-				assert.Equal(t, td.state.params.BlockReward+randAccumulatedFee, payload.Value())
-				require.Len(t, payload.Recipients, 3)
-				assert.Equal(t, dlgOwner, payload.Recipients[1].To)
-				assert.Equal(t, tt.dlgShare, payload.Recipients[1].Amount)
-				assert.Equal(t, rewardAddr, payload.Recipients[2].To)
-				assert.Equal(t,
-					td.state.params.BlockReward-tt.dlgShare-td.state.params.FoundationReward+randAccumulatedFee,
-					payload.Recipients[2].Amount)
+func TestBlockSubsidyWithDelegationTx(t *testing.T) {
+	td := setup(t)
+
+	// Without reward address in config
+	rewardAddr := td.RandAccAddress()
+	dlgOwnerAddr := td.RandAccAddress()
+	proposerAddr := td.state.Proposer(0).Address()
+	foundationAddr := td.state.params.FoundationAddress[td.state.LastBlockHeight()+1]
+
+	tests := []struct {
+		name               string
+		accumulatedFee     amount.Amount
+		ownerShare         amount.Amount
+		expectedRecipients []payload.BatchRecipient
+	}{
+		{
+			name:           "owner share 0, without transaction fee",
+			accumulatedFee: 0,
+			ownerShare:     0,
+			expectedRecipients: []payload.BatchRecipient{
+				{To: foundationAddr, Amount: 0.3e9},
+				{To: rewardAddr, Amount: 0.7e9},
+			},
+		},
+		{
+			name:           "owner share 0.2, without transaction fee",
+			accumulatedFee: 0,
+			ownerShare:     0.2e9, // 0.2 PAC
+			expectedRecipients: []payload.BatchRecipient{
+				{To: foundationAddr, Amount: 0.3e9},
+				{To: dlgOwnerAddr, Amount: 0.2e9},
+				{To: rewardAddr, Amount: 0.5e9},
+			},
+		},
+		{
+			name:           "owner share 0.7, without transaction fee",
+			accumulatedFee: 0,
+			ownerShare:     0.7e9, // 0.7 PAC
+			expectedRecipients: []payload.BatchRecipient{
+				{To: foundationAddr, Amount: 0.3e9},
+				{To: dlgOwnerAddr, Amount: 0.7e9},
+			},
+		},
+		{
+			name:           "owner share 0, with transaction fee",
+			accumulatedFee: 0.01e9, // 0.01 PAC
+			ownerShare:     0,
+			expectedRecipients: []payload.BatchRecipient{
+				{To: foundationAddr, Amount: 0.3e9},
+				{To: rewardAddr, Amount: 0.71e9},
+			},
+		},
+		{
+			name:           "owner share 0.2, with transaction fee",
+			accumulatedFee: 0.01e9, // 0.01 PAC
+			ownerShare:     0.2e9,  // 0.2 PAC
+			expectedRecipients: []payload.BatchRecipient{
+				{To: foundationAddr, Amount: 0.3e9},
+				{To: dlgOwnerAddr, Amount: 0.2e9},
+				{To: rewardAddr, Amount: 0.51e9},
+			},
+		},
+		{
+			name:           "owner share 0.7, with transaction fee",
+			accumulatedFee: 0.01e9, // 0.01 PAC
+			ownerShare:     0.7e9,  // 0.7 PAC
+			expectedRecipients: []payload.BatchRecipient{
+				{To: foundationAddr, Amount: 0.3e9},
+				{To: dlgOwnerAddr, Amount: 0.71e9},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			val, _ := td.state.ValidatorByAddress(proposerAddr)
+			val.SetDelegation(dlgOwnerAddr, tt.ownerShare, td.RandHeight())
+			td.state.store.UpdateValidator(val)
+
+			trx := td.state.createSubsidyTx(proposerAddr, rewardAddr, tt.accumulatedFee)
+
+			err := td.state.checkSubsidy(trx, td.genValKeys[0].Address(), true)
+			assert.NoError(t, err)
+
+			payload := trx.Payload().(*payload.BatchTransferPayload)
+
+			for i, recipient := range payload.Recipients {
+				assert.Equal(t, tt.expectedRecipients[i].To, recipient.To)
+				assert.Equal(t, tt.expectedRecipients[i].Amount, recipient.Amount)
 			}
 		})
 	}
