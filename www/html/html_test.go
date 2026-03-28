@@ -17,6 +17,7 @@ import (
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/zmq"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type testData struct {
@@ -71,10 +72,10 @@ func setup(t *testing.T) *testData {
 		mockState, mockSync, mockNet, mockConsMgr,
 		mockWalletMgr, zmqPublishers,
 	)
-	assert.NoError(t, gRPCServer.StartServer())
+	require.NoError(t, gRPCServer.StartServer())
 
 	httpServer := NewServer(context.Background(), httpConf, false)
-	assert.NoError(t, httpServer.StartServer(gRPCServer.Address()))
+	require.NoError(t, httpServer.StartServer(gRPCServer.Address()))
 
 	return &testData{
 		TestSuite:   ts,

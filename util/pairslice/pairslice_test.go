@@ -11,7 +11,7 @@ func TestNew(t *testing.T) {
 
 	assert.NotNil(t, slice)
 	assert.Equal(t, 10, cap(slice.pairs))
-	assert.Equal(t, 0, len(slice.pairs))
+	assert.Empty(t, slice.pairs)
 }
 
 func TestPairSlice(t *testing.T) {
@@ -23,8 +23,8 @@ func TestPairSlice(t *testing.T) {
 		slice.Append(3, "c")
 
 		assert.Equal(t, 3, slice.Len())
-		assert.Equal(t, slice.pairs[2].First, 3)
-		assert.Equal(t, slice.pairs[2].Second, "c")
+		assert.Equal(t, 3, slice.pairs[2].First)
+		assert.Equal(t, "c", slice.pairs[2].Second)
 	})
 
 	t.Run("Test RemoveFirst", func(t *testing.T) {
@@ -36,8 +36,8 @@ func TestPairSlice(t *testing.T) {
 
 		slice.RemoveFirst()
 
-		assert.Equal(t, slice.pairs[0].First, 2)
-		assert.Equal(t, slice.pairs[0].Second, "b")
+		assert.Equal(t, 2, slice.pairs[0].First)
+		assert.Equal(t, "b", slice.pairs[0].Second)
 	})
 
 	t.Run("Test RemoveLast", func(t *testing.T) {
@@ -50,8 +50,8 @@ func TestPairSlice(t *testing.T) {
 
 		slice.RemoveLast()
 
-		assert.Equal(t, slice.pairs[2].First, 3)
-		assert.Equal(t, slice.pairs[2].Second, "c")
+		assert.Equal(t, 3, slice.pairs[2].First)
+		assert.Equal(t, "c", slice.pairs[2].Second)
 	})
 
 	t.Run("Test Len", func(t *testing.T) {
@@ -73,8 +73,8 @@ func TestPairSlice(t *testing.T) {
 
 		slice.remove(1)
 
-		assert.Equal(t, slice.pairs[1].First, 3)
-		assert.Equal(t, slice.pairs[1].Second, "c")
+		assert.Equal(t, 3, slice.pairs[1].First)
+		assert.Equal(t, "c", slice.pairs[1].Second)
 	})
 
 	t.Run("Test Get", func(t *testing.T) {

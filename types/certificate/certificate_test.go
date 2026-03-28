@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golang.org/x/exp/slices"
 )
 
@@ -28,7 +29,7 @@ func TestDecoding(t *testing.T) {
 		r := bytes.NewReader(data)
 		cert := new(certificate.Certificate)
 		err := cert.Decode(r)
-		assert.ErrorIs(t, err, certificate.ErrTooManyCommitters)
+		require.ErrorIs(t, err, certificate.ErrTooManyCommitters)
 	})
 
 	t.Run("Too many absentees", func(t *testing.T) {
@@ -41,7 +42,7 @@ func TestDecoding(t *testing.T) {
 		r := bytes.NewReader(data)
 		cert := new(certificate.Certificate)
 		err := cert.Decode(r)
-		assert.ErrorIs(t, err, certificate.ErrTooManyAbsentees)
+		require.ErrorIs(t, err, certificate.ErrTooManyAbsentees)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -56,7 +57,7 @@ func TestDecoding(t *testing.T) {
 		r := bytes.NewReader(data)
 		cert := new(certificate.Certificate)
 		err := cert.Decode(r)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, uint32(0x01020304), cert.Height())
 		assert.Equal(t, int16(0x0001), cert.Round())
 		assert.Equal(t, []int32{1, 2, 3, 4, 5, 6}, cert.Committers())
@@ -110,18 +111,17 @@ func TestCertificateCBORMarshaling(t *testing.T) {
 
 	cert1 := ts.GenerateTestCertificate(ts.RandHeight())
 	bz1, err := cbor.Marshal(cert1)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	var cert2 certificate.Certificate
 	err = cbor.Unmarshal(bz1, &cert2)
-	assert.NoError(t, err)
-	assert.NoError(t, cert2.BasicCheck())
-	assert.Equal(t, cert1.Hash(), cert1.Hash())
+	require.NoError(t, err)
+	require.NoError(t, cert2.BasicCheck())
 
 	assert.True(t, cert1.Signature().EqualsTo(cert2.Signature()))
 	assert.Equal(t, cert1.Hash(), cert2.Hash())
 
 	err = cbor.Unmarshal([]byte{1}, &cert2)
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestBasicCheck(t *testing.T) {
@@ -131,7 +131,7 @@ func TestBasicCheck(t *testing.T) {
 		cert := certificate.NewCertificate(0, 0)
 
 		err := cert.BasicCheck()
-		assert.ErrorIs(t, err, certificate.BasicCheckError{
+		require.ErrorIs(t, err, certificate.BasicCheckError{
 			Reason: "height is not positive: 0",
 		})
 	})
@@ -140,7 +140,7 @@ func TestBasicCheck(t *testing.T) {
 		cert := certificate.NewCertificate(1, -1)
 
 		err := cert.BasicCheck()
-		assert.ErrorIs(t, err, certificate.BasicCheckError{
+		require.ErrorIs(t, err, certificate.BasicCheckError{
 			Reason: "round is negative: -1",
 		})
 	})
@@ -150,7 +150,7 @@ func TestBasicCheck(t *testing.T) {
 		cert.SetSignature(nil, []int32{1}, ts.RandBLSSignature())
 
 		err := cert.BasicCheck()
-		assert.ErrorIs(t, err, certificate.BasicCheckError{
+		require.ErrorIs(t, err, certificate.BasicCheckError{
 			Reason: "committers is missing",
 		})
 	})
@@ -160,7 +160,7 @@ func TestBasicCheck(t *testing.T) {
 		cert.SetSignature([]int32{1, 2, 3, 4}, nil, ts.RandBLSSignature())
 
 		err := cert.BasicCheck()
-		assert.ErrorIs(t, err, certificate.BasicCheckError{
+		require.ErrorIs(t, err, certificate.BasicCheckError{
 			Reason: "absentees is missing",
 		})
 	})
@@ -170,7 +170,7 @@ func TestBasicCheck(t *testing.T) {
 		cert.SetSignature([]int32{1, 2, 3, 4, 5, 6}, []int32{1}, nil)
 
 		err := cert.BasicCheck()
-		assert.ErrorIs(t, err, certificate.BasicCheckError{
+		require.ErrorIs(t, err, certificate.BasicCheckError{
 			Reason: "signature is missing",
 		})
 	})
@@ -180,7 +180,7 @@ func TestBasicCheck(t *testing.T) {
 		cert.SetSignature([]int32{11, 2, 3, 4, 5, 6}, []int32{66}, ts.RandBLSSignature())
 
 		err := cert.BasicCheck()
-		assert.ErrorIs(t, err, certificate.BasicCheckError{
+		require.ErrorIs(t, err, certificate.BasicCheckError{
 			Reason: fmt.Sprintf("absentees are not a subset of committers: %v, %v",
 				cert.Committers(), []int32{66}),
 		})
@@ -191,7 +191,7 @@ func TestBasicCheck(t *testing.T) {
 		cert.SetSignature([]int32{1, 2, 3, 4, 5, 6}, []int32{2, 1}, ts.RandBLSSignature())
 
 		err := cert.BasicCheck()
-		assert.ErrorIs(t, err, certificate.BasicCheckError{
+		require.ErrorIs(t, err, certificate.BasicCheckError{
 			Reason: fmt.Sprintf("absentees are not a subset of committers: %v, %v",
 				cert.Committers(), []int32{2, 1}),
 		})
@@ -206,20 +206,20 @@ func TestEncodingCertificate(t *testing.T) {
 
 	for i := 0; i < length; i++ {
 		w := util.NewFixedWriter(i)
-		assert.Error(t, cert1.Encode(w), "encode test %v failed", i)
+		require.Error(t, cert1.Encode(w), "encode test %v failed", i)
 	}
 	writer := util.NewFixedWriter(length)
-	assert.NoError(t, cert1.Encode(writer))
+	require.NoError(t, cert1.Encode(writer))
 
 	for i := 0; i < length; i++ {
 		cert := new(certificate.Certificate)
 		r := util.NewFixedReader(i, writer.Bytes())
-		assert.Error(t, cert.Decode(r), "decode test %v failed", i)
+		require.Error(t, cert.Decode(r), "decode test %v failed", i)
 	}
 
 	cert2 := new(certificate.Certificate)
 	reader := util.NewFixedReader(length, writer.Bytes())
-	assert.NoError(t, cert2.Decode(reader))
+	require.NoError(t, cert2.Decode(reader))
 	assert.Equal(t, cert1.Hash(), cert2.Hash())
 }
 
@@ -249,7 +249,7 @@ func TestAddSignature(t *testing.T) {
 	cert.SetSignature(committers, absentees, aggSig)
 
 	err := cert.ValidatePrecommit(validators, blockHash)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	numAbsentees := len(cert.Absentees())
 
@@ -257,7 +257,7 @@ func TestAddSignature(t *testing.T) {
 		cert.AddSignature(validators[0].Number(), sigs[0])
 
 		err := cert.ValidatePrecommit(validators, blockHash)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Len(t, cert.Absentees(), numAbsentees)
 	})
@@ -266,7 +266,7 @@ func TestAddSignature(t *testing.T) {
 		cert.AddSignature(validators[3].Number(), sigs[3])
 
 		err := cert.ValidatePrecommit(validators, blockHash)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Len(t, cert.Absentees(), numAbsentees-1)
 	})
@@ -297,11 +297,11 @@ func TestCertificateValidatePrepare(t *testing.T) {
 	t.Run("Doesn't have 2f+1 majority", func(t *testing.T) {
 		absentees := committers[2:]
 		aggSig, sigErr := bls.SignatureAggregate(sigs[:2]...)
-		assert.NoError(t, sigErr)
+		require.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidatePrepare(validators, blockHash)
-		assert.ErrorIs(t, err, certificate.InsufficientPowerError{
+		require.ErrorIs(t, err, certificate.InsufficientPowerError{
 			SignedPower:   2,
 			RequiredPower: 3,
 		})
@@ -310,11 +310,11 @@ func TestCertificateValidatePrepare(t *testing.T) {
 	t.Run("Ok, should return no error", func(t *testing.T) {
 		absentees := committers[3:]
 		aggSig, sigErr := bls.SignatureAggregate(sigs[:3]...)
-		assert.NoError(t, sigErr)
+		require.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidatePrepare(validators, blockHash)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 }
 
@@ -344,11 +344,11 @@ func TestCertificateValidatePrecommit(t *testing.T) {
 		invCommitters = append(invCommitters, ts.Rand.Int31n(10000))
 		absentees := committers[4:]
 		aggSig, sigErr := bls.SignatureAggregate(sigs[:4]...)
-		assert.NoError(t, sigErr)
+		require.NoError(t, sigErr)
 		cert.SetSignature(invCommitters, absentees, aggSig)
 
 		err := cert.ValidatePrecommit(validators, blockHash)
-		assert.ErrorIs(t, err, certificate.UnexpectedCommittersError{
+		require.ErrorIs(t, err, certificate.UnexpectedCommittersError{
 			Committers: invCommitters,
 		})
 	})
@@ -356,13 +356,13 @@ func TestCertificateValidatePrecommit(t *testing.T) {
 	t.Run("Invalid validator", func(t *testing.T) {
 		absentees := committers[4:]
 		aggSig, sigErr := bls.SignatureAggregate(sigs[:4]...)
-		assert.NoError(t, sigErr)
+		require.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		invValidators := slices.Clone(validators)
 		invValidators[0] = ts.GenerateTestValidator()
 		err := cert.ValidatePrecommit(invValidators, blockHash)
-		assert.ErrorIs(t, err, certificate.UnexpectedCommittersError{
+		require.ErrorIs(t, err, certificate.UnexpectedCommittersError{
 			Committers: committers,
 		})
 	})
@@ -370,11 +370,11 @@ func TestCertificateValidatePrecommit(t *testing.T) {
 	t.Run("Doesn't have 2f+1 majority", func(t *testing.T) {
 		absentees := committers[2:]
 		aggSig, sigErr := bls.SignatureAggregate(sigs[:2]...)
-		assert.NoError(t, sigErr)
+		require.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidatePrecommit(validators, blockHash)
-		assert.ErrorIs(t, err, certificate.InsufficientPowerError{
+		require.ErrorIs(t, err, certificate.InsufficientPowerError{
 			SignedPower:   2,
 			RequiredPower: 3,
 		})
@@ -383,31 +383,31 @@ func TestCertificateValidatePrecommit(t *testing.T) {
 	t.Run("One signature short, should return an error for invalid signature", func(t *testing.T) {
 		absentees := committers[4:]
 		aggSig, sigErr := bls.SignatureAggregate(sigs[3:]...)
-		assert.NoError(t, sigErr)
+		require.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidatePrecommit(validators, blockHash)
-		assert.ErrorIs(t, err, crypto.ErrInvalidSignature)
+		require.ErrorIs(t, err, crypto.ErrInvalidSignature)
 	})
 
 	t.Run("Invalid block hash", func(t *testing.T) {
 		absentees := committers[3:]
 		aggSig, sigErr := bls.SignatureAggregate(sigs[:3]...)
-		assert.NoError(t, sigErr)
+		require.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidatePrecommit(validators, ts.RandHash())
-		assert.ErrorIs(t, err, crypto.ErrInvalidSignature)
+		require.ErrorIs(t, err, crypto.ErrInvalidSignature)
 	})
 
 	t.Run("Ok, should return no error", func(t *testing.T) {
 		absentees := committers[3:]
 		aggSig, sigErr := bls.SignatureAggregate(sigs[:3]...)
-		assert.NoError(t, sigErr)
+		require.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidatePrecommit(validators, blockHash)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 }
 
@@ -437,21 +437,21 @@ func TestCertificateValidateCPPreVote(t *testing.T) {
 	t.Run("Invalid cpValue", func(t *testing.T) {
 		absentees := committers[3:]
 		aggSig, sigErr := bls.SignatureAggregate(sigs[:3]...)
-		assert.NoError(t, sigErr)
+		require.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidateCPPreVote(validators, blockHash, cpRound, byte(0))
-		assert.ErrorIs(t, err, crypto.ErrInvalidSignature)
+		require.ErrorIs(t, err, crypto.ErrInvalidSignature)
 	})
 
 	t.Run("Doesn't have 2f+1 majority", func(t *testing.T) {
 		absentees := committers[2:]
 		aggSig, sigErr := bls.SignatureAggregate(sigs[:2]...)
-		assert.NoError(t, sigErr)
+		require.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidateCPPreVote(validators, blockHash, cpRound, cpValue)
-		assert.ErrorIs(t, err, certificate.InsufficientPowerError{
+		require.ErrorIs(t, err, certificate.InsufficientPowerError{
 			SignedPower:   2,
 			RequiredPower: 3,
 		})
@@ -460,11 +460,11 @@ func TestCertificateValidateCPPreVote(t *testing.T) {
 	t.Run("Ok, should return no error", func(t *testing.T) {
 		absentees := committers[3:]
 		aggSig, sigErr := bls.SignatureAggregate(sigs[:3]...)
-		assert.NoError(t, sigErr)
+		require.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidateCPPreVote(validators, blockHash, cpRound, cpValue)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 }
 
@@ -494,21 +494,21 @@ func TestCertificateValidateCPMainVote(t *testing.T) {
 	t.Run("Invalid cpValue", func(t *testing.T) {
 		absentees := committers[3:]
 		aggSig, sigErr := bls.SignatureAggregate(sigs[:3]...)
-		assert.NoError(t, sigErr)
+		require.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidateCPMainVote(validators, blockHash, cpRound, byte(0))
-		assert.ErrorIs(t, err, crypto.ErrInvalidSignature)
+		require.ErrorIs(t, err, crypto.ErrInvalidSignature)
 	})
 
 	t.Run("Doesn't have 2f+1 majority", func(t *testing.T) {
 		absentees := committers[2:]
 		aggSig, sigErr := bls.SignatureAggregate(sigs[:2]...)
-		assert.NoError(t, sigErr)
+		require.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidateCPMainVote(validators, blockHash, cpRound, cpValue)
-		assert.ErrorIs(t, err, certificate.InsufficientPowerError{
+		require.ErrorIs(t, err, certificate.InsufficientPowerError{
 			SignedPower:   2,
 			RequiredPower: 3,
 		})
@@ -517,11 +517,11 @@ func TestCertificateValidateCPMainVote(t *testing.T) {
 	t.Run("Ok, should return no error", func(t *testing.T) {
 		absentees := committers[3:]
 		aggSig, sigErr := bls.SignatureAggregate(sigs[:3]...)
-		assert.NoError(t, sigErr)
+		require.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidateCPMainVote(validators, blockHash, cpRound, cpValue)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 }
 

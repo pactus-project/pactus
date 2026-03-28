@@ -5,11 +5,12 @@ import (
 
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNopeEncrypterParams(t *testing.T) {
 	enc := NopeEncrypter()
-	assert.Equal(t, "", enc.Method)
+	assert.Empty(t, enc.Method)
 	assert.Nil(t, enc.Params)
 	assert.False(t, enc.IsEncrypted())
 }
@@ -19,15 +20,15 @@ func TestNopeEncrypter(t *testing.T) {
 
 	msg := "foo"
 	_, err := enc.Encrypt(msg, "password")
-	assert.ErrorIs(t, err, ErrInvalidPassword)
+	require.ErrorIs(t, err, ErrInvalidPassword)
 	cipher, err := enc.Encrypt(msg, "")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, msg, cipher)
 
 	_, err = enc.Decrypt(cipher, "password")
-	assert.ErrorIs(t, err, ErrInvalidPassword)
+	require.ErrorIs(t, err, ErrInvalidPassword)
 	decipher, err := enc.Decrypt(cipher, "")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, msg, decipher)
 }
 
@@ -63,17 +64,17 @@ func TestDefaultEncrypter(t *testing.T) {
 	password := ts.RandString(ts.RandIntNonZero(100))
 
 	_, err := enc.Encrypt(msg, "")
-	assert.ErrorIs(t, err, ErrInvalidPassword)
+	require.ErrorIs(t, err, ErrInvalidPassword)
 
 	cipher, err := enc.Encrypt(msg, password)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	dec, err := enc.Decrypt(cipher, password)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, msg, dec)
 
 	_, err = enc.Decrypt(cipher, "invalid-password")
-	assert.ErrorIs(t, err, ErrInvalidPassword)
+	require.ErrorIs(t, err, ErrInvalidPassword)
 }
 
 func TestInvalidMethod(t *testing.T) {
@@ -98,10 +99,10 @@ func TestInvalidMethod(t *testing.T) {
 		}
 
 		_, err := enc.Encrypt("foo", "password")
-		assert.ErrorIs(t, err, ErrMethodNotSupported)
+		require.ErrorIs(t, err, ErrMethodNotSupported)
 
 		_, err = enc.Decrypt("AJFPsGu6bDMJ5iuMWDJS/87xVs7r", "password")
-		assert.ErrorIs(t, err, ErrMethodNotSupported)
+		require.ErrorIs(t, err, ErrMethodNotSupported)
 	}
 }
 
@@ -117,14 +118,14 @@ func TestInvalidDecrypt(t *testing.T) {
 	}
 
 	_, err := enc.Decrypt("", "password")
-	assert.ErrorIs(t, err, ErrInvalidCipher)
+	require.ErrorIs(t, err, ErrInvalidCipher)
 
 	_, err = enc.Decrypt("invalid-base64", "password")
-	assert.ErrorIs(t, err, ErrInvalidCipher)
+	require.ErrorIs(t, err, ErrInvalidCipher)
 
 	enc.Params.SetUint32(nameParamKeyLen, 64)
 	_, err = enc.Decrypt("AJFPsGu6bDMJ5iuMWDJS/87xVs7r", "password")
-	assert.ErrorIs(t, err, ErrInvalidParam)
+	require.ErrorIs(t, err, ErrInvalidParam)
 }
 
 func TestAES256CBC(t *testing.T) {
@@ -142,17 +143,17 @@ func TestAES256CBC(t *testing.T) {
 	password := "cowboy"
 
 	_, err := enc.Encrypt(msg, "")
-	assert.ErrorIs(t, err, ErrInvalidPassword)
+	require.ErrorIs(t, err, ErrInvalidPassword)
 
 	cipher, err := enc.Encrypt(msg, password)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	dec, err := enc.Decrypt(cipher, password)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, msg, dec)
 
 	_, err = enc.Decrypt(cipher, "invalid-password")
-	assert.ErrorIs(t, err, ErrInvalidPassword)
+	require.ErrorIs(t, err, ErrInvalidPassword)
 }
 
 func TestDecrypt(t *testing.T) {
@@ -210,7 +211,7 @@ func TestDecrypt(t *testing.T) {
 
 	for _, tt := range tests {
 		dec, err := tt.enc.Decrypt(tt.cipher, password)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, msg, dec)
 	}
 }

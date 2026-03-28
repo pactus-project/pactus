@@ -355,13 +355,13 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certif
 	blk := prop.Block()
 
 	err = td.consX.bcState.CommitBlock(blk, cert)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	err = td.consY.bcState.CommitBlock(blk, cert)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	err = td.consB.bcState.CommitBlock(blk, cert)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	err = td.consP.bcState.CommitBlock(blk, cert)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	return blk, cert
 }
@@ -740,7 +740,7 @@ func TestDuplicateProposal(t *testing.T) {
 		1000, tx.WithMemo("proposal changer"))
 	td.HelperSignTransaction(td.consX.valKey.PrivateKey(), trx)
 
-	assert.NoError(t, td.txPool.AppendTx(trx))
+	require.NoError(t, td.txPool.AppendTx(trx))
 	p2 := td.makeProposal(t, height, round)
 	assert.NotEqual(t, prop1.Hash(), p2.Hash())
 
@@ -792,7 +792,7 @@ func TestNonActiveValidator(t *testing.T) {
 		nonActiveCons.MoveToNewHeight()
 		td.checkHeightRound(t, nonActiveCons, 1, 0)
 
-		assert.NoError(t, nonActiveCons.bcState.CommitBlock(b1, cert1))
+		require.NoError(t, nonActiveCons.bcState.CommitBlock(b1, cert1))
 
 		nonActiveCons.MoveToNewHeight()
 		td.newHeightTimeout(nonActiveCons)
@@ -942,7 +942,7 @@ func TestByzantine(t *testing.T) {
 	byzTrx := tx.NewTransferTx(height,
 		td.consB.rewardAddr, td.RandAccAddress(), 1000, 1000)
 	td.HelperSignTransaction(td.consB.valKey.PrivateKey(), byzTrx)
-	assert.NoError(t, td.txPool.AppendTx(byzTrx))
+	require.NoError(t, td.txPool.AppendTx(byzTrx))
 	prop2 := td.makeProposal(t, height, round)
 
 	require.NotEqual(t, prop1.Block().Hash(), prop2.Block().Hash())

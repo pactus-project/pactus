@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestValidatorKey(t *testing.T) {
@@ -18,5 +19,5 @@ func TestValidatorKey(t *testing.T) {
 	assert.Equal(t, prv, valKey.PrivateKey())
 	assert.Equal(t, pub, valKey.PublicKey())
 	assert.Equal(t, pub.ValidatorAddress(), valKey.Address())
-	assert.NoError(t, pub.Verify([]byte("foo"), sig))
+	require.NoError(t, pub.Verify([]byte("foo"), sig))
 }
