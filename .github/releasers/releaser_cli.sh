@@ -14,7 +14,7 @@ PACKAGE_NAME="pactus-cli_${VERSION}"
 for OS_ARCH in \
      "linux amd64" "linux arm64" \
      "android arm64" \
-     "freebsd amd64" "freebsd arm" \
+     "freebsd amd64" "freebsd arm64" \
      "darwin amd64" "darwin arm64" \
      "windows 386" "windows amd64" "windows arm64"; do
 
