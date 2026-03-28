@@ -49,7 +49,9 @@ cd "$ROOT_DIR" && $GENERATOR_DIR/build/cli.js generate \
   -d "${ROOT_DIR}/www/grpc/gen/open-rpc/pactus-openrpc.json" \
   -o "$GENERATOR_DIR/js"
 cd "$GENERATOR_DIR/js/client/typescript"
-npm install && tsc
+
+npm install && npx tsc
+
 cp $GENERATOR_DIR/js/client/typescript/build/index.d.ts ${PACKAGE_DIR}/js/pactus-jsonrpc
 cp $GENERATOR_DIR/js/client/typescript/build/index.js ${PACKAGE_DIR}/js/pactus-jsonrpc
 cp $GENERATOR_DIR/js/client/typescript/build/index.js.map ${PACKAGE_DIR}/js/pactus-jsonrpc
