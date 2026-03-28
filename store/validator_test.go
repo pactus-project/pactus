@@ -62,7 +62,7 @@ func TestValidatorBatchSaving(t *testing.T) {
 			val := td.GenerateTestValidator(testsuite.ValidatorWithNumber(i))
 			td.store.UpdateValidator(val)
 		}
-		assert.NoError(t, td.store.WriteBatch())
+		require.NoError(t, td.store.WriteBatch())
 		assert.Equal(t, total, td.store.TotalValidators())
 	})
 
@@ -98,21 +98,21 @@ func TestValidatorByNumber(t *testing.T) {
 			val := td.GenerateTestValidator(testsuite.ValidatorWithNumber(i))
 			td.store.UpdateValidator(val)
 		}
-		assert.NoError(t, td.store.WriteBatch())
+		require.NoError(t, td.store.WriteBatch())
 		assert.Equal(t, total, td.store.TotalValidators())
 	})
 
 	t.Run("Get a random Validator", func(t *testing.T) {
 		num := td.RandInt32Max(total)
 		val, err := td.store.ValidatorByNumber(num)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		require.NotNil(t, val)
 		assert.Equal(t, num, val.Number())
 	})
 
 	t.Run("Negative number", func(t *testing.T) {
 		val, err := td.store.ValidatorByNumber(-1)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, val)
 	})
 
@@ -122,7 +122,7 @@ func TestValidatorByNumber(t *testing.T) {
 		has := td.store.HasValidator(addr)
 
 		assert.False(t, has)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, val)
 	})
 
@@ -132,12 +132,12 @@ func TestValidatorByNumber(t *testing.T) {
 
 		num := td.RandInt32Max(total)
 		val, err := store.ValidatorByNumber(num)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		require.NotNil(t, val)
 		assert.Equal(t, num, val.Number())
 
 		val, err = td.store.ValidatorByNumber(total + 1)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, val)
 	})
 }
@@ -151,7 +151,7 @@ func TestValidatorByAddress(t *testing.T) {
 			val := td.GenerateTestValidator(testsuite.ValidatorWithNumber(i))
 			td.store.UpdateValidator(val)
 		}
-		assert.NoError(t, td.store.WriteBatch())
+		require.NoError(t, td.store.WriteBatch())
 		assert.Equal(t, total, td.store.TotalValidators())
 	})
 
@@ -159,14 +159,14 @@ func TestValidatorByAddress(t *testing.T) {
 		num := td.RandInt32Max(total)
 		val0, _ := td.store.ValidatorByNumber(num)
 		val, err := td.store.Validator(val0.Address())
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		require.NotNil(t, val)
 		assert.Equal(t, num, val.Number())
 	})
 
 	t.Run("Unknown address", func(t *testing.T) {
 		val, err := td.store.Validator(td.RandAccAddress())
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, val)
 	})
 
@@ -177,7 +177,7 @@ func TestValidatorByAddress(t *testing.T) {
 		num := td.RandInt32Max(total)
 		val0, _ := store.ValidatorByNumber(num)
 		val, err := store.Validator(val0.Address())
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		require.NotNil(t, val)
 		assert.Equal(t, num, val.Number())
 	})
@@ -193,7 +193,7 @@ func TestIterateValidators(t *testing.T) {
 		td.store.UpdateValidator(val)
 		hashes1 = append(hashes1, val.Hash())
 	}
-	assert.NoError(t, td.store.WriteBatch())
+	require.NoError(t, td.store.WriteBatch())
 
 	hashes2 := []hash.Hash{}
 	td.store.IterateValidators(func(val *validator.Validator) bool {

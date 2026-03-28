@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestPublicKeyCBORMarshaling(t *testing.T) {
@@ -20,15 +21,15 @@ func TestPublicKeyCBORMarshaling(t *testing.T) {
 	pub2 := new(ed25519.PublicKey)
 
 	bs, err := pub1.MarshalCBOR()
-	assert.NoError(t, err)
-	assert.NoError(t, pub2.UnmarshalCBOR(bs))
+	require.NoError(t, err)
+	require.NoError(t, pub2.UnmarshalCBOR(bs))
 	assert.True(t, pub1.EqualsTo(pub2))
 
-	assert.Error(t, pub2.UnmarshalCBOR([]byte("abcd")))
+	require.Error(t, pub2.UnmarshalCBOR([]byte("abcd")))
 
 	inv, _ := hex.DecodeString(strings.Repeat("ff", ed25519.PublicKeySize))
 	data, _ := cbor.Marshal(inv)
-	assert.NoError(t, pub2.UnmarshalCBOR(data))
+	require.NoError(t, pub2.UnmarshalCBOR(data))
 }
 
 func TestPublicKeyEqualsTo(t *testing.T) {
@@ -48,16 +49,16 @@ func TestPublicKeyEncoding(t *testing.T) {
 
 	pub, _ := ts.RandEd25519KeyPair()
 	fw1 := util.NewFixedWriter(20)
-	assert.Error(t, pub.Encode(fw1))
+	require.Error(t, pub.Encode(fw1))
 
 	fw2 := util.NewFixedWriter(ed25519.PublicKeySize)
-	assert.NoError(t, pub.Encode(fw2))
+	require.NoError(t, pub.Encode(fw2))
 
 	fr1 := util.NewFixedReader(20, fw2.Bytes())
-	assert.Error(t, pub.Decode(fr1))
+	require.Error(t, pub.Decode(fr1))
 
 	fr2 := util.NewFixedReader(ed25519.PublicKeySize, fw2.Bytes())
-	assert.NoError(t, pub.Decode(fr2))
+	require.NoError(t, pub.Decode(fr2))
 	assert.Equal(t, ed25519.PublicKeySize, pub.SerializeSize())
 }
 
@@ -68,7 +69,7 @@ func TestPublicKeyVerifyAddress(t *testing.T) {
 	pub2, _ := ts.RandEd25519KeyPair()
 
 	err := pub1.VerifyAddress(pub1.AccountAddress())
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	err = pub1.VerifyAddress(pub2.AccountAddress())
 	assert.Equal(t, crypto.AddressMismatchError{
@@ -82,9 +83,9 @@ func TestNilPublicKey(t *testing.T) {
 
 	pub := &ed25519.PublicKey{}
 	randSig := ts.RandEd25519Signature()
-	assert.Error(t, pub.VerifyAddress(ts.RandAccAddress()))
-	assert.Error(t, pub.VerifyAddress(ts.RandValAddress()))
-	assert.Error(t, pub.Verify(nil, nil))
+	require.Error(t, pub.VerifyAddress(ts.RandAccAddress()))
+	require.Error(t, pub.VerifyAddress(ts.RandValAddress()))
+	require.Error(t, pub.Verify(nil, nil))
 	assert.Panics(t, func() { _ = pub.Verify(nil, randSig) })
 }
 
@@ -93,8 +94,8 @@ func TestNilSignature(t *testing.T) {
 
 	pub, _ := ts.RandEd25519KeyPair()
 	randSig := ts.RandEd25519Signature()
-	assert.Error(t, pub.Verify(nil, nil))
-	assert.Error(t, pub.Verify(nil, randSig))
+	require.Error(t, pub.Verify(nil, nil))
+	require.Error(t, pub.Verify(nil, randSig))
 }
 
 func TestPublicKeyFromString(t *testing.T) {
@@ -143,7 +144,7 @@ func TestPublicKeyFromString(t *testing.T) {
 	for no, tt := range tests {
 		pub, err := ed25519.PublicKeyFromString(tt.encoded)
 		if tt.valid {
-			assert.NoError(t, err, "test %v: unexpected error", no)
+			require.NoError(t, err, "test %v: unexpected error", no)
 			assert.Equal(t, tt.result, pub.Bytes(), "test %v: invalid bytes", no)
 			assert.Equal(t, tt.encoded, pub.String(), "test %v: invalid encoded", no)
 		} else {

@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSortitionType(t *testing.T) {
@@ -79,21 +80,21 @@ func TestSortitionDecoding(t *testing.T) {
 		r := util.NewFixedReader(len(tt.raw), tt.raw)
 		err := pld.Decode(payload.DecodeContext{}, r)
 		if tt.readErr != nil {
-			assert.ErrorIs(t, err, tt.readErr)
+			require.ErrorIs(t, err, tt.readErr)
 		} else {
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			for i := 0; i < pld.SerializeSize(); i++ {
 				w := util.NewFixedWriter(i)
-				assert.Error(t, pld.Encode(w), "encode test %v failed", no)
+				require.Error(t, pld.Encode(w), "encode test %v failed", no)
 			}
 			w := util.NewFixedWriter(pld.SerializeSize())
-			assert.NoError(t, pld.Encode(w))
-			assert.Equal(t, pld.SerializeSize(), len(w.Bytes()))
+			require.NoError(t, pld.Encode(w))
+			assert.Len(t, w.Bytes(), pld.SerializeSize())
 			assert.Equal(t, tt.raw, w.Bytes())
 
 			// Basic check
-			assert.NoError(t, pld.BasicCheck())
+			require.NoError(t, pld.BasicCheck())
 
 			// Check signer
 			if tt.raw[0] != 0 {

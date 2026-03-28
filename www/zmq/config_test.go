@@ -4,16 +4,17 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestDefaultConfig(t *testing.T) {
 	cfg := DefaultConfig()
 
 	assert.NotNil(t, cfg, "DefaultConfig should not return nil")
-	assert.Equal(t, "", cfg.ZmqPubBlockInfo, "ZmqPubBlockInfo should be empty")
-	assert.Equal(t, "", cfg.ZmqPubTxInfo, "ZmqPubTxInfo should be empty")
-	assert.Equal(t, "", cfg.ZmqPubRawBlock, "ZmqPubRawBlock should be empty")
-	assert.Equal(t, "", cfg.ZmqPubRawTx, "ZmqPubRawTx should be empty")
+	assert.Empty(t, cfg.ZmqPubBlockInfo, "ZmqPubBlockInfo should be empty")
+	assert.Empty(t, cfg.ZmqPubTxInfo, "ZmqPubTxInfo should be empty")
+	assert.Empty(t, cfg.ZmqPubRawBlock, "ZmqPubRawBlock should be empty")
+	assert.Empty(t, cfg.ZmqPubRawTx, "ZmqPubRawTx should be empty")
 	assert.Equal(t, 1000, cfg.ZmqPubHWM, "ZmqPubHWM should default to 1000")
 }
 
@@ -52,9 +53,9 @@ func TestBasicCheck(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			err := tt.config.BasicCheck()
 			if tt.expectErr {
-				assert.Error(t, err, "BasicCheck should return an error")
+				require.Error(t, err, "BasicCheck should return an error")
 			} else {
-				assert.NoError(t, err, "BasicCheck should not return an error")
+				require.NoError(t, err, "BasicCheck should not return an error")
 			}
 		})
 	}

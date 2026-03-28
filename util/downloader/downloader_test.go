@@ -13,6 +13,7 @@ import (
 
 	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestDownloader(t *testing.T) {
@@ -39,7 +40,7 @@ func TestDownloader(t *testing.T) {
 	filePath := util.TempFilePath()
 
 	defer func() {
-		assert.NoError(t, os.RemoveAll("./testdata"))
+		require.NoError(t, os.RemoveAll("./testdata"))
 	}()
 
 	downloader := New(server.URL+fileURL, filePath, expectedSHA256Hex,
@@ -56,7 +57,7 @@ func TestDownloader(t *testing.T) {
 	t.Log(downloader.FileType())
 
 	downloadedContent, err := os.ReadFile(filePath)
-	assert.NoError(t, err, "Failed to read the downloaded file")
+	require.NoError(t, err, "Failed to read the downloaded file")
 	assert.Equal(t, fileContent, downloadedContent, "Downloaded file content does not match expected content")
 }
 

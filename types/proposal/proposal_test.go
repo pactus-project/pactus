@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestProposalMarshaling(t *testing.T) {
@@ -17,10 +18,10 @@ func TestProposalMarshaling(t *testing.T) {
 
 	prop := ts.GenerateTestProposal(10, 10)
 	data, err := prop.MarshalCBOR()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	var p2 proposal.Proposal
 	err = p2.UnmarshalCBOR(data)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }
 
 func TestProposalSignBytes(t *testing.T) {
@@ -50,18 +51,18 @@ func TestProposalSignature(t *testing.T) {
 	prop := ts.GenerateTestProposal(ts.RandHeight(), ts.RandRound(), testsuite.ProposalWithKey(proposerKey))
 
 	err := prop.Verify(proposerKey.PublicKey())
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	rndValKey := ts.RandValKey()
 	err = prop.Verify(rndValKey.PublicKey())
-	assert.ErrorIs(t, err, crypto.AddressMismatchError{
+	require.ErrorIs(t, err, crypto.AddressMismatchError{
 		Expected: rndValKey.Address(),
 		Got:      prop.Block().Header().ProposerAddress(),
 	})
 
 	ts.HelperSignProposal(rndValKey, prop)
 	err = prop.Verify(proposerKey.PublicKey())
-	assert.ErrorIs(t, crypto.ErrInvalidSignature, err)
+	require.ErrorIs(t, crypto.ErrInvalidSignature, err)
 }
 
 func TestBasicCheck(t *testing.T) {
@@ -70,7 +71,7 @@ func TestBasicCheck(t *testing.T) {
 	t.Run("No block", func(t *testing.T) {
 		p := &proposal.Proposal{}
 		err := p.BasicCheck()
-		assert.ErrorIs(t, err, proposal.BasicCheckError{
+		require.ErrorIs(t, err, proposal.BasicCheckError{
 			Reason: "no block",
 		})
 	})
@@ -80,7 +81,7 @@ func TestBasicCheck(t *testing.T) {
 		p := proposal.NewProposal(0, 0, blk)
 		p.SetSignature(ts.RandBLSSignature())
 		err := p.BasicCheck()
-		assert.ErrorIs(t, err, proposal.BasicCheckError{
+		require.ErrorIs(t, err, proposal.BasicCheckError{
 			Reason: "invalid height",
 		})
 	})
@@ -90,7 +91,7 @@ func TestBasicCheck(t *testing.T) {
 		p := proposal.NewProposal(ts.RandHeight(), -1, blk)
 		p.SetSignature(ts.RandBLSSignature())
 		err := p.BasicCheck()
-		assert.ErrorIs(t, err, proposal.BasicCheckError{
+		require.ErrorIs(t, err, proposal.BasicCheckError{
 			Reason: "invalid round",
 		})
 	})
@@ -104,19 +105,19 @@ func TestBasicCheck(t *testing.T) {
 				"48bbbc616c005573d8ad4d5c6997996d6f488946cdd78410f0a400c4a7f9bdb41506bdf717a892fa0004f6")
 		prop := &proposal.Proposal{}
 		err := cbor.Unmarshal(data, &prop)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		err = prop.BasicCheck()
-		assert.ErrorIs(t, err, proposal.BasicCheckError{
+		require.ErrorIs(t, err, proposal.BasicCheckError{
 			Reason: "no signature",
 		})
 
 		err = prop.Verify(pub)
-		assert.Error(t, err, crypto.ErrInvalidSignature)
+		require.ErrorIs(t, err, crypto.ErrInvalidSignature)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		prop := ts.GenerateTestProposal(100, 0)
-		assert.NoError(t, prop.BasicCheck())
+		require.NoError(t, prop.BasicCheck())
 	})
 }

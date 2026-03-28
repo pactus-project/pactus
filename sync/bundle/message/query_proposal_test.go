@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestQueryProposalType(t *testing.T) {
@@ -19,13 +20,13 @@ func TestQueryProposalMessage(t *testing.T) {
 		msg := NewQueryProposalMessage(0, -1, ts.RandValAddress())
 
 		err := msg.BasicCheck()
-		assert.ErrorIs(t, err, BasicCheckError{"invalid round"})
+		require.ErrorIs(t, err, BasicCheckError{"invalid round"})
 	})
 
 	t.Run("OK", func(t *testing.T) {
 		msg := NewQueryProposalMessage(100, 0, ts.RandValAddress())
 
-		assert.NoError(t, msg.BasicCheck())
+		require.NoError(t, msg.BasicCheck())
 		assert.Contains(t, msg.LogString(), "100")
 	})
 }

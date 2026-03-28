@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/util/testsuite"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSignMessageWithPrivateKey(t *testing.T) {
@@ -27,7 +28,7 @@ func TestSignMessageWithPrivateKey(t *testing.T) {
 				PrivateKey: prvStr,
 			})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, expectedSig, res.Signature)
 	})
 
@@ -38,7 +39,7 @@ func TestSignMessageWithPrivateKey(t *testing.T) {
 				PrivateKey: invalidPrvStr,
 			})
 
-		assert.NotNil(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 }
@@ -61,7 +62,7 @@ func TestSignMessageWithED25519PrivateKey(t *testing.T) {
 				PrivateKey: prvStr,
 			})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, expectedSig, res.Signature)
 	})
 
@@ -72,7 +73,7 @@ func TestSignMessageWithED25519PrivateKey(t *testing.T) {
 				PrivateKey: invalidPrvStr,
 			})
 
-		assert.NotNil(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 }
@@ -95,7 +96,7 @@ func TestVerifyMessage(t *testing.T) {
 				Signature: sigStr,
 				PublicKey: pubStr,
 			})
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.True(t, res.IsValid)
 	})
 
@@ -107,7 +108,7 @@ func TestVerifyMessage(t *testing.T) {
 				PublicKey: pubStr,
 			})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.False(t, res.IsValid)
 	})
 }
@@ -131,7 +132,7 @@ func TestVerifyED25519Message(t *testing.T) {
 				Signature: sigStr,
 				PublicKey: pubStr,
 			})
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.True(t, res.IsValid)
 	})
 
@@ -143,7 +144,7 @@ func TestVerifyED25519Message(t *testing.T) {
 				PublicKey: pubStr,
 			})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.False(t, res.IsValid)
 	})
 }
@@ -166,7 +167,7 @@ func TestPublicKeyAggregation(t *testing.T) {
 				PublicKeys: []string{},
 			})
 
-		assert.NotNil(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -176,7 +177,7 @@ func TestPublicKeyAggregation(t *testing.T) {
 				PublicKeys: []string{pub1.String()},
 			})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, pub1.String(), res.PublicKey)
 	})
 
@@ -186,7 +187,7 @@ func TestPublicKeyAggregation(t *testing.T) {
 				PublicKeys: []string{pub1.String(), pub2.String(), invalidPub, pub3.String()},
 			})
 
-		assert.NotNil(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -196,7 +197,7 @@ func TestPublicKeyAggregation(t *testing.T) {
 				PublicKeys: []string{pub1.String(), pub2.String(), pub3.String()},
 			})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, aggPub.String(), res.PublicKey)
 	})
 }
@@ -219,7 +220,7 @@ func TestSignatureAggregation(t *testing.T) {
 				Signatures: []string{},
 			})
 
-		assert.NotNil(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -229,7 +230,7 @@ func TestSignatureAggregation(t *testing.T) {
 				Signatures: []string{sig1.String()},
 			})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, sig1.String(), res.Signature)
 	})
 
@@ -239,7 +240,7 @@ func TestSignatureAggregation(t *testing.T) {
 				Signatures: []string{sig1.String(), sig2.String(), invalidSig, sig3.String()},
 			})
 
-		assert.NotNil(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -249,7 +250,7 @@ func TestSignatureAggregation(t *testing.T) {
 				Signatures: []string{sig1.String(), sig2.String(), sig3.String()},
 			})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, aggSig.String(), res.Signature)
 	})
 }

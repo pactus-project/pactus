@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -47,7 +46,7 @@ func TestBasicAuthMiddleware(t *testing.T) {
 
 		checkMetadataHandler := basicAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			md, ok := metadata.FromOutgoingContext(r.Context())
-			require.True(t, ok, "No metadata in context")
+			assert.True(t, ok, "No metadata in context")
 
 			auth := md["authorization"][0]
 

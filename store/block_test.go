@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestBlockStore(t *testing.T) {
@@ -17,23 +18,23 @@ func TestBlockStore(t *testing.T) {
 	t.Run("Add block, don't batch write", func(t *testing.T) {
 		td.store.SaveBlock(nextBlk, nextCert)
 		b2, err := td.store.Block(lastHeight + 1)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, b2)
 	})
 
 	t.Run("Add block, batch write", func(t *testing.T) {
 		td.store.SaveBlock(nextBlk, nextCert)
-		assert.NoError(t, td.store.WriteBatch())
+		require.NoError(t, td.store.WriteBatch())
 
 		cBlk, err := td.store.Block(lastHeight + 1)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, lastHeight+1, cBlk.Height)
 
 		d, _ := nextBlk.Bytes()
 		assert.True(t, bytes.Equal(cBlk.Data, d))
 
 		cert := td.store.LastCertificate()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, nextCert.Hash(), cert.Hash())
 	})
 }
