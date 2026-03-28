@@ -15,25 +15,25 @@ func TestHashFromString(t *testing.T) {
 
 	hash1 := ts.RandHash()
 	hash2, err := hash.FromString(hash1.String())
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, hash1, hash2)
 
 	_, err = hash.FromString("")
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	_, err = hash.FromString("inv")
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	_, err = hash.FromString("00")
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestHashEmpty(t *testing.T) {
 	_, err := hash.FromBytes(nil)
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	_, err = hash.FromBytes([]byte{1})
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestHash256(t *testing.T) {
@@ -52,7 +52,7 @@ func TestHash160(t *testing.T) {
 
 func TestHashBasicCheck(t *testing.T) {
 	h, err := hash.FromString("0000000000000000000000000000000000000000000000000000000000000000")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.True(t, h.IsUndef())
 	assert.Equal(t, hash.UndefHash.Bytes(), h.Bytes())
 }
@@ -61,6 +61,6 @@ func TestShortString(t *testing.T) {
 	h, err := hash.FromString("1234560000000000000000000000000000000000000000000000000000abcdef")
 	require.NoError(t, err)
 
-	assert.Equal(t, h.ShortString(), "123456-abcdef")
+	assert.Equal(t, "123456-abcdef", h.ShortString())
 	assert.Equal(t, h.ShortString(), h.LogString())
 }

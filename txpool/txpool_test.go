@@ -187,7 +187,7 @@ func TestAppendAndRemove(t *testing.T) {
 
 	trx := td.makeValidTransferTx()
 
-	assert.NoError(t, td.pool.AppendTx(trx))
+	require.NoError(t, td.pool.AppendTx(trx))
 	assert.True(t, td.pool.HasTx(trx.ID()))
 	assert.Equal(t, trx, td.pool.PendingTx(trx.ID()))
 
@@ -202,10 +202,10 @@ func TestAppendSameTransaction(t *testing.T) {
 	trx := td.makeValidTransferTx()
 
 	err := td.pool.AppendTx(trx)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	err = td.pool.AppendTx(trx)
-	assert.ErrorIs(t, err, execution.TransactionCommittedError{ID: trx.ID()})
+	require.ErrorIs(t, err, execution.TransactionCommittedError{ID: trx.ID()})
 }
 
 func TestDisableConsumption(t *testing.T) {
@@ -313,9 +313,9 @@ func TestEstimatedConsumptionalFee(t *testing.T) {
 
 			err := td.pool.AppendTx(testTrx)
 			if tt.withErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 		}
 	})
@@ -324,7 +324,7 @@ func TestEstimatedConsumptionalFee(t *testing.T) {
 		trx := td.makeValidTransferTx(testsuite.TransactionWithFee(0))
 
 		err := td.pool.AppendTx(trx)
-		assert.Error(t, err)
+		require.Error(t, err)
 	})
 }
 
@@ -336,7 +336,7 @@ func TestAppendInvalidTransaction(t *testing.T) {
 		trx.SetSignature(nil)
 
 		err := td.pool.AppendTx(trx)
-		assert.ErrorIs(t, err, tx.BasicCheckError{
+		require.ErrorIs(t, err, tx.BasicCheckError{
 			Reason: "no signature",
 		})
 	})
@@ -345,7 +345,7 @@ func TestAppendInvalidTransaction(t *testing.T) {
 		invTrx := td.GenerateTestTransferTx()
 
 		err := td.pool.AppendTx(invTrx)
-		assert.ErrorIs(t, err, executor.AccountNotFoundError{
+		require.ErrorIs(t, err, executor.AccountNotFoundError{
 			Address: invTrx.Payload().Signer(),
 		})
 	})
@@ -365,7 +365,7 @@ func TestFullPool(t *testing.T) {
 	for i := 0; i < len(trxs); i++ {
 		trx := td.makeValidTransferTx()
 
-		assert.NoError(t, td.pool.AppendTx(trx))
+		require.NoError(t, td.pool.AppendTx(trx))
 		trxs[i] = trx
 	}
 
@@ -397,12 +397,12 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	sortitionTx := td.makeValidSortitionTx(testsuite.TransactionWithSigner(prv4))
 	batchTransferTx := td.makeValidBatchTransferTx(testsuite.TransactionWithSigner(prv5))
 
-	assert.NoError(t, td.pool.AppendTx(transferTx))
-	assert.NoError(t, td.pool.AppendTx(unbondTx))
-	assert.NoError(t, td.pool.AppendTx(withdrawTx))
-	assert.NoError(t, td.pool.AppendTx(bondTx))
-	assert.NoError(t, td.pool.AppendTx(sortitionTx))
-	assert.NoError(t, td.pool.AppendTx(batchTransferTx))
+	require.NoError(t, td.pool.AppendTx(transferTx))
+	require.NoError(t, td.pool.AppendTx(unbondTx))
+	require.NoError(t, td.pool.AppendTx(withdrawTx))
+	require.NoError(t, td.pool.AppendTx(bondTx))
+	require.NoError(t, td.pool.AppendTx(sortitionTx))
+	require.NoError(t, td.pool.AppendTx(batchTransferTx))
 
 	trxs := td.pool.PrepareBlockTransactions()
 	assert.Len(t, trxs, 6)
@@ -423,7 +423,7 @@ func TestAddSubsidyTransactions(t *testing.T) {
 		trx := td.makeValidSubsidyTx(testsuite.TransactionWithLockTime(randHeight))
 
 		err := td.pool.AppendTx(trx)
-		assert.ErrorIs(t, err, execution.LockTimeExpiredError{
+		require.ErrorIs(t, err, execution.LockTimeExpiredError{
 			LockTime: randHeight,
 		})
 	})
@@ -436,7 +436,7 @@ func TestAddSubsidyTransactions(t *testing.T) {
 		trx := td.makeValidSubsidyTx(testsuite.TransactionWithLockTime(randHeight + 1))
 
 		err := td.pool.AppendTx(trx)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 }
 
@@ -446,7 +446,7 @@ func TestRecheckTransactions(t *testing.T) {
 	trx := td.makeValidSubsidyTx()
 
 	err := td.pool.AppendTx(trx)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, 1, td.pool.Size())
 
 	td.pool.SetNewSandboxAndRecheck(td.sbx)
@@ -458,7 +458,7 @@ func TestAppendAndBroadcast(t *testing.T) {
 		td := setup(t, nil)
 
 		invTrx := td.GenerateTestTransferTx()
-		assert.Error(t, td.pool.AppendTxAndBroadcast(invTrx))
+		require.Error(t, td.pool.AppendTxAndBroadcast(invTrx))
 	})
 
 	t.Run("Valid transaction with valid fee: Should add to pool and broadcast", func(t *testing.T) {
@@ -467,7 +467,7 @@ func TestAppendAndBroadcast(t *testing.T) {
 		trx := td.makeValidTransferTx()
 
 		err := td.pool.AppendTxAndBroadcast(trx)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, 1, td.pool.Size())
 		td.shouldPublishTransaction(t, trx.ID())
@@ -479,7 +479,7 @@ func TestAppendAndBroadcast(t *testing.T) {
 		trx := td.makeValidTransferTx(testsuite.TransactionWithFee(0))
 
 		err := td.pool.AppendTxAndBroadcast(trx)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Zero(t, td.pool.Size())
 		td.shouldPublishTransaction(t, trx.ID())
@@ -490,7 +490,7 @@ func TestAllPendingTxs(t *testing.T) {
 	td := setup(t, nil)
 
 	trxs := td.pool.AllPendingTxs()
-	assert.Empty(t, trxs, 0)
+	assert.Empty(t, trxs, "%+v", 0)
 
 	pub1, _ := td.RandBLSKeyPair()
 	_, prv2 := td.RandBLSKeyPair()
@@ -502,12 +502,12 @@ func TestAllPendingTxs(t *testing.T) {
 	sortitionTx := td.makeValidSortitionTx(testsuite.TransactionWithSigner(prv2))
 	batchTransferTx := td.makeValidBatchTransferTx()
 
-	assert.NoError(t, td.pool.AppendTx(transferTx))
-	assert.NoError(t, td.pool.AppendTx(bondTx))
-	assert.NoError(t, td.pool.AppendTx(unbondTx))
-	assert.NoError(t, td.pool.AppendTx(withdrawTx))
-	assert.NoError(t, td.pool.AppendTx(sortitionTx))
-	assert.NoError(t, td.pool.AppendTx(batchTransferTx))
+	require.NoError(t, td.pool.AppendTx(transferTx))
+	require.NoError(t, td.pool.AppendTx(bondTx))
+	require.NoError(t, td.pool.AppendTx(unbondTx))
+	require.NoError(t, td.pool.AppendTx(withdrawTx))
+	require.NoError(t, td.pool.AppendTx(sortitionTx))
+	require.NoError(t, td.pool.AppendTx(batchTransferTx))
 
 	trxs = td.pool.AllPendingTxs()
 	assert.Len(t, trxs, 6)

@@ -7,6 +7,7 @@ import (
 
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetBlock(t *testing.T) {
@@ -23,7 +24,7 @@ func TestGetBlock(t *testing.T) {
 				Height: height + 1, Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_DATA,
 			})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -31,7 +32,7 @@ func TestGetBlock(t *testing.T) {
 		res, err := client.GetBlock(context.Background(),
 			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_DATA})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, height, res.Height)
 		assert.Equal(t, blk.Hash().String(), res.Hash)
@@ -44,7 +45,7 @@ func TestGetBlock(t *testing.T) {
 		res, err := client.GetBlock(context.Background(),
 			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_INFO})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, height, res.Height)
 		assert.Equal(t, blk.Hash().String(), res.Hash)
@@ -55,7 +56,7 @@ func TestGetBlock(t *testing.T) {
 		for i, trx := range res.Txs {
 			blockTrx := blk.Transactions()[i]
 			blk, err := blockTrx.Bytes()
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, trx.Id, blockTrx.ID().String())
 			assert.Equal(t, trx.Data, hex.EncodeToString(blk))
 			assert.Zero(t, trx.LockTime)
@@ -68,7 +69,7 @@ func TestGetBlock(t *testing.T) {
 		res, err := client.GetBlock(context.Background(),
 			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_TRANSACTIONS})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, height, res.Height)
 		assert.Equal(t, blk.Hash().String(), res.Hash)
@@ -103,7 +104,7 @@ func TestGetBlockHash(t *testing.T) {
 		res, err := client.GetBlockHash(context.Background(),
 			&pactus.GetBlockHashRequest{Height: 0})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -111,7 +112,7 @@ func TestGetBlockHash(t *testing.T) {
 		res, err := client.GetBlockHash(context.Background(),
 			&pactus.GetBlockHashRequest{Height: height})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, blk.Hash().String(), res.Hash)
 	})
 }
@@ -127,7 +128,7 @@ func TestGetBlockHeight(t *testing.T) {
 		res, err := client.GetBlockHeight(context.Background(),
 			&pactus.GetBlockHeightRequest{Hash: ""})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -135,7 +136,7 @@ func TestGetBlockHeight(t *testing.T) {
 		res, err := client.GetBlockHeight(context.Background(),
 			&pactus.GetBlockHeightRequest{Hash: td.RandHash().String()})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -143,7 +144,7 @@ func TestGetBlockHeight(t *testing.T) {
 		res, err := client.GetBlockHeight(context.Background(),
 			&pactus.GetBlockHeightRequest{Hash: blk.Hash().String()})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, height, res.Height)
 	})
 }
@@ -156,7 +157,7 @@ func TestGetBlockchainInfo(t *testing.T) {
 		res, err := client.GetBlockchainInfo(context.Background(),
 			&pactus.GetBlockchainInfoRequest{})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, td.mockState.TestStore.LastHeight, res.LastBlockHeight)
 		assert.NotEmpty(t, res.LastBlockHash)
 		assert.Zero(t, res.PruningHeight)
@@ -171,7 +172,7 @@ func TestGetCommitteeInfo(t *testing.T) {
 	t.Run("Should return committee info", func(t *testing.T) {
 		res, err := client.GetCommitteeInfo(context.Background(),
 			&pactus.GetCommitteeInfoRequest{})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.GreaterOrEqual(t, res.CommitteePower, int64(0))
 		assert.NotNil(t, res.Validators)
@@ -189,7 +190,7 @@ func TestGetAccount(t *testing.T) {
 		res, err := client.GetAccount(context.Background(),
 			&pactus.GetAccountRequest{Address: ""})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -197,7 +198,7 @@ func TestGetAccount(t *testing.T) {
 		res, err := client.GetAccount(context.Background(),
 			&pactus.GetAccountRequest{Address: td.RandAccAddress().String()})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -205,7 +206,7 @@ func TestGetAccount(t *testing.T) {
 		res, err := client.GetAccount(context.Background(),
 			&pactus.GetAccountRequest{Address: addr.String()})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, acc.Balance().ToNanoPAC(), res.Account.Balance)
 		assert.Equal(t, acc.Number(), res.Account.Number)
@@ -222,7 +223,7 @@ func TestGetValidator(t *testing.T) {
 		res, err := client.GetValidator(context.Background(),
 			&pactus.GetValidatorRequest{Address: ""})
 
-		assert.Error(t, err, "Error should be returned")
+		require.Error(t, err, "Error should be returned")
 		assert.Nil(t, res, "Response should be empty")
 	})
 
@@ -230,7 +231,7 @@ func TestGetValidator(t *testing.T) {
 		res, err := client.GetValidator(context.Background(),
 			&pactus.GetValidatorRequest{Address: td.RandAccAddress().String()})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -238,7 +239,7 @@ func TestGetValidator(t *testing.T) {
 		res, err := client.GetValidator(context.Background(),
 			&pactus.GetValidatorRequest{Address: val1.Address().String()})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, val1.PublicKey().String(), res.GetValidator().PublicKey)
 	})
@@ -254,7 +255,7 @@ func TestGetValidator(t *testing.T) {
 		res, err := client.GetValidator(context.Background(),
 			&pactus.GetValidatorRequest{Address: val1.Address().String()})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 
 		v := res.GetValidator()
@@ -275,7 +276,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 		res, err := client.GetValidatorByNumber(context.Background(),
 			&pactus.GetValidatorByNumberRequest{Number: -1})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -283,7 +284,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 		res, err := client.GetValidatorByNumber(context.Background(),
 			&pactus.GetValidatorByNumberRequest{Number: val1.Number() + 1})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -291,7 +292,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 		res, err := client.GetValidatorByNumber(context.Background(),
 			&pactus.GetValidatorByNumberRequest{Number: val1.Number()})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, val1.PublicKey().String(), res.GetValidator().PublicKey)
 		assert.Equal(t, val1.Number(), res.GetValidator().GetNumber())
@@ -309,9 +310,9 @@ func TestGetValidatorAddresses(t *testing.T) {
 		res, err := client.GetValidatorAddresses(context.Background(),
 			&pactus.GetValidatorAddressesRequest{})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, 2, len(res.GetAddresses()))
+		assert.Len(t, res.GetAddresses(), 2)
 	})
 }
 
@@ -325,7 +326,7 @@ func TestGetPublicKey(t *testing.T) {
 		res, err := client.GetPublicKey(context.Background(),
 			&pactus.GetPublicKeyRequest{Address: ""})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -333,7 +334,7 @@ func TestGetPublicKey(t *testing.T) {
 		res, err := client.GetPublicKey(context.Background(),
 			&pactus.GetPublicKeyRequest{Address: td.RandAccAddress().String()})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -341,7 +342,7 @@ func TestGetPublicKey(t *testing.T) {
 		res, err := client.GetPublicKey(context.Background(),
 			&pactus.GetPublicKeyRequest{Address: val.Address().String()})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, val.PublicKey().String(), res.PublicKey)
 	})
@@ -371,7 +372,7 @@ func TestConsensusInfo(t *testing.T) {
 	t.Run("Should return the consensus info", func(t *testing.T) {
 		res, err := client.GetConsensusInfo(context.Background(), &pactus.GetConsensusInfoRequest{})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 
 		assert.True(t, res.Instances[0].Active)
@@ -410,10 +411,10 @@ func TestGetTxPoolContent(t *testing.T) {
 		}
 		resp, err := client.GetTxPoolContent(context.Background(), in)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, resp)
 
-		assert.Equal(t, 8, len(resp.Txs))
+		assert.Len(t, resp.Txs, 8)
 	})
 
 	t.Run("Should return all Bond transactions", func(t *testing.T) {
@@ -422,9 +423,9 @@ func TestGetTxPoolContent(t *testing.T) {
 		}
 		resp, err := client.GetTxPoolContent(context.Background(), in)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, resp)
-		assert.Greater(t, len(resp.Txs), 0)
+		assert.NotEmpty(t, resp.Txs)
 
 		for _, tx := range resp.Txs {
 			assert.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_BOND, tx.PayloadType)
@@ -437,9 +438,9 @@ func TestGetTxPoolContent(t *testing.T) {
 		}
 		resp, err := client.GetTxPoolContent(context.Background(), in)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, resp)
-		assert.Greater(t, len(resp.Txs), 0)
+		assert.NotEmpty(t, resp.Txs)
 
 		for _, tx := range resp.Txs {
 			assert.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_TRANSFER, tx.PayloadType)
@@ -452,9 +453,9 @@ func TestGetTxPoolContent(t *testing.T) {
 		}
 		resp, err := client.GetTxPoolContent(context.Background(), in)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, resp)
-		assert.Greater(t, len(resp.Txs), 0)
+		assert.NotEmpty(t, resp.Txs)
 
 		for _, tx := range resp.Txs {
 			assert.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_UNBOND, tx.PayloadType)
@@ -467,9 +468,9 @@ func TestGetTxPoolContent(t *testing.T) {
 		}
 		resp, err := client.GetTxPoolContent(context.Background(), in)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, resp)
-		assert.Greater(t, len(resp.Txs), 0)
+		assert.NotEmpty(t, resp.Txs)
 
 		for _, tx := range resp.Txs {
 			assert.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_SORTITION, tx.PayloadType)
@@ -482,9 +483,9 @@ func TestGetTxPoolContent(t *testing.T) {
 		}
 		resp, err := client.GetTxPoolContent(context.Background(), in)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, resp)
-		assert.Greater(t, len(resp.Txs), 0)
+		assert.NotEmpty(t, resp.Txs)
 
 		for _, tx := range resp.Txs {
 			assert.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_WITHDRAW, tx.PayloadType)

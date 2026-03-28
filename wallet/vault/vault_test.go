@@ -34,23 +34,23 @@ func setup(t *testing.T) *testData {
 	password := ts.RandString(32)
 	mnemonic, _ := GenerateMnemonic(128)
 	vault, err := CreateVaultFromMnemonic(mnemonic, 21888)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// Create some test address
 	addr1, err := vault.NewBLSAccountAddress("bls-account-address")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	addr2, err := vault.NewEd25519AccountAddress("ed25519-account-address", "")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	addr3, err := vault.NewValidatorAddress("validator-address")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	_, importedBLSPrv := ts.RandBLSKeyPair()
 	addr4, addr5, err := vault.ImportBLSPrivateKey("", importedBLSPrv)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	_, importedEd25519Prv := ts.RandEd25519KeyPair()
 	addr6, err := vault.ImportEd25519PrivateKey("", importedEd25519Prv)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	testAddrs := []*types.AddressInfo{addr1, addr2, addr3, addr4, addr5, addr6}
 
@@ -64,7 +64,7 @@ func setup(t *testing.T) *testData {
 	}
 
 	err = vault.UpdatePassword("", password, opts...)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.True(t, vault.IsEncrypted())
 
 	return &testData{
@@ -81,15 +81,15 @@ func TestCreateVaultFromMnemonic(t *testing.T) {
 
 	t.Run("Invalid mnemonic", func(t *testing.T) {
 		_, err := CreateVaultFromMnemonic("invalid mnemonic phrase seed", 21888)
-		assert.Error(t, err)
+		require.Error(t, err)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		recovered, err := CreateVaultFromMnemonic(td.mnemonic, 21888)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		vaultMnemonic, err := recovered.Mnemonic("")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, vaultMnemonic, td.mnemonic)
 
 		assert.Zero(t, recovered.Purposes.PurposeBLS.NextAccountIndex)
@@ -98,11 +98,11 @@ func TestCreateVaultFromMnemonic(t *testing.T) {
 
 		// Recover addresses
 		_, err = recovered.NewBLSAccountAddress("bls-account-address")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		_, err = recovered.NewEd25519AccountAddress("ed25519-account-address", "")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		_, err = recovered.NewValidatorAddress("validator-address")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, recovered.Purposes, td.vault.Purposes)
 	})
@@ -114,26 +114,26 @@ func TestGetPrivateKeys(t *testing.T) {
 	t.Run("Unknown purpose", func(t *testing.T) {
 		path, _ := addresspath.FromString("m/0")
 		_, err := td.vault.PrivateKeys(td.password, []addresspath.Path{path})
-		assert.ErrorIs(t, err, ErrUnsupportedPurpose)
+		require.ErrorIs(t, err, ErrUnsupportedPurpose)
 	})
 
 	t.Run("No password", func(t *testing.T) {
 		path, _ := addresspath.FromString("m/44/21888/3/0")
 		_, err := td.vault.PrivateKeys("", []addresspath.Path{path})
-		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+		require.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Invalid password", func(t *testing.T) {
 		path, _ := addresspath.FromString("m/44/21888/3/0")
 		_, err := td.vault.PrivateKeys("wrong_password", []addresspath.Path{path})
-		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+		require.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Check all the private keys", func(t *testing.T) {
 		for _, info := range td.testAddrs {
 			path, _ := addresspath.FromString(info.Path)
 			prv, err := td.vault.PrivateKeys(td.password, []addresspath.Path{path})
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			switch path.AddressType() {
 			case crypto.AddressTypeBLSAccount,
@@ -157,12 +157,12 @@ func TestImportBLSPrivateKey(t *testing.T) {
 
 	t.Run("Invalid password", func(t *testing.T) {
 		_, _, err := td.vault.ImportBLSPrivateKey("invalid-password", prv)
-		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+		require.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		accInfo, valInfo, err := td.vault.ImportBLSPrivateKey(td.password, prv)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, prv.PublicKeyNative().String(), accInfo.PublicKey)
 		assert.Equal(t, prv.PublicKeyNative().String(), valInfo.PublicKey)
@@ -179,12 +179,12 @@ func TestImportEd25519PrivateKey(t *testing.T) {
 
 	t.Run("Invalid password", func(t *testing.T) {
 		_, err := td.vault.ImportEd25519PrivateKey("invalid-password", prv)
-		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+		require.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		info, err := td.vault.ImportEd25519PrivateKey(td.password, prv)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, prv.PublicKeyNative().String(), info.PublicKey)
 		assert.Equal(t, "m/65535'/21888'/3'/2'", info.Path)
@@ -196,17 +196,17 @@ func TestGetMnemonic(t *testing.T) {
 
 	t.Run("Invalid password", func(t *testing.T) {
 		_, err := td.vault.Mnemonic("invalid-password")
-		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+		require.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("No password", func(t *testing.T) {
 		_, err := td.vault.Mnemonic("")
-		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+		require.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		m, err := td.vault.Mnemonic(td.password)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, m, td.mnemonic)
 	})
 }
@@ -224,26 +224,26 @@ func TestUpdatePassword(t *testing.T) {
 
 	t.Run("Rejects empty current password", func(t *testing.T) {
 		err := td.vault.UpdatePassword("", newPassword)
-		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+		require.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Rejects incorrect current password", func(t *testing.T) {
 		err := td.vault.UpdatePassword("invalid-password", newPassword)
-		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+		require.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Updates password with valid current password", func(t *testing.T) {
-		assert.NoError(t, td.vault.UpdatePassword(td.password, newPassword, opts...))
+		require.NoError(t, td.vault.UpdatePassword(td.password, newPassword, opts...))
 		assert.True(t, td.vault.IsEncrypted())
 	})
 
 	t.Run("Old password is no longer valid after update", func(t *testing.T) {
 		err := td.vault.UpdatePassword(td.password, newPassword)
-		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+		require.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Clears vault password when new password is empty", func(t *testing.T) {
-		assert.NoError(t, td.vault.UpdatePassword(newPassword, ""))
+		require.NoError(t, td.vault.UpdatePassword(newPassword, ""))
 		assert.False(t, td.vault.IsEncrypted())
 	})
 }
@@ -256,19 +256,19 @@ func TestNeuter(t *testing.T) {
 	assert.True(t, td.vault.IsNeutered())
 
 	_, err := td.vault.Mnemonic(td.password)
-	assert.ErrorIs(t, err, ErrNeutered)
+	require.ErrorIs(t, err, ErrNeutered)
 
 	_, err = td.vault.PrivateKeys(td.password, []addresspath.Path{})
-	assert.ErrorIs(t, err, ErrNeutered)
+	require.ErrorIs(t, err, ErrNeutered)
 
 	_, _, err = td.vault.ImportBLSPrivateKey("any", nil)
-	assert.ErrorIs(t, err, ErrNeutered)
+	require.ErrorIs(t, err, ErrNeutered)
 
 	_, err = td.vault.ImportEd25519PrivateKey("any", nil)
-	assert.ErrorIs(t, err, ErrNeutered)
+	require.ErrorIs(t, err, ErrNeutered)
 
 	err = td.vault.UpdatePassword("any", "any")
-	assert.ErrorIs(t, err, ErrNeutered)
+	require.ErrorIs(t, err, ErrNeutered)
 }
 
 // TestAddressRecovery tests the address recovery functionality according to PIP-41 specification.
@@ -302,7 +302,7 @@ func TestAddressRecovery(t *testing.T) {
 
 	t.Run("recover addresses from a fresh wallet without any active addresses", func(t *testing.T) {
 		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		// Mock hasActivity to return false for all addresses (no active addresses)
 		hasActivity := func(_ string) (bool, error) {
@@ -310,14 +310,14 @@ func TestAddressRecovery(t *testing.T) {
 		}
 
 		recovered, err := vault.RecoverAddresses(context.Background(), "", hasActivity)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Empty(t, recovered)
 	})
 
 	t.Run("recover addresses with one gap at the beginning", func(t *testing.T) {
 		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		// Mock hasActivity to return true only for the first call (address at index 0)
 		hasActivity := func(addr string) (bool, error) {
@@ -326,7 +326,7 @@ func TestAddressRecovery(t *testing.T) {
 		}
 
 		recovered, err := vault.RecoverAddresses(context.Background(), "", hasActivity)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		// Should have 4 addresses
 		assert.Len(t, recovered, 4)
@@ -338,7 +338,7 @@ func TestAddressRecovery(t *testing.T) {
 
 	t.Run("recover addresses with gaps in the middle of the address list", func(t *testing.T) {
 		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		hasActivity := func(addr string) (bool, error) {
 			return addr == "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3" ||
@@ -349,7 +349,7 @@ func TestAddressRecovery(t *testing.T) {
 		}
 
 		recovered, err := vault.RecoverAddresses(context.Background(), "", hasActivity)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Len(t, recovered, 8)
 
@@ -365,7 +365,7 @@ func TestAddressRecovery(t *testing.T) {
 
 	t.Run("prevent recovering existing address", func(t *testing.T) {
 		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		_, _ = vault.NewEd25519AccountAddress("existing address", "")
 
@@ -374,14 +374,14 @@ func TestAddressRecovery(t *testing.T) {
 		}
 
 		recovered, err := vault.RecoverAddresses(context.Background(), "", hasActivity)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
-		assert.Len(t, recovered, 0)
+		assert.Empty(t, recovered)
 	})
 
 	t.Run("error handling", func(t *testing.T) {
 		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		// Mock hasActivity to return an error
 		hasActivity := func(_ string) (bool, error) {
@@ -389,13 +389,13 @@ func TestAddressRecovery(t *testing.T) {
 		}
 
 		_, err = vault.RecoverAddresses(context.Background(), "", hasActivity)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Contains(t, err.Error(), "blockchain connection error")
 	})
 
 	t.Run("cancel recovery with context cancel signal", func(t *testing.T) {
 		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		// Create a cancellable context
 		ctx, cancel := context.WithCancel(context.Background())
@@ -415,7 +415,7 @@ func TestAddressRecovery(t *testing.T) {
 		}
 
 		_, err = vault.RecoverAddresses(ctx, "", hasActivity)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Equal(t, context.Canceled, err)
 	})
 }

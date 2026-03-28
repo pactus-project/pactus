@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNew(t *testing.T) {
@@ -26,10 +27,10 @@ func TestNew(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ipBlocker, err := New(tt.bannedNets)
 			if tt.expectedError {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
-				assert.Equal(t, tt.expectedLength, len(ipBlocker.cidrs))
+				require.NoError(t, err)
+				assert.Len(t, ipBlocker.cidrs, tt.expectedLength)
 			}
 		})
 	}
@@ -71,7 +72,7 @@ func TestIsBlocked(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ipBlocker, err := New(tt.bannedNets)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			result := ipBlocker.IsBanned(tt.ip)
 			assert.Equal(t, tt.expected, result)
 		})

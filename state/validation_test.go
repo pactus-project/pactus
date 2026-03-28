@@ -10,7 +10,7 @@ import (
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/protocol"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestBlockValidation(t *testing.T) {
@@ -32,12 +32,12 @@ func TestBlockValidation(t *testing.T) {
 			blk0.Header().ProposerAddress())
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
 		err := td.state.ValidateBlock(blk, round)
-		assert.ErrorIs(t, err, ErrInvalidBlockVersion)
+		require.ErrorIs(t, err, ErrInvalidBlockVersion)
 
 		// Receiving a block with version 2 and rejects it.
 		// It is possible that the same block would be considered valid by other nodes (Hard Fork).
 		err = td.state.CommitBlock(blk, cert)
-		assert.ErrorIs(t, err, ErrInvalidBlockVersion)
+		require.ErrorIs(t, err, ErrInvalidBlockVersion)
 	})
 
 	t.Run("Invalid version, less than current", func(t *testing.T) {
@@ -54,12 +54,12 @@ func TestBlockValidation(t *testing.T) {
 			blk0.Header().ProposerAddress())
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
 		err := td.state.ValidateBlock(blk, round)
-		assert.ErrorIs(t, err, ErrInvalidBlockVersion)
+		require.ErrorIs(t, err, ErrInvalidBlockVersion)
 
 		// Receiving a block with version 2 and rejects it.
 		// It is possible that the same block would be considered valid by other nodes (Hard Fork).
 		err = td.state.CommitBlock(blk, cert)
-		assert.ErrorIs(t, err, ErrInvalidBlockVersion)
+		require.ErrorIs(t, err, ErrInvalidBlockVersion)
 	})
 
 	t.Run("Invalid time", func(t *testing.T) {
@@ -76,13 +76,13 @@ func TestBlockValidation(t *testing.T) {
 			blk0.Header().ProposerAddress())
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
 		err := td.state.ValidateBlock(blk, round)
-		assert.ErrorIs(t, err, InvalidBlockTimeError{
+		require.ErrorIs(t, err, InvalidBlockTimeError{
 			Reason: fmt.Sprintf("block time (%s) is before the last block time (%s)",
 				invBlockTime, td.state.LastBlockTime()),
 		})
 
 		err = td.state.CommitBlock(blk, cert)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("Invalid StateRoot", func(t *testing.T) {
@@ -99,13 +99,13 @@ func TestBlockValidation(t *testing.T) {
 			blk0.Header().ProposerAddress())
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
 		err := td.state.ValidateBlock(blk, round)
-		assert.ErrorIs(t, err, InvalidStateRootHashError{
+		require.ErrorIs(t, err, InvalidStateRootHashError{
 			Expected: td.state.stateRoot(),
 			Got:      blk.Header().StateRoot(),
 		})
 
 		err = td.state.CommitBlock(blk, cert)
-		assert.ErrorIs(t, err, InvalidStateRootHashError{
+		require.ErrorIs(t, err, InvalidStateRootHashError{
 			Expected: td.state.stateRoot(),
 			Got:      blk.Header().StateRoot(),
 		})
@@ -133,10 +133,10 @@ func TestBlockValidation(t *testing.T) {
 			blk0.Header().ProposerAddress())
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
 		err := td.state.ValidateBlock(blk, round)
-		assert.ErrorIs(t, err, crypto.ErrInvalidSignature)
+		require.ErrorIs(t, err, crypto.ErrInvalidSignature)
 
 		err = td.state.CommitBlock(blk, cert)
-		assert.ErrorIs(t, err, crypto.ErrInvalidSignature)
+		require.ErrorIs(t, err, crypto.ErrInvalidSignature)
 	})
 
 	t.Run("Invalid ProposerAddress", func(t *testing.T) {
@@ -153,13 +153,13 @@ func TestBlockValidation(t *testing.T) {
 			invProposerAddress)
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
 		err := td.state.ValidateBlock(blk, round)
-		assert.ErrorIs(t, err, InvalidProposerError{
+		require.ErrorIs(t, err, InvalidProposerError{
 			Expected: td.state.committee.Proposer(round).Address(),
 			Got:      invProposerAddress,
 		})
 
 		err = td.state.CommitBlock(blk, cert)
-		assert.ErrorIs(t, err, InvalidProposerError{
+		require.ErrorIs(t, err, InvalidProposerError{
 			Expected: td.state.committee.Proposer(round).Address(),
 			Got:      invProposerAddress,
 		})
@@ -179,16 +179,16 @@ func TestBlockValidation(t *testing.T) {
 			blk0.Header().ProposerAddress())
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
 		err := td.state.ValidateBlock(blk, round)
-		assert.ErrorIs(t, err, ErrInvalidSortitionSeed)
+		require.ErrorIs(t, err, ErrInvalidSortitionSeed)
 
 		err = td.state.CommitBlock(blk, cert)
-		assert.ErrorIs(t, err, ErrInvalidSortitionSeed)
+		require.ErrorIs(t, err, ErrInvalidSortitionSeed)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		blk, cert := td.makeBlockAndCertificate(t, round)
 
-		assert.NoError(t, td.state.ValidateBlock(blk, round))
-		assert.NoError(t, td.state.CommitBlock(blk, cert))
+		require.NoError(t, td.state.ValidateBlock(blk, round))
+		require.NoError(t, td.state.CommitBlock(blk, cert))
 	})
 }

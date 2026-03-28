@@ -21,18 +21,18 @@ func TestPublicKeyCBORMarshaling(t *testing.T) {
 	pub2 := new(bls.PublicKey)
 
 	bs, err := pub1.MarshalCBOR()
-	assert.NoError(t, err)
-	assert.NoError(t, pub2.UnmarshalCBOR(bs))
+	require.NoError(t, err)
+	require.NoError(t, pub2.UnmarshalCBOR(bs))
 	assert.True(t, pub1.EqualsTo(pub2))
 
-	assert.Error(t, pub2.UnmarshalCBOR([]byte("abcd")))
+	require.Error(t, pub2.UnmarshalCBOR([]byte("abcd")))
 
 	inv, _ := hex.DecodeString(strings.Repeat("ff", bls.PublicKeySize))
 	data, _ := cbor.Marshal(inv)
-	assert.NoError(t, pub2.UnmarshalCBOR(data))
+	require.NoError(t, pub2.UnmarshalCBOR(data))
 
 	_, err = pub2.PointG2()
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestPublicKeyEqualsTo(t *testing.T) {
@@ -52,16 +52,16 @@ func TestPublicKeyEncoding(t *testing.T) {
 
 	pub, _ := ts.RandBLSKeyPair()
 	fw1 := util.NewFixedWriter(20)
-	assert.Error(t, pub.Encode(fw1))
+	require.Error(t, pub.Encode(fw1))
 
 	fw2 := util.NewFixedWriter(bls.PublicKeySize)
-	assert.NoError(t, pub.Encode(fw2))
+	require.NoError(t, pub.Encode(fw2))
 
 	fr1 := util.NewFixedReader(20, fw2.Bytes())
-	assert.Error(t, pub.Decode(fr1))
+	require.Error(t, pub.Decode(fr1))
 
 	fr2 := util.NewFixedReader(bls.PublicKeySize, fw2.Bytes())
-	assert.NoError(t, pub.Decode(fr2))
+	require.NoError(t, pub.Decode(fr2))
 	assert.Equal(t, bls.PublicKeySize, pub.SerializeSize())
 }
 
@@ -72,9 +72,9 @@ func TestPublicKeyVerifyAddress(t *testing.T) {
 	pub2, _ := ts.RandBLSKeyPair()
 
 	err := pub1.VerifyAddress(pub1.AccountAddress())
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	err = pub1.VerifyAddress(pub1.ValidatorAddress())
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	err = pub1.VerifyAddress(pub2.AccountAddress())
 	assert.Equal(t, crypto.AddressMismatchError{
@@ -94,19 +94,19 @@ func TestNilPublicKey(t *testing.T) {
 
 	pub := &bls.PublicKey{}
 	randSig := ts.RandBLSSignature()
-	assert.Error(t, pub.VerifyAddress(ts.RandAccAddress()))
-	assert.Error(t, pub.VerifyAddress(ts.RandValAddress()))
-	assert.Error(t, pub.Verify(nil, nil))
-	assert.Error(t, pub.Verify(nil, &bls.Signature{}))
-	assert.Error(t, pub.Verify(nil, randSig))
+	require.Error(t, pub.VerifyAddress(ts.RandAccAddress()))
+	require.Error(t, pub.VerifyAddress(ts.RandValAddress()))
+	require.Error(t, pub.Verify(nil, nil))
+	require.Error(t, pub.Verify(nil, &bls.Signature{}))
+	require.Error(t, pub.Verify(nil, randSig))
 }
 
 func TestNilSignature(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	pub, _ := ts.RandBLSKeyPair()
-	assert.Error(t, pub.Verify(nil, nil))
-	assert.Error(t, pub.Verify(nil, &bls.Signature{}))
+	require.Error(t, pub.Verify(nil, nil))
+	require.Error(t, pub.Verify(nil, &bls.Signature{}))
 }
 
 func TestPublicKeyFromString(t *testing.T) {
@@ -179,7 +179,7 @@ func TestPublicKeyFromString(t *testing.T) {
 	for no, tt := range tests {
 		pub, err := bls.PublicKeyFromString(tt.encoded)
 		if tt.valid {
-			assert.NoError(t, err, "test %v: unexpected error", no)
+			require.NoError(t, err, "test %v: unexpected error", no)
 			assert.Equal(t, tt.result, pub.Bytes(), "test %v: invalid bytes", no)
 			assert.Equal(t, tt.encoded, pub.String(), "test %v: invalid encoded", no)
 		} else {
@@ -226,7 +226,7 @@ func TestPointG2(t *testing.T) {
 
 		_, err = pub.PointG2()
 		if tt.valid {
-			assert.NoError(t, err, "test %v: unexpected error", no)
+			require.NoError(t, err, "test %v: unexpected error", no)
 		} else {
 			assert.Contains(t, err.Error(), tt.errMsg, "test %v: error not matched", no)
 		}

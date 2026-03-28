@@ -148,12 +148,12 @@ func TestFromString(t *testing.T) {
 	for no, tt := range tests {
 		addr, err := crypto.AddressFromString(tt.encoded)
 		if tt.err == nil {
-			assert.NoError(t, err, "test %v: unexpected error", no)
+			require.NoError(t, err, "test %v: unexpected error", no)
 			assert.Equal(t, tt.bytes, addr.Bytes(), "test %v: invalid result", no)
 			assert.Equal(t, strings.ToLower(tt.encoded), addr.String(), "test %v: invalid encode", no)
 			assert.Equal(t, tt.addrType, addr.Type(), "test %v: invalid type", no)
 		} else {
-			assert.ErrorIs(t, err, tt.err, "test %v: invalid error", no)
+			require.ErrorIs(t, err, tt.err, "test %v: invalid error", no)
 		}
 	}
 }
@@ -212,19 +212,19 @@ func TestAddressDecoding(t *testing.T) {
 
 		err := addr.Decode(buf)
 		if tt.err != nil {
-			assert.ErrorIs(t, err, tt.err, "test %v: error not matched", no)
+			require.ErrorIs(t, err, tt.err, "test %v: error not matched", no)
 			assert.Equal(t, tt.size, addr.SerializeSize(), "test %v invalid size", no)
 		} else {
-			assert.NoError(t, err, "test %v expected no error", no)
+			require.NoError(t, err, "test %v expected no error", no)
 			assert.Equal(t, tt.size, addr.SerializeSize(), "test %v invalid size", no)
 
 			length := addr.SerializeSize()
 			for i := 0; i < length; i++ {
 				w := util.NewFixedWriter(i)
-				assert.Error(t, addr.Encode(w), "encode test %v failed", i)
+				require.Error(t, addr.Encode(w), "encode test %v failed", i)
 			}
 			w := util.NewFixedWriter(length)
-			assert.NoError(t, addr.Encode(w))
+			require.NoError(t, addr.Encode(w))
 			assert.Equal(t, data, w.Bytes())
 		}
 	}
@@ -234,6 +234,6 @@ func TestShortString(t *testing.T) {
 	h, err := crypto.AddressFromString("pc1p0hrct7eflrpw4ccrttxzs4qud2axex4dcdzdfr")
 	require.NoError(t, err)
 
-	assert.Equal(t, h.ShortString(), "pc1p0hrc-dzdfr")
+	assert.Equal(t, "pc1p0hrc-dzdfr", h.ShortString())
 	assert.Equal(t, h.ShortString(), h.LogString())
 }

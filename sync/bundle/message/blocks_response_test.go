@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestLatestBlocksResponseType(t *testing.T) {
@@ -25,7 +26,7 @@ func TestBlocksResponseMessage(t *testing.T) {
 			sid, ts.RandHeight(), [][]byte{d}, cert)
 		err := msg.BasicCheck()
 
-		assert.ErrorIs(t, err, certificate.BasicCheckError{
+		require.ErrorIs(t, err, certificate.BasicCheckError{
 			Reason: "height is not positive: 0",
 		})
 	})
@@ -39,7 +40,7 @@ func TestBlocksResponseMessage(t *testing.T) {
 		msg := NewBlocksResponseMessage(ResponseCodeMoreBlocks, ResponseCodeMoreBlocks.String(),
 			sid, 100, [][]byte{d1, d2}, cert2)
 
-		assert.NoError(t, msg.BasicCheck())
+		require.NoError(t, msg.BasicCheck())
 		assert.Contains(t, msg.LogString(), "100")
 		assert.Equal(t, ResponseCodeMoreBlocks.String(), msg.Reason)
 	})
@@ -52,7 +53,7 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 		reason := ts.RandString(16)
 		msg := NewBlocksResponseMessage(ResponseCodeRejected, reason, 1, 0, nil, nil)
 
-		assert.NoError(t, msg.BasicCheck())
+		require.NoError(t, msg.BasicCheck())
 		assert.Zero(t, msg.From)
 		assert.Zero(t, msg.To())
 		assert.Zero(t, msg.Count())
@@ -69,7 +70,7 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 		reason := ts.RandString(16)
 		msg := NewBlocksResponseMessage(ResponseCodeMoreBlocks, reason, 1, 100, [][]byte{d1, d2}, nil)
 
-		assert.NoError(t, msg.BasicCheck())
+		require.NoError(t, msg.BasicCheck())
 		assert.Equal(t, uint32(100), msg.From)
 		assert.Equal(t, uint32(101), msg.To())
 		assert.Equal(t, uint32(2), msg.Count())
@@ -84,7 +85,7 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 		reason := ts.RandString(16)
 		msg := NewBlocksResponseMessage(ResponseCodeSynced, reason, 1, 100, nil, cert)
 
-		assert.NoError(t, msg.BasicCheck())
+		require.NoError(t, msg.BasicCheck())
 		assert.Equal(t, uint32(100), msg.From)
 		assert.Zero(t, msg.To())
 		assert.Zero(t, msg.Count())

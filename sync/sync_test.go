@@ -76,7 +76,7 @@ func setup(t *testing.T, config *Config) *testData {
 
 	syncInst, err := NewSynchronizer(t.Context(), config, valKeys,
 		mockState, consV1Mgr, consV2Mgr, mockNetwork, broadcastPipe, mockNetwork.EventPipe)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	sync := syncInst.(*synchronizer)
 
 	td := &testData{
@@ -88,7 +88,7 @@ func setup(t *testing.T, config *Config) *testData {
 		sync:      sync,
 	}
 
-	assert.NoError(t, td.sync.Start())
+	require.NoError(t, td.sync.Start())
 	assert.Equal(t, config.Moniker, td.sync.Moniker())
 	assert.Equal(t, config.Services, td.sync.Services())
 

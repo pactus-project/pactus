@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestVoteMarshaling(t *testing.T) {
@@ -199,10 +200,10 @@ func TestVoteMarshaling(t *testing.T) {
 
 		vote := new(vote.Vote)
 		err := vote.UnmarshalCBOR(bz1)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		bz2, err := vote.MarshalCBOR()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, bz1, bz2)
 
@@ -210,7 +211,7 @@ func TestVoteMarshaling(t *testing.T) {
 		assert.Equal(t, expectedHash, vote.Hash())
 
 		vote.SetSignature(ts.RandBLSSignature())
-		assert.NoError(t, vote.BasicCheck())
+		require.NoError(t, vote.BasicCheck())
 
 		expectedSignBytes, _ := hex.DecodeString(tt.signBytes)
 		assert.Equal(t, expectedSignBytes, vote.SignBytes())
@@ -231,17 +232,17 @@ func TestVoteSignature(t *testing.T) {
 	vote1 := vote.NewPrepareVote(hash1, 101, 5, pub1.ValidatorAddress())
 	vote2 := vote.NewPrepareVote(hash1, 101, 5, pub2.ValidatorAddress())
 
-	assert.Error(t, vote1.BasicCheck(), "No signature")
+	require.Error(t, vote1.BasicCheck(), "No signature")
 
 	sig1 := prv1.SignNative(vote1.SignBytes())
 	vote1.SetSignature(sig1)
 	err1 := vote1.Verify(pub1)
-	assert.NoError(t, err1, "Ok")
+	require.NoError(t, err1, "Ok")
 
 	sig2 := prv2.SignNative(vote2.SignBytes())
 	vote2.SetSignature(sig2)
 	err2 := vote2.Verify(pub1)
-	assert.ErrorIs(t, err2, vote.InvalidSignerError{
+	require.ErrorIs(t, err2, vote.InvalidSignerError{
 		Expected: pub1.ValidatorAddress(),
 		Got:      pub2.ValidatorAddress(),
 	})
@@ -249,7 +250,7 @@ func TestVoteSignature(t *testing.T) {
 	sig3 := prv1.SignNative(vote2.SignBytes())
 	vote2.SetSignature(sig3)
 	err3 := vote2.Verify(pub2)
-	assert.ErrorIs(t, err3, crypto.ErrInvalidSignature)
+	require.ErrorIs(t, err3, crypto.ErrInvalidSignature)
 }
 
 func TestCPPreVote(t *testing.T) {
@@ -265,7 +266,7 @@ func TestCPPreVote(t *testing.T) {
 			invalidCPRound, vote.CPValueYes, just, ts.RandAccAddress())
 
 		err := cpVote.BasicCheck()
-		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP round"})
+		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP round"})
 	})
 
 	t.Run("invalid CP value", func(t *testing.T) {
@@ -274,7 +275,7 @@ func TestCPPreVote(t *testing.T) {
 			1, invalidCPValue, just, ts.RandAccAddress())
 
 		err := cpVote.BasicCheck()
-		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP value"})
+		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP value"})
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -283,7 +284,7 @@ func TestCPPreVote(t *testing.T) {
 		cpVote.SetSignature(ts.RandBLSSignature())
 
 		err := cpVote.BasicCheck()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, int16(1), cpVote.CPRound())
 		assert.Equal(t, vote.CPValueNo, cpVote.CPValue())
 		assert.NotNil(t, cpVote.CPJust())
@@ -303,7 +304,7 @@ func TestCPMainVote(t *testing.T) {
 			invalidCPRound, vote.CPValueNo, just, ts.RandAccAddress())
 
 		err := invVote.BasicCheck()
-		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP round"})
+		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP round"})
 	})
 
 	t.Run("No CP data", func(t *testing.T) {
@@ -315,7 +316,7 @@ func TestCPMainVote(t *testing.T) {
 		decVote.SetSignature(ts.RandBLSSignature())
 
 		err := decVote.BasicCheck()
-		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "should have CP data"})
+		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "should have CP data"})
 	})
 
 	t.Run("Invalid CP value", func(t *testing.T) {
@@ -324,7 +325,7 @@ func TestCPMainVote(t *testing.T) {
 			1, invalidCPValue, just, ts.RandAccAddress())
 
 		err := cpVote.BasicCheck()
-		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP value"})
+		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP value"})
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -333,7 +334,7 @@ func TestCPMainVote(t *testing.T) {
 		cpVote.SetSignature(ts.RandBLSSignature())
 
 		err := cpVote.BasicCheck()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, int16(1), cpVote.CPRound())
 		assert.Equal(t, vote.CPValueAbstain, cpVote.CPValue())
 		assert.NotNil(t, cpVote.CPJust())
@@ -353,7 +354,7 @@ func TestCPDecided(t *testing.T) {
 			invalidCPRound, vote.CPValueNo, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
-		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP round"})
+		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP round"})
 	})
 
 	t.Run("No CP data", func(t *testing.T) {
@@ -364,7 +365,7 @@ func TestCPDecided(t *testing.T) {
 		v.SetSignature(ts.RandBLSSignature())
 
 		err := v.BasicCheck()
-		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "should have CP data"})
+		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "should have CP data"})
 	})
 
 	t.Run("Invalid CP value", func(t *testing.T) {
@@ -373,7 +374,7 @@ func TestCPDecided(t *testing.T) {
 			1, invalidCPValue, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
-		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP value"})
+		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP value"})
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -382,7 +383,7 @@ func TestCPDecided(t *testing.T) {
 		vte.SetSignature(ts.RandBLSSignature())
 
 		err := vte.BasicCheck()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, int16(1), vte.CPRound())
 		assert.Equal(t, vote.CPValueAbstain, vte.CPValue())
 		assert.NotNil(t, vte.CPJust())
@@ -397,31 +398,31 @@ func TestBasicCheck(t *testing.T) {
 			"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6")
 		v := new(vote.Vote)
 		err := v.UnmarshalCBOR(data)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		err = v.BasicCheck()
-		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "should have CP data"})
+		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "should have CP data"})
 	})
 
 	t.Run("Invalid height", func(t *testing.T) {
 		v := vote.NewPrepareVote(ts.RandHash(), 0, 0, ts.RandAccAddress())
 
 		err := v.BasicCheck()
-		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid height"})
+		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid height"})
 	})
 
 	t.Run("Invalid round", func(t *testing.T) {
 		v := vote.NewPrepareVote(ts.RandHash(), 100, -1, ts.RandAccAddress())
 
 		err := v.BasicCheck()
-		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid round"})
+		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid round"})
 	})
 
 	t.Run("No signature", func(t *testing.T) {
 		v := vote.NewPrepareVote(ts.RandHash(), 100, 0, ts.RandAccAddress())
 
 		err := v.BasicCheck()
-		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "no signature"})
+		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "no signature"})
 	})
 
 	t.Run("Should not have CP data", func(t *testing.T) {
@@ -432,14 +433,14 @@ func TestBasicCheck(t *testing.T) {
 		v.SetSignature(ts.RandBLSSignature())
 
 		err := v.BasicCheck()
-		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "should not have CP data"})
+		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "should not have CP data"})
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		v := vote.NewPrepareVote(ts.RandHash(), 100, 0, ts.RandAccAddress())
 		v.SetSignature(ts.RandBLSSignature())
 
-		assert.NoError(t, v.BasicCheck())
+		require.NoError(t, v.BasicCheck())
 	})
 }
 
@@ -465,11 +466,11 @@ func TestSignBytes(t *testing.T) {
 	sby4 := vote4.SignBytes()
 	sby5 := vote5.SignBytes()
 
-	assert.Equal(t, 45, len(sby1))
-	assert.Equal(t, 38, len(sby2))
-	assert.Equal(t, 49, len(sby3))
-	assert.Equal(t, 50, len(sby4))
-	assert.Equal(t, 48, len(sby5))
+	assert.Len(t, sby1, 45)
+	assert.Len(t, sby2, 38)
+	assert.Len(t, sby3, 49)
+	assert.Len(t, sby4, 50)
+	assert.Len(t, sby5, 48)
 
 	assert.Contains(t, string(sby1), "PREPARE")
 	assert.Contains(t, string(sby3), "PRE-VOTE")
@@ -523,5 +524,5 @@ func TestCPInvalidJustType(t *testing.T) {
 
 	v := new(vote.Vote)
 	err := v.UnmarshalCBOR(voteData)
-	assert.Error(t, err)
+	require.Error(t, err)
 }

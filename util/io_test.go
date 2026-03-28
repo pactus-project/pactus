@@ -21,8 +21,8 @@ const invalidDirName = "/invalid:path/\x00*folder?\\CON"
 func TestWriteFile(t *testing.T) {
 	p := TempDirPath()
 	d := []byte("some-data")
-	assert.NoError(t, WriteFile(p+"/d.dat", d))
-	assert.NoError(t, WriteFile(p+"/another-folder/d.dat", d))
+	require.NoError(t, WriteFile(p+"/d.dat", d))
+	require.NoError(t, WriteFile(p+"/another-folder/d.dat", d))
 }
 
 func TestEmptyPath(t *testing.T) {
@@ -32,9 +32,9 @@ func TestEmptyPath(t *testing.T) {
 
 	f := TempFilePath()
 	d := []byte("pactus")
-	assert.NoError(t, WriteFile(f, d))
+	require.NoError(t, WriteFile(f, d))
 	o, err := ReadFile(f)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, d, o)
 }
 
@@ -69,7 +69,7 @@ func TestTempFile(t *testing.T) {
 	})
 	assert.False(t, PathExists(tmpFile))
 	assert.True(t, IsDirNotExistsOrEmpty(tmpFile))
-	assert.NoError(t, Mkdir(tmpFile))
+	require.NoError(t, Mkdir(tmpFile))
 	assert.True(t, IsDirNotExistsOrEmpty(tmpFile))
 	assert.True(t, IsDirEmpty(tmpFile)) // no panic now
 }
@@ -108,7 +108,7 @@ func TestMoveDirectory(t *testing.T) {
 		dstDir := TempDirPath()
 
 		err := MoveDirectory(srcDir, dstDir)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Contains(t, err.Error(), "destination directory")
 	})
 
@@ -116,7 +116,7 @@ func TestMoveDirectory(t *testing.T) {
 		srcDir := TempDirPath()
 
 		err := MoveDirectory(srcDir, invalidDirName)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Contains(t, err.Error(), "failed to create parent directories")
 	})
 
@@ -125,14 +125,14 @@ func TestMoveDirectory(t *testing.T) {
 		dstDir := TempDirPath()
 
 		err := os.RemoveAll(dstDir)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		// Remove the source directory to simulate the rename failure
 		err = os.RemoveAll(srcDir)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		err = MoveDirectory(srcDir, dstDir)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Contains(t, err.Error(), "failed to move directory")
 	})
 
@@ -146,7 +146,7 @@ func TestMoveDirectory(t *testing.T) {
 		// Create a subdirectory in the source directory
 		subDir := filepath.Join(srcDir, "subdir")
 		err := Mkdir(subDir)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		// Create multiple files in the subdirectory
 		files := []struct {
@@ -160,13 +160,13 @@ func TestMoveDirectory(t *testing.T) {
 		for _, file := range files {
 			filePath := filepath.Join(subDir, file.name)
 			err = WriteFile(filePath, []byte(file.content))
-			assert.NoError(t, err)
+			require.NoError(t, err)
 		}
 
 		// Move the directory
 		dstDirPath := filepath.Join(dstDir, "movedir")
 		err = MoveDirectory(srcDir, dstDirPath)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		// Assert the source directory no longer exists
 		assert.False(t, PathExists(srcDir))
@@ -178,7 +178,7 @@ func TestMoveDirectory(t *testing.T) {
 		for _, file := range files {
 			movedFilePath := filepath.Join(dstDirPath, "subdir", file.name)
 			data, err := ReadFile(movedFilePath)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, file.content, string(data))
 		}
 	})
@@ -207,10 +207,10 @@ func TestSanitizeArchivePath(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			result, err := SanitizeArchivePath(baseDir, tt.inputPath)
 			if tt.expectErr {
-				assert.Error(t, err, "Expected error but got none")
+				require.Error(t, err, "Expected error but got none")
 				assert.Empty(t, result, "Expected empty result due to error")
 			} else {
-				assert.NoError(t, err, "Unexpected error occurred")
+				require.NoError(t, err, "Unexpected error occurred")
 				assert.Equal(t, tt.expected, result, "Sanitized path did not match expected")
 			}
 		})
@@ -271,7 +271,7 @@ func TestLimitReaderClose(t *testing.T) {
 		buf := make([]byte, 10)
 		n, err := r.Read(buf)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, int(limit), n)
 		assert.Equal(t, data[:limit], buf[:n])
 
@@ -279,7 +279,7 @@ func TestLimitReaderClose(t *testing.T) {
 		n, err = r.Read(buf)
 		assert.Equal(t, 0, n)
 		assert.Equal(t, io.EOF, err)
-		assert.NoError(t, r.Close())
+		require.NoError(t, r.Close())
 	})
 
 	t.Run("Read exactly limit", func(t *testing.T) {
@@ -289,7 +289,7 @@ func TestLimitReaderClose(t *testing.T) {
 		buf := make([]byte, limit)
 		n, err := r.Read(buf)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, int(limit), n)
 		assert.Equal(t, data, buf)
 
@@ -297,7 +297,7 @@ func TestLimitReaderClose(t *testing.T) {
 		assert.Equal(t, 0, n)
 		assert.Equal(t, io.EOF, err)
 
-		assert.NoError(t, r.Close())
+		require.NoError(t, r.Close())
 	})
 
 	t.Run("Read with zero limit", func(t *testing.T) {
@@ -308,7 +308,7 @@ func TestLimitReaderClose(t *testing.T) {
 		assert.Equal(t, 0, n)
 		assert.Equal(t, io.EOF, err)
 
-		assert.NoError(t, r.Close())
+		require.NoError(t, r.Close())
 	})
 
 	t.Run("Underlying reader returns EOF before limit", func(t *testing.T) {
@@ -317,7 +317,7 @@ func TestLimitReaderClose(t *testing.T) {
 		r := LimitReaderClose(newReadCloser(data), limit)
 		buf := make([]byte, 10)
 		n, err := r.Read(buf)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, len(data), n)
 		assert.Equal(t, data, buf[:n])
 
@@ -325,7 +325,7 @@ func TestLimitReaderClose(t *testing.T) {
 		assert.Equal(t, 0, n)
 		assert.Equal(t, io.EOF, err)
 
-		assert.NoError(t, r.Close())
+		require.NoError(t, r.Close())
 	})
 }
 
