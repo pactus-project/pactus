@@ -109,7 +109,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 		handler.state.UpdateValidatorProtocolVersion(pub.ValidatorAddress(), agent.ProtocolVersion)
 	}
 
-	if agent.ProtocolVersion < protocol.ProtocolVersionLatest {
+	if agent.ProtocolVersion < protocol.ProtocolVersion2 {
 		// Keep outdated peer connected for gossiping but don't mark as known.
 		return
 	}
