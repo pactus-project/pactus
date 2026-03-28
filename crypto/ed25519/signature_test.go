@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSignatureCBORMarshaling(t *testing.T) {
@@ -21,15 +22,15 @@ func TestSignatureCBORMarshaling(t *testing.T) {
 	sig2 := new(ed25519.Signature)
 
 	bs, err := sig1.MarshalCBOR()
-	assert.NoError(t, err)
-	assert.NoError(t, sig2.UnmarshalCBOR(bs))
+	require.NoError(t, err)
+	require.NoError(t, sig2.UnmarshalCBOR(bs))
 	assert.True(t, sig1.EqualsTo(sig2))
 
-	assert.Error(t, sig2.UnmarshalCBOR([]byte("abcd")))
+	require.Error(t, sig2.UnmarshalCBOR([]byte("abcd")))
 
 	inv, _ := hex.DecodeString(strings.Repeat("ff", ed25519.SignatureSize))
 	data, _ := cbor.Marshal(inv)
-	assert.NoError(t, sig2.UnmarshalCBOR(data))
+	require.NoError(t, sig2.UnmarshalCBOR(data))
 }
 
 func TestSignatureEqualsTo(t *testing.T) {
@@ -54,16 +55,16 @@ func TestSignatureEncoding(t *testing.T) {
 	_, prv := ts.RandEd25519KeyPair()
 	sig := prv.Sign(ts.RandBytes(16))
 	fw1 := util.NewFixedWriter(20)
-	assert.Error(t, sig.Encode(fw1))
+	require.Error(t, sig.Encode(fw1))
 
 	fw2 := util.NewFixedWriter(ed25519.SignatureSize)
-	assert.NoError(t, sig.Encode(fw2))
+	require.NoError(t, sig.Encode(fw2))
 
 	fr1 := util.NewFixedReader(20, fw2.Bytes())
-	assert.Error(t, sig.Decode(fr1))
+	require.Error(t, sig.Decode(fr1))
 
 	fr2 := util.NewFixedReader(ed25519.SignatureSize, fw2.Bytes())
-	assert.NoError(t, sig.Decode(fr2))
+	require.NoError(t, sig.Decode(fr2))
 	assert.Equal(t, ed25519.SignatureSize, sig.SerializeSize())
 }
 
@@ -78,11 +79,11 @@ func TestVerifyingSignature(t *testing.T) {
 	sig2 := pv2.Sign(msg)
 
 	assert.False(t, sig1.EqualsTo(sig2))
-	assert.NoError(t, pb1.Verify(msg, sig1))
-	assert.NoError(t, pb2.Verify(msg, sig2))
-	assert.ErrorIs(t, pb1.Verify(msg, sig2), crypto.ErrInvalidSignature)
-	assert.ErrorIs(t, pb2.Verify(msg, sig1), crypto.ErrInvalidSignature)
-	assert.ErrorIs(t, pb1.Verify(msg[1:], sig1), crypto.ErrInvalidSignature)
+	require.NoError(t, pb1.Verify(msg, sig1))
+	require.NoError(t, pb2.Verify(msg, sig2))
+	require.ErrorIs(t, pb1.Verify(msg, sig2), crypto.ErrInvalidSignature)
+	require.ErrorIs(t, pb2.Verify(msg, sig1), crypto.ErrInvalidSignature)
+	require.ErrorIs(t, pb1.Verify(msg[1:], sig1), crypto.ErrInvalidSignature)
 }
 
 func TestSignatureFromString(t *testing.T) {
@@ -119,7 +120,7 @@ func TestSignatureFromString(t *testing.T) {
 	for no, tt := range tests {
 		sig, err := ed25519.SignatureFromString(tt.encoded)
 		if tt.valid {
-			assert.NoError(t, err, "test %v: unexpected error", no)
+			require.NoError(t, err, "test %v: unexpected error", no)
 			assert.Equal(t, tt.bytes, sig.Bytes(), "test %v: invalid bytes", no)
 			assert.Equal(t, tt.encoded, sig.String(), "test %v: invalid encode", no)
 		} else {

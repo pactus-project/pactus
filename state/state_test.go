@@ -141,7 +141,7 @@ func (td *testData) commitBlocks(t *testing.T, count int) {
 
 	for i := 0; i < count; i++ {
 		blk, cert := td.makeBlockAndCertificate(t, 0)
-		assert.NoError(t, td.state.CommitBlock(blk, cert))
+		require.NoError(t, td.state.CommitBlock(blk, cert))
 	}
 }
 
@@ -188,7 +188,7 @@ func TestBlockSubsidyTx(t *testing.T) {
 			trx := td.state.createSubsidyTx(proposerAddr, rewardAddr, tt.accumulatedFee)
 
 			err := td.state.checkSubsidy(trx, td.genValKeys[0].Address(), true)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			payload := trx.Payload().(*payload.BatchTransferPayload)
 
@@ -282,7 +282,7 @@ func TestBlockSubsidyWithDelegationTx(t *testing.T) {
 			trx := td.state.createSubsidyTx(proposerAddr, rewardAddr, tt.accumulatedFee)
 
 			err := td.state.checkSubsidy(trx, td.genValKeys[0].Address(), true)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			payload := trx.Payload().(*payload.BatchTransferPayload)
 
@@ -300,7 +300,7 @@ func TestTryCommitInvalidCertificate(t *testing.T) {
 	blk, _ := td.makeBlockAndCertificate(t, td.RandRound())
 	invCert := td.GenerateTestCertificate(td.state.LastBlockHeight() + 1)
 
-	assert.Error(t, td.state.CommitBlock(blk, invCert))
+	require.Error(t, td.state.CommitBlock(blk, invCert))
 }
 
 func TestTryCommitValidBlocks(t *testing.T) {
@@ -308,11 +308,11 @@ func TestTryCommitValidBlocks(t *testing.T) {
 
 	blk, cert := td.makeBlockAndCertificate(t, 0)
 
-	assert.NoError(t, td.state.CommitBlock(blk, cert))
+	require.NoError(t, td.state.CommitBlock(blk, cert))
 
 	// Commit again
 	// No error here but block is ignored, because the height is invalid
-	assert.NoError(t, td.state.CommitBlock(blk, cert))
+	require.NoError(t, td.state.CommitBlock(blk, cert))
 
 	assert.Equal(t, blk.Hash(), td.state.LastBlockHash())
 	assert.Equal(t, blk.Header().Time(), td.state.LastBlockTime())
@@ -380,7 +380,7 @@ func TestCommitSandbox(t *testing.T) {
 		td.state.commitSandbox(sbx, 0)
 
 		stateVal, _ := td.state.ValidatorByAddress(addr)
-		assert.Equal(t, stake+amt, stateVal.Stake(), val.Stake())
+		assert.Equal(t, stake+amt, stateVal.Stake(), "%+v", val.Stake())
 	})
 
 	t.Run("Move committee", func(t *testing.T) {
@@ -455,7 +455,7 @@ func TestUpdateLastCertificate(t *testing.T) {
 
 	for no, tt := range tests {
 		err := td.state.UpdateLastCertificate(tt.vote)
-		assert.ErrorIs(t, err, tt.err, "error not matched for test %v", no)
+		require.ErrorIs(t, err, tt.err, "error not matched for test %v", no)
 	}
 }
 
@@ -464,17 +464,17 @@ func TestBlockProposal(t *testing.T) {
 
 	t.Run("validity of the proposed block", func(t *testing.T) {
 		blk, err := td.state.ProposeBlock(td.state.valKeys[0], td.RandAccAddress())
-		assert.NoError(t, err)
-		assert.NoError(t, td.state.ValidateBlock(blk, 0))
+		require.NoError(t, err)
+		require.NoError(t, td.state.ValidateBlock(blk, 0))
 	})
 
 	t.Run("Tx pool has two subsidy transactions", func(t *testing.T) {
 		trx := td.state.createSubsidyTx(td.genValKeys[0].Address(), td.RandAccAddress(), 0)
-		assert.NoError(t, td.state.AddPendingTx(trx))
+		require.NoError(t, td.state.AddPendingTx(trx))
 
 		blk, err := td.state.ProposeBlock(td.state.valKeys[0], td.RandAccAddress())
-		assert.NoError(t, err)
-		assert.NoError(t, td.state.ValidateBlock(blk, 0))
+		require.NoError(t, err)
+		require.NoError(t, td.state.ValidateBlock(blk, 0))
 		assert.Equal(t, 1, blk.Transactions().Len())
 	})
 }
@@ -511,7 +511,7 @@ func TestSortition(t *testing.T) {
 	trx := tx.NewBondTx(1, td.genAccKey.PublicKeyNative().AccountAddress(),
 		secValKey.Address(), secValKey.PublicKey(), 1000000000, 100000)
 	td.HelperSignTransaction(td.genAccKey, trx)
-	assert.NoError(t, td.state.AddPendingTx(trx))
+	require.NoError(t, td.state.AddPendingTx(trx))
 
 	td.commitBlocks(t, 1)
 
@@ -537,10 +537,10 @@ func TestValidateBlockTime(t *testing.T) {
 	t.Run("Time is not rounded", func(t *testing.T) {
 		roundedNow := util.RoundNow(10)
 
-		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(-15*time.Second)))
-		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(-5*time.Second)))
-		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(5*time.Second)))
-		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(15*time.Second)))
+		require.Error(t, td.state.validateBlockTime(roundedNow.Add(-15*time.Second)))
+		require.Error(t, td.state.validateBlockTime(roundedNow.Add(-5*time.Second)))
+		require.Error(t, td.state.validateBlockTime(roundedNow.Add(5*time.Second)))
+		require.Error(t, td.state.validateBlockTime(roundedNow.Add(15*time.Second)))
 	})
 
 	t.Run("Last block is committed 10 seconds ago", func(t *testing.T) {
@@ -548,15 +548,15 @@ func TestValidateBlockTime(t *testing.T) {
 		td.state.lastInfo.UpdateBlockTime(roundedNow.Add(-10 * time.Second))
 
 		// Before or same as the last block time
-		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(-20*time.Second)))
-		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(-10*time.Second)))
+		require.Error(t, td.state.validateBlockTime(roundedNow.Add(-20*time.Second)))
+		require.Error(t, td.state.validateBlockTime(roundedNow.Add(-10*time.Second)))
 
 		// Ok
-		assert.NoError(t, td.state.validateBlockTime(roundedNow))
-		assert.NoError(t, td.state.validateBlockTime(roundedNow.Add(10*time.Second)))
+		require.NoError(t, td.state.validateBlockTime(roundedNow))
+		require.NoError(t, td.state.validateBlockTime(roundedNow.Add(10*time.Second)))
 
 		// More than the threshold
-		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(20*time.Second)))
+		require.Error(t, td.state.validateBlockTime(roundedNow.Add(20*time.Second)))
 
 		expectedProposeTime := roundedNow
 		assert.Equal(t, expectedProposeTime, td.state.proposeNextBlockTime())
@@ -568,16 +568,16 @@ func TestValidateBlockTime(t *testing.T) {
 		lastBlockTime := td.state.LastBlockTime()
 
 		// Before or same as the last block time
-		assert.Error(t, td.state.validateBlockTime(lastBlockTime.Add(-10*time.Second)))
-		assert.Error(t, td.state.validateBlockTime(lastBlockTime))
+		require.Error(t, td.state.validateBlockTime(lastBlockTime.Add(-10*time.Second)))
+		require.Error(t, td.state.validateBlockTime(lastBlockTime))
 
 		// Ok
-		assert.NoError(t, td.state.validateBlockTime(roundedNow.Add(-10*time.Second)))
-		assert.NoError(t, td.state.validateBlockTime(roundedNow))
-		assert.NoError(t, td.state.validateBlockTime(roundedNow.Add(10*time.Second)))
+		require.NoError(t, td.state.validateBlockTime(roundedNow.Add(-10*time.Second)))
+		require.NoError(t, td.state.validateBlockTime(roundedNow))
+		require.NoError(t, td.state.validateBlockTime(roundedNow.Add(10*time.Second)))
 
 		// More than the threshold
-		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(30*time.Second)))
+		require.Error(t, td.state.validateBlockTime(roundedNow.Add(30*time.Second)))
 
 		expectedProposeTime := util.RoundNow(10)
 		assert.Equal(t, expectedProposeTime, td.state.proposeNextBlockTime())
@@ -588,18 +588,18 @@ func TestValidateBlockTime(t *testing.T) {
 		td.state.lastInfo.UpdateBlockTime(roundedNow.Add(1 * time.Minute)) // One minute later
 		lastBlockTime := td.state.LastBlockTime()
 
-		assert.Error(t, td.state.validateBlockTime(lastBlockTime.Add(+1*time.Minute)))
+		require.Error(t, td.state.validateBlockTime(lastBlockTime.Add(+1*time.Minute)))
 
 		// Before the last block time
-		assert.Error(t, td.state.validateBlockTime(lastBlockTime.Add(-10*time.Second)))
-		assert.Error(t, td.state.validateBlockTime(lastBlockTime))
+		require.Error(t, td.state.validateBlockTime(lastBlockTime.Add(-10*time.Second)))
+		require.Error(t, td.state.validateBlockTime(lastBlockTime))
 
 		// Ok
-		assert.NoError(t, td.state.validateBlockTime(lastBlockTime.Add(10*time.Second)))
-		assert.NoError(t, td.state.validateBlockTime(lastBlockTime.Add(20*time.Second)))
+		require.NoError(t, td.state.validateBlockTime(lastBlockTime.Add(10*time.Second)))
+		require.NoError(t, td.state.validateBlockTime(lastBlockTime.Add(20*time.Second)))
 
 		// More than the threshold
-		assert.Error(t, td.state.validateBlockTime(lastBlockTime.Add(30*time.Second)))
+		require.Error(t, td.state.validateBlockTime(lastBlockTime.Add(30*time.Second)))
 
 		expectedProposeTime := roundedNow.Add(1 * time.Minute).Add(
 			time.Duration(td.state.params.BlockIntervalInSecond) * time.Second)
@@ -643,11 +643,11 @@ func TestLoadState(t *testing.T) {
 		pub.ValidatorAddress(), pub, 1000000000, 100000)
 	td.HelperSignTransaction(td.genAccKey, bondTrx)
 
-	assert.NoError(t, td.state.AddPendingTx(bondTrx))
+	require.NoError(t, td.state.AddPendingTx(bondTrx))
 
 	blk5, cert5 := td.makeBlockAndCertificate(t, 1)
 	assert.Equal(t, 2, blk5.Transactions().Len())
-	assert.NoError(t, td.state.CommitBlock(blk5, cert5))
+	require.NoError(t, td.state.CommitBlock(blk5, cert5))
 
 	blk6, cert6 := td.makeBlockAndCertificate(t, 0)
 
@@ -699,11 +699,11 @@ func TestCheckMaximumTransactionPerBlock(t *testing.T) {
 		fee := td.state.CalculateFee(amt, payload.TypeTransfer)
 		trx := tx.NewTransferTx(lockTime, senderAddr, td.RandAccAddress(), amt, fee)
 		err := td.state.AddPendingTx(trx)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	}
 
 	blk, err := td.state.ProposeBlock(td.state.valKeys[0], td.RandAccAddress())
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, td.state.params.MaxTransactionsPerBlock, blk.Transactions().Len())
 }
 
@@ -712,7 +712,7 @@ func TestCommittedBlock(t *testing.T) {
 
 	t.Run("Block at 0", func(t *testing.T) {
 		cBlkZero, err := td.state.CommittedBlock(0)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, cBlkZero)
 		assert.Equal(t, hash.UndefHash, td.state.BlockHash(0))
 		assert.Equal(t, uint32(0), td.state.BlockHeight(hash.UndefHash))
@@ -722,7 +722,7 @@ func TestCommittedBlock(t *testing.T) {
 		cBlkOne, err := td.state.CommittedBlock(1)
 		require.NoError(t, err)
 		blkOne, err := cBlkOne.ToBlock()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Nil(t, blkOne.PrevCertificate())
 		assert.Equal(t, hash.UndefHash, blkOne.Header().PrevBlockHash())
 	})
@@ -731,7 +731,7 @@ func TestCommittedBlock(t *testing.T) {
 		cBlkLast, err := td.state.CommittedBlock(td.state.LastBlockHeight())
 		require.NoError(t, err)
 		blkLast, err := cBlkLast.ToBlock()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, blkLast.Hash(), td.state.LastBlockHash())
 	})
 }

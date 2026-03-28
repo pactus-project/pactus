@@ -13,13 +13,13 @@ import (
 
 func TestSaveMainnetConfig(t *testing.T) {
 	path := util.TempFilePath()
-	assert.NoError(t, SaveMainnetConfig(path))
+	require.NoError(t, SaveMainnetConfig(path))
 
 	defConf := DefaultConfigMainnet()
 	conf, err := LoadFromFile(path, true, defConf)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
-	assert.NoError(t, conf.BasicCheck())
+	require.NoError(t, conf.BasicCheck())
 	assert.Equal(t, conf, DefaultConfigMainnet())
 
 	confData, _ := util.ReadFile(path)
@@ -33,38 +33,38 @@ func TestSaveTestnetConfig(t *testing.T) {
 
 	path := util.TempFilePath()
 	defConf := DefaultConfigTestnet()
-	assert.NoError(t, defConf.Save(path))
+	require.NoError(t, defConf.Save(path))
 
 	conf, err := LoadFromFile(path, true, defConf)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, conf, DefaultConfigTestnet())
 
-	assert.NoError(t, conf.BasicCheck())
+	require.NoError(t, conf.BasicCheck())
 }
 
 func TestDefaultConfig(t *testing.T) {
 	conf := defaultConfig()
 
-	assert.NoError(t, conf.BasicCheck())
+	require.NoError(t, conf.BasicCheck())
 	assert.Empty(t, conf.Network.ListenAddrStrings)
-	assert.Zero(t, conf.Network.NetworkName)
-	assert.Zero(t, conf.Network.DefaultPort)
+	assert.Empty(t, conf.Network.NetworkName)
+	assert.Empty(t, conf.Network.DefaultPort)
 
 	assert.False(t, conf.GRPC.Enable)
 	assert.False(t, conf.HTML.Enable)
 	assert.False(t, conf.HTTP.Enable)
 	assert.False(t, conf.JSONRPC.Enable)
 
-	assert.Zero(t, conf.GRPC.Listen)
-	assert.Zero(t, conf.HTML.Listen)
-	assert.Zero(t, conf.HTTP.Listen)
-	assert.Zero(t, conf.JSONRPC.Listen)
+	assert.Empty(t, conf.GRPC.Listen)
+	assert.Empty(t, conf.HTML.Listen)
+	assert.Empty(t, conf.HTTP.Listen)
+	assert.Empty(t, conf.JSONRPC.Listen)
 }
 
 func TestMainnetConfig(t *testing.T) {
 	conf := DefaultConfigMainnet()
 
-	assert.NoError(t, conf.BasicCheck())
+	require.NoError(t, conf.BasicCheck())
 	assert.Empty(t, conf.Network.ListenAddrStrings)
 	assert.Equal(t, "pactus", conf.Network.NetworkName)
 	assert.Equal(t, 21888, conf.Network.DefaultPort)
@@ -86,7 +86,7 @@ func TestTestnetConfig(t *testing.T) {
 
 	conf := DefaultConfigTestnet()
 
-	assert.NoError(t, conf.BasicCheck())
+	require.NoError(t, conf.BasicCheck())
 	assert.Empty(t, conf.Network.ListenAddrStrings)
 	assert.Equal(t, "pactus-testnet", conf.Network.NetworkName)
 	assert.Equal(t, 21777, conf.Network.DefaultPort)
@@ -105,7 +105,7 @@ func TestTestnetConfig(t *testing.T) {
 func TestLocalnetConfig(t *testing.T) {
 	conf := DefaultConfigLocalnet()
 
-	assert.NoError(t, conf.BasicCheck())
+	require.NoError(t, conf.BasicCheck())
 	assert.Empty(t, conf.Network.ListenAddrStrings)
 	assert.Equal(t, "pactus-localnet", conf.Network.NetworkName)
 	assert.Equal(t, 0, conf.Network.DefaultPort)
@@ -126,14 +126,14 @@ func TestLoadFromFile(t *testing.T) {
 	defConf := DefaultConfigMainnet()
 
 	_, err := LoadFromFile(path, true, defConf)
-	assert.Error(t, err, "not exists")
+	require.Error(t, err, "not exists")
 
-	assert.NoError(t, util.WriteFile(path, []byte(`foo = "bar"`)))
+	require.NoError(t, util.WriteFile(path, []byte(`foo = "bar"`)))
 	_, err = LoadFromFile(path, true, defConf)
-	assert.Error(t, err, "unknown field")
+	require.Error(t, err, "unknown field")
 
 	conf, err := LoadFromFile(path, false, defConf)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, defConf, conf)
 }
 
@@ -223,12 +223,12 @@ func TestNodeConfigBasicCheck(t *testing.T) {
 			tt.updateFn(conf)
 			if tt.expectedErr != nil {
 				err := conf.BasicCheck()
-				assert.ErrorIs(t, tt.expectedErr, err,
+				require.ErrorIs(t, tt.expectedErr, err,
 					"Expected error not matched for test %d-%s, expected: %s, got: %s",
 					no, tt.name, tt.expectedErr, err)
 			} else {
 				err := conf.BasicCheck()
-				assert.NoError(t, err, "Expected no error for test %d-%s, get: %s", no, tt.name, err)
+				require.NoError(t, err, "Expected no error for test %d-%s, get: %s", no, tt.name, err)
 			}
 		})
 	}

@@ -23,7 +23,7 @@ func TestNonHardenedDerivation(t *testing.T) {
 
 	masterKey, _ := NewMaster(testSeed)
 	_, err := masterKey.DerivePath(path)
-	assert.ErrorIs(t, err, ErrNonHardenedPath)
+	require.ErrorIs(t, err, ErrNonHardenedPath)
 }
 
 // TestHardenedDerivation tests derive key in hardened mode.
@@ -131,7 +131,7 @@ func TestGenerateSeed(t *testing.T) {
 
 	for no, tt := range tests {
 		seed, err := GenerateSeed(tt.length)
-		assert.ErrorIs(t, err, tt.err)
+		require.ErrorIs(t, err, tt.err)
 
 		if tt.err == nil {
 			assert.Len(t, seed, int(tt.length),
@@ -189,7 +189,7 @@ func TestNewMaster(t *testing.T) {
 	for no, tt := range tests {
 		seed, _ := hex.DecodeString(tt.seed)
 		extKey, err := NewMaster(seed)
-		assert.ErrorIs(t, err, tt.err)
+		require.ErrorIs(t, err, tt.err)
 
 		if tt.err == nil {
 			privKey := extKey.RawPrivateKey()
@@ -309,6 +309,6 @@ func TestInvalidString(t *testing.T) {
 
 	for no, tt := range tests {
 		_, err := NewKeyFromString(tt.str)
-		assert.ErrorIs(t, err, tt.expectedError, "test %d error is not matched", no)
+		require.ErrorIs(t, err, tt.expectedError, "test %d error is not matched", no)
 	}
 }

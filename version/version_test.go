@@ -1,7 +1,6 @@
 package version_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/pactus-project/pactus/version"
@@ -97,9 +96,9 @@ func TestParseVersion(t *testing.T) {
 			ver, err := version.ParseVersion(tt.input)
 
 			if tt.expectedErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.Equal(t, tt.expected, ver)
 			}
 		})
@@ -154,16 +153,16 @@ func TestVersionComparison(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ver1, err := version.ParseVersion(tt.v1Input)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			ver2, err := version.ParseVersion(tt.v2Input)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			expectedSign := tt.expectedSign
 			actualSign := ver1.Compare(ver2)
 
-			assert.Equal(t, expectedSign, actualSign,
-				fmt.Sprintf("Comparison result mismatch for %s vs %s", tt.v1Input, tt.v2Input))
+			assert.Equalf(t, expectedSign, actualSign,
+				"Comparison result mismatch for %s vs %s", tt.v1Input, tt.v2Input)
 		})
 	}
 }

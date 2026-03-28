@@ -374,13 +374,13 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certif
 	blk := prop.Block()
 
 	err = td.consX.bcState.CommitBlock(blk, cert)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	err = td.consY.bcState.CommitBlock(blk, cert)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	err = td.consB.bcState.CommitBlock(blk, cert)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	err = td.consP.bcState.CommitBlock(blk, cert)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	return blk, cert
 }
@@ -515,7 +515,7 @@ func TestNotInCommittee(t *testing.T) {
 
 	td.enterNewHeight(cons)
 	td.newHeightTimeout(cons)
-	assert.Equal(t, cons.currentState.name(), "new-height")
+	assert.Equal(t, "new-height", cons.currentState.name())
 }
 
 func TestIsProposer(t *testing.T) {
@@ -798,7 +798,7 @@ func TestNonActiveValidator(t *testing.T) {
 		td.checkHeightRound(t, nonActiveCons, 1, 0)
 
 		assert.False(t, nonActiveCons.IsActive())
-		assert.Equal(t, nonActiveCons.currentState.name(), "new-height")
+		assert.Equal(t, "new-height", nonActiveCons.currentState.name())
 	})
 
 	t.Run("non-active instances should ignore proposals", func(t *testing.T) {
@@ -820,7 +820,7 @@ func TestNonActiveValidator(t *testing.T) {
 		nonActiveCons.MoveToNewHeight()
 		td.checkHeightRound(t, nonActiveCons, 1, 0)
 
-		assert.NoError(t, nonActiveCons.bcState.CommitBlock(b1, cert1))
+		require.NoError(t, nonActiveCons.bcState.CommitBlock(b1, cert1))
 
 		nonActiveCons.MoveToNewHeight()
 		td.newHeightTimeout(nonActiveCons)

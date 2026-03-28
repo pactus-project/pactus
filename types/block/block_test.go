@@ -12,6 +12,7 @@ import (
 	"github.com/pactus-project/pactus/util/simplemerkle"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestBasicCheck(t *testing.T) {
@@ -36,7 +37,7 @@ func TestBasicCheck(t *testing.T) {
 		blk, _ := block.FromString(str)
 
 		err := blk.BasicCheck()
-		assert.ErrorIs(t, err, block.BasicCheckError{
+		require.ErrorIs(t, err, block.BasicCheckError{
 			Reason: "no subsidy transaction",
 		})
 	})
@@ -58,14 +59,14 @@ func TestBasicCheck(t *testing.T) {
 			"e907" // Txs: Len (1001)
 
 		_, err := block.FromString(str)
-		assert.ErrorIs(t, err, block.ErrTooManyTransactions)
+		require.ErrorIs(t, err, block.ErrTooManyTransactions)
 	})
 
 	t.Run("Without the previous certificate", func(t *testing.T) {
 		blk, _ := ts.GenerateTestBlock(ts.RandHeight(), testsuite.BlockWithPrevCert(nil))
 
 		err := blk.BasicCheck()
-		assert.ErrorIs(t, err, block.BasicCheckError{
+		require.ErrorIs(t, err, block.BasicCheckError{
 			Reason: "invalid genesis block hash",
 		})
 	})
@@ -98,7 +99,7 @@ func TestBasicCheck(t *testing.T) {
 		blk, _ := block.FromString(str)
 
 		err := blk.BasicCheck()
-		assert.ErrorIs(t, err, block.BasicCheckError{
+		require.ErrorIs(t, err, block.BasicCheckError{
 			Reason: "invalid certificate: height is not positive: 0",
 		})
 	})
@@ -131,7 +132,7 @@ func TestBasicCheck(t *testing.T) {
 		blk, _ := block.FromString(str)
 
 		err := blk.BasicCheck()
-		assert.ErrorIs(t, err, block.BasicCheckError{
+		require.ErrorIs(t, err, block.BasicCheckError{
 			Reason: "invalid transaction: invalid version: 0",
 		})
 	})
@@ -162,7 +163,7 @@ func TestBasicCheck(t *testing.T) {
 			"01" // Tx[0]: Amount
 
 		_, err := block.FromString(str)
-		assert.Error(t, err)
+		require.Error(t, err)
 	})
 
 	t.Run("Invalid proposer address (type is 2)", func(t *testing.T) {
@@ -192,7 +193,7 @@ func TestBasicCheck(t *testing.T) {
 
 		blk, _ := block.FromString(str)
 		err := blk.BasicCheck()
-		assert.ErrorIs(t, err, block.BasicCheckError{
+		require.ErrorIs(t, err, block.BasicCheckError{
 			Reason: "invalid proposer address: pc1z42424242424242424242424242424242klpmq4",
 		})
 	})
@@ -224,7 +225,7 @@ func TestBasicCheck(t *testing.T) {
 
 		blk, _ := block.FromString(str)
 		err := blk.BasicCheck()
-		assert.ErrorIs(t, err, block.BasicCheckError{
+		require.ErrorIs(t, err, block.BasicCheckError{
 			Reason: "invalid block version: 0",
 		})
 	})
@@ -255,7 +256,7 @@ func TestBasicCheck(t *testing.T) {
 			"01" // Tx[0]: Amount
 
 		blk, _ := block.FromString(str)
-		assert.NoError(t, blk.BasicCheck())
+		require.NoError(t, blk.BasicCheck())
 		assert.Zero(t, blk.Header().UnixTime())
 		assert.Equal(t, protocol.ProtocolVersionLatest, blk.Header().Version())
 	})
@@ -266,17 +267,17 @@ func TestCBORMarshaling(t *testing.T) {
 
 	blk1, _ := ts.GenerateTestBlock(ts.RandHeight())
 	bz1, err := cbor.Marshal(blk1)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	var blk2 block.Block
 	err = cbor.Unmarshal(bz1, &blk2)
-	assert.NoError(t, err)
-	assert.NoError(t, blk2.BasicCheck())
+	require.NoError(t, err)
+	require.NoError(t, blk2.BasicCheck())
 	assert.Equal(t, blk1.Hash(), blk2.Hash())
 
 	assert.Equal(t, blk1.Hash(), blk2.Hash())
 
 	err = cbor.Unmarshal([]byte{1}, &blk2)
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestEncodingBlock(t *testing.T) {
@@ -287,27 +288,27 @@ func TestEncodingBlock(t *testing.T) {
 
 	for i := 0; i < length; i++ {
 		w := util.NewFixedWriter(i)
-		assert.Error(t, blk.Encode(w), "encode test %v failed", i)
+		require.Error(t, blk.Encode(w), "encode test %v failed", i)
 	}
 	writer := util.NewFixedWriter(length)
-	assert.NoError(t, blk.Encode(writer))
+	require.NoError(t, blk.Encode(writer))
 
 	for i := 0; i < length; i++ {
 		blk2 := new(block.Block)
 		r := util.NewFixedReader(i, writer.Bytes())
-		assert.Error(t, blk2.Decode(r), "decode test %v failed", i)
+		require.Error(t, blk2.Decode(r), "decode test %v failed", i)
 	}
 
 	blk2 := new(block.Block)
 	r := util.NewFixedReader(length, writer.Bytes())
-	assert.NoError(t, blk2.Decode(r))
+	require.NoError(t, blk2.Decode(r))
 	assert.Equal(t, blk.Hash(), blk2.Hash())
 	assert.Equal(t, blk.Header(), blk2.Header())
 }
 
 func TestInvalidString(t *testing.T) {
 	_, err := block.FromString("badcow")
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestBlockHash(t *testing.T) {
@@ -337,7 +338,7 @@ func TestBlockHash(t *testing.T) {
 			"01") // Tx[0]: Amount
 
 	blk, err := block.FromBytes(data)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, len(data), blk.SerializeSize())
 
 	blockData, _ := blk.Bytes()
@@ -386,8 +387,8 @@ func TestBlockHeight(t *testing.T) {
 	blk1, _ := ts.GenerateTestBlock(1, testsuite.BlockWithPrevCert(nil), testsuite.BlockWithPrevHash(hash.UndefHash))
 	blk2, _ := ts.GenerateTestBlock(2)
 
-	assert.NoError(t, blk1.BasicCheck())
-	assert.NoError(t, blk2.BasicCheck())
+	require.NoError(t, blk1.BasicCheck())
+	require.NoError(t, blk2.BasicCheck())
 
 	assert.Equal(t, uint32(1), blk1.Height())
 	assert.Equal(t, uint32(2), blk2.Height())

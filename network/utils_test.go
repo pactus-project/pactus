@@ -7,6 +7,7 @@ import (
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestMakeMultiAddrs(t *testing.T) {
@@ -44,9 +45,9 @@ func TestMakeMultiAddrs(t *testing.T) {
 
 			if tt.expected != nil {
 				assert.Equal(t, tt.expected, actualPis)
-				assert.NoError(t, actualError)
+				require.NoError(t, actualError)
 			} else {
-				assert.Error(t, actualError)
+				require.Error(t, actualError)
 				assert.Nil(t, actualPis)
 			}
 		})
@@ -101,9 +102,9 @@ func TestMakeAddrInfos(t *testing.T) {
 
 			if tt.expectedPis != nil {
 				assert.Equal(t, tt.expectedPis, actualPis)
-				assert.NoError(t, actualError)
+				require.NoError(t, actualError)
 			} else {
-				assert.Error(t, actualError)
+				require.Error(t, actualError)
 				assert.Nil(t, actualPis)
 			}
 		})
@@ -126,10 +127,10 @@ func TestIPToMultiAddr(t *testing.T) {
 		t.Run(tt.expected, func(t *testing.T) {
 			ma, err := IPToMultiAddr(tt.ip, tt.port)
 			if tt.expected != "" {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.Equal(t, tt.expected, ma.String())
 			} else {
-				assert.Error(t, err)
+				require.Error(t, err)
 			}
 		})
 	}

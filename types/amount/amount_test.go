@@ -14,6 +14,7 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAmountCreation(t *testing.T) {
@@ -100,10 +101,10 @@ func TestAmountCreation(t *testing.T) {
 	for _, tt := range tests {
 		amt, err := amount.NewAmount(tt.amount)
 		if tt.valid {
-			assert.NoErrorf(t, err,
+			require.NoErrorf(t, err,
 				"%v: Positive test Amount creation failed with: %v", tt.name, err)
 		} else {
-			assert.Errorf(t, err,
+			require.Errorf(t, err,
 				"%v: Negative test Amount creation succeeded (value %v) when should fail", tt.name, amt)
 		}
 
@@ -194,7 +195,7 @@ func TestAmountUnitConversions(t *testing.T) {
 
 	for _, tt := range tests {
 		f := tt.amount.ToUnit(tt.unit)
-		assert.Equal(t, tt.converted, f,
+		assert.InDelta(t, tt.converted, f, 0.00001,
 			"%v: converted value %v does not match expected %v", tt.name, f, tt.converted)
 
 		str := tt.amount.Format(amount.WithUnit(tt.unit), amount.WithDelimiters())
@@ -204,7 +205,7 @@ func TestAmountUnitConversions(t *testing.T) {
 		// Verify that Amount.ToPAC works as advertised.
 		f1 := tt.amount.ToUnit(amount.UnitPAC)
 		f2 := tt.amount.ToPAC()
-		assert.Equal(t, f1, f2,
+		assert.InDelta(t, f1, f2, 0.00001,
 			"%v: ToPAC does not match ToUnit(AmountPAC): %v != %v", tt.name, f1, f2)
 
 		// Verify that Amount.String works as advertised.
@@ -386,12 +387,12 @@ func TestFromString(t *testing.T) {
 	for _, tt := range tests {
 		amt, err := amount.FromString(tt.amount)
 		if tt.parsErr == nil {
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, tt.NanoPac, amt.ToNanoPAC())
-			assert.Equal(t, tt.PAC, amt.ToPAC())
+			assert.InDelta(t, tt.PAC, amt.ToPAC(), 0.00001)
 			assert.Equal(t, tt.str, amt.String())
 		} else {
-			assert.ErrorIs(t, err, tt.parsErr)
+			require.ErrorIs(t, err, tt.parsErr)
 		}
 	}
 }
@@ -400,7 +401,7 @@ func TestSQLDriver(t *testing.T) {
 	t.Run("Value returns int64", func(t *testing.T) {
 		amt := amount.Amount(123456000000)
 		val, err := amt.Value()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.IsType(t, int64(0), val)
 		assert.Equal(t, int64(123456000000), val.(int64))
 	})
@@ -408,30 +409,30 @@ func TestSQLDriver(t *testing.T) {
 	t.Run("Scan from int64 succeeds", func(t *testing.T) {
 		var amt amount.Amount
 		err := amt.Scan(int64(123456000000))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, int64(123456000000), amt.ToNanoPAC())
 	})
 
 	t.Run("Scan from nil fails", func(t *testing.T) {
 		var amt amount.Amount
 		err := amt.Scan(nil)
-		assert.ErrorIs(t, err, amount.ErrInvalidSQLType)
+		require.ErrorIs(t, err, amount.ErrInvalidSQLType)
 	})
 
 	t.Run("Scan from float64 fails", func(t *testing.T) {
 		var amt amount.Amount
 		err := amt.Scan(123.456)
-		assert.ErrorIs(t, err, amount.ErrInvalidSQLType)
+		require.ErrorIs(t, err, amount.ErrInvalidSQLType)
 	})
 
 	t.Run("Round trip Value and Scan", func(t *testing.T) {
 		original := amount.Amount(util.RandInt64(1000e9))
 		val, err := original.Value()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		var scanned amount.Amount
 		err = scanned.Scan(val)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, original.ToNanoPAC(), scanned.ToNanoPAC())
 	})
 }

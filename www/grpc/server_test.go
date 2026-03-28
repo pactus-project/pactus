@@ -16,7 +16,7 @@ import (
 	wltmgr "github.com/pactus-project/pactus/wallet/manager"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/pactus-project/pactus/www/zmq"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"
@@ -73,7 +73,7 @@ func setup(t *testing.T, conf *Config) *testData {
 		mockWalletMgr, zmqPublishers,
 	)
 	err := server.startListening(listener)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	return &testData{
 		TestSuite:     ts,
@@ -102,10 +102,10 @@ func (td *testData) newClient(t *testing.T) *grpc.ClientConn {
 	conn, err := grpc.NewClient("passthrough://bufnet",
 		grpc.WithContextDialer(td.bufDialer),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	t.Cleanup(func() {
-		assert.Nil(t, conn.Close())
+		require.NoError(t, conn.Close())
 		td.StopServer()
 	})
 

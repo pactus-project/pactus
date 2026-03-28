@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUtils(t *testing.T) {
@@ -36,17 +37,16 @@ func TestSetFlags(t *testing.T) {
 	flags := 0
 	flags = SetFlag(flags, 0x2)
 	flags = SetFlag(flags, 0x8)
-	assert.Equal(t, flags, 0xa)
+	assert.Equal(t, 0xa, flags)
 	assert.True(t, IsFlagSet(flags, 0x2))
 	assert.False(t, IsFlagSet(flags, 0x4))
 	flags = UnsetFlag(flags, 0x2)
 	assert.False(t, IsFlagSet(flags, 0x2))
-	assert.Equal(t, flags, 0x8)
+	assert.Equal(t, 0x8, flags)
 }
 
 func TestRandUint16(t *testing.T) {
 	rnd := RandUint16(4)
-	assert.GreaterOrEqual(t, rnd, uint16(0))
 	assert.LessOrEqual(t, rnd, uint16(4))
 }
 
@@ -58,7 +58,6 @@ func TestRandInt16(t *testing.T) {
 
 func TestRandUint32(t *testing.T) {
 	rnd := RandUint32(4)
-	assert.GreaterOrEqual(t, rnd, uint32(0))
 	assert.LessOrEqual(t, rnd, uint32(4))
 }
 
@@ -76,7 +75,6 @@ func TestRandInt64(t *testing.T) {
 
 func TestRandUint64(t *testing.T) {
 	rnd1 := RandUint64(4)
-	assert.GreaterOrEqual(t, rnd1, uint64(0))
 	assert.LessOrEqual(t, rnd1, uint64(4))
 
 	rnd2 := RandUint64(0)
@@ -198,10 +196,10 @@ func TestParseGRPCAddr(t *testing.T) {
 		t.Run(tt.addr, func(t *testing.T) {
 			if tt.wantError {
 				_, _, err := ParseGRPCAddr(tt.addr, tt.insecure)
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
 				target, prefix, err := ParseGRPCAddr(tt.addr, tt.insecure)
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.Equal(t, tt.wantTarget, target)
 				assert.Equal(t, tt.wantPrefix, prefix)
 			}
