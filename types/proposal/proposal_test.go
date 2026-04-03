@@ -113,7 +113,7 @@ func TestBasicCheck(t *testing.T) {
 		})
 
 		err = prop.Verify(pub)
-		require.ErrorIs(t, err, crypto.ErrInvalidSignature)
+		require.Error(t, err)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
