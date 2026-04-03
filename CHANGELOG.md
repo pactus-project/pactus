@@ -1,5 +1,32 @@
 # Changelog
 
+## [1.13.0](https://github.com/pactus-project/pactus/compare/v1.12.0...v1.13.0) (2026-04-03)
+
+### Feat
+
+- **grpc**: update validator object to support delegation ([#2117](https://github.com/pactus-project/pactus/pull/2117))
+- **cmd**: add delegation flags for bond and unbond transactions ([#2106](https://github.com/pactus-project/pactus/pull/2106))
+- **other**: implement PIP-49 ([#2101](https://github.com/pactus-project/pactus/pull/2101))
+- **gtk**: add network info tab ([#2098](https://github.com/pactus-project/pactus/pull/2098))
+- **gtk**: add committee info tab ([#2096](https://github.com/pactus-project/pactus/pull/2096))
+
+### Fix
+
+- **sync**: update the latest support version ([#2125](https://github.com/pactus-project/pactus/pull/2125))
+- **state**: fix delegate reward on boundaries ([#2120](https://github.com/pactus-project/pactus/pull/2120))
+- **state**: check subsidy transaction for delegated reward ([#2119](https://github.com/pactus-project/pactus/pull/2119))
+- **types**: check decode size for validator ([#2116](https://github.com/pactus-project/pactus/pull/2116))
+- **cmd**: set protocol version for localnet ([#2114](https://github.com/pactus-project/pactus/pull/2114))
+- **gtk**: set percentage of protocol versions ([#2113](https://github.com/pactus-project/pactus/pull/2113))
+- **gtk**: set public key for known validators ([#2112](https://github.com/pactus-project/pactus/pull/2112))
+- **wallet**: ignore delegation on normal bond tx ([#2111](https://github.com/pactus-project/pactus/pull/2111))
+- **state**: set subsidy for delegated reward ([#2109](https://github.com/pactus-project/pactus/pull/2109))
+- **execution**: check delegation for withdraw execution ([#2108](https://github.com/pactus-project/pactus/pull/2108))
+- **execution**: check delegation for unbond execution ([#2107](https://github.com/pactus-project/pactus/pull/2107))
+- **types**: set delegation-owner for unbond transaction ([#2105](https://github.com/pactus-project/pactus/pull/2105))
+- **types**: fix bond encoding issue ([#2104](https://github.com/pactus-project/pactus/pull/2104))
+- **wallet**: set remote provider if not specified ([#2097](https://github.com/pactus-project/pactus/pull/2097))
+
 ## [1.12.0](https://github.com/pactus-project/pactus/compare/v1.11.0...v1.12.0) (2026-02-21)
 
 ### Feat
