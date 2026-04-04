@@ -193,7 +193,7 @@ func TestAddressOperations(t *testing.T) {
 
 	// Test GetAddress not found
 	_, err = td.storage.AddressInfo("non_existent")
-	assert.ErrorIs(t, err, storage.ErrNotFound)
+	require.ErrorIs(t, err, storage.ErrNotFound)
 }
 
 func TestInsertAddress(t *testing.T) {
@@ -233,7 +233,7 @@ func TestTransactionOperations(t *testing.T) {
 
 	// Test GetTransaction not found
 	_, err = td.storage.GetTransaction(-1)
-	assert.ErrorIs(t, err, storage.ErrNotFound)
+	require.ErrorIs(t, err, storage.ErrNotFound)
 
 	// Test UpdateTransactionStatus
 	err = td.storage.UpdateTransactionStatus(txInfo.No, types.TransactionStatusConfirmed, 1)
@@ -281,7 +281,7 @@ func TestQueryTransactions_Range(t *testing.T) {
 		Skip:      0,
 	})
 	require.NoError(t, err)
-	assert.Len(t, transactions, 0)
+	assert.Empty(t, transactions)
 }
 
 func TestQueryTransactions_Direction(t *testing.T) {
@@ -331,7 +331,7 @@ func TestQueryTransactions_Direction(t *testing.T) {
 		Skip:      0,
 	})
 	require.NoError(t, err)
-	assert.Len(t, txs, 0)
+	assert.Empty(t, txs)
 	// Filter receiver only (B): rows with incoming to B (row 3)
 	txs, err = td.storage.QueryTransactions(storage.QueryParams{
 		Address:   addrB.String(),

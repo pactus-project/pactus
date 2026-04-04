@@ -39,5 +39,5 @@ func TestMessage(t *testing.T) {
 
 func TestInvalidMessageType(t *testing.T) {
 	_, err := MakeMessage(66)
-	assert.ErrorIs(t, err, InvalidMessageTypeError{Type: 66})
+	require.ErrorIs(t, err, InvalidMessageTypeError{Type: 66})
 }

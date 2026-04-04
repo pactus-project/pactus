@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSliceToInt16(t *testing.T) {
@@ -91,9 +92,9 @@ func TestSliceToInt64(t *testing.T) {
 func TestCompress(t *testing.T) {
 	a := []byte{1, 2, 3, 4, 5, 6, 7}
 	c, err := CompressBuffer(a)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	b, err := DecompressBuffer(c)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, a, b)
 }
 
@@ -104,9 +105,9 @@ func TestDecompress(t *testing.T) {
 			"9fcd92c947ee35a43a49ff5d57b563eeaad9415b8ed6d685bd72aaf9afd3b5898b334455a26edf71fd634957941ead7f15ad5fe0e96517ce" +
 			"f48d79216323616702020000ffffa63359ef1b010000")
 	_, err := DecompressBuffer(data[1:])
-	assert.Error(t, err)
+	require.Error(t, err)
 	_, err = DecompressBuffer(data)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }
 
 func TestSubtractAndSubset(t *testing.T) {

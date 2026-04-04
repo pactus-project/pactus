@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/version"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAgentString(t *testing.T) {
@@ -53,9 +54,9 @@ func TestParseAgent(t *testing.T) {
 			agent, err := version.ParseAgent(tt.agentStr)
 
 			if tt.expectedErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.Equal(t, tt.expected, agent)
 			}
 		})

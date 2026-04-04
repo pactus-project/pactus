@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestLatestBlocksRequestType(t *testing.T) {
@@ -16,19 +17,19 @@ func TestBlocksRequestMessage(t *testing.T) {
 		msg := NewBlocksRequestMessage(1, 0, 0)
 
 		err := msg.BasicCheck()
-		assert.ErrorIs(t, err, BasicCheckError{Reason: "invalid height"})
+		require.ErrorIs(t, err, BasicCheckError{Reason: "invalid height"})
 	})
 	t.Run("Invalid count", func(t *testing.T) {
 		msg := NewBlocksRequestMessage(1, 200, 0)
 
 		err := msg.BasicCheck()
-		assert.ErrorIs(t, err, BasicCheckError{Reason: "count is zero"})
+		require.ErrorIs(t, err, BasicCheckError{Reason: "count is zero"})
 	})
 
 	t.Run("OK", func(t *testing.T) {
 		msg := NewBlocksRequestMessage(1, 100, 7)
 
-		assert.NoError(t, msg.BasicCheck())
+		require.NoError(t, msg.BasicCheck())
 		assert.Equal(t, uint32(106), msg.To())
 		assert.Contains(t, msg.LogString(), "100")
 	})

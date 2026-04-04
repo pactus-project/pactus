@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/version"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetNetworkInfo(t *testing.T) {
@@ -16,7 +17,7 @@ func TestGetNetworkInfo(t *testing.T) {
 
 	res, err := client.GetNetworkInfo(context.Background(),
 		&pactus.GetNetworkInfoRequest{})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, res)
 	assert.NotEmpty(t, res.NetworkName)
 }
@@ -27,12 +28,11 @@ func TestListPeers(t *testing.T) {
 
 	res, err := client.ListPeers(context.Background(),
 		&pactus.ListPeersRequest{IncludeDisconnected: true})
-	assert.NoError(t, err)
-	assert.Nil(t, err)
-	assert.Equal(t, 2, len(res.Peers))
+	require.NoError(t, err)
+	assert.Len(t, res.Peers, 2)
 	for _, peer := range res.Peers {
 		assert.NotEmpty(t, peer.PeerId)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		pid, _ := lp2ppeer.Decode(peer.PeerId)
 		pp := td.mockSync.PeerSet().GetPeer(pid)
 		assert.Equal(t, peer.Agent, pp.Agent)
@@ -51,14 +51,13 @@ func TestGetNodeInfo(t *testing.T) {
 
 	res, err := client.GetNodeInfo(context.Background(),
 		&pactus.GetNodeInfoRequest{})
-	assert.NoError(t, err)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, version.NodeAgent.String(), res.Agent)
 	assert.Equal(t, td.mockSync.SelfID().String(), res.PeerId)
 	assert.Equal(t, "test-moniker", res.Moniker)
-	assert.Equal(t, res.ZmqPublishers[0].Address, "zmq_address")
-	assert.Equal(t, res.ZmqPublishers[0].Topic, "zmq_topic")
-	assert.Equal(t, res.ZmqPublishers[0].Hwm, int32(100))
+	assert.Equal(t, "zmq_address", res.ZmqPublishers[0].Address)
+	assert.Equal(t, "zmq_topic", res.ZmqPublishers[0].Topic)
+	assert.Equal(t, int32(100), res.ZmqPublishers[0].Hwm)
 }
 
 func TestPing(t *testing.T) {
@@ -69,7 +68,7 @@ func TestPing(t *testing.T) {
 	t.Run("Should return empty response for ping", func(t *testing.T) {
 		res, err := client.Ping(context.Background(), &pactus.PingRequest{})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.IsType(t, &pactus.PingResponse{}, res)
 	})
@@ -78,7 +77,7 @@ func TestPing(t *testing.T) {
 		// Test multiple consecutive pings to ensure consistency
 		for i := 0; i < 5; i++ {
 			res, err := client.Ping(context.Background(), &pactus.PingRequest{})
-			assert.Nil(t, err)
+			require.NoError(t, err)
 			assert.NotNil(t, res)
 		}
 	})

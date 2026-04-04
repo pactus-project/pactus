@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestBlockAnnounceType(t *testing.T) {
@@ -23,7 +24,7 @@ func TestBlockAnnounceMessage(t *testing.T) {
 		msg := NewBlockAnnounceMessage(blk, cert, nil)
 		err := msg.BasicCheck()
 
-		assert.ErrorIs(t, err, certificate.BasicCheckError{
+		require.ErrorIs(t, err, certificate.BasicCheckError{
 			Reason: "height is not positive: 0",
 		})
 	})
@@ -35,7 +36,7 @@ func TestBlockAnnounceMessage(t *testing.T) {
 		msg := NewBlockAnnounceMessage(blk, cert, proof)
 		err := msg.BasicCheck()
 
-		assert.ErrorIs(t, err, certificate.BasicCheckError{
+		require.ErrorIs(t, err, certificate.BasicCheckError{
 			Reason: "height is not positive: 0",
 		})
 	})
@@ -45,7 +46,7 @@ func TestBlockAnnounceMessage(t *testing.T) {
 		blk, cert := ts.GenerateTestBlock(height)
 		msg := NewBlockAnnounceMessage(blk, cert, nil)
 
-		assert.NoError(t, msg.BasicCheck())
+		require.NoError(t, msg.BasicCheck())
 		assert.Equal(t, height, msg.ConsensusHeight())
 		assert.Contains(t, msg.LogString(), fmt.Sprintf("%d", height))
 	})

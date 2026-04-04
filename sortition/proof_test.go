@@ -3,12 +3,12 @@ package sortition
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestProofFromString(t *testing.T) {
 	_, err := ProofFromString("inv")
-	assert.Error(t, err)
+	require.Error(t, err)
 	_, err = ProofFromBytes([]byte{0})
-	assert.Error(t, err)
+	require.Error(t, err)
 }

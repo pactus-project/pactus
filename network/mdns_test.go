@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestMDNS(t *testing.T) {
@@ -31,10 +32,10 @@ func TestMDNS(t *testing.T) {
 	conf2.EnableMdns = true
 	net2 := makeTestNetwork(t, conf2, nil)
 
-	assert.NoError(t, net1.Start())
+	require.NoError(t, net1.Start())
 	time.Sleep(250 * time.Millisecond)
 
-	assert.NoError(t, net2.Start())
+	require.NoError(t, net2.Start())
 	time.Sleep(250 * time.Millisecond)
 
 	msg := []byte("test-mdns")

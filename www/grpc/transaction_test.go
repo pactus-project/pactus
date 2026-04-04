@@ -12,6 +12,7 @@ import (
 	"github.com/pactus-project/pactus/util/testsuite"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetTransaction(t *testing.T) {
@@ -33,14 +34,14 @@ func TestGetTransaction(t *testing.T) {
 				Verbosity: pactus.TransactionVerbosity_TRANSACTION_VERBOSITY_DATA,
 			})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.NotEmpty(t, res.Transaction)
 		assert.Equal(t, blockHeight, res.BlockHeight)
 		assert.Equal(t, textTrx.ID().String(), res.Transaction.Id)
 
 		b, err := textTrx.Bytes()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, hex.EncodeToString(b), res.Transaction.Data)
 		assert.Nil(t, res.Transaction.Payload)
@@ -54,7 +55,7 @@ func TestGetTransaction(t *testing.T) {
 			})
 		pld := res.Transaction.Payload.(*pactus.TransactionInfo_Bond)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.NotEmpty(t, res.Transaction)
 		assert.Empty(t, res.Transaction.Data)
@@ -76,7 +77,7 @@ func TestGetTransaction(t *testing.T) {
 	t.Run("Should return nil value because transaction id is invalid", func(t *testing.T) {
 		res, err := client.GetTransaction(context.Background(),
 			&pactus.GetTransactionRequest{Id: "invalid_id"})
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -84,7 +85,7 @@ func TestGetTransaction(t *testing.T) {
 		id := td.RandHash()
 		res, err := client.GetTransaction(context.Background(),
 			&pactus.GetTransactionRequest{Id: id.String()})
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 }
@@ -96,7 +97,7 @@ func TestSendRawTransaction(t *testing.T) {
 	t.Run("Should fail, invalid cbor", func(t *testing.T) {
 		res, err := client.BroadcastTransaction(context.Background(),
 			&pactus.BroadcastTransactionRequest{SignedRawTransaction: "00000000"})
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -105,14 +106,14 @@ func TestSendRawTransaction(t *testing.T) {
 	t.Run("Should pass", func(t *testing.T) {
 		res, err := client.BroadcastTransaction(context.Background(),
 			&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 	})
 	t.Run("Should fail and not broadcast", func(t *testing.T) {
 		td.mockState.TestPool.AppendError = errors.New("some error")
 		res, err := client.BroadcastTransaction(context.Background(),
 			&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 }
@@ -130,11 +131,11 @@ func TestGetRawTransaction(t *testing.T) {
 				Amount:   amt.ToNanoPAC(),
 				Memo:     td.RandString(32),
 			})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
 
 		decodedTrx, err := tx.FromString(res.RawTransaction)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		expectedLockTime := td.mockState.LastBlockHeight()
 		expectedFee := td.mockState.CalculateFee(amt, payload.TypeTransfer)
 
@@ -164,11 +165,11 @@ func TestGetRawTransaction(t *testing.T) {
 				Memo: td.RandString(32),
 			},
 		)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
 
 		decodedTrx, err := tx.FromString(res.RawTransaction)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		expectedLockTime := td.mockState.LastBlockHeight()
 		expectedFee := td.mockState.CalculateFee(totalAmt, payload.TypeBatchTransfer)
 
@@ -189,11 +190,11 @@ func TestGetRawTransaction(t *testing.T) {
 				PublicKey: pub.String(),
 				Memo:      td.RandString(32),
 			})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
 
 		decodedTrx, err := tx.FromString(res.RawTransaction)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		expectedLockTime := td.mockState.LastBlockHeight()
 		expectedFee := td.mockState.CalculateFee(amt, payload.TypeBond)
 
@@ -212,11 +213,11 @@ func TestGetRawTransaction(t *testing.T) {
 				Stake:    amt.ToNanoPAC(),
 				Memo:     td.RandString(32),
 			})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
 
 		decodedTrx, err := tx.FromString(res.RawTransaction)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		expectedLockTime := td.mockState.LastBlockHeight()
 		expectedFee := td.mockState.CalculateFee(amt, payload.TypeBond)
 
@@ -231,11 +232,11 @@ func TestGetRawTransaction(t *testing.T) {
 				ValidatorAddress: td.RandValAddress().String(),
 				Memo:             td.RandString(32),
 			})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
 
 		decodedTrx, err := tx.FromString(res.RawTransaction)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		expectedLockTime := td.mockState.LastBlockHeight()
 
 		assert.Zero(t, decodedTrx.Payload().Value())
@@ -253,11 +254,11 @@ func TestGetRawTransaction(t *testing.T) {
 				Memo:             td.RandString(32),
 			})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
 
 		decodedTrx, err := tx.FromString(res.RawTransaction)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		expectedLockTime := td.mockState.LastBlockHeight()
 		expectedFee := td.mockState.CalculateFee(amt, payload.TypeWithdraw)
 
@@ -280,7 +281,7 @@ func TestCalculateFee(t *testing.T) {
 				PayloadType: pactus.PayloadType_PAYLOAD_TYPE_TRANSFER,
 				FixedAmount: false,
 			})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, amt.ToNanoPAC(), res.Amount)
 		assert.Equal(t, expectedFee.ToNanoPAC(), res.Fee)
 	})
@@ -294,7 +295,7 @@ func TestCalculateFee(t *testing.T) {
 				PayloadType: pactus.PayloadType_PAYLOAD_TYPE_TRANSFER,
 				FixedAmount: true,
 			})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, (amt - expectedFee).ToNanoPAC(), res.Amount)
 		assert.Equal(t, expectedFee.ToNanoPAC(), res.Fee)
 	})
@@ -308,7 +309,7 @@ func TestCalculateFee(t *testing.T) {
 				PayloadType: pactus.PayloadType_PAYLOAD_TYPE_TRANSFER,
 				FixedAmount: true,
 			})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Negative(t, res.Amount)
 		assert.Equal(t, expectedFee.ToNanoPAC(), res.Fee)
 	})
@@ -323,7 +324,7 @@ func TestDecodeRawTransaction(t *testing.T) {
 		data, _ := trx.Bytes()
 		res, err := client.DecodeRawTransaction(context.Background(),
 			&pactus.DecodeRawTransactionRequest{RawTransaction: hex.EncodeToString(data)})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, trx.ID().String(), res.Transaction.Id)
 		assert.Equal(t, trx.Fee().ToNanoPAC(), res.Transaction.Fee)
@@ -337,7 +338,7 @@ func TestDecodeRawTransaction(t *testing.T) {
 	t.Run("Should fail to decode invalid raw transaction", func(t *testing.T) {
 		res, err := client.DecodeRawTransaction(context.Background(),
 			&pactus.DecodeRawTransactionRequest{RawTransaction: "invalid_raw_transaction"})
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 }

@@ -155,9 +155,9 @@ func TestDecodeBundles(t *testing.T) {
 			bs := td.DecodingHex(tt.data)
 			_, err := td.firewall.OpenGossipBundle(bs, td.unknownPeerID)
 			if tt.wantErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 		})
 	}
@@ -182,7 +182,7 @@ func TestGossipMismatchBundleHeight(t *testing.T) {
 	rawMsg := td.DecodingHex(corruptedData)
 	bdl, err := td.firewall.OpenGossipBundle(rawMsg, td.unknownPeerID)
 	assert.Nil(t, bdl)
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Equal(t, err, ErrMisMatchConsensusHeight)
 
 	assert.Equal(t, status.StatusUnknown, td.firewall.peerSet.GetPeerStatus(td.unknownPeerID))
@@ -240,7 +240,7 @@ func TestStreamMessage(t *testing.T) {
 
 		assert.False(t, td.network.IsClosed(td.unknownPeerID))
 		_, err := td.firewall.OpenStreamBundle(bytes.NewReader(nil), td.unknownPeerID)
-		assert.Error(t, err)
+		require.Error(t, err)
 	})
 
 	t.Run("Message from banned peer", func(t *testing.T) {
@@ -250,7 +250,7 @@ func TestStreamMessage(t *testing.T) {
 
 		assert.False(t, td.network.IsClosed(td.bannedPeerID))
 		_, err := td.firewall.OpenStreamBundle(bytes.NewReader(data), td.bannedPeerID)
-		assert.ErrorIs(t, err, PeerBannedError{
+		require.ErrorIs(t, err, PeerBannedError{
 			PeerID:  td.bannedPeerID,
 			Address: "",
 		})
@@ -335,10 +335,10 @@ func TestBannedAddress(t *testing.T) {
 				PeerID:  peerID,
 				Address: tt.addr,
 			}
-			assert.ErrorIs(t, err, expectedErr,
+			require.ErrorIs(t, err, expectedErr,
 				"test %v failed, addr %v should be banned", no, tt.addr)
 		} else {
-			assert.NoError(t, err,
+			require.NoError(t, err,
 				"test %v failed, addr %v should not be banned", no, tt.addr)
 		}
 	}
@@ -350,15 +350,15 @@ func TestNetworkFlagsMainnet(t *testing.T) {
 	bdl := bundle.NewBundle(message.NewQueryVoteMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 	err := td.firewall.checkBundle(bdl)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 	err = td.firewall.checkBundle(bdl)
-	assert.ErrorIs(t, err, ErrNetworkMismatch)
+	require.ErrorIs(t, err, ErrNetworkMismatch)
 
 	bdl.Flags = 0
 	err = td.firewall.checkBundle(bdl)
-	assert.ErrorIs(t, err, ErrNetworkMismatch)
+	require.ErrorIs(t, err, ErrNetworkMismatch)
 }
 
 func TestNetworkFlagsTestnet(t *testing.T) {
@@ -368,15 +368,15 @@ func TestNetworkFlagsTestnet(t *testing.T) {
 	bdl := bundle.NewBundle(message.NewQueryVoteMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 	err := td.firewall.checkBundle(bdl)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 	err = td.firewall.checkBundle(bdl)
-	assert.ErrorIs(t, err, ErrNetworkMismatch)
+	require.ErrorIs(t, err, ErrNetworkMismatch)
 
 	bdl.Flags = 0
 	err = td.firewall.checkBundle(bdl)
-	assert.ErrorIs(t, err, ErrNetworkMismatch)
+	require.ErrorIs(t, err, ErrNetworkMismatch)
 }
 
 func TestNetworkFlagsLocalnet(t *testing.T) {
@@ -386,15 +386,15 @@ func TestNetworkFlagsLocalnet(t *testing.T) {
 	bdl := bundle.NewBundle(message.NewQueryVoteMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 	err := td.firewall.checkBundle(bdl)
-	assert.ErrorIs(t, err, ErrNetworkMismatch)
+	require.ErrorIs(t, err, ErrNetworkMismatch)
 
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 	err = td.firewall.checkBundle(bdl)
-	assert.ErrorIs(t, err, ErrNetworkMismatch)
+	require.ErrorIs(t, err, ErrNetworkMismatch)
 
 	bdl.Flags = 0
 	err = td.firewall.checkBundle(bdl)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }
 
 func TestParseP2PAddr(t *testing.T) {
@@ -433,9 +433,9 @@ func TestParseP2PAddr(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ip, err := td.firewall.getIPFromMultiAddress(tt.address)
 			if tt.expectError {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.Equal(t, tt.expectedIP, ip)
 			}
 		})

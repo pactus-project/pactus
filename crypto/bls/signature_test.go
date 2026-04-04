@@ -22,18 +22,18 @@ func TestSignatureCBORMarshaling(t *testing.T) {
 	sig2 := new(bls.Signature)
 
 	bs, err := sig1.MarshalCBOR()
-	assert.NoError(t, err)
-	assert.NoError(t, sig2.UnmarshalCBOR(bs))
+	require.NoError(t, err)
+	require.NoError(t, sig2.UnmarshalCBOR(bs))
 	assert.True(t, sig1.EqualsTo(sig2))
 
-	assert.Error(t, sig2.UnmarshalCBOR([]byte("abcd")))
+	require.Error(t, sig2.UnmarshalCBOR([]byte("abcd")))
 
 	inv, _ := hex.DecodeString(strings.Repeat("ff", bls.SignatureSize))
 	data, _ := cbor.Marshal(inv)
-	assert.NoError(t, sig2.UnmarshalCBOR(data))
+	require.NoError(t, sig2.UnmarshalCBOR(data))
 
 	_, err = sig2.PointG1()
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestSignatureEqualsTo(t *testing.T) {
@@ -58,16 +58,16 @@ func TestSignatureEncoding(t *testing.T) {
 	_, prv := ts.RandBLSKeyPair()
 	sig := prv.Sign(ts.RandBytes(16))
 	fw1 := util.NewFixedWriter(20)
-	assert.Error(t, sig.Encode(fw1))
+	require.Error(t, sig.Encode(fw1))
 
 	fw2 := util.NewFixedWriter(bls.SignatureSize)
-	assert.NoError(t, sig.Encode(fw2))
+	require.NoError(t, sig.Encode(fw2))
 
 	fr1 := util.NewFixedReader(20, fw2.Bytes())
-	assert.Error(t, sig.Decode(fr1))
+	require.Error(t, sig.Decode(fr1))
 
 	fr2 := util.NewFixedReader(bls.SignatureSize, fw2.Bytes())
-	assert.NoError(t, sig.Decode(fr2))
+	require.NoError(t, sig.Decode(fr2))
 	assert.Equal(t, bls.SignatureSize, sig.SerializeSize())
 }
 
@@ -82,11 +82,11 @@ func TestVerifyingSignature(t *testing.T) {
 	sig2 := pv2.Sign(msg)
 
 	assert.False(t, sig1.EqualsTo(sig2))
-	assert.NoError(t, pb1.Verify(msg, sig1))
-	assert.NoError(t, pb2.Verify(msg, sig2))
-	assert.ErrorIs(t, pb1.Verify(msg, sig2), crypto.ErrInvalidSignature)
-	assert.ErrorIs(t, pb2.Verify(msg, sig1), crypto.ErrInvalidSignature)
-	assert.ErrorIs(t, pb1.Verify(msg[1:], sig1), crypto.ErrInvalidSignature)
+	require.NoError(t, pb1.Verify(msg, sig1))
+	require.NoError(t, pb2.Verify(msg, sig2))
+	require.ErrorIs(t, pb1.Verify(msg, sig2), crypto.ErrInvalidSignature)
+	require.ErrorIs(t, pb2.Verify(msg, sig1), crypto.ErrInvalidSignature)
+	require.ErrorIs(t, pb1.Verify(msg[1:], sig1), crypto.ErrInvalidSignature)
 }
 
 func TestSignatureFromString(t *testing.T) {
@@ -131,7 +131,7 @@ func TestSignatureFromString(t *testing.T) {
 	for no, tt := range tests {
 		sig, err := bls.SignatureFromString(tt.encoded)
 		if tt.valid {
-			assert.NoError(t, err, "test %v: unexpected error", no)
+			require.NoError(t, err, "test %v: unexpected error", no)
 			assert.Equal(t, tt.bytes, sig.Bytes(), "test %v: invalid bytes", no)
 			assert.Equal(t, tt.encoded, sig.String(), "test %v: invalid encode", no)
 		} else {
@@ -174,7 +174,7 @@ func TestPointG1(t *testing.T) {
 
 		_, err = sig.PointG1()
 		if tt.valid {
-			assert.NoError(t, err, "test %v: unexpected error", no)
+			require.NoError(t, err, "test %v: unexpected error", no)
 		} else {
 			assert.Contains(t, err.Error(), tt.errMsg, "test %v: error not matched", no)
 		}

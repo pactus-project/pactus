@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSigning(t *testing.T) {
@@ -22,7 +23,7 @@ func TestSigning(t *testing.T) {
 
 	sig1 := prv.Sign(msg)
 	assert.Equal(t, sig.Bytes(), sig1.Bytes())
-	assert.NoError(t, pub.Verify(msg, sig))
+	require.NoError(t, pub.Verify(msg, sig))
 	assert.Equal(t, pub, prv.PublicKey())
 	assert.Equal(t, addr, pub.AccountAddress())
 }

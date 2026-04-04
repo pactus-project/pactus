@@ -6,13 +6,14 @@ import (
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSeedFromString(t *testing.T) {
 	_, err := sortition.VerifiableSeedFromString("inv")
-	assert.Error(t, err)
+	require.Error(t, err)
 	_, err = sortition.VerifiableSeedFromBytes([]byte{0})
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestValidate(t *testing.T) {
