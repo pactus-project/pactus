@@ -1,7 +1,6 @@
 package network
 
 import (
-	"context"
 	"testing"
 
 	lp2pps "github.com/libp2p/go-libp2p-pubsub"
@@ -146,7 +145,7 @@ func TestTopicValidator(t *testing.T) {
 				},
 			}
 			propagate = tt.policy
-			result := validator(context.Background(), tt.peerID, msg)
+			result := validator(t.Context(), tt.peerID, msg)
 			assert.Equal(t, tt.expectedResult, result)
 		})
 	}

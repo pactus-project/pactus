@@ -1,7 +1,6 @@
 package html
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -68,13 +67,13 @@ func setup(t *testing.T) *testData {
 		zmq.MockingPublisher("zmq_address", "zmq_topic", 100),
 	}
 
-	gRPCServer := grpc.NewServer(context.Background(), grpcConf,
+	gRPCServer := grpc.NewServer(t.Context(), grpcConf,
 		mockState, mockSync, mockNet, mockConsMgr,
 		mockWalletMgr, zmqPublishers,
 	)
 	require.NoError(t, gRPCServer.StartServer())
 
-	httpServer := NewServer(context.Background(), httpConf, false)
+	httpServer := NewServer(t.Context(), httpConf, false)
 	require.NoError(t, httpServer.StartServer(gRPCServer.Address()))
 
 	return &testData{

@@ -68,7 +68,7 @@ func setup(t *testing.T, conf *Config) *testData {
 		zmq.MockingPublisher("zmq_address", "zmq_topic", 100),
 	}
 
-	server := NewServer(context.Background(), conf,
+	server := NewServer(t.Context(), conf,
 		mockState, mockSync, mockNet, mockConsMgr,
 		mockWalletMgr, zmqPublishers,
 	)

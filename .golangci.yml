@@ -159,10 +159,11 @@ linters:
         - -ST1000
         - -QF1008
     testifylint:
-      usetesting:
-        os-temp-dir: true
-        context-background: true
-        context-todo: true
+      enable-all: true
+    usetesting:
+      os-temp-dir: true
+      context-background: true
+      context-todo: true
     tagliatelle:
       case:
         rules:

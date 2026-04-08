@@ -1,7 +1,6 @@
 package network
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -28,7 +27,7 @@ func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 
 	pipe := pipeline.New[Event](t.Context())
 	log := logger.NewSubLogger("_network", nil)
-	net, err := makeNetwork(context.Background(), conf, log, pipe, opts)
+	net, err := makeNetwork(t.Context(), conf, log, pipe, opts)
 	require.NoError(t, err)
 
 	log.SetObj(testsuite.NewOverrideLogStringer(

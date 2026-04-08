@@ -309,7 +309,7 @@ func TestAddressRecovery(t *testing.T) {
 			return false, nil
 		}
 
-		recovered, err := vault.RecoverAddresses(context.Background(), "", hasActivity)
+		recovered, err := vault.RecoverAddresses(t.Context(), "", hasActivity)
 		require.NoError(t, err)
 
 		assert.Empty(t, recovered)
@@ -325,7 +325,7 @@ func TestAddressRecovery(t *testing.T) {
 				addr == "pc1z4xuja689hg2434yhr32clhn97x6afw58a5n9ns", nil
 		}
 
-		recovered, err := vault.RecoverAddresses(context.Background(), "", hasActivity)
+		recovered, err := vault.RecoverAddresses(t.Context(), "", hasActivity)
 		require.NoError(t, err)
 
 		// Should have 4 addresses
@@ -348,7 +348,7 @@ func TestAddressRecovery(t *testing.T) {
 				addr == "pc1ztmex7taes23h6z4jf0awwmps0zpzmecuzcsev0", nil
 		}
 
-		recovered, err := vault.RecoverAddresses(context.Background(), "", hasActivity)
+		recovered, err := vault.RecoverAddresses(t.Context(), "", hasActivity)
 		require.NoError(t, err)
 
 		assert.Len(t, recovered, 8)
@@ -373,7 +373,7 @@ func TestAddressRecovery(t *testing.T) {
 			return addr == "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3", nil
 		}
 
-		recovered, err := vault.RecoverAddresses(context.Background(), "", hasActivity)
+		recovered, err := vault.RecoverAddresses(t.Context(), "", hasActivity)
 		require.NoError(t, err)
 
 		assert.Empty(t, recovered)
@@ -388,7 +388,7 @@ func TestAddressRecovery(t *testing.T) {
 			return false, errors.New("blockchain connection error")
 		}
 
-		_, err = vault.RecoverAddresses(context.Background(), "", hasActivity)
+		_, err = vault.RecoverAddresses(t.Context(), "", hasActivity)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "blockchain connection error")
 	})
@@ -398,7 +398,7 @@ func TestAddressRecovery(t *testing.T) {
 		require.NoError(t, err)
 
 		// Create a cancellable context
-		ctx, cancel := context.WithCancel(context.Background())
+		ctx, cancel := context.WithCancel(t.Context())
 
 		// Counter to track how many times hasActivity is called
 		callCount := 0

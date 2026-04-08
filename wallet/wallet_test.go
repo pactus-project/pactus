@@ -1,7 +1,6 @@
 package wallet
 
 import (
-	"context"
 	"errors"
 	"strings"
 	"testing"
@@ -55,7 +54,7 @@ func setup(t *testing.T) *testData {
 		}
 	})
 
-	wlt, err := New(context.Background(), mockStorage, WithBlockchainProvider(mockProvider))
+	wlt, err := New(t.Context(), mockStorage, WithBlockchainProvider(mockProvider))
 	require.NoError(t, err)
 
 	return &testData{

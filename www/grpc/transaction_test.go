@@ -1,7 +1,6 @@
 package grpc
 
 import (
-	"context"
 	"encoding/hex"
 	"errors"
 	"testing"
@@ -28,7 +27,7 @@ func TestGetTransaction(t *testing.T) {
 	td.mockState.TestStore.SaveBlock(testBlock, testCert)
 
 	t.Run("Should return transaction (verbosity: 0)", func(t *testing.T) {
-		res, err := client.GetTransaction(context.Background(),
+		res, err := client.GetTransaction(t.Context(),
 			&pactus.GetTransactionRequest{
 				Id:        textTrx.ID().String(),
 				Verbosity: pactus.TransactionVerbosity_TRANSACTION_VERBOSITY_DATA,
@@ -48,7 +47,7 @@ func TestGetTransaction(t *testing.T) {
 	})
 
 	t.Run("Should return transaction (verbosity: 1)", func(t *testing.T) {
-		res, err := client.GetTransaction(context.Background(),
+		res, err := client.GetTransaction(t.Context(),
 			&pactus.GetTransactionRequest{
 				Id:        textTrx.ID().String(),
 				Verbosity: pactus.TransactionVerbosity_TRANSACTION_VERBOSITY_INFO,
@@ -75,7 +74,7 @@ func TestGetTransaction(t *testing.T) {
 	})
 
 	t.Run("Should return nil value because transaction id is invalid", func(t *testing.T) {
-		res, err := client.GetTransaction(context.Background(),
+		res, err := client.GetTransaction(t.Context(),
 			&pactus.GetTransactionRequest{Id: "invalid_id"})
 		require.Error(t, err)
 		assert.Nil(t, res)
@@ -83,7 +82,7 @@ func TestGetTransaction(t *testing.T) {
 
 	t.Run("Should return nil value because transaction doesn't exist", func(t *testing.T) {
 		id := td.RandHash()
-		res, err := client.GetTransaction(context.Background(),
+		res, err := client.GetTransaction(t.Context(),
 			&pactus.GetTransactionRequest{Id: id.String()})
 		require.Error(t, err)
 		assert.Nil(t, res)
@@ -95,7 +94,7 @@ func TestSendRawTransaction(t *testing.T) {
 	client := td.transactionClient(t)
 
 	t.Run("Should fail, invalid cbor", func(t *testing.T) {
-		res, err := client.BroadcastTransaction(context.Background(),
+		res, err := client.BroadcastTransaction(t.Context(),
 			&pactus.BroadcastTransactionRequest{SignedRawTransaction: "00000000"})
 		require.Error(t, err)
 		assert.Nil(t, res)
@@ -104,14 +103,14 @@ func TestSendRawTransaction(t *testing.T) {
 	trx := td.GenerateTestTransferTx()
 	data, _ := trx.Bytes()
 	t.Run("Should pass", func(t *testing.T) {
-		res, err := client.BroadcastTransaction(context.Background(),
+		res, err := client.BroadcastTransaction(t.Context(),
 			&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
 		require.NoError(t, err)
 		assert.NotNil(t, res)
 	})
 	t.Run("Should fail and not broadcast", func(t *testing.T) {
 		td.mockState.TestPool.AppendError = errors.New("some error")
-		res, err := client.BroadcastTransaction(context.Background(),
+		res, err := client.BroadcastTransaction(t.Context(),
 			&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
 		require.Error(t, err)
 		assert.Nil(t, res)
@@ -124,7 +123,7 @@ func TestGetRawTransaction(t *testing.T) {
 
 	t.Run("Transfer", func(t *testing.T) {
 		amt := td.RandAmount()
-		res, err := client.GetRawTransferTransaction(context.Background(),
+		res, err := client.GetRawTransferTransaction(t.Context(),
 			&pactus.GetRawTransferTransactionRequest{
 				Sender:   td.RandAccAddress().String(),
 				Receiver: td.RandAccAddress().String(),
@@ -149,7 +148,7 @@ func TestGetRawTransaction(t *testing.T) {
 		amt2 := td.RandAmount()
 		totalAmt := amt1 + amt2
 
-		res, err := client.GetRawBatchTransferTransaction(context.Background(),
+		res, err := client.GetRawBatchTransferTransaction(t.Context(),
 			&pactus.GetRawBatchTransferTransactionRequest{
 				Sender: td.RandAccAddress().String(),
 				Recipients: []*pactus.Recipient{
@@ -182,7 +181,7 @@ func TestGetRawTransaction(t *testing.T) {
 		amt := td.RandAmount()
 		pub, _ := td.RandBLSKeyPair()
 
-		res, err := client.GetRawBondTransaction(context.Background(),
+		res, err := client.GetRawBondTransaction(t.Context(),
 			&pactus.GetRawBondTransactionRequest{
 				Sender:    td.RandAccAddress().String(),
 				Receiver:  td.RandValAddress().String(),
@@ -206,7 +205,7 @@ func TestGetRawTransaction(t *testing.T) {
 	t.Run("Bond without the Public Key", func(t *testing.T) {
 		amt := td.RandAmount()
 
-		res, err := client.GetRawBondTransaction(context.Background(),
+		res, err := client.GetRawBondTransaction(t.Context(),
 			&pactus.GetRawBondTransactionRequest{
 				Sender:   td.RandAccAddress().String(),
 				Receiver: td.RandValAddress().String(),
@@ -227,7 +226,7 @@ func TestGetRawTransaction(t *testing.T) {
 	})
 
 	t.Run("Unbond", func(t *testing.T) {
-		res, err := client.GetRawUnbondTransaction(context.Background(),
+		res, err := client.GetRawUnbondTransaction(t.Context(),
 			&pactus.GetRawUnbondTransactionRequest{
 				ValidatorAddress: td.RandValAddress().String(),
 				Memo:             td.RandString(32),
@@ -246,7 +245,7 @@ func TestGetRawTransaction(t *testing.T) {
 
 	t.Run("Withdraw", func(t *testing.T) {
 		amt := td.RandAmount()
-		res, err := client.GetRawWithdrawTransaction(context.Background(),
+		res, err := client.GetRawWithdrawTransaction(t.Context(),
 			&pactus.GetRawWithdrawTransactionRequest{
 				ValidatorAddress: td.RandValAddress().String(),
 				AccountAddress:   td.RandAccAddress().String(),
@@ -275,7 +274,7 @@ func TestCalculateFee(t *testing.T) {
 	t.Run("Not fixed amount", func(t *testing.T) {
 		amt := amount.Amount(100e9)
 		expectedFee := amount.Amount(0.1e9)
-		res, err := client.CalculateFee(context.Background(),
+		res, err := client.CalculateFee(t.Context(),
 			&pactus.CalculateFeeRequest{
 				Amount:      amt.ToNanoPAC(),
 				PayloadType: pactus.PayloadType_PAYLOAD_TYPE_TRANSFER,
@@ -289,7 +288,7 @@ func TestCalculateFee(t *testing.T) {
 	t.Run("Fixed amount", func(t *testing.T) {
 		amt := amount.Amount(100e9)
 		expectedFee := amount.Amount(0.1e9)
-		res, err := client.CalculateFee(context.Background(),
+		res, err := client.CalculateFee(t.Context(),
 			&pactus.CalculateFeeRequest{
 				Amount:      100e9,
 				PayloadType: pactus.PayloadType_PAYLOAD_TYPE_TRANSFER,
@@ -303,7 +302,7 @@ func TestCalculateFee(t *testing.T) {
 	t.Run("Insufficient amount to pay fee", func(t *testing.T) {
 		amt := amount.Amount(1)
 		expectedFee := amount.Amount(0.1e9)
-		res, err := client.CalculateFee(context.Background(),
+		res, err := client.CalculateFee(t.Context(),
 			&pactus.CalculateFeeRequest{
 				Amount:      amt.ToNanoPAC(),
 				PayloadType: pactus.PayloadType_PAYLOAD_TYPE_TRANSFER,
@@ -322,7 +321,7 @@ func TestDecodeRawTransaction(t *testing.T) {
 	t.Run("Should decode valid raw transaction", func(t *testing.T) {
 		trx := td.GenerateTestTransferTx()
 		data, _ := trx.Bytes()
-		res, err := client.DecodeRawTransaction(context.Background(),
+		res, err := client.DecodeRawTransaction(t.Context(),
 			&pactus.DecodeRawTransactionRequest{RawTransaction: hex.EncodeToString(data)})
 		require.NoError(t, err)
 		assert.NotNil(t, res)
@@ -336,7 +335,7 @@ func TestDecodeRawTransaction(t *testing.T) {
 	})
 
 	t.Run("Should fail to decode invalid raw transaction", func(t *testing.T) {
-		res, err := client.DecodeRawTransaction(context.Background(),
+		res, err := client.DecodeRawTransaction(t.Context(),
 			&pactus.DecodeRawTransactionRequest{RawTransaction: "invalid_raw_transaction"})
 		require.Error(t, err)
 		assert.Nil(t, res)

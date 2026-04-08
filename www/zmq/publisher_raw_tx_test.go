@@ -1,7 +1,6 @@
 package zmq
 
 import (
-	"context"
 	"encoding/binary"
 	"fmt"
 	"testing"
@@ -23,7 +22,7 @@ func TestRawTxPublisher(t *testing.T) {
 
 	td.server.Publishers()
 
-	sub := zmq4.NewSub(context.Background(), zmq4.WithAutomaticReconnect(false))
+	sub := zmq4.NewSub(t.Context(), zmq4.WithAutomaticReconnect(false))
 
 	err := sub.Dial(addr)
 	require.NoError(t, err)

@@ -1,7 +1,6 @@
 package html
 
 import (
-	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -30,7 +29,7 @@ func TestNetworkInfo(t *testing.T) {
 	td := setup(t)
 
 	w := httptest.NewRecorder()
-	r, err := http.NewRequestWithContext(context.Background(), http.MethodGet, "/network/info", http.NoBody)
+	r, err := http.NewRequestWithContext(t.Context(), http.MethodGet, "/network/info", http.NoBody)
 	require.NoError(t, err)
 
 	td.httpServer.NetworkHandler(w, r)
@@ -47,7 +46,7 @@ func TestPeerList(t *testing.T) {
 	td := setup(t)
 
 	w := httptest.NewRecorder()
-	r, err := http.NewRequestWithContext(context.Background(), http.MethodGet, "/network/peers", http.NoBody)
+	r, err := http.NewRequestWithContext(t.Context(), http.MethodGet, "/network/peers", http.NoBody)
 	require.NoError(t, err)
 
 	td.httpServer.PeerListHandler(w, r)

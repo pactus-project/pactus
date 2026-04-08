@@ -1,7 +1,6 @@
 package grpc
 
 import (
-	"context"
 	"testing"
 
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
@@ -15,7 +14,7 @@ func TestGetNetworkInfo(t *testing.T) {
 	td := setup(t, nil)
 	client := td.networkClient(t)
 
-	res, err := client.GetNetworkInfo(context.Background(),
+	res, err := client.GetNetworkInfo(t.Context(),
 		&pactus.GetNetworkInfoRequest{})
 	require.NoError(t, err)
 	assert.NotNil(t, res)
@@ -26,7 +25,7 @@ func TestListPeers(t *testing.T) {
 	td := setup(t, nil)
 	client := td.networkClient(t)
 
-	res, err := client.ListPeers(context.Background(),
+	res, err := client.ListPeers(t.Context(),
 		&pactus.ListPeersRequest{IncludeDisconnected: true})
 	require.NoError(t, err)
 	assert.Len(t, res.Peers, 2)
@@ -49,7 +48,7 @@ func TestGetNodeInfo(t *testing.T) {
 	td := setup(t, nil)
 	client := td.networkClient(t)
 
-	res, err := client.GetNodeInfo(context.Background(),
+	res, err := client.GetNodeInfo(t.Context(),
 		&pactus.GetNodeInfoRequest{})
 	require.NoError(t, err)
 	assert.Equal(t, version.NodeAgent.String(), res.Agent)
@@ -66,7 +65,7 @@ func TestPing(t *testing.T) {
 	client := td.networkClient(t)
 
 	t.Run("Should return empty response for ping", func(t *testing.T) {
-		res, err := client.Ping(context.Background(), &pactus.PingRequest{})
+		res, err := client.Ping(t.Context(), &pactus.PingRequest{})
 
 		require.NoError(t, err)
 		assert.NotNil(t, res)
@@ -76,7 +75,7 @@ func TestPing(t *testing.T) {
 	t.Run("Should handle multiple ping requests", func(t *testing.T) {
 		// Test multiple consecutive pings to ensure consistency
 		for i := 0; i < 5; i++ {
-			res, err := client.Ping(context.Background(), &pactus.PingRequest{})
+			res, err := client.Ping(t.Context(), &pactus.PingRequest{})
 			require.NoError(t, err)
 			assert.NotNil(t, res)
 		}
