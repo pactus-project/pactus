@@ -29,7 +29,7 @@ func TestWalletServiceIsDisabled(t *testing.T) {
 		&pactus.CreateWalletRequest{
 			WalletName: "TestWallet",
 		})
-	assert.ErrorIs(t, err, status.Error(codes.Unimplemented, "unknown service pactus.Wallet"))
+	require.ErrorIs(t, err, status.Error(codes.Unimplemented, "unknown service pactus.Wallet"))
 	assert.Nil(t, res)
 }
 
@@ -45,7 +45,7 @@ func TestCreateWallet(t *testing.T) {
 			&pactus.CreateWalletRequest{
 				WalletName: "",
 			})
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -59,7 +59,7 @@ func TestCreateWallet(t *testing.T) {
 				WalletName: "test",
 				Password:   "password",
 			})
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -73,7 +73,7 @@ func TestCreateWallet(t *testing.T) {
 				WalletName: "test",
 				Password:   "password",
 			})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, "test", res.WalletName)
 		assert.Equal(t, "mnemonic", res.Mnemonic)
@@ -90,7 +90,7 @@ func TestRestoreWallet(t *testing.T) {
 	t.Run("No wallet name, should return an error", func(t *testing.T) {
 		res, err := client.RestoreWallet(t.Context(),
 			&pactus.RestoreWalletRequest{})
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -99,13 +99,13 @@ func TestRestoreWallet(t *testing.T) {
 			&pactus.RestoreWalletRequest{
 				WalletName: "test",
 			})
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Restore wallet failed", func(t *testing.T) {
 		mnemonic, err := wallet.GenerateMnemonic(128)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		td.mockWalletMgr.EXPECT().
 			RestoreWallet("test", mnemonic, "password").
@@ -117,13 +117,13 @@ func TestRestoreWallet(t *testing.T) {
 				Mnemonic:   mnemonic,
 				Password:   "password",
 			})
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Restore wallet successfully", func(t *testing.T) {
 		mnemonic, err := wallet.GenerateMnemonic(128)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		td.mockWalletMgr.EXPECT().
 			RestoreWallet("test", mnemonic, "password").
@@ -135,7 +135,7 @@ func TestRestoreWallet(t *testing.T) {
 				Mnemonic:   mnemonic,
 				Password:   "password",
 			})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, "test", res.WalletName)
 	})
@@ -157,7 +157,7 @@ func TestGetTotalBalance(t *testing.T) {
 			&pactus.GetTotalBalanceRequest{
 				WalletName: "test",
 			})
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -192,7 +192,7 @@ func TestGetTotalStake(t *testing.T) {
 			&pactus.GetTotalStakeRequest{
 				WalletName: "test",
 			})
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -225,7 +225,7 @@ func TestSignRawTransaction(t *testing.T) {
 				RawTransaction: "invalid-hex",
 			})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -239,7 +239,7 @@ func TestSignRawTransaction(t *testing.T) {
 				WalletName:     "test",
 				RawTransaction: "1a2b3c4d",
 			})
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -253,7 +253,7 @@ func TestSignRawTransaction(t *testing.T) {
 				WalletName:     "test",
 				RawTransaction: "1a2b3c4d",
 			})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 	})
 }
@@ -274,7 +274,7 @@ func TestGetValidatorAddress(t *testing.T) {
 			&pactus.GetValidatorAddressRequest{
 				PublicKey: "pubKey",
 			})
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -312,7 +312,7 @@ func TestSignMessage(t *testing.T) {
 				Address:    "addr",
 				Message:    "hello",
 			})
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -353,7 +353,7 @@ func TestNewAddress(t *testing.T) {
 				Label:       "label",
 				Password:    "password",
 			})
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -402,7 +402,7 @@ func TestAddressInfo(t *testing.T) {
 				WalletName: "test",
 				Address:    "addr",
 			})
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -450,7 +450,7 @@ func TestSetAddressLabel(t *testing.T) {
 				Address:    "addr",
 				Label:      "label",
 			})
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -487,7 +487,7 @@ func TestListWallet(t *testing.T) {
 			Return(nil, errors.New("error on listing wallets"))
 
 		res, err := client.ListWallets(t.Context(), &pactus.ListWalletsRequest{})
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -517,7 +517,7 @@ func TestGetWalletInfo(t *testing.T) {
 
 		res, err := client.GetWalletInfo(t.Context(),
 			&pactus.GetWalletInfoRequest{WalletName: "test"})
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
@@ -562,7 +562,7 @@ func TestListAddress(t *testing.T) {
 
 		res, err := client.ListAddresses(t.Context(),
 			&pactus.ListAddressesRequest{WalletName: "test"})
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 

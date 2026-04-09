@@ -1,13 +1,13 @@
 package network
 
 import (
-	"context"
 	"testing"
 
 	lp2pps "github.com/libp2p/go-libp2p-pubsub"
 	pubsubpb "github.com/libp2p/go-libp2p-pubsub/pb"
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestJoinBlockTopic(t *testing.T) {
@@ -15,14 +15,14 @@ func TestJoinBlockTopic(t *testing.T) {
 
 	msg := []byte("test-block-topic")
 
-	assert.ErrorIs(t, net.gossip.Broadcast(msg, TopicIDBlock),
+	require.ErrorIs(t, net.gossip.Broadcast(msg, TopicIDBlock),
 		NotSubscribedError{
 			TopicID: TopicIDBlock,
 		})
-	assert.NoError(t, net.JoinTopic(TopicIDBlock, alwaysPropagate))
-	assert.NoError(t, net.gossip.Broadcast(msg, TopicIDBlock))
+	require.NoError(t, net.JoinTopic(TopicIDBlock, alwaysPropagate))
+	require.NoError(t, net.gossip.Broadcast(msg, TopicIDBlock))
 
-	assert.Error(t, net.JoinTopic(TopicIDBlock, alwaysPropagate), "already joined")
+	require.Error(t, net.JoinTopic(TopicIDBlock, alwaysPropagate), "already joined")
 }
 
 func TestJoinConsensusTopic(t *testing.T) {
@@ -30,14 +30,14 @@ func TestJoinConsensusTopic(t *testing.T) {
 
 	msg := []byte("test-consensus-topic")
 
-	assert.ErrorIs(t, net.gossip.Broadcast(msg, TopicIDConsensus),
+	require.ErrorIs(t, net.gossip.Broadcast(msg, TopicIDConsensus),
 		NotSubscribedError{
 			TopicID: TopicIDConsensus,
 		})
-	assert.NoError(t, net.JoinTopic(TopicIDConsensus, alwaysPropagate))
-	assert.NoError(t, net.gossip.Broadcast(msg, TopicIDConsensus))
+	require.NoError(t, net.JoinTopic(TopicIDConsensus, alwaysPropagate))
+	require.NoError(t, net.gossip.Broadcast(msg, TopicIDConsensus))
 
-	assert.Error(t, net.JoinTopic(TopicIDConsensus, alwaysPropagate), "already joined")
+	require.Error(t, net.JoinTopic(TopicIDConsensus, alwaysPropagate), "already joined")
 }
 
 func TestJoinTransactionTopic(t *testing.T) {
@@ -45,25 +45,25 @@ func TestJoinTransactionTopic(t *testing.T) {
 
 	msg := []byte("test-transaction-topic")
 
-	assert.ErrorIs(t, net.gossip.Broadcast(msg, TopicIDTransaction),
+	require.ErrorIs(t, net.gossip.Broadcast(msg, TopicIDTransaction),
 		NotSubscribedError{
 			TopicID: TopicIDTransaction,
 		})
-	assert.NoError(t, net.JoinTopic(TopicIDTransaction, alwaysPropagate))
-	assert.NoError(t, net.gossip.Broadcast(msg, TopicIDTransaction))
+	require.NoError(t, net.JoinTopic(TopicIDTransaction, alwaysPropagate))
+	require.NoError(t, net.gossip.Broadcast(msg, TopicIDTransaction))
 
-	assert.Error(t, net.JoinTopic(TopicIDTransaction, alwaysPropagate), "already joined")
+	require.Error(t, net.JoinTopic(TopicIDTransaction, alwaysPropagate), "already joined")
 }
 
 func TestJoinInvalidTopic(t *testing.T) {
 	net := makeTestNetwork(t, testConfig(), nil)
 
-	assert.ErrorIs(t, net.JoinTopic(TopicIDUnspecified, alwaysPropagate),
+	require.ErrorIs(t, net.JoinTopic(TopicIDUnspecified, alwaysPropagate),
 		InvalidTopicError{
 			TopicID: TopicIDUnspecified,
 		})
 
-	assert.ErrorIs(t, net.JoinTopic(TopicID(-1), alwaysPropagate),
+	require.ErrorIs(t, net.JoinTopic(TopicID(-1), alwaysPropagate),
 		InvalidTopicError{
 			TopicID: TopicID(-1),
 		})
@@ -74,12 +74,12 @@ func TestInvalidTopic(t *testing.T) {
 
 	msg := []byte("test-invalid-topic")
 
-	assert.ErrorIs(t, net.gossip.Broadcast(msg, TopicIDUnspecified),
+	require.ErrorIs(t, net.gossip.Broadcast(msg, TopicIDUnspecified),
 		InvalidTopicError{
 			TopicID: TopicIDUnspecified,
 		})
 
-	assert.ErrorIs(t, net.gossip.Broadcast(msg, -1),
+	require.ErrorIs(t, net.gossip.Broadcast(msg, -1),
 		InvalidTopicError{
 			TopicID: TopicID(-1),
 		})
@@ -145,8 +145,8 @@ func TestTopicValidator(t *testing.T) {
 				},
 			}
 			propagate = tt.policy
-			result := validator(context.Background(), tt.peerID, msg)
-			assert.Equal(t, result, tt.expectedResult)
+			result := validator(t.Context(), tt.peerID, msg)
+			assert.Equal(t, tt.expectedResult, result)
 		})
 	}
 }

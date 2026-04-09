@@ -53,7 +53,7 @@ func setup(t *testing.T, config *Config) *testData {
 	for height := uint32(0); height < 10; height++ {
 		blk, cert := td.GenerateTestBlock(height + 1)
 		td.store.SaveBlock(blk, cert)
-		assert.NoError(t, td.store.WriteBatch())
+		require.NoError(t, td.store.WriteBatch())
 	}
 
 	return td
@@ -93,7 +93,7 @@ func TestUnknownTransactionID(t *testing.T) {
 	td := setup(t, nil)
 
 	trx, err := td.store.Transaction(td.RandHash())
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Nil(t, trx)
 }
 
@@ -102,7 +102,7 @@ func TestWriteAndClosePeacefully(t *testing.T) {
 
 	// After closing the database, writing will result in an error
 	td.store.Close()
-	assert.Error(t, td.store.WriteBatch())
+	require.Error(t, td.store.WriteBatch())
 }
 
 func TestRetrieveBlockAndTransactions(t *testing.T) {
@@ -111,14 +111,14 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 	lastCert := td.store.LastCertificate()
 	lastHeight := lastCert.Height()
 	cBlk, err := td.store.Block(lastHeight)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, lastHeight, cBlk.Height)
 	blk, _ := cBlk.ToBlock()
 	assert.Equal(t, lastHeight-1, blk.PrevCertificate().Height())
 
 	for _, trx := range blk.Transactions() {
 		committedTx, err := td.store.Transaction(trx.ID())
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, committedTx.BlockTime, blk.Header().UnixTime())
 		assert.Equal(t, committedTx.TxID, trx.ID())
 		assert.Equal(t, committedTx.Height, lastHeight)
@@ -136,7 +136,7 @@ func TestIndexingPublicKeys(t *testing.T) {
 		for _, trx := range blk.Transactions()[1:] {
 			addr := trx.Payload().Signer()
 			pub, err := td.store.PublicKey(addr)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			ok := td.store.HasPublicKey(addr)
 			assert.True(t, ok)
@@ -152,7 +152,7 @@ func TestIndexingPublicKeys(t *testing.T) {
 		ok := td.store.HasPublicKey(randValAddress)
 		assert.False(t, ok)
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, pubKey)
 	})
 }
@@ -222,20 +222,20 @@ func TestStrippedPublicKey(t *testing.T) {
 		//
 		if tt.failed {
 			_, err := cBlk.ToBlock()
-			assert.ErrorIs(t, err, PublicKeyNotFoundError{
+			require.ErrorIs(t, err, PublicKeyNotFoundError{
 				Address: tt.trx.Payload().Signer(),
 			}, "test %d failed, expected error", no+1)
 
 			_, err = cTrx.ToTx()
-			assert.ErrorIs(t, err, PublicKeyNotFoundError{
+			require.ErrorIs(t, err, PublicKeyNotFoundError{
 				Address: tt.trx.Payload().Signer(),
 			}, "test %d failed, expected error", no+1)
 		} else {
 			_, err := cBlk.ToBlock()
-			assert.NoError(t, err, "test %d failed, not expected error", no+1)
+			require.NoError(t, err, "test %d failed, not expected error", no+1)
 
 			_, err = cTrx.ToTx()
-			assert.NoError(t, err, "test %d failed, not expected error", no+1)
+			require.NoError(t, err, "test %d failed, not expected error", no+1)
 		}
 	}
 }
@@ -261,10 +261,10 @@ func TestPruneBlock(t *testing.T) {
 		blkOne, _ := cBlkOne.ToBlock()
 		pruned, err := td.store.pruneBlock(height)
 		assert.True(t, pruned)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		err = td.store.WriteBatch()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		cBlk, _ := td.store.Block(height)
 		assert.Nil(t, cBlk)
@@ -282,10 +282,10 @@ func TestPruneBlock(t *testing.T) {
 		height := uint32(11)
 		pruned, err := td.store.pruneBlock(height)
 		assert.False(t, pruned)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		err = td.store.WriteBatch()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 }
 
@@ -311,7 +311,7 @@ func TestPrune(t *testing.T) {
 
 		// Store doesn't have blocks for one day
 		err := td.store.Prune(callback)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Zero(t, totalPruned)
 		assert.Zero(t, lastPruningHeight)
@@ -333,7 +333,7 @@ func TestPrune(t *testing.T) {
 
 		// It should remove blocks [1..8]
 		err = td.store.Prune(callback)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, uint32(8), totalPruned)
 		assert.Equal(t, uint32(1), lastPruningHeight)
@@ -357,7 +357,7 @@ func TestPrune(t *testing.T) {
 		require.NoError(t, err)
 
 		cBlk, err := td.store.Block(9)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, cBlk)
 
 		assert.Equal(t, uint32(9), td.store.PruningHeight())
@@ -383,7 +383,7 @@ func TestCancelPrune(t *testing.T) {
 		require.NoError(t, err)
 
 		err = td.store.Prune(callback)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, uint32(1), hits)
 	})

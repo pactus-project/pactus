@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestPrivateKeyEqualsTo(t *testing.T) {
@@ -91,7 +92,7 @@ func TestPrivateKeyFromString(t *testing.T) {
 	for no, tt := range tests {
 		prv, err := bls.PrivateKeyFromString(tt.encoded)
 		if tt.valid {
-			assert.NoError(t, err, "test %v: unexpected error", no)
+			require.NoError(t, err, "test %v: unexpected error", no)
 			assert.Equal(t, tt.result, prv.Bytes(), "test %v: invalid bytes", no)
 			assert.Equal(t, strings.ToUpper(tt.encoded), prv.String(), "test %v: invalid encoded", no)
 		} else {
@@ -147,10 +148,10 @@ func TestKeyGen(t *testing.T) {
 		ikm, _ := hex.DecodeString(tt.ikm)
 		prv, err := bls.KeyGen(ikm, nil)
 		if tt.sk == "Err" {
-			assert.Error(t, err,
+			require.Error(t, err,
 				"test '%v' failed. no error", no)
 		} else {
-			assert.NoError(t, err,
+			require.NoError(t, err,
 				"test'%v' failed. has error", no)
 			assert.Equal(t, tt.sk, hex.EncodeToString(prv.Bytes()),
 				"test '%v' failed. not equal", no)

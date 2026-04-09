@@ -26,7 +26,7 @@ func TestSigning(t *testing.T) {
 
 	sig1 := prv.Sign(msg)
 	assert.Equal(t, sig.Bytes(), sig1.Bytes())
-	assert.NoError(t, pub.Verify(msg, sig))
+	require.NoError(t, pub.Verify(msg, sig))
 	assert.Equal(t, pub, prv.PublicKey())
 	assert.Equal(t, valAddr, pub.ValidatorAddress())
 	assert.Equal(t, accAddr, pub.AccountAddress())
@@ -80,27 +80,27 @@ func TestAggregateFailed(t *testing.T) {
 	pubAgg3, _ := bls.PublicKeyAggregate(pubs3...)
 	pubAgg4, _ := bls.PublicKeyAggregate(pubs4...)
 
-	assert.NoError(t, pub1.Verify(msg1, sig1))
-	assert.NoError(t, pub2.Verify(msg1, sig2))
-	assert.NoError(t, pub3.Verify(msg1, sig3))
-	assert.Error(t, pub2.Verify(msg1, sig1))
-	assert.Error(t, pub3.Verify(msg1, sig1))
-	assert.Error(t, pub1.Verify(msg1, agg1))
-	assert.Error(t, pub2.Verify(msg1, agg1))
-	assert.Error(t, pub3.Verify(msg1, agg1))
+	require.NoError(t, pub1.Verify(msg1, sig1))
+	require.NoError(t, pub2.Verify(msg1, sig2))
+	require.NoError(t, pub3.Verify(msg1, sig3))
+	require.Error(t, pub2.Verify(msg1, sig1))
+	require.Error(t, pub3.Verify(msg1, sig1))
+	require.Error(t, pub1.Verify(msg1, agg1))
+	require.Error(t, pub2.Verify(msg1, agg1))
+	require.Error(t, pub3.Verify(msg1, agg1))
 
-	assert.NoError(t, pubAgg1.Verify(msg1, agg1))
-	assert.Error(t, pubAgg1.Verify(msg2, agg1))
-	assert.Error(t, pubAgg1.Verify(msg1, agg2))
-	assert.Error(t, pubAgg2.Verify(msg1, agg1))
-	assert.NoError(t, pubAgg2.Verify(msg1, agg2))
-	assert.Error(t, pubAgg2.Verify(msg2, agg2))
-	assert.Error(t, pubAgg1.Verify(msg1, agg3))
-	assert.Error(t, pubAgg1.Verify(msg2, agg3))
-	assert.Error(t, pubAgg1.Verify(msg1, agg4))
-	assert.Error(t, pubAgg3.Verify(msg1, agg1))
-	assert.NoError(t, pubAgg1.Verify(msg1, agg5))
-	assert.NoError(t, pubAgg4.Verify(msg1, agg1))
+	require.NoError(t, pubAgg1.Verify(msg1, agg1))
+	require.Error(t, pubAgg1.Verify(msg2, agg1))
+	require.Error(t, pubAgg1.Verify(msg1, agg2))
+	require.Error(t, pubAgg2.Verify(msg1, agg1))
+	require.NoError(t, pubAgg2.Verify(msg1, agg2))
+	require.Error(t, pubAgg2.Verify(msg2, agg2))
+	require.Error(t, pubAgg1.Verify(msg1, agg3))
+	require.Error(t, pubAgg1.Verify(msg2, agg3))
+	require.Error(t, pubAgg1.Verify(msg1, agg4))
+	require.Error(t, pubAgg3.Verify(msg1, agg1))
+	require.NoError(t, pubAgg1.Verify(msg1, agg5))
+	require.NoError(t, pubAgg4.Verify(msg1, agg1))
 }
 
 func TestAggregateOnlyOneSignature(t *testing.T) {
@@ -208,7 +208,7 @@ func TestSignatureAggregateErrorHandling(t *testing.T) {
 
 	t.Run("EmptyInput", func(t *testing.T) {
 		aggSig, err := bls.SignatureAggregate()
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, aggSig)
 		assert.Contains(t, err.Error(), "no signatures provided")
 	})
@@ -217,10 +217,10 @@ func TestSignatureAggregateErrorHandling(t *testing.T) {
 		// Point at infinity
 		invalidSig, err := bls.SignatureFromString(
 			"C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		aggSig, err := bls.SignatureAggregate(invalidSig)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, aggSig)
 	})
 
@@ -229,10 +229,10 @@ func TestSignatureAggregateErrorHandling(t *testing.T) {
 
 		invalidSig, err := bls.SignatureFromString(
 			"C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		aggSig, err := bls.SignatureAggregate(validSig, invalidSig)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, aggSig)
 	})
 }
@@ -243,7 +243,7 @@ func TestPublicKeyAggregateErrorHandling(t *testing.T) {
 
 	t.Run("EmptyInput", func(t *testing.T) {
 		aggPub, err := bls.PublicKeyAggregate()
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, aggPub)
 		assert.Contains(t, err.Error(), "no public keys provided")
 	})
@@ -253,10 +253,10 @@ func TestPublicKeyAggregateErrorHandling(t *testing.T) {
 		invalidPub, err := bls.PublicKeyFromString(
 			"public1pcqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" +
 				"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqglnhh9")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		aggPub, err := bls.PublicKeyAggregate(invalidPub)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, aggPub)
 	})
 
@@ -266,10 +266,10 @@ func TestPublicKeyAggregateErrorHandling(t *testing.T) {
 		invalidPub, err := bls.PublicKeyFromString(
 			"public1pcqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" +
 				"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqglnhh9")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		aggPub, err := bls.PublicKeyAggregate(validPub, invalidPub)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, aggPub)
 	})
 }

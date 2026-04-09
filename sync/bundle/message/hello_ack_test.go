@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestHelloAckType(t *testing.T) {
@@ -13,5 +14,5 @@ func TestHelloAckType(t *testing.T) {
 
 func TestHelloAckMessage(t *testing.T) {
 	msg := NewHelloAckMessage(ResponseCodeRejected, "rejected", 0)
-	assert.NoError(t, msg.BasicCheck())
+	require.NoError(t, msg.BasicCheck())
 }

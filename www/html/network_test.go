@@ -1,13 +1,13 @@
 package html
 
 import (
-	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/pactus-project/pactus/version"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNodeInfo(t *testing.T) {
@@ -29,8 +29,8 @@ func TestNetworkInfo(t *testing.T) {
 	td := setup(t)
 
 	w := httptest.NewRecorder()
-	r, err := http.NewRequestWithContext(context.Background(), http.MethodGet, "/network/info", http.NoBody)
-	assert.NoError(t, err)
+	r, err := http.NewRequestWithContext(t.Context(), http.MethodGet, "/network/info", http.NoBody)
+	require.NoError(t, err)
 
 	td.httpServer.NetworkHandler(w, r)
 
@@ -46,8 +46,8 @@ func TestPeerList(t *testing.T) {
 	td := setup(t)
 
 	w := httptest.NewRecorder()
-	r, err := http.NewRequestWithContext(context.Background(), http.MethodGet, "/network/peers", http.NoBody)
-	assert.NoError(t, err)
+	r, err := http.NewRequestWithContext(t.Context(), http.MethodGet, "/network/peers", http.NoBody)
+	require.NoError(t, err)
 
 	td.httpServer.PeerListHandler(w, r)
 

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestRoundNow(t *testing.T) {
@@ -34,7 +35,7 @@ func TestRoundingTime(t *testing.T) {
 
 	for _, tt := range tests {
 		parsedTime, err := time.Parse(time.RFC3339Nano, tt.input)
-		assert.NoError(t, err, "Failed to parse time")
+		require.NoError(t, err, "Failed to parse time")
 
 		roundedTime := roundDownTime(parsedTime, 10)
 

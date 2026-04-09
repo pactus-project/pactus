@@ -7,7 +7,7 @@ import (
 )
 
 func TestServicesString(t *testing.T) {
-	assert.Equal(t, "", New(None).String())
+	assert.Empty(t, New(None).String())
 	assert.Equal(t, "FULL", New(FullNode).String())
 	assert.Equal(t, "PRUNED", New(PrunedNode).String())
 	assert.Equal(t, "FULL | PRUNED", New(FullNode, PrunedNode).String())

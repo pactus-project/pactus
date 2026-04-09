@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestProposeBlock(t *testing.T) {
@@ -96,7 +97,7 @@ func TestProposalNextRound(t *testing.T) {
 
 	// Byzantine node sends proposal for the second round (his turn) even before the first round is started
 	b, err := td.consB.bcState.ProposeBlock(td.consB.valKey, td.consB.rewardAddr)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	p := proposal.NewProposal(2, 1, b)
 	td.HelperSignProposal(td.consB.valKey, p)
 

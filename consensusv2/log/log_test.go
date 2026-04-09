@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestMustGetRound(t *testing.T) {
@@ -45,7 +46,7 @@ func TestAddValidVote(t *testing.T) {
 		ts.HelperSignVote(valKeys[0], v)
 
 		added, err := log.AddVote(v)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.True(t, added)
 	}
 
@@ -73,10 +74,10 @@ func TestAddInvalidVoteType(t *testing.T) {
 			"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6")
 	invVote := new(vote.Vote)
 	err := invVote.UnmarshalCBOR(data)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	added, err := log.AddVote(invVote)
-	assert.ErrorContains(t, err, "unexpected vote type: 15")
+	require.ErrorContains(t, err, "unexpected vote type: 15")
 	assert.False(t, added)
 	assert.False(t, log.HasVote(invVote.Hash()))
 }
