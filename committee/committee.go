@@ -1,9 +1,10 @@
 package committee
 
 import (
+	"cmp"
 	"errors"
 	"fmt"
-	"sort"
+	"slices"
 	"strings"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -56,8 +57,8 @@ func (c *committee) TotalPower() int64 {
 }
 
 func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
-	sort.SliceStable(joined, func(i, j int) bool {
-		return joined[i].Number() < joined[j].Number()
+	slices.SortStableFunc(joined, func(a, b *validator.Validator) int {
+		return cmp.Compare(a.Number(), b.Number())
 	})
 
 	// First update the validator list
@@ -88,8 +89,8 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 		i++
 	}
 
-	sort.SliceStable(oldestFirst, func(i, j int) bool {
-		return oldestFirst[i].Data.LastSortitionHeight() < oldestFirst[j].Data.LastSortitionHeight()
+	slices.SortStableFunc(oldestFirst, func(a, b *linkedlist.Element[*validator.Validator]) int {
+		return cmp.Compare(a.Data.LastSortitionHeight(), b.Data.LastSortitionHeight())
 	})
 
 	for j := 0; j <= int(lastRound); j++ {

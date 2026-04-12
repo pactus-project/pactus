@@ -1,9 +1,10 @@
 package html
 
 import (
+	"cmp"
 	"fmt"
 	"net/http"
-	"sort"
+	"slices"
 	"time"
 
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
@@ -54,9 +55,11 @@ func (s *Server) PeerListHandler(w http.ResponseWriter, r *http.Request) {
 	tmk.addRowString("Peers", "---")
 
 	peers := res.Peers
-	sort.Slice(peers, func(i, j int) bool {
-		return peers[i].MetricInfo.TotalReceived.Bundles >
-			peers[j].MetricInfo.TotalReceived.Bundles
+	slices.SortFunc(peers, func(a, b *pactus.PeerInfo) int {
+		return cmp.Compare(
+			b.MetricInfo.TotalReceived.Bundles,
+			a.MetricInfo.TotalReceived.Bundles,
+		)
 	})
 
 	for index, peer := range peers {
@@ -145,8 +148,8 @@ func metricToTable(tmk *tableMaker, metricInfo *pactus.MetricInfo) {
 			keys = append(keys, k)
 		}
 
-		sort.Slice(keys, func(i, j int) bool {
-			return msgCounter[keys[i]].Bundles > msgCounter[keys[j]].Bundles
+		slices.SortFunc(keys, func(a, b int32) int {
+			return cmp.Compare(msgCounter[b].Bundles, msgCounter[a].Bundles)
 		})
 
 		for _, key := range keys {

@@ -79,9 +79,9 @@ func (c *NodeWidgetController) timeout1() {
 		c.view.LabelLastBlockTime.SetText(lastBlockTime.Format("02 Jan 06 15:04:05 MST"))
 		c.view.LabelLastBlockHeight.SetText(strconv.FormatInt(int64(lastBlockHeight), 10))
 
-		nowUnix := time.Now().Unix()
-		lastBlockTimeUnix := lastBlockTime.Unix()
-		blocksLeft := (nowUnix - lastBlockTimeUnix) / 10
+		nowSec := time.Now().Unix()
+		lastBlockTimeSec := lastBlockTime.Unix()
+		blocksLeft := (nowSec - lastBlockTimeSec) / 10
 		c.view.LabelBlocksLeft.SetText(strconv.FormatInt(blocksLeft, 10))
 
 		// Sync progress: 100% when up-to-date, 0% when syncProgressWindowBlocks behind (no genesis time).

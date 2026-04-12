@@ -19,7 +19,7 @@ func TestBasicAuthMiddleware(t *testing.T) {
 	}))
 
 	t.Run("NoAuth", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/", http.NoBody)
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", http.NoBody)
 		rec := httptest.NewRecorder()
 
 		handler.ServeHTTP(rec, req)
@@ -29,7 +29,7 @@ func TestBasicAuthMiddleware(t *testing.T) {
 	})
 
 	t.Run("WithAuth", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/", http.NoBody)
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", http.NoBody)
 		req.SetBasicAuth("username", "password")
 		rec := httptest.NewRecorder()
 
@@ -40,7 +40,7 @@ func TestBasicAuthMiddleware(t *testing.T) {
 	})
 
 	t.Run("CheckMetadata", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/", http.NoBody)
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", http.NoBody)
 		req.SetBasicAuth("username", "password")
 		rec := httptest.NewRecorder()
 
