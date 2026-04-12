@@ -45,23 +45,23 @@ func TestScoreManager(t *testing.T) {
 		scoreMgr.SetCertificate(tt.cert)
 
 		score0 := scoreMgr.AvailabilityScore(0)
-		assert.Equal(t, tt.score0, score0, "#%v: invalid score0, expected %v, got %v",
+		assert.InDelta(t, tt.score0, score0, 0.00001, "#%v: invalid score0, expected %v, got %v",
 			no, tt.score0, score0)
 
 		score1 := scoreMgr.AvailabilityScore(1)
-		assert.Equal(t, tt.score1, score1, "#%v: invalid score1, expected %v, got %v",
+		assert.InDelta(t, tt.score1, score1, 0.00001, "#%v: invalid score1, expected %v, got %v",
 			no, tt.score1, score1)
 
 		score2 := scoreMgr.AvailabilityScore(2)
-		assert.Equal(t, tt.score2, score2, "#%v: invalid score2, expected %v, got %v",
+		assert.InDelta(t, tt.score2, score2, 0.00001, "#%v: invalid score2, expected %v, got %v",
 			no, tt.score2, score2)
 
 		score3 := scoreMgr.AvailabilityScore(3)
-		assert.Equal(t, tt.score3, score3, "#%v: invalid score3, expected %v, got %v",
+		assert.InDelta(t, tt.score3, score3, 0.00001, "#%v: invalid score3, expected %v, got %v",
 			no, tt.score3, score3)
 
 		score4 := scoreMgr.AvailabilityScore(4)
-		assert.Equal(t, tt.score4, score4, "#%v: invalid score4, expected %v, got %v",
+		assert.InDelta(t, tt.score4, score4, 0.00001, "#%v: invalid score4, expected %v, got %v",
 			no, tt.score4, score4)
 	}
 }

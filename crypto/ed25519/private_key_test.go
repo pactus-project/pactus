@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestPrivateKeyEqualsTo(t *testing.T) {
@@ -67,7 +68,7 @@ func TestPrivateKeyFromString(t *testing.T) {
 	for no, tt := range tests {
 		prv, err := ed25519.PrivateKeyFromString(tt.encoded)
 		if tt.valid {
-			assert.NoError(t, err, "test %v: unexpected error", no)
+			require.NoError(t, err, "test %v: unexpected error", no)
 			assert.Equal(t, tt.result, prv.Bytes(), "test %v: invalid bytes", no)
 			assert.Equal(t, strings.ToUpper(tt.encoded), prv.String(), "test %v: invalid encoded", no)
 		} else {

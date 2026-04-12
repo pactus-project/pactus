@@ -55,7 +55,7 @@ func TestBasicAuth(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ctx := context.Background()
+			ctx := t.Context()
 			if tt.authHeader != "" {
 				md := metadata.New(map[string]string{"authorization": tt.authHeader})
 				ctx = metadata.NewIncomingContext(ctx, md)
@@ -76,6 +76,6 @@ func TestGrpcRecovery(t *testing.T) {
 
 	interceptor := s.server.Recovery()
 
-	_, err := interceptor(context.Background(), nil, &grpc.UnaryServerInfo{}, mockUnaryPanicHandler)
+	_, err := interceptor(t.Context(), nil, &grpc.UnaryServerInfo{}, mockUnaryPanicHandler)
 	assert.Equal(t, codes.Unknown, status.Code(err))
 }

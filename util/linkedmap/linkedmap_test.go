@@ -15,8 +15,8 @@ func TestLinkedMap(t *testing.T) {
 		lmp.PushFront(2, "b")
 		lmp.PushFront(1, "a")
 
-		assert.Equal(t, lmp.HeadNode().Data.Key, 1)
-		assert.Equal(t, lmp.HeadNode().Data.Value, "a")
+		assert.Equal(t, 1, lmp.HeadNode().Data.Key)
+		assert.Equal(t, "a", lmp.HeadNode().Data.Value)
 	})
 
 	t.Run("Test LastNode", func(t *testing.T) {
@@ -27,8 +27,8 @@ func TestLinkedMap(t *testing.T) {
 		lmp.PushBack(2, "b")
 		lmp.PushBack(3, "c")
 
-		assert.Equal(t, lmp.TailNode().Data.Key, 3)
-		assert.Equal(t, lmp.TailNode().Data.Value, "c")
+		assert.Equal(t, 3, lmp.TailNode().Data.Key)
+		assert.Equal(t, "c", lmp.TailNode().Data.Value)
 	})
 
 	t.Run("Test Get", func(t *testing.T) {
@@ -38,8 +38,8 @@ func TestLinkedMap(t *testing.T) {
 		lmp.PushBack(1, "a")
 
 		node := lmp.GetNode(2)
-		assert.Equal(t, node.Data.Key, 2)
-		assert.Equal(t, node.Data.Value, "b")
+		assert.Equal(t, 2, node.Data.Key)
+		assert.Equal(t, "b", node.Data.Value)
 
 		node = lmp.GetNode(5)
 		assert.Nil(t, node)
@@ -62,8 +62,8 @@ func TestLinkedMap(t *testing.T) {
 		lmp.PushBack(2, "b")
 
 		lmp.RemoveTail()
-		assert.Equal(t, lmp.TailNode().Data.Value, "a")
-		assert.NotEqual(t, lmp.TailNode().Data.Value, "b")
+		assert.Equal(t, "a", lmp.TailNode().Data.Value)
+		assert.NotEqual(t, "b", lmp.TailNode().Data.Value)
 	})
 
 	t.Run("Test RemoveHead", func(t *testing.T) {
@@ -73,8 +73,8 @@ func TestLinkedMap(t *testing.T) {
 		lmp.PushBack(2, "b")
 
 		lmp.RemoveHead()
-		assert.Equal(t, lmp.HeadNode().Data.Value, "a")
-		assert.NotEqual(t, lmp.HeadNode().Data.Value, "-")
+		assert.Equal(t, "a", lmp.HeadNode().Data.Value)
+		assert.NotEqual(t, "-", lmp.HeadNode().Data.Value)
 	})
 
 	t.Run("Should updates v", func(t *testing.T) {
@@ -83,13 +83,13 @@ func TestLinkedMap(t *testing.T) {
 
 		lmp.PushBack(1, "b")
 		node := lmp.GetNode(1)
-		assert.Equal(t, node.Data.Key, 1)
-		assert.Equal(t, node.Data.Value, "b")
+		assert.Equal(t, 1, node.Data.Key)
+		assert.Equal(t, "b", node.Data.Value)
 
 		lmp.PushFront(1, "c")
 		node = lmp.GetNode(1)
-		assert.Equal(t, node.Data.Key, 1)
-		assert.Equal(t, node.Data.Value, "c")
+		assert.Equal(t, 1, node.Data.Key)
+		assert.Equal(t, "c", node.Data.Value)
 	})
 
 	t.Run("Should prunes oldest item", func(t *testing.T) {
@@ -101,8 +101,8 @@ func TestLinkedMap(t *testing.T) {
 		lmp.PushBack(4, "d")
 
 		node := lmp.GetNode(1)
-		assert.Equal(t, node.Data.Key, 1)
-		assert.Equal(t, node.Data.Value, "a")
+		assert.Equal(t, 1, node.Data.Key)
+		assert.Equal(t, "a", node.Data.Value)
 
 		lmp.PushBack(5, "e")
 
@@ -121,8 +121,8 @@ func TestLinkedMap(t *testing.T) {
 		lmp.SetCapacity(6)
 
 		node := lmp.GetNode(2)
-		assert.Equal(t, node.Data.Key, 2)
-		assert.Equal(t, node.Data.Value, "b")
+		assert.Equal(t, 2, node.Data.Key)
+		assert.Equal(t, "b", node.Data.Value)
 
 		lmp.SetCapacity(2)
 		assert.True(t, lmp.Full())
@@ -140,8 +140,8 @@ func TestLinkedMap(t *testing.T) {
 		lmp.PushBack(4, "d")
 
 		node := lmp.HeadNode()
-		assert.Equal(t, node.Data.Key, 2)
-		assert.Equal(t, node.Data.Value, "b")
+		assert.Equal(t, 2, node.Data.Key)
+		assert.Equal(t, "b", node.Data.Value)
 	})
 
 	t.Run("Test PushFront and prune", func(t *testing.T) {
@@ -153,8 +153,8 @@ func TestLinkedMap(t *testing.T) {
 		lmp.PushFront(4, "d") // This item should be pruned
 
 		node := lmp.TailNode()
-		assert.Equal(t, node.Data.Key, 1)
-		assert.Equal(t, node.Data.Value, "a")
+		assert.Equal(t, 1, node.Data.Key)
+		assert.Equal(t, "a", node.Data.Value)
 	})
 
 	t.Run("Delete first ", func(t *testing.T) {
@@ -166,8 +166,8 @@ func TestLinkedMap(t *testing.T) {
 
 		lmp.Remove(1)
 
-		assert.Equal(t, lmp.HeadNode().Data.Key, 2)
-		assert.Equal(t, lmp.HeadNode().Data.Value, "b")
+		assert.Equal(t, 2, lmp.HeadNode().Data.Key)
+		assert.Equal(t, "b", lmp.HeadNode().Data.Value)
 	})
 
 	t.Run("Delete last", func(t *testing.T) {
@@ -179,8 +179,8 @@ func TestLinkedMap(t *testing.T) {
 
 		lmp.Remove(3)
 
-		assert.Equal(t, lmp.TailNode().Data.Key, 2)
-		assert.Equal(t, lmp.TailNode().Data.Value, "b")
+		assert.Equal(t, 2, lmp.TailNode().Data.Key)
+		assert.Equal(t, "b", lmp.TailNode().Data.Value)
 	})
 
 	t.Run("Test Has function", func(t *testing.T) {
@@ -205,7 +205,7 @@ func TestCapacity(t *testing.T) {
 	t.Run("Check Capacity", func(t *testing.T) {
 		capacity := 100
 		lmp := New[int, string](capacity)
-		assert.Equal(t, lmp.Capacity(), capacity)
+		assert.Equal(t, capacity, lmp.Capacity())
 	})
 
 	t.Run("Test FirstNode with Zero Capacity", func(t *testing.T) {
@@ -216,8 +216,8 @@ func TestCapacity(t *testing.T) {
 		lmp.PushFront(2, "b")
 		lmp.PushFront(1, "a")
 
-		assert.Equal(t, lmp.HeadNode().Data.Key, 1)
-		assert.Equal(t, lmp.HeadNode().Data.Value, "a")
+		assert.Equal(t, 1, lmp.HeadNode().Data.Key)
+		assert.Equal(t, "a", lmp.HeadNode().Data.Value)
 	})
 
 	t.Run("Test LastNode with Zero Capacity", func(t *testing.T) {
@@ -228,8 +228,8 @@ func TestCapacity(t *testing.T) {
 		lmp.PushBack(2, "b")
 		lmp.PushBack(3, "c")
 
-		assert.Equal(t, lmp.TailNode().Data.Key, 3)
-		assert.Equal(t, lmp.TailNode().Data.Value, "c")
+		assert.Equal(t, 3, lmp.TailNode().Data.Key)
+		assert.Equal(t, "c", lmp.TailNode().Data.Value)
 	})
 
 	t.Run("Test Get with Zero Capacity", func(t *testing.T) {
@@ -239,8 +239,8 @@ func TestCapacity(t *testing.T) {
 		lmp.PushBack(1, "a")
 
 		node := lmp.GetNode(2)
-		assert.Equal(t, node.Data.Key, 2)
-		assert.Equal(t, node.Data.Value, "b")
+		assert.Equal(t, 2, node.Data.Key)
+		assert.Equal(t, "b", node.Data.Value)
 
 		node = lmp.GetNode(5)
 		assert.Nil(t, node)
@@ -263,8 +263,8 @@ func TestCapacity(t *testing.T) {
 		lmp.PushBack(2, "b")
 
 		lmp.RemoveTail()
-		assert.Equal(t, lmp.TailNode().Data.Value, "a")
-		assert.NotEqual(t, lmp.TailNode().Data.Value, "b")
+		assert.Equal(t, "a", lmp.TailNode().Data.Value)
+		assert.NotEqual(t, "b", lmp.TailNode().Data.Value)
 	})
 
 	t.Run("Test RemoveHead with Zero Capacity", func(t *testing.T) {
@@ -274,8 +274,8 @@ func TestCapacity(t *testing.T) {
 		lmp.PushBack(2, "b")
 
 		lmp.RemoveHead()
-		assert.Equal(t, lmp.HeadNode().Data.Value, "a")
-		assert.NotEqual(t, lmp.HeadNode().Data.Value, "-")
+		assert.Equal(t, "a", lmp.HeadNode().Data.Value)
+		assert.NotEqual(t, "-", lmp.HeadNode().Data.Value)
 	})
 
 	t.Run("Should updates v with Zero Capacity", func(t *testing.T) {
@@ -284,13 +284,13 @@ func TestCapacity(t *testing.T) {
 
 		lmp.PushBack(1, "b")
 		node := lmp.GetNode(1)
-		assert.Equal(t, node.Data.Key, 1)
-		assert.Equal(t, node.Data.Value, "b")
+		assert.Equal(t, 1, node.Data.Key)
+		assert.Equal(t, "b", node.Data.Value)
 
 		lmp.PushFront(1, "c")
 		node = lmp.GetNode(1)
-		assert.Equal(t, node.Data.Key, 1)
-		assert.Equal(t, node.Data.Value, "c")
+		assert.Equal(t, 1, node.Data.Key)
+		assert.Equal(t, "c", node.Data.Value)
 	})
 
 	t.Run("Should not prunes oldest item with Zero Capacity", func(t *testing.T) {
@@ -302,8 +302,8 @@ func TestCapacity(t *testing.T) {
 		lmp.PushBack(4, "d")
 
 		node := lmp.GetNode(1)
-		assert.Equal(t, node.Data.Key, 1)
-		assert.Equal(t, node.Data.Value, "a")
+		assert.Equal(t, 1, node.Data.Key)
+		assert.Equal(t, "a", node.Data.Value)
 
 		lmp.PushBack(5, "e")
 
@@ -322,8 +322,8 @@ func TestCapacity(t *testing.T) {
 		lmp.SetCapacity(6)
 
 		node := lmp.GetNode(2)
-		assert.Equal(t, node.Data.Key, 2)
-		assert.Equal(t, node.Data.Value, "b")
+		assert.Equal(t, 2, node.Data.Key)
+		assert.Equal(t, "b", node.Data.Value)
 
 		lmp.SetCapacity(2)
 		assert.True(t, lmp.Full())
@@ -341,8 +341,8 @@ func TestCapacity(t *testing.T) {
 		lmp.PushBack(4, "d")
 
 		node := lmp.TailNode()
-		assert.Equal(t, node.Data.Key, 4)
-		assert.Equal(t, node.Data.Value, "d")
+		assert.Equal(t, 4, node.Data.Key)
+		assert.Equal(t, "d", node.Data.Value)
 	})
 
 	t.Run("Test PushFront and prune with Zero Capacity", func(t *testing.T) {
@@ -354,8 +354,8 @@ func TestCapacity(t *testing.T) {
 		lmp.PushFront(4, "d") // This item should be pruned
 
 		n := lmp.TailNode()
-		assert.Equal(t, n.Data.Key, 1)
-		assert.Equal(t, n.Data.Value, "a")
+		assert.Equal(t, 1, n.Data.Key)
+		assert.Equal(t, "a", n.Data.Value)
 	})
 
 	t.Run("Delete first with Zero Capacity", func(t *testing.T) {
@@ -367,8 +367,8 @@ func TestCapacity(t *testing.T) {
 
 		lmp.Remove(1)
 
-		assert.Equal(t, lmp.HeadNode().Data.Key, 2)
-		assert.Equal(t, lmp.HeadNode().Data.Value, "b")
+		assert.Equal(t, 2, lmp.HeadNode().Data.Key)
+		assert.Equal(t, "b", lmp.HeadNode().Data.Value)
 	})
 
 	t.Run("Delete last with Zero Capacity", func(t *testing.T) {
@@ -380,8 +380,8 @@ func TestCapacity(t *testing.T) {
 
 		lmp.Remove(3)
 
-		assert.Equal(t, lmp.TailNode().Data.Key, 2)
-		assert.Equal(t, lmp.TailNode().Data.Value, "b")
+		assert.Equal(t, 2, lmp.TailNode().Data.Key)
+		assert.Equal(t, "b", lmp.TailNode().Data.Value)
 	})
 
 	t.Run("Test Has function with Zero Capacity", func(t *testing.T) {

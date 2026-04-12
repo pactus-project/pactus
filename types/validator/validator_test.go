@@ -23,7 +23,7 @@ func TestFromBytes(t *testing.T) {
 	// Round-trip serialization
 	data, err := val1.Bytes()
 	require.NoError(t, err)
-	assert.Equal(t, 120, len(data))
+	assert.Len(t, data, 120)
 
 	for i := range len(data) {
 		_, err := validator.FromBytes(data[:i])
@@ -58,7 +58,7 @@ func TestFromBytesDelegation(t *testing.T) {
 	// Round-trip serialization with delegation
 	data, err := val1.Bytes()
 	require.NoError(t, err)
-	assert.Equal(t, 120+21+8+4, len(data))
+	assert.Len(t, data, 120+21+8+4)
 
 	for i := range 32 {
 		_, err := validator.FromBytes(data[0 : 121+i])

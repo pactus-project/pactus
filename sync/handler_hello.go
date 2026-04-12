@@ -98,7 +98,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 	agent, _ := version.ParseAgent(msg.Agent)
 	if agent.Version.Compare(handler.config.LatestSupportingVer) == -1 {
 		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
-			"not supporting version", 0)
+			"not supporting Pactus version", 0)
 
 		handler.acknowledge(response, pid)
 
@@ -109,8 +109,13 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 		handler.state.UpdateValidatorProtocolVersion(pub.ValidatorAddress(), agent.ProtocolVersion)
 	}
 
-	if agent.ProtocolVersion < protocol.ProtocolVersion2 {
-		// Keep outdated peer connected for gossiping but don't mark as known.
+	if handler.state.Params().BlockVersion == protocol.ProtocolVersionLatest &&
+		agent.ProtocolVersion < protocol.ProtocolVersionLatest {
+		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
+			"not supporting protocol version", 0)
+
+		handler.acknowledge(response, pid)
+
 		return
 	}
 

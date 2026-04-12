@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestProposalType(t *testing.T) {
@@ -19,7 +20,7 @@ func TestProposalMessage(t *testing.T) {
 		prop := ts.GenerateTestProposal(100, 0)
 		msg := NewProposalMessage(prop)
 
-		assert.NoError(t, msg.BasicCheck())
+		require.NoError(t, msg.BasicCheck())
 		assert.Contains(t, msg.LogString(), "100")
 	})
 }

@@ -68,7 +68,7 @@ func TestNTPChecker(t *testing.T) {
 		}, 5*time.Second, 100*time.Millisecond)
 
 		offset, err := td.checker.ClockOffset()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, ntpOffset, offset)
 		assert.False(t, td.checker.IsOutOfSync())
 	})
@@ -92,7 +92,7 @@ func TestNTPChecker(t *testing.T) {
 		}, 5*time.Second, 100*time.Millisecond)
 
 		offset, err := td.checker.ClockOffset()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, ntpOffset, offset)
 		assert.True(t, td.checker.IsOutOfSync())
 	})
@@ -112,7 +112,7 @@ func TestNTPChecker(t *testing.T) {
 		}, 5*time.Second, 100*time.Millisecond)
 
 		offset, err := td.checker.ClockOffset()
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Zero(t, offset)
 		assert.True(t, td.checker.IsOutOfSync())
 	})
@@ -135,7 +135,7 @@ func TestNTPChecker(t *testing.T) {
 		}, 5*time.Second, 100*time.Millisecond)
 
 		offset, err := td.checker.ClockOffset()
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Zero(t, offset)
 		assert.True(t, td.checker.IsOutOfSync())
 	})

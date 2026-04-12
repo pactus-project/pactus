@@ -20,7 +20,7 @@ func TestAccountCounter(t *testing.T) {
 		assert.Zero(t, td.store.TotalAccounts())
 
 		td.store.UpdateAccount(addr, acc)
-		assert.NoError(t, td.store.WriteBatch())
+		require.NoError(t, td.store.WriteBatch())
 		assert.Equal(t, int32(1), td.store.TotalAccounts())
 	})
 
@@ -28,13 +28,13 @@ func TestAccountCounter(t *testing.T) {
 		acc.AddToBalance(1)
 		td.store.UpdateAccount(addr, acc)
 
-		assert.NoError(t, td.store.WriteBatch())
+		require.NoError(t, td.store.WriteBatch())
 		assert.Equal(t, int32(1), td.store.TotalAccounts())
 	})
 
 	t.Run("Get account", func(t *testing.T) {
 		acc1, err := td.store.Account(addr)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, acc1.Hash(), acc.Hash())
 		assert.Equal(t, int32(1), td.store.TotalAccounts())
@@ -51,7 +51,7 @@ func TestAccountBatchSaving(t *testing.T) {
 			acc, addr := td.GenerateTestAccount(testsuite.AccountWithNumber(i))
 			td.store.UpdateAccount(addr, acc)
 		}
-		assert.NoError(t, td.store.WriteBatch())
+		require.NoError(t, td.store.WriteBatch())
 		assert.Equal(t, total, td.store.TotalAccounts())
 	})
 
@@ -74,7 +74,7 @@ func TestAccountByAddress(t *testing.T) {
 
 			lastAddr = addr
 		}
-		assert.NoError(t, td.store.WriteBatch())
+		require.NoError(t, td.store.WriteBatch())
 		assert.Equal(t, total, td.store.TotalAccounts())
 	})
 
@@ -84,7 +84,7 @@ func TestAccountByAddress(t *testing.T) {
 		has := td.store.HasAccount(addr)
 
 		assert.False(t, has)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, acc)
 	})
 
@@ -93,7 +93,7 @@ func TestAccountByAddress(t *testing.T) {
 		store, _ := NewStore(td.store.config)
 
 		acc, err := store.Account(lastAddr)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		require.NotNil(t, acc)
 		assert.Equal(t, total-1, acc.Number())
 	})
@@ -109,7 +109,7 @@ func TestIterateAccounts(t *testing.T) {
 		td.store.UpdateAccount(addr, acc)
 		hashes1 = append(hashes1, acc.Hash())
 	}
-	assert.NoError(t, td.store.WriteBatch())
+	require.NoError(t, td.store.WriteBatch())
 
 	hashes2 := []hash.Hash{}
 	td.store.IterateAccounts(func(_ crypto.Address, acc *account.Account) bool {

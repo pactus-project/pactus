@@ -18,7 +18,7 @@ func TestMakeConfig(t *testing.T) {
 		workingDir := util.TempDirPath()
 
 		_, _, err := MakeConfig(workingDir)
-		assert.Error(t, err)
+		require.Error(t, err)
 	})
 
 	t.Run("No Config file, Should recover it", func(t *testing.T) {
@@ -29,7 +29,7 @@ func TestMakeConfig(t *testing.T) {
 		require.NoError(t, err)
 
 		_, _, err = MakeConfig(workingDir)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("Invalid Config file, Should recover it", func(t *testing.T) {
@@ -45,7 +45,7 @@ func TestMakeConfig(t *testing.T) {
 		require.NoError(t, err)
 
 		_, _, err = MakeConfig(workingDir)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("Everything is good", func(t *testing.T) {
@@ -61,7 +61,7 @@ func TestMakeConfig(t *testing.T) {
 		require.NoError(t, err)
 
 		_, _, err = MakeConfig(workingDir)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 }
 
@@ -152,7 +152,7 @@ func TestMakeRewardAddresses(t *testing.T) {
 		walletPath := util.TempFilePath()
 		mnemonic, _ := wallet.GenerateMnemonic(128)
 		wlt, err := wallet.Create(t.Context(), walletPath, mnemonic, "", genesis.Mainnet)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		_, _ = wlt.NewValidatorAddress("Validator 1")
 		_, _ = wlt.NewValidatorAddress("Validator 2")
@@ -180,7 +180,7 @@ func TestMakeRewardAddresses(t *testing.T) {
 		valAddrsInfo := wlt.ListAddresses(wallet.OnlyValidatorAddresses())
 		confRewardAddresses := []string{}
 		rewardAddrs, err := MakeRewardAddresses(wlt, valAddrsInfo, confRewardAddresses)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, rewardAddrs[0].String(), addr1Info.Address)
 		assert.Equal(t, rewardAddrs[1].String(), addr1Info.Address)
@@ -196,7 +196,7 @@ func TestMakeRewardAddresses(t *testing.T) {
 		valAddrsInfo := wlt.ListAddresses(wallet.OnlyValidatorAddresses())
 		confRewardAddresses := []string{}
 		rewardAddrs, err := MakeRewardAddresses(wlt, valAddrsInfo, confRewardAddresses)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, rewardAddrs[0].String(), addr1Info.Address)
 		assert.Equal(t, rewardAddrs[1].String(), addr1Info.Address)
@@ -211,7 +211,7 @@ func TestMakeRewardAddresses(t *testing.T) {
 			ts.RandAccAddress().String(),
 		}
 		rewardAddrs, err := MakeRewardAddresses(wlt, valAddrsInfo, confRewardAddresses)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, rewardAddrs[0].String(), confRewardAddresses[0])
 		assert.Equal(t, rewardAddrs[1].String(), confRewardAddresses[0])
@@ -228,7 +228,7 @@ func TestMakeRewardAddresses(t *testing.T) {
 			ts.RandAccAddress().String(),
 		}
 		rewardAddrs, err := MakeRewardAddresses(wlt, valAddrsInfo, confRewardAddresses)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, rewardAddrs[0].String(), confRewardAddresses[0])
 		assert.Equal(t, rewardAddrs[1].String(), confRewardAddresses[1])
@@ -322,9 +322,9 @@ func TestCreateNode(t *testing.T) {
 			tt.numValidators, tt.chain, tt.workingDir, tt.mnemonic, "")
 
 		if tt.withErr {
-			assert.Error(t, err)
+			require.Error(t, err)
 		} else {
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			valInfos := wlt.ListAddresses(wallet.OnlyValidatorAddresses())
 			for i, addr := range tt.validatorAddrs {

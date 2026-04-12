@@ -1,13 +1,13 @@
 package grpc
 
 import (
-	"context"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/util/testsuite"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSignMessageWithPrivateKey(t *testing.T) {
@@ -21,24 +21,24 @@ func TestSignMessageWithPrivateKey(t *testing.T) {
 	expectedSig := "923d67a8624cbb7972b29328e15ec76cc846076ccf00a9e94d991c677846f334ae4ba4551396fbcd6d1cab7593baf3b7"
 
 	t.Run("", func(t *testing.T) {
-		res, err := client.SignMessageWithPrivateKey(context.Background(),
+		res, err := client.SignMessageWithPrivateKey(t.Context(),
 			&pactus.SignMessageWithPrivateKeyRequest{
 				Message:    msg,
 				PrivateKey: prvStr,
 			})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, expectedSig, res.Signature)
 	})
 
 	t.Run("", func(t *testing.T) {
-		res, err := client.SignMessageWithPrivateKey(context.Background(),
+		res, err := client.SignMessageWithPrivateKey(t.Context(),
 			&pactus.SignMessageWithPrivateKeyRequest{
 				Message:    msg,
 				PrivateKey: invalidPrvStr,
 			})
 
-		assert.NotNil(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 }
@@ -55,24 +55,24 @@ func TestSignMessageWithED25519PrivateKey(t *testing.T) {
 		"525a855bbd5df94110a7d0083d6e386e016ecf8b7f522c339f79d305"
 
 	t.Run("", func(t *testing.T) {
-		res, err := client.SignMessageWithPrivateKey(context.Background(),
+		res, err := client.SignMessageWithPrivateKey(t.Context(),
 			&pactus.SignMessageWithPrivateKeyRequest{
 				Message:    msg,
 				PrivateKey: prvStr,
 			})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, expectedSig, res.Signature)
 	})
 
 	t.Run("", func(t *testing.T) {
-		res, err := client.SignMessageWithPrivateKey(context.Background(),
+		res, err := client.SignMessageWithPrivateKey(t.Context(),
 			&pactus.SignMessageWithPrivateKeyRequest{
 				Message:    msg,
 				PrivateKey: invalidPrvStr,
 			})
 
-		assert.NotNil(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 }
@@ -89,25 +89,25 @@ func TestVerifyMessage(t *testing.T) {
 	invalidSigStr := "113d67a8624cbb7972b29328e15ec76cc846076ccf00a9e94d991c677846f334ae4ba4551396fbcd6d1cab7593baf3c9"
 
 	t.Run("valid message", func(t *testing.T) {
-		res, err := client.VerifyMessage(context.Background(),
+		res, err := client.VerifyMessage(t.Context(),
 			&pactus.VerifyMessageRequest{
 				Message:   msg,
 				Signature: sigStr,
 				PublicKey: pubStr,
 			})
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.True(t, res.IsValid)
 	})
 
 	t.Run("invalid message", func(t *testing.T) {
-		res, err := client.VerifyMessage(context.Background(),
+		res, err := client.VerifyMessage(t.Context(),
 			&pactus.VerifyMessageRequest{
 				Message:   msg,
 				Signature: invalidSigStr,
 				PublicKey: pubStr,
 			})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.False(t, res.IsValid)
 	})
 }
@@ -125,25 +125,25 @@ func TestVerifyED25519Message(t *testing.T) {
 		"874a412080525a855bbd5df94110a7d0083d6e386e016ecf8b7f522c339f79d305"
 
 	t.Run("valid message", func(t *testing.T) {
-		res, err := client.VerifyMessage(context.Background(),
+		res, err := client.VerifyMessage(t.Context(),
 			&pactus.VerifyMessageRequest{
 				Message:   msg,
 				Signature: sigStr,
 				PublicKey: pubStr,
 			})
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.True(t, res.IsValid)
 	})
 
 	t.Run("invalid message", func(t *testing.T) {
-		res, err := client.VerifyMessage(context.Background(),
+		res, err := client.VerifyMessage(t.Context(),
 			&pactus.VerifyMessageRequest{
 				Message:   msg,
 				Signature: invalidSigStr,
 				PublicKey: pubStr,
 			})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.False(t, res.IsValid)
 	})
 }
@@ -161,42 +161,42 @@ func TestPublicKeyAggregation(t *testing.T) {
 	invalidPub := "invalidpub"
 
 	t.Run("no public keys", func(t *testing.T) {
-		res, err := client.PublicKeyAggregation(context.Background(),
+		res, err := client.PublicKeyAggregation(t.Context(),
 			&pactus.PublicKeyAggregationRequest{
 				PublicKeys: []string{},
 			})
 
-		assert.NotNil(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("only one public key", func(t *testing.T) {
-		res, err := client.PublicKeyAggregation(context.Background(),
+		res, err := client.PublicKeyAggregation(t.Context(),
 			&pactus.PublicKeyAggregationRequest{
 				PublicKeys: []string{pub1.String()},
 			})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, pub1.String(), res.PublicKey)
 	})
 
 	t.Run("invalid public key", func(t *testing.T) {
-		res, err := client.PublicKeyAggregation(context.Background(),
+		res, err := client.PublicKeyAggregation(t.Context(),
 			&pactus.PublicKeyAggregationRequest{
 				PublicKeys: []string{pub1.String(), pub2.String(), invalidPub, pub3.String()},
 			})
 
-		assert.NotNil(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("valid public keys", func(t *testing.T) {
-		res, err := client.PublicKeyAggregation(context.Background(),
+		res, err := client.PublicKeyAggregation(t.Context(),
 			&pactus.PublicKeyAggregationRequest{
 				PublicKeys: []string{pub1.String(), pub2.String(), pub3.String()},
 			})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, aggPub.String(), res.PublicKey)
 	})
 }
@@ -214,42 +214,42 @@ func TestSignatureAggregation(t *testing.T) {
 	invalidSig := "invalidsig"
 
 	t.Run("no signatures", func(t *testing.T) {
-		res, err := client.SignatureAggregation(context.Background(),
+		res, err := client.SignatureAggregation(t.Context(),
 			&pactus.SignatureAggregationRequest{
 				Signatures: []string{},
 			})
 
-		assert.NotNil(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("only one signature", func(t *testing.T) {
-		res, err := client.SignatureAggregation(context.Background(),
+		res, err := client.SignatureAggregation(t.Context(),
 			&pactus.SignatureAggregationRequest{
 				Signatures: []string{sig1.String()},
 			})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, sig1.String(), res.Signature)
 	})
 
 	t.Run("invalid signature", func(t *testing.T) {
-		res, err := client.SignatureAggregation(context.Background(),
+		res, err := client.SignatureAggregation(t.Context(),
 			&pactus.SignatureAggregationRequest{
 				Signatures: []string{sig1.String(), sig2.String(), invalidSig, sig3.String()},
 			})
 
-		assert.NotNil(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("valid signatures", func(t *testing.T) {
-		res, err := client.SignatureAggregation(context.Background(),
+		res, err := client.SignatureAggregation(t.Context(),
 			&pactus.SignatureAggregationRequest{
 				Signatures: []string{sig1.String(), sig2.String(), sig3.String()},
 			})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, aggSig.String(), res.Signature)
 	})
 }

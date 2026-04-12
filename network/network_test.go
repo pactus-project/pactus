@@ -1,7 +1,6 @@
 package network
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -28,13 +27,13 @@ func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 
 	pipe := pipeline.New[Event](t.Context())
 	log := logger.NewSubLogger("_network", nil)
-	net, err := makeNetwork(context.Background(), conf, log, pipe, opts)
+	net, err := makeNetwork(t.Context(), conf, log, pipe, opts)
 	require.NoError(t, err)
 
 	log.SetObj(testsuite.NewOverrideLogStringer(
 		fmt.Sprintf("%s - %s: ", net.SelfID().ShortString(), t.Name()), net))
 
-	assert.NoError(t, net.Start())
+	require.NoError(t, net.Start())
 
 	return net
 }
@@ -106,8 +105,8 @@ func readData(t *testing.T, r io.ReadCloser, length int) []byte {
 	buf := make([]byte, length)
 	_, err := r.Read(buf)
 	if !errors.Is(err, io.EOF) {
-		assert.NoError(t, err)
-		assert.NoError(t, r.Close())
+		require.NoError(t, err)
+		require.NoError(t, r.Close())
 	}
 
 	return buf
@@ -116,8 +115,8 @@ func readData(t *testing.T, r io.ReadCloser, length int) []byte {
 func TestStoppingNetwork(t *testing.T) {
 	net := makeTestNetwork(t, testConfig(), nil)
 
-	assert.NoError(t, net.Start())
-	assert.NoError(t, net.JoinTopic(TopicIDBlock, alwaysPropagate))
+	require.NoError(t, net.Start())
+	require.NoError(t, net.JoinTopic(TopicIDBlock, alwaysPropagate))
 
 	// Should stop peacefully
 	net.Stop()
@@ -190,16 +189,16 @@ func TestNetwork(t *testing.T) {
 		lp2p.ForceReachabilityPrivate(),
 	})
 
-	assert.NoError(t, networkB.JoinTopic(TopicIDBlock, alwaysPropagate))
-	assert.NoError(t, networkP.JoinTopic(TopicIDBlock, alwaysPropagate))
-	assert.NoError(t, networkM.JoinTopic(TopicIDBlock, alwaysPropagate))
-	assert.NoError(t, networkN.JoinTopic(TopicIDBlock, alwaysPropagate))
-	assert.NoError(t, networkX.JoinTopic(TopicIDBlock, alwaysPropagate))
+	require.NoError(t, networkB.JoinTopic(TopicIDBlock, alwaysPropagate))
+	require.NoError(t, networkP.JoinTopic(TopicIDBlock, alwaysPropagate))
+	require.NoError(t, networkM.JoinTopic(TopicIDBlock, alwaysPropagate))
+	require.NoError(t, networkN.JoinTopic(TopicIDBlock, alwaysPropagate))
+	require.NoError(t, networkX.JoinTopic(TopicIDBlock, alwaysPropagate))
 
-	assert.NoError(t, networkB.JoinTopic(TopicIDConsensus, alwaysPropagate))
-	assert.NoError(t, networkP.JoinTopic(TopicIDConsensus, alwaysPropagate))
-	assert.NoError(t, networkM.JoinTopic(TopicIDConsensus, alwaysPropagate))
-	assert.NoError(t, networkN.JoinTopic(TopicIDConsensus, alwaysPropagate))
+	require.NoError(t, networkB.JoinTopic(TopicIDConsensus, alwaysPropagate))
+	require.NoError(t, networkP.JoinTopic(TopicIDConsensus, alwaysPropagate))
+	require.NoError(t, networkM.JoinTopic(TopicIDConsensus, alwaysPropagate))
+	require.NoError(t, networkN.JoinTopic(TopicIDConsensus, alwaysPropagate))
 	// Network X doesn't join the consensus topic
 
 	time.Sleep(4 * time.Second)
@@ -493,11 +492,11 @@ func TestLoadOrCreateKey(t *testing.T) {
 
 		// Create new valid key
 		validKey, err := loadOrCreateKey(keyPath)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		// Retrieve previously created valid key, the file path exists
 		previousValidKey, err := loadOrCreateKey(keyPath)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, validKey.GetPublic(), previousValidKey.GetPublic())
 	})
@@ -506,10 +505,10 @@ func TestLoadOrCreateKey(t *testing.T) {
 		tempFilePath := util.TempFilePath()
 
 		err := util.WriteFile(tempFilePath, []byte("invalid_data"))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		key, err := loadOrCreateKey(tempFilePath)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, key)
 	})
 
@@ -517,24 +516,24 @@ func TestLoadOrCreateKey(t *testing.T) {
 		tempFilePath := util.TempFilePath()
 
 		err := util.WriteFile(tempFilePath, []byte("00"))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		key, err := loadOrCreateKey(tempFilePath)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, key)
 	})
 
 	t.Run("Should return error when input path is directory", func(t *testing.T) {
 		tempDir := t.TempDir()
 		key, err := loadOrCreateKey(tempDir)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, key)
 	})
 
 	t.Run("Should return error when input path is invalid", func(t *testing.T) {
 		invalidPath := string([]byte{0x00})
 		key, err := loadOrCreateKey(invalidPath)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, key)
 	})
 
@@ -544,10 +543,10 @@ func TestLoadOrCreateKey(t *testing.T) {
 		err := util.WriteFile(tempFilePath,
 			[]byte(" 080112406da99c6b29ac8093fad3a92327aaf87acf22dbb60927786db25880f025c0"+
 				"4cb6f80873898709981d9b75795a191eab2d29bc7983ebcb4826e2b44566c85ea194 \r\n"))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		key, err := loadOrCreateKey(tempFilePath)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, key)
 	})
 }

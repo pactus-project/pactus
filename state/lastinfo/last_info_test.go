@@ -103,8 +103,8 @@ func TestRestoreCommittee(t *testing.T) {
 
 	lastInfo := NewLastInfo()
 
-	cmt, err := lastInfo.RestoreLastInfo(td.store, 4)
-	assert.NoError(t, err)
+	cmt, _, err := lastInfo.RestoreLastInfo(td.store, 4)
+	require.NoError(t, err)
 
 	val0, _ := td.store.ValidatorByNumber(0)
 	val1, _ := td.store.ValidatorByNumber(1)
@@ -116,7 +116,7 @@ func TestRestoreCommittee(t *testing.T) {
 	assert.Equal(t, td.lastInfo.BlockHash(), lastInfo.BlockHash())
 	assert.Equal(t, td.lastInfo.Certificate().Hash(), lastInfo.Certificate().Hash())
 	assert.Equal(t, td.lastInfo.BlockTime(), lastInfo.BlockTime())
-	assert.Equal(t, td.lastInfo.Validators(), []*validator.Validator{val0, val1, val2, val3})
+	assert.Equal(t, []*validator.Validator{val0, val1, val2, val3}, td.lastInfo.Validators())
 	assert.Equal(t, []int32{1, 4, 2, 3}, cmt.Committers())
 }
 
@@ -129,8 +129,8 @@ func TestRestoreFailed(t *testing.T) {
 		li := NewLastInfo()
 
 		td.store.Validators = make(map[crypto.Address]*validator.Validator) // Reset Validators
-		_, err := li.RestoreLastInfo(td.store, 4)
-		assert.Error(t, err)
+		_, _, err := li.RestoreLastInfo(td.store, 4)
+		require.Error(t, err)
 	})
 
 	t.Run("Unable to get block from store", func(t *testing.T) {
@@ -139,7 +139,7 @@ func TestRestoreFailed(t *testing.T) {
 		li := NewLastInfo()
 
 		td.store.Blocks = make(map[uint32]*block.Block) // Reset Blocks
-		_, err := li.RestoreLastInfo(td.store, 4)
-		assert.Error(t, err)
+		_, _, err := li.RestoreLastInfo(td.store, 4)
+		require.Error(t, err)
 	})
 }

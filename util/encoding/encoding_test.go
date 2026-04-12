@@ -71,7 +71,7 @@ func TestElementEncoding(t *testing.T) {
 	for no, tt := range tests {
 		var buf bytes.Buffer
 		err := WriteElement(&buf, tt.in)
-		assert.NoError(t, err, "writeElement #%d", no)
+		require.NoError(t, err, "writeElement #%d", no)
 		assert.Equal(t, buf.Bytes(), tt.buf, "writeElement #%d", no)
 
 		rbuf := bytes.NewReader(tt.buf)
@@ -80,7 +80,7 @@ func TestElementEncoding(t *testing.T) {
 			val = reflect.New(reflect.TypeOf(tt.in)).Interface()
 		}
 		err = ReadElement(rbuf, val)
-		assert.NoError(t, err, "readElement #%d", no)
+		require.NoError(t, err, "readElement #%d", no)
 
 		ival := val
 		if reflect.ValueOf(tt.in).Kind() != reflect.Ptr {
@@ -124,7 +124,7 @@ func TestElementEncodingErrors(t *testing.T) {
 	for no, tt := range tests {
 		w := util.NewFixedWriter(tt.max)
 		err := WriteElement(w, tt.in)
-		assert.ErrorIs(t, err, tt.writeErr, "writeElement #%d", no)
+		require.ErrorIs(t, err, tt.writeErr, "writeElement #%d", no)
 
 		r := util.NewFixedReader(tt.max, nil)
 		val := tt.in
@@ -132,7 +132,7 @@ func TestElementEncodingErrors(t *testing.T) {
 			val = reflect.New(reflect.TypeOf(tt.in)).Interface()
 		}
 		err = ReadElement(r, val)
-		assert.ErrorIs(t, err, tt.readErr, "readElement #%d", no)
+		require.ErrorIs(t, err, tt.readErr, "readElement #%d", no)
 	}
 }
 
@@ -159,14 +159,14 @@ func TestVarStringEncoding(t *testing.T) {
 	for no, tt := range tests {
 		var buf bytes.Buffer
 		err := WriteVarString(&buf, tt.in)
-		assert.NoError(t, err, "WriteVarString #%d ", no)
+		require.NoError(t, err, "WriteVarString #%d ", no)
 		assert.Equal(t, buf.Bytes(), tt.buf, "WriteVarString #%d", no)
 
 		rbuf := bytes.NewReader(tt.buf)
 		val, err := ReadVarString(rbuf)
-		assert.NoError(t, err, "ReadVarString #%d", no)
+		require.NoError(t, err, "ReadVarString #%d", no)
 		assert.Equal(t, val, tt.out, "ReadVarString #%d", no)
-		assert.Equal(t, VarStringSerializeSize(tt.in), len(tt.buf))
+		assert.Len(t, tt.buf, VarStringSerializeSize(tt.in))
 	}
 }
 
@@ -196,11 +196,11 @@ func TestVarStringEncodingErrors(t *testing.T) {
 	for no, tt := range tests {
 		w := util.NewFixedWriter(tt.max)
 		err := WriteVarString(w, tt.in)
-		assert.ErrorIs(t, err, tt.writeErr, "WriteVarString #%d", no)
+		require.ErrorIs(t, err, tt.writeErr, "WriteVarString #%d", no)
 
 		r := util.NewFixedReader(tt.max, tt.buf)
 		_, err = ReadVarString(r)
-		assert.ErrorIs(t, err, tt.readErr, "ReadVarString #%d wrong", no)
+		require.ErrorIs(t, err, tt.readErr, "ReadVarString #%d wrong", no)
 	}
 }
 
@@ -246,15 +246,15 @@ func TestVarBytesEncoding(t *testing.T) {
 	for no, tt := range tests {
 		var buf bytes.Buffer
 		err := WriteVarBytes(&buf, tt.in)
-		assert.NoError(t, err, "WriteVarBytes #%d", no)
+		require.NoError(t, err, "WriteVarBytes #%d", no)
 		assert.Equal(t, buf.Bytes(), tt.buf, "WriteVarBytes #%d", no)
 
 		rbuf := bytes.NewReader(tt.buf)
 		val, err := ReadVarBytes(rbuf)
-		assert.NoError(t, err, "ReadVarBytes #%d", no)
+		require.NoError(t, err, "ReadVarBytes #%d", no)
 		assert.Equal(t, buf.Bytes(), tt.buf, "ReadVarBytes #%d", no)
 		assert.Equal(t, val, tt.in, "ReadVarBytes #%d", no)
-		assert.Equal(t, VarBytesSerializeSize(tt.in), len(tt.buf))
+		assert.Len(t, tt.buf, VarBytesSerializeSize(tt.in))
 	}
 }
 
@@ -284,11 +284,11 @@ func TestVarBytesEncodingErrors(t *testing.T) {
 	for no, tt := range tests {
 		w := util.NewFixedWriter(tt.max)
 		err := WriteVarBytes(w, tt.in)
-		assert.ErrorIs(t, err, tt.writeErr, "WriteVarBytes #%d", no)
+		require.ErrorIs(t, err, tt.writeErr, "WriteVarBytes #%d", no)
 
 		r := util.NewFixedReader(tt.max, tt.buf)
 		_, err = ReadVarBytes(r)
-		assert.ErrorIs(t, err, tt.readErr, "ReadVarBytes #%d", no)
+		require.ErrorIs(t, err, tt.readErr, "ReadVarBytes #%d", no)
 	}
 }
 
@@ -341,13 +341,13 @@ func TestVarInt(t *testing.T) {
 	for no, tt := range tests {
 		var buf bytes.Buffer
 		err := WriteVarInt(&buf, tt.in)
-		assert.NoError(t, err, "WriteVarInt #%d", no)
+		require.NoError(t, err, "WriteVarInt #%d", no)
 		assert.Equal(t, buf.Bytes(), tt.buf, "WriteVarInt #%d", no)
 
 		val, err := ReadVarInt(&buf)
-		assert.NoError(t, err, "ReadVarInt #%d", no)
+		require.NoError(t, err, "ReadVarInt #%d", no)
 		assert.Equal(t, val, tt.in, "ReadVarInt #%d", no)
-		assert.Equal(t, VarIntSerializeSize(tt.in), len(tt.buf))
+		assert.Len(t, tt.buf, VarIntSerializeSize(tt.in))
 	}
 }
 
@@ -382,7 +382,7 @@ func TestVarIntError(t *testing.T) {
 	for no, tt := range tests {
 		rbuf := bytes.NewReader(tt.in)
 		val, err := ReadVarInt(rbuf)
-		assert.ErrorIs(t, err, tt.readErr, "ReadVarInt #%d", no)
+		require.ErrorIs(t, err, tt.readErr, "ReadVarInt #%d", no)
 		assert.Zero(t, val, "ReadVarInt #%d", no)
 	}
 }
@@ -410,8 +410,8 @@ func TestWriteElements(t *testing.T) {
 	el4 := uint64(4)
 	var buf bytes.Buffer
 	err := WriteElements(&buf, &el1, &el2, &el3, &el4)
-	assert.NoError(t, err)
-	assert.Equal(t, buf.Bytes(), []byte{0x1, 0x2, 0x0, 0x3, 0x0, 0x0, 0x0, 0x4, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0})
+	require.NoError(t, err)
+	assert.Equal(t, []byte{0x1, 0x2, 0x0, 0x3, 0x0, 0x0, 0x0, 0x4, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, buf.Bytes())
 }
 
 func TestReadElements(t *testing.T) {
@@ -421,9 +421,9 @@ func TestReadElements(t *testing.T) {
 	el4 := uint64(4)
 	r := bytes.NewReader([]byte{0x1, 0x2, 0x0, 0x3, 0x0, 0x0, 0x0, 0x4, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0})
 	err := ReadElements(r, &el1, &el2, &el3, &el4)
-	assert.NoError(t, err)
-	assert.Equal(t, el1, uint8(1))
-	assert.Equal(t, el2, uint16(2))
-	assert.Equal(t, el3, uint32(3))
-	assert.Equal(t, el4, uint64(4))
+	require.NoError(t, err)
+	assert.Equal(t, uint8(1), el1)
+	assert.Equal(t, uint16(2), el2)
+	assert.Equal(t, uint32(3), el3)
+	assert.Equal(t, uint64(4), el4)
 }

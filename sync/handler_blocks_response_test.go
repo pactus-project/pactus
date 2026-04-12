@@ -180,12 +180,12 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 
 	sync1, err := NewSynchronizer(t.Context(), configAlice, valKeyAlice, stateAlice,
 		consV1MgrAlice, consV2MgrAlice, networkAlice, broadcastPipe, networkAlice.EventPipe)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	syncAlice := sync1.(*synchronizer)
 
 	sync2, err := NewSynchronizer(t.Context(), configBob, valKeyBob, stateBob,
 		consV1MgrBob, consV2MgrBob, networkBob, broadcastPipe, networkBob.EventPipe)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	syncBob := sync2.(*synchronizer)
 
 	// -------------------------------
@@ -199,8 +199,8 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	overrideLogger(syncBob, "Bob")
 	// -------------------------------
 
-	assert.NoError(t, syncAlice.Start())
-	assert.NoError(t, syncBob.Start())
+	require.NoError(t, syncAlice.Start())
+	require.NoError(t, syncBob.Start())
 
 	// Connect the networks of Alice and Bob to each other (Alice is outbound, Bob is inbound)
 	networkBob.AddAnotherNetwork(networkAlice, lp2pnetwork.DirInbound)
@@ -256,7 +256,7 @@ func TestHandlerBlocksResponseSyncing(t *testing.T) {
 	blockTime := nets.syncBob.state.Genesis().GenesisTime()
 	for i := uint32(0); i < 100; i++ {
 		blk, cert := nets.GenerateTestBlock(i+1, testsuite.BlockWithTime(blockTime))
-		assert.NoError(t, nets.syncBob.state.CommitBlock(blk, cert))
+		require.NoError(t, nets.syncBob.state.CommitBlock(blk, cert))
 
 		blockTime = blockTime.Add(blockInterval)
 	}
@@ -310,7 +310,7 @@ func TestHandlerBlocksResponseSyncingHasBlockInCache(t *testing.T) {
 	blockTime := nets.syncBob.state.Genesis().GenesisTime()
 	for i := uint32(0); i < 23; i++ {
 		blk, cert := nets.GenerateTestBlock(i+1, testsuite.BlockWithTime(blockTime))
-		assert.NoError(t, nets.syncBob.state.CommitBlock(blk, cert))
+		require.NoError(t, nets.syncBob.state.CommitBlock(blk, cert))
 
 		blockTime = blockTime.Add(blockInterval)
 	}

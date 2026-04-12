@@ -22,7 +22,7 @@ func TestPrivateKey(t *testing.T) {
 		td.mockStorage.EXPECT().AddressInfo(addr).Return(nil, storage.ErrNotFound)
 
 		_, err := td.wallet.PrivateKey(td.password, addr)
-		assert.ErrorIs(t, err, storage.ErrNotFound)
+		require.ErrorIs(t, err, storage.ErrNotFound)
 	})
 }
 
@@ -110,7 +110,7 @@ func TestNewValidatorAddress(t *testing.T) {
 	td.mockStorage.EXPECT().UpdateVault(td.testVault).Return(nil)
 	label := td.RandString(16)
 	addressInfo, err := td.wallet.NewValidatorAddress(label)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotEmpty(t, addressInfo.Address)
 	assert.NotEmpty(t, addressInfo.PublicKey)
 	assert.Equal(t, label, addressInfo.Label)
@@ -127,7 +127,7 @@ func TestNewBLSAccountAddress(t *testing.T) {
 	td.mockStorage.EXPECT().UpdateVault(td.testVault).Return(nil)
 	label := td.RandString(16)
 	addressInfo, err := td.wallet.NewBLSAccountAddress(label)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotEmpty(t, addressInfo.Address)
 	assert.NotEmpty(t, addressInfo.PublicKey)
 	assert.Equal(t, label, addressInfo.Label)
@@ -144,7 +144,7 @@ func TestNewE225519AccountAddress(t *testing.T) {
 	td.mockStorage.EXPECT().UpdateVault(td.testVault).Return(nil)
 	label := td.RandString(16)
 	addressInfo, err := td.wallet.NewEd25519AccountAddress(label, td.password)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotEmpty(t, addressInfo.Address)
 	assert.NotEmpty(t, addressInfo.PublicKey)
 	assert.Equal(t, label, addressInfo.Label)
@@ -163,7 +163,7 @@ func TestImportBLSPrivateKey(t *testing.T) {
 		td.mockStorage.EXPECT().HasAddress(pub.AccountAddress().String()).Return(false)
 
 		err := td.wallet.ImportBLSPrivateKey("invalid-password", prv)
-		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+		require.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -172,7 +172,7 @@ func TestImportBLSPrivateKey(t *testing.T) {
 		td.mockStorage.EXPECT().UpdateVault(td.testVault).Return(nil)
 
 		err := td.wallet.ImportBLSPrivateKey(td.password, prv)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		td.mockStorage.EXPECT().HasAddress(pub.AccountAddress().String()).Return(true)
 		td.mockStorage.EXPECT().HasAddress(pub.ValidatorAddress().String()).Return(true)
@@ -185,7 +185,7 @@ func TestImportBLSPrivateKey(t *testing.T) {
 		td.mockStorage.EXPECT().HasAddress(pub.AccountAddress().String()).Return(true)
 
 		err := td.wallet.ImportBLSPrivateKey(td.password, prv)
-		assert.ErrorIs(t, err, ErrAddressExists)
+		require.ErrorIs(t, err, ErrAddressExists)
 	})
 }
 
@@ -198,7 +198,7 @@ func TestImportEd25519PrivateKey(t *testing.T) {
 		td.mockStorage.EXPECT().HasAddress(pub.AccountAddress().String()).Return(false)
 
 		err := td.wallet.ImportEd25519PrivateKey("invalid-password", prv)
-		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+		require.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -207,7 +207,7 @@ func TestImportEd25519PrivateKey(t *testing.T) {
 		td.mockStorage.EXPECT().UpdateVault(td.testVault).Return(nil)
 
 		err := td.wallet.ImportEd25519PrivateKey(td.password, prv)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		td.mockStorage.EXPECT().HasAddress(pub.AccountAddress().String()).Return(true)
 		assert.True(t, td.wallet.HasAddress(pub.AccountAddress().String()))
@@ -217,7 +217,7 @@ func TestImportEd25519PrivateKey(t *testing.T) {
 		td.mockStorage.EXPECT().HasAddress(pub.AccountAddress().String()).Return(true)
 
 		err := td.wallet.ImportEd25519PrivateKey(td.password, prv)
-		assert.ErrorIs(t, err, ErrAddressExists)
+		require.ErrorIs(t, err, ErrAddressExists)
 	})
 }
 
@@ -234,7 +234,7 @@ func TestSetAddressLabel(t *testing.T) {
 		td.mockStorage.EXPECT().AddressInfo(invAddr).Return(nil, storage.ErrNotFound).AnyTimes()
 
 		err := td.wallet.SetAddressLabel(invAddr, "i have label")
-		assert.ErrorIs(t, err, storage.ErrNotFound)
+		require.ErrorIs(t, err, storage.ErrNotFound)
 		assert.Empty(t, td.wallet.AddressLabel(invAddr))
 	})
 
@@ -247,7 +247,7 @@ func TestSetAddressLabel(t *testing.T) {
 		td.mockStorage.EXPECT().AddressInfo(testAddr.Address).Return(&updatedInfo, nil)
 
 		err := td.wallet.SetAddressLabel(testAddr.Address, "I have a label")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, "I have a label", td.wallet.AddressLabel(testAddr.Address))
 	})
 
@@ -260,7 +260,7 @@ func TestSetAddressLabel(t *testing.T) {
 		td.mockStorage.EXPECT().AddressInfo(testAddr.Address).Return(&noLabelInfo, nil)
 
 		err := td.wallet.SetAddressLabel(testAddr.Address, "")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Empty(t, td.wallet.AddressLabel(testAddr.Address))
 	})
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestTransactionsType(t *testing.T) {
@@ -20,14 +21,14 @@ func TestTransactionsMessage(t *testing.T) {
 		msg := NewTransactionsMessage(nil)
 
 		err := msg.BasicCheck()
-		assert.ErrorIs(t, err, BasicCheckError{Reason: "no transaction"})
+		require.ErrorIs(t, err, BasicCheckError{Reason: "no transaction"})
 	})
 
 	t.Run("OK", func(t *testing.T) {
 		trx := ts.GenerateTestTransferTx()
 		msg := NewTransactionsMessage([]*tx.Tx{trx})
 
-		assert.NoError(t, msg.BasicCheck())
+		require.NoError(t, msg.BasicCheck())
 		assert.Contains(t, msg.LogString(), trx.ID().LogString())
 	})
 }

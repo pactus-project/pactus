@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestHelloType(t *testing.T) {
@@ -27,7 +28,7 @@ func TestHelloMessage(t *testing.T) {
 		msg.Signature = ts.RandBLSSignature()
 
 		err := msg.BasicCheck()
-		assert.ErrorIs(t, err, crypto.ErrInvalidSignature)
+		require.ErrorIs(t, err, crypto.ErrInvalidSignature)
 	})
 
 	t.Run("Signature is nil", func(t *testing.T) {
@@ -38,7 +39,7 @@ func TestHelloMessage(t *testing.T) {
 		msg.Signature = nil
 
 		err := msg.BasicCheck()
-		assert.ErrorIs(t, err, BasicCheckError{"no signature"})
+		require.ErrorIs(t, err, BasicCheckError{"no signature"})
 	})
 
 	t.Run("PublicKeys are empty", func(t *testing.T) {
@@ -49,7 +50,7 @@ func TestHelloMessage(t *testing.T) {
 		msg.PublicKeys = make([]*bls.PublicKey, 0)
 
 		err := msg.BasicCheck()
-		assert.ErrorIs(t, err, BasicCheckError{"no public key"})
+		require.ErrorIs(t, err, BasicCheckError{"no public key"})
 	})
 
 	t.Run("Invalid PublicKey", func(t *testing.T) {
@@ -60,7 +61,7 @@ func TestHelloMessage(t *testing.T) {
 		msg.PublicKeys = []*bls.PublicKey{{}}
 
 		err := msg.BasicCheck()
-		assert.ErrorIs(t, err, BasicCheckError{"short buffer"})
+		require.ErrorIs(t, err, BasicCheckError{"short buffer"})
 	})
 
 	t.Run("Check hello message time", func(t *testing.T) {
@@ -79,7 +80,7 @@ func TestHelloMessage(t *testing.T) {
 			ts.RandHeight(), ts.RandHash(), ts.RandHash())
 		msg.Sign([]*bls.ValidatorKey{valKey})
 
-		assert.NoError(t, msg.BasicCheck())
+		require.NoError(t, msg.BasicCheck())
 		assert.Contains(t, msg.LogString(), "Alice")
 		assert.Contains(t, msg.LogString(), "FULL")
 	})
