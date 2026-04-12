@@ -64,7 +64,7 @@ func configurePragmas(ctx context.Context, db *sql.DB) error {
 
 func openDB(ctx context.Context, path string) (*sql.DB, error) {
 	dsn := fmt.Sprintf("file:%s?_busy_timeout=5000", dbPath(path))
-	db, err := sql.Open("sqlite", dsn) 
+	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
