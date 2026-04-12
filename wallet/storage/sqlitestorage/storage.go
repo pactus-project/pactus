@@ -48,7 +48,8 @@ func dbPath(path string) string {
 
 func configurePragmas(ctx context.Context, db *sql.DB) error {
 	pragmas := []string{
-		"PRAGMA locking_mode=EXCLUSIVE;",
+		"PRAGMA locking_mode=NORMAL;",
+		"PRAGMA journal_mode=WAL;",
 		"PRAGMA synchronous=NORMAL;",
 	}
 
@@ -62,7 +63,8 @@ func configurePragmas(ctx context.Context, db *sql.DB) error {
 }
 
 func openDB(ctx context.Context, path string) (*sql.DB, error) {
-	db, err := sql.Open("sqlite", dbPath(path))
+    dsn := fmt.Sprintf("file:%s?_busy_timeout=5000", dbPath(path))
+	db, err := sql.Open("sqlite", dsn) 
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
