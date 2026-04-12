@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/logger"
@@ -75,18 +76,20 @@ func (li *LastInfo) UpdateValidators(vals []*validator.Validator) {
 	li.lastValidators = vals
 }
 
-func (li *LastInfo) RestoreLastInfo(store store.Store, committeeSize int) (committee.Committee, error) {
+func (li *LastInfo) RestoreLastInfo(store store.Store, committeeSize int) (
+	committee.Committee, protocol.Version, error,
+) {
 	lastCert := store.LastCertificate()
 	lastHeight := lastCert.Height()
 	logger.Debug("try to restore last state info", "height", lastHeight)
 	sb, err := store.Block(lastHeight)
 	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve block %v: %w", lastHeight, err)
+		return nil, 0, fmt.Errorf("unable to retrieve block %v: %w", lastHeight, err)
 	}
 
 	lastBlock, err := sb.ToBlock()
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	li.lastCert = lastCert
@@ -96,10 +99,10 @@ func (li *LastInfo) RestoreLastInfo(store store.Store, committeeSize int) (commi
 
 	cmt, err := li.restoreCommittee(store, lastBlock, committeeSize)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return cmt, nil
+	return cmt, lastBlock.Header().Version(), nil
 }
 
 func (li *LastInfo) restoreCommittee(store store.Store, lastBlock *block.Block,

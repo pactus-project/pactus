@@ -103,7 +103,7 @@ func TestRestoreCommittee(t *testing.T) {
 
 	lastInfo := NewLastInfo()
 
-	cmt, err := lastInfo.RestoreLastInfo(td.store, 4)
+	cmt, _, err := lastInfo.RestoreLastInfo(td.store, 4)
 	require.NoError(t, err)
 
 	val0, _ := td.store.ValidatorByNumber(0)
@@ -129,7 +129,7 @@ func TestRestoreFailed(t *testing.T) {
 		li := NewLastInfo()
 
 		td.store.Validators = make(map[crypto.Address]*validator.Validator) // Reset Validators
-		_, err := li.RestoreLastInfo(td.store, 4)
+		_, _, err := li.RestoreLastInfo(td.store, 4)
 		require.Error(t, err)
 	})
 
@@ -139,7 +139,7 @@ func TestRestoreFailed(t *testing.T) {
 		li := NewLastInfo()
 
 		td.store.Blocks = make(map[uint32]*block.Block) // Reset Blocks
-		_, err := li.RestoreLastInfo(td.store, 4)
+		_, _, err := li.RestoreLastInfo(td.store, 4)
 		require.Error(t, err)
 	})
 }
