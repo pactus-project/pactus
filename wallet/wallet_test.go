@@ -703,7 +703,7 @@ func TestOfflineWallet(t *testing.T) {
 	require.NoError(t, err)
 
 	_, err = wlt.Balance(td.RandAccAddress().String())
-	assert.ErrorIs(t, err, offline.ErrOffline)
+	require.ErrorIs(t, err, offline.ErrOffline)
 
 	wlt.Close()
 }
