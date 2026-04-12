@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/provider"
+	"github.com/pactus-project/pactus/wallet/provider/offline"
 	"github.com/pactus-project/pactus/wallet/storage"
 	"github.com/pactus-project/pactus/wallet/types"
 	"github.com/pactus-project/pactus/wallet/vault"
@@ -689,4 +690,20 @@ func TestTestnetWallet(t *testing.T) {
 
 		wlt.Close()
 	})
+}
+
+func TestOfflineWallet(t *testing.T) {
+	td := setup(t)
+
+	strg := storage.NewMockIStorage(td.Ctrl)
+	strg.EXPECT().Vault().Return(td.testVault).Times(1)
+	strg.EXPECT().Close().Return(nil).Times(1)
+
+	wlt, err := New(t.Context(), strg, WithOfflineProvider())
+	require.NoError(t, err)
+
+	_, err = wlt.Balance(td.RandAccAddress().String())
+	assert.ErrorIs(t, err, offline.ErrOffline)
+
+	wlt.Close()
 }

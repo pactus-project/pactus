@@ -14,6 +14,7 @@ import (
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/pactus-project/pactus/wallet/provider"
+	"github.com/pactus-project/pactus/wallet/provider/offline"
 	"github.com/pactus-project/pactus/wallet/provider/remote"
 	"github.com/pactus-project/pactus/wallet/storage"
 	"github.com/pactus-project/pactus/wallet/storage/jsonstorage"
@@ -127,6 +128,12 @@ func WithEventPipe(eventPipe pipeline.Pipeline[any]) OpenWalletOption {
 func WithBlockchainProvider(provider provider.IBlockchainProvider) OpenWalletOption {
 	return func(cfg *openWalletConfig) {
 		cfg.provider = provider
+	}
+}
+
+func WithOfflineProvider() OpenWalletOption {
+	return func(cfg *openWalletConfig) {
+		cfg.provider = offline.NewOfflineBlockchainProvider()
 	}
 }
 
