@@ -10,8 +10,9 @@ import (
 	"strings"
 	"time"
 
-	_ "github.com/glebarez/go-sqlite" // sqlite driver
+	_ "github.com/glebarez/go-sqlite"
 	"github.com/google/uuid"
+
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
