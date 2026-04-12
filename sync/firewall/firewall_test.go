@@ -285,12 +285,12 @@ func TestUpdateLastReceived(t *testing.T) {
 	td := setup(t, nil)
 
 	data := td.testGossipBundle()
-	now := time.Now().UnixNano()
+	nowNano := time.Now().UnixNano()
 	_, err := td.firewall.OpenGossipBundle(data, td.goodPeerID)
 	require.NoError(t, err)
 
 	peerGood := td.firewall.peerSet.GetPeer(td.goodPeerID)
-	assert.GreaterOrEqual(t, peerGood.LastReceived.UnixNano(), now)
+	assert.GreaterOrEqual(t, peerGood.LastReceived.UnixNano(), nowNano)
 }
 
 func TestBannedAddress(t *testing.T) {

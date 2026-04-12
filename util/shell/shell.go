@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os"
-	"sort"
+	"slices"
 	"strings"
 
 	"github.com/c-bata/go-prompt"
@@ -207,23 +207,19 @@ func parseSuggestions(out string) []prompt.Suggest {
 		suggestions = append(suggestions, suggestion)
 	}
 
-	sort.Slice(suggestions, func(i, j int) bool {
-		iText := suggestions[i].Text
-		jText := suggestions[j].Text
-
-		if isFlag(iText) && isFlag(jText) {
-			return iText < jText
+	slices.SortFunc(suggestions, func(a, b prompt.Suggest) int {
+		aText, bText := a.Text, b.Text
+		aFlag, bFlag := isFlag(aText), isFlag(bText)
+		switch {
+		case aFlag && bFlag:
+			return strings.Compare(aText, bText)
+		case aFlag:
+			return 1
+		case bFlag:
+			return -1
+		default:
+			return strings.Compare(aText, bText)
 		}
-
-		if isFlag(iText) {
-			return false
-		}
-
-		if isFlag(jText) {
-			return true
-		}
-
-		return iText < jText
 	})
 
 	return suggestions

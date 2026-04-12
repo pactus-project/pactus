@@ -1,7 +1,8 @@
 package executor
 
 import (
-	"sort"
+	"cmp"
+	"slices"
 
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/tx"
@@ -89,8 +90,8 @@ func (e *SortitionExecutor) canJoinCommittee() error {
 	}
 
 	vals := committee.Validators()
-	sort.SliceStable(vals, func(i, j int) bool {
-		return vals[i].LastSortitionHeight() < vals[j].LastSortitionHeight()
+	slices.SortStableFunc(vals, func(a, b *validator.Validator) int {
+		return cmp.Compare(a.LastSortitionHeight(), b.LastSortitionHeight())
 	})
 	leavingPower := int64(0)
 	for i := 0; i < joiningNum; i++ {
