@@ -5,8 +5,9 @@ package controller
 import (
 	"context"
 	"fmt"
-	"sort"
+	"slices"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/ezex-io/gopkg/scheduler"
@@ -50,7 +51,7 @@ func (c *CommitteeWidgetController) refresh(_ context.Context) {
 	for ver, percentage := range res.ProtocolVersions {
 		protocolLines = append(protocolLines, fmt.Sprintf("%s: %.2f%%", protocol.Version(ver), percentage))
 	}
-	sort.Slice(protocolLines, func(i, j int) bool { return protocolLines[i] < protocolLines[j] })
+	slices.SortFunc(protocolLines, strings.Compare)
 	protocolStr := ""
 	for i, s := range protocolLines {
 		if i > 0 {
