@@ -11,7 +11,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"sort"
+	"slices"
 	"time"
 
 	"github.com/pactus-project/pactus/genesis"
@@ -113,8 +113,8 @@ func (i *Importer) GetMetadata(ctx context.Context) ([]Metadata, error) {
 		return nil, err
 	}
 
-	sort.SliceStable(metadata, func(i, j int) bool {
-		return metadata[i].CreatedAtTime().After(metadata[j].CreatedAtTime())
+	slices.SortStableFunc(metadata, func(a, b Metadata) int {
+		return b.CreatedAtTime().Compare(a.CreatedAtTime())
 	})
 
 	return metadata, nil
