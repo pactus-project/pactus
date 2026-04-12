@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestParseVersion(t *testing.T) {
@@ -26,9 +27,9 @@ func TestParseVersion(t *testing.T) {
 	for _, test := range tests {
 		result, err := ParseVersion(test.input)
 		if test.hasError {
-			assert.Error(t, err, "ParseVersion(%q) should return error", test.input)
+			require.Error(t, err, "ParseVersion(%q) should return error", test.input)
 		} else {
-			assert.NoError(t, err, "ParseVersion(%q) should not return error", test.input)
+			require.NoError(t, err, "ParseVersion(%q) should not return error", test.input)
 			assert.Equal(t, test.expected, result, "ParseVersion(%q)", test.input)
 		}
 	}

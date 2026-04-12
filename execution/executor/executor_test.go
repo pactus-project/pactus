@@ -51,13 +51,13 @@ func (td *testData) check(t *testing.T, trx *tx.Tx, strict bool, expectedErr err
 
 	exe, err := MakeExecutor(trx, td.sbx)
 	if err != nil {
-		assert.ErrorIs(t, err, expectedErr)
+		require.ErrorIs(t, err, expectedErr)
 
 		return
 	}
 
 	err = exe.Check(strict)
-	assert.ErrorIs(t, err, expectedErr)
+	require.ErrorIs(t, err, expectedErr)
 }
 
 func (td *testData) execute(t *testing.T, trx *tx.Tx) {

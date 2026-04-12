@@ -5,6 +5,7 @@ import (
 
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestConfigBasicCheck(t *testing.T) {
@@ -118,12 +119,12 @@ func TestConfigBasicCheck(t *testing.T) {
 			tt.updateFn(conf)
 			if tt.expectedErr != nil {
 				err := conf.BasicCheck()
-				assert.ErrorIs(t, err, tt.expectedErr,
+				require.ErrorIs(t, err, tt.expectedErr,
 					"Expected error not matched for test %d-%s, expected: %s, got: %s",
 					no, tt.name, tt.expectedErr, err)
 			} else {
 				err := conf.BasicCheck()
-				assert.NoError(t, err,
+				require.NoError(t, err,
 					"Expected no error for test %d-%s, get: %s",
 					no, tt.name, err)
 			}

@@ -4,20 +4,21 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGenerateMnemonic(t *testing.T) {
 	_, err := GenerateMnemonic(127)
-	assert.Error(t, err, "low entropy")
+	require.Error(t, err, "low entropy")
 
 	_, err = GenerateMnemonic(128)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	_, err = GenerateMnemonic(257)
-	assert.Error(t, err, "high entropy")
+	require.Error(t, err, "high entropy")
 
 	_, err = GenerateMnemonic(256)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }
 
 func TestValidateMnemonic(t *testing.T) {

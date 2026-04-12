@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestConfigBasicCheck(t *testing.T) {
@@ -61,11 +62,11 @@ func TestConfigBasicCheck(t *testing.T) {
 			tt.updateFn(conf)
 			if tt.expectedErr != nil {
 				err := conf.BasicCheck()
-				assert.ErrorIs(t, tt.expectedErr, err,
+				require.ErrorIs(t, tt.expectedErr, err,
 					"Expected error not matched for test %d-%s, expected: %s, got: %s", no, tt.name, tt.expectedErr, err)
 			} else {
 				err := conf.BasicCheck()
-				assert.NoError(t, err, "Expected no error for test %d-%s, get: %s", no, tt.name, err)
+				require.NoError(t, err, "Expected no error for test %d-%s, get: %s", no, tt.name, err)
 			}
 		})
 	}

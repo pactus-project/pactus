@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestTransferLockTime(t *testing.T) {
@@ -59,10 +60,10 @@ func TestTransferLockTime(t *testing.T) {
 				testsuite.TransactionWithLockTime(tt.lockTime))
 
 			strictErr := CheckLockTime(trx, sbx, true)
-			assert.ErrorIs(t, strictErr, tt.strictErr)
+			require.ErrorIs(t, strictErr, tt.strictErr)
 
 			nonStrictErr := CheckLockTime(trx, sbx, false)
-			assert.ErrorIs(t, nonStrictErr, tt.nonStrictErr)
+			require.ErrorIs(t, nonStrictErr, tt.nonStrictErr)
 		})
 	}
 }
@@ -118,10 +119,10 @@ func TestSortitionLockTime(t *testing.T) {
 				testsuite.TransactionWithLockTime(tt.lockTime))
 
 			strictErr := CheckLockTime(trx, sbx, true)
-			assert.ErrorIs(t, strictErr, tt.strictErr)
+			require.ErrorIs(t, strictErr, tt.strictErr)
 
 			nonStrictErr := CheckLockTime(trx, sbx, false)
-			assert.ErrorIs(t, nonStrictErr, tt.nonStrictErr)
+			require.ErrorIs(t, nonStrictErr, tt.nonStrictErr)
 		})
 	}
 }
@@ -164,10 +165,10 @@ func TestSubsidyLockTime(t *testing.T) {
 				testsuite.TransactionWithLockTime(tt.lockTime))
 
 			strictErr := CheckLockTime(trx, sbx, true)
-			assert.ErrorIs(t, strictErr, tt.strictErr)
+			require.ErrorIs(t, strictErr, tt.strictErr)
 
 			nonStrictErr := CheckLockTime(trx, sbx, false)
-			assert.ErrorIs(t, nonStrictErr, tt.nonStrictErr)
+			require.ErrorIs(t, nonStrictErr, tt.nonStrictErr)
 		})
 	}
 }
@@ -188,7 +189,7 @@ func TestExecute(t *testing.T) {
 			testsuite.TransactionWithSigner(unknownSigner))
 
 		err := Execute(trx, sbx)
-		assert.ErrorIs(t, err, executor.AccountNotFoundError{Address: trx.Payload().Signer()})
+		require.ErrorIs(t, err, executor.AccountNotFoundError{Address: trx.Payload().Signer()})
 	})
 
 	t.Run("Valid Transaction", func(t *testing.T) {
@@ -197,7 +198,7 @@ func TestExecute(t *testing.T) {
 			testsuite.TransactionWithSigner(knownSigner))
 
 		err := Execute(trx, sbx)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.True(t, sbx.RecentTransaction(trx.ID()))
 	})
@@ -219,7 +220,7 @@ func TestCheck(t *testing.T) {
 			testsuite.TransactionWithSigner(unknownSigner))
 
 		err := CheckAndExecute(trx, sbx, true)
-		assert.ErrorIs(t, err, executor.AccountNotFoundError{Address: trx.Payload().Signer()})
+		require.ErrorIs(t, err, executor.AccountNotFoundError{Address: trx.Payload().Signer()})
 	})
 
 	t.Run("Invalid lock-time, Should return error", func(t *testing.T) {
@@ -229,7 +230,7 @@ func TestCheck(t *testing.T) {
 			testsuite.TransactionWithSigner(knownSigner))
 
 		err := CheckAndExecute(trx, sbx, true)
-		assert.ErrorIs(t, err, LockTimeInFutureError{LockTime: invalidLockTime})
+		require.ErrorIs(t, err, LockTimeInFutureError{LockTime: invalidLockTime})
 	})
 
 	t.Run("Invalid transaction, Should return error", func(t *testing.T) {
@@ -239,7 +240,7 @@ func TestCheck(t *testing.T) {
 			testsuite.TransactionWithAmount(testAcc.Balance()+1))
 
 		err := CheckAndExecute(trx, sbx, true)
-		assert.ErrorIs(t, err, executor.ErrInsufficientFunds)
+		require.ErrorIs(t, err, executor.ErrInsufficientFunds)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -248,7 +249,7 @@ func TestCheck(t *testing.T) {
 			testsuite.TransactionWithSigner(knownSigner))
 
 		err := CheckAndExecute(trx, sbx, true)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.True(t, sbx.RecentTransaction(trx.ID()))
 	})
 }
@@ -266,10 +267,10 @@ func TestReplay(t *testing.T) {
 		testsuite.TransactionWithSigner(knownSigner))
 
 	err := Execute(trx, sbx)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	err = CheckAndExecute(trx, sbx, false)
-	assert.ErrorIs(t, err, TransactionCommittedError{
+	require.ErrorIs(t, err, TransactionCommittedError{
 		ID: trx.ID(),
 	})
 }

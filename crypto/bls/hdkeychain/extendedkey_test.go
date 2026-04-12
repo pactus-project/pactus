@@ -179,10 +179,10 @@ func TestDerivation(t *testing.T) {
 		require.Equal(t, tt.path, neuterKeyG2.Path())
 
 		_, err = neuterKeyG1.RawPrivateKey()
-		assert.ErrorIs(t, err, ErrNotPrivExtKey)
+		require.ErrorIs(t, err, ErrNotPrivExtKey)
 
 		_, err = neuterKeyG2.RawPrivateKey()
-		assert.ErrorIs(t, err, ErrNotPrivExtKey)
+		require.ErrorIs(t, err, ErrNotPrivExtKey)
 
 		blsPrivKey, _ := bls.PrivateKeyFromBytes(privKeyG2)
 		require.Equal(t, pubKeyG2, blsPrivKey.PublicKey().Bytes())
@@ -196,7 +196,7 @@ func TestInvalidDerivation(t *testing.T) {
 		chainCode := [32]byte{0}
 		ext := newExtendedKey(key[:], chainCode[:], []uint32{}, true, false)
 		_, err := ext.Derive(hardenedKeyStart)
-		assert.ErrorIs(t, err, ErrInvalidKeyData)
+		require.ErrorIs(t, err, ErrInvalidKeyData)
 	})
 
 	t.Run("Public key on G1 is 96 bytes. It should be 48 bytes", func(t *testing.T) {
@@ -204,7 +204,7 @@ func TestInvalidDerivation(t *testing.T) {
 		chainCode := [32]byte{0}
 		ext := newExtendedKey(key[:], chainCode[:], []uint32{}, false, true)
 		_, err := ext.Derive(0)
-		assert.ErrorIs(t, err, ErrInvalidKeyData)
+		require.ErrorIs(t, err, ErrInvalidKeyData)
 	})
 
 	t.Run("Public key on G2 is 42 bytes. It should be 96 bytes", func(t *testing.T) {
@@ -212,7 +212,7 @@ func TestInvalidDerivation(t *testing.T) {
 		chainCode := [32]byte{0}
 		ext := newExtendedKey(key[:], chainCode[:], []uint32{}, false, false)
 		_, err := ext.Derive(0)
-		assert.ErrorIs(t, err, ErrInvalidKeyData)
+		require.ErrorIs(t, err, ErrInvalidKeyData)
 	})
 
 	t.Run("Invalid key", func(t *testing.T) {
@@ -220,7 +220,7 @@ func TestInvalidDerivation(t *testing.T) {
 		chainCode := [32]byte{0}
 		ext := newExtendedKey(key[:], chainCode[:], []uint32{}, false, false)
 		_, err := ext.Derive(0)
-		assert.ErrorIs(t, err, ErrInvalidKeyData)
+		require.ErrorIs(t, err, ErrInvalidKeyData)
 	})
 
 	t.Run("Derive public key from hardened key", func(t *testing.T) {
@@ -228,7 +228,7 @@ func TestInvalidDerivation(t *testing.T) {
 		chainCode := [32]byte{0}
 		ext := newExtendedKey(key[:], chainCode[:], []uint32{}, false, false)
 		_, err := ext.Derive(hardenedKeyStart)
-		assert.ErrorIs(t, err, ErrDeriveHardFromPublic)
+		require.ErrorIs(t, err, ErrDeriveHardFromPublic)
 	})
 }
 
@@ -253,7 +253,7 @@ func TestGenerateSeed(t *testing.T) {
 
 	for no, tt := range tests {
 		seed, err := GenerateSeed(tt.length)
-		assert.ErrorIs(t, err, tt.err)
+		require.ErrorIs(t, err, tt.err)
 
 		if tt.err == nil {
 			assert.Len(t, seed, int(tt.length),
@@ -311,10 +311,10 @@ func TestNewMaster(t *testing.T) {
 	for no, tt := range tests {
 		seed, _ := hex.DecodeString(tt.seed)
 		extKeyG1, err := NewMaster(seed, true)
-		assert.ErrorIs(t, err, tt.err)
+		require.ErrorIs(t, err, tt.err)
 
 		extKeyG2, err := NewMaster(seed, true)
-		assert.ErrorIs(t, err, tt.err)
+		require.ErrorIs(t, err, tt.err)
 
 		if tt.err == nil {
 			privKeyG1, _ := extKeyG1.RawPrivateKey()
@@ -494,7 +494,7 @@ func TestInvalidString(t *testing.T) {
 
 	for no, tt := range tests {
 		_, err := NewKeyFromString(tt.str)
-		assert.ErrorIs(t, err, tt.expectedError, "test %d error is not matched", no)
+		require.ErrorIs(t, err, tt.expectedError, "test %d error is not matched", no)
 	}
 }
 

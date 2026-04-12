@@ -1,12 +1,12 @@
 package grpc
 
 import (
-	"context"
 	"encoding/hex"
 	"testing"
 
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetBlock(t *testing.T) {
@@ -18,20 +18,20 @@ func TestGetBlock(t *testing.T) {
 	data, _ := blk.Bytes()
 
 	t.Run("Should return nil for non existing block ", func(t *testing.T) {
-		res, err := client.GetBlock(context.Background(),
+		res, err := client.GetBlock(t.Context(),
 			&pactus.GetBlockRequest{
 				Height: height + 1, Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_DATA,
 			})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Should return an existing block data (verbosity: 0)", func(t *testing.T) {
-		res, err := client.GetBlock(context.Background(),
+		res, err := client.GetBlock(t.Context(),
 			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_DATA})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, height, res.Height)
 		assert.Equal(t, blk.Hash().String(), res.Hash)
@@ -41,10 +41,10 @@ func TestGetBlock(t *testing.T) {
 	})
 
 	t.Run("Should return object with (verbosity: 1)", func(t *testing.T) {
-		res, err := client.GetBlock(context.Background(),
+		res, err := client.GetBlock(t.Context(),
 			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_INFO})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, height, res.Height)
 		assert.Equal(t, blk.Hash().String(), res.Hash)
@@ -55,7 +55,7 @@ func TestGetBlock(t *testing.T) {
 		for i, trx := range res.Txs {
 			blockTrx := blk.Transactions()[i]
 			blk, err := blockTrx.Bytes()
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, trx.Id, blockTrx.ID().String())
 			assert.Equal(t, trx.Data, hex.EncodeToString(blk))
 			assert.Zero(t, trx.LockTime)
@@ -65,10 +65,10 @@ func TestGetBlock(t *testing.T) {
 	})
 
 	t.Run("Should return object with (verbosity: 2)", func(t *testing.T) {
-		res, err := client.GetBlock(context.Background(),
+		res, err := client.GetBlock(t.Context(),
 			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_TRANSACTIONS})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, height, res.Height)
 		assert.Equal(t, blk.Hash().String(), res.Hash)
@@ -100,18 +100,18 @@ func TestGetBlockHash(t *testing.T) {
 	blk := td.mockState.TestStore.AddTestBlock(height)
 
 	t.Run("Should return error for non existing block", func(t *testing.T) {
-		res, err := client.GetBlockHash(context.Background(),
+		res, err := client.GetBlockHash(t.Context(),
 			&pactus.GetBlockHashRequest{Height: 0})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Should return height of existing block", func(t *testing.T) {
-		res, err := client.GetBlockHash(context.Background(),
+		res, err := client.GetBlockHash(t.Context(),
 			&pactus.GetBlockHashRequest{Height: height})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, blk.Hash().String(), res.Hash)
 	})
 }
@@ -124,26 +124,26 @@ func TestGetBlockHeight(t *testing.T) {
 	blk := td.mockState.TestStore.AddTestBlock(height)
 
 	t.Run("Should return error for invalid hash", func(t *testing.T) {
-		res, err := client.GetBlockHeight(context.Background(),
+		res, err := client.GetBlockHeight(t.Context(),
 			&pactus.GetBlockHeightRequest{Hash: ""})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Should return error for non existing block", func(t *testing.T) {
-		res, err := client.GetBlockHeight(context.Background(),
+		res, err := client.GetBlockHeight(t.Context(),
 			&pactus.GetBlockHeightRequest{Hash: td.RandHash().String()})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Should return height of existing block", func(t *testing.T) {
-		res, err := client.GetBlockHeight(context.Background(),
+		res, err := client.GetBlockHeight(t.Context(),
 			&pactus.GetBlockHeightRequest{Hash: blk.Hash().String()})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, height, res.Height)
 	})
 }
@@ -153,10 +153,10 @@ func TestGetBlockchainInfo(t *testing.T) {
 	client := td.blockchainClient(t)
 
 	t.Run("Should return the last block height", func(t *testing.T) {
-		res, err := client.GetBlockchainInfo(context.Background(),
+		res, err := client.GetBlockchainInfo(t.Context(),
 			&pactus.GetBlockchainInfoRequest{})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, td.mockState.TestStore.LastHeight, res.LastBlockHeight)
 		assert.NotEmpty(t, res.LastBlockHash)
 		assert.Zero(t, res.PruningHeight)
@@ -169,9 +169,9 @@ func TestGetCommitteeInfo(t *testing.T) {
 	client := td.blockchainClient(t)
 
 	t.Run("Should return committee info", func(t *testing.T) {
-		res, err := client.GetCommitteeInfo(context.Background(),
+		res, err := client.GetCommitteeInfo(t.Context(),
 			&pactus.GetCommitteeInfoRequest{})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.GreaterOrEqual(t, res.CommitteePower, int64(0))
 		assert.NotNil(t, res.Validators)
@@ -186,26 +186,26 @@ func TestGetAccount(t *testing.T) {
 	addr, acc := td.mockState.TestStore.AddTestAccount()
 
 	t.Run("Should return error for non-parsable address ", func(t *testing.T) {
-		res, err := client.GetAccount(context.Background(),
+		res, err := client.GetAccount(t.Context(),
 			&pactus.GetAccountRequest{Address: ""})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Should return nil for non existing account ", func(t *testing.T) {
-		res, err := client.GetAccount(context.Background(),
+		res, err := client.GetAccount(t.Context(),
 			&pactus.GetAccountRequest{Address: td.RandAccAddress().String()})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Should return account details", func(t *testing.T) {
-		res, err := client.GetAccount(context.Background(),
+		res, err := client.GetAccount(t.Context(),
 			&pactus.GetAccountRequest{Address: addr.String()})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, acc.Balance().ToNanoPAC(), res.Account.Balance)
 		assert.Equal(t, acc.Number(), res.Account.Number)
@@ -219,26 +219,26 @@ func TestGetValidator(t *testing.T) {
 	val1 := td.mockState.TestStore.AddTestValidator()
 
 	t.Run("Should return nil value due to invalid address", func(t *testing.T) {
-		res, err := client.GetValidator(context.Background(),
+		res, err := client.GetValidator(t.Context(),
 			&pactus.GetValidatorRequest{Address: ""})
 
-		assert.Error(t, err, "Error should be returned")
+		require.Error(t, err, "Error should be returned")
 		assert.Nil(t, res, "Response should be empty")
 	})
 
 	t.Run("should return Not Found", func(t *testing.T) {
-		res, err := client.GetValidator(context.Background(),
+		res, err := client.GetValidator(t.Context(),
 			&pactus.GetValidatorRequest{Address: td.RandAccAddress().String()})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Should return validator, and the public keys should match", func(t *testing.T) {
-		res, err := client.GetValidator(context.Background(),
+		res, err := client.GetValidator(t.Context(),
 			&pactus.GetValidatorRequest{Address: val1.Address().String()})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, val1.PublicKey().String(), res.GetValidator().PublicKey)
 	})
@@ -251,10 +251,10 @@ func TestGetValidator(t *testing.T) {
 		val1.SetDelegation(dlgOwnerAddr, dlgOwnerShare, dlgExpiry)
 		td.mockState.TestStore.UpdateValidator(val1)
 
-		res, err := client.GetValidator(context.Background(),
+		res, err := client.GetValidator(t.Context(),
 			&pactus.GetValidatorRequest{Address: val1.Address().String()})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 
 		v := res.GetValidator()
@@ -272,26 +272,26 @@ func TestGetValidatorByNumber(t *testing.T) {
 	val1 := td.mockState.TestStore.AddTestValidator()
 
 	t.Run("Should return nil value due to invalid number", func(t *testing.T) {
-		res, err := client.GetValidatorByNumber(context.Background(),
+		res, err := client.GetValidatorByNumber(t.Context(),
 			&pactus.GetValidatorByNumberRequest{Number: -1})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("should return Not Found", func(t *testing.T) {
-		res, err := client.GetValidatorByNumber(context.Background(),
+		res, err := client.GetValidatorByNumber(t.Context(),
 			&pactus.GetValidatorByNumberRequest{Number: val1.Number() + 1})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Should return validator matching with public key and number", func(t *testing.T) {
-		res, err := client.GetValidatorByNumber(context.Background(),
+		res, err := client.GetValidatorByNumber(t.Context(),
 			&pactus.GetValidatorByNumberRequest{Number: val1.Number()})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, val1.PublicKey().String(), res.GetValidator().PublicKey)
 		assert.Equal(t, val1.Number(), res.GetValidator().GetNumber())
@@ -306,12 +306,12 @@ func TestGetValidatorAddresses(t *testing.T) {
 		td.mockState.TestStore.AddTestValidator()
 		td.mockState.TestStore.AddTestValidator()
 
-		res, err := client.GetValidatorAddresses(context.Background(),
+		res, err := client.GetValidatorAddresses(t.Context(),
 			&pactus.GetValidatorAddressesRequest{})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, 2, len(res.GetAddresses()))
+		assert.Len(t, res.GetAddresses(), 2)
 	})
 }
 
@@ -322,26 +322,26 @@ func TestGetPublicKey(t *testing.T) {
 	val := td.mockState.TestStore.AddTestValidator()
 
 	t.Run("Should return error for non-parsable address ", func(t *testing.T) {
-		res, err := client.GetPublicKey(context.Background(),
+		res, err := client.GetPublicKey(t.Context(),
 			&pactus.GetPublicKeyRequest{Address: ""})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Should return nil for non existing public key ", func(t *testing.T) {
-		res, err := client.GetPublicKey(context.Background(),
+		res, err := client.GetPublicKey(t.Context(),
 			&pactus.GetPublicKeyRequest{Address: td.RandAccAddress().String()})
 
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Should return the public key", func(t *testing.T) {
-		res, err := client.GetPublicKey(context.Background(),
+		res, err := client.GetPublicKey(t.Context(),
 			&pactus.GetPublicKeyRequest{Address: val.Address().String()})
 
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, val.PublicKey().String(), res.PublicKey)
 	})
@@ -369,9 +369,9 @@ func TestConsensusInfo(t *testing.T) {
 	td.consMocks[1].Round = consRound
 
 	t.Run("Should return the consensus info", func(t *testing.T) {
-		res, err := client.GetConsensusInfo(context.Background(), &pactus.GetConsensusInfoRequest{})
+		res, err := client.GetConsensusInfo(t.Context(), &pactus.GetConsensusInfoRequest{})
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, res)
 
 		assert.True(t, res.Instances[0].Active)
@@ -408,23 +408,23 @@ func TestGetTxPoolContent(t *testing.T) {
 		in := &pactus.GetTxPoolContentRequest{
 			PayloadType: pactus.PayloadType_PAYLOAD_TYPE_UNSPECIFIED,
 		}
-		resp, err := client.GetTxPoolContent(context.Background(), in)
+		resp, err := client.GetTxPoolContent(t.Context(), in)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, resp)
 
-		assert.Equal(t, 8, len(resp.Txs))
+		assert.Len(t, resp.Txs, 8)
 	})
 
 	t.Run("Should return all Bond transactions", func(t *testing.T) {
 		in := &pactus.GetTxPoolContentRequest{
 			PayloadType: pactus.PayloadType_PAYLOAD_TYPE_BOND,
 		}
-		resp, err := client.GetTxPoolContent(context.Background(), in)
+		resp, err := client.GetTxPoolContent(t.Context(), in)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, resp)
-		assert.Greater(t, len(resp.Txs), 0)
+		assert.NotEmpty(t, resp.Txs)
 
 		for _, tx := range resp.Txs {
 			assert.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_BOND, tx.PayloadType)
@@ -435,11 +435,11 @@ func TestGetTxPoolContent(t *testing.T) {
 		in := &pactus.GetTxPoolContentRequest{
 			PayloadType: pactus.PayloadType_PAYLOAD_TYPE_TRANSFER,
 		}
-		resp, err := client.GetTxPoolContent(context.Background(), in)
+		resp, err := client.GetTxPoolContent(t.Context(), in)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, resp)
-		assert.Greater(t, len(resp.Txs), 0)
+		assert.NotEmpty(t, resp.Txs)
 
 		for _, tx := range resp.Txs {
 			assert.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_TRANSFER, tx.PayloadType)
@@ -450,11 +450,11 @@ func TestGetTxPoolContent(t *testing.T) {
 		in := &pactus.GetTxPoolContentRequest{
 			PayloadType: pactus.PayloadType_PAYLOAD_TYPE_UNBOND,
 		}
-		resp, err := client.GetTxPoolContent(context.Background(), in)
+		resp, err := client.GetTxPoolContent(t.Context(), in)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, resp)
-		assert.Greater(t, len(resp.Txs), 0)
+		assert.NotEmpty(t, resp.Txs)
 
 		for _, tx := range resp.Txs {
 			assert.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_UNBOND, tx.PayloadType)
@@ -465,11 +465,11 @@ func TestGetTxPoolContent(t *testing.T) {
 		in := &pactus.GetTxPoolContentRequest{
 			PayloadType: pactus.PayloadType_PAYLOAD_TYPE_SORTITION,
 		}
-		resp, err := client.GetTxPoolContent(context.Background(), in)
+		resp, err := client.GetTxPoolContent(t.Context(), in)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, resp)
-		assert.Greater(t, len(resp.Txs), 0)
+		assert.NotEmpty(t, resp.Txs)
 
 		for _, tx := range resp.Txs {
 			assert.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_SORTITION, tx.PayloadType)
@@ -480,11 +480,11 @@ func TestGetTxPoolContent(t *testing.T) {
 		in := &pactus.GetTxPoolContentRequest{
 			PayloadType: pactus.PayloadType_PAYLOAD_TYPE_WITHDRAW,
 		}
-		resp, err := client.GetTxPoolContent(context.Background(), in)
+		resp, err := client.GetTxPoolContent(t.Context(), in)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, resp)
-		assert.Greater(t, len(resp.Txs), 0)
+		assert.NotEmpty(t, resp.Txs)
 
 		for _, tx := range resp.Txs {
 			assert.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_WITHDRAW, tx.PayloadType)

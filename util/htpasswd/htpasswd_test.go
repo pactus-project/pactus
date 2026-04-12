@@ -181,14 +181,14 @@ func TestExtractBasicAuthFromContext(t *testing.T) {
 		},
 		{
 			name:        "NoMetadata",
-			ctx:         context.Background(),
+			ctx:         t.Context(),
 			wantUser:    "",
 			wantPass:    "",
 			expectError: ErrMetadataNotFound,
 		},
 		{
 			name:        "NoAuthorizationHeader",
-			ctx:         metadata.NewIncomingContext(context.Background(), metadata.MD{}),
+			ctx:         metadata.NewIncomingContext(t.Context(), metadata.MD{}),
 			wantUser:    "",
 			wantPass:    "",
 			expectError: ErrAuthHeaderNotFound,

@@ -55,6 +55,7 @@ linters:
     - tagalign
     - tagliatelle
     - testableexamples
+    - testifylint
     - thelper
     - tparallel
     - unconvert
@@ -161,6 +162,12 @@ linters:
         - all
         - -ST1000
         - -QF1008
+    testifylint:
+      enable-all: true
+    usetesting:
+      os-temp-dir: true
+      context-background: true
+      context-todo: true
     tagliatelle:
       case:
         rules:

@@ -114,11 +114,11 @@ func TestManager(t *testing.T) {
 
 		blk1, cert1 := ts.GenerateTestBlock(consHeight)
 		err := state.CommitBlock(blk1, cert1)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		blk2, cert2 := ts.GenerateTestBlock(consHeight + 1)
 		err = state.CommitBlock(blk2, cert2)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		mgr.MoveToNewHeight()
 
@@ -139,11 +139,11 @@ func TestManager(t *testing.T) {
 
 		blk1, cert1 := ts.GenerateTestBlock(consHeight)
 		err := state.CommitBlock(blk1, cert1)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		blk2, cert2 := ts.GenerateTestBlock(consHeight + 1)
 		err = state.CommitBlock(blk2, cert2)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		mgr.MoveToNewHeight()
 

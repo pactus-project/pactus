@@ -5,11 +5,12 @@ import (
 
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestDefaultConfig(t *testing.T) {
 	conf := DefaultConfig()
-	assert.NoError(t, conf.BasicCheck())
+	require.NoError(t, conf.BasicCheck())
 
 	assert.Equal(t, 500, conf.transferPoolSize())
 	assert.Equal(t, 100, conf.bondPoolSize())
@@ -93,11 +94,11 @@ func TestConfigBasicCheck(t *testing.T) {
 			tt.updateFn(conf)
 			if tt.expectedErr != nil {
 				err := conf.BasicCheck()
-				assert.ErrorIs(t, tt.expectedErr, err,
+				require.ErrorIs(t, tt.expectedErr, err,
 					"Expected error not matched for test %d-%s, expected: %s, got: %s", no, tt.name, tt.expectedErr, err)
 			} else {
 				err := conf.BasicCheck()
-				assert.NoError(t, err, "Expected no error for test %d-%s, get: %s", no, tt.name, err)
+				require.NoError(t, err, "Expected no error for test %d-%s, get: %s", no, tt.name, err)
 			}
 		})
 	}

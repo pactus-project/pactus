@@ -168,9 +168,9 @@ func TestBondDecoding(t *testing.T) {
 		r := util.NewFixedReader(len(tt.raw), tt.raw)
 		err := pld.Decode(payload.DecodeContext{}, r)
 		if tt.readErr != nil {
-			assert.ErrorIs(t, err, tt.readErr)
+			require.ErrorIs(t, err, tt.readErr)
 		} else {
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			for i := 0; i < pld.SerializeSize(); i++ {
 				w := util.NewFixedWriter(i)
@@ -178,11 +178,11 @@ func TestBondDecoding(t *testing.T) {
 			}
 			w := util.NewFixedWriter(pld.SerializeSize())
 			require.NoError(t, pld.Encode(w))
-			assert.Equal(t, pld.SerializeSize(), len(w.Bytes()))
+			assert.Len(t, w.Bytes(), pld.SerializeSize())
 			assert.Equal(t, tt.raw, w.Bytes())
 
 			// Basic check
-			assert.NoError(t, pld.BasicCheck())
+			require.NoError(t, pld.BasicCheck())
 
 			// Check signer
 			assert.Equal(t, crypto.Address(tt.raw[:21]), pld.Signer())
@@ -273,9 +273,9 @@ func TestBondWithDelegateDecoding(t *testing.T) {
 		r := util.NewFixedReader(len(tt.raw), tt.raw)
 		err := pld.Decode(payload.DecodeContext{WithDelegation: true}, r)
 		if tt.readErr != nil {
-			assert.ErrorIs(t, err, tt.readErr)
+			require.ErrorIs(t, err, tt.readErr)
 		} else {
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			for i := 0; i < pld.SerializeSize(); i++ {
 				w := util.NewFixedWriter(i)
@@ -283,7 +283,7 @@ func TestBondWithDelegateDecoding(t *testing.T) {
 			}
 			w := util.NewFixedWriter(pld.SerializeSize())
 			require.NoError(t, pld.Encode(w))
-			assert.Equal(t, pld.SerializeSize(), len(w.Bytes()))
+			assert.Len(t, w.Bytes(), pld.SerializeSize())
 			assert.Equal(t, tt.raw, w.Bytes())
 
 			// Basic check
@@ -291,7 +291,7 @@ func TestBondWithDelegateDecoding(t *testing.T) {
 				err := pld.BasicCheck()
 				require.ErrorIs(t, err, tt.basicErr, "basic check %v failed", no)
 			} else {
-				assert.NoError(t, pld.BasicCheck())
+				require.NoError(t, pld.BasicCheck())
 
 				// Check signer
 				assert.Equal(t, crypto.Address(tt.raw[:21]), pld.Signer())
@@ -377,7 +377,7 @@ func TestBondBasicCheck(t *testing.T) {
 
 	for no, tt := range tests {
 		if tt.err == "" {
-			assert.NoError(t, tt.pld.BasicCheck(), "test %v failed", no)
+			require.NoError(t, tt.pld.BasicCheck(), "test %v failed", no)
 		} else {
 			assert.ErrorContains(t, tt.pld.BasicCheck(), tt.err, "test %v failed", no)
 		}

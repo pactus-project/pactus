@@ -25,12 +25,12 @@ func TestCBORMarshaling(t *testing.T) {
 
 	tx1 := ts.GenerateTestTransferTx()
 	bz, err := cbor.Marshal(tx1)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	tx2 := new(tx.Tx)
-	assert.NoError(t, cbor.Unmarshal(bz, tx2))
+	require.NoError(t, cbor.Unmarshal(bz, tx2))
 	assert.Equal(t, tx1.ID(), tx2.ID())
 
-	assert.Error(t, cbor.Unmarshal([]byte{1}, tx2))
+	require.Error(t, cbor.Unmarshal([]byte{1}, tx2))
 }
 
 func TestEncodingTx(t *testing.T) {
@@ -45,32 +45,32 @@ func TestEncodingTx(t *testing.T) {
 
 	tests := []*tx.Tx{trx1, trx2, trx3, trx4, trx5, trx6}
 	for _, trx := range tests {
-		assert.NoError(t, trx.BasicCheck())
-		assert.NoError(t, trx.BasicCheck()) // double basic check
+		require.NoError(t, trx.BasicCheck())
+		require.NoError(t, trx.BasicCheck()) // double basic check
 
 		length := trx.SerializeSize()
 		for i := 0; i < length; i++ {
 			w := util.NewFixedWriter(i)
-			assert.Error(t, trx.Encode(w), "encode test %v failed", i)
+			require.Error(t, trx.Encode(w), "encode test %v failed", i)
 		}
 		w := util.NewFixedWriter(length)
-		assert.NoError(t, trx.Encode(w))
+		require.NoError(t, trx.Encode(w))
 
 		for i := 0; i < length; i++ {
 			newTrx := new(tx.Tx)
 			r := util.NewFixedReader(i, w.Bytes())
-			assert.Error(t, newTrx.Decode(r), "decode test %v failed", i)
+			require.Error(t, newTrx.Decode(r), "decode test %v failed", i)
 		}
 
 		bz, err := trx.Bytes()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		decodedTrx, err := tx.FromBytes(bz)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, trx.ID(), decodedTrx.ID())
 	}
 
 	_, err := tx.FromString("badcow")
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestTxIDNoSignatory(t *testing.T) {
@@ -98,7 +98,7 @@ func TestBasicCheck(t *testing.T) {
 			ts.RandAccAddress(), ts.RandAccAddress(), ts.RandAmount(), ts.RandFee())
 
 		err := trx.BasicCheck()
-		assert.ErrorIs(t, err, tx.BasicCheckError{
+		require.ErrorIs(t, err, tx.BasicCheckError{
 			Reason: "lock time is not defined",
 		})
 	})
@@ -110,7 +110,7 @@ func TestBasicCheck(t *testing.T) {
 			ts.RandAccAddress(), ts.RandAccAddress(), ts.RandAmount(), ts.RandFee(), tx.WithMemo(bigMemo))
 
 		err := trx.BasicCheck()
-		assert.ErrorIs(t, err, tx.BasicCheckError{
+		require.ErrorIs(t, err, tx.BasicCheckError{
 			Reason: "memo length exceeded: 65",
 		})
 	})
@@ -121,7 +121,7 @@ func TestBasicCheck(t *testing.T) {
 		trx := tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), invAddr, 1e9, ts.RandFee())
 
 		err := trx.BasicCheck()
-		assert.ErrorIs(t, err, tx.BasicCheckError{
+		require.ErrorIs(t, err, tx.BasicCheckError{
 			Reason: "invalid payload: receiver is not an account address: " + invAddr.String(),
 		})
 	})
@@ -130,7 +130,7 @@ func TestBasicCheck(t *testing.T) {
 		trx := tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), ts.RandAccAddress(), -1, 1)
 
 		err := trx.BasicCheck()
-		assert.ErrorIs(t, err, tx.BasicCheckError{
+		require.ErrorIs(t, err, tx.BasicCheckError{
 			Reason: "invalid amount: -0.000000001 PAC",
 		})
 	})
@@ -139,7 +139,7 @@ func TestBasicCheck(t *testing.T) {
 		trx := tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), ts.RandAccAddress(), (42e15)+1, 1)
 
 		err := trx.BasicCheck()
-		assert.ErrorIs(t, err, tx.BasicCheckError{
+		require.ErrorIs(t, err, tx.BasicCheckError{
 			Reason: "invalid amount: 42,000,000 PAC",
 		})
 	})
@@ -152,7 +152,7 @@ func TestBasicCheck(t *testing.T) {
 		trx.SetPublicKey(valKey.PublicKey())
 
 		err := trx.BasicCheck()
-		assert.ErrorIs(t, err, tx.BasicCheckError{
+		require.ErrorIs(t, err, tx.BasicCheckError{
 			Reason: fmt.Sprintf("address mismatch: expected %s, got %s",
 				valKey.PublicKey().AccountAddress(), trx.Payload().Signer()),
 		})
@@ -170,9 +170,9 @@ func TestBasicCheck(t *testing.T) {
 			"01" // Amount
 
 		trx, err := tx.FromString(str)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		err = trx.BasicCheck()
-		assert.ErrorIs(t, err, tx.BasicCheckError{
+		require.ErrorIs(t, err, tx.BasicCheckError{
 			Reason: "invalid version: 2",
 		})
 	})
@@ -190,7 +190,7 @@ func TestInvalidPayloadType(t *testing.T) {
 		"01" // Amount
 
 	_, err := tx.FromString(str)
-	assert.ErrorIs(t, err, tx.InvalidPayloadTypeError{
+	require.ErrorIs(t, err, tx.InvalidPayloadTypeError{
 		PayloadType: payload.Type(7),
 	})
 }
@@ -206,7 +206,7 @@ func TestSubsidyTx(t *testing.T) {
 		trx.SetSignature(sig)
 
 		err := trx.BasicCheck()
-		assert.ErrorIs(t, err, tx.BasicCheckError{
+		require.ErrorIs(t, err, tx.BasicCheckError{
 			Reason: "subsidy transaction with signatory",
 		})
 	})
@@ -216,7 +216,7 @@ func TestSubsidyTx(t *testing.T) {
 		trx.SetPublicKey(pub)
 
 		err := trx.BasicCheck()
-		assert.ErrorIs(t, err, tx.BasicCheckError{
+		require.ErrorIs(t, err, tx.BasicCheckError{
 			Reason: "subsidy transaction with signatory",
 		})
 	})
@@ -226,7 +226,7 @@ func TestSubsidyTx(t *testing.T) {
 		trx.StripPublicKey()
 
 		err := trx.BasicCheck()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.False(t, trx.IsPublicKeyStriped())
 	})
 }
@@ -236,7 +236,7 @@ func TestInvalidSignature(t *testing.T) {
 
 	t.Run("Good", func(t *testing.T) {
 		trx := ts.GenerateTestTransferTx()
-		assert.NoError(t, trx.BasicCheck())
+		require.NoError(t, trx.BasicCheck())
 	})
 
 	t.Run("No signature", func(t *testing.T) {
@@ -244,7 +244,7 @@ func TestInvalidSignature(t *testing.T) {
 		trx.SetSignature(nil)
 
 		err := trx.BasicCheck()
-		assert.ErrorIs(t, err, tx.BasicCheckError{
+		require.ErrorIs(t, err, tx.BasicCheckError{
 			Reason: "no signature",
 		})
 	})
@@ -254,7 +254,7 @@ func TestInvalidSignature(t *testing.T) {
 		trx.SetPublicKey(nil)
 
 		err := trx.BasicCheck()
-		assert.ErrorIs(t, err, tx.BasicCheckError{
+		require.ErrorIs(t, err, tx.BasicCheckError{
 			Reason: "no public key",
 		})
 	})
@@ -266,7 +266,7 @@ func TestInvalidSignature(t *testing.T) {
 		trx.SetSignature(sig)
 
 		err := trx.BasicCheck()
-		assert.ErrorIs(t, err, tx.BasicCheckError{
+		require.ErrorIs(t, err, tx.BasicCheckError{
 			Reason: "invalid signature",
 		})
 	})
@@ -276,7 +276,7 @@ func TestInvalidSignature(t *testing.T) {
 		trx.SetPublicKey(pbInv)
 
 		err := trx.BasicCheck()
-		assert.ErrorIs(t, err, tx.BasicCheckError{
+		require.ErrorIs(t, err, tx.BasicCheckError{
 			Reason: fmt.Sprintf("address mismatch: expected %s, got %s", pbInv.AccountAddress(), trx.Payload().Signer()),
 		})
 	})
@@ -290,7 +290,7 @@ func TestInvalidSignature(t *testing.T) {
 		trx.SetSignature(trx0.Signature())
 
 		err := trx.BasicCheck()
-		assert.ErrorIs(t, err, tx.BasicCheckError{
+		require.ErrorIs(t, err, tx.BasicCheckError{
 			Reason: "invalid signature",
 		})
 	})
@@ -300,7 +300,7 @@ func TestInvalidSignature(t *testing.T) {
 		trx.SetSignature(&bls.Signature{})
 
 		err := trx.BasicCheck()
-		assert.ErrorIs(t, err, tx.BasicCheckError{
+		require.ErrorIs(t, err, tx.BasicCheckError{
 			Reason: "invalid signature",
 		})
 	})
@@ -311,7 +311,7 @@ func TestInvalidSignature(t *testing.T) {
 		trx.SetPublicKey(zeroPubKey)
 
 		err := trx.BasicCheck()
-		assert.ErrorIs(t, err, tx.BasicCheckError{
+		require.ErrorIs(t, err, tx.BasicCheckError{
 			Reason: fmt.Sprintf("address mismatch: expected %s, got %s",
 				zeroPubKey.AccountAddress().String(), trx.Payload().Signer()),
 		})
@@ -335,7 +335,7 @@ func TestSignBytesBLS(t *testing.T) {
 
 	txID, _ := hash.FromString("7ab1287fe4882918e69b9f83215378ea08f2d91e0700c2e35a73b7aae1d7bf2d")
 	trx, err := tx.FromBytes(data)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, len(data), trx.SerializeSize())
 
 	signBytes := data[1 : len(data)-bls.PublicKeySize-bls.SignatureSize]
@@ -366,7 +366,7 @@ func TestSignBytesEd25519(t *testing.T) {
 
 	txID, _ := hash.FromString("34cd4656a98f7eb996e83efdc384cefbe3a9c52dca79a99245b4eacc0b0b4311")
 	trx, err := tx.FromBytes(data)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, len(data), trx.SerializeSize())
 
 	signBytes := data[1 : len(data)-ed25519.PublicKeySize-ed25519.SignatureSize]
@@ -385,12 +385,12 @@ func TestStripPublicKey(t *testing.T) {
 
 	trx1 := ts.GenerateTestTransferTx()
 	id1 := trx1.ID()
-	assert.NoError(t, trx1.BasicCheck())
+	require.NoError(t, trx1.BasicCheck())
 
 	trx1.StripPublicKey()
 	assert.True(t, trx1.IsPublicKeyStriped())
 	assert.Equal(t, id1, trx1.ID())
-	assert.ErrorIs(t, trx1.BasicCheck(),
+	require.ErrorIs(t, trx1.BasicCheck(),
 		tx.BasicCheckError{
 			Reason: "no public key",
 		})
@@ -427,7 +427,7 @@ func TestInvalidSignerSignature(t *testing.T) {
 
 	bytes, _ := trx.Bytes()
 	_, err := tx.FromBytes(bytes)
-	assert.ErrorIs(t, err, tx.ErrInvalidSigner)
+	require.ErrorIs(t, err, tx.ErrInvalidSigner)
 }
 
 func TestInvalidSignerPublicKey(t *testing.T) {
@@ -441,7 +441,7 @@ func TestInvalidSignerPublicKey(t *testing.T) {
 
 	bytes, _ := trx.Bytes()
 	_, err := tx.FromBytes(bytes)
-	assert.ErrorIs(t, err, tx.ErrInvalidSigner)
+	require.ErrorIs(t, err, tx.ErrInvalidSigner)
 }
 
 func TestIsFreeTx(t *testing.T) {
@@ -522,7 +522,7 @@ func TestCheckFee(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := tt.trx.BasicCheck()
-			assert.ErrorIs(t, err, tt.expectedErr)
+			require.ErrorIs(t, err, tt.expectedErr)
 		})
 	}
 }

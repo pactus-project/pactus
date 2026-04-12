@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"testing"
 
 	"github.com/spf13/cobra"
@@ -52,7 +51,7 @@ func TestCreateRootCommand(t *testing.T) {
 
 	// Execute PersistentPreRun
 	testCmd := &cobra.Command{}
-	testCmd.SetContext(context.Background())
+	testCmd.SetContext(t.Context())
 	interactiveCmd.PersistentPreRun(testCmd, nil)
 
 	// Verify other commands were added
@@ -104,7 +103,7 @@ func TestClearScreenCommand(t *testing.T) {
 // TestSetAuthContext tests the setAuthContext function.
 func TestSetAuthContext(t *testing.T) {
 	rootCmd := &cobra.Command{}
-	rootCmd.SetContext(context.Background())
+	rootCmd.SetContext(t.Context())
 
 	// Test with empty credentials (should not modify context)
 	originalCtx := rootCmd.Context()

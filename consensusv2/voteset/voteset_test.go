@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func setupCommittee(ts *testsuite.TestSuite, stakes ...amount.Amount) (
@@ -51,26 +52,26 @@ func TestAddBlockVote(t *testing.T) {
 
 	ts.HelperSignVote(invKey, vote1)
 	added, err := voteSet.AddVote(vote1)
-	assert.ErrorIs(t, err, IneligibleVoterError{Address: vote1.Signer()}) // unknown validator
+	require.ErrorIs(t, err, IneligibleVoterError{Address: vote1.Signer()}) // unknown validator
 	assert.False(t, added)
 
 	ts.HelperSignVote(invKey, vote2)
 	added, err = voteSet.AddVote(vote2)
-	assert.ErrorIs(t, err, crypto.ErrInvalidSignature)
+	require.ErrorIs(t, err, crypto.ErrInvalidSignature)
 	assert.False(t, added)
 
 	ts.HelperSignVote(valKey, vote2)
 	added, err = voteSet.AddVote(vote2)
-	assert.NoError(t, err) // ok
+	require.NoError(t, err) // ok
 	assert.True(t, added)
 
 	added, err = voteSet.AddVote(vote2) // Adding again
 	assert.False(t, added)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	ts.HelperSignVote(valKey, vote3)
 	added, err = voteSet.AddVote(vote3)
-	assert.ErrorIs(t, err, ErrDoubleVote)
+	require.ErrorIs(t, err, ErrDoubleVote)
 	assert.True(t, added)
 }
 
@@ -96,26 +97,26 @@ func TestAddBinaryVote(t *testing.T) {
 
 	ts.HelperSignVote(invKey, vote1)
 	added, err := voteSet.AddVote(vote1)
-	assert.ErrorIs(t, err, IneligibleVoterError{Address: vote1.Signer()}) // unknown validator
+	require.ErrorIs(t, err, IneligibleVoterError{Address: vote1.Signer()}) // unknown validator
 	assert.False(t, added)
 
 	ts.HelperSignVote(invKey, vote2)
 	added, err = voteSet.AddVote(vote2)
-	assert.ErrorIs(t, err, crypto.ErrInvalidSignature)
+	require.ErrorIs(t, err, crypto.ErrInvalidSignature)
 	assert.False(t, added)
 
 	ts.HelperSignVote(valKey, vote2)
 	added, err = voteSet.AddVote(vote2)
-	assert.NoError(t, err) // ok
+	require.NoError(t, err) // ok
 	assert.True(t, added)
 
 	added, err = voteSet.AddVote(vote2) // Adding again
 	assert.False(t, added)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	ts.HelperSignVote(valKey, vote3)
 	added, err = voteSet.AddVote(vote3)
-	assert.ErrorIs(t, err, ErrDoubleVote)
+	require.ErrorIs(t, err, ErrDoubleVote)
 	assert.True(t, added)
 }
 
@@ -140,15 +141,15 @@ func TestDoubleBlockVote(t *testing.T) {
 	ts.HelperSignVote(valKeys[0], doubleVote2)
 
 	added, err := voteSet.AddVote(correctVote)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.True(t, added)
 
 	added, err = voteSet.AddVote(doubleVote1)
-	assert.ErrorIs(t, err, ErrDoubleVote)
+	require.ErrorIs(t, err, ErrDoubleVote)
 	assert.True(t, added)
 
 	added, err = voteSet.AddVote(doubleVote2)
-	assert.ErrorIs(t, err, ErrDoubleVote)
+	require.ErrorIs(t, err, ErrDoubleVote)
 	assert.True(t, added)
 
 	assert.Contains(t, voteSet.AllVotes(), correctVote)
@@ -177,15 +178,15 @@ func TestDoubleBinaryVote(t *testing.T) {
 	ts.HelperSignVote(valKeys[0], doubleVote2)
 
 	added, err := voteSet.AddVote(correctVote)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.True(t, added)
 
 	added, err = voteSet.AddVote(doubleVote1)
-	assert.ErrorIs(t, err, ErrDoubleVote)
+	require.ErrorIs(t, err, ErrDoubleVote)
 	assert.True(t, added)
 
 	added, err = voteSet.AddVote(doubleVote2)
-	assert.ErrorIs(t, err, ErrDoubleVote)
+	require.ErrorIs(t, err, ErrDoubleVote)
 	assert.True(t, added)
 
 	assert.Contains(t, voteSet.AllVotes(), correctVote)
@@ -412,7 +413,7 @@ func TestDecidedVoteset(t *testing.T) {
 	ts.HelperSignVote(valKeys[0], vte)
 
 	_, err := voteSet.AddVote(vte)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.True(t, voteSet.HasAnyVoteFor(0, vote.CPValueYes))
 	assert.False(t, voteSet.HasAnyVoteFor(0, vote.CPValueNo))
 }
@@ -436,13 +437,13 @@ func TestBlockVotedPower(t *testing.T) {
 	ts.HelperSignVote(valKeys[1], vote2)
 
 	_, err := voteSet.AddVote(vote1a)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	_, err = voteSet.AddVote(vote1b) // Double vote
-	assert.ErrorIs(t, err, ErrDoubleVote)
+	require.ErrorIs(t, err, ErrDoubleVote)
 
 	_, err = voteSet.AddVote(vote2)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	assert.Equal(t, int64(5+6), voteSet.VotedPower())
 }
@@ -469,16 +470,16 @@ func TestBinaryVotedPower(t *testing.T) {
 	ts.HelperSignVote(valKeys[1], vote2)
 
 	_, _err := voteSet.AddVote(vote1a)
-	assert.NoError(t, _err)
+	require.NoError(t, _err)
 
 	_, _err = voteSet.AddVote(vote1b) // Double vote
-	assert.ErrorIs(t, _err, ErrDoubleVote)
+	require.ErrorIs(t, _err, ErrDoubleVote)
 
 	_, _err = voteSet.AddVote(vote1c) // Next CP:Round
-	assert.NoError(t, _err)
+	require.NoError(t, _err)
 
 	_, _err = voteSet.AddVote(vote2)
-	assert.NoError(t, _err)
+	require.NoError(t, _err)
 
 	assert.Equal(t, int64(5+6), voteSet.VotedPower(0))
 	assert.Equal(t, int64(5), voteSet.VotedPower(1))

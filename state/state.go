@@ -152,12 +152,13 @@ func (st *state) concreteSandbox() sandbox.Sandbox {
 
 func (st *state) tryLoadLastInfo() error {
 	logger.Debug("try to restore the last state")
-	committeeInstance, err := st.lastInfo.RestoreLastInfo(st.store, st.params.CommitteeSize)
+	committeeInstance, blockVersion, err := st.lastInfo.RestoreLastInfo(st.store, st.params.CommitteeSize)
 	if err != nil {
 		return err
 	}
 
 	st.committee = committeeInstance
+	st.params.BlockVersion = blockVersion
 
 	logger.Info("last state restored",
 		"last height", st.lastInfo.BlockHeight(),
@@ -477,15 +478,6 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 	st.lastInfo.UpdateSortitionSeed(blk.Header().SortitionSeed())
 	st.lastInfo.UpdateCertificate(cert)
 	st.lastInfo.UpdateValidators(st.committee.Validators())
-
-	// -----------------------------------
-	// Update block version
-	if blk.Header().Version() > st.params.BlockVersion {
-		st.logger.Info("block version is higher than the current version",
-			"block version", blk.Header().Version(), "current version", st.params.BlockVersion)
-
-		st.params.BlockVersion = blk.Header().Version()
-	}
 
 	// Commit and update the committee
 	st.commitSandbox(sbx, cert.Round())

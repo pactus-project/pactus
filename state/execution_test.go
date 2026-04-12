@@ -32,12 +32,12 @@ func TestProposeBlock(t *testing.T) {
 		testsuite.TransactionWithLockTime(lockTime),
 		testsuite.TransactionWithSigner(td.genAccKey))
 
-	assert.NoError(t, td.state.AddPendingTx(invTransferTx))
-	assert.NoError(t, td.state.AddPendingTx(invBondTx))
-	assert.NoError(t, td.state.AddPendingTx(invSortitionTx))
-	assert.NoError(t, td.state.AddPendingTx(dupSubsidyTx))
-	assert.NoError(t, td.state.AddPendingTx(validTrx1))
-	assert.NoError(t, td.state.AddPendingTx(validTrx2))
+	require.NoError(t, td.state.AddPendingTx(invTransferTx))
+	require.NoError(t, td.state.AddPendingTx(invBondTx))
+	require.NoError(t, td.state.AddPendingTx(invSortitionTx))
+	require.NoError(t, td.state.AddPendingTx(dupSubsidyTx))
+	require.NoError(t, td.state.AddPendingTx(validTrx1))
+	require.NoError(t, td.state.AddPendingTx(validTrx2))
 
 	rewardAddr := td.RandAccAddress()
 	blk, err := td.state.ProposeBlock(td.state.valKeys[0], rewardAddr)
@@ -57,7 +57,7 @@ func TestExecuteBlock(t *testing.T) {
 	td := setup(t)
 
 	blk, cert := td.makeBlockAndCertificate(t, 0)
-	assert.NoError(t, td.state.CommitBlock(blk, cert))
+	require.NoError(t, td.state.CommitBlock(blk, cert))
 
 	invTransferTx := td.GenerateTestTransferTx()
 	validTx1 := td.GenerateTestTransferTx(
@@ -69,10 +69,10 @@ func TestExecuteBlock(t *testing.T) {
 	invSubsidyTx := td.state.createSubsidyTx(td.genValKeys[0].Address(), td.RandAccAddress(), validTx1.Fee()+1)
 	validSubsidyTx := td.state.createSubsidyTx(td.genValKeys[0].Address(), td.RandAccAddress(), validTx1.Fee())
 
-	assert.NoError(t, td.state.AddPendingTx(invTransferTx))
-	assert.NoError(t, td.state.AddPendingTx(validSubsidyTx))
-	assert.NoError(t, td.state.AddPendingTx(invSubsidyTx))
-	assert.NoError(t, td.state.AddPendingTx(validTx1))
+	require.NoError(t, td.state.AddPendingTx(invTransferTx))
+	require.NoError(t, td.state.AddPendingTx(validSubsidyTx))
+	require.NoError(t, td.state.AddPendingTx(invSubsidyTx))
+	require.NoError(t, td.state.AddPendingTx(validTx1))
 
 	t.Run("Block has invalid subsidy amount", func(t *testing.T) {
 		txs := block.NewTxs()
@@ -88,7 +88,7 @@ func TestExecuteBlock(t *testing.T) {
 
 		sb := td.state.concreteSandbox()
 		err := td.state.executeBlock(invBlock, sb, true)
-		assert.ErrorIs(t, err, InvalidSubsidyAmountError{
+		require.ErrorIs(t, err, InvalidSubsidyAmountError{
 			Expected: 1e9 + validTx1.Fee(),
 			Got:      1e9 + validTx1.Fee() + 1,
 		})
@@ -108,7 +108,7 @@ func TestExecuteBlock(t *testing.T) {
 
 		sb := td.state.concreteSandbox()
 		err := td.state.executeBlock(invBlock, sb, true)
-		assert.ErrorIs(t, err, executor.AccountNotFoundError{
+		require.ErrorIs(t, err, executor.AccountNotFoundError{
 			Address: invTransferTx.Payload().Signer(),
 		})
 	})
@@ -127,7 +127,7 @@ func TestExecuteBlock(t *testing.T) {
 
 		sb := td.state.concreteSandbox()
 		err := td.state.executeBlock(invBlock, sb, true)
-		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
+		require.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
 	t.Run("Block has no subsidy transaction", func(t *testing.T) {
@@ -143,7 +143,7 @@ func TestExecuteBlock(t *testing.T) {
 
 		sb := td.state.concreteSandbox()
 		err := td.state.executeBlock(invBlock, sb, true)
-		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
+		require.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
 	t.Run("Block has two subsidy transactions", func(t *testing.T) {
@@ -160,7 +160,7 @@ func TestExecuteBlock(t *testing.T) {
 
 		sb := td.state.concreteSandbox()
 		err := td.state.executeBlock(invBlock, sb, true)
-		assert.ErrorIs(t, err, ErrDuplicatedSubsidyTransaction)
+		require.ErrorIs(t, err, ErrDuplicatedSubsidyTransaction)
 	})
 
 	t.Run("Block has invalid proposer", func(t *testing.T) {
@@ -177,7 +177,7 @@ func TestExecuteBlock(t *testing.T) {
 
 		sb := td.state.concreteSandbox()
 		err := td.state.executeBlock(invBlock, sb, true)
-		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
+		require.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
 	t.Run("OK", func(t *testing.T) {
@@ -193,7 +193,7 @@ func TestExecuteBlock(t *testing.T) {
 			testsuite.BlockWithTransactions(txs))
 
 		sb := td.state.concreteSandbox()
-		assert.NoError(t, td.state.executeBlock(validBlock, sb, true))
+		require.NoError(t, td.state.executeBlock(validBlock, sb, true))
 
 		// Check if fee is claimed
 		treasury := sb.Account(crypto.TreasuryAddress)
@@ -210,7 +210,7 @@ func TestSubsidyTransaction(t *testing.T) {
 		trx := tx.NewTransferTx(td.RandHeight(), crypto.TreasuryAddress, td.RandAccAddress(), td.RandAmount(), 0)
 
 		err := td.state.checkSubsidy(trx, proposerAddr, true)
-		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
+		require.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
 	t.Run("Split Reward With No Foundation Address", func(t *testing.T) {
@@ -223,7 +223,7 @@ func TestSubsidyTransaction(t *testing.T) {
 		trx := td.GenerateTestSubsidyTx(testsuite.TransactionWithRecipients(recipients))
 
 		err := td.state.checkSubsidy(trx, proposerAddr, true)
-		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
+		require.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
 	t.Run("Split Reward With Invalid Foundation Address", func(t *testing.T) {
@@ -240,7 +240,7 @@ func TestSubsidyTransaction(t *testing.T) {
 		trx := td.GenerateTestSubsidyTx(testsuite.TransactionWithRecipients(recipients))
 
 		err := td.state.checkSubsidy(trx, proposerAddr, true)
-		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
+		require.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
 	t.Run("Split Reward: Ok", func(t *testing.T) {
@@ -260,7 +260,7 @@ func TestSubsidyTransaction(t *testing.T) {
 			testsuite.TransactionWithRecipients(recipients))
 
 		err := td.state.checkSubsidy(trx, proposerAddr, true)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("Non-delegated proposer rejects 3-recipient subsidy", func(t *testing.T) {
@@ -290,7 +290,7 @@ func TestSubsidyTransaction(t *testing.T) {
 			testsuite.TransactionWithRecipients(recipients))
 
 		err = td.state.checkSubsidy(trx, proposerAddr, true)
-		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
+		require.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
 	t.Run("Delegated proposer accepts valid 3-recipient subsidy", func(t *testing.T) {
@@ -323,7 +323,7 @@ func TestSubsidyTransaction(t *testing.T) {
 			testsuite.TransactionWithRecipients(recipients))
 
 		err = td.state.checkSubsidy(trx, proposerAddr, true)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("Delegated proposer rejects invalid owner amount/address in 3-recipient subsidy", func(t *testing.T) {
@@ -356,7 +356,7 @@ func TestSubsidyTransaction(t *testing.T) {
 			testsuite.TransactionWithRecipients(badRecipients))
 
 		err = td.state.checkSubsidy(trx, proposerAddr, true)
-		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
+		require.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
 	t.Run("Delegated proposer with zero share for owner", func(t *testing.T) {
@@ -384,6 +384,6 @@ func TestSubsidyTransaction(t *testing.T) {
 			testsuite.TransactionWithRecipients(recipients))
 
 		err = td.state.checkSubsidy(trx, proposerAddr, true)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 }

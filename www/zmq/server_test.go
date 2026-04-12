@@ -1,7 +1,6 @@
 package zmq
 
 import (
-	"context"
 	"fmt"
 	"testing"
 
@@ -25,7 +24,7 @@ func setup(t *testing.T, conf *Config) *testData {
 	ts := testsuite.NewTestSuite(t)
 	mockState := state.MockingState(ts)
 	pipe := pipeline.New[any](t.Context())
-	server, err := New(context.Background(), conf, pipe)
+	server, err := New(t.Context(), conf, pipe)
 	require.NoError(t, err)
 
 	return &testData{

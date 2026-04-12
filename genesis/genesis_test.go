@@ -41,19 +41,19 @@ func TestMarshaling(t *testing.T) {
 
 	// Test saving and loading
 	f := util.TempFilePath()
-	assert.NoError(t, gen1.SaveToFile(f))
+	require.NoError(t, gen1.SaveToFile(f))
 	gen3, err := genesis.LoadFromFile(f)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	require.Equal(t, gen1.Hash(), gen3.Hash())
 
 	_, err = genesis.LoadFromFile(util.TempFilePath())
-	assert.Error(t, err, "file not found")
+	require.Error(t, err, "file not found")
 }
 
 func TestGenesisMainnet(t *testing.T) {
 	gen := genesis.MainnetGenesis()
-	assert.Equal(t, len(gen.Validators()), 4)
-	assert.Equal(t, len(gen.Accounts()), 5)
+	assert.Len(t, gen.Validators(), 4)
+	assert.Len(t, gen.Accounts(), 5)
 
 	genTime, _ := time.Parse("02 Jan 2006, 15:04 MST", "24 Jan 2024, 20:24 UTC")
 	expected, _ := hash.FromString("e4d59e3145c9d718caf178edb33bc2ca7fe43e5b30990c9d57d53a60c4741432")
@@ -94,8 +94,8 @@ func TestGenesisTestnet(t *testing.T) {
 	crypto.AddressHRP = "tpc"
 
 	gen := genesis.TestnetGenesis()
-	assert.Equal(t, 4, len(gen.Validators()))
-	assert.Equal(t, 5, len(gen.Accounts()))
+	assert.Len(t, gen.Validators(), 4)
+	assert.Len(t, gen.Accounts(), 5)
 
 	genTime, _ := time.Parse("2006-01-02", "2024-03-16")
 	expected, _ := hash.FromString("13f96e6fbc9e0de0d53537ac5e894fc8e66be1600436db2df1511dc30696e822")

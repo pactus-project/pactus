@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestContains(t *testing.T) {
@@ -44,7 +45,7 @@ func TestInvalidProposerJoinAndLeave(t *testing.T) {
 	val5 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(4))
 
 	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val5.Address())
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Nil(t, cmt)
 }
 
@@ -61,7 +62,7 @@ func TestProposerMove(t *testing.T) {
 
 	cmt, err := committee.NewCommittee(
 		[]*validator.Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address())
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	//
 	// +*+-+-+-+-+-+-+    +-+*+-+-+-+-+-+    +-+-+-+-+-+*+-+    +*+-+-+-+-+-+-+
@@ -125,7 +126,7 @@ func TestProposerJoin(t *testing.T) {
 	val7 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(7))
 
 	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 7, val1.Address())
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, 4, cmt.Size())
 
 	//
@@ -206,7 +207,7 @@ func TestProposerJoinAndLeave(t *testing.T) {
 
 	cmt, err := committee.NewCommittee(
 		[]*validator.Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address())
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	fmt.Println(cmt.String())
 
 	// This code comment explains how the committee changes when new validators join.
@@ -322,7 +323,7 @@ func TestIsProposer(t *testing.T) {
 	val4 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(3))
 
 	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val1.Address())
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	assert.Equal(t, int32(0), cmt.Proposer(0).Number())
 	assert.Equal(t, int32(1), cmt.Proposer(1).Number())
@@ -341,7 +342,7 @@ func TestCommitters(t *testing.T) {
 	val4 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(3))
 
 	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val1.Address())
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, []int32{0, 1, 2, 3}, cmt.Committers())
 }
 
@@ -357,9 +358,9 @@ func TestSortJoined(t *testing.T) {
 	val7 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(6))
 
 	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 17, val1.Address())
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	committee2, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 17, val1.Address())
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	cmt.Update(0, []*validator.Validator{val5, val6, val7})
 	committee2.Update(0, []*validator.Validator{val7, val5, val6})
@@ -376,7 +377,7 @@ func TestTotalPower(t *testing.T) {
 	val4 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(3))
 
 	cmt, err := committee.NewCommittee([]*validator.Validator{val0, val1, val2, val3, val4}, 4, val1.Address())
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	totalPower := val0.Power() + val1.Power() + val2.Power() + val3.Power() + val4.Power()
 	totalStake := val0.Stake() + val1.Stake() + val2.Stake() + val3.Stake() + val4.Stake()
@@ -399,12 +400,12 @@ func TestProtocolVersionPercentages(t *testing.T) {
 	val5.UpdateProtocolVersion(protocol.ProtocolVersion2)
 
 	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4, val5}, 5, val1.Address())
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	percentages := cmt.ProtocolVersions()
-	assert.Equal(t, float64(25), percentages[protocol.ProtocolVersionUnknown])
-	assert.Equal(t, float64(25), percentages[protocol.ProtocolVersion1])
-	assert.Equal(t, float64(50), percentages[protocol.ProtocolVersion2])
+	assert.InDelta(t, float64(25), percentages[protocol.ProtocolVersionUnknown], 0.01)
+	assert.InDelta(t, float64(25), percentages[protocol.ProtocolVersion1], 0.01)
+	assert.InDelta(t, float64(50), percentages[protocol.ProtocolVersion2], 0.01)
 }
 
 func TestSupportProtocolVersion(t *testing.T) {
@@ -422,7 +423,7 @@ func TestSupportProtocolVersion(t *testing.T) {
 	val5.UpdateProtocolVersion(protocol.ProtocolVersion2)
 
 	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4, val5}, 5, val1.Address())
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	supportVer1 := cmt.SupportProtocolVersion(protocol.ProtocolVersion1)
 	supportVer2 := cmt.SupportProtocolVersion(protocol.ProtocolVersion2)
