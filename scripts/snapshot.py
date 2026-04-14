@@ -34,6 +34,7 @@ import hashlib
 import json
 import logging
 import zipfile
+import time
 from datetime import datetime
 
 
@@ -173,6 +174,7 @@ class DaemonManager:
             sv = get_service_name(service_path)
             logging.info(f"Starting systemctl service '{sv}'")
             return run_command(["sudo", "systemctl", "start", sv])
+
         return None
 
     @staticmethod
@@ -184,6 +186,7 @@ class DaemonManager:
             sv = get_service_name(service_path)
             logging.info(f"Stopping systemctl service '{sv}'")
             return run_command(["sudo", "systemctl", "stop", sv])
+
         return None
 
 
@@ -329,13 +332,18 @@ class ProcessBackup:
     def __init__(self, args):
         self.args = args
 
-    def run(self):
         Validation.validate_args(self.args)
+
+    def run(self):
         DaemonManager.stop_service(
             service_path=self.args.service_path,
             docker_compose_path=self.args.docker_compose_path,
             docker_service_name=self.args.docker_service_name
         )
+
+        # sleeps for 5 seconds
+        time.sleep(5)
+
         snapshot_manager = SnapshotManager(self.args)
         snapshot_manager.manage_snapshots()
         snapshot_manager.create_snapshot()
