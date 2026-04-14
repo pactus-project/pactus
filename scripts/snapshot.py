@@ -63,7 +63,7 @@ class Metadata:
 
     @staticmethod
     def update_metadata_file(snapshot_path, snapshot_metadata):
-        metadata_file = os.path.join(snapshot_path, "snapshots", "metadata.json")
+        metadata_file = os.path.join(snapshot_path, "metadata.json")
         if os.path.isfile(metadata_file):
             logging.info(f"Updating existing metadata file '{metadata_file}'")
             with open(metadata_file, "r") as f:
@@ -195,7 +195,7 @@ class SnapshotManager:
         self.args = args
 
     def manage_snapshots(self):
-        snapshots_dir = os.path.join(self.args.snapshot_path, "snapshots")
+        snapshots_dir = self.args.snapshot_path
         logging.info(f"Managing snapshots in '{snapshots_dir}'")
 
         if not os.path.exists(snapshots_dir):
@@ -224,7 +224,7 @@ class SnapshotManager:
 
     def create_snapshot(self):
         timestamp_str = get_timestamp_str()
-        snapshot_dir = os.path.join(self.args.snapshot_path, "snapshots", timestamp_str)
+        snapshot_dir = os.path.join(self.args.snapshot_path, timestamp_str)
         logging.info(f"Creating snapshot directory '{snapshot_dir}'")
         os.makedirs(snapshot_dir, exist_ok=True)
 
@@ -321,10 +321,9 @@ class Validation:
             f"Permission to access snapshot path '{args.snapshot_path}' confirmed"
         )
 
-        snapshots_dir = os.path.join(args.snapshot_path, "snapshots")
-        if not os.path.isdir(snapshots_dir):
+        if not os.path.isdir(args.snapshot_path):
             logging.info("Snapshots directory does not exist, creating it")
-            os.makedirs(snapshots_dir)
+            os.makedirs(args.snapshot_path)
         else:
             logging.info("Snapshots directory exists")
 
