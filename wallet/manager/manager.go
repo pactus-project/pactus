@@ -40,9 +40,12 @@ func NewManager(ctx context.Context, conf *Config,
 	}
 
 	for _, file := range files {
-		wlt, err := wallet.Open(ctx, file,
+		opts := []wallet.OpenWalletOption{
 			wallet.WithBlockchainProvider(provider),
-			wallet.WithEventPipe(eventPipe))
+			wallet.WithEventPipe(eventPipe),
+			wallet.WithLockMode(conf.LockMode),
+		}
+		wlt, err := wallet.Open(ctx, file, opts...)
 		if err != nil {
 			return nil, fmt.Errorf("failed to open wallet %s: %w", file, err)
 		}

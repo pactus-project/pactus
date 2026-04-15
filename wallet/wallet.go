@@ -71,7 +71,13 @@ func Create(ctx context.Context, walletPath, mnemonic, password string,
 		return nil, err
 	}
 
-	storage, err := sqlitestorage.Create(ctx, walletPath, chain, vlt)
+	cfg := defaultOpenWalletConfig
+	for _, opt := range opts {
+		opt(&cfg)
+	}
+
+	storage, err := sqlitestorage.Create(ctx, walletPath, chain, vlt,
+		sqlitestorage.WithLockingMode(cfg.lockMode))
 	if err != nil {
 		return nil, err
 	}
@@ -85,8 +91,14 @@ func Create(ctx context.Context, walletPath, mnemonic, password string,
 // Offline wallet doesn’t have any connection to any node.
 // Online wallet has a connection to one of the pre-defined servers.
 func Open(ctx context.Context, walletPath string, opts ...OpenWalletOption) (*Wallet, error) {
+	cfg := defaultOpenWalletConfig
+	for _, opt := range opts {
+		opt(&cfg)
+	}
+
 	if util.IsDir(walletPath) {
-		sqliteStrg, err := sqlitestorage.Open(ctx, walletPath)
+		sqliteStrg, err := sqlitestorage.Open(ctx, walletPath,
+			sqlitestorage.WithLockingMode(cfg.lockMode))
 		if err != nil {
 			return nil, err
 		}
@@ -110,11 +122,13 @@ func Open(ctx context.Context, walletPath string, opts ...OpenWalletOption) (*Wa
 type openWalletConfig struct {
 	eventPipe pipeline.Pipeline[any]
 	provider  provider.IBlockchainProvider
+	lockMode  bool
 }
 
 var defaultOpenWalletConfig = openWalletConfig{
 	eventPipe: nil,
 	provider:  nil,
+	lockMode:  true,
 }
 
 type OpenWalletOption func(*openWalletConfig)
@@ -134,6 +148,13 @@ func WithBlockchainProvider(provider provider.IBlockchainProvider) OpenWalletOpt
 func WithOfflineProvider() OpenWalletOption {
 	return func(cfg *openWalletConfig) {
 		cfg.provider = offline.NewOfflineBlockchainProvider()
+	}
+}
+
+// WithLockMode configures exclusive or normal database locking.
+func WithLockMode(lockMode bool) OpenWalletOption {
+	return func(cfg *openWalletConfig) {
+		cfg.lockMode = lockMode
 	}
 }
 

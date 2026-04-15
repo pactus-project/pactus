@@ -275,3 +275,10 @@
   # The watermark is applied uniformly to all active topics.
   # Default is 1000
   zmqpubhwm = 1000
+
+# `wallet` contains wallet storage options.
+[wallet]
+  # `lock_mode` controls how wallets behave when it opens.
+  # If true, wallets will be locked when it opens and won't allow other instances to open the same wallet.
+  # If false, wallets will not be locked when it opens and other instances can open the same wallet.
+  lock_mode = true

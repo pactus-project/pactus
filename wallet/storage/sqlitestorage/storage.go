@@ -46,9 +46,9 @@ func dbPath(path string) string {
 	return filepath.Join(path, "wallet.db")
 }
 
-func configurePragmas(ctx context.Context, db *sql.DB) error {
+func configurePragmas(ctx context.Context, db *sql.DB, lockingMode string) error {
 	pragmas := []string{
-		"PRAGMA locking_mode=NORMAL;",
+		fmt.Sprintf("PRAGMA locking_mode=%s;", lockingMode),
 		"PRAGMA journal_mode=WAL;",
 		"PRAGMA synchronous=NORMAL;",
 	}
@@ -62,14 +62,18 @@ func configurePragmas(ctx context.Context, db *sql.DB) error {
 	return nil
 }
 
-func openDB(ctx context.Context, path string) (*sql.DB, error) {
+func openDB(ctx context.Context, path string, opts ...Option) (*sql.DB, error) {
 	dsn := fmt.Sprintf("file:%s?_busy_timeout=5000", dbPath(path))
 	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
 
-	if err := configurePragmas(ctx, db); err != nil {
+	p := defaultSettings()
+	for _, opt := range opts {
+		opt(&p)
+	}
+	if err := configurePragmas(ctx, db, p.lockingMode); err != nil {
 		_ = db.Close()
 
 		return nil, err
@@ -79,12 +83,14 @@ func openDB(ctx context.Context, path string) (*sql.DB, error) {
 }
 
 // Create creates a new SQLite storage instance and initializes the schema.
-func Create(ctx context.Context, path string, network genesis.ChainType, vlt *vault.Vault) (*Storage, error) {
+func Create(ctx context.Context, path string, network genesis.ChainType, vlt *vault.Vault,
+	opts ...Option,
+) (*Storage, error) {
 	if err := util.Mkdir(path); err != nil {
 		return nil, err
 	}
 
-	db, err := openDB(ctx, path)
+	db, err := openDB(ctx, path, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -146,8 +152,8 @@ func Create(ctx context.Context, path string, network genesis.ChainType, vlt *va
 }
 
 // Open opens an existing SQLite storage instance without creating schema.
-func Open(ctx context.Context, path string) (*Storage, error) {
-	db, err := openDB(ctx, path)
+func Open(ctx context.Context, path string, opts ...Option) (*Storage, error) {
+	db, err := openDB(ctx, path, opts...)
 	if err != nil {
 		return nil, err
 	}
