@@ -38,21 +38,21 @@ var (
 
 // Config defines parameters for the root application configuration.
 type Config struct {
-	Node    *NodeConfig     `toml:"node"`
-	Store   *store.Config   `toml:"store"`
-	Network *network.Config `toml:"network"`
-	Sync    *sync.Config    `toml:"sync"`
-	TxPool  *txpool.Config  `toml:"tx_pool"`
-	Logger  *logger.Config  `toml:"logger"`
-	GRPC    *grpc.Config    `toml:"grpc"`
-	JSONRPC *jsonrpc.Config `toml:"jsonrpc"`
-	HTTP    *http.Config    `toml:"http"`
-	HTML    *html.Config    `toml:"html"`
-	ZeroMq  *zmq.Config     `toml:"zeromq"`
+	Node          *NodeConfig     `toml:"node"`
+	Store         *store.Config   `toml:"store"`
+	Network       *network.Config `toml:"network"`
+	Sync          *sync.Config    `toml:"sync"`
+	TxPool        *txpool.Config  `toml:"tx_pool"`
+	Logger        *logger.Config  `toml:"logger"`
+	GRPC          *grpc.Config    `toml:"grpc"`
+	JSONRPC       *jsonrpc.Config `toml:"jsonrpc"`
+	HTTP          *http.Config    `toml:"http"`
+	HTML          *html.Config    `toml:"html"`
+	ZeroMq        *zmq.Config     `toml:"zeromq"`
+	WalletManager *wltmgr.Config  `toml:"wallet"`
 
-	Consensus     *consensus.Config   `toml:"-"` // Deprecated: replaced by new consensus algorithm
-	ConsensusV2   *consensusv2.Config `toml:"-"`
-	WalletManager *wltmgr.Config      `toml:"-"`
+	Consensus   *consensus.Config   `toml:"-"` // Deprecated: replaced by new consensus algorithm
+	ConsensusV2 *consensusv2.Config `toml:"-"`
 }
 
 type BootstrapInfo struct {
@@ -310,6 +310,9 @@ func (conf *Config) BasicCheck() error {
 		return err
 	}
 	if err := conf.ZeroMq.BasicCheck(); err != nil {
+		return err
+	}
+	if err := conf.WalletManager.BasicCheck(); err != nil {
 		return err
 	}
 
