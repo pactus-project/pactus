@@ -949,6 +949,8 @@ type GetBlockchainInfoResponse struct {
 	InCommittee bool `protobuf:"varint,13,opt,name=in_committee,json=inCommittee,proto3" json:"in_committee,omitempty"`
 	// The number of validators in the current committee.
 	CommitteeSize int32 `protobuf:"varint,14,opt,name=committee_size,json=committeeSize,proto3" json:"committee_size,omitempty"`
+	// Average availability score of validators with stake, in percentage (0-100).
+	AverageScore  float64 `protobuf:"fixed64,15,opt,name=average_score,json=averageScore,proto3" json:"average_score,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1063,6 +1065,13 @@ func (x *GetBlockchainInfoResponse) GetInCommittee() bool {
 func (x *GetBlockchainInfoResponse) GetCommitteeSize() int32 {
 	if x != nil {
 		return x.CommitteeSize
+	}
+	return 0
+}
+
+func (x *GetBlockchainInfoResponse) GetAverageScore() float64 {
+	if x != nil {
+		return x.AverageScore
 	}
 	return 0
 }
@@ -2077,7 +2086,7 @@ const file_blockchain_proto_rawDesc = "" +
 	"\x04hash\x18\x01 \x01(\tR\x04hash\"0\n" +
 	"\x16GetBlockHeightResponse\x12\x16\n" +
 	"\x06height\x18\x01 \x01(\rR\x06height\"\x1a\n" +
-	"\x18GetBlockchainInfoRequest\"\xee\x03\n" +
+	"\x18GetBlockchainInfoRequest\"\x93\x04\n" +
 	"\x19GetBlockchainInfoResponse\x12*\n" +
 	"\x11last_block_height\x18\x01 \x01(\rR\x0flastBlockHeight\x12&\n" +
 	"\x0flast_block_hash\x18\x02 \x01(\tR\rlastBlockHash\x12&\n" +
@@ -2092,7 +2101,8 @@ const file_blockchain_proto_rawDesc = "" +
 	"\tis_pruned\x18\b \x01(\bR\bisPruned\x12%\n" +
 	"\x0epruning_height\x18\t \x01(\rR\rpruningHeight\x12!\n" +
 	"\fin_committee\x18\r \x01(\bR\vinCommittee\x12%\n" +
-	"\x0ecommittee_size\x18\x0e \x01(\x05R\rcommitteeSize\"\x19\n" +
+	"\x0ecommittee_size\x18\x0e \x01(\x05R\rcommitteeSize\x12#\n" +
+	"\raverage_score\x18\x0f \x01(\x01R\faverageScore\"\x19\n" +
 	"\x17GetCommitteeInfoRequest\"\xec\x02\n" +
 	"\x18GetCommitteeInfoResponse\x12%\n" +
 	"\x0ecommittee_size\x18\x01 \x01(\x05R\rcommitteeSize\x12'\n" +

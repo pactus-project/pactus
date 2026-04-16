@@ -3309,6 +3309,9 @@ impl serde::Serialize for GetBlockchainInfoResponse {
         if self.committee_size != 0 {
             len += 1;
         }
+        if self.average_score != 0. {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.GetBlockchainInfoResponse", len)?;
         if self.last_block_height != 0 {
             struct_ser.serialize_field("lastBlockHeight", &self.last_block_height)?;
@@ -3352,6 +3355,9 @@ impl serde::Serialize for GetBlockchainInfoResponse {
         if self.committee_size != 0 {
             struct_ser.serialize_field("committeeSize", &self.committee_size)?;
         }
+        if self.average_score != 0. {
+            struct_ser.serialize_field("averageScore", &self.average_score)?;
+        }
         struct_ser.end()
     }
 }
@@ -3386,6 +3392,8 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
             "inCommittee",
             "committee_size",
             "committeeSize",
+            "average_score",
+            "averageScore",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -3402,6 +3410,7 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
             PruningHeight,
             InCommittee,
             CommitteeSize,
+            AverageScore,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -3435,6 +3444,7 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                             "pruningHeight" | "pruning_height" => Ok(GeneratedField::PruningHeight),
                             "inCommittee" | "in_committee" => Ok(GeneratedField::InCommittee),
                             "committeeSize" | "committee_size" => Ok(GeneratedField::CommitteeSize),
+                            "averageScore" | "average_score" => Ok(GeneratedField::AverageScore),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -3466,6 +3476,7 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                 let mut pruning_height__ = None;
                 let mut in_committee__ = None;
                 let mut committee_size__ = None;
+                let mut average_score__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::LastBlockHeight => {
@@ -3558,6 +3569,14 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                                 Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
+                        GeneratedField::AverageScore => {
+                            if average_score__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("averageScore"));
+                            }
+                            average_score__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
                     }
                 }
                 Ok(GetBlockchainInfoResponse {
@@ -3573,6 +3592,7 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                     pruning_height: pruning_height__.unwrap_or_default(),
                     in_committee: in_committee__.unwrap_or_default(),
                     committee_size: committee_size__.unwrap_or_default(),
+                    average_score: average_score__.unwrap_or_default(),
                 })
             }
         }

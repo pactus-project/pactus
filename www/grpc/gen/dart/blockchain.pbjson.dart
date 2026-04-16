@@ -330,6 +330,7 @@ const GetBlockchainInfoResponse$json = {
     {'1': 'pruning_height', '3': 9, '4': 1, '5': 13, '10': 'pruningHeight'},
     {'1': 'in_committee', '3': 13, '4': 1, '5': 8, '10': 'inCommittee'},
     {'1': 'committee_size', '3': 14, '4': 1, '5': 5, '10': 'committeeSize'},
+    {'1': 'average_score', '3': 15, '4': 1, '5': 1, '10': 'averageScore'},
   ],
 };
 
@@ -343,7 +344,8 @@ final $typed_data.Uint8List getBlockchainInfoResponseDescriptor = $convert.base6
     'MSHwoLdG90YWxfcG93ZXIYBSABKANSCnRvdGFsUG93ZXISJwoPY29tbWl0dGVlX3Bvd2VyGAYg'
     'ASgDUg5jb21taXR0ZWVQb3dlchIbCglpc19wcnVuZWQYCCABKAhSCGlzUHJ1bmVkEiUKDnBydW'
     '5pbmdfaGVpZ2h0GAkgASgNUg1wcnVuaW5nSGVpZ2h0EiEKDGluX2NvbW1pdHRlZRgNIAEoCFIL'
-    'aW5Db21taXR0ZWUSJQoOY29tbWl0dGVlX3NpemUYDiABKAVSDWNvbW1pdHRlZVNpemU=');
+    'aW5Db21taXR0ZWUSJQoOY29tbWl0dGVlX3NpemUYDiABKAVSDWNvbW1pdHRlZVNpemUSIwoNYX'
+    'ZlcmFnZV9zY29yZRgPIAEoAVIMYXZlcmFnZVNjb3Jl');
 
 @$core.Deprecated('Use getCommitteeInfoRequestDescriptor instead')
 const GetCommitteeInfoRequest$json = {

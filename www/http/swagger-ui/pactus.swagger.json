@@ -2020,6 +2020,11 @@
           "type": "integer",
           "format": "int32",
           "description": "The number of validators in the current committee."
+        },
+        "averageScore": {
+          "type": "number",
+          "format": "double",
+          "description": "Average availability score of validators with stake, in percentage (0-100)."
         }
       },
       "description": "Response message contains general blockchain information."

@@ -1006,6 +1006,7 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     $core.int? activeValidators,
     $core.bool? inCommittee,
     $core.int? committeeSize,
+    $core.double? averageScore,
   }) {
     final result = create();
     if (lastBlockHeight != null) result.lastBlockHeight = lastBlockHeight;
@@ -1020,6 +1021,7 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     if (activeValidators != null) result.activeValidators = activeValidators;
     if (inCommittee != null) result.inCommittee = inCommittee;
     if (committeeSize != null) result.committeeSize = committeeSize;
+    if (averageScore != null) result.averageScore = averageScore;
     return result;
   }
 
@@ -1050,6 +1052,7 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     ..aI(12, _omitFieldNames ? '' : 'activeValidators')
     ..aOB(13, _omitFieldNames ? '' : 'inCommittee')
     ..aI(14, _omitFieldNames ? '' : 'committeeSize')
+    ..aD(15, _omitFieldNames ? '' : 'averageScore')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1192,6 +1195,16 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
   $core.bool hasCommitteeSize() => $_has(11);
   @$pb.TagNumber(14)
   void clearCommitteeSize() => $_clearField(14);
+
+  /// Average availability score of validators with stake, in percentage (0-100).
+  @$pb.TagNumber(15)
+  $core.double get averageScore => $_getN(12);
+  @$pb.TagNumber(15)
+  set averageScore($core.double value) => $_setDouble(12, value);
+  @$pb.TagNumber(15)
+  $core.bool hasAverageScore() => $_has(12);
+  @$pb.TagNumber(15)
+  void clearAverageScore() => $_clearField(15);
 }
 
 /// Request message for retrieving committee information.

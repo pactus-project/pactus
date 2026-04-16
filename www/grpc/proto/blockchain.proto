@@ -177,6 +177,8 @@ message GetBlockchainInfoResponse {
   bool in_committee = 13;
   // The number of validators in the current committee.
   int32 committee_size = 14;
+  // Average availability score of validators with stake, in percentage (0-100).
+  double average_score = 15;
 }
 
 // Request message for retrieving committee information.

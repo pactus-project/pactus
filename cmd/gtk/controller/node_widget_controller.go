@@ -142,6 +142,7 @@ func (c *NodeWidgetController) timeout10() {
 		c.view.LabelActiveValidator.SetText(fmt.Sprintf("%v", chainInfo.ActiveValidators))
 		c.view.LabelCommitteeStake.SetText(committeeStake.String())
 		c.view.LabelTotalStake.SetText(totalStake.String())
+		c.view.LabelAverageScore.SetText(fmt.Sprintf("%.2f", chainInfo.AverageScore))
 		c.view.LabelNumConnections.SetText(numConnections)
 		c.view.LabelReachability.SetText(reachability)
 
