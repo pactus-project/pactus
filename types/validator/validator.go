@@ -265,3 +265,8 @@ func (val *Validator) UpdateProtocolVersion(ver protocol.Version) {
 func (val *Validator) ProtocolVersion() protocol.Version {
 	return val.data.ProtocolVersion
 }
+
+// IsActive returns true if the validator is active (has stake and is not unbonded).
+func (val *Validator) IsActive() bool {
+	return val.Stake() > 0 && !val.IsUnbonded()
+}
