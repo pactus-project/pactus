@@ -3094,7 +3094,8 @@ committeePower: jspb.Message.getFieldWithDefault(msg, 6, 0),
 isPruned: jspb.Message.getBooleanFieldWithDefault(msg, 8, false),
 pruningHeight: jspb.Message.getFieldWithDefault(msg, 9, 0),
 inCommittee: jspb.Message.getBooleanFieldWithDefault(msg, 13, false),
-committeeSize: jspb.Message.getFieldWithDefault(msg, 14, 0)
+committeeSize: jspb.Message.getFieldWithDefault(msg, 14, 0),
+averageScore: jspb.Message.getFloatingPointFieldWithDefault(msg, 15, 0.0)
   };
 
   if (includeInstance) {
@@ -3178,6 +3179,10 @@ proto.pactus.GetBlockchainInfoResponse.deserializeBinaryFromReader = function(ms
     case 14:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setCommitteeSize(value);
+      break;
+    case 15:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setAverageScore(value);
       break;
     default:
       reader.skipField();
@@ -3289,6 +3294,13 @@ proto.pactus.GetBlockchainInfoResponse.serializeBinaryToWriter = function(messag
   if (f !== 0) {
     writer.writeInt32(
       14,
+      f
+    );
+  }
+  f = message.getAverageScore();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      15,
       f
     );
   }
@@ -3508,6 +3520,24 @@ proto.pactus.GetBlockchainInfoResponse.prototype.getCommitteeSize = function() {
  */
 proto.pactus.GetBlockchainInfoResponse.prototype.setCommitteeSize = function(value) {
   return jspb.Message.setProto3IntField(this, 14, value);
+};
+
+
+/**
+ * optional double average_score = 15;
+ * @return {number}
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.getAverageScore = function() {
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 15, 0.0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.setAverageScore = function(value) {
+  return jspb.Message.setProto3FloatField(this, 15, value);
 };
 
 

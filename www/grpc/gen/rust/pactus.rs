@@ -544,7 +544,7 @@ pub struct GetBlockHeightResponse {
 pub struct GetBlockchainInfoRequest {
 }
 /// Response message contains general blockchain information.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetBlockchainInfoResponse {
     /// The height of the last block in the blockchain.
     #[prost(uint32, tag="1")]
@@ -583,6 +583,9 @@ pub struct GetBlockchainInfoResponse {
     /// The number of validators in the current committee.
     #[prost(int32, tag="14")]
     pub committee_size: i32,
+    /// Average availability score of validators with stake, in percentage (0-100).
+    #[prost(double, tag="15")]
+    pub average_score: f64,
 }
 /// Request message for retrieving committee information.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]

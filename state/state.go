@@ -762,6 +762,24 @@ func (st *state) ChainInfo() *ChainInfo {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
+	totalScore := 0.0
+	totalWithStake := 0
+	st.store.IterateValidators(func(val *validator.Validator) bool {
+		if val.Stake().ToNanoPAC() == 0 {
+			return false
+		}
+
+		totalScore += st.scoreMgr.AvailabilityScore(val.Number())
+		totalWithStake++
+
+		return false
+	})
+
+	averageScore := 100.0
+	if totalWithStake > 0 {
+		averageScore = totalScore / float64(totalWithStake) * 100
+	}
+
 	return &ChainInfo{
 		LastBlockHeight:  st.lastInfo.BlockHeight(),
 		LastBlockHash:    st.lastInfo.BlockHash(),
@@ -772,6 +790,7 @@ func (st *state) ChainInfo() *ChainInfo {
 		TotalAccounts:    st.store.TotalAccounts(),
 		TotalValidators:  st.store.TotalValidators(),
 		ActiveValidators: st.store.ActiveValidators(),
+		AverageScore:     averageScore,
 		IsPruned:         st.store.IsPruned(),
 		PruningHeight:    st.store.PruningHeight(),
 	}

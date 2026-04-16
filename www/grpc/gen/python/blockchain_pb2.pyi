@@ -152,6 +152,7 @@ class GetBlockchainInfoResponse(_message.Message):
     PRUNING_HEIGHT_FIELD_NUMBER: _ClassVar[int]
     IN_COMMITTEE_FIELD_NUMBER: _ClassVar[int]
     COMMITTEE_SIZE_FIELD_NUMBER: _ClassVar[int]
+    AVERAGE_SCORE_FIELD_NUMBER: _ClassVar[int]
     last_block_height: int
     last_block_hash: str
     last_block_time: int
@@ -164,7 +165,8 @@ class GetBlockchainInfoResponse(_message.Message):
     pruning_height: int
     in_committee: bool
     committee_size: int
-    def __init__(self, last_block_height: _Optional[int] = ..., last_block_hash: _Optional[str] = ..., last_block_time: _Optional[int] = ..., total_accounts: _Optional[int] = ..., total_validators: _Optional[int] = ..., active_validators: _Optional[int] = ..., total_power: _Optional[int] = ..., committee_power: _Optional[int] = ..., is_pruned: _Optional[bool] = ..., pruning_height: _Optional[int] = ..., in_committee: _Optional[bool] = ..., committee_size: _Optional[int] = ...) -> None: ...
+    average_score: float
+    def __init__(self, last_block_height: _Optional[int] = ..., last_block_hash: _Optional[str] = ..., last_block_time: _Optional[int] = ..., total_accounts: _Optional[int] = ..., total_validators: _Optional[int] = ..., active_validators: _Optional[int] = ..., total_power: _Optional[int] = ..., committee_power: _Optional[int] = ..., is_pruned: _Optional[bool] = ..., pruning_height: _Optional[int] = ..., in_committee: _Optional[bool] = ..., committee_size: _Optional[int] = ..., average_score: _Optional[float] = ...) -> None: ...
 
 class GetCommitteeInfoRequest(_message.Message):
     __slots__ = ()

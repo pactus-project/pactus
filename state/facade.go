@@ -32,6 +32,7 @@ type ChainInfo struct {
 	TotalAccounts    int32
 	TotalValidators  int32
 	ActiveValidators int32
+	AverageScore     float64
 
 	IsPruned      bool
 	PruningHeight uint32

@@ -1892,6 +1892,13 @@ of its running validators is a member of the current committee.
   The number of validators in the current committee.
     </td>
   </tr>
+   <tr>
+    <td class="fw-bold">average_score</td>
+    <td> numeric</td>
+    <td>
+  Average availability score of validators with stake, in percentage (0-100).
+    </td>
+  </tr>
    </tbody>
 </table>
 

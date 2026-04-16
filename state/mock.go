@@ -250,6 +250,7 @@ func (m *MockState) ChainInfo() *ChainInfo {
 		TotalAccounts:    m.TestStore.TotalAccounts(),
 		TotalValidators:  m.TestStore.TotalValidators(),
 		ActiveValidators: m.TestStore.ActiveValidators(),
+		AverageScore:     m.AvailabilityScore(0) * 100,
 		IsPruned:         m.TestStore.IsPruned(),
 		PruningHeight:    m.TestStore.PruningHeight(),
 	}

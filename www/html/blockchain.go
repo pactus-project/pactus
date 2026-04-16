@@ -32,6 +32,7 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
 	tmk.addRowInt("Total Accounts", int(res.TotalAccounts))
 	tmk.addRowInt("Total Validators", int(res.TotalValidators))
 	tmk.addRowInt("Active Validators", int(res.ActiveValidators))
+	tmk.addRowString("Average Score", fmt.Sprintf("%.2f", res.AverageScore))
 	tmk.addRowPower("Total Power", res.TotalPower)
 	tmk.addRowPower("Committee Power", res.CommitteePower)
 	tmk.addRowInt("Committee Size", int(res.CommitteeSize))

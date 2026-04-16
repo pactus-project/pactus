@@ -30,6 +30,7 @@ type NodeWidgetView struct {
 	LabelInCommittee     *gtk.Label
 	LabelCommitteeStake  *gtk.Label
 	LabelTotalStake      *gtk.Label
+	LabelAverageScore    *gtk.Label
 	LabelNumConnections  *gtk.Label
 	LabelReachability    *gtk.Label
 }
@@ -59,6 +60,7 @@ func NewNodeWidgetView() *NodeWidgetView {
 		LabelInCommittee:     builder.GetLabelObj("id_label_in_committee"),
 		LabelCommitteeStake:  builder.GetLabelObj("id_label_committee_power"),
 		LabelTotalStake:      builder.GetLabelObj("id_label_total_power"),
+		LabelAverageScore:    builder.GetLabelObj("id_label_average_score"),
 		LabelNumConnections:  builder.GetLabelObj("id_label_num_connections"),
 		LabelReachability:    builder.GetLabelObj("id_label_reachability"),
 	}

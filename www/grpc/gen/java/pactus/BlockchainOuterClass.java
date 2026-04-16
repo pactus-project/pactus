@@ -10453,6 +10453,16 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * @return The committeeSize.
      */
     int getCommitteeSize();
+
+    /**
+     * <pre>
+     * Average availability score of validators with stake, in percentage (0-100).
+     * </pre>
+     *
+     * <code>double average_score = 15 [json_name = "averageScore"];</code>
+     * @return The averageScore.
+     */
+    double getAverageScore();
   }
   /**
    * <pre>
@@ -10709,6 +10719,21 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       return committeeSize_;
     }
 
+    public static final int AVERAGE_SCORE_FIELD_NUMBER = 15;
+    private double averageScore_ = 0D;
+    /**
+     * <pre>
+     * Average availability score of validators with stake, in percentage (0-100).
+     * </pre>
+     *
+     * <code>double average_score = 15 [json_name = "averageScore"];</code>
+     * @return The averageScore.
+     */
+    @java.lang.Override
+    public double getAverageScore() {
+      return averageScore_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -10758,6 +10783,9 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       }
       if (committeeSize_ != 0) {
         output.writeInt32(14, committeeSize_);
+      }
+      if (java.lang.Double.doubleToRawLongBits(averageScore_) != 0) {
+        output.writeDouble(15, averageScore_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -10815,6 +10843,10 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(14, committeeSize_);
       }
+      if (java.lang.Double.doubleToRawLongBits(averageScore_) != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeDoubleSize(15, averageScore_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -10854,6 +10886,9 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
           != other.getInCommittee()) return false;
       if (getCommitteeSize()
           != other.getCommitteeSize()) return false;
+      if (java.lang.Double.doubleToLongBits(getAverageScore())
+          != java.lang.Double.doubleToLongBits(
+              other.getAverageScore())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -10894,6 +10929,9 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
           getInCommittee());
       hash = (37 * hash) + COMMITTEE_SIZE_FIELD_NUMBER;
       hash = (53 * hash) + getCommitteeSize();
+      hash = (37 * hash) + AVERAGE_SCORE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          java.lang.Double.doubleToLongBits(getAverageScore()));
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -11041,6 +11079,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         pruningHeight_ = 0;
         inCommittee_ = false;
         committeeSize_ = 0;
+        averageScore_ = 0D;
         return this;
       }
 
@@ -11110,6 +11149,9 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         if (((from_bitField0_ & 0x00000800) != 0)) {
           result.committeeSize_ = committeeSize_;
         }
+        if (((from_bitField0_ & 0x00001000) != 0)) {
+          result.averageScore_ = averageScore_;
+        }
       }
 
       @java.lang.Override
@@ -11161,6 +11203,9 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         }
         if (other.getCommitteeSize() != 0) {
           setCommitteeSize(other.getCommitteeSize());
+        }
+        if (java.lang.Double.doubleToRawLongBits(other.getAverageScore()) != 0) {
+          setAverageScore(other.getAverageScore());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -11248,6 +11293,11 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
                 bitField0_ |= 0x00000800;
                 break;
               } // case 112
+              case 121: {
+                averageScore_ = input.readDouble();
+                bitField0_ |= 0x00001000;
+                break;
+              } // case 121
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -11840,6 +11890,50 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       public Builder clearCommitteeSize() {
         bitField0_ = (bitField0_ & ~0x00000800);
         committeeSize_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private double averageScore_ ;
+      /**
+       * <pre>
+       * Average availability score of validators with stake, in percentage (0-100).
+       * </pre>
+       *
+       * <code>double average_score = 15 [json_name = "averageScore"];</code>
+       * @return The averageScore.
+       */
+      @java.lang.Override
+      public double getAverageScore() {
+        return averageScore_;
+      }
+      /**
+       * <pre>
+       * Average availability score of validators with stake, in percentage (0-100).
+       * </pre>
+       *
+       * <code>double average_score = 15 [json_name = "averageScore"];</code>
+       * @param value The averageScore to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAverageScore(double value) {
+
+        averageScore_ = value;
+        bitField0_ |= 0x00001000;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Average availability score of validators with stake, in percentage (0-100).
+       * </pre>
+       *
+       * <code>double average_score = 15 [json_name = "averageScore"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAverageScore() {
+        bitField0_ = (bitField0_ & ~0x00001000);
+        averageScore_ = 0D;
         onChanged();
         return this;
       }
@@ -26052,7 +26146,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       "ashResponse\022\022\n\004hash\030\001 \001(\tR\004hash\"+\n\025GetBl" +
       "ockHeightRequest\022\022\n\004hash\030\001 \001(\tR\004hash\"0\n\026" +
       "GetBlockHeightResponse\022\026\n\006height\030\001 \001(\rR\006" +
-      "height\"\032\n\030GetBlockchainInfoRequest\"\356\003\n\031G" +
+      "height\"\032\n\030GetBlockchainInfoRequest\"\223\004\n\031G" +
       "etBlockchainInfoResponse\022*\n\021last_block_h" +
       "eight\030\001 \001(\rR\017lastBlockHeight\022&\n\017last_blo" +
       "ck_hash\030\002 \001(\tR\rlastBlockHash\022&\n\017last_blo" +
@@ -26065,95 +26159,96 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       "ed\030\010 \001(\010R\010isPruned\022%\n\016pruning_height\030\t \001" +
       "(\rR\rpruningHeight\022!\n\014in_committee\030\r \001(\010R" +
       "\013inCommittee\022%\n\016committee_size\030\016 \001(\005R\rco" +
-      "mmitteeSize\"\031\n\027GetCommitteeInfoRequest\"\354" +
-      "\002\n\030GetCommitteeInfoResponse\022%\n\016committee" +
-      "_size\030\001 \001(\005R\rcommitteeSize\022\'\n\017committee_" +
-      "power\030\002 \001(\003R\016committeePower\022\037\n\013total_pow" +
-      "er\030\003 \001(\003R\ntotalPower\0225\n\nvalidators\030\004 \003(\013" +
-      "2\025.pactus.ValidatorInfoR\nvalidators\022c\n\021p" +
-      "rotocol_versions\030\005 \003(\01326.pactus.GetCommi" +
-      "tteeInfoResponse.ProtocolVersionsEntryR\020" +
-      "protocolVersions\032C\n\025ProtocolVersionsEntr" +
-      "y\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value\030\002 \001(\001R\005valu" +
-      "e:\0028\001\"\031\n\027GetConsensusInfoRequest\"\201\001\n\030Get" +
-      "ConsensusInfoResponse\0220\n\010proposal\030\001 \001(\0132" +
-      "\024.pactus.ProposalInfoR\010proposal\0223\n\tinsta" +
-      "nces\030\002 \003(\0132\025.pactus.ConsensusInfoR\tinsta" +
-      "nces\"Q\n\027GetTxPoolContentRequest\0226\n\014paylo" +
-      "ad_type\030\001 \001(\0162\023.pactus.PayloadTypeR\013payl" +
-      "oadType\"E\n\030GetTxPoolContentResponse\022)\n\003t" +
-      "xs\030\001 \003(\0132\027.pactus.TransactionInfoR\003txs\"\241" +
-      "\004\n\rValidatorInfo\022\022\n\004hash\030\001 \001(\tR\004hash\022\022\n\004" +
-      "data\030\002 \001(\tR\004data\022\035\n\npublic_key\030\003 \001(\tR\tpu" +
-      "blicKey\022\026\n\006number\030\004 \001(\005R\006number\022\024\n\005stake" +
-      "\030\005 \001(\003R\005stake\022.\n\023last_bonding_height\030\006 \001" +
-      "(\rR\021lastBondingHeight\0222\n\025last_sortition_" +
-      "height\030\007 \001(\rR\023lastSortitionHeight\022)\n\020unb" +
-      "onding_height\030\010 \001(\rR\017unbondingHeight\022\030\n\007" +
-      "address\030\t \001(\tR\007address\022-\n\022availability_s" +
-      "core\030\n \001(\001R\021availabilityScore\022)\n\020protoco" +
-      "l_version\030\013 \001(\005R\017protocolVersion\022!\n\014is_d" +
-      "elegated\030\014 \001(\010R\013isDelegated\022%\n\016delegate_" +
-      "owner\030\r \001(\tR\rdelegateOwner\022%\n\016delegate_s" +
-      "hare\030\016 \001(\003R\rdelegateShare\022\'\n\017delegate_ex" +
-      "piry\030\017 \001(\rR\016delegateExpiry\"\201\001\n\013AccountIn" +
-      "fo\022\022\n\004hash\030\001 \001(\tR\004hash\022\022\n\004data\030\002 \001(\tR\004da" +
-      "ta\022\026\n\006number\030\003 \001(\005R\006number\022\030\n\007balance\030\004 " +
-      "\001(\003R\007balance\022\030\n\007address\030\005 \001(\tR\007address\"\304" +
-      "\001\n\017BlockHeaderInfo\022\030\n\007version\030\001 \001(\005R\007ver" +
-      "sion\022&\n\017prev_block_hash\030\002 \001(\tR\rprevBlock" +
-      "Hash\022\035\n\nstate_root\030\003 \001(\tR\tstateRoot\022%\n\016s" +
-      "ortition_seed\030\004 \001(\tR\rsortitionSeed\022)\n\020pr" +
-      "oposer_address\030\005 \001(\tR\017proposerAddress\"\227\001" +
-      "\n\017CertificateInfo\022\022\n\004hash\030\001 \001(\tR\004hash\022\024\n" +
-      "\005round\030\002 \001(\005R\005round\022\036\n\ncommitters\030\003 \003(\005R" +
-      "\ncommitters\022\034\n\tabsentees\030\004 \003(\005R\tabsentee" +
-      "s\022\034\n\tsignature\030\005 \001(\tR\tsignature\"\261\001\n\010Vote" +
-      "Info\022$\n\004type\030\001 \001(\0162\020.pactus.VoteTypeR\004ty" +
-      "pe\022\024\n\005voter\030\002 \001(\tR\005voter\022\035\n\nblock_hash\030\003" +
-      " \001(\tR\tblockHash\022\024\n\005round\030\004 \001(\005R\005round\022\031\n" +
-      "\010cp_round\030\005 \001(\005R\007cpRound\022\031\n\010cp_value\030\006 \001" +
-      "(\005R\007cpValue\"\227\001\n\rConsensusInfo\022\030\n\007address" +
-      "\030\001 \001(\tR\007address\022\026\n\006active\030\002 \001(\010R\006active\022" +
-      "\026\n\006height\030\003 \001(\rR\006height\022\024\n\005round\030\004 \001(\005R\005" +
-      "round\022&\n\005votes\030\005 \003(\0132\020.pactus.VoteInfoR\005" +
-      "votes\"y\n\014ProposalInfo\022\026\n\006height\030\001 \001(\rR\006h" +
-      "eight\022\024\n\005round\030\002 \001(\005R\005round\022\035\n\nblock_dat" +
-      "a\030\003 \001(\tR\tblockData\022\034\n\tsignature\030\004 \001(\tR\ts" +
-      "ignature*f\n\016BlockVerbosity\022\030\n\024BLOCK_VERB" +
-      "OSITY_DATA\020\000\022\030\n\024BLOCK_VERBOSITY_INFO\020\001\022 " +
-      "\n\034BLOCK_VERBOSITY_TRANSACTIONS\020\002*\246\001\n\010Vot" +
-      "eType\022\031\n\025VOTE_TYPE_UNSPECIFIED\020\000\022\025\n\021VOTE" +
-      "_TYPE_PREPARE\020\001\022\027\n\023VOTE_TYPE_PRECOMMIT\020\002" +
-      "\022\031\n\025VOTE_TYPE_CP_PRE_VOTE\020\003\022\032\n\026VOTE_TYPE" +
-      "_CP_MAIN_VOTE\020\004\022\030\n\024VOTE_TYPE_CP_DECIDED\020" +
-      "\0052\342\007\n\nBlockchain\022=\n\010GetBlock\022\027.pactus.Ge" +
-      "tBlockRequest\032\030.pactus.GetBlockResponse\022" +
-      "I\n\014GetBlockHash\022\033.pactus.GetBlockHashReq" +
-      "uest\032\034.pactus.GetBlockHashResponse\022O\n\016Ge" +
-      "tBlockHeight\022\035.pactus.GetBlockHeightRequ" +
-      "est\032\036.pactus.GetBlockHeightResponse\022X\n\021G" +
-      "etBlockchainInfo\022 .pactus.GetBlockchainI" +
-      "nfoRequest\032!.pactus.GetBlockchainInfoRes" +
-      "ponse\022U\n\020GetCommitteeInfo\022\037.pactus.GetCo" +
-      "mmitteeInfoRequest\032 .pactus.GetCommittee" +
-      "InfoResponse\022U\n\020GetConsensusInfo\022\037.pactu" +
-      "s.GetConsensusInfoRequest\032 .pactus.GetCo" +
-      "nsensusInfoResponse\022C\n\nGetAccount\022\031.pact" +
-      "us.GetAccountRequest\032\032.pactus.GetAccount" +
-      "Response\022I\n\014GetValidator\022\033.pactus.GetVal" +
-      "idatorRequest\032\034.pactus.GetValidatorRespo" +
-      "nse\022Y\n\024GetValidatorByNumber\022#.pactus.Get" +
-      "ValidatorByNumberRequest\032\034.pactus.GetVal" +
-      "idatorResponse\022d\n\025GetValidatorAddresses\022" +
-      "$.pactus.GetValidatorAddressesRequest\032%." +
-      "pactus.GetValidatorAddressesResponse\022I\n\014" +
-      "GetPublicKey\022\033.pactus.GetPublicKeyReques" +
-      "t\032\034.pactus.GetPublicKeyResponse\022U\n\020GetTx" +
-      "PoolContent\022\037.pactus.GetTxPoolContentReq" +
-      "uest\032 .pactus.GetTxPoolContentResponseB:" +
-      "\n\006pactusZ0github.com/pactus-project/pact" +
-      "us/www/grpc/pactusb\006proto3"
+      "mmitteeSize\022#\n\raverage_score\030\017 \001(\001R\014aver" +
+      "ageScore\"\031\n\027GetCommitteeInfoRequest\"\354\002\n\030" +
+      "GetCommitteeInfoResponse\022%\n\016committee_si" +
+      "ze\030\001 \001(\005R\rcommitteeSize\022\'\n\017committee_pow" +
+      "er\030\002 \001(\003R\016committeePower\022\037\n\013total_power\030" +
+      "\003 \001(\003R\ntotalPower\0225\n\nvalidators\030\004 \003(\0132\025." +
+      "pactus.ValidatorInfoR\nvalidators\022c\n\021prot" +
+      "ocol_versions\030\005 \003(\01326.pactus.GetCommitte" +
+      "eInfoResponse.ProtocolVersionsEntryR\020pro" +
+      "tocolVersions\032C\n\025ProtocolVersionsEntry\022\020" +
+      "\n\003key\030\001 \001(\005R\003key\022\024\n\005value\030\002 \001(\001R\005value:\002" +
+      "8\001\"\031\n\027GetConsensusInfoRequest\"\201\001\n\030GetCon" +
+      "sensusInfoResponse\0220\n\010proposal\030\001 \001(\0132\024.p" +
+      "actus.ProposalInfoR\010proposal\0223\n\tinstance" +
+      "s\030\002 \003(\0132\025.pactus.ConsensusInfoR\tinstance" +
+      "s\"Q\n\027GetTxPoolContentRequest\0226\n\014payload_" +
+      "type\030\001 \001(\0162\023.pactus.PayloadTypeR\013payload" +
+      "Type\"E\n\030GetTxPoolContentResponse\022)\n\003txs\030" +
+      "\001 \003(\0132\027.pactus.TransactionInfoR\003txs\"\241\004\n\r" +
+      "ValidatorInfo\022\022\n\004hash\030\001 \001(\tR\004hash\022\022\n\004dat" +
+      "a\030\002 \001(\tR\004data\022\035\n\npublic_key\030\003 \001(\tR\tpubli" +
+      "cKey\022\026\n\006number\030\004 \001(\005R\006number\022\024\n\005stake\030\005 " +
+      "\001(\003R\005stake\022.\n\023last_bonding_height\030\006 \001(\rR" +
+      "\021lastBondingHeight\0222\n\025last_sortition_hei" +
+      "ght\030\007 \001(\rR\023lastSortitionHeight\022)\n\020unbond" +
+      "ing_height\030\010 \001(\rR\017unbondingHeight\022\030\n\007add" +
+      "ress\030\t \001(\tR\007address\022-\n\022availability_scor" +
+      "e\030\n \001(\001R\021availabilityScore\022)\n\020protocol_v" +
+      "ersion\030\013 \001(\005R\017protocolVersion\022!\n\014is_dele" +
+      "gated\030\014 \001(\010R\013isDelegated\022%\n\016delegate_own" +
+      "er\030\r \001(\tR\rdelegateOwner\022%\n\016delegate_shar" +
+      "e\030\016 \001(\003R\rdelegateShare\022\'\n\017delegate_expir" +
+      "y\030\017 \001(\rR\016delegateExpiry\"\201\001\n\013AccountInfo\022" +
+      "\022\n\004hash\030\001 \001(\tR\004hash\022\022\n\004data\030\002 \001(\tR\004data\022" +
+      "\026\n\006number\030\003 \001(\005R\006number\022\030\n\007balance\030\004 \001(\003" +
+      "R\007balance\022\030\n\007address\030\005 \001(\tR\007address\"\304\001\n\017" +
+      "BlockHeaderInfo\022\030\n\007version\030\001 \001(\005R\007versio" +
+      "n\022&\n\017prev_block_hash\030\002 \001(\tR\rprevBlockHas" +
+      "h\022\035\n\nstate_root\030\003 \001(\tR\tstateRoot\022%\n\016sort" +
+      "ition_seed\030\004 \001(\tR\rsortitionSeed\022)\n\020propo" +
+      "ser_address\030\005 \001(\tR\017proposerAddress\"\227\001\n\017C" +
+      "ertificateInfo\022\022\n\004hash\030\001 \001(\tR\004hash\022\024\n\005ro" +
+      "und\030\002 \001(\005R\005round\022\036\n\ncommitters\030\003 \003(\005R\nco" +
+      "mmitters\022\034\n\tabsentees\030\004 \003(\005R\tabsentees\022\034" +
+      "\n\tsignature\030\005 \001(\tR\tsignature\"\261\001\n\010VoteInf" +
+      "o\022$\n\004type\030\001 \001(\0162\020.pactus.VoteTypeR\004type\022" +
+      "\024\n\005voter\030\002 \001(\tR\005voter\022\035\n\nblock_hash\030\003 \001(" +
+      "\tR\tblockHash\022\024\n\005round\030\004 \001(\005R\005round\022\031\n\010cp" +
+      "_round\030\005 \001(\005R\007cpRound\022\031\n\010cp_value\030\006 \001(\005R" +
+      "\007cpValue\"\227\001\n\rConsensusInfo\022\030\n\007address\030\001 " +
+      "\001(\tR\007address\022\026\n\006active\030\002 \001(\010R\006active\022\026\n\006" +
+      "height\030\003 \001(\rR\006height\022\024\n\005round\030\004 \001(\005R\005rou" +
+      "nd\022&\n\005votes\030\005 \003(\0132\020.pactus.VoteInfoR\005vot" +
+      "es\"y\n\014ProposalInfo\022\026\n\006height\030\001 \001(\rR\006heig" +
+      "ht\022\024\n\005round\030\002 \001(\005R\005round\022\035\n\nblock_data\030\003" +
+      " \001(\tR\tblockData\022\034\n\tsignature\030\004 \001(\tR\tsign" +
+      "ature*f\n\016BlockVerbosity\022\030\n\024BLOCK_VERBOSI" +
+      "TY_DATA\020\000\022\030\n\024BLOCK_VERBOSITY_INFO\020\001\022 \n\034B" +
+      "LOCK_VERBOSITY_TRANSACTIONS\020\002*\246\001\n\010VoteTy" +
+      "pe\022\031\n\025VOTE_TYPE_UNSPECIFIED\020\000\022\025\n\021VOTE_TY" +
+      "PE_PREPARE\020\001\022\027\n\023VOTE_TYPE_PRECOMMIT\020\002\022\031\n" +
+      "\025VOTE_TYPE_CP_PRE_VOTE\020\003\022\032\n\026VOTE_TYPE_CP" +
+      "_MAIN_VOTE\020\004\022\030\n\024VOTE_TYPE_CP_DECIDED\020\0052\342" +
+      "\007\n\nBlockchain\022=\n\010GetBlock\022\027.pactus.GetBl" +
+      "ockRequest\032\030.pactus.GetBlockResponse\022I\n\014" +
+      "GetBlockHash\022\033.pactus.GetBlockHashReques" +
+      "t\032\034.pactus.GetBlockHashResponse\022O\n\016GetBl" +
+      "ockHeight\022\035.pactus.GetBlockHeightRequest" +
+      "\032\036.pactus.GetBlockHeightResponse\022X\n\021GetB" +
+      "lockchainInfo\022 .pactus.GetBlockchainInfo" +
+      "Request\032!.pactus.GetBlockchainInfoRespon" +
+      "se\022U\n\020GetCommitteeInfo\022\037.pactus.GetCommi" +
+      "tteeInfoRequest\032 .pactus.GetCommitteeInf" +
+      "oResponse\022U\n\020GetConsensusInfo\022\037.pactus.G" +
+      "etConsensusInfoRequest\032 .pactus.GetConse" +
+      "nsusInfoResponse\022C\n\nGetAccount\022\031.pactus." +
+      "GetAccountRequest\032\032.pactus.GetAccountRes" +
+      "ponse\022I\n\014GetValidator\022\033.pactus.GetValida" +
+      "torRequest\032\034.pactus.GetValidatorResponse" +
+      "\022Y\n\024GetValidatorByNumber\022#.pactus.GetVal" +
+      "idatorByNumberRequest\032\034.pactus.GetValida" +
+      "torResponse\022d\n\025GetValidatorAddresses\022$.p" +
+      "actus.GetValidatorAddressesRequest\032%.pac" +
+      "tus.GetValidatorAddressesResponse\022I\n\014Get" +
+      "PublicKey\022\033.pactus.GetPublicKeyRequest\032\034" +
+      ".pactus.GetPublicKeyResponse\022U\n\020GetTxPoo" +
+      "lContent\022\037.pactus.GetTxPoolContentReques" +
+      "t\032 .pactus.GetTxPoolContentResponseB:\n\006p" +
+      "actusZ0github.com/pactus-project/pactus/" +
+      "www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -26261,7 +26356,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
     internal_static_pactus_GetBlockchainInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetBlockchainInfoResponse_descriptor,
-        new java.lang.String[] { "LastBlockHeight", "LastBlockHash", "LastBlockTime", "TotalAccounts", "TotalValidators", "ActiveValidators", "TotalPower", "CommitteePower", "IsPruned", "PruningHeight", "InCommittee", "CommitteeSize", });
+        new java.lang.String[] { "LastBlockHeight", "LastBlockHash", "LastBlockTime", "TotalAccounts", "TotalValidators", "ActiveValidators", "TotalPower", "CommitteePower", "IsPruned", "PruningHeight", "InCommittee", "CommitteeSize", "AverageScore", });
     internal_static_pactus_GetCommitteeInfoRequest_descriptor =
       getDescriptor().getMessageType(17);
     internal_static_pactus_GetCommitteeInfoRequest_fieldAccessorTable = new
