@@ -180,3 +180,17 @@ func TestUpdateProtocolVersion(t *testing.T) {
 	val.UpdateProtocolVersion(1)
 	assert.Equal(t, protocol.Version(1), val.ProtocolVersion())
 }
+
+func TestIsActive(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	val := ts.GenerateTestValidator()
+	assert.True(t, val.IsActive())
+
+	val.UpdateUnbondingHeight(ts.RandHeight())
+	assert.False(t, val.IsActive())
+
+	val.UpdateUnbondingHeight(0)
+	val.SubtractFromStake(val.Stake())
+	assert.False(t, val.IsActive())
+}

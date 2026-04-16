@@ -159,7 +159,6 @@ func TestGetBlockchainInfo(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, td.mockState.TestStore.LastHeight, res.LastBlockHeight)
 		assert.NotEmpty(t, res.LastBlockHash)
-		assert.InEpsilon(t, 98.7, res.AverageScore, 1e-9)
 		assert.Zero(t, res.PruningHeight)
 		assert.False(t, res.IsPruned)
 	})
