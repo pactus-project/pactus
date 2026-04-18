@@ -12,8 +12,9 @@ package storage
 import (
 	reflect "reflect"
 
+	types "github.com/pactus-project/pactus/types"
 	amount "github.com/pactus-project/pactus/types/amount"
-	types "github.com/pactus-project/pactus/wallet/types"
+	types0 "github.com/pactus-project/pactus/wallet/types"
 	vault "github.com/pactus-project/pactus/wallet/vault"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -57,10 +58,10 @@ func (mr *MockIStorageMockRecorder) AddressCount() *gomock.Call {
 }
 
 // AddressInfo mocks base method.
-func (m *MockIStorage) AddressInfo(address string) (*types.AddressInfo, error) {
+func (m *MockIStorage) AddressInfo(address string) (*types0.AddressInfo, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddressInfo", address)
-	ret0, _ := ret[0].(*types.AddressInfo)
+	ret0, _ := ret[0].(*types0.AddressInfo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -72,10 +73,10 @@ func (mr *MockIStorageMockRecorder) AddressInfo(address any) *gomock.Call {
 }
 
 // AllAddresses mocks base method.
-func (m *MockIStorage) AllAddresses() []types.AddressInfo {
+func (m *MockIStorage) AllAddresses() []types0.AddressInfo {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AllAddresses")
-	ret0, _ := ret[0].([]types.AddressInfo)
+	ret0, _ := ret[0].([]types0.AddressInfo)
 	return ret0
 }
 
@@ -115,10 +116,10 @@ func (mr *MockIStorageMockRecorder) Close() *gomock.Call {
 }
 
 // GetPendingTransactions mocks base method.
-func (m *MockIStorage) GetPendingTransactions() (map[string]*types.TransactionInfo, error) {
+func (m *MockIStorage) GetPendingTransactions() (map[string]*types0.TransactionInfo, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPendingTransactions")
-	ret0, _ := ret[0].(map[string]*types.TransactionInfo)
+	ret0, _ := ret[0].(map[string]*types0.TransactionInfo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -130,10 +131,10 @@ func (mr *MockIStorageMockRecorder) GetPendingTransactions() *gomock.Call {
 }
 
 // GetTransaction mocks base method.
-func (m *MockIStorage) GetTransaction(no int64) (*types.TransactionInfo, error) {
+func (m *MockIStorage) GetTransaction(no int64) (*types0.TransactionInfo, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTransaction", no)
-	ret0, _ := ret[0].(*types.TransactionInfo)
+	ret0, _ := ret[0].(*types0.TransactionInfo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -173,7 +174,7 @@ func (mr *MockIStorageMockRecorder) HasTransaction(txID any) *gomock.Call {
 }
 
 // InsertAddress mocks base method.
-func (m *MockIStorage) InsertAddress(info *types.AddressInfo) error {
+func (m *MockIStorage) InsertAddress(info *types0.AddressInfo) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InsertAddress", info)
 	ret0, _ := ret[0].(error)
@@ -187,7 +188,7 @@ func (mr *MockIStorageMockRecorder) InsertAddress(info any) *gomock.Call {
 }
 
 // InsertTransaction mocks base method.
-func (m *MockIStorage) InsertTransaction(info *types.TransactionInfo) error {
+func (m *MockIStorage) InsertTransaction(info *types0.TransactionInfo) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InsertTransaction", info)
 	ret0, _ := ret[0].(error)
@@ -215,10 +216,10 @@ func (mr *MockIStorageMockRecorder) IsLegacy() *gomock.Call {
 }
 
 // QueryTransactions mocks base method.
-func (m *MockIStorage) QueryTransactions(params QueryParams) ([]*types.TransactionInfo, error) {
+func (m *MockIStorage) QueryTransactions(params QueryParams) ([]*types0.TransactionInfo, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "QueryTransactions", params)
-	ret0, _ := ret[0].([]*types.TransactionInfo)
+	ret0, _ := ret[0].([]*types0.TransactionInfo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -244,7 +245,7 @@ func (mr *MockIStorageMockRecorder) SetDefaultFee(fee any) *gomock.Call {
 }
 
 // UpdateAddress mocks base method.
-func (m *MockIStorage) UpdateAddress(info *types.AddressInfo) error {
+func (m *MockIStorage) UpdateAddress(info *types0.AddressInfo) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateAddress", info)
 	ret0, _ := ret[0].(error)
@@ -258,7 +259,7 @@ func (mr *MockIStorageMockRecorder) UpdateAddress(info any) *gomock.Call {
 }
 
 // UpdateTransactionStatus mocks base method.
-func (m *MockIStorage) UpdateTransactionStatus(no int64, status types.TransactionStatus, blockHeight uint32) error {
+func (m *MockIStorage) UpdateTransactionStatus(no int64, status types0.TransactionStatus, blockHeight types.Height) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateTransactionStatus", no, status, blockHeight)
 	ret0, _ := ret[0].(error)
@@ -300,10 +301,10 @@ func (mr *MockIStorageMockRecorder) Vault() *gomock.Call {
 }
 
 // WalletInfo mocks base method.
-func (m *MockIStorage) WalletInfo() *types.WalletInfo {
+func (m *MockIStorage) WalletInfo() *types0.WalletInfo {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WalletInfo")
-	ret0, _ := ret[0].(*types.WalletInfo)
+	ret0, _ := ret[0].(*types0.WalletInfo)
 	return ret0
 }
 

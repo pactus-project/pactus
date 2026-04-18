@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/pactus-project/pactus/network"
+	"github.com/pactus-project/pactus/types"
 )
 
 type ResponseCode int
@@ -143,7 +144,7 @@ type Message interface {
 	// ConsensusHeight indicates the consensus height at which the message is broadcast.
 	// This is applicable for consensus messages, including BlockAnnounce.
 	// For non-consensus messages, this height is set to zero.
-	ConsensusHeight() uint32
+	ConsensusHeight() types.Height
 	// LogString returns a concise string representation intended for use in logs.
 	LogString() string
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"testing"
 
+	"github.com/pactus-project/pactus/types"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -13,14 +14,14 @@ func TestGetBlock(t *testing.T) {
 	td := setup(t, nil)
 	client := td.blockchainClient(t)
 
-	height := uint32(100)
+	height := types.Height(100)
 	blk := td.mockState.TestStore.AddTestBlock(height)
 	data, _ := blk.Bytes()
 
 	t.Run("Should return nil for non existing block ", func(t *testing.T) {
 		res, err := client.GetBlock(t.Context(),
 			&pactus.GetBlockRequest{
-				Height: height + 1, Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_DATA,
+				Height: uint32(height + 1), Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_DATA,
 			})
 
 		require.Error(t, err)
@@ -29,11 +30,11 @@ func TestGetBlock(t *testing.T) {
 
 	t.Run("Should return an existing block data (verbosity: 0)", func(t *testing.T) {
 		res, err := client.GetBlock(t.Context(),
-			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_DATA})
+			&pactus.GetBlockRequest{Height: uint32(height), Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_DATA})
 
 		require.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, height, res.Height)
+		assert.Equal(t, uint32(height), res.Height)
 		assert.Equal(t, blk.Hash().String(), res.Hash)
 		assert.Equal(t, hex.EncodeToString(data), res.Data)
 		assert.Empty(t, res.Header)
@@ -42,11 +43,11 @@ func TestGetBlock(t *testing.T) {
 
 	t.Run("Should return object with (verbosity: 1)", func(t *testing.T) {
 		res, err := client.GetBlock(t.Context(),
-			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_INFO})
+			&pactus.GetBlockRequest{Height: uint32(height), Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_INFO})
 
 		require.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, height, res.Height)
+		assert.Equal(t, uint32(height), res.Height)
 		assert.Equal(t, blk.Hash().String(), res.Hash)
 		assert.Empty(t, res.Data)
 		assert.NotEmpty(t, res.Header)
@@ -66,11 +67,11 @@ func TestGetBlock(t *testing.T) {
 
 	t.Run("Should return object with (verbosity: 2)", func(t *testing.T) {
 		res, err := client.GetBlock(t.Context(),
-			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_TRANSACTIONS})
+			&pactus.GetBlockRequest{Height: uint32(height), Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_TRANSACTIONS})
 
 		require.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, height, res.Height)
+		assert.Equal(t, uint32(height), res.Height)
 		assert.Equal(t, blk.Hash().String(), res.Hash)
 		assert.Empty(t, res.Data)
 		assert.NotEmpty(t, res.Header)
@@ -80,7 +81,7 @@ func TestGetBlock(t *testing.T) {
 
 			assert.Equal(t, trx.Id, blockTrx.ID().String())
 			assert.Empty(t, trx.Data)
-			assert.Equal(t, trx.LockTime, blockTrx.LockTime())
+			assert.Equal(t, uint32(blockTrx.LockTime()), trx.LockTime)
 			if blockTrx.IsSubsidyTx() {
 				assert.Empty(t, trx.Signature)
 				assert.Empty(t, trx.PublicKey)
@@ -109,7 +110,7 @@ func TestGetBlockHash(t *testing.T) {
 
 	t.Run("Should return height of existing block", func(t *testing.T) {
 		res, err := client.GetBlockHash(t.Context(),
-			&pactus.GetBlockHashRequest{Height: height})
+			&pactus.GetBlockHashRequest{Height: uint32(height)})
 
 		require.NoError(t, err)
 		assert.Equal(t, blk.Hash().String(), res.Hash)
@@ -144,7 +145,7 @@ func TestGetBlockHeight(t *testing.T) {
 			&pactus.GetBlockHeightRequest{Hash: blk.Hash().String()})
 
 		require.NoError(t, err)
-		assert.Equal(t, height, res.Height)
+		assert.Equal(t, uint32(height), res.Height)
 	})
 }
 
@@ -157,7 +158,7 @@ func TestGetBlockchainInfo(t *testing.T) {
 			&pactus.GetBlockchainInfoRequest{})
 
 		require.NoError(t, err)
-		assert.Equal(t, td.mockState.TestStore.LastHeight, res.LastBlockHeight)
+		assert.Equal(t, uint32(td.mockState.TestStore.LastHeight), res.LastBlockHeight)
 		assert.NotEmpty(t, res.LastBlockHash)
 		assert.Zero(t, res.PruningHeight)
 		assert.False(t, res.IsPruned)
@@ -261,7 +262,7 @@ func TestGetValidator(t *testing.T) {
 		assert.True(t, v.IsDelegated)
 		assert.Equal(t, dlgOwnerAddr.String(), v.DelegateOwner)
 		assert.Equal(t, dlgOwnerShare.ToNanoPAC(), v.DelegateShare)
-		assert.Equal(t, dlgExpiry, v.DelegateExpiry)
+		assert.Equal(t, uint32(dlgExpiry), v.DelegateExpiry)
 	})
 }
 
@@ -375,17 +376,17 @@ func TestConsensusInfo(t *testing.T) {
 		assert.NotNil(t, res)
 
 		assert.True(t, res.Instances[0].Active)
-		assert.Equal(t, consHeight, res.Instances[0].Height)
+		assert.Equal(t, uint32(consHeight), res.Instances[0].Height)
 		assert.Equal(t, int32(consRound), res.Instances[0].Round)
 		assert.Len(t, res.Instances[0].Votes, 2)
 		assert.Equal(t, pactus.VoteType_VOTE_TYPE_PREPARE, res.Instances[0].Votes[0].Type)
 		assert.Equal(t, pactus.VoteType_VOTE_TYPE_PRECOMMIT, res.Instances[0].Votes[1].Type)
 
 		assert.False(t, res.Instances[1].Active)
-		assert.Equal(t, consHeight, res.Instances[1].Height)
+		assert.Equal(t, uint32(consHeight), res.Instances[1].Height)
 		assert.Equal(t, int32(consRound), res.Instances[1].Round)
 
-		assert.Equal(t, consHeight, res.Proposal.Height)
+		assert.Equal(t, uint32(consHeight), res.Proposal.Height)
 		assert.Equal(t, int32(consRound), res.Proposal.Round)
 		assert.Equal(t, prop.Signature().String(), res.Proposal.Signature)
 	})

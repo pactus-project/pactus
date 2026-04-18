@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/state/param"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util/encoding"
 )
@@ -20,7 +21,7 @@ type BondPayload struct {
 	// Delegation fields
 	DelegateOwner  crypto.Address
 	DelegateShare  amount.Amount
-	DelegateExpiry uint32
+	DelegateExpiry types.Height
 }
 
 func (*BondPayload) Type() Type {

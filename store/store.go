@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
@@ -109,9 +110,13 @@ func NewStore(conf *Config) (Store, error) {
 	}
 
 	currentHeight := lastCert.Height()
-	startHeight := uint32(1)
-	if currentHeight > conf.TxCacheWindow {
-		startHeight = currentHeight - conf.TxCacheWindow
+	// startHeight := uint32(1)
+	// if currentHeight > conf.TxCacheWindow {
+	// 	startHeight = currentHeight - conf.TxCacheWindow
+	// }
+	startHeight := currentHeight.SafeDecrease(conf.TxCacheWindow)
+	if startHeight == 0 {
+		startHeight = 1
 	}
 
 	for height := startHeight; height < currentHeight+1; height++ {
@@ -156,8 +161,8 @@ func (s *store) SaveBlock(blk *block.Block, cert *certificate.Certificate) {
 	s.txStore.pruneCache(height)
 
 	// Removing old block from prune node store.
-	if s.isPruned && height > s.config.RetentionBlocks() {
-		pruneHeight := height - s.config.RetentionBlocks()
+	pruneHeight := height.SafeDecrease(s.config.RetentionBlocks())
+	if s.isPruned && pruneHeight > 0 {
 		deleted, err := s.pruneBlock(pruneHeight)
 		if err != nil {
 			panic(err)
@@ -185,14 +190,14 @@ func (s *store) SaveBlock(blk *block.Block, cert *certificate.Certificate) {
 	s.batch.Put(lastInfoKey, buf.Bytes())
 }
 
-func (s *store) Block(height uint32) (*CommittedBlock, error) {
+func (s *store) Block(height types.Height) (*CommittedBlock, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.block(height)
 }
 
-func (s *store) block(height uint32) (*CommittedBlock, error) {
+func (s *store) block(height types.Height) (*CommittedBlock, error) {
 	data, err := s.blockStore.block(height)
 	if err != nil {
 		return nil, err
@@ -211,14 +216,14 @@ func (s *store) block(height uint32) (*CommittedBlock, error) {
 	}, nil
 }
 
-func (s *store) BlockHeight(h hash.Hash) uint32 {
+func (s *store) BlockHeight(h hash.Hash) types.Height {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.blockStore.blockHeight(h)
 }
 
-func (s *store) BlockHash(height uint32) hash.Hash {
+func (s *store) BlockHash(height types.Height) hash.Hash {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -232,7 +237,7 @@ func (s *store) BlockHash(height uint32) hash.Hash {
 	return hash.UndefHash
 }
 
-func (s *store) SortitionSeed(blockHeight uint32) *sortition.VerifiableSeed {
+func (s *store) SortitionSeed(blockHeight types.Height) *sortition.VerifiableSeed {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -450,7 +455,7 @@ func (s *store) IsPruned() bool {
 
 // PruningHeight returns the height at which blocks will be pruned if the store is in prune mode.
 // If the store is not in prune mode, it returns 0.
-func (s *store) PruningHeight() uint32 {
+func (s *store) PruningHeight() types.Height {
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 
@@ -461,13 +466,13 @@ func (s *store) PruningHeight() uint32 {
 	// TODO: it can be optimized (and safer?) by keeping the last block height in memory.
 	cert := s.lastCertificate()
 
-	return cert.Height() - s.config.RetentionBlocks()
+	return cert.Height().SafeDecrease(s.config.RetentionBlocks())
 }
 
 // Prune iterates over all blocks from the pruning height to the genesis block and prunes them.
 // The pruning height is `LastBlockHeight - RetentionBlocks`.
 // The callback function is called after each block is pruned and can cancel the process.
-func (s *store) Prune(callback func(pruned bool, pruningHeight uint32) bool) error {
+func (s *store) Prune(callback func(pruned bool, pruningHeight types.Height) bool) error {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -479,11 +484,7 @@ func (s *store) Prune(callback func(pruned bool, pruningHeight uint32) bool) err
 	}
 
 	retentionBlocks := s.config.RetentionBlocks()
-	if cert.Height() < retentionBlocks {
-		return nil
-	}
-
-	pruningHeight := cert.Height() - retentionBlocks
+	pruningHeight := cert.Height().SafeDecrease(retentionBlocks)
 	for height := pruningHeight; height >= 1; height-- {
 		deleted, err := s.pruneBlock(height)
 		if err != nil {
@@ -507,7 +508,7 @@ func (s *store) Prune(callback func(pruned bool, pruningHeight uint32) bool) err
 // It accepts a block height to prune, and returns a boolean that
 // indicate whether the block at the specified height existed and pruned,
 // or did not exist, along with any encountered errors.
-func (s *store) pruneBlock(blockHeight uint32) (bool, error) {
+func (s *store) pruneBlock(blockHeight types.Height) (bool, error) {
 	if !s.blockStore.hasBlock(blockHeight) {
 		return false, nil
 	}

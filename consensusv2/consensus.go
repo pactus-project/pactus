@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/proposal"
@@ -34,7 +35,7 @@ type consensusV2 struct {
 	logger      *logger.SubLogger
 	log         *log.Log
 	validators  []*validator.Validator
-	height      uint32
+	height      types.Height
 	round       int16
 	valKey      *bls.ValidatorKey
 	rewardAddr  crypto.Address
@@ -136,7 +137,7 @@ func (cs *consensusV2) ConsensusKey() *bls.PublicKey {
 	return cs.valKey.PublicKey()
 }
 
-func (cs *consensusV2) HeightRound() (uint32, int16) {
+func (cs *consensusV2) HeightRound() (types.Height, int16) {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
@@ -181,7 +182,7 @@ func (cs *consensusV2) MoveToNewHeight() {
 	}
 }
 
-func (cs *consensusV2) scheduleTimeout(duration time.Duration, height uint32, round int16, target tickerTarget) {
+func (cs *consensusV2) scheduleTimeout(duration time.Duration, height types.Height, round int16, target tickerTarget) {
 	cs.logger.Trace("new timer scheduled ⏱️", "duration", duration, "height", height, "round", round, "target", target)
 
 	ticker := &ticker{duration, height, round, target}
@@ -424,7 +425,7 @@ func (cs *consensusV2) Proposal() *proposal.Proposal {
 	return cs.log.RoundProposal(cs.round)
 }
 
-func (cs *consensusV2) HandleQueryProposal(height uint32, round int16) *proposal.Proposal {
+func (cs *consensusV2) HandleQueryProposal(height types.Height, round int16) *proposal.Proposal {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
@@ -455,7 +456,7 @@ func (cs *consensusV2) HandleQueryProposal(height uint32, round int16) *proposal
 }
 
 // TODO: Improve the performance?
-func (cs *consensusV2) HandleQueryVote(height uint32, round int16) *vote.Vote {
+func (cs *consensusV2) HandleQueryVote(height types.Height, round int16) *vote.Vote {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 

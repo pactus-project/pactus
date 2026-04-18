@@ -6,6 +6,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -38,7 +39,7 @@ func TestSetProposalAfterChangeProposer(t *testing.T) {
 func TestChangeProposerAgreementYes(t *testing.T) {
 	td := setup(t)
 
-	height := uint32(1)
+	height := types.Height(1)
 	round := int16(0)
 	td.enterNewHeight(td.consP)
 	td.checkHeightRound(t, td.consP, height, round)
@@ -62,7 +63,7 @@ func TestChangeProposerAgreementNo(t *testing.T) {
 
 	td.commitBlockForAllStates(t) // height 1
 
-	height := uint32(2)
+	height := types.Height(2)
 	round := int16(1)
 	td.enterNewHeight(td.consP)
 	td.enterNextRound(td.consP)
@@ -98,7 +99,7 @@ func TestCrashOnTestnet(t *testing.T) {
 
 	td.commitBlockForAllStates(t) // height 1
 
-	height := uint32(2)
+	height := types.Height(2)
 	round := int16(0)
 	td.consP.MoveToNewHeight()
 
@@ -135,7 +136,7 @@ func TestInvalidJustInitOne(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consX)
-	height := uint32(1)
+	height := types.Height(1)
 	round := int16(0)
 	just := &vote.JustInitYes{}
 
@@ -175,7 +176,7 @@ func TestInvalidJustInitZero(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consX)
-	height := uint32(1)
+	height := types.Height(1)
 	round := int16(0)
 	just := &vote.JustInitNo{
 		QCert: td.GenerateTestCertificate(height),
@@ -216,7 +217,7 @@ func TestInvalidJustPreVoteHard(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consX)
-	height := uint32(1)
+	height := types.Height(1)
 	round := int16(0)
 	just := &vote.JustPreVoteHard{
 		QCert: td.GenerateTestCertificate(height),
@@ -257,7 +258,7 @@ func TestInvalidJustPreVoteSoft(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consX)
-	height := uint32(1)
+	height := types.Height(1)
 	round := int16(0)
 	just := &vote.JustPreVoteSoft{
 		QCert: td.GenerateTestCertificate(height),
@@ -298,7 +299,7 @@ func TestInvalidJustMainVoteNoConflict(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consX)
-	height := uint32(1)
+	height := types.Height(1)
 	round := int16(0)
 	just := &vote.JustMainVoteNoConflict{
 		QCert: td.GenerateTestCertificate(height),
@@ -329,7 +330,7 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consX)
-	height := uint32(1)
+	height := types.Height(1)
 	round := int16(0)
 
 	t.Run("invalid value: no", func(t *testing.T) {
@@ -439,7 +440,7 @@ func TestInvalidJustDecided(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consX)
-	height := uint32(1)
+	height := types.Height(1)
 	round := int16(0)
 	just := &vote.JustDecided{
 		QCert: td.GenerateTestCertificate(height),

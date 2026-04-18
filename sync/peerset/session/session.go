@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/sync/peerset/peer"
+	"github.com/pactus-project/pactus/types"
 )
 
 type Status int
@@ -18,12 +19,12 @@ type Session struct {
 	SessionID    int
 	Status       Status
 	PeerID       peer.ID
-	From         uint32
+	From         types.Height
 	Count        uint32
 	LastActivity time.Time
 }
 
-func NewSession(id int, peerID peer.ID, from, count uint32) *Session {
+func NewSession(id int, peerID peer.ID, from types.Height, count uint32) *Session {
 	return &Session{
 		SessionID:    id,
 		Status:       Open,

@@ -4,15 +4,16 @@ import (
 	"fmt"
 
 	"github.com/pactus-project/pactus/network"
+	"github.com/pactus-project/pactus/types"
 )
 
 type BlocksRequestMessage struct {
-	SessionID int    `cbor:"1,keyasint"`
-	From      uint32 `cbor:"2,keyasint"`
-	Count     uint32 `cbor:"3,keyasint"`
+	SessionID int          `cbor:"1,keyasint"`
+	From      types.Height `cbor:"2,keyasint"`
+	Count     uint32       `cbor:"3,keyasint"`
 }
 
-func NewBlocksRequestMessage(sid int, from, count uint32) *BlocksRequestMessage {
+func NewBlocksRequestMessage(sid int, from types.Height, count uint32) *BlocksRequestMessage {
 	return &BlocksRequestMessage{
 		SessionID: sid,
 		From:      from,
@@ -20,8 +21,8 @@ func NewBlocksRequestMessage(sid int, from, count uint32) *BlocksRequestMessage 
 	}
 }
 
-func (m *BlocksRequestMessage) To() uint32 {
-	return m.From + m.Count - 1
+func (m *BlocksRequestMessage) To() types.Height {
+	return m.From + types.Height(m.Count) - 1
 }
 
 func (m *BlocksRequestMessage) BasicCheck() error {
@@ -47,7 +48,7 @@ func (*BlocksRequestMessage) ShouldBroadcast() bool {
 	return false
 }
 
-func (*BlocksRequestMessage) ConsensusHeight() uint32 {
+func (*BlocksRequestMessage) ConsensusHeight() types.Height {
 	return 0
 }
 

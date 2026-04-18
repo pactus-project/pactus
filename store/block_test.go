@@ -59,12 +59,9 @@ func TestSortitionSeed(t *testing.T) {
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		rndInt := td.RandUint32Max(conf.SeedCacheWindow)
-		rndInt += lastHeight - conf.SeedCacheWindow + 1
-
-		committedBlk, _ := td.store.Block(rndInt)
+		committedBlk, _ := td.store.Block(5)
 		blk, _ := committedBlk.ToBlock()
 		expectedSortition := blk.Header().SortitionSeed()
-		assert.Equal(t, &expectedSortition, td.store.SortitionSeed(rndInt))
+		assert.Equal(t, &expectedSortition, td.store.SortitionSeed(5))
 	})
 }

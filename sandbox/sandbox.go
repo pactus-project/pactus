@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/state/param"
 	"github.com/pactus-project/pactus/store"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
@@ -28,7 +29,7 @@ type sandbox struct {
 	committedTrxs   map[tx.ID]*tx.Tx
 	params          *param.Params
 	isMainnet       bool
-	height          uint32
+	height          types.Height
 	totalAccounts   int32
 	totalValidators int32
 	totalPower      int64
@@ -47,7 +48,7 @@ type sandboxAccount struct {
 	updated bool
 }
 
-func NewSandbox(height uint32, store store.Reader, params *param.Params,
+func NewSandbox(height types.Height, store store.Reader, params *param.Params,
 	committee committee.Reader, totalPower int64, isMainnet bool,
 ) Sandbox {
 	sbx := &sandbox{
@@ -233,7 +234,7 @@ func (sb *sandbox) Params() *param.Params {
 	return sb.params
 }
 
-func (sb *sandbox) CurrentHeight() uint32 {
+func (sb *sandbox) CurrentHeight() types.Height {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
@@ -287,7 +288,7 @@ func (sb *sandbox) PowerDelta() int64 {
 }
 
 // VerifyProof verifies proof of a sortition transaction.
-func (sb *sandbox) VerifyProof(blockHeight uint32, proof sortition.Proof, val *validator.Validator) bool {
+func (sb *sandbox) VerifyProof(blockHeight types.Height, proof sortition.Proof, val *validator.Validator) bool {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 

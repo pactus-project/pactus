@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/pactus-project/pactus/network"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
 )
@@ -38,7 +39,7 @@ func (m *BlockAnnounceMessage) BasicCheck() error {
 	return m.Certificate.BasicCheck()
 }
 
-func (m *BlockAnnounceMessage) Height() uint32 {
+func (m *BlockAnnounceMessage) Height() types.Height {
 	return m.Certificate.Height()
 }
 
@@ -54,7 +55,7 @@ func (*BlockAnnounceMessage) ShouldBroadcast() bool {
 	return true
 }
 
-func (m *BlockAnnounceMessage) ConsensusHeight() uint32 {
+func (m *BlockAnnounceMessage) ConsensusHeight() types.Height {
 	return m.Certificate.Height()
 }
 

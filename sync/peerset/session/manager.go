@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/sync/peerset/peer"
+	"github.com/pactus-project/pactus/types"
 )
 
 type Manager struct {
@@ -45,7 +46,7 @@ func (sm *Manager) Stats() Stats {
 	}
 }
 
-func (sm *Manager) OpenSession(pid peer.ID, from, count uint32) *Session {
+func (sm *Manager) OpenSession(pid peer.ID, from types.Height, count uint32) *Session {
 	ssn := NewSession(sm.nextSessionID, pid, from, count)
 	sm.sessions[ssn.SessionID] = ssn
 	sm.nextSessionID++

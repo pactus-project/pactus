@@ -4,15 +4,16 @@ import (
 	"fmt"
 
 	"github.com/pactus-project/pactus/network"
+	"github.com/pactus-project/pactus/types"
 )
 
 type HelloAckMessage struct {
 	ResponseCode ResponseCode `cbor:"1,keyasint"`
 	Reason       string       `cbor:"2,keyasint"`
-	Height       uint32       `cbor:"3,keyasint"`
+	Height       types.Height `cbor:"3,keyasint"`
 }
 
-func NewHelloAckMessage(code ResponseCode, reason string, height uint32) *HelloAckMessage {
+func NewHelloAckMessage(code ResponseCode, reason string, height types.Height) *HelloAckMessage {
 	return &HelloAckMessage{
 		ResponseCode: code,
 		Reason:       reason,
@@ -36,7 +37,7 @@ func (*HelloAckMessage) ShouldBroadcast() bool {
 	return false
 }
 
-func (*HelloAckMessage) ConsensusHeight() uint32 {
+func (*HelloAckMessage) ConsensusHeight() types.Height {
 	return 0
 }
 

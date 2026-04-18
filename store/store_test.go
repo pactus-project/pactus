@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
@@ -50,7 +51,7 @@ func setup(t *testing.T, config *Config) *testData {
 	}
 
 	// Save 10 blocks
-	for height := uint32(0); height < 10; height++ {
+	for height := types.Height(0); height < 10; height++ {
 		blk, cert := td.GenerateTestBlock(height + 1)
 		td.store.SaveBlock(blk, cert)
 		require.NoError(t, td.store.WriteBatch())
@@ -66,7 +67,7 @@ func TestReopenStore(t *testing.T) {
 
 	assert.False(t, store.IsPruned())
 	assert.Zero(t, store.PruningHeight())
-	assert.Equal(t, uint32(10), store.LastCertificate().Height())
+	assert.Equal(t, types.Height(10), store.LastCertificate().Height())
 }
 
 func TestBlockHash(t *testing.T) {
@@ -75,7 +76,7 @@ func TestBlockHash(t *testing.T) {
 	sb, _ := td.store.Block(1)
 
 	assert.Equal(t, hash.UndefHash, td.store.BlockHash(0))
-	assert.Equal(t, hash.UndefHash, td.store.BlockHash(util.MaxUint32))
+	assert.Equal(t, hash.UndefHash, td.store.BlockHash(types.Height(util.MaxUint32)))
 	assert.Equal(t, sb.BlockHash, td.store.BlockHash(1))
 }
 
@@ -84,9 +85,9 @@ func TestBlockHeight(t *testing.T) {
 
 	sb, _ := td.store.Block(1)
 
-	assert.Equal(t, uint32(0), td.store.BlockHeight(hash.UndefHash))
-	assert.Equal(t, uint32(0), td.store.BlockHeight(td.RandHash()))
-	assert.Equal(t, uint32(1), td.store.BlockHeight(sb.BlockHash))
+	assert.Equal(t, types.Height(0), td.store.BlockHeight(hash.UndefHash))
+	assert.Equal(t, types.Height(0), td.store.BlockHeight(td.RandHash()))
+	assert.Equal(t, types.Height(1), td.store.BlockHeight(sb.BlockHash))
 }
 
 func TestUnknownTransactionID(t *testing.T) {
@@ -256,7 +257,7 @@ func TestPruneBlock(t *testing.T) {
 	td := setup(t, conf)
 
 	t.Run("Prune existing block", func(t *testing.T) {
-		height := uint32(1)
+		height := types.Height(1)
 		cBlkOne, _ := td.store.Block(height)
 		blkOne, _ := cBlkOne.ToBlock()
 		pruned, err := td.store.pruneBlock(height)
@@ -279,7 +280,7 @@ func TestPruneBlock(t *testing.T) {
 	})
 
 	t.Run("Prune non existing block", func(t *testing.T) {
-		height := uint32(11)
+		height := types.Height(11)
 		pruned, err := td.store.pruneBlock(height)
 		assert.False(t, pruned)
 		require.NoError(t, err)
@@ -295,8 +296,8 @@ func TestPrune(t *testing.T) {
 	td := setup(t, conf)
 
 	totalPruned := uint32(0)
-	lastPruningHeight := uint32(0)
-	callback := func(pruned bool, pruningHeight uint32) bool {
+	lastPruningHeight := types.Height(0)
+	callback := func(pruned bool, pruningHeight types.Height) bool {
 		if pruned {
 			totalPruned++
 		}
@@ -307,7 +308,7 @@ func TestPrune(t *testing.T) {
 
 	t.Run("Not enough block to prune", func(t *testing.T) {
 		totalPruned = uint32(0)
-		lastPruningHeight = uint32(0)
+		lastPruningHeight = types.Height(0)
 
 		// Store doesn't have blocks for one day
 		err := td.store.Prune(callback)
@@ -319,7 +320,7 @@ func TestPrune(t *testing.T) {
 
 	t.Run("Prune database", func(t *testing.T) {
 		totalPruned = uint32(0)
-		lastPruningHeight = uint32(0)
+		lastPruningHeight = types.Height(0)
 
 		blk, cert := td.GenerateTestBlock(blockPerDay + 7)
 		td.store.SaveBlock(blk, cert)
@@ -336,7 +337,7 @@ func TestPrune(t *testing.T) {
 		require.NoError(t, err)
 
 		assert.Equal(t, uint32(8), totalPruned)
-		assert.Equal(t, uint32(1), lastPruningHeight)
+		assert.Equal(t, types.Height(1), lastPruningHeight)
 	})
 
 	t.Run("Reopen the store", func(t *testing.T) {
@@ -347,7 +348,7 @@ func TestPrune(t *testing.T) {
 		td.store = s.(*store)
 
 		assert.True(t, td.store.IsPruned(), "store should be in prune mode")
-		assert.Equal(t, uint32(8), td.store.PruningHeight())
+		assert.Equal(t, types.Height(8), td.store.PruningHeight())
 	})
 
 	t.Run("Commit new block", func(t *testing.T) {
@@ -360,7 +361,7 @@ func TestPrune(t *testing.T) {
 		require.Error(t, err)
 		assert.Nil(t, cBlk)
 
-		assert.Equal(t, uint32(9), td.store.PruningHeight())
+		assert.Equal(t, types.Height(9), td.store.PruningHeight())
 	})
 }
 
@@ -370,7 +371,7 @@ func TestCancelPrune(t *testing.T) {
 	td := setup(t, conf)
 
 	hits := uint32(0)
-	callback := func(_ bool, _ uint32) bool {
+	callback := func(_ bool, _ types.Height) bool {
 		hits++
 
 		return true // Cancel pruning
@@ -401,7 +402,7 @@ func TestRecentTransaction(t *testing.T) {
 	require.NoError(t, err)
 	assert.True(t, td.store.RecentTransaction(oldTrx.ID()))
 
-	blk, cert := td.GenerateTestBlock(lastHeight + td.store.txStore.txCacheWindow + 2)
+	blk, cert := td.GenerateTestBlock(lastHeight.SafeIncrease(td.store.txStore.txCacheWindow + 2))
 	td.store.SaveBlock(blk, cert)
 	err = td.store.writeBatch()
 	require.NoError(t, err)

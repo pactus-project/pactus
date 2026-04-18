@@ -54,7 +54,7 @@ func TestRawBlockPublisher(t *testing.T) {
 
 	require.NotNil(t, header)
 	require.Equal(t, uint32(0), seqNo)
-	require.Equal(t, blk.Height(), height)
+	require.Equal(t, uint32(blk.Height()), height)
 	require.Equal(t, TopicRawBlock.Bytes(), topic)
 	require.Equal(t, header.PrevBlockHash(), blk.Header().PrevBlockHash())
 	require.Equal(t, header.StateRoot(), blk.Header().StateRoot())

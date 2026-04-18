@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/store"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/protocol"
@@ -32,7 +33,7 @@ func (li *LastInfo) SortitionSeed() sortition.VerifiableSeed {
 	return li.lastSortitionSeed
 }
 
-func (li *LastInfo) BlockHeight() uint32 {
+func (li *LastInfo) BlockHeight() types.Height {
 	if li.lastCert == nil {
 		return 0
 	}

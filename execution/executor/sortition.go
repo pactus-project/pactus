@@ -5,6 +5,7 @@ import (
 	"slices"
 
 	"github.com/pactus-project/pactus/sandbox"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
@@ -14,7 +15,7 @@ type SortitionExecutor struct {
 	sbx             sandbox.Sandbox
 	pld             *payload.SortitionPayload
 	validator       *validator.Validator
-	sortitionHeight uint32
+	sortitionHeight types.Height
 }
 
 func newSortitionExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*SortitionExecutor, error) {
@@ -36,7 +37,7 @@ func newSortitionExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*SortitionExecutor, 
 }
 
 func (e *SortitionExecutor) Check(strict bool) error {
-	if e.sbx.CurrentHeight()-e.validator.LastBondingHeight() < e.sbx.Params().BondInterval {
+	if e.sbx.CurrentHeight().SafeSub(e.validator.LastBondingHeight()) < e.sbx.Params().BondInterval {
 		return ErrBondingPeriod
 	}
 

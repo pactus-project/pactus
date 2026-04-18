@@ -3,8 +3,8 @@ package offline
 import (
 	"errors"
 
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
-	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/wallet/provider"
@@ -21,7 +21,7 @@ func NewOfflineBlockchainProvider() *OfflineBlockchainProvider {
 	return &OfflineBlockchainProvider{}
 }
 
-func (*OfflineBlockchainProvider) LastBlockHeight() (block.Height, error) {
+func (*OfflineBlockchainProvider) LastBlockHeight() (types.Height, error) {
 	return 0, ErrOffline
 }
 
@@ -33,7 +33,7 @@ func (*OfflineBlockchainProvider) GetValidator(string) (*validator.Validator, er
 	return nil, ErrOffline
 }
 
-func (*OfflineBlockchainProvider) GetTransaction(string) (*tx.Tx, block.Height, error) {
+func (*OfflineBlockchainProvider) GetTransaction(string) (*tx.Tx, types.Height, error) {
 	return nil, 0, ErrOffline
 }
 

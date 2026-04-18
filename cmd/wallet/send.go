@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/prompt"
@@ -49,7 +50,7 @@ func buildSendTransferCmd(parentCmd *cobra.Command) {
 
 		opts := []wallet.TxOption{
 			wallet.OptionFee(*feeOpt),
-			wallet.OptionLockTime(uint32(*lockTimeOpt)),
+			wallet.OptionLockTime(types.Height(*lockTimeOpt)),
 			wallet.OptionMemo(*memoOpt),
 		}
 
@@ -100,11 +101,11 @@ func buildSendBondCmd(parentCmd *cobra.Command) {
 
 		opts := []wallet.TxOption{
 			wallet.OptionFee(*feeOpt),
-			wallet.OptionLockTime(uint32(*lockTime)),
+			wallet.OptionLockTime(types.Height(*lockTime)),
 			wallet.OptionMemo(*memoOpt),
 			wallet.OptionDelegateOwner(*delegateOwnerOpt),
 			wallet.OptionDelegateShare(*delegateShareOpt),
-			wallet.OptionDelegateExpiry(*delegateExpiryOpt),
+			wallet.OptionDelegateExpiry(types.Height(*delegateExpiryOpt)),
 		}
 
 		trx, err := wlt.MakeBondTx(sender, receiver, *pubKeyOpt, amt, opts...)
@@ -146,7 +147,7 @@ func buildSendUnbondCmd(parentCmd *cobra.Command) {
 
 		opts := []wallet.TxOption{
 			wallet.OptionFee(*feeOpt),
-			wallet.OptionLockTime(uint32(*lockTime)),
+			wallet.OptionLockTime(types.Height(*lockTime)),
 			wallet.OptionMemo(*memoOpt),
 			wallet.OptionDelegateOwner(*delegateOwnerOpt),
 		}
@@ -189,7 +190,7 @@ func buildSendWithdrawCmd(parentCmd *cobra.Command) {
 
 		opts := []wallet.TxOption{
 			wallet.OptionFee(*feeOpt),
-			wallet.OptionLockTime(uint32(*lockTime)),
+			wallet.OptionLockTime(types.Height(*lockTime)),
 			wallet.OptionMemo(*memoOpt),
 		}
 

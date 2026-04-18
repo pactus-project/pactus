@@ -5,15 +5,16 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/network"
+	"github.com/pactus-project/pactus/types"
 )
 
 type QueryProposalMessage struct {
-	Height  uint32         `cbor:"1,keyasint"`
+	Height  types.Height   `cbor:"1,keyasint"`
 	Round   int16          `cbor:"3,keyasint"`
 	Querier crypto.Address `cbor:"2,keyasint"`
 }
 
-func NewQueryProposalMessage(height uint32, round int16, querier crypto.Address) *QueryProposalMessage {
+func NewQueryProposalMessage(height types.Height, round int16, querier crypto.Address) *QueryProposalMessage {
 	return &QueryProposalMessage{
 		Height:  height,
 		Round:   round,
@@ -41,7 +42,7 @@ func (*QueryProposalMessage) ShouldBroadcast() bool {
 	return true
 }
 
-func (m *QueryProposalMessage) ConsensusHeight() uint32 {
+func (m *QueryProposalMessage) ConsensusHeight() types.Height {
 	return m.Height
 }
 

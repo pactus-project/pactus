@@ -3,6 +3,7 @@ package cache
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
@@ -62,7 +63,7 @@ func TestCacheIsFull(t *testing.T) {
 
 	cache, _ := NewCache(10)
 
-	height := uint32(0)
+	height := types.Height(0)
 	for ; height < 10; height++ {
 		blk, _ := ts.GenerateTestBlock(height + 1)
 		cache.AddBlock(blk)

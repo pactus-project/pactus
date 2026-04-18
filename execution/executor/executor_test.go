@@ -23,7 +23,8 @@ func setup(t *testing.T) *testData {
 	ts := testsuite.NewTestSuite(t)
 
 	sbx := sandbox.MockingSandbox(ts)
-	randHeight := ts.RandHeight()
+	randHeight := ts.RandHeight(
+		testsuite.HeightWithMin(sbx.TestParams.UnbondInterval))
 	_ = sbx.TestStore.AddTestBlock(randHeight)
 
 	return &testData{

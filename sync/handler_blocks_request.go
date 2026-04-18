@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util"
 )
 
@@ -77,7 +78,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 			message.ResponseCodeMoreBlocks.String(), msg.SessionID, height, blocksData, nil)
 		handler.respond(response, pid)
 
-		height += uint32(len(blocksData))
+		height += types.Height(len(blocksData))
 		count -= uint32(len(blocksData))
 		if count <= 0 {
 			break

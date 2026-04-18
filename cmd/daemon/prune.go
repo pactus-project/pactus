@@ -10,6 +10,7 @@ import (
 	"github.com/gofrs/flock"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/store"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/util/terminal"
@@ -79,7 +80,7 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 			<-closed
 		})
 
-		err = store.Prune(func(pruned bool, pruningHeight uint32) bool {
+		err = store.Prune(func(pruned bool, pruningHeight types.Height) bool {
 			if pruned {
 				prunedCount++
 			} else {
@@ -87,7 +88,7 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 			}
 
 			if totalCount == 0 {
-				totalCount = pruningHeight
+				totalCount = uint32(pruningHeight)
 			}
 
 			pruningProgressBar(prunedCount, skippedCount, totalCount)

@@ -4,11 +4,12 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/sortition"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
 )
 
-func NewSubsidyTx(lockTime uint32,
+func NewSubsidyTx(lockTime types.Height,
 	recipients []payload.BatchRecipient, opts ...TxOption,
 ) *Tx {
 	return NewBatchTransferTx(
@@ -19,7 +20,7 @@ func NewSubsidyTx(lockTime uint32,
 		opts...)
 }
 
-func NewTransferTx(lockTime uint32,
+func NewTransferTx(lockTime types.Height,
 	sender, receiver crypto.Address,
 	amt, fee amount.Amount, opts ...TxOption,
 ) *Tx {
@@ -32,7 +33,7 @@ func NewTransferTx(lockTime uint32,
 	return newTx(lockTime, pld, fee, opts...)
 }
 
-func NewBatchTransferTx(lockTime uint32,
+func NewBatchTransferTx(lockTime types.Height,
 	sender crypto.Address, recipients []payload.BatchRecipient,
 	fee amount.Amount, opts ...TxOption,
 ) *Tx {
@@ -44,7 +45,7 @@ func NewBatchTransferTx(lockTime uint32,
 	return newTx(lockTime, pld, fee, opts...)
 }
 
-func NewBondTx(lockTime uint32,
+func NewBondTx(lockTime types.Height,
 	sender, receiver crypto.Address,
 	pubKey *bls.PublicKey,
 	stake, fee amount.Amount, opts ...TxOption,
@@ -59,7 +60,7 @@ func NewBondTx(lockTime uint32,
 	return newTx(lockTime, pld, fee, opts...)
 }
 
-func NewUnbondTx(lockTime uint32,
+func NewUnbondTx(lockTime types.Height,
 	val crypto.Address,
 	opts ...TxOption,
 ) *Tx {
@@ -70,7 +71,7 @@ func NewUnbondTx(lockTime uint32,
 	return newTx(lockTime, pld, 0, opts...)
 }
 
-func NewWithdrawTx(lockTime uint32,
+func NewWithdrawTx(lockTime types.Height,
 	val, acc crypto.Address,
 	amt, fee amount.Amount,
 	opts ...TxOption,
@@ -84,7 +85,7 @@ func NewWithdrawTx(lockTime uint32,
 	return newTx(lockTime, pld, fee, opts...)
 }
 
-func NewSortitionTx(lockTime uint32,
+func NewSortitionTx(lockTime types.Height,
 	addr crypto.Address,
 	proof sortition.Proof,
 ) *Tx {

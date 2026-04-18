@@ -4,18 +4,19 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
-func lastHeight() uint32 {
+func lastHeight() types.Height {
 	res, err := tBlockchainClient.GetBlockchainInfo(tCtx,
 		&pactus.GetBlockchainInfoRequest{})
 	if err != nil {
 		panic(err)
 	}
 
-	return res.LastBlockHeight
+	return types.Height(res.LastBlockHeight)
 }
 
 func waitForNewBlocks(num uint32) {
@@ -32,11 +33,11 @@ func lastBlock() *pactus.GetBlockResponse {
 	return getBlockAt(lastHeight())
 }
 
-func getBlockAt(height uint32) *pactus.GetBlockResponse {
+func getBlockAt(height types.Height) *pactus.GetBlockResponse {
 	for i := 0; i < 120; i++ {
 		res, err := tBlockchainClient.GetBlock(tCtx,
 			&pactus.GetBlockRequest{
-				Height:    height,
+				Height:    uint32(height),
 				Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_INFO,
 			},
 		)

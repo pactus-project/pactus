@@ -52,7 +52,7 @@ func TestBlockInfoPublisher(t *testing.T) {
 	require.Equal(t, blk.Header().ProposerAddress().Bytes(), proposerBytes)
 	require.Equal(t, blk.Header().UnixTime(), timestamp)
 	require.Equal(t, uint16(len(blk.Transactions())), txCount)
-	require.Equal(t, blk.Height(), height)
+	require.Equal(t, uint32(blk.Height()), height)
 	require.Equal(t, uint32(0), seqNo)
 
 	require.NoError(t, sub.Close())

@@ -4,6 +4,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
@@ -23,7 +24,7 @@ type CommittedBlock struct {
 	store *store
 
 	BlockHash hash.Hash
-	Height    uint32
+	Height    types.Height
 	Data      []byte
 }
 
@@ -54,7 +55,7 @@ type CommittedTx struct {
 	store *store
 
 	TxID      tx.ID
-	Height    uint32
+	Height    types.Height
 	BlockTime uint32
 	Data      []byte
 }
@@ -79,10 +80,10 @@ func (s *CommittedTx) ToTx() (*tx.Tx, error) {
 }
 
 type Reader interface {
-	Block(height uint32) (*CommittedBlock, error)
-	BlockHeight(h hash.Hash) uint32
-	BlockHash(height uint32) hash.Hash
-	SortitionSeed(blockHeight uint32) *sortition.VerifiableSeed
+	Block(height types.Height) (*CommittedBlock, error)
+	BlockHeight(h hash.Hash) types.Height
+	BlockHash(height types.Height) hash.Hash
+	SortitionSeed(blockHeight types.Height) *sortition.VerifiableSeed
 	Transaction(txID tx.ID) (*CommittedTx, error)
 	RecentTransaction(txID tx.ID) bool
 	PublicKey(addr crypto.Address) (crypto.PublicKey, error)
@@ -101,7 +102,7 @@ type Reader interface {
 	LastCertificate() *certificate.Certificate
 	IsBanned(addr crypto.Address) bool
 	IsPruned() bool
-	PruningHeight() uint32
+	PruningHeight() types.Height
 }
 
 type Store interface {
@@ -111,7 +112,7 @@ type Store interface {
 	UpdateValidator(val *validator.Validator)
 	UpdateValidatorProtocolVersion(addr crypto.Address, ver protocol.Version)
 	SaveBlock(blk *block.Block, cert *certificate.Certificate)
-	Prune(callback func(pruned bool, pruningHeight uint32) bool) error
+	Prune(callback func(pruned bool, pruningHeight types.Height) bool) error
 	WriteBatch() error
 	Close()
 }

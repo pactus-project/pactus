@@ -2,6 +2,7 @@ package message
 
 import (
 	"github.com/pactus-project/pactus/network"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/protocol"
 )
@@ -36,11 +37,11 @@ func (*ProposalMessage) ShouldBroadcast() bool {
 	return true
 }
 
-func (m *ProposalMessage) ConsensusHeight() uint32 {
+func (m *ProposalMessage) ConsensusHeight() types.Height {
 	return m.Height()
 }
 
-func (m *ProposalMessage) Height() uint32 {
+func (m *ProposalMessage) Height() types.Height {
 	return m.Proposal.Height()
 }
 

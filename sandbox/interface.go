@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/state/param"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
@@ -30,11 +31,11 @@ type Sandbox interface {
 	PowerDelta() int64
 	AccumulatedFee() amount.Amount
 
-	VerifyProof(uint32, sortition.Proof, *validator.Validator) bool
+	VerifyProof(types.Height, sortition.Proof, *validator.Validator) bool
 	Committee() committee.Reader
 
 	Params() *param.Params
-	CurrentHeight() uint32
+	CurrentHeight() types.Height
 	IsMainnet() bool
 
 	IterateAccounts(consumer func(crypto.Address, *account.Account, bool))

@@ -9,6 +9,7 @@ import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
@@ -18,7 +19,7 @@ import (
 // As a Certificate, it verifies if a block is signed by a majority of validators.
 // As a Certificate, it checks whether a majority of validators have voted in the consensus step.
 type Certificate struct {
-	height     uint32
+	height     types.Height
 	round      int16
 	committers []int32
 	absentees  []int32
@@ -26,14 +27,14 @@ type Certificate struct {
 }
 
 // NewCertificate creates a new Certificate instance.
-func NewCertificate(height uint32, round int16) *Certificate {
+func NewCertificate(height types.Height, round int16) *Certificate {
 	return &Certificate{
 		height: height,
 		round:  round,
 	}
 }
 
-func (cert *Certificate) Height() uint32 {
+func (cert *Certificate) Height() types.Height {
 	return cert.height
 }
 
@@ -256,7 +257,7 @@ func (cert *Certificate) SignBytesCPDecided(blockHash hash.Hash, cpRound int16, 
 // signBytes returns the sign bytes for the vote certificate.
 func (cert *Certificate) signBytes(blockHash hash.Hash, extraData ...[]byte) []byte {
 	signBytes := blockHash.Bytes()
-	signBytes = append(signBytes, util.Uint32ToSlice(cert.height)...)
+	signBytes = append(signBytes, cert.height.EncodeAsSlice()...)
 	signBytes = append(signBytes, util.Int16ToSlice(cert.round)...)
 	for _, data := range extraData {
 		signBytes = append(signBytes, data...)

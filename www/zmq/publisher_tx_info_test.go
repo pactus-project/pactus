@@ -49,7 +49,7 @@ func TestTxInfoPublisher(t *testing.T) {
 
 		require.Equal(t, TopicTransactionInfo.Bytes(), topic)
 		require.Equal(t, blk.Transactions()[i].ID().Bytes(), txHash)
-		require.Equal(t, blk.Height(), height)
+		require.Equal(t, uint32(blk.Height()), height)
 		require.Equal(t, uint32(i), seqNo)
 	}
 

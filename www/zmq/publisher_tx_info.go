@@ -22,7 +22,7 @@ func newTxInfoPub(socket zmq4.Socket, logger *logger.SubLogger) Publisher {
 
 func (t *txInfoPub) onNewBlock(blk *block.Block) {
 	for _, txn := range blk.Transactions() {
-		rawMsg := t.makeTopicMsg(txn.ID().Bytes(), blk.Height())
+		rawMsg := t.makeTopicMsg(txn.ID().Bytes(), uint32(blk.Height()))
 		message := zmq4.NewMsg(rawMsg)
 
 		if err := t.zmqSocket.Send(message); err != nil {

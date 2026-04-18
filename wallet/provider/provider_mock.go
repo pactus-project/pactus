@@ -12,8 +12,8 @@ package provider
 import (
 	reflect "reflect"
 
+	types "github.com/pactus-project/pactus/types"
 	account "github.com/pactus-project/pactus/types/account"
-	block "github.com/pactus-project/pactus/types/block"
 	tx "github.com/pactus-project/pactus/types/tx"
 	validator "github.com/pactus-project/pactus/types/validator"
 	gomock "go.uber.org/mock/gomock"
@@ -73,11 +73,11 @@ func (mr *MockIBlockchainProviderMockRecorder) GetAccount(addrStr any) *gomock.C
 }
 
 // GetTransaction mocks base method.
-func (m *MockIBlockchainProvider) GetTransaction(txID string) (*tx.Tx, block.Height, error) {
+func (m *MockIBlockchainProvider) GetTransaction(txID string) (*tx.Tx, types.Height, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTransaction", txID)
 	ret0, _ := ret[0].(*tx.Tx)
-	ret1, _ := ret[1].(block.Height)
+	ret1, _ := ret[1].(types.Height)
 	ret2, _ := ret[2].(error)
 	return ret0, ret1, ret2
 }
@@ -104,10 +104,10 @@ func (mr *MockIBlockchainProviderMockRecorder) GetValidator(addrStr any) *gomock
 }
 
 // LastBlockHeight mocks base method.
-func (m *MockIBlockchainProvider) LastBlockHeight() (block.Height, error) {
+func (m *MockIBlockchainProvider) LastBlockHeight() (types.Height, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "LastBlockHeight")
-	ret0, _ := ret[0].(block.Height)
+	ret0, _ := ret[0].(types.Height)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

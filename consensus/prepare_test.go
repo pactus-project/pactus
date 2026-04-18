@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/vote"
 )
 
@@ -21,7 +22,7 @@ func TestQueryProposal(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)
-	height := uint32(2)
+	height := types.Height(2)
 
 	td.enterNewHeight(td.consP)
 	td.enterNextRound(td.consP)
@@ -36,7 +37,7 @@ func TestQueryVote(t *testing.T) {
 
 	td.commitBlockForAllStates(t)
 	td.commitBlockForAllStates(t)
-	height := uint32(3)
+	height := types.Height(3)
 	round := int16(1)
 
 	td.enterNewHeight(td.consP)

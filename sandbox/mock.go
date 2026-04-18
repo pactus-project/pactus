@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/state/param"
 	"github.com/pactus-project/pactus/store"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
@@ -108,7 +109,7 @@ func (m *MockSandbox) UpdateValidator(val *validator.Validator) {
 	m.TestStore.UpdateValidator(val)
 }
 
-func (m *MockSandbox) CurrentHeight() uint32 {
+func (m *MockSandbox) CurrentHeight() types.Height {
 	return m.TestStore.LastHeight + 1
 }
 
@@ -148,7 +149,7 @@ func (m *MockSandbox) PowerDelta() int64 {
 	return m.TestPowerDelta
 }
 
-func (m *MockSandbox) VerifyProof(uint32, sortition.Proof, *validator.Validator) bool {
+func (m *MockSandbox) VerifyProof(types.Height, sortition.Proof, *validator.Validator) bool {
 	return m.TestAcceptSortition
 }
 

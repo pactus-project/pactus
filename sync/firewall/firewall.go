@@ -235,7 +235,7 @@ func (f *Firewall) isExpiredMessage(msgData []byte) bool {
 	consensusHeight := binary.BigEndian.Uint32(msgData[msgLen-4:])
 
 	// The message is expired, or the consensus height is behind the network's current height.
-	if f.state.LastBlockHeight() > 0 && consensusHeight < f.state.LastBlockHeight()-1 {
+	if f.state.LastBlockHeight() > 0 && consensusHeight < uint32(f.state.LastBlockHeight()-1) {
 		f.logger.Debug("firewall: expired message", "message height", consensusHeight,
 			"our height", f.state.LastBlockHeight())
 

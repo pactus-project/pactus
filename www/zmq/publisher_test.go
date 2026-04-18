@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-zeromq/zmq4"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -63,7 +64,7 @@ func TestPublisherOnSameSockets(t *testing.T) {
 		seqNo := binary.BigEndian.Uint32(msg[len(msg)-4:])
 		t.Logf("[%s] %d", topic, seqNo)
 
-		require.Equal(t, height, blk.Height())
+		require.Equal(t, types.Height(height), blk.Height())
 
 		switch topic {
 		case TopicRawTransaction:

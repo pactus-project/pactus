@@ -12,6 +12,7 @@ import (
 	"github.com/pactus-project/pactus/execution/executor"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -62,6 +63,10 @@ func setup(t *testing.T, cfg *Config) *testData {
 	assert.NotNil(t, pool)
 
 	sbx.TestAcceptSortition = true
+
+	randHeight := ts.RandHeight(
+		testsuite.HeightWithMin(sbx.TestParams.UnbondInterval))
+	_ = sbx.TestStore.AddTestBlock(randHeight)
 
 	return &testData{
 		TestSuite: ts,
@@ -162,7 +167,7 @@ func (td *testData) makeValidWithdrawTx(options ...testsuite.TransactionMakerOpt
 	validatorPublicKey := trx.PublicKey().(*bls.PublicKey)
 	val := td.sbx.MakeNewValidator(validatorPublicKey)
 	val.AddToStake(trx.Payload().Value() + trx.Fee())
-	val.UpdateUnbondingHeight(td.sbx.CurrentHeight() - (td.sbx.TestParams.UnbondInterval + 1))
+	val.UpdateUnbondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.TestParams.UnbondInterval + 1))
 	td.sbx.UpdateValidator(val)
 
 	return trx
@@ -176,7 +181,7 @@ func (td *testData) makeValidSortitionTx(options ...testsuite.TransactionMakerOp
 
 	validatorPublicKey := trx.PublicKey().(*bls.PublicKey)
 	val := td.sbx.MakeNewValidator(validatorPublicKey)
-	val.UpdateLastBondingHeight(td.sbx.CurrentHeight() - (td.sbx.TestParams.BondInterval + 1))
+	val.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.TestParams.BondInterval + 1))
 	td.sbx.UpdateValidator(val)
 
 	return trx
@@ -261,7 +266,7 @@ func TestCalculatingConsumption(t *testing.T) {
 	}
 
 	tests := []struct {
-		height uint32
+		height types.Height
 		txs    []*tx.Tx
 	}{
 		{2, []*tx.Tx{trx20, trx21}},

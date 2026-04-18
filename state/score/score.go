@@ -1,6 +1,9 @@
 package score
 
-import "github.com/pactus-project/pactus/types/certificate"
+import (
+	"github.com/pactus-project/pactus/types"
+	"github.com/pactus-project/pactus/types/certificate"
+)
 
 type scoreData struct {
 	inCommittee int // Number of times a validator was in the committee
@@ -8,14 +11,14 @@ type scoreData struct {
 }
 
 type Manager struct {
-	certs   map[uint32]*certificate.Certificate
+	certs   map[types.Height]*certificate.Certificate
 	vals    map[int32]*scoreData
 	maxCert uint32
 }
 
 func NewScoreManager(maxCert uint32) *Manager {
 	return &Manager{
-		certs:   make(map[uint32]*certificate.Certificate),
+		certs:   make(map[types.Height]*certificate.Certificate),
 		vals:    make(map[int32]*scoreData),
 		maxCert: maxCert,
 	}
@@ -42,7 +45,7 @@ func (sm *Manager) SetCertificate(cert *certificate.Certificate) {
 		data.absent++
 	}
 
-	oldHeight := lastHeight - sm.maxCert
+	oldHeight := lastHeight.SafeDecrease(sm.maxCert)
 	oldCert, ok := sm.certs[oldHeight]
 	if ok {
 		for _, num := range oldCert.Committers() {

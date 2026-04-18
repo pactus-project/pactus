@@ -14,6 +14,7 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/logger"
@@ -127,7 +128,7 @@ func TestHandlerBlocksResponseStrippedPublicKey(t *testing.T) {
 	}
 }
 
-func shouldPublishBlockRequest(t *testing.T, net *network.MockNetwork, from uint32) {
+func shouldPublishBlockRequest(t *testing.T, net *network.MockNetwork, from types.Height) {
 	t.Helper()
 
 	bdl := shouldPublishMessageWithThisType(t, net, message.TypeBlocksRequest)
@@ -136,7 +137,7 @@ func shouldPublishBlockRequest(t *testing.T, net *network.MockNetwork, from uint
 }
 
 func shouldPublishBlockResponse(t *testing.T, net *network.MockNetwork,
-	from, count uint32, code message.ResponseCode,
+	from types.Height, count uint32, code message.ResponseCode,
 ) {
 	t.Helper()
 
@@ -254,15 +255,15 @@ func TestHandlerBlocksResponseSyncing(t *testing.T) {
 	// Adding 100 blocks for Bob
 	blockInterval := nets.syncBob.state.Genesis().Params().BlockInterval()
 	blockTime := nets.syncBob.state.Genesis().GenesisTime()
-	for i := uint32(0); i < 100; i++ {
+	for i := types.Height(0); i < 100; i++ {
 		blk, cert := nets.GenerateTestBlock(i+1, testsuite.BlockWithTime(blockTime))
 		require.NoError(t, nets.syncBob.state.CommitBlock(blk, cert))
 
 		blockTime = blockTime.Add(blockInterval)
 	}
 
-	assert.Equal(t, uint32(0), nets.syncAlice.state.LastBlockHeight())
-	assert.Equal(t, uint32(100), nets.syncBob.state.LastBlockHeight())
+	assert.Equal(t, types.Height(0), nets.syncAlice.state.LastBlockHeight())
+	assert.Equal(t, types.Height(100), nets.syncBob.state.LastBlockHeight())
 
 	// Announcing a block
 	blk, cert := nets.GenerateTestBlock(nets.RandHeight())
@@ -298,7 +299,7 @@ func TestHandlerBlocksResponseSyncing(t *testing.T) {
 	shouldPublishBlockResponse(t, nets.networkBob, 100, 0, message.ResponseCodeSynced)     // Synced
 
 	assert.Eventually(t, func() bool {
-		return nets.syncAlice.state.LastBlockHeight() == uint32(100)
+		return nets.syncAlice.state.LastBlockHeight() == types.Height(100)
 	}, 10*time.Second, 1*time.Second)
 }
 
@@ -308,15 +309,15 @@ func TestHandlerBlocksResponseSyncingHasBlockInCache(t *testing.T) {
 	// Adding 100 blocks for Bob
 	blockInterval := nets.syncBob.state.Genesis().Params().BlockInterval()
 	blockTime := nets.syncBob.state.Genesis().GenesisTime()
-	for i := uint32(0); i < 23; i++ {
+	for i := types.Height(0); i < 23; i++ {
 		blk, cert := nets.GenerateTestBlock(i+1, testsuite.BlockWithTime(blockTime))
 		require.NoError(t, nets.syncBob.state.CommitBlock(blk, cert))
 
 		blockTime = blockTime.Add(blockInterval)
 	}
 
-	assert.Equal(t, uint32(0), nets.syncAlice.state.LastBlockHeight())
-	assert.Equal(t, uint32(23), nets.syncBob.state.LastBlockHeight())
+	assert.Equal(t, types.Height(0), nets.syncAlice.state.LastBlockHeight())
+	assert.Equal(t, types.Height(23), nets.syncBob.state.LastBlockHeight())
 
 	// Adding some blocks to the cache
 	blk1 := nets.stateBob.TestStore.Blocks[1]

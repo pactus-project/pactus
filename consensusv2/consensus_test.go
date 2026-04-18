@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/txpool"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
@@ -181,7 +182,7 @@ func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensusV2, 
 }
 
 func (td *testData) shouldPublishProposal(t *testing.T, cons *consensusV2,
-	height uint32, round int16,
+	height types.Height, round int16,
 ) *proposal.Proposal {
 	t.Helper()
 
@@ -200,7 +201,7 @@ func (td *testData) shouldPublishProposal(t *testing.T, cons *consensusV2,
 	return nil
 }
 
-func (td *testData) shouldPublishQueryProposal(t *testing.T, cons *consensusV2, height uint32, round int16) {
+func (td *testData) shouldPublishQueryProposal(t *testing.T, cons *consensusV2, height types.Height, round int16) {
 	t.Helper()
 
 	for _, consMsg := range td.network {
@@ -219,7 +220,7 @@ func (td *testData) shouldPublishQueryProposal(t *testing.T, cons *consensusV2, 
 	require.NoError(t, errors.New("Query proposal message not published"))
 }
 
-func (td *testData) shouldPublishQueryVote(t *testing.T, cons *consensusV2, height uint32, round int16) {
+func (td *testData) shouldPublishQueryVote(t *testing.T, cons *consensusV2, height types.Height, round int16) {
 	t.Helper()
 
 	for _, consMsg := range td.network {
@@ -257,7 +258,7 @@ func (td *testData) shouldPublishVote(t *testing.T, cons *consensusV2, voteType 
 	return nil
 }
 
-func (*testData) checkHeightRound(t *testing.T, cons *consensusV2, height uint32, round int16) {
+func (*testData) checkHeightRound(t *testing.T, cons *consensusV2, height types.Height, round int16) {
 	t.Helper()
 
 	h, r := cons.HeightRound()
@@ -266,7 +267,7 @@ func (*testData) checkHeightRound(t *testing.T, cons *consensusV2, height uint32
 }
 
 func (td *testData) addPrecommitVote(t *testing.T, cons *consensusV2, blockHash hash.Hash,
-	height uint32, round int16, valID int,
+	height types.Height, round int16, valID int,
 ) *vote.Vote {
 	t.Helper()
 
@@ -276,7 +277,7 @@ func (td *testData) addPrecommitVote(t *testing.T, cons *consensusV2, blockHash 
 }
 
 func (td *testData) addCPPreVote(t *testing.T, cons *consensusV2, blockHash hash.Hash,
-	height uint32, round int16, cpVal vote.CPValue, just vote.Just, valID int,
+	height types.Height, round int16, cpVal vote.CPValue, just vote.Just, valID int,
 ) *vote.Vote {
 	t.Helper()
 
@@ -286,7 +287,7 @@ func (td *testData) addCPPreVote(t *testing.T, cons *consensusV2, blockHash hash
 }
 
 func (td *testData) addCPMainVote(t *testing.T, cons *consensusV2, blockHash hash.Hash,
-	height uint32, round int16, cpVal vote.CPValue, just vote.Just, valID int,
+	height types.Height, round int16, cpVal vote.CPValue, just vote.Just, valID int,
 ) *vote.Vote {
 	t.Helper()
 
@@ -295,7 +296,7 @@ func (td *testData) addCPMainVote(t *testing.T, cons *consensusV2, blockHash has
 	return td.addVote(t, cons, v, valID)
 }
 
-func (td *testData) addCPDecidedVote(t *testing.T, cons *consensusV2, blockHash hash.Hash, height uint32, round int16,
+func (td *testData) addCPDecidedVote(t *testing.T, cons *consensusV2, blockHash hash.Hash, height types.Height, round int16,
 	cpVal vote.CPValue, just vote.Just, valID int,
 ) *vote.Vote {
 	t.Helper()
@@ -387,12 +388,12 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certif
 
 // makeProposal generates a signed and valid proposal for the given height and round.
 // If rewardAddr is provided, it will be used instead of the consensus instance's default reward address.
-func (td *testData) makeProposal(t *testing.T, height uint32, round int16, rewardAddr ...crypto.Address,
+func (td *testData) makeProposal(t *testing.T, height types.Height, round int16, rewardAddr ...crypto.Address,
 ) *proposal.Proposal {
 	t.Helper()
 
 	var cons *consensusV2
-	switch (height % 4) + uint32(round%4) {
+	switch types.Height(height%4) + types.Height(round%4) {
 	case 1:
 		cons = td.consX
 	case 2:
@@ -426,7 +427,7 @@ func (td *testData) makeProposal(t *testing.T, height uint32, round int16, rewar
 //  2. `JustMainVoteNoConflict` for the main-vote step,
 //  3. `JustDecided` for the decided step.
 func (td *testData) makeChangeProposerJusts(t *testing.T, propBlockHash hash.Hash,
-	height uint32, round int16,
+	height types.Height, round int16,
 ) (preVoteJust, mainVoteJust, decidedJust vote.Just) {
 	t.Helper()
 
@@ -598,7 +599,7 @@ func TestConsensusDelayedProposal(t *testing.T) {
 
 	td.enterNewHeight(td.consP)
 
-	height := uint32(2)
+	height := types.Height(2)
 	round := int16(0)
 	prop := td.makeProposal(t, height, round)
 	blockHash := prop.Block().Hash()
@@ -624,7 +625,7 @@ func TestConsensusDelayedVote(t *testing.T) {
 
 	td.enterNewHeight(td.consP)
 
-	height := uint32(2)
+	height := types.Height(2)
 	round := int16(0)
 	prop := td.makeProposal(t, height, round)
 	blockHash := prop.Block().Hash()
@@ -649,7 +650,7 @@ func TestHandleQueryVote(t *testing.T) {
 	td.commitBlockForAllStates(t)
 
 	td.enterNewHeight(td.consP)
-	height := uint32(2)
+	height := types.Height(2)
 
 	assert.Nil(t, td.consP.HandleQueryVote(height, 0))
 
@@ -709,7 +710,7 @@ func TestHandleQueryProposal(t *testing.T) {
 	td.enterNextRound(td.consY) // consY is the proposer
 	td.consX.SetProposal(td.consY.Proposal())
 
-	height := uint32(1)
+	height := types.Height(1)
 	round := int16(1)
 
 	prop0 := td.consY.HandleQueryProposal(height, round-1)
@@ -766,7 +767,7 @@ func TestDoubleProposal(t *testing.T) {
 
 	td.enterNewHeight(td.consX)
 
-	height := uint32(4)
+	height := types.Height(4)
 	round := int16(0)
 	prop1 := td.makeProposal(t, height, round, td.RandAccAddress())
 	prop2 := td.makeProposal(t, height, round, td.RandAccAddress())
@@ -903,7 +904,7 @@ func (td *testData) executeConsensusNormal(t *testing.T) *certificate.Certificat
 	t.Helper()
 
 	td.commitBlockForAllStates(t)
-	height := uint32(2)
+	height := types.Height(2)
 
 	td.enterNewHeight(td.consX)
 	td.enterNewHeight(td.consY)
@@ -965,7 +966,7 @@ func (td *testData) executeConsensusByzantine(t *testing.T) *certificate.Certifi
 	td.commitBlockForAllStates(t)
 	td.commitBlockForAllStates(t)
 
-	height := uint32(3)
+	height := types.Height(3)
 	round := int16(0)
 
 	// =================================

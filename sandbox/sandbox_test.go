@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/state/param"
 	"github.com/pactus-project/pactus/store"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/validator"
@@ -48,8 +49,8 @@ func setup(t *testing.T) *testData {
 		totalPower += val.Power()
 	}
 
-	lastHeight := uint32(21)
-	for height := uint32(1); height < lastHeight; height++ {
+	lastHeight := types.Height(21)
+	for height := types.Height(1); height < lastHeight; height++ {
 		blk, cert := ts.GenerateTestBlock(height)
 		mockStore.SaveBlock(blk, cert)
 	}
@@ -365,7 +366,7 @@ func TestVerifyProof(t *testing.T) {
 
 	// Try to evaluate a valid sortition
 	var validProof sortition.Proof
-	var validLockTime uint32
+	var validLockTime types.Height
 	var validVal *validator.Validator
 	for height := lastHeight; height > 0; height-- {
 		block := td.store.Blocks[height]

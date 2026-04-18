@@ -48,7 +48,7 @@ func (e *WithdrawExecutor) Check(_ bool) error {
 		return ErrValidatorBonded
 	}
 
-	if e.sbx.CurrentHeight() < e.sender.UnbondingHeight()+e.sbx.Params().UnbondInterval {
+	if e.sbx.CurrentHeight() < e.sender.UnbondingHeight().SafeIncrease(e.sbx.Params().UnbondInterval) {
 		return ErrUnbondingPeriod
 	}
 

@@ -3,6 +3,8 @@ package consensusv2
 import (
 	"fmt"
 	"time"
+
+	"github.com/pactus-project/pactus/types"
 )
 
 type tickerTarget int
@@ -31,7 +33,7 @@ func (rs tickerTarget) String() string {
 
 type ticker struct {
 	Duration time.Duration
-	Height   uint32
+	Height   types.Height
 	Round    int16
 	Target   tickerTarget
 }
