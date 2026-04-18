@@ -66,7 +66,7 @@ func (m *BlocksResponseMessage) To() types.Height {
 		return 0
 	}
 
-	return m.From + types.Height(m.Count()) - 1
+	return m.From.SafeIncrease(m.Count()) - 1
 }
 
 // LogString returns a concise string representation intended for use in logs.

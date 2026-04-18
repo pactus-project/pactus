@@ -22,7 +22,7 @@ func NewBlocksRequestMessage(sid int, from types.Height, count uint32) *BlocksRe
 }
 
 func (m *BlocksRequestMessage) To() types.Height {
-	return m.From + types.Height(m.Count) - 1
+	return m.From.SafeIncrease(m.Count) - 1
 }
 
 func (m *BlocksRequestMessage) BasicCheck() error {
