@@ -40,7 +40,7 @@ func TestChangeProposerAgreementYes(t *testing.T) {
 	td := setup(t)
 
 	height := types.Height(1)
-	round := int16(0)
+	round := types.Round(0)
 	td.enterNewHeight(td.consP)
 	td.checkHeightRound(t, td.consP, height, round)
 
@@ -64,7 +64,7 @@ func TestChangeProposerAgreementNo(t *testing.T) {
 	td.commitBlockForAllStates(t) // height 1
 
 	height := types.Height(2)
-	round := int16(1)
+	round := types.Round(1)
 	td.enterNewHeight(td.consP)
 	td.enterNextRound(td.consP)
 	td.checkHeightRound(t, td.consP, height, round)
@@ -100,7 +100,7 @@ func TestCrashOnTestnet(t *testing.T) {
 	td.commitBlockForAllStates(t) // height 1
 
 	height := types.Height(2)
-	round := int16(0)
+	round := types.Round(0)
 	td.consP.MoveToNewHeight()
 
 	blockHash := td.RandHash()
@@ -137,7 +137,7 @@ func TestInvalidJustInitOne(t *testing.T) {
 
 	td.enterNewHeight(td.consX)
 	height := types.Height(1)
-	round := int16(0)
+	round := types.Round(0)
 	just := &vote.JustInitYes{}
 
 	t.Run("invalid value: no", func(t *testing.T) {
@@ -177,7 +177,7 @@ func TestInvalidJustInitZero(t *testing.T) {
 
 	td.enterNewHeight(td.consX)
 	height := types.Height(1)
-	round := int16(0)
+	round := types.Round(0)
 	just := &vote.JustInitNo{
 		QCert: td.GenerateTestCertificate(height),
 	}
@@ -218,7 +218,7 @@ func TestInvalidJustPreVoteHard(t *testing.T) {
 
 	td.enterNewHeight(td.consX)
 	height := types.Height(1)
-	round := int16(0)
+	round := types.Round(0)
 	just := &vote.JustPreVoteHard{
 		QCert: td.GenerateTestCertificate(height),
 	}
@@ -259,7 +259,7 @@ func TestInvalidJustPreVoteSoft(t *testing.T) {
 
 	td.enterNewHeight(td.consX)
 	height := types.Height(1)
-	round := int16(0)
+	round := types.Round(0)
 	just := &vote.JustPreVoteSoft{
 		QCert: td.GenerateTestCertificate(height),
 	}
@@ -300,7 +300,7 @@ func TestInvalidJustMainVoteNoConflict(t *testing.T) {
 
 	td.enterNewHeight(td.consX)
 	height := types.Height(1)
-	round := int16(0)
+	round := types.Round(0)
 	just := &vote.JustMainVoteNoConflict{
 		QCert: td.GenerateTestCertificate(height),
 	}
@@ -331,7 +331,7 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 
 	td.enterNewHeight(td.consX)
 	height := types.Height(1)
-	round := int16(0)
+	round := types.Round(0)
 
 	t.Run("invalid value: no", func(t *testing.T) {
 		just := &vote.JustMainVoteConflict{
@@ -441,7 +441,7 @@ func TestInvalidJustDecided(t *testing.T) {
 
 	td.enterNewHeight(td.consX)
 	height := types.Height(1)
-	round := int16(0)
+	round := types.Round(0)
 	just := &vote.JustDecided{
 		QCert: td.GenerateTestCertificate(height),
 	}

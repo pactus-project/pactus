@@ -38,7 +38,7 @@ func TestQueryVote(t *testing.T) {
 	td.commitBlockForAllStates(t)
 	td.commitBlockForAllStates(t)
 	height := types.Height(3)
-	round := int16(1)
+	round := types.Round(1)
 
 	td.enterNewHeight(td.consP)
 	td.enterNextRound(td.consP)

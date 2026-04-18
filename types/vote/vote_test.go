@@ -451,7 +451,7 @@ func TestSignBytes(t *testing.T) {
 	signer := ts.RandAccAddress()
 	blockHash := ts.RandHash()
 	height := ts.RandHeight()
-	round := int16(10)
+	round := types.Round(10)
 	cpRound := int16(10)
 	just := &vote.JustInitNo{}
 
@@ -485,7 +485,7 @@ func TestLogString(t *testing.T) {
 	signer := ts.RandAccAddress()
 	blockHash := ts.RandHash()
 	height := types.Height(100)
-	round := int16(2)
+	round := types.Round(2)
 	just := &vote.JustInitNo{}
 
 	v1 := vote.NewPrepareVote(blockHash, height, round, signer)

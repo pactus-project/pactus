@@ -72,7 +72,7 @@ func TestProposeNetworkLagging(t *testing.T) {
 	td.enterNewHeight(td.consP)
 
 	height := types.Height(1)
-	round := int16(0)
+	round := types.Round(0)
 	prop := td.makeProposal(t, height, round)
 
 	// consP doesn't have the proposal, but it has received prepared votes from other peers
@@ -107,5 +107,5 @@ func TestProposeNextRound(t *testing.T) {
 	assert.NotNil(t, td.consX.log.RoundProposal(1))
 	assert.Nil(t, td.consX.Proposal())
 	assert.Equal(t, types.Height(2), td.consX.height)
-	assert.Equal(t, int16(0), td.consX.round)
+	assert.Equal(t, types.Round(0), td.consX.round)
 }

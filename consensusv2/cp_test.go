@@ -51,7 +51,7 @@ func TestCPChangeProposerAgreementYes(t *testing.T) {
 	td := setup(t)
 
 	height := types.Height(1)
-	round := int16(0)
+	round := types.Round(0)
 	td.enterNewHeight(td.consP)
 	td.checkHeightRound(t, td.consP, height, round)
 
@@ -75,7 +75,7 @@ func TestCPChangeProposerAgreementNo(t *testing.T) {
 	td.commitBlockForAllStates(t) // height 1
 
 	height := types.Height(2)
-	round := int16(1)
+	round := types.Round(1)
 	td.enterNewHeight(td.consP)
 	td.enterNextRound(td.consP)
 	td.checkHeightRound(t, td.consP, height, round)
@@ -106,7 +106,7 @@ func TestCPCrashOnTestnet(t *testing.T) {
 	td.commitBlockForAllStates(t) // height 1
 
 	height := types.Height(2)
-	round := int16(0)
+	round := types.Round(0)
 	td.consP.MoveToNewHeight()
 
 	blockHash := td.RandHash()
@@ -128,27 +128,27 @@ func TestCPMoveToNextRoundOnDecidedVoteYes(t *testing.T) {
 
 	td.enterNewHeight(td.consP)
 	td.changeProposerTimeout(td.consP)
-	h := types.Height(1)
-	r := int16(0)
+	hright := types.Height(1)
+	round := types.Round(0)
 
-	td.checkHeightRound(t, td.consP, h, r)
+	td.checkHeightRound(t, td.consP, hright, round)
 
-	_, _, decideJust := td.makeChangeProposerJusts(t, hash.UndefHash, h, r)
-	td.addCPDecidedVote(t, td.consP, hash.UndefHash, h, r, vote.CPValueYes, decideJust, tIndexX)
+	_, _, decideJust := td.makeChangeProposerJusts(t, hash.UndefHash, hright, round)
+	td.addCPDecidedVote(t, td.consP, hash.UndefHash, hright, round, vote.CPValueYes, decideJust, tIndexX)
 
-	td.checkHeightRound(t, td.consP, h, r+1)
+	td.checkHeightRound(t, td.consP, hright, round+1)
 }
 
 func TestCPInvalidJustInitYes(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consP)
-	h := types.Height(1)
-	r := int16(0)
+	height := types.Height(1)
+	round := types.Round(0)
 	just := &vote.JustInitYes{}
 
 	t.Run("invalid value: no", func(t *testing.T) {
-		v := vote.NewCPPreVote(hash.UndefHash, h, r, 0, vote.CPValueNo, just, td.consB.valKey.Address())
+		v := vote.NewCPPreVote(hash.UndefHash, height, round, 0, vote.CPValueNo, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.ErrorIs(t, err, InvalidJustificationError{
@@ -157,7 +157,7 @@ func TestCPInvalidJustInitYes(t *testing.T) {
 	})
 
 	t.Run("cp-round should be 0", func(t *testing.T) {
-		v := vote.NewCPPreVote(hash.UndefHash, h, r, 1, vote.CPValueYes, just, td.consB.valKey.Address())
+		v := vote.NewCPPreVote(hash.UndefHash, height, round, 1, vote.CPValueYes, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.ErrorIs(t, err, InvalidJustificationError{
@@ -167,7 +167,7 @@ func TestCPInvalidJustInitYes(t *testing.T) {
 
 	t.Run("invalid block hash", func(t *testing.T) {
 		blockHash := td.RandHash()
-		v := vote.NewCPPreVote(blockHash, h, r, 0, vote.CPValueYes, just, td.consB.valKey.Address())
+		v := vote.NewCPPreVote(blockHash, height, round, 0, vote.CPValueYes, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.ErrorIs(t, err, InvalidJustificationError{
@@ -180,14 +180,14 @@ func TestCPInvalidJustInitNo(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consP)
-	h := types.Height(1)
-	r := int16(0)
+	height := types.Height(1)
+	round := types.Round(0)
 	just := &vote.JustInitNo{
-		QCert: td.GenerateTestCertificate(h),
+		QCert: td.GenerateTestCertificate(height),
 	}
 
 	t.Run("invalid value: yes", func(t *testing.T) {
-		v := vote.NewCPPreVote(td.RandHash(), h, r, 0, vote.CPValueYes, just, td.consB.valKey.Address())
+		v := vote.NewCPPreVote(td.RandHash(), height, round, 0, vote.CPValueYes, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.ErrorIs(t, err, InvalidJustificationError{
@@ -196,7 +196,7 @@ func TestCPInvalidJustInitNo(t *testing.T) {
 	})
 
 	t.Run("cp-round should be 0", func(t *testing.T) {
-		v := vote.NewCPPreVote(td.RandHash(), h, r, 1, vote.CPValueNo, just, td.consB.valKey.Address())
+		v := vote.NewCPPreVote(td.RandHash(), height, round, 1, vote.CPValueNo, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.ErrorIs(t, err, InvalidJustificationError{
@@ -205,7 +205,7 @@ func TestCPInvalidJustInitNo(t *testing.T) {
 	})
 
 	t.Run("invalid certificate", func(t *testing.T) {
-		v := vote.NewCPPreVote(td.RandHash(), h, r, 0, vote.CPValueNo, just, td.consB.valKey.Address())
+		v := vote.NewCPPreVote(td.RandHash(), height, round, 0, vote.CPValueNo, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.Error(t, err)
@@ -216,14 +216,14 @@ func TestCPInvalidJustPreVoteHard(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consP)
-	h := types.Height(1)
-	r := int16(0)
+	height := types.Height(1)
+	round := types.Round(0)
 	just := &vote.JustPreVoteHard{
-		QCert: td.GenerateTestCertificate(h),
+		QCert: td.GenerateTestCertificate(height),
 	}
 
 	t.Run("invalid value: abstain", func(t *testing.T) {
-		v := vote.NewCPPreVote(td.RandHash(), h, r, 1, vote.CPValueAbstain, just, td.consB.valKey.Address())
+		v := vote.NewCPPreVote(td.RandHash(), height, round, 1, vote.CPValueAbstain, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.ErrorIs(t, err, InvalidJustificationError{
@@ -232,7 +232,7 @@ func TestCPInvalidJustPreVoteHard(t *testing.T) {
 	})
 
 	t.Run("cp-round should not be 0", func(t *testing.T) {
-		v := vote.NewCPPreVote(td.RandHash(), h, r, 0, vote.CPValueNo, just, td.consB.valKey.Address())
+		v := vote.NewCPPreVote(td.RandHash(), height, round, 0, vote.CPValueNo, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.ErrorIs(t, err, InvalidJustificationError{
@@ -241,7 +241,7 @@ func TestCPInvalidJustPreVoteHard(t *testing.T) {
 	})
 
 	t.Run("invalid certificate", func(t *testing.T) {
-		v := vote.NewCPPreVote(td.RandHash(), h, r, 1, vote.CPValueNo, just, td.consB.valKey.Address())
+		v := vote.NewCPPreVote(td.RandHash(), height, round, 1, vote.CPValueNo, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.ErrorIs(t, err, InvalidJustificationError{
@@ -254,14 +254,14 @@ func TestCPInvalidJustPreVoteSoft(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consP)
-	h := types.Height(1)
-	r := int16(0)
+	height := types.Height(1)
+	round := types.Round(0)
 	just := &vote.JustPreVoteSoft{
-		QCert: td.GenerateTestCertificate(h),
+		QCert: td.GenerateTestCertificate(height),
 	}
 
 	t.Run("invalid value: abstain", func(t *testing.T) {
-		v := vote.NewCPPreVote(td.RandHash(), h, r, 1, vote.CPValueAbstain, just, td.consB.valKey.Address())
+		v := vote.NewCPPreVote(td.RandHash(), height, round, 1, vote.CPValueAbstain, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.ErrorIs(t, err, InvalidJustificationError{
@@ -270,7 +270,7 @@ func TestCPInvalidJustPreVoteSoft(t *testing.T) {
 	})
 
 	t.Run("cp-round should not be 0", func(t *testing.T) {
-		v := vote.NewCPPreVote(td.RandHash(), h, r, 0, vote.CPValueNo, just, td.consB.valKey.Address())
+		v := vote.NewCPPreVote(td.RandHash(), height, round, 0, vote.CPValueNo, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.ErrorIs(t, err, InvalidJustificationError{
@@ -279,7 +279,7 @@ func TestCPInvalidJustPreVoteSoft(t *testing.T) {
 	})
 
 	t.Run("invalid certificate", func(t *testing.T) {
-		v := vote.NewCPPreVote(td.RandHash(), h, r, 1, vote.CPValueNo, just, td.consB.valKey.Address())
+		v := vote.NewCPPreVote(td.RandHash(), height, round, 1, vote.CPValueNo, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.ErrorIs(t, err, InvalidJustificationError{
@@ -292,14 +292,14 @@ func TestCPInvalidJustMainVoteNoConflict(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consP)
-	h := types.Height(1)
-	r := int16(0)
+	height := types.Height(1)
+	round := types.Round(0)
 	just := &vote.JustMainVoteNoConflict{
-		QCert: td.GenerateTestCertificate(h),
+		QCert: td.GenerateTestCertificate(height),
 	}
 
 	t.Run("invalid value: abstain", func(t *testing.T) {
-		v := vote.NewCPMainVote(td.RandHash(), h, r, 1, vote.CPValueAbstain, just, td.consB.valKey.Address())
+		v := vote.NewCPMainVote(td.RandHash(), height, round, 1, vote.CPValueAbstain, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.ErrorIs(t, err, InvalidJustificationError{
@@ -308,7 +308,7 @@ func TestCPInvalidJustMainVoteNoConflict(t *testing.T) {
 	})
 
 	t.Run("invalid certificate", func(t *testing.T) {
-		v := vote.NewCPMainVote(td.RandHash(), h, r, 1, vote.CPValueNo, just, td.consB.valKey.Address())
+		v := vote.NewCPMainVote(td.RandHash(), height, round, 1, vote.CPValueNo, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.ErrorIs(t, err, InvalidJustificationError{
@@ -321,11 +321,11 @@ func TestCPInvalidJustMainVoteConflict(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consP)
-	h := types.Height(1)
-	r := int16(0)
+	height := types.Height(1)
+	round := types.Round(0)
 
 	blockHash := td.RandHash()
-	properJustInitNo, _, _ := td.makeChangeProposerJusts(t, blockHash, h, r)
+	properJustInitNo, _, _ := td.makeChangeProposerJusts(t, blockHash, height, round)
 	properJustInitYes := &vote.JustInitYes{}
 
 	t.Run("invalid value: no", func(t *testing.T) {
@@ -333,7 +333,7 @@ func TestCPInvalidJustMainVoteConflict(t *testing.T) {
 			JustNo:  properJustInitNo,
 			JustYes: properJustInitYes,
 		}
-		v := vote.NewCPMainVote(blockHash, h, r, 0, vote.CPValueNo, just, td.consB.valKey.Address())
+		v := vote.NewCPMainVote(blockHash, height, round, 0, vote.CPValueNo, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.ErrorIs(t, err, InvalidJustificationError{
@@ -346,7 +346,7 @@ func TestCPInvalidJustMainVoteConflict(t *testing.T) {
 			JustNo:  properJustInitNo,
 			JustYes: properJustInitYes,
 		}
-		v := vote.NewCPMainVote(blockHash, h, r, 0, vote.CPValueYes, just, td.consB.valKey.Address())
+		v := vote.NewCPMainVote(blockHash, height, round, 0, vote.CPValueYes, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.ErrorIs(t, err, InvalidJustificationError{
@@ -359,7 +359,7 @@ func TestCPInvalidJustMainVoteConflict(t *testing.T) {
 			JustNo:  &vote.JustInitYes{},
 			JustYes: properJustInitYes,
 		}
-		v := vote.NewCPMainVote(blockHash, h, r, 0, vote.CPValueAbstain, just, td.consB.valKey.Address())
+		v := vote.NewCPMainVote(blockHash, height, round, 0, vote.CPValueAbstain, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.ErrorIs(t, err, InvalidJustificationError{
@@ -371,10 +371,10 @@ func TestCPInvalidJustMainVoteConflict(t *testing.T) {
 		just := &vote.JustMainVoteConflict{
 			JustNo: properJustInitNo,
 			JustYes: &vote.JustInitNo{
-				QCert: td.GenerateTestCertificate(h),
+				QCert: td.GenerateTestCertificate(height),
 			},
 		}
-		v := vote.NewCPMainVote(blockHash, h, r, 0, vote.CPValueAbstain, just, td.consB.valKey.Address())
+		v := vote.NewCPMainVote(blockHash, height, round, 0, vote.CPValueAbstain, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.ErrorIs(t, err, InvalidJustificationError{
@@ -385,11 +385,11 @@ func TestCPInvalidJustMainVoteConflict(t *testing.T) {
 	t.Run("invalid certificate - No", func(t *testing.T) {
 		just := &vote.JustMainVoteConflict{
 			JustNo: &vote.JustPreVoteSoft{
-				QCert: td.GenerateTestCertificate(h),
+				QCert: td.GenerateTestCertificate(height),
 			},
 			JustYes: properJustInitYes,
 		}
-		v := vote.NewCPMainVote(blockHash, h, r, 0, vote.CPValueAbstain, just, td.consB.valKey.Address())
+		v := vote.NewCPMainVote(blockHash, height, round, 0, vote.CPValueAbstain, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.ErrorIs(t, err, InvalidJustificationError{
@@ -401,10 +401,10 @@ func TestCPInvalidJustMainVoteConflict(t *testing.T) {
 		just := &vote.JustMainVoteConflict{
 			JustNo: properJustInitNo,
 			JustYes: &vote.JustPreVoteHard{
-				QCert: td.GenerateTestCertificate(h),
+				QCert: td.GenerateTestCertificate(height),
 			},
 		}
-		v := vote.NewCPMainVote(blockHash, h, r, 0, vote.CPValueAbstain, just, td.consB.valKey.Address())
+		v := vote.NewCPMainVote(blockHash, height, round, 0, vote.CPValueAbstain, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.ErrorIs(t, err, InvalidJustificationError{
@@ -417,14 +417,14 @@ func TestCPInvalidJustDecided(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consP)
-	h := types.Height(1)
-	r := int16(0)
+	height := types.Height(1)
+	round := types.Round(0)
 	just := &vote.JustDecided{
-		QCert: td.GenerateTestCertificate(h),
+		QCert: td.GenerateTestCertificate(height),
 	}
 
 	t.Run("invalid value: abstain", func(t *testing.T) {
-		v := vote.NewCPDecidedVote(td.RandHash(), h, r, 0, vote.CPValueAbstain, just, td.consB.valKey.Address())
+		v := vote.NewCPDecidedVote(td.RandHash(), height, round, 0, vote.CPValueAbstain, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.ErrorIs(t, err, InvalidJustificationError{
@@ -433,7 +433,7 @@ func TestCPInvalidJustDecided(t *testing.T) {
 	})
 
 	t.Run("invalid certificate", func(t *testing.T) {
-		v := vote.NewCPDecidedVote(hash.UndefHash, h, r, 0, vote.CPValueYes, just, td.consB.valKey.Address())
+		v := vote.NewCPDecidedVote(hash.UndefHash, height, round, 0, vote.CPValueYes, just, td.consB.valKey.Address())
 
 		err := td.consP.changeProposer.cpCheckJust(v)
 		require.ErrorIs(t, err, InvalidJustificationError{

@@ -122,7 +122,7 @@ func (m *MockState) ProposeBlock(valKey *bls.ValidatorKey, _ crypto.Address) (*b
 	return blk, nil
 }
 
-func (*MockState) ValidateBlock(_ *block.Block, _ int16) error {
+func (*MockState) ValidateBlock(_ *block.Block, _ types.Round) error {
 	return nil
 }
 
@@ -134,11 +134,11 @@ func (m *MockState) IsInCommittee(addr crypto.Address) bool {
 	return m.TestCommittee.Contains(addr)
 }
 
-func (m *MockState) Proposer(round int16) *validator.Validator {
+func (m *MockState) Proposer(round types.Round) *validator.Validator {
 	return m.TestCommittee.Proposer(round)
 }
 
-func (m *MockState) IsProposer(addr crypto.Address, round int16) bool {
+func (m *MockState) IsProposer(addr crypto.Address, round types.Round) bool {
 	return m.TestCommittee.IsProposer(addr, round)
 }
 

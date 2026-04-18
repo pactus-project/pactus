@@ -98,7 +98,7 @@ func setup(t *testing.T) *testData {
 	return td
 }
 
-func (td *testData) makeBlockAndCertificate(t *testing.T, round int16) (
+func (td *testData) makeBlockAndCertificate(t *testing.T, round types.Round) (
 	*block.Block, *certificate.Certificate,
 ) {
 	t.Helper()
@@ -115,7 +115,7 @@ func (td *testData) makeBlockAndCertificate(t *testing.T, round int16) (
 }
 
 func (td *testData) makeCertificateAndSign(t *testing.T, blockHash hash.Hash,
-	round int16,
+	round types.Round,
 ) *certificate.Certificate {
 	t.Helper()
 

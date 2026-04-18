@@ -1,6 +1,10 @@
 package consensus
 
-import "time"
+import (
+	"time"
+
+	"github.com/pactus-project/pactus/types"
+)
 
 // Config defines parameters for the legacy consensus algorithm.
 type Config struct {
@@ -40,7 +44,7 @@ func (conf *Config) BasicCheck() error {
 	return nil
 }
 
-func (conf *Config) CalculateChangeProposerTimeout(round int16) time.Duration {
+func (conf *Config) CalculateChangeProposerTimeout(round types.Round) time.Duration {
 	return conf.ChangeProposerTimeout +
 		conf.ChangeProposerDelta*time.Duration(round)
 }

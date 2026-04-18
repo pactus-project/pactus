@@ -55,13 +55,13 @@ type Facade interface {
 	LastCertificate() *certificate.Certificate
 	UpdateLastCertificate(v *vote.Vote) error
 	ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Address) (*block.Block, error)
-	ValidateBlock(blk *block.Block, round int16) error
+	ValidateBlock(blk *block.Block, round types.Round) error
 	CommitBlock(blk *block.Block, cert *certificate.Certificate) error
 	CommitteeValidators() []*validator.Validator
 	CommitteeInfo() *CommitteeInfo
 	IsInCommittee(addr crypto.Address) bool
-	Proposer(round int16) *validator.Validator
-	IsProposer(addr crypto.Address, round int16) bool
+	Proposer(round types.Round) *validator.Validator
+	IsProposer(addr crypto.Address, round types.Round) bool
 	PendingTx(txID tx.ID) *tx.Tx
 	AddPendingTx(trx *tx.Tx) error
 	AddPendingTxAndBroadcast(trx *tx.Tx) error

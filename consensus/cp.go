@@ -5,6 +5,7 @@ import (
 	"slices"
 
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 )
@@ -309,7 +310,7 @@ func (cp *changeProposer) checkJust(vte *vote.Vote) error {
 	}
 }
 
-func (cp *changeProposer) cpStrongTermination(round, cpRound int16) {
+func (cp *changeProposer) cpStrongTermination(round types.Round, cpRound int16) {
 	cpDecided := cp.log.CPDecidedVoteSet(round)
 	if cpDecided.HasAnyVoteFor(cpRound, vote.CPValueNo) {
 		cp.round = round
