@@ -157,8 +157,8 @@ func (s *store) SaveBlock(blk *block.Block, cert *certificate.Certificate) {
 	s.txStore.pruneCache(height)
 
 	// Removing old block from prune node store.
-	pruneHeight := height.SafeDecrease(s.config.RetentionBlocks())
-	if s.isPruned && pruneHeight > 0 {
+	if s.isPruned && uint32(height) > s.config.RetentionBlocks() {
+		pruneHeight := height.SafeDecrease(s.config.RetentionBlocks())
 		deleted, err := s.pruneBlock(pruneHeight)
 		if err != nil {
 			panic(err)
