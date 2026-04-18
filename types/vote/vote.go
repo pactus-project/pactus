@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/certificate"
 )
 
@@ -17,7 +18,7 @@ type Vote struct {
 
 type voteData struct {
 	Type      Type           `cbor:"1,keyasint"`
-	Height    uint32         `cbor:"2,keyasint"`
+	Height    types.Height   `cbor:"2,keyasint"`
 	Round     int16          `cbor:"3,keyasint"`
 	BlockHash hash.Hash      `cbor:"4,keyasint"`
 	Signer    crypto.Address `cbor:"5,keyasint"`
@@ -26,17 +27,17 @@ type voteData struct {
 }
 
 // NewPrepareVote creates a new PREPARE with the specified parameters.
-func NewPrepareVote(blockHash hash.Hash, height uint32, round int16, signer crypto.Address) *Vote {
+func NewPrepareVote(blockHash hash.Hash, height types.Height, round int16, signer crypto.Address) *Vote {
 	return newVote(VoteTypePrepare, blockHash, height, round, signer)
 }
 
 // NewPrecommitVote creates a new PRECOMMIT with the specified parameters.
-func NewPrecommitVote(blockHash hash.Hash, height uint32, round int16, signer crypto.Address) *Vote {
+func NewPrecommitVote(blockHash hash.Hash, height types.Height, round int16, signer crypto.Address) *Vote {
 	return newVote(VoteTypePrecommit, blockHash, height, round, signer)
 }
 
 // NewCPPreVote creates a new cp:PRE-VOTE with the specified parameters.
-func NewCPPreVote(blockHash hash.Hash, height uint32, round int16,
+func NewCPPreVote(blockHash hash.Hash, height types.Height, round int16,
 	cpRound int16, cpValue CPValue, just Just, signer crypto.Address,
 ) *Vote {
 	vote := newVote(VoteTypeCPPreVote, blockHash, height, round, signer)
@@ -50,7 +51,7 @@ func NewCPPreVote(blockHash hash.Hash, height uint32, round int16,
 }
 
 // NewCPMainVote creates a new cp:MAIN-VOTE with the specified parameters.
-func NewCPMainVote(blockHash hash.Hash, height uint32, round int16,
+func NewCPMainVote(blockHash hash.Hash, height types.Height, round int16,
 	cpRound int16, cpValue CPValue, just Just, signer crypto.Address,
 ) *Vote {
 	vote := newVote(VoteTypeCPMainVote, blockHash, height, round, signer)
@@ -64,7 +65,7 @@ func NewCPMainVote(blockHash hash.Hash, height uint32, round int16,
 }
 
 // NewCPDecidedVote creates a new cp:Decided with the specified parameters.
-func NewCPDecidedVote(blockHash hash.Hash, height uint32, round int16,
+func NewCPDecidedVote(blockHash hash.Hash, height types.Height, round int16,
 	cpRound int16, cpValue CPValue, just Just, signer crypto.Address,
 ) *Vote {
 	vote := newVote(VoteTypeCPDecided, blockHash, height, round, signer)
@@ -78,7 +79,7 @@ func NewCPDecidedVote(blockHash hash.Hash, height uint32, round int16,
 }
 
 // newVote creates a new vote with the specified parameters.
-func newVote(voteType Type, blockHash hash.Hash, height uint32, round int16,
+func newVote(voteType Type, blockHash hash.Hash, height types.Height, round int16,
 	signer crypto.Address,
 ) *Vote {
 	return &Vote{
@@ -123,7 +124,7 @@ func (v *Vote) Type() Type {
 }
 
 // Height returns the height of the block in the vote.
-func (v *Vote) Height() uint32 {
+func (v *Vote) Height() types.Height {
 	return v.data.Height
 }
 

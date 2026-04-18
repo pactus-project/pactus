@@ -4,19 +4,20 @@ import (
 	"fmt"
 
 	"github.com/pactus-project/pactus/network"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/certificate"
 )
 
 type BlocksResponseMessage struct {
 	ResponseCode    ResponseCode             `cbor:"1,keyasint"`
 	SessionID       int                      `cbor:"2,keyasint"`
-	From            uint32                   `cbor:"3,keyasint"`
+	From            types.Height             `cbor:"3,keyasint"`
 	BlocksData      [][]byte                 `cbor:"4,keyasint"`
 	LastCertificate *certificate.Certificate `cbor:"5,keyasint"`
 	Reason          string                   `cbor:"6,keyasint"`
 }
 
-func NewBlocksResponseMessage(code ResponseCode, reason string, sid int, from uint32,
+func NewBlocksResponseMessage(code ResponseCode, reason string, sid int, from types.Height,
 	blocksData [][]byte, lastCert *certificate.Certificate,
 ) *BlocksResponseMessage {
 	return &BlocksResponseMessage{
@@ -51,7 +52,7 @@ func (*BlocksResponseMessage) ShouldBroadcast() bool {
 	return false
 }
 
-func (*BlocksResponseMessage) ConsensusHeight() uint32 {
+func (*BlocksResponseMessage) ConsensusHeight() types.Height {
 	return 0
 }
 
@@ -59,13 +60,13 @@ func (m *BlocksResponseMessage) Count() uint32 {
 	return uint32(len(m.BlocksData))
 }
 
-func (m *BlocksResponseMessage) To() uint32 {
+func (m *BlocksResponseMessage) To() types.Height {
 	// response message without any block
 	if len(m.BlocksData) == 0 {
 		return 0
 	}
 
-	return m.From + m.Count() - 1
+	return m.From.SafeIncrease(m.Count()) - 1
 }
 
 // LogString returns a concise string representation intended for use in logs.

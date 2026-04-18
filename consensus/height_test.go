@@ -3,6 +3,7 @@ package consensus
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/stretchr/testify/assert"
 )
@@ -47,7 +48,7 @@ func TestNewHeightTimeBehindNetwork(t *testing.T) {
 	td.commitBlockForAllStates(t)
 	td.consP.MoveToNewHeight()
 
-	height := uint32(2)
+	height := types.Height(2)
 	round := int16(0)
 	prop := td.makeProposal(t, height, round)
 

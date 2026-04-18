@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/vote"
 )
 
@@ -12,7 +13,7 @@ func TestPrecommitStrongCommit(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)
-	height := uint32(2)
+	height := types.Height(2)
 	round := int16(0)
 
 	td.enterNewHeight(td.consP)
@@ -35,7 +36,7 @@ func TestPrecommitQueryProposal(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)
-	height := uint32(2)
+	height := types.Height(2)
 	round := int16(0)
 
 	// ConsP is not the proposer for this round.
@@ -50,7 +51,7 @@ func TestPrecommitQueryVote(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)
-	height := uint32(2)
+	height := types.Height(2)
 	round := int16(0)
 
 	// ConsY is  the proposer for this round.
@@ -74,7 +75,7 @@ func TestPrecommitChangeProposer(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)
-	height := uint32(2)
+	height := types.Height(2)
 	round := int16(0)
 
 	td.enterNewHeight(td.consP)
@@ -93,7 +94,7 @@ func TestPrecommitQueryProposalWithCert(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)
-	height := uint32(2)
+	height := types.Height(2)
 	round := int16(0)
 
 	td.enterNewHeight(td.consP)
@@ -109,7 +110,7 @@ func TestPrecommitQueryVoteWithCert(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)
-	height := uint32(2)
+	height := types.Height(2)
 	round := int16(0)
 
 	td.enterNewHeight(td.consP)

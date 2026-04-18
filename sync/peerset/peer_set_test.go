@@ -12,6 +12,7 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
 	"github.com/pactus-project/pactus/sync/peerset/session"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
@@ -160,8 +161,8 @@ func TestOpenSession(t *testing.T) {
 	ssn1 := getSessionByID(peerSet, sid1)
 	ssn2 := getSessionByID(peerSet, sid1)
 	assert.NotNil(t, ssn1)
-	assert.Equal(t, uint32(100), ssn1.From)
-	assert.Equal(t, uint32(100), ssn2.From)
+	assert.Equal(t, types.Height(100), ssn1.From)
+	assert.Equal(t, types.Height(100), ssn2.From)
 	assert.Equal(t, uint32(10), ssn1.Count)
 	assert.Equal(t, uint32(10), ssn2.Count)
 	assert.Equal(t, pid1, ssn1.PeerID)

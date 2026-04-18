@@ -3,6 +3,7 @@ package message
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -30,7 +31,7 @@ func TestBlocksRequestMessage(t *testing.T) {
 		msg := NewBlocksRequestMessage(1, 100, 7)
 
 		require.NoError(t, msg.BasicCheck())
-		assert.Equal(t, uint32(106), msg.To())
+		assert.Equal(t, types.Height(106), msg.To())
 		assert.Contains(t, msg.LogString(), "100")
 	})
 }

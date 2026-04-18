@@ -4,8 +4,8 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
-	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/wallet/provider"
@@ -23,8 +23,8 @@ func NewLocalBlockchainProvider(state state.Facade) *LocalBlockchainProvider {
 	}
 }
 
-func (p *LocalBlockchainProvider) LastBlockHeight() (block.Height, error) {
-	return block.Height(p.state.LastBlockHeight()), nil
+func (p *LocalBlockchainProvider) LastBlockHeight() (types.Height, error) {
+	return p.state.LastBlockHeight(), nil
 }
 
 func (p *LocalBlockchainProvider) GetAccount(addrStr string) (*account.Account, error) {
@@ -45,7 +45,7 @@ func (p *LocalBlockchainProvider) GetValidator(addrStr string) (*validator.Valid
 	return p.state.ValidatorByAddress(addr)
 }
 
-func (p *LocalBlockchainProvider) GetTransaction(txID string) (*tx.Tx, block.Height, error) {
+func (p *LocalBlockchainProvider) GetTransaction(txID string) (*tx.Tx, types.Height, error) {
 	idHash, err := hash.FromString(txID)
 	if err != nil {
 		return nil, 0, err
@@ -61,7 +61,7 @@ func (p *LocalBlockchainProvider) GetTransaction(txID string) (*tx.Tx, block.Hei
 		return nil, 0, err
 	}
 
-	return trx, block.Height(cTrx.Height), nil
+	return trx, cTrx.Height, nil
 }
 
 func (p *LocalBlockchainProvider) SendTx(trx *tx.Tx) (string, error) {

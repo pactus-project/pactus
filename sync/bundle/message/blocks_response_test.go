@@ -3,6 +3,7 @@ package message
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -71,8 +72,8 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 		msg := NewBlocksResponseMessage(ResponseCodeMoreBlocks, reason, 1, 100, [][]byte{d1, d2}, nil)
 
 		require.NoError(t, msg.BasicCheck())
-		assert.Equal(t, uint32(100), msg.From)
-		assert.Equal(t, uint32(101), msg.To())
+		assert.Equal(t, types.Height(100), msg.From)
+		assert.Equal(t, types.Height(101), msg.To())
 		assert.Equal(t, uint32(2), msg.Count())
 		assert.False(t, msg.IsRequestRejected())
 		assert.Equal(t, reason, msg.Reason)
@@ -86,7 +87,7 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 		msg := NewBlocksResponseMessage(ResponseCodeSynced, reason, 1, 100, nil, cert)
 
 		require.NoError(t, msg.BasicCheck())
-		assert.Equal(t, uint32(100), msg.From)
+		assert.Equal(t, types.Height(100), msg.From)
 		assert.Zero(t, msg.To())
 		assert.Zero(t, msg.Count())
 		assert.False(t, msg.IsRequestRejected())

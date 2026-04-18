@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
@@ -58,7 +59,7 @@ func TestDecoding(t *testing.T) {
 		cert := new(certificate.Certificate)
 		err := cert.Decode(r)
 		require.NoError(t, err)
-		assert.Equal(t, uint32(0x01020304), cert.Height())
+		assert.Equal(t, types.Height(0x01020304), cert.Height())
 		assert.Equal(t, int16(0x0001), cert.Round())
 		assert.Equal(t, []int32{1, 2, 3, 4, 5, 6}, cert.Committers())
 		assert.Equal(t, []int32{2}, cert.Absentees())

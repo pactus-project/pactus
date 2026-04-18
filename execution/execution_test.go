@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/execution/executor"
 	"github.com/pactus-project/pactus/sandbox"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -18,19 +19,19 @@ func TestTransferLockTime(t *testing.T) {
 
 	tests := []struct {
 		name         string
-		lockTime     uint32
+		lockTime     types.Height
 		strictErr    error
 		nonStrictErr error
 	}{
 		{
 			name:         "Transaction has expired LockTime  (-8641)",
-			lockTime:     sbx.CurrentHeight() - sbx.TestParams.TransactionToLiveInterval - 1,
-			strictErr:    LockTimeExpiredError{sbx.CurrentHeight() - sbx.TestParams.TransactionToLiveInterval - 1},
-			nonStrictErr: LockTimeExpiredError{sbx.CurrentHeight() - sbx.TestParams.TransactionToLiveInterval - 1},
+			lockTime:     sbx.CurrentHeight().SafeDecrease(sbx.TestParams.TransactionToLiveInterval) - 1,
+			strictErr:    LockTimeExpiredError{sbx.CurrentHeight().SafeDecrease(sbx.TestParams.TransactionToLiveInterval) - 1},
+			nonStrictErr: LockTimeExpiredError{sbx.CurrentHeight().SafeDecrease(sbx.TestParams.TransactionToLiveInterval) - 1},
 		},
 		{
 			name:         "Transaction has valid LockTime (-8640)",
-			lockTime:     sbx.CurrentHeight() - sbx.TestParams.TransactionToLiveInterval,
+			lockTime:     sbx.CurrentHeight().SafeDecrease(sbx.TestParams.TransactionToLiveInterval),
 			strictErr:    nil,
 			nonStrictErr: nil,
 		},
@@ -77,19 +78,19 @@ func TestSortitionLockTime(t *testing.T) {
 
 	tests := []struct {
 		name         string
-		lockTime     uint32
+		lockTime     types.Height
 		strictErr    error
 		nonStrictErr error
 	}{
 		{
 			name:         "Sortition transaction has expired LockTime (-8)",
-			lockTime:     sbx.CurrentHeight() - sbx.TestParams.SortitionInterval - 1,
-			strictErr:    LockTimeExpiredError{sbx.CurrentHeight() - sbx.TestParams.SortitionInterval - 1},
-			nonStrictErr: LockTimeExpiredError{sbx.CurrentHeight() - sbx.TestParams.SortitionInterval - 1},
+			lockTime:     sbx.CurrentHeight().SafeDecrease(sbx.TestParams.SortitionInterval) - 1,
+			strictErr:    LockTimeExpiredError{sbx.CurrentHeight().SafeDecrease(sbx.TestParams.SortitionInterval) - 1},
+			nonStrictErr: LockTimeExpiredError{sbx.CurrentHeight().SafeDecrease(sbx.TestParams.SortitionInterval) - 1},
 		},
 		{
 			name:         "Sortition transaction has valid LockTime (-7)",
-			lockTime:     sbx.CurrentHeight() - sbx.TestParams.SortitionInterval,
+			lockTime:     sbx.CurrentHeight().SafeDecrease(sbx.TestParams.SortitionInterval),
 			strictErr:    nil,
 			nonStrictErr: nil,
 		},
@@ -135,7 +136,7 @@ func TestSubsidyLockTime(t *testing.T) {
 
 	tests := []struct {
 		name         string
-		lockTime     uint32
+		lockTime     types.Height
 		strictErr    error
 		nonStrictErr error
 	}{

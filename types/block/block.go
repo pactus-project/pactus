@@ -11,14 +11,13 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
 )
-
-type Height uint32
 
 type Block struct {
 	memorizedHash *hash.Hash
@@ -152,8 +151,8 @@ func (b *Block) Hash() hash.Hash {
 }
 
 // Height returns the height of the block.
-// TODO: return block.Height type.
-func (b *Block) Height() uint32 {
+// TODO: return types.Height type.
+func (b *Block) Height() types.Height {
 	if b.data.PrevCert == nil {
 		return 1
 	}

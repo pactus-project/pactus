@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset/peer/metric"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
+	"github.com/pactus-project/pactus/types"
 )
 
 type ID = lp2ppeer.ID
@@ -27,7 +28,7 @@ type Peer struct {
 	LastSent          time.Time
 	LastReceived      time.Time
 	LastBlockHash     hash.Hash
-	Height            uint32
+	Height            types.Height
 	TotalSessions     int
 	CompletedSessions int
 	Metric            metric.Metric

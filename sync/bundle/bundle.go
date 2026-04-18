@@ -7,6 +7,7 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util"
 )
 
@@ -37,7 +38,7 @@ func (u fixedUint32) MarshalCBOR() ([]byte, error) {
 type Bundle struct {
 	Flags           int
 	Message         message.Message
-	ConsensusHeight uint32
+	ConsensusHeight types.Height
 }
 
 func NewBundle(msg message.Message) *Bundle {
@@ -122,7 +123,7 @@ func (b *Bundle) Decode(r io.Reader) (int, error) {
 
 	b.Flags = bdl.Flags
 	b.Message = msg
-	b.ConsensusHeight = uint32(bdl.ConsensusHeight)
+	b.ConsensusHeight = types.Height(bdl.ConsensusHeight)
 
 	return bytesRead, cbor.Unmarshal(data, msg)
 }

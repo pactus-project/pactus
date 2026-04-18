@@ -13,6 +13,7 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
 	"github.com/pactus-project/pactus/sync/peerset/session"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util"
 )
 
@@ -36,7 +37,7 @@ func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
 }
 
 // OpenSession opens a new session for downloading blocks and returns the session ID.
-func (ps *PeerSet) OpenSession(pid peer.ID, from, count uint32) int {
+func (ps *PeerSet) OpenSession(pid peer.ID, from types.Height, count uint32) int {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
@@ -200,7 +201,7 @@ func (ps *PeerSet) UpdateInfo(
 	p.Services = services
 }
 
-func (ps *PeerSet) UpdateHeight(pid peer.ID, height uint32, lastBlockHash hash.Hash) {
+func (ps *PeerSet) UpdateHeight(pid peer.ID, height types.Height, lastBlockHash hash.Hash) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 

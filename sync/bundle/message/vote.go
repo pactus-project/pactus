@@ -2,6 +2,7 @@ package message
 
 import (
 	"github.com/pactus-project/pactus/network"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/vote"
 )
 
@@ -31,7 +32,7 @@ func (*VoteMessage) ShouldBroadcast() bool {
 	return true
 }
 
-func (m *VoteMessage) ConsensusHeight() uint32 {
+func (m *VoteMessage) ConsensusHeight() types.Height {
 	return m.Vote.Height()
 }
 

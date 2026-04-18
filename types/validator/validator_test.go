@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/validator"
@@ -44,7 +45,7 @@ func TestFromBytesDelegation(t *testing.T) {
 
 	owner := ts.RandAccAddress()
 	share := amount.Amount(350_000_000) // 0.35 PAC
-	expiry := uint32(1000)
+	expiry := types.Height(1000)
 	val1.SetDelegation(owner, share, expiry)
 
 	assert.True(t, val1.IsDelegated())
@@ -103,9 +104,9 @@ func TestDecoding(t *testing.T) {
 
 	assert.Equal(t, int32(1), val.Number())
 	assert.Equal(t, amount.Amount(2), val.Stake())
-	assert.Equal(t, uint32(3), val.LastBondingHeight())
-	assert.Equal(t, uint32(4), val.UnbondingHeight())
-	assert.Equal(t, uint32(5), val.LastSortitionHeight())
+	assert.Equal(t, types.Height(3), val.LastBondingHeight())
+	assert.Equal(t, types.Height(4), val.UnbondingHeight())
+	assert.Equal(t, types.Height(5), val.LastSortitionHeight())
 
 	d2, _ := val.Bytes()
 	assert.Equal(t, data, d2)

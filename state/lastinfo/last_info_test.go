@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/store"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/protocol"
@@ -138,7 +139,7 @@ func TestRestoreFailed(t *testing.T) {
 
 		li := NewLastInfo()
 
-		td.store.Blocks = make(map[uint32]*block.Block) // Reset Blocks
+		td.store.Blocks = make(map[types.Height]*block.Block) // Reset Blocks
 		_, _, err := li.RestoreLastInfo(td.store, 4)
 		require.Error(t, err)
 	})

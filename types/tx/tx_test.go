@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -342,7 +343,7 @@ func TestSignBytesBLS(t *testing.T) {
 	assert.Equal(t, signBytes, trx.SignBytes())
 	assert.Equal(t, hash.CalcHash(signBytes), trx.ID())
 	assert.Equal(t, txID, trx.ID())
-	assert.Equal(t, uint32(0x04030201), trx.LockTime())
+	assert.Equal(t, types.Height(0x04030201), trx.LockTime())
 	assert.Equal(t, "test", trx.Memo())
 	assert.Equal(t, amount.Amount(1000), trx.Fee())
 	assert.Equal(t, amount.Amount(20000), trx.Payload().Value())
@@ -373,7 +374,7 @@ func TestSignBytesEd25519(t *testing.T) {
 	assert.Equal(t, signBytes, trx.SignBytes())
 	assert.Equal(t, hash.CalcHash(signBytes), trx.ID())
 	assert.Equal(t, txID, trx.ID())
-	assert.Equal(t, uint32(0x00030201), trx.LockTime())
+	assert.Equal(t, types.Height(0x00030201), trx.LockTime())
 	assert.Equal(t, "test", trx.Memo())
 	assert.Equal(t, amount.Amount(1000), trx.Fee())
 	assert.Equal(t, amount.Amount(20000), trx.Payload().Value())

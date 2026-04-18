@@ -6,6 +6,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
@@ -42,7 +43,7 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 	}
 
 	return &pactus.GetBlockchainInfoResponse{
-		LastBlockHeight:  chainInfo.LastBlockHeight,
+		LastBlockHeight:  uint32(chainInfo.LastBlockHeight),
 		LastBlockHash:    chainInfo.LastBlockHash.String(),
 		LastBlockTime:    chainInfo.LastBlockTime.Unix(),
 		TotalAccounts:    chainInfo.TotalAccounts,
@@ -53,7 +54,7 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 		CommitteePower:   chainInfo.CommitteePower,
 		CommitteeSize:    int32(chainInfo.CommitteeSize),
 		IsPruned:         chainInfo.IsPruned,
-		PruningHeight:    chainInfo.PruningHeight,
+		PruningHeight:    uint32(chainInfo.PruningHeight),
 		InCommittee:      inCommittee,
 	}, nil
 }
@@ -99,7 +100,7 @@ func (s *blockchainServer) GetConsensusInfo(_ context.Context,
 			&pactus.ConsensusInfo{
 				Address: cons.ConsensusKey().ValidatorAddress().String(),
 				Active:  cons.IsActive(),
-				Height:  height,
+				Height:  uint32(height),
 				Round:   int32(round),
 				Votes:   voteInfos,
 			})
@@ -116,7 +117,7 @@ func (s *blockchainServer) GetConsensusInfo(_ context.Context,
 		blockData = hex.EncodeToString(data)
 
 		proposalInfo = &pactus.ProposalInfo{
-			Height:    prop.Height(),
+			Height:    uint32(prop.Height()),
 			Round:     int32(prop.Round()),
 			BlockData: blockData,
 			Signature: prop.Signature().String(),
@@ -133,7 +134,7 @@ func (s *blockchainServer) GetBlockHash(_ context.Context,
 	req *pactus.GetBlockHashRequest,
 ) (*pactus.GetBlockHashResponse, error) {
 	height := req.GetHeight()
-	h := s.state.BlockHash(height)
+	h := s.state.BlockHash(types.Height(height))
 	if h.IsUndef() {
 		return nil, status.Errorf(codes.NotFound, "block not found with this height")
 	}
@@ -156,7 +157,7 @@ func (s *blockchainServer) GetBlockHeight(_ context.Context,
 	}
 
 	return &pactus.GetBlockHeightResponse{
-		Height: height,
+		Height: uint32(height),
 	}, nil
 }
 
@@ -164,12 +165,12 @@ func (s *blockchainServer) GetBlock(_ context.Context,
 	req *pactus.GetBlockRequest,
 ) (*pactus.GetBlockResponse, error) {
 	height := req.GetHeight()
-	cBlk, err := s.state.CommittedBlock(height)
+	cBlk, err := s.state.CommittedBlock(types.Height(height))
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "block not found")
 	}
 	res := &pactus.GetBlockResponse{
-		Height: cBlk.Height,
+		Height: uint32(cBlk.Height),
 		Hash:   cBlk.BlockHash.String(),
 	}
 
@@ -342,7 +343,7 @@ func (s *blockchainServer) validatorToProto(val *validator.Validator) *pactus.Va
 		// This makes the response consistent with the intent of PIP-49 delegation.
 		delegateOwner = val.DelegateOwner().String()
 		delegateShare = val.DelegateShare().ToNanoPAC()
-		delegateExpiry = val.DelegateExpiry()
+		delegateExpiry = uint32(val.DelegateExpiry())
 	}
 
 	return &pactus.ValidatorInfo{
@@ -352,9 +353,9 @@ func (s *blockchainServer) validatorToProto(val *validator.Validator) *pactus.Va
 		Address:             val.Address().String(),
 		Number:              val.Number(),
 		Stake:               val.Stake().ToNanoPAC(),
-		LastBondingHeight:   val.LastBondingHeight(),
-		LastSortitionHeight: val.LastSortitionHeight(),
-		UnbondingHeight:     val.UnbondingHeight(),
+		LastBondingHeight:   uint32(val.LastBondingHeight()),
+		LastSortitionHeight: uint32(val.LastSortitionHeight()),
+		UnbondingHeight:     uint32(val.UnbondingHeight()),
 		AvailabilityScore:   s.state.AvailabilityScore(val.Number()),
 		ProtocolVersion:     int32(val.ProtocolVersion()),
 		IsDelegated:         isDelegated,

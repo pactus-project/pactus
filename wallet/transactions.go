@@ -1,13 +1,14 @@
 package wallet
 
 import (
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/wallet/provider"
 	"github.com/pactus-project/pactus/wallet/storage"
-	"github.com/pactus-project/pactus/wallet/types"
+	wtypes "github.com/pactus-project/pactus/wallet/types"
 )
 
 type transactions struct {
@@ -39,22 +40,22 @@ func (t *transactions) AddTransaction(txID tx.ID) error {
 		return err
 	}
 
-	return t.addTransactionWithStatus(trx, types.TransactionStatusConfirmed, height)
+	return t.addTransactionWithStatus(trx, wtypes.TransactionStatusConfirmed, height)
 }
 
-func (t *transactions) addTransactionWithStatus(trx *tx.Tx, status types.TransactionStatus,
-	blockHeight block.Height,
+func (t *transactions) addTransactionWithStatus(trx *tx.Tx, status wtypes.TransactionStatus,
+	blockHeight types.Height,
 ) error {
-	txInfos, err := types.MakeTransactionInfos(trx, status, blockHeight)
+	txInfos, err := wtypes.MakeTransactionInfos(trx, status, blockHeight)
 	if err != nil {
 		return err
 	}
 
 	for _, info := range txInfos {
 		if t.storage.HasAddress(info.Sender) {
-			info.Direction = types.TxDirectionOutgoing
+			info.Direction = wtypes.TxDirectionOutgoing
 		} else if t.storage.HasAddress(info.Receiver) {
-			info.Direction = types.TxDirectionIncoming
+			info.Direction = wtypes.TxDirectionIncoming
 		} else {
 			continue
 		}
@@ -69,14 +70,14 @@ func (t *transactions) addTransactionWithStatus(trx *tx.Tx, status types.Transac
 
 // listTransactionsConfig contains options for listing transactions.
 type listTransactionsConfig struct {
-	direction types.TxDirection
+	direction wtypes.TxDirection
 	address   string
 	count     int
 	skip      int
 }
 
 var defaultListTransactionsConfig = listTransactionsConfig{
-	direction: types.TxDirectionAny,
+	direction: wtypes.TxDirectionAny,
 	address:   "*",
 	count:     10,
 	skip:      0,
@@ -86,7 +87,7 @@ var defaultListTransactionsConfig = listTransactionsConfig{
 type ListTransactionsOption func(*listTransactionsConfig)
 
 // WithDirection filters transactions by direction (incoming or outgoing).
-func WithDirection(dir types.TxDirection) ListTransactionsOption {
+func WithDirection(dir wtypes.TxDirection) ListTransactionsOption {
 	return func(cfg *listTransactionsConfig) {
 		cfg.direction = dir
 	}
@@ -119,7 +120,7 @@ func WithSkip(skip int) ListTransactionsOption {
 	}
 }
 
-func (t *transactions) ListTransactions(opts ...ListTransactionsOption) []*types.TransactionInfo {
+func (t *transactions) ListTransactions(opts ...ListTransactionsOption) []*wtypes.TransactionInfo {
 	if t.storage.IsLegacy() {
 		return nil
 	}
@@ -178,13 +179,13 @@ func collectReceivers(trx *tx.Tx) []string {
 	}
 }
 
-func (t *transactions) addIncomingIfWallet(trx *tx.Tx, receivers []string, blockHeight block.Height) bool {
+func (t *transactions) addIncomingIfWallet(trx *tx.Tx, receivers []string, blockHeight types.Height) bool {
 	for _, receiver := range receivers {
 		if !t.storage.HasAddress(receiver) {
 			continue
 		}
 
-		if err := t.addTransactionWithStatus(trx, types.TransactionStatusConfirmed, blockHeight); err != nil {
+		if err := t.addTransactionWithStatus(trx, wtypes.TransactionStatusConfirmed, blockHeight); err != nil {
 			logger.Warn("failed to add incoming transaction to wallet", "error", err, "id", trx.ID())
 
 			continue
@@ -231,7 +232,7 @@ func (t *transactions) processBlock(blk *block.Block) {
 		if _, ok := pendingTxs[txID]; ok {
 			pendingInfo := pendingTxs[txID]
 			if err := t.storage.UpdateTransactionStatus(pendingInfo.No,
-				types.TransactionStatusConfirmed, blk.Height()); err != nil {
+				wtypes.TransactionStatusConfirmed, blk.Height()); err != nil {
 				logger.Warn("failed to update transaction status", "error", err, "id", txID)
 			}
 
@@ -240,7 +241,7 @@ func (t *transactions) processBlock(blk *block.Block) {
 			continue
 		}
 
-		if t.addIncomingIfWallet(trx, collectReceivers(trx), block.Height(blk.Height())) {
+		if t.addIncomingIfWallet(trx, collectReceivers(trx), blk.Height()) {
 			continue
 		}
 
@@ -253,7 +254,7 @@ func (t *transactions) processBlock(blk *block.Block) {
 			continue
 		}
 
-		if err := t.addTransactionWithStatus(trx, types.TransactionStatusConfirmed, block.Height(blk.Height())); err != nil {
+		if err := t.addTransactionWithStatus(trx, wtypes.TransactionStatusConfirmed, blk.Height()); err != nil {
 			logger.Warn("failed to add outgoing transaction to wallet", "error", err, "id", trx.ID())
 
 			continue

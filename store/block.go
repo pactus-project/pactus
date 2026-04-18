@@ -9,14 +9,16 @@ import (
 	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
 	"github.com/pactus-project/pactus/util/pairslice"
 	"github.com/syndtr/goleveldb/leveldb"
 )
 
-func blockKey(height uint32) []byte { return append(blockPrefix, util.Uint32ToSlice(height)...) }
+func blockKey(height types.Height) []byte {
+	return append(blockPrefix, height.EncodeAsSlice()...)
+}
 
 func publicKeyKey(addr crypto.Address) []byte {
 	return append(publicKeyPrefix, addr.Bytes()...)
@@ -29,7 +31,7 @@ func blockHashKey(h hash.Hash) []byte {
 type blockStore struct {
 	db              *leveldb.DB
 	pubKeyCache     *lru.Cache[crypto.Address, crypto.PublicKey]
-	seedCache       *pairslice.PairSlice[uint32, *sortition.VerifiableSeed]
+	seedCache       *pairslice.PairSlice[types.Height, *sortition.VerifiableSeed]
 	seedCacheWindow uint32
 }
 
@@ -41,13 +43,13 @@ func newBlockStore(db *leveldb.DB, seedCacheWindow uint32, publicKeyCacheSize in
 
 	return &blockStore{
 		db:              db,
-		seedCache:       pairslice.New[uint32, *sortition.VerifiableSeed](int(seedCacheWindow)),
+		seedCache:       pairslice.New[types.Height, *sortition.VerifiableSeed](int(seedCacheWindow)),
 		pubKeyCache:     pubKeyCache,
 		seedCacheWindow: seedCacheWindow,
 	}
 }
 
-func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, blk *block.Block) []blockRegion {
+func (bs *blockStore) saveBlock(batch *leveldb.Batch, height types.Height, blk *block.Block) []blockRegion {
 	blockHash := blk.Hash()
 	regs := make([]blockRegion, blk.Transactions().Len())
 	buf := bytes.NewBuffer(make([]byte, 0, blk.SerializeSize()+hash.HashSize))
@@ -97,7 +99,7 @@ func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, blk *block.
 	blockHashKey := blockHashKey(blockHash)
 
 	batch.Put(blockKey, buf.Bytes())
-	batch.Put(blockHashKey, util.Uint32ToSlice(height))
+	batch.Put(blockHashKey, height.EncodeAsSlice())
 
 	sortitionSeed := blk.Header().SortitionSeed()
 	bs.addToCache(height, sortitionSeed)
@@ -105,7 +107,7 @@ func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, blk *block.
 	return regs
 }
 
-func (bs *blockStore) block(height uint32) ([]byte, error) {
+func (bs *blockStore) block(height types.Height) ([]byte, error) {
 	data, err := tryGet(bs.db, blockKey(height))
 	if err != nil {
 		return nil, err
@@ -114,16 +116,16 @@ func (bs *blockStore) block(height uint32) ([]byte, error) {
 	return data, nil
 }
 
-func (bs *blockStore) blockHeight(h hash.Hash) uint32 {
+func (bs *blockStore) blockHeight(h hash.Hash) types.Height {
 	data, err := tryGet(bs.db, blockHashKey(h))
 	if err != nil {
 		return 0
 	}
 
-	return util.SliceToUint32(data)
+	return types.HeightFromSlice(data)
 }
 
-func (bs *blockStore) sortitionSeed(blockHeight uint32) *sortition.VerifiableSeed {
+func (bs *blockStore) sortitionSeed(blockHeight types.Height) *sortition.VerifiableSeed {
 	startHeight, _, _ := bs.seedCache.First()
 
 	if blockHeight < startHeight {
@@ -139,7 +141,7 @@ func (bs *blockStore) sortitionSeed(blockHeight uint32) *sortition.VerifiableSee
 	return sortitionSeed
 }
 
-func (bs *blockStore) hasBlock(height uint32) bool {
+func (bs *blockStore) hasBlock(height types.Height) bool {
 	return tryHas(bs.db, blockKey(height))
 }
 
@@ -187,7 +189,7 @@ func (bs *blockStore) hasPublicKey(addr crypto.Address) bool {
 	return ok
 }
 
-func (bs *blockStore) addToCache(blockHeight uint32, sortitionSeed sortition.VerifiableSeed) {
+func (bs *blockStore) addToCache(blockHeight types.Height, sortitionSeed sortition.VerifiableSeed) {
 	bs.seedCache.Append(blockHeight, &sortitionSeed)
 	if bs.seedCache.Len() > int(bs.seedCacheWindow) {
 		bs.seedCache.RemoveFirst()

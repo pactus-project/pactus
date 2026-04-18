@@ -14,6 +14,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/proposal"
@@ -35,7 +36,7 @@ type consensus struct {
 	validators      []*validator.Validator
 	cpWeakValidity  *hash.Hash // The change proposer's weak validity that is a prepared block hash
 	cpDecided       int
-	height          uint32
+	height          types.Height
 	round           int16
 	cpRound         int16
 	valKey          *bls.ValidatorKey
@@ -135,7 +136,7 @@ func (cs *consensus) ConsensusKey() *bls.PublicKey {
 	return cs.valKey.PublicKey()
 }
 
-func (cs *consensus) HeightRound() (uint32, int16) {
+func (cs *consensus) HeightRound() (types.Height, int16) {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
@@ -184,7 +185,7 @@ func (cs *consensus) MoveToNewHeight() {
 	}
 }
 
-func (cs *consensus) scheduleTimeout(duration time.Duration, height uint32, round int16, target tickerTarget) {
+func (cs *consensus) scheduleTimeout(duration time.Duration, height types.Height, round int16, target tickerTarget) {
 	cs.logger.Trace("new timer scheduled ⏱️", "duration", duration, "height", height, "round", round, "target", target)
 
 	ticker := &ticker{duration, height, round, target}
@@ -461,7 +462,7 @@ func (cs *consensus) Proposal() *proposal.Proposal {
 	return cs.log.RoundProposal(cs.round)
 }
 
-func (cs *consensus) HandleQueryProposal(height uint32, round int16) *proposal.Proposal {
+func (cs *consensus) HandleQueryProposal(height types.Height, round int16) *proposal.Proposal {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
@@ -492,7 +493,7 @@ func (cs *consensus) HandleQueryProposal(height uint32, round int16) *proposal.P
 }
 
 // TODO: Improve the performance?
-func (cs *consensus) HandleQueryVote(height uint32, round int16) *vote.Vote {
+func (cs *consensus) HandleQueryVote(height types.Height, round int16) *vote.Vote {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 

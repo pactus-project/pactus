@@ -21,6 +21,7 @@ import (
 	"github.com/pactus-project/pactus/state/score"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/txpool"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
@@ -101,10 +102,10 @@ func LoadOrNewState(
 	// Restoring score manager
 	state.logger.Info("calculating the availability scores...")
 	scoreWindow := uint32(60000)
-	startHeight := uint32(2)
+	startHeight := types.Height(2)
 	endHeight := state.lastInfo.BlockHeight()
-	if endHeight > scoreWindow {
-		startHeight = endHeight - scoreWindow
+	if uint32(endHeight) > scoreWindow {
+		startHeight = endHeight.SafeDecrease(scoreWindow)
 	}
 
 	scoreMgr := score.NewScoreManager(scoreWindow)
@@ -241,7 +242,7 @@ func (st *state) Genesis() *genesis.Genesis {
 	return st.genDoc
 }
 
-func (st *state) LastBlockHeight() uint32 {
+func (st *state) LastBlockHeight() types.Height {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
@@ -525,7 +526,7 @@ func (st *state) evaluateSortition() bool {
 			continue
 		}
 
-		if st.lastInfo.BlockHeight()-val.LastBondingHeight() < st.params.BondInterval {
+		if st.lastInfo.BlockHeight().SafeSub(val.LastBondingHeight()) < st.params.BondInterval {
 			// Bonding period
 			continue
 		}
@@ -665,7 +666,7 @@ func (st *state) IsProposer(addr crypto.Address, round int16) bool {
 	return st.committee.IsProposer(addr, round)
 }
 
-func (st *state) CommittedBlock(height uint32) (*store.CommittedBlock, error) {
+func (st *state) CommittedBlock(height types.Height) (*store.CommittedBlock, error) {
 	return st.store.Block(height)
 }
 
@@ -673,11 +674,11 @@ func (st *state) CommittedTx(txID tx.ID) (*store.CommittedTx, error) {
 	return st.store.Transaction(txID)
 }
 
-func (st *state) BlockHash(height uint32) hash.Hash {
+func (st *state) BlockHash(height types.Height) hash.Hash {
 	return st.store.BlockHash(height)
 }
 
-func (st *state) BlockHeight(h hash.Hash) uint32 {
+func (st *state) BlockHeight(h hash.Hash) types.Height {
 	return st.store.BlockHeight(h)
 }
 

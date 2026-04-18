@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
@@ -193,14 +194,14 @@ func (p *txPool) increaseConsumption(blk *block.Block) {
 	}
 }
 
-func (p *txPool) decreaseConsumption(curHeight uint32) {
+func (p *txPool) decreaseConsumption(curHeight types.Height) {
 	// If height is less than or equal to ConsumptionWindow, nothing to do.
-	if curHeight <= p.config.ConsumptionWindow {
+	if curHeight <= types.Height(p.config.ConsumptionWindow) {
 		return
 	}
 
 	// Calculate the block height that has passed out of the consumption window.
-	windowedBlockHeight := curHeight - p.config.ConsumptionWindow
+	windowedBlockHeight := curHeight.SafeDecrease(p.config.ConsumptionWindow)
 	committedBlock, err := p.store.Block(windowedBlockHeight)
 	if err != nil {
 		p.logger.Error("failed to read block", "height", windowedBlockHeight, "err", err)

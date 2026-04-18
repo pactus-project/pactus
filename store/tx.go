@@ -3,6 +3,7 @@ package store
 import (
 	"bytes"
 
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/encoding"
@@ -11,7 +12,7 @@ import (
 )
 
 type blockRegion struct {
-	height uint32
+	height types.Height
 	offset uint32
 	length uint32
 }
@@ -20,14 +21,14 @@ func txKey(txID tx.ID) []byte { return append(txPrefix, txID.Bytes()...) }
 
 type txStore struct {
 	db            *leveldb.DB
-	txCache       *linkedmap.LinkedMap[tx.ID, uint32]
+	txCache       *linkedmap.LinkedMap[tx.ID, types.Height]
 	txCacheWindow uint32
 }
 
 func newTxStore(db *leveldb.DB, txCacheWindow uint32) *txStore {
 	return &txStore{
 		db:            db,
-		txCache:       linkedmap.New[tx.ID, uint32](0),
+		txCache:       linkedmap.New[tx.ID, types.Height](0),
 		txCacheWindow: txCacheWindow,
 	}
 }
@@ -49,12 +50,12 @@ func (ts *txStore) saveTxs(batch *leveldb.Batch, txs block.Txs, regs []blockRegi
 	}
 }
 
-func (ts *txStore) pruneCache(currentHeight uint32) {
+func (ts *txStore) pruneCache(currentHeight types.Height) {
 	for {
 		head := ts.txCache.HeadNode()
 		txHeight := head.Data.Value
 
-		if currentHeight-txHeight <= ts.txCacheWindow {
+		if currentHeight.SafeSub(txHeight) <= ts.txCacheWindow {
 			break
 		}
 		ts.txCache.RemoveHead()
@@ -79,6 +80,6 @@ func (ts *txStore) tx(txID tx.ID) (*blockRegion, error) {
 	return reg, nil
 }
 
-func (ts *txStore) addToCache(txID tx.ID, height uint32) {
+func (ts *txStore) addToCache(txID tx.ID, height types.Height) {
 	ts.txCache.PushBack(txID, height)
 }

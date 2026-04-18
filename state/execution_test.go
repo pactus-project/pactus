@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/execution/executor"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/protocol"
@@ -64,7 +65,7 @@ func TestExecuteBlock(t *testing.T) {
 		testsuite.TransactionWithLockTime(1),
 		testsuite.TransactionWithSigner(td.genAccKey))
 
-	blockHeight := uint32(2)
+	blockHeight := types.Height(2)
 	proposerAddr := td.state.Proposer(0).Address()
 	invSubsidyTx := td.state.createSubsidyTx(td.genValKeys[0].Address(), td.RandAccAddress(), validTx1.Fee()+1)
 	validSubsidyTx := td.state.createSubsidyTx(td.genValKeys[0].Address(), td.RandAccAddress(), validTx1.Fee())

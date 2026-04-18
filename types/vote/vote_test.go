@@ -6,6 +6,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -449,7 +450,7 @@ func TestSignBytes(t *testing.T) {
 
 	signer := ts.RandAccAddress()
 	blockHash := ts.RandHash()
-	height := uint32(100)
+	height := ts.RandHeight()
 	round := int16(10)
 	cpRound := int16(10)
 	just := &vote.JustInitNo{}
@@ -483,7 +484,7 @@ func TestLogString(t *testing.T) {
 
 	signer := ts.RandAccAddress()
 	blockHash := ts.RandHash()
-	height := uint32(100)
+	height := types.Height(100)
 	round := int16(2)
 	just := &vote.JustInitNo{}
 

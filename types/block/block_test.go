@@ -6,6 +6,7 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/util"
@@ -390,6 +391,6 @@ func TestBlockHeight(t *testing.T) {
 	require.NoError(t, blk1.BasicCheck())
 	require.NoError(t, blk2.BasicCheck())
 
-	assert.Equal(t, uint32(1), blk1.Height())
-	assert.Equal(t, uint32(2), blk2.Height())
+	assert.Equal(t, types.Height(1), blk1.Height())
+	assert.Equal(t, types.Height(2), blk2.Height())
 }

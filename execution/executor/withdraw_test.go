@@ -46,7 +46,7 @@ func TestExecuteWithdrawTx(t *testing.T) {
 		td.check(t, trx, false, ErrValidatorBonded)
 	})
 
-	val.UpdateUnbondingHeight(td.sbx.CurrentHeight() - td.sbx.Params().UnbondInterval + 1)
+	val.UpdateUnbondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().UnbondInterval) + 1)
 	td.sbx.UpdateValidator(val)
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
@@ -92,7 +92,7 @@ func TestExecuteDelegatedWithdrawTx(t *testing.T) {
 	val.AddToStake(totalStake)
 	owner := td.RandAccAddress()
 	val.SetDelegation(owner, amount.Amount(0.3e9), td.sbx.CurrentHeight()+10)
-	val.UpdateUnbondingHeight(td.sbx.CurrentHeight() - td.sbx.Params().UnbondInterval + 1)
+	val.UpdateUnbondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().UnbondInterval) + 1)
 	td.sbx.UpdateValidator(val)
 
 	fee := td.RandFee()

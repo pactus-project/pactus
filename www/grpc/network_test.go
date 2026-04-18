@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/version"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
@@ -36,7 +37,7 @@ func TestListPeers(t *testing.T) {
 		pp := td.mockSync.PeerSet().GetPeer(pid)
 		assert.Equal(t, peer.Agent, pp.Agent)
 		assert.Equal(t, peer.Moniker, pp.Moniker)
-		assert.Equal(t, peer.Height, pp.Height)
+		assert.Equal(t, types.Height(peer.Height), pp.Height)
 		assert.NotEmpty(t, pp.ConsensusKeys)
 		for _, key := range pp.ConsensusKeys {
 			assert.Contains(t, peer.ConsensusKeys, key.String())

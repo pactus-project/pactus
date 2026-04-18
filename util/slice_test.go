@@ -361,3 +361,22 @@ func TestShuffle(t *testing.T) {
 	assert.NotEqual(t, originalInts, ints, "ints slice was not shuffled")
 	assert.ElementsMatch(t, originalInts, ints, "ints slice does not contain the same elements")
 }
+
+func TestPrepend(t *testing.T) {
+	tests := []struct {
+		slice    []int
+		elements []int
+		want     []int
+	}{
+		{[]int{3, 4, 5}, []int{1, 2}, []int{1, 2, 3, 4, 5}},
+		{[]int{3, 4, 5}, []int{}, []int{3, 4, 5}},
+		{[]int{}, []int{1, 2}, []int{1, 2}},
+		{[]int{}, []int{}, []int{}},
+	}
+
+	for _, tt := range tests {
+		got := Prepend(tt.slice, tt.elements...)
+		assert.Equal(t, tt.want, got,
+			"Prepend(%v, %v) = %v; want %v", tt.slice, tt.elements, got, tt.want)
+	}
+}

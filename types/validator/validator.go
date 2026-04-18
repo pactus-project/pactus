@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/util/encoding"
@@ -22,14 +23,14 @@ type validatorData struct {
 	PublicKey           *bls.PublicKey
 	Number              int32
 	Stake               amount.Amount
-	LastBondingHeight   uint32
-	UnbondingHeight     uint32
-	LastSortitionHeight uint32
+	LastBondingHeight   types.Height
+	UnbondingHeight     types.Height
+	LastSortitionHeight types.Height
 
 	// Optional delegation (PIP-49). Zero DelegateOwner means not delegated.
 	DelegateOwner  crypto.Address
 	DelegateShare  amount.Amount
-	DelegateExpiry uint32
+	DelegateExpiry types.Height
 
 	// The protocol version of the validator.
 	// This is in memory and not saved to the blockchain.
@@ -105,12 +106,12 @@ func (val *Validator) Stake() amount.Amount {
 }
 
 // LastBondingHeight returns the last height in which the validator bonded stake.
-func (val *Validator) LastBondingHeight() uint32 {
+func (val *Validator) LastBondingHeight() types.Height {
 	return val.data.LastBondingHeight
 }
 
 // UnbondingHeight returns the last height in which the validator unbonded stake.
-func (val *Validator) UnbondingHeight() uint32 {
+func (val *Validator) UnbondingHeight() types.Height {
 	return val.data.UnbondingHeight
 }
 
@@ -135,12 +136,12 @@ func (val *Validator) DelegateShare() amount.Amount {
 }
 
 // DelegateExpiry returns the block height at which delegation expires (0 = no expiry).
-func (val *Validator) DelegateExpiry() uint32 {
+func (val *Validator) DelegateExpiry() types.Height {
 	return val.data.DelegateExpiry
 }
 
 // DelegateExpired returns true if delegation has expired at the given height.
-func (val *Validator) DelegateExpired(height uint32) bool {
+func (val *Validator) DelegateExpired(height types.Height) bool {
 	if !val.IsDelegated() {
 		return false
 	}
@@ -149,14 +150,14 @@ func (val *Validator) DelegateExpired(height uint32) bool {
 }
 
 // SetDelegation sets the delegation fields (PIP-49). Use zero owner to clear delegation.
-func (val *Validator) SetDelegation(owner crypto.Address, share amount.Amount, expiry uint32) {
+func (val *Validator) SetDelegation(owner crypto.Address, share amount.Amount, expiry types.Height) {
 	val.data.DelegateOwner = owner
 	val.data.DelegateShare = share
 	val.data.DelegateExpiry = expiry
 }
 
 // LastSortitionHeight returns the last height in which the validator evaluated sortition.
-func (val *Validator) LastSortitionHeight() uint32 {
+func (val *Validator) LastSortitionHeight() types.Height {
 	return val.data.LastSortitionHeight
 }
 
@@ -184,17 +185,17 @@ func (val *Validator) AddToStake(amt amount.Amount) {
 }
 
 // UpdateLastSortitionHeight updates the last height at which the validator performed a valid sortition.
-func (val *Validator) UpdateLastSortitionHeight(height uint32) {
+func (val *Validator) UpdateLastSortitionHeight(height types.Height) {
 	val.data.LastSortitionHeight = height
 }
 
 // UpdateLastBondingHeight updates the last height at which the validator bonded some stakes.
-func (val *Validator) UpdateLastBondingHeight(height uint32) {
+func (val *Validator) UpdateLastBondingHeight(height types.Height) {
 	val.data.LastBondingHeight = height
 }
 
 // UpdateUnbondingHeight updates the unbonding height for the validator.
-func (val *Validator) UpdateUnbondingHeight(height uint32) {
+func (val *Validator) UpdateUnbondingHeight(height types.Height) {
 	val.data.UnbondingHeight = height
 }
 

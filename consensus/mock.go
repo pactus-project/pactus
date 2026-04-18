@@ -4,6 +4,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -21,7 +22,7 @@ type MockConsensus struct {
 	CurProposal *proposal.Proposal
 	Active      bool
 	Proposer    bool
-	Height      uint32
+	Height      types.Height
 	Round       int16
 }
 
@@ -67,11 +68,11 @@ func (m *MockConsensus) Proposal() *proposal.Proposal {
 	return m.CurProposal
 }
 
-func (m *MockConsensus) HandleQueryProposal(_ uint32, _ int16) *proposal.Proposal {
+func (m *MockConsensus) HandleQueryProposal(_ types.Height, _ int16) *proposal.Proposal {
 	return m.CurProposal
 }
 
-func (m *MockConsensus) HeightRound() (uint32, int16) {
+func (m *MockConsensus) HeightRound() (types.Height, int16) {
 	return m.Height, m.Round
 }
 
@@ -79,7 +80,7 @@ func (*MockConsensus) LogString() string {
 	return ""
 }
 
-func (m *MockConsensus) HandleQueryVote(_ uint32, _ int16) *vote.Vote {
+func (m *MockConsensus) HandleQueryVote(_ types.Height, _ int16) *vote.Vote {
 	if len(m.Votes) == 0 {
 		return nil
 	}

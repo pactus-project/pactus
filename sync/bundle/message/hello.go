@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/version"
 )
 
@@ -18,7 +19,7 @@ type HelloMessage struct {
 	Moniker         string           `cbor:"3,keyasint"`
 	PublicKeys      []*bls.PublicKey `cbor:"4,keyasint"`
 	Signature       *bls.Signature   `cbor:"5,keyasint"`
-	Height          uint32           `cbor:"6,keyasint"`
+	Height          types.Height     `cbor:"6,keyasint"`
 	Services        service.Services `cbor:"7,keyasint"`
 	GenesisHash     hash.Hash        `cbor:"8,keyasint"`
 	BlockHash       hash.Hash        `cbor:"9,keyasint"`
@@ -26,7 +27,7 @@ type HelloMessage struct {
 }
 
 func NewHelloMessage(pid peer.ID, moniker string,
-	services service.Services, height uint32, blockHash, genesisHash hash.Hash,
+	services service.Services, height types.Height, blockHash, genesisHash hash.Hash,
 ) *HelloMessage {
 	return &HelloMessage{
 		PeerID:          pid,
@@ -75,7 +76,7 @@ func (*HelloMessage) ShouldBroadcast() bool {
 	return false
 }
 
-func (*HelloMessage) ConsensusHeight() uint32 {
+func (*HelloMessage) ConsensusHeight() types.Height {
 	return 0
 }
 

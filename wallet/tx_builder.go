@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -15,7 +16,7 @@ import (
 type TxOption func(builder *txBuilder) error
 
 // OptionLockTime sets the lock time for the transaction.
-func OptionLockTime(lockTime uint32) func(builder *txBuilder) error {
+func OptionLockTime(lockTime types.Height) func(builder *txBuilder) error {
 	return func(builder *txBuilder) error {
 		builder.lockTime = lockTime
 
@@ -84,7 +85,7 @@ func OptionDelegateShare(shareStr string) func(builder *txBuilder) error {
 }
 
 // OptionDelegateExpiry sets delegation expiry height for delegated bond transactions.
-func OptionDelegateExpiry(expiry uint32) func(builder *txBuilder) error {
+func OptionDelegateExpiry(expiry types.Height) func(builder *txBuilder) error {
 	return func(builder *txBuilder) error {
 		builder.delegateExpiry = expiry
 
@@ -100,9 +101,9 @@ type txBuilder struct {
 	pub            *bls.PublicKey
 	delegateOwner  *crypto.Address
 	delegateShare  amount.Amount
-	delegateExpiry uint32
+	delegateExpiry types.Height
 	typ            payload.Type
-	lockTime       uint32
+	lockTime       types.Height
 	amount         amount.Amount
 	fee            amount.Amount
 	memo           string
@@ -194,7 +195,7 @@ func (m *txBuilder) setLockTime() error {
 		if err != nil {
 			return err
 		}
-		m.lockTime = uint32(height + 1)
+		m.lockTime = height + 1
 	}
 
 	return nil

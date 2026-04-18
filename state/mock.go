@@ -12,6 +12,7 @@ import (
 	"github.com/pactus-project/pactus/state/param"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/txpool"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
@@ -68,7 +69,7 @@ func (m *MockState) Genesis() *genesis.Genesis {
 	return m.TestGenesis
 }
 
-func (m *MockState) LastBlockHeight() uint32 {
+func (m *MockState) LastBlockHeight() types.Height {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 
@@ -145,7 +146,7 @@ func (m *MockState) IsValidator(addr crypto.Address) bool {
 	return m.TestStore.HasValidator(addr)
 }
 
-func (m *MockState) CommittedBlock(height uint32) (*store.CommittedBlock, error) {
+func (m *MockState) CommittedBlock(height types.Height) (*store.CommittedBlock, error) {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 
@@ -159,14 +160,14 @@ func (m *MockState) CommittedTx(txID tx.ID) (*store.CommittedTx, error) {
 	return m.TestStore.Transaction(txID)
 }
 
-func (m *MockState) BlockHash(height uint32) hash.Hash {
+func (m *MockState) BlockHash(height types.Height) hash.Hash {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 
 	return m.TestStore.BlockHash(height)
 }
 
-func (m *MockState) BlockHeight(h hash.Hash) uint32 {
+func (m *MockState) BlockHeight(h hash.Hash) types.Height {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 

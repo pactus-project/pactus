@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
+	"github.com/pactus-project/pactus/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -68,13 +69,13 @@ func TestHandlerBlocksRequestParsingMessages(t *testing.T) {
 
 		t.Run("Accept request within `BlockPerSession`", func(t *testing.T) {
 			t.Run("Peer needs more block", func(t *testing.T) {
-				msg := message.NewBlocksRequestMessage(sid, curHeight-config.BlockPerMessage, config.BlockPerMessage)
+				msg := message.NewBlocksRequestMessage(sid, curHeight-types.Height(config.BlockPerMessage), config.BlockPerMessage)
 				td.receivingNewMessage(td.sync, msg, pid)
 
 				bdl1 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 				res1 := bdl1.Message.(*message.BlocksResponseMessage)
 				assert.Equal(t, message.ResponseCodeMoreBlocks, res1.ResponseCode)
-				assert.Equal(t, curHeight-config.BlockPerMessage, res1.From)
+				assert.Equal(t, curHeight-types.Height(config.BlockPerMessage), res1.From)
 				assert.Equal(t, curHeight-1, res1.To())
 				assert.Equal(t, config.BlockPerMessage, res1.Count())
 
@@ -87,13 +88,14 @@ func TestHandlerBlocksRequestParsingMessages(t *testing.T) {
 			})
 
 			t.Run("Peer synced", func(t *testing.T) {
-				msg := message.NewBlocksRequestMessage(sid, curHeight-config.BlockPerMessage+1, config.BlockPerMessage)
+				msg := message.NewBlocksRequestMessage(sid,
+					curHeight-types.Height(config.BlockPerMessage)+1, config.BlockPerMessage)
 				td.receivingNewMessage(td.sync, msg, pid)
 
 				bdl1 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 				res1 := bdl1.Message.(*message.BlocksResponseMessage)
 				assert.Equal(t, message.ResponseCodeMoreBlocks, res1.ResponseCode)
-				assert.Equal(t, curHeight-config.BlockPerMessage+1, res1.From)
+				assert.Equal(t, curHeight-types.Height(config.BlockPerMessage)+1, res1.From)
 				assert.Equal(t, curHeight, res1.To())
 				assert.Equal(t, config.BlockPerMessage, res1.Count())
 

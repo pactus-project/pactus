@@ -16,6 +16,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
@@ -72,9 +73,42 @@ func (ts *TestSuite) MockingController() *gomock.Controller {
 	return ts.Ctrl
 }
 
-// RandHeight returns a random number between [1000, 1000000] for block height.
-func (ts *TestSuite) RandHeight() uint32 {
-	return ts.RandUint32(testsuite.WithMin(uint32(1000)), testsuite.WithMax(uint32(1e6)))
+type HeightRange struct {
+	Min types.Height
+	Max types.Height
+}
+
+func NewHeightRange() *HeightRange {
+	return &HeightRange{
+		Min: 1e3,
+		Max: 1e6,
+	}
+}
+
+type HeightRangeOption func(*HeightRange)
+
+func HeightWithMin(min uint32) HeightRangeOption {
+	return func(h *HeightRange) {
+		h.Min = types.Height(min)
+	}
+}
+
+func HeightWithMax(max uint32) HeightRangeOption {
+	return func(h *HeightRange) {
+		h.Max = types.Height(max)
+	}
+}
+
+// RandHeight returns a random number between [1,000, 1,000,000] for block height.
+func (ts *TestSuite) RandHeight(opts ...HeightRangeOption) types.Height {
+	h := NewHeightRange()
+	for _, opt := range opts {
+		opt(h)
+	}
+
+	return types.Height(ts.RandUint32(
+		testsuite.WithMin(uint32(h.Min)),
+		testsuite.WithMax(uint32(h.Max))))
 }
 
 // RandRound returns a random number between [0, 10) for block round.
@@ -484,7 +518,7 @@ func BlockWithTransactions(txs block.Txs) BlockMakerOption {
 }
 
 // GenerateTestBlock generates a block for testing purposes with optional configuration.
-func (ts *TestSuite) GenerateTestBlock(height uint32, opts ...BlockMakerOption) (
+func (ts *TestSuite) GenerateTestBlock(height types.Height, opts ...BlockMakerOption) (
 	*block.Block, *certificate.Certificate,
 ) {
 	bmk := ts.NewBlockMaker()
@@ -508,7 +542,7 @@ func (ts *TestSuite) GenerateTestBlock(height uint32, opts ...BlockMakerOption) 
 }
 
 // GenerateTestCertificate generates a block certificate for testing purposes.
-func (ts *TestSuite) GenerateTestCertificate(height uint32) *certificate.Certificate {
+func (ts *TestSuite) GenerateTestCertificate(height types.Height) *certificate.Certificate {
 	sig := ts.RandBLSSignature()
 
 	cert := certificate.NewCertificate(height, ts.RandRound())
@@ -539,7 +573,7 @@ func ProposalWithKey(key *bls.ValidatorKey) func(*ProposalMaker) {
 }
 
 // GenerateTestProposal generates a proposal for testing purposes.
-func (ts *TestSuite) GenerateTestProposal(height uint32, round int16,
+func (ts *TestSuite) GenerateTestProposal(height types.Height, round int16,
 	opts ...func(*ProposalMaker),
 ) *proposal.Proposal {
 	pmk := ts.NewProposalMaker()
@@ -556,7 +590,7 @@ func (ts *TestSuite) GenerateTestProposal(height uint32, round int16,
 }
 
 type TransactionMaker struct {
-	LockTime   uint32
+	LockTime   types.Height
 	Amount     amount.Amount
 	Fee        amount.Amount
 	Signer     crypto.PrivateKey
@@ -607,7 +641,7 @@ func (ts *TestSuite) NewTransactionMaker() *TransactionMaker {
 }
 
 // TransactionWithLockTime sets lock-time to the transaction.
-func TransactionWithLockTime(lockTime uint32) TransactionMakerOption {
+func TransactionWithLockTime(lockTime types.Height) TransactionMakerOption {
 	return func(tm *TransactionMaker) {
 		tm.LockTime = lockTime
 	}
@@ -821,7 +855,7 @@ func (ts *TestSuite) GenerateTestWithdrawTx(opts ...TransactionMakerOption) *tx.
 }
 
 // GenerateTestPrecommitVote generates a precommit vote for testing purposes.
-func (ts *TestSuite) GenerateTestPrecommitVote(height uint32, round int16) (*vote.Vote, *bls.ValidatorKey) {
+func (ts *TestSuite) GenerateTestPrecommitVote(height types.Height, round int16) (*vote.Vote, *bls.ValidatorKey) {
 	valKey := ts.RandValKey()
 	vote := vote.NewPrecommitVote(
 		ts.RandHash(),
@@ -833,7 +867,7 @@ func (ts *TestSuite) GenerateTestPrecommitVote(height uint32, round int16) (*vot
 }
 
 // GenerateTestPrepareVote generates a prepare vote for testing purposes.
-func (ts *TestSuite) GenerateTestPrepareVote(height uint32, round int16) (*vote.Vote, *bls.ValidatorKey) {
+func (ts *TestSuite) GenerateTestPrepareVote(height types.Height, round int16) (*vote.Vote, *bls.ValidatorKey) {
 	valKey := ts.RandValKey()
 	vote := vote.NewPrepareVote(
 		ts.RandHash(),
@@ -857,8 +891,8 @@ func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []*bls
 		valKeys[index] = valKey
 		vals[index] = val
 
-		val.UpdateLastBondingHeight(1 + uint32(index))
-		val.UpdateLastSortitionHeight(1 + uint32(index))
+		val.UpdateLastBondingHeight(types.Height(1 + index))
+		val.UpdateLastSortitionHeight(types.Height(1 + index))
 		val.SubtractFromStake(val.Stake())
 		val.AddToStake(10e9)
 	}

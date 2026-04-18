@@ -43,10 +43,10 @@ func TestExecuteSortitionTx(t *testing.T) {
 	lockTime := td.sbx.CurrentHeight()
 	proof := td.RandProof()
 
-	val.UpdateLastBondingHeight(curHeight - td.sbx.Params().BondInterval)
+	val.UpdateLastBondingHeight(curHeight.SafeDecrease(td.sbx.Params().BondInterval - 1))
+	val.UpdateLastSortitionHeight(lockTime - 1)
 	td.sbx.UpdateValidator(val)
 
-	assert.Zero(t, val.LastSortitionHeight())
 	assert.False(t, td.sbx.IsJoinedCommittee(val.Address()))
 
 	t.Run("Should fail, unknown address", func(t *testing.T) {
@@ -57,9 +57,6 @@ func TestExecuteSortitionTx(t *testing.T) {
 		td.check(t, trx, false, ValidatorNotFoundError{Address: randomAddr})
 	})
 
-	val.UpdateLastBondingHeight(curHeight - td.sbx.Params().BondInterval + 1)
-	td.sbx.UpdateValidator(val)
-
 	t.Run("Should fail, Bonding period", func(t *testing.T) {
 		trx := tx.NewSortitionTx(lockTime, val.Address(), proof)
 
@@ -68,7 +65,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	})
 
 	// Let's add one more block
-	td.sbx.TestStore.AddTestBlock(curHeight + 1)
+	td.sbx.TestStore.AddTestBlock(curHeight)
 
 	t.Run("Should fail, invalid proof", func(t *testing.T) {
 		trx := tx.NewSortitionTx(lockTime, val.Address(), proof)
@@ -79,6 +76,10 @@ func TestExecuteSortitionTx(t *testing.T) {
 
 	t.Run("Should fail, committee has free seats and validator is in the committee", func(t *testing.T) {
 		val0 := td.sbx.Committee().Proposer(0)
+		val0.UpdateLastSortitionHeight(lockTime - 1)
+		val0.UpdateLastBondingHeight(curHeight.SafeDecrease(td.sbx.Params().BondInterval + 1))
+		td.sbx.UpdateValidator(val0)
+
 		trx := tx.NewSortitionTx(lockTime, val0.Address(), proof)
 		td.sbx.TestAcceptSortition = true
 
@@ -123,39 +124,42 @@ func TestChangePower1(t *testing.T) {
 	// This moves proposer to next validator
 	updateCommittee(td)
 
+	lockTime := td.sbx.CurrentHeight()
+	proof := td.RandProof()
+
 	// Let's create validators first
 	pub1, _ := td.RandBLSKeyPair()
 	amt1 := td.sbx.Committee().TotalPower() / 3
 	val1 := td.sbx.MakeNewValidator(pub1)
 	val1.AddToStake(amount.Amount(amt1 - 1))
-	val1.UpdateLastBondingHeight(td.sbx.CurrentHeight() - td.sbx.Params().BondInterval)
+	val1.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
+	val1.UpdateLastSortitionHeight(lockTime - 1)
 	td.sbx.UpdateValidator(val1)
-	proof1 := td.RandProof()
 
 	pub2, _ := td.RandBLSKeyPair()
 	val2 := td.sbx.MakeNewValidator(pub2)
 	val2.AddToStake(2)
-	val2.UpdateLastBondingHeight(td.sbx.CurrentHeight() - td.sbx.Params().BondInterval)
+	val2.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
+	val2.UpdateLastSortitionHeight(lockTime - 1)
 	td.sbx.UpdateValidator(val2)
-	lockTime := td.sbx.CurrentHeight()
-	proof2 := td.RandProof()
 
 	val3 := td.sbx.Committee().Proposer(0)
-	proof3 := td.RandProof()
+	val3.UpdateLastSortitionHeight(lockTime - 1)
+	td.sbx.UpdateValidator(val3)
 
 	td.sbx.TestParams.CommitteeSize = 4
 	td.sbx.TestAcceptSortition = true
-	trx1 := tx.NewSortitionTx(lockTime, val1.Address(), proof1)
+	trx1 := tx.NewSortitionTx(lockTime, val1.Address(), proof)
 	td.check(t, trx1, true, nil)
 	td.check(t, trx1, false, nil)
 	td.execute(t, trx1)
 
-	trx2 := tx.NewSortitionTx(lockTime, val2.Address(), proof2)
+	trx2 := tx.NewSortitionTx(lockTime, val2.Address(), proof)
 	td.check(t, trx2, true, ErrCommitteeJoinLimitExceeded)
 	td.check(t, trx2, false, nil)
 
 	// Val3 is a Committee member
-	trx3 := tx.NewSortitionTx(lockTime, val3.Address(), proof3)
+	trx3 := tx.NewSortitionTx(lockTime, val3.Address(), proof)
 	td.check(t, trx3, true, nil)
 	td.check(t, trx3, false, nil)
 }
@@ -166,50 +170,53 @@ func TestChangePower2(t *testing.T) {
 	// This moves proposer to next validator
 	updateCommittee(td)
 
+	lockTime := td.sbx.CurrentHeight()
+	proof := td.RandProof()
+
 	// Let's create validators first
 	pub1, _ := td.RandBLSKeyPair()
 	val1 := td.sbx.MakeNewValidator(pub1)
 	val1.AddToStake(1)
-	val1.UpdateLastBondingHeight(td.sbx.CurrentHeight() - td.sbx.Params().BondInterval)
+	val1.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
+	val1.UpdateLastSortitionHeight(lockTime - 1)
 	td.sbx.UpdateValidator(val1)
-	proof1 := td.RandProof()
 
 	pub2, _ := td.RandBLSKeyPair()
 	val2 := td.sbx.MakeNewValidator(pub2)
 	val2.AddToStake(1)
-	val2.UpdateLastBondingHeight(td.sbx.CurrentHeight() - td.sbx.Params().BondInterval)
+	val2.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
+	val2.UpdateLastSortitionHeight(lockTime - 1)
 	td.sbx.UpdateValidator(val2)
-	proof2 := td.RandProof()
 
 	pub3, _ := td.RandBLSKeyPair()
 	val3 := td.sbx.MakeNewValidator(pub3)
 	val3.AddToStake(1)
-	val3.UpdateLastBondingHeight(td.sbx.CurrentHeight() - td.sbx.Params().BondInterval)
+	val3.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
+	val3.UpdateLastSortitionHeight(lockTime - 1)
 	td.sbx.UpdateValidator(val3)
-	lockTime := td.sbx.CurrentHeight()
-	proof3 := td.RandProof()
 
 	val4 := td.sbx.Committee().Proposer(0)
-	proof4 := td.RandProof()
+	val4.UpdateLastSortitionHeight(lockTime - 1)
+	td.sbx.UpdateValidator(val4)
 
 	td.sbx.TestParams.CommitteeSize = 7
 	td.sbx.TestAcceptSortition = true
-	trx1 := tx.NewSortitionTx(lockTime, val1.Address(), proof1)
+	trx1 := tx.NewSortitionTx(lockTime, val1.Address(), proof)
 	td.check(t, trx1, true, nil)
 	td.check(t, trx1, false, nil)
 	td.execute(t, trx1)
 
-	trx2 := tx.NewSortitionTx(lockTime, val2.Address(), proof2)
+	trx2 := tx.NewSortitionTx(lockTime, val2.Address(), proof)
 	td.check(t, trx2, true, nil)
 	td.check(t, trx2, false, nil)
 	td.execute(t, trx2)
 
-	trx3 := tx.NewSortitionTx(lockTime, val3.Address(), proof3)
+	trx3 := tx.NewSortitionTx(lockTime, val3.Address(), proof)
 	td.check(t, trx3, true, ErrCommitteeLeaveLimitExceeded)
 	td.check(t, trx3, false, nil)
 
 	// Committee member
-	trx4 := tx.NewSortitionTx(lockTime, val4.Address(), proof4)
+	trx4 := tx.NewSortitionTx(lockTime, val4.Address(), proof)
 	td.check(t, trx4, true, nil)
 	td.check(t, trx4, false, nil)
 	td.execute(t, trx4)
@@ -227,7 +234,7 @@ func TestOldestDidNotPropose(t *testing.T) {
 		val := td.sbx.MakeNewValidator(pub)
 		val.AddToStake(10 * 1e9)
 		val.UpdateLastBondingHeight(
-			td.sbx.CurrentHeight() - td.sbx.Params().BondInterval)
+			td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
 		td.sbx.UpdateValidator(val)
 		vals[index] = val
 	}

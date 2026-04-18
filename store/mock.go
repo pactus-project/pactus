@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
@@ -21,23 +22,23 @@ var _ Store = &MockStore{}
 type MockStore struct {
 	ts *testsuite.TestSuite
 
-	Blocks     map[uint32]*block.Block
+	Blocks     map[types.Height]*block.Block
 	Accounts   map[crypto.Address]*account.Account
 	Validators map[crypto.Address]*validator.Validator
 	LastCert   *certificate.Certificate
-	LastHeight uint32
+	LastHeight types.Height
 }
 
 func MockingStore(ts *testsuite.TestSuite) *MockStore {
 	return &MockStore{
 		ts:         ts,
-		Blocks:     make(map[uint32]*block.Block),
+		Blocks:     make(map[types.Height]*block.Block),
 		Accounts:   make(map[crypto.Address]*account.Account),
 		Validators: make(map[crypto.Address]*validator.Validator),
 	}
 }
 
-func (m *MockStore) Block(height uint32) (*CommittedBlock, error) {
+func (m *MockStore) Block(height types.Height) (*CommittedBlock, error) {
 	b, ok := m.Blocks[height]
 	if ok {
 		d, _ := b.Bytes()
@@ -52,7 +53,7 @@ func (m *MockStore) Block(height uint32) (*CommittedBlock, error) {
 	return nil, errors.New("not found")
 }
 
-func (m *MockStore) BlockHash(height uint32) hash.Hash {
+func (m *MockStore) BlockHash(height types.Height) hash.Hash {
 	b, ok := m.Blocks[height]
 	if ok {
 		return b.Hash()
@@ -61,7 +62,7 @@ func (m *MockStore) BlockHash(height uint32) hash.Hash {
 	return hash.UndefHash
 }
 
-func (m *MockStore) BlockHeight(h hash.Hash) uint32 {
+func (m *MockStore) BlockHeight(h hash.Hash) types.Height {
 	for height, b := range m.Blocks {
 		if b.Hash() == h {
 			return height
@@ -71,7 +72,7 @@ func (m *MockStore) BlockHeight(h hash.Hash) uint32 {
 	return 0
 }
 
-func (m *MockStore) SortitionSeed(blockHeight uint32) *sortition.VerifiableSeed {
+func (m *MockStore) SortitionSeed(blockHeight types.Height) *sortition.VerifiableSeed {
 	if blk, ok := m.Blocks[blockHeight]; ok {
 		sortitionSeed := blk.Header().SortitionSeed()
 
@@ -270,7 +271,7 @@ func (m *MockStore) AddTestAccount(options ...testsuite.AccountMakerOption) (cry
 	return addr, acc
 }
 
-func (m *MockStore) AddTestBlock(height uint32) *block.Block {
+func (m *MockStore) AddTestBlock(height types.Height) *block.Block {
 	blk, cert := m.ts.GenerateTestBlock(height)
 	m.SaveBlock(blk, cert)
 
@@ -301,7 +302,7 @@ func (*MockStore) IsBanned(_ crypto.Address) bool {
 	return false
 }
 
-func (*MockStore) Prune(_ func(_ bool, _ uint32) bool) error {
+func (*MockStore) Prune(_ func(_ bool, _ types.Height) bool) error {
 	return nil
 }
 
@@ -309,7 +310,7 @@ func (*MockStore) IsPruned() bool {
 	return false
 }
 
-func (*MockStore) PruningHeight() uint32 {
+func (*MockStore) PruningHeight() types.Height {
 	return 0
 }
 

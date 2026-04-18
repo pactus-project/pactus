@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/pactus-project/pactus/network"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/tx"
 )
 
@@ -43,7 +44,7 @@ func (*TransactionsMessage) ShouldBroadcast() bool {
 	return true
 }
 
-func (*TransactionsMessage) ConsensusHeight() uint32 {
+func (*TransactionsMessage) ConsensusHeight() types.Height {
 	return 0
 }
 

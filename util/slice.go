@@ -230,3 +230,8 @@ func Shuffle[T any](slice []T) {
 		slice[i], slice[j] = slice[j], slice[i]
 	})
 }
+
+// Prepend adds elements to the beginning of a slice and returns the modified slice.
+func Prepend[T any](slice []T, elements ...T) []T {
+	return append(elements, slice...)
+}

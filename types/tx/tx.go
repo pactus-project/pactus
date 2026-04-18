@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
@@ -37,7 +38,7 @@ type Tx struct {
 type txData struct {
 	Flags     uint8
 	Version   uint8
-	LockTime  uint32
+	LockTime  types.Height
 	Fee       amount.Amount
 	Memo      string
 	Payload   payload.Payload
@@ -53,7 +54,7 @@ func WithMemo(memo string) TxOption {
 	}
 }
 
-func newTx(lockTime uint32, pld payload.Payload, fee amount.Amount, opts ...TxOption) *Tx {
+func newTx(lockTime types.Height, pld payload.Payload, fee amount.Amount, opts ...TxOption) *Tx {
 	data := txData{
 		Flags:    flagNotSigned,
 		LockTime: lockTime,
@@ -94,7 +95,7 @@ func (tx *Tx) Version() uint8 {
 	return tx.data.Version & 0x0f
 }
 
-func (tx *Tx) LockTime() uint32 {
+func (tx *Tx) LockTime() types.Height {
 	return tx.data.LockTime
 }
 

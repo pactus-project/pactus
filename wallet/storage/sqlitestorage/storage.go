@@ -13,11 +13,12 @@ import (
 	_ "github.com/glebarez/go-sqlite" // sqlite driver
 	"github.com/google/uuid"
 	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet/storage"
-	"github.com/pactus-project/pactus/wallet/types"
+	wtypes "github.com/pactus-project/pactus/wallet/types"
 	"github.com/pactus-project/pactus/wallet/vault"
 )
 
@@ -36,10 +37,10 @@ type Storage struct {
 	ctx  context.Context
 	db   *sql.DB
 	path string
-	info *types.WalletInfo
+	info *wtypes.WalletInfo
 	vlt  *vault.Vault
 
-	addressMap map[string]types.AddressInfo
+	addressMap map[string]wtypes.AddressInfo
 }
 
 func dbPath(path string) string {
@@ -196,7 +197,7 @@ func (s *Storage) Close() error {
 }
 
 // WalletInfo returns the wallet information.
-func (s *Storage) WalletInfo() *types.WalletInfo {
+func (s *Storage) WalletInfo() *wtypes.WalletInfo {
 	return s.info
 }
 
@@ -251,7 +252,7 @@ func (s *Storage) loadWalletInfo() error {
 	}
 	s.vlt = &vlt
 
-	s.info = &types.WalletInfo{
+	s.info = &wtypes.WalletInfo{
 		Path:       s.path,
 		Driver:     "SQLite",
 		Version:    version,
@@ -274,7 +275,7 @@ func (s *Storage) loadAddresses() error {
 	}
 	defer func() { _ = rows.Close() }()
 
-	s.addressMap = make(map[string]types.AddressInfo)
+	s.addressMap = make(map[string]wtypes.AddressInfo)
 	for rows.Next() {
 		addr, err := scanAddress(rows)
 		if err != nil {
@@ -315,8 +316,8 @@ func (s *Storage) SetDefaultFee(fee amount.Amount) error {
 }
 
 // AllAddresses returns all addresses in the wallet.
-func (s *Storage) AllAddresses() []types.AddressInfo {
-	addresses := make([]types.AddressInfo, 0, len(s.addressMap))
+func (s *Storage) AllAddresses() []wtypes.AddressInfo {
+	addresses := make([]wtypes.AddressInfo, 0, len(s.addressMap))
 	for _, addr := range s.addressMap {
 		addresses = append(addresses, addr)
 	}
@@ -330,7 +331,7 @@ func (s *Storage) AddressCount() int {
 }
 
 // AddressInfo returns the address information for the given address.
-func (s *Storage) AddressInfo(address string) (*types.AddressInfo, error) {
+func (s *Storage) AddressInfo(address string) (*wtypes.AddressInfo, error) {
 	info, exists := s.addressMap[address]
 	if !exists {
 		return nil, storage.ErrNotFound
@@ -340,7 +341,7 @@ func (s *Storage) AddressInfo(address string) (*types.AddressInfo, error) {
 }
 
 // InsertAddress inserts a new address.
-func (s *Storage) InsertAddress(info *types.AddressInfo) error {
+func (s *Storage) InsertAddress(info *wtypes.AddressInfo) error {
 	_, err := s.db.ExecContext(s.ctx, insertAddressSQL,
 		info.Address, info.PublicKey, info.Label, info.Path)
 	if err != nil {
@@ -351,7 +352,7 @@ func (s *Storage) InsertAddress(info *types.AddressInfo) error {
 }
 
 // UpdateAddress updates an existing address.
-func (s *Storage) UpdateAddress(info *types.AddressInfo) error {
+func (s *Storage) UpdateAddress(info *wtypes.AddressInfo) error {
 	_, err := s.db.ExecContext(s.ctx, updateAddressSQL,
 		info.Label, info.PublicKey, info.Path, info.Address)
 	if err != nil {
@@ -369,7 +370,7 @@ func (s *Storage) HasAddress(address string) bool {
 }
 
 // InsertTransaction inserts a new transaction.
-func (s *Storage) InsertTransaction(info *types.TransactionInfo) error {
+func (s *Storage) InsertTransaction(info *wtypes.TransactionInfo) error {
 	result, err := s.db.ExecContext(s.ctx, insertTransactionSQL,
 		info.TxID,
 		info.Sender,
@@ -394,7 +395,7 @@ func (s *Storage) InsertTransaction(info *types.TransactionInfo) error {
 }
 
 // UpdateTransactionStatus updates the status and block height for all transactions with the given primary key.
-func (s *Storage) UpdateTransactionStatus(no int64, status types.TransactionStatus, blockHeight uint32) error {
+func (s *Storage) UpdateTransactionStatus(no int64, status wtypes.TransactionStatus, blockHeight types.Height) error {
 	_, err := s.db.ExecContext(s.ctx, updateTransactionStatusSQL, int(status), blockHeight, no)
 
 	return err
@@ -417,8 +418,8 @@ type scanner interface {
 }
 
 // scanAddress scans a row into an AddressInfo struct.
-func scanAddress(s scanner) (*types.AddressInfo, error) {
-	var info types.AddressInfo
+func scanAddress(s scanner) (*wtypes.AddressInfo, error) {
+	var info wtypes.AddressInfo
 
 	err := s.Scan(
 		&info.Address,
@@ -436,8 +437,8 @@ func scanAddress(s scanner) (*types.AddressInfo, error) {
 }
 
 // scanTransaction scans a row into a TransactionInfo struct.
-func scanTransaction(s scanner) (*types.TransactionInfo, error) {
-	var info types.TransactionInfo
+func scanTransaction(s scanner) (*wtypes.TransactionInfo, error) {
+	var info wtypes.TransactionInfo
 	var status, payloadType int
 
 	err := s.Scan(
@@ -461,14 +462,14 @@ func scanTransaction(s scanner) (*types.TransactionInfo, error) {
 		return nil, err
 	}
 
-	info.Status = types.TransactionStatus(status)
+	info.Status = wtypes.TransactionStatus(status)
 	info.PayloadType = payload.Type(payloadType)
 
 	return &info, nil
 }
 
 // GetTransaction retrieves a transaction by primary key.
-func (s *Storage) GetTransaction(no int64) (*types.TransactionInfo, error) {
+func (s *Storage) GetTransaction(no int64) (*wtypes.TransactionInfo, error) {
 	info, err := scanTransaction(s.db.QueryRowContext(s.ctx, selectTransactionByNoSQL, no))
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -483,24 +484,24 @@ func (s *Storage) GetTransaction(no int64) (*types.TransactionInfo, error) {
 
 // QueryTransactions returns transactions matching the provided filters with pagination.
 // Empty or "*" address value is treated as no filter. Filters are combined with AND.
-func (s *Storage) QueryTransactions(params storage.QueryParams) ([]*types.TransactionInfo, error) {
+func (s *Storage) QueryTransactions(params storage.QueryParams) ([]*wtypes.TransactionInfo, error) {
 	conditions := make([]string, 0, 3)
 	args := make([]any, 0, 6)
 
-	if params.Direction != types.TxDirectionAny {
+	if params.Direction != wtypes.TxDirectionAny {
 		conditions = append(conditions, "direction = ?")
 		args = append(args, params.Direction)
 	}
 
 	if params.Address != "*" {
 		switch params.Direction {
-		case types.TxDirectionAny:
+		case wtypes.TxDirectionAny:
 			conditions = append(conditions, "(sender = ? OR receiver = ?)")
 			args = append(args, params.Address, params.Address)
-		case types.TxDirectionIncoming:
+		case wtypes.TxDirectionIncoming:
 			conditions = append(conditions, "receiver = ?")
 			args = append(args, params.Address)
-		case types.TxDirectionOutgoing:
+		case wtypes.TxDirectionOutgoing:
 			conditions = append(conditions, "sender = ?")
 			args = append(args, params.Address)
 		}
@@ -536,7 +537,7 @@ func (s *Storage) QueryTransactions(params storage.QueryParams) ([]*types.Transa
 	}
 	defer func() { _ = rows.Close() }()
 
-	transactions := make([]*types.TransactionInfo, 0)
+	transactions := make([]*wtypes.TransactionInfo, 0)
 	for rows.Next() {
 		info, err := scanTransaction(rows)
 		if err != nil {
@@ -550,14 +551,14 @@ func (s *Storage) QueryTransactions(params storage.QueryParams) ([]*types.Transa
 }
 
 // GetPendingTransactions returns pending transactions keyed by transaction ID.
-func (s *Storage) GetPendingTransactions() (map[string]*types.TransactionInfo, error) {
-	rows, err := s.db.QueryContext(s.ctx, selectPendingTransactionsSQL, int(types.TransactionStatusPending))
+func (s *Storage) GetPendingTransactions() (map[string]*wtypes.TransactionInfo, error) {
+	rows, err := s.db.QueryContext(s.ctx, selectPendingTransactionsSQL, int(wtypes.TransactionStatusPending))
 	if err != nil {
 		return nil, err
 	}
 	defer func() { _ = rows.Close() }()
 
-	pending := make(map[string]*types.TransactionInfo)
+	pending := make(map[string]*wtypes.TransactionInfo)
 	for rows.Next() {
 		info, err := scanTransaction(rows)
 		if err != nil {

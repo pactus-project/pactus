@@ -12,6 +12,7 @@ import (
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/txpool"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
@@ -317,7 +318,7 @@ func TestTryCommitValidBlocks(t *testing.T) {
 	assert.Equal(t, blk.Hash(), td.state.LastBlockHash())
 	assert.Equal(t, blk.Header().Time(), td.state.LastBlockTime())
 	assert.Equal(t, cert.Hash(), td.state.LastCertificate().Hash())
-	assert.Equal(t, uint32(9), td.state.LastBlockHeight())
+	assert.Equal(t, types.Height(9), td.state.LastBlockHeight())
 }
 
 func TestCommitSandbox(t *testing.T) {
@@ -715,7 +716,7 @@ func TestCommittedBlock(t *testing.T) {
 		require.Error(t, err)
 		assert.Nil(t, cBlkZero)
 		assert.Equal(t, hash.UndefHash, td.state.BlockHash(0))
-		assert.Equal(t, uint32(0), td.state.BlockHeight(hash.UndefHash))
+		assert.Equal(t, types.Height(0), td.state.BlockHeight(hash.UndefHash))
 	})
 
 	t.Run("First block (Genesis)", func(t *testing.T) {

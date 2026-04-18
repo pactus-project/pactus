@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/pactus-project/pactus/types/block"
-	"github.com/pactus-project/pactus/wallet/types"
+	"github.com/pactus-project/pactus/types"
+	wtypes "github.com/pactus-project/pactus/wallet/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
@@ -14,41 +14,41 @@ import (
 func TestTransactionsListOptions(t *testing.T) {
 	tests := []struct {
 		opts     []ListTransactionsOption
-		expDir   types.TxDirection
+		expDir   wtypes.TxDirection
 		expAddr  string
 		expCount int
 		expSkip  int
 	}{
 		{
 			opts:   []ListTransactionsOption{},
-			expDir: types.TxDirectionAny, expAddr: "*", expCount: 10, expSkip: 0,
+			expDir: wtypes.TxDirectionAny, expAddr: "*", expCount: 10, expSkip: 0,
 		},
 		{
 			opts: []ListTransactionsOption{
-				WithDirection(types.TxDirectionAny),
+				WithDirection(wtypes.TxDirectionAny),
 				WithAddress(""),
 				WithCount(-1),
 				WithSkip(-1),
 			},
-			expDir: types.TxDirectionAny, expAddr: "*", expCount: 10, expSkip: 0,
+			expDir: wtypes.TxDirectionAny, expAddr: "*", expCount: 10, expSkip: 0,
 		},
 		{
 			opts: []ListTransactionsOption{
-				WithDirection(types.TxDirectionOutgoing),
+				WithDirection(wtypes.TxDirectionOutgoing),
 				WithAddress("*"),
 				WithCount(0),
 				WithSkip(0),
 			},
-			expDir: types.TxDirectionOutgoing, expAddr: "*", expCount: 10, expSkip: 0,
+			expDir: wtypes.TxDirectionOutgoing, expAddr: "*", expCount: 10, expSkip: 0,
 		},
 		{
 			opts: []ListTransactionsOption{
-				WithDirection(types.TxDirectionIncoming),
+				WithDirection(wtypes.TxDirectionIncoming),
 				WithAddress("addr1"),
 				WithCount(5),
 				WithSkip(2),
 			},
-			expDir: types.TxDirectionIncoming, expAddr: "addr1", expCount: 5, expSkip: 2,
+			expDir: wtypes.TxDirectionIncoming, expAddr: "addr1", expCount: 5, expSkip: 2,
 		},
 	}
 
@@ -75,7 +75,7 @@ func TestAddTransaction(t *testing.T) {
 		td.mockStorage.EXPECT().HasTransaction(txID.String()).Return(false)
 		td.mockProvider.EXPECT().
 			GetTransaction(txID.String()).
-			Return(nil, block.Height(0), errors.New("not exists"))
+			Return(nil, types.Height(0), errors.New("not exists"))
 
 		err := td.wallet.AddTransaction(txID)
 		require.Error(t, err)
@@ -98,7 +98,7 @@ func TestAddTransaction(t *testing.T) {
 		td.mockStorage.EXPECT().HasTransaction(trx.ID().String()).Return(false)
 		td.mockProvider.EXPECT().
 			GetTransaction(trx.ID().String()).
-			Return(trx, block.Height(td.RandHeight()), nil)
+			Return(trx, td.RandHeight(), nil)
 		td.mockStorage.EXPECT().HasAddress(gomock.Any()).Return(true)
 		td.mockStorage.EXPECT().InsertTransaction(gomock.Any()).Return(nil)
 

@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -120,8 +121,8 @@ func TestDecodeVoteCBOR(t *testing.T) {
 	assert.Equal(t, 0x0100, bdl2.Flags)
 	assert.Contains(t, bdl1.LogString(), "vote")
 
-	assert.Equal(t, uint32(0x1234), bdl1.ConsensusHeight)
-	assert.Equal(t, uint32(0x1234), bdl2.ConsensusHeight)
+	assert.Equal(t, types.Height(0x1234), bdl1.ConsensusHeight)
+	assert.Equal(t, types.Height(0x1234), bdl2.ConsensusHeight)
 }
 
 func TestEncodingData(t *testing.T) {
@@ -140,7 +141,7 @@ func TestEncodingData(t *testing.T) {
 			"" + "0313" +
 			"041a00000000" // Consensus height (0x00000000)
 		assert.Equal(t, expectedData, hex.EncodeToString(data))
-		assert.Equal(t, uint32(0x00), bdl.ConsensusHeight)
+		assert.Equal(t, types.Height(0x00), bdl.ConsensusHeight)
 	})
 
 	t.Run("Encoding consensus message", func(t *testing.T) {
@@ -161,7 +162,7 @@ func TestEncodingData(t *testing.T) {
 			"" + "0355" + hex.EncodeToString(rndAddr.Bytes()) +
 			"041a00000012" // Consensus height (0x00000012)
 		assert.Equal(t, expectedData, hex.EncodeToString(data))
-		assert.Equal(t, uint32(0x12), bdl.ConsensusHeight)
+		assert.Equal(t, types.Height(0x12), bdl.ConsensusHeight)
 	})
 }
 

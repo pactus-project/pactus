@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/go-zeromq/zmq4"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/require"
@@ -54,7 +55,7 @@ func TestRawTxPublisher(t *testing.T) {
 		require.NotNil(t, txn)
 
 		require.Equal(t, TopicRawTransaction.Bytes(), topic)
-		require.Equal(t, height, blk.Height())
+		require.Equal(t, types.Height(height), blk.Height())
 		require.Equal(t, uint32(i), seqNo)
 		require.NotEqual(t, 0, txn.SerializeSize())
 	}

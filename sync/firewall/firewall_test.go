@@ -462,13 +462,13 @@ func TestAllowBlockRequest(t *testing.T) {
 	require.NoError(t, td.state.CommitBlock(testBlk, testCert))
 
 	t.Run("expired message", func(t *testing.T) {
-		msg := makeTestGossipMessage(td.state.LastBlockHeight() - 2)
+		msg := makeTestGossipMessage(uint32(td.state.LastBlockHeight() - 2))
 
 		assert.Equal(t, network.Drop, td.firewall.AllowBlockRequest(msg))
 	})
 
 	t.Run("rate limit exceeded", func(t *testing.T) {
-		msg := makeTestGossipMessage(td.state.LastBlockHeight())
+		msg := makeTestGossipMessage(uint32(td.state.LastBlockHeight()))
 
 		assert.Equal(t, network.Propagate, td.firewall.AllowBlockRequest(msg))
 		assert.Equal(t, network.DropButConsume, td.firewall.AllowBlockRequest(msg))
@@ -482,7 +482,7 @@ func TestAllowTransactionRequest(t *testing.T) {
 	td := setup(t, conf)
 
 	t.Run("rate limit exceeded", func(t *testing.T) {
-		msg := makeTestGossipMessage(td.state.LastBlockHeight())
+		msg := makeTestGossipMessage(uint32(td.state.LastBlockHeight()))
 
 		assert.Equal(t, network.Propagate, td.firewall.AllowTransactionRequest(msg))
 		assert.Equal(t, network.DropButConsume, td.firewall.AllowTransactionRequest(msg))
@@ -499,13 +499,13 @@ func TestAllowConsensusRequest(t *testing.T) {
 	require.NoError(t, td.state.CommitBlock(testBlk, testCert))
 
 	t.Run("expired message", func(t *testing.T) {
-		msg := makeTestGossipMessage(td.state.LastBlockHeight() - 2)
+		msg := makeTestGossipMessage(uint32(td.state.LastBlockHeight() - 2))
 
 		assert.Equal(t, network.Drop, td.firewall.AllowConsensusRequest(msg))
 	})
 
 	t.Run("rate limit exceeded", func(t *testing.T) {
-		msg := makeTestGossipMessage(td.state.LastBlockHeight())
+		msg := makeTestGossipMessage(uint32(td.state.LastBlockHeight()))
 
 		assert.Equal(t, network.Propagate, td.firewall.AllowConsensusRequest(msg))
 		assert.Equal(t, network.DropButConsume, td.firewall.AllowConsensusRequest(msg))

@@ -2,23 +2,24 @@ package cache
 
 import (
 	lru "github.com/hashicorp/golang-lru/v2"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/util"
 )
 
 type Cache struct {
-	blocks *lru.Cache[uint32, *block.Block] // it's thread safe
-	certs  *lru.Cache[uint32, *certificate.Certificate]
+	blocks *lru.Cache[types.Height, *block.Block] // it's thread safe
+	certs  *lru.Cache[types.Height, *certificate.Certificate]
 }
 
 func NewCache(size int) (*Cache, error) {
-	blockCache, err := lru.New[uint32, *block.Block](size)
+	blockCache, err := lru.New[types.Height, *block.Block](size)
 	if err != nil {
 		return nil, err
 	}
 
-	certCache, err := lru.New[uint32, *certificate.Certificate](size)
+	certCache, err := lru.New[types.Height, *certificate.Certificate](size)
 	if err != nil {
 		return nil, err
 	}
@@ -29,11 +30,11 @@ func NewCache(size int) (*Cache, error) {
 	}, nil
 }
 
-func (c *Cache) HasBlockInCache(height uint32) bool {
+func (c *Cache) HasBlockInCache(height types.Height) bool {
 	return c.blocks.Contains(height)
 }
 
-func (c *Cache) GetBlock(height uint32) *block.Block {
+func (c *Cache) GetBlock(height types.Height) *block.Block {
 	blk, ok := c.blocks.Get(height)
 	if ok {
 		return blk
@@ -52,7 +53,7 @@ func (c *Cache) AddBlock(blk *block.Block) {
 	}
 }
 
-func (c *Cache) GetCertificate(height uint32) *certificate.Certificate {
+func (c *Cache) GetCertificate(height types.Height) *certificate.Certificate {
 	cert, ok := c.certs.Get(height)
 	if ok {
 		return cert
@@ -68,7 +69,7 @@ func (c *Cache) AddCertificate(cert *certificate.Certificate) {
 }
 
 // RemoveBlock removes the block and certificates at the specified height from the cache.
-func (c *Cache) RemoveBlock(height uint32) {
+func (c *Cache) RemoveBlock(height types.Height) {
 	c.blocks.Remove(height)
 	c.certs.Remove(height)
 }

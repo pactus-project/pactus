@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/tx"
 )
 
@@ -24,7 +25,7 @@ func (e TransactionCommittedError) Error() string {
 // is in the past and has expired,
 // indicating the transaction can no longer be executed.
 type LockTimeExpiredError struct {
-	LockTime uint32
+	LockTime types.Height
 }
 
 func (e LockTimeExpiredError) Error() string {
@@ -35,7 +36,7 @@ func (e LockTimeExpiredError) Error() string {
 // is in the future,
 // indicating the transaction is not yet eligible for processing.
 type LockTimeInFutureError struct {
-	LockTime uint32
+	LockTime types.Height
 }
 
 func (e LockTimeInFutureError) Error() string {

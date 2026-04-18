@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
-	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
@@ -150,7 +150,7 @@ func (p *RemoteBlockchainProvider) Close() error {
 	return nil
 }
 
-func (p *RemoteBlockchainProvider) LastBlockHeight() (block.Height, error) {
+func (p *RemoteBlockchainProvider) LastBlockHeight() (types.Height, error) {
 	if err := p.connect(); err != nil {
 		return 0, err
 	}
@@ -164,7 +164,7 @@ func (p *RemoteBlockchainProvider) LastBlockHeight() (block.Height, error) {
 		return 0, err
 	}
 
-	return block.Height(res.LastBlockHeight), nil
+	return types.Height(res.LastBlockHeight), nil
 }
 
 func (p *RemoteBlockchainProvider) GetAccount(addrStr string) (*account.Account, error) {
@@ -233,7 +233,7 @@ func (p *RemoteBlockchainProvider) SendTx(trx *tx.Tx) (string, error) {
 	return res.Id, nil
 }
 
-func (p *RemoteBlockchainProvider) GetTransaction(txID string) (*tx.Tx, block.Height, error) {
+func (p *RemoteBlockchainProvider) GetTransaction(txID string) (*tx.Tx, types.Height, error) {
 	if err := p.connect(); err != nil {
 		return nil, 0, err
 	}
@@ -260,5 +260,5 @@ func (p *RemoteBlockchainProvider) GetTransaction(txID string) (*tx.Tx, block.He
 		return nil, 0, err
 	}
 
-	return tx, block.Height(res.BlockHeight), nil
+	return tx, types.Height(res.BlockHeight), nil
 }

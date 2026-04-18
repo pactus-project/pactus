@@ -21,6 +21,7 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
 	"github.com/pactus-project/pactus/sync/peerset/session"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/ntp"
@@ -142,7 +143,7 @@ func (sync *synchronizer) IsClockOutOfSync() bool {
 	return sync.ntp.IsOutOfSync()
 }
 
-func (sync *synchronizer) stateHeight() uint32 {
+func (sync *synchronizer) stateHeight() types.Height {
 	stateHeight := sync.state.LastBlockHeight()
 
 	return stateHeight
@@ -420,7 +421,7 @@ func (sync *synchronizer) updateBlockchain() {
 }
 
 // downloadBlocks starts downloading blocks from the network.
-func (sync *synchronizer) downloadBlocks(from uint32, onlyFullNodes bool) {
+func (sync *synchronizer) downloadBlocks(from types.Height, onlyFullNodes bool) {
 	sync.logger.Debug("downloading blocks", "from", from)
 
 	for i := sync.peerSet.NumberOfSessions(); i < sync.config.MaxSessions; i++ {
@@ -430,11 +431,11 @@ func (sync *synchronizer) downloadBlocks(from uint32, onlyFullNodes bool) {
 			return
 		}
 
-		from += count
+		from += types.Height(count)
 	}
 }
 
-func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyFullNodes bool) bool {
+func (sync *synchronizer) sendBlockRequestToRandomPeer(from types.Height, count uint32, onlyFullNodes bool) bool {
 	// Prevent downloading blocks that might be cached before
 	for sync.cache.HasBlockInCache(from) {
 		from++
@@ -494,7 +495,7 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyF
 }
 
 func (sync *synchronizer) tryCommitBlocks() {
-	onError := func(height uint32, err error) {
+	onError := func(height types.Height, err error) {
 		sync.logger.Warn("committing block failed, removing block from the cache",
 			"height", height, "error", err)
 
@@ -546,7 +547,7 @@ func (sync *synchronizer) tryCommitBlocks() {
 	}
 }
 
-func (sync *synchronizer) prepareBlocks(from, count uint32) [][]byte {
+func (sync *synchronizer) prepareBlocks(from types.Height, count uint32) [][]byte {
 	ourHeight := sync.stateHeight()
 
 	if from > ourHeight {
@@ -555,13 +556,13 @@ func (sync *synchronizer) prepareBlocks(from, count uint32) [][]byte {
 		return nil
 	}
 
-	if from+count > ourHeight {
-		count = ourHeight - from + 1
+	if from+types.Height(count) > ourHeight {
+		count = uint32(ourHeight - from + 1)
 	}
 
 	blocks := make([][]byte, 0, count)
 
-	for height := from; height < from+count; height++ {
+	for height := from; height < from+types.Height(count); height++ {
 		cBlk, err := sync.state.CommittedBlock(height)
 		if err != nil {
 			sync.logger.Warn("unable to find a block", "height", height)

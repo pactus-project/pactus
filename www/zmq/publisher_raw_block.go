@@ -32,7 +32,7 @@ func (r *rawBlockPub) onNewBlock(blk *block.Block) {
 		return
 	}
 
-	rawMsg := r.makeTopicMsg(buf.Bytes(), blk.Height())
+	rawMsg := r.makeTopicMsg(buf.Bytes(), uint32(blk.Height()))
 	message := zmq4.NewMsg(rawMsg)
 
 	if err := r.zmqSocket.Send(message); err != nil {

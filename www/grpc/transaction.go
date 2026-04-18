@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -40,7 +41,7 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 	}
 
 	res := &pactus.GetTransactionResponse{
-		BlockHeight: committedTx.Height,
+		BlockHeight: uint32(committedTx.Height),
 		BlockTime:   committedTx.BlockTime,
 	}
 
@@ -262,24 +263,24 @@ func (s *transactionServer) getFee(f int64, amt amount.Amount) amount.Amount {
 	return fee
 }
 
-func (s *transactionServer) getLockTime(lockTime uint32) uint32 {
+func (s *transactionServer) getLockTime(lockTime uint32) types.Height {
 	if lockTime == 0 {
-		lockTime = s.state.LastBlockHeight()
+		return s.state.LastBlockHeight()
 	}
 
-	return lockTime
+	return types.Height(lockTime)
 }
 
-func transactionToProto(trx *tx.Tx, blockHeight uint32, confirmations int) *pactus.TransactionInfo {
+func transactionToProto(trx *tx.Tx, blockHeight types.Height, confirmations int) *pactus.TransactionInfo {
 	trxInfo := &pactus.TransactionInfo{
 		Id:            trx.ID().String(),
 		Version:       int32(trx.Version()),
-		LockTime:      trx.LockTime(),
+		LockTime:      uint32(trx.LockTime()),
 		Fee:           trx.Fee().ToNanoPAC(),
 		Value:         trx.Payload().Value().ToNanoPAC(),
 		PayloadType:   pactus.PayloadType(trx.Payload().Type()),
 		Memo:          trx.Memo(),
-		BlockHeight:   blockHeight,
+		BlockHeight:   uint32(blockHeight),
 		Confirmed:     confirmations > 0,
 		Confirmations: int32(confirmations),
 	}

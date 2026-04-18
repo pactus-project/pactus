@@ -112,7 +112,7 @@ func (s *networkServer) ListPeers(_ context.Context,
 		peerInfo.Address = peer.Address
 		peerInfo.Direction = pactus.Direction(peer.Direction)
 		peerInfo.Services = uint32(peer.Services)
-		peerInfo.Height = peer.Height
+		peerInfo.Height = uint32(peer.Height)
 		peerInfo.Protocols = peer.Protocols
 		peerInfo.Status = int32(peer.Status)
 		peerInfo.LastSent = peer.LastSent.Unix()

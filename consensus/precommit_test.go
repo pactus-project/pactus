@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/stretchr/testify/assert"
@@ -14,7 +15,7 @@ func TestPrecommitQueryProposal(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)
-	height := uint32(2)
+	height := types.Height(2)
 	round := int16(0)
 
 	td.enterNewHeight(td.consP)
@@ -36,7 +37,7 @@ func TestPrecommitDuplicatedProposal(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)
-	height := uint32(2)
+	height := types.Height(2)
 	round := int16(0)
 
 	prop1 := td.makeProposal(t, height, round)
@@ -76,7 +77,7 @@ func TestGoToChangeProposerFromPrecommit(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)
-	height := uint32(2)
+	height := types.Height(2)
 	round := int16(0)
 
 	td.enterNewHeight(td.consP)

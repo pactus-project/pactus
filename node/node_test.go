@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
@@ -66,7 +67,7 @@ func TestRunningNode(t *testing.T) {
 	require.NoError(t, err)
 
 	consHeight, _ := node.ConsManager().HeightRound()
-	assert.Equal(t, uint32(1), consHeight)
+	assert.Equal(t, types.Height(1), consHeight)
 
 	lastBlockTime := node.State().LastBlockTime()
 	assert.Equal(t, gen.GenesisTime(), lastBlockTime)

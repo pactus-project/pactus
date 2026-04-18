@@ -2,6 +2,7 @@ package consensusv2
 
 import (
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 )
@@ -42,7 +43,7 @@ func (s *proposeState) decide() {
 	s.enterNewState(s.precommitState)
 }
 
-func (s *proposeState) createProposal(height uint32, round int16) {
+func (s *proposeState) createProposal(height types.Height, round int16) {
 	block, err := s.bcState.ProposeBlock(s.valKey, s.rewardAddr)
 	if err != nil {
 		s.logger.Error("unable to propose a block!", "error", err)

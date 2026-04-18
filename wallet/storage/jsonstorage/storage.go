@@ -5,10 +5,11 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet/storage"
-	"github.com/pactus-project/pactus/wallet/types"
+	wtypes "github.com/pactus-project/pactus/wallet/types"
 	"github.com/pactus-project/pactus/wallet/vault"
 )
 
@@ -25,7 +26,7 @@ func Create(path string, network genesis.ChainType, vault *vault.Vault) (*Storag
 		Network:    network,
 		DefaultFee: amount.Amount(10_000_000),
 		Vault:      *vault,
-		Addresses:  make(map[string]types.AddressInfo),
+		Addresses:  make(map[string]wtypes.AddressInfo),
 	}
 
 	if err := store.Save(path); err != nil {
@@ -64,8 +65,8 @@ func (s *Storage) save() error {
 	return s.store.Save(s.path)
 }
 
-func (s *Storage) WalletInfo() *types.WalletInfo {
-	return &types.WalletInfo{
+func (s *Storage) WalletInfo() *wtypes.WalletInfo {
+	return &wtypes.WalletInfo{
 		Path:       s.path,
 		Driver:     "JSON (legacy)",
 		Version:    s.store.Version,
@@ -94,8 +95,8 @@ func (s *Storage) SetDefaultFee(fee amount.Amount) error {
 	return s.save()
 }
 
-func (s *Storage) AllAddresses() []types.AddressInfo {
-	addrs := make([]types.AddressInfo, 0, len(s.store.Addresses))
+func (s *Storage) AllAddresses() []wtypes.AddressInfo {
+	addrs := make([]wtypes.AddressInfo, 0, len(s.store.Addresses))
 	for _, info := range s.store.Addresses {
 		addrs = append(addrs, info)
 	}
@@ -103,7 +104,7 @@ func (s *Storage) AllAddresses() []types.AddressInfo {
 	return addrs
 }
 
-func (s *Storage) AddressInfo(address string) (*types.AddressInfo, error) {
+func (s *Storage) AddressInfo(address string) (*wtypes.AddressInfo, error) {
 	info, exists := s.store.Addresses[address]
 	if !exists {
 		return nil, storage.ErrNotFound
@@ -112,7 +113,7 @@ func (s *Storage) AddressInfo(address string) (*types.AddressInfo, error) {
 	return &info, nil
 }
 
-func (s *Storage) InsertAddress(info *types.AddressInfo) error {
+func (s *Storage) InsertAddress(info *wtypes.AddressInfo) error {
 	s.store.Addresses[info.Address] = *info
 
 	return s.save()
@@ -128,17 +129,17 @@ func (s *Storage) AddressCount() int {
 	return len(s.store.Addresses)
 }
 
-func (s *Storage) UpdateAddress(info *types.AddressInfo) error {
+func (s *Storage) UpdateAddress(info *wtypes.AddressInfo) error {
 	s.store.Addresses[info.Address] = *info
 
 	return s.save()
 }
 
-func (*Storage) InsertTransaction(_ *types.TransactionInfo) error {
+func (*Storage) InsertTransaction(_ *wtypes.TransactionInfo) error {
 	return ErrUnsupported
 }
 
-func (*Storage) UpdateTransactionStatus(_ int64, _ types.TransactionStatus, _ uint32) error {
+func (*Storage) UpdateTransactionStatus(_ int64, _ wtypes.TransactionStatus, _ types.Height) error {
 	return ErrUnsupported
 }
 
@@ -146,15 +147,15 @@ func (*Storage) HasTransaction(_ string) bool {
 	return false
 }
 
-func (*Storage) GetTransaction(_ int64) (*types.TransactionInfo, error) {
+func (*Storage) GetTransaction(_ int64) (*wtypes.TransactionInfo, error) {
 	return nil, ErrUnsupported
 }
 
-func (*Storage) GetPendingTransactions() (map[string]*types.TransactionInfo, error) {
+func (*Storage) GetPendingTransactions() (map[string]*wtypes.TransactionInfo, error) {
 	return nil, ErrUnsupported
 }
 
-func (*Storage) QueryTransactions(_ storage.QueryParams) ([]*types.TransactionInfo, error) {
+func (*Storage) QueryTransactions(_ storage.QueryParams) ([]*wtypes.TransactionInfo, error) {
 	return nil, ErrUnsupported
 }
 
