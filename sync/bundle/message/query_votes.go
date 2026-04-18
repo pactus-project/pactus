@@ -10,11 +10,11 @@ import (
 
 type QueryVoteMessage struct {
 	Height  types.Height   `cbor:"1,keyasint"`
-	Round   int16          `cbor:"2,keyasint"`
+	Round   types.Round    `cbor:"2,keyasint"`
 	Querier crypto.Address `cbor:"3,keyasint"`
 }
 
-func NewQueryVoteMessage(height types.Height, round int16, querier crypto.Address) *QueryVoteMessage {
+func NewQueryVoteMessage(height types.Height, round types.Round, querier crypto.Address) *QueryVoteMessage {
 	return &QueryVoteMessage{
 		Height:  height,
 		Round:   round,

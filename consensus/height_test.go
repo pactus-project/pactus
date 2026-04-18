@@ -49,7 +49,7 @@ func TestNewHeightTimeBehindNetwork(t *testing.T) {
 	td.consP.MoveToNewHeight()
 
 	height := types.Height(2)
-	round := int16(0)
+	round := types.Round(0)
 	prop := td.makeProposal(t, height, round)
 
 	td.consP.SetProposal(prop)

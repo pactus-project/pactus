@@ -1,6 +1,10 @@
 package consensusv2
 
-import "time"
+import (
+	"time"
+
+	"github.com/pactus-project/pactus/types"
+)
 
 // Config defines parameters for the consensusv2 algorithm.
 type Config struct {
@@ -40,7 +44,7 @@ func (conf *Config) BasicCheck() error {
 	return nil
 }
 
-func (conf *Config) CalculateChangeProposerTimeout(round int16) time.Duration {
+func (conf *Config) CalculateChangeProposerTimeout(round types.Round) time.Duration {
 	return conf.ChangeProposerTimeout +
 		conf.ChangeProposerDelta*time.Duration(round)
 }

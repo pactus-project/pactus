@@ -20,14 +20,14 @@ import (
 // As a Certificate, it checks whether a majority of validators have voted in the consensus step.
 type Certificate struct {
 	height     types.Height
-	round      int16
+	round      types.Round
 	committers []int32
 	absentees  []int32
 	signature  *bls.Signature
 }
 
 // NewCertificate creates a new Certificate instance.
-func NewCertificate(height types.Height, round int16) *Certificate {
+func NewCertificate(height types.Height, round types.Round) *Certificate {
 	return &Certificate{
 		height: height,
 		round:  round,
@@ -38,7 +38,7 @@ func (cert *Certificate) Height() types.Height {
 	return cert.height
 }
 
-func (cert *Certificate) Round() int16 {
+func (cert *Certificate) Round() types.Round {
 	return cert.round
 }
 
@@ -258,7 +258,7 @@ func (cert *Certificate) SignBytesCPDecided(blockHash hash.Hash, cpRound int16, 
 func (cert *Certificate) signBytes(blockHash hash.Hash, extraData ...[]byte) []byte {
 	signBytes := blockHash.Bytes()
 	signBytes = append(signBytes, cert.height.EncodeAsSlice()...)
-	signBytes = append(signBytes, util.Int16ToSlice(cert.round)...)
+	signBytes = append(signBytes, cert.round.EncodeAsSlice()...)
 	for _, data := range extraData {
 		signBytes = append(signBytes, data...)
 	}

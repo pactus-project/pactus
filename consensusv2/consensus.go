@@ -36,7 +36,7 @@ type consensusV2 struct {
 	log         *log.Log
 	validators  []*validator.Validator
 	height      types.Height
-	round       int16
+	round       types.Round
 	valKey      *bls.ValidatorKey
 	rewardAddr  crypto.Address
 	bcState     state.Facade // Blockchain state
@@ -137,7 +137,7 @@ func (cs *consensusV2) ConsensusKey() *bls.PublicKey {
 	return cs.valKey.PublicKey()
 }
 
-func (cs *consensusV2) HeightRound() (types.Height, int16) {
+func (cs *consensusV2) HeightRound() (types.Height, types.Round) {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
@@ -159,7 +159,7 @@ func (cs *consensusV2) AllVotes() []*vote.Vote {
 	defer cs.lk.RUnlock()
 
 	votes := []*vote.Vote{}
-	for r := int16(0); r <= cs.round; r++ {
+	for r := types.Round(0); r <= cs.round; r++ {
 		m := cs.log.RoundMessages(r)
 		votes = append(votes, m.AllVotes()...)
 	}
@@ -182,7 +182,9 @@ func (cs *consensusV2) MoveToNewHeight() {
 	}
 }
 
-func (cs *consensusV2) scheduleTimeout(duration time.Duration, height types.Height, round int16, target tickerTarget) {
+func (cs *consensusV2) scheduleTimeout(duration time.Duration,
+	height types.Height, round types.Round, target tickerTarget,
+) {
 	cs.logger.Trace("new timer scheduled ⏱️", "duration", duration, "height", height, "round", round, "target", target)
 
 	ticker := &ticker{duration, height, round, target}
@@ -296,7 +298,7 @@ func (cs *consensusV2) AddVote(vte *vote.Vote) {
 	}
 }
 
-func (cs *consensusV2) proposer(round int16) *validator.Validator {
+func (cs *consensusV2) proposer(round types.Round) *validator.Validator {
 	return cs.bcState.Proposer(round)
 }
 
@@ -425,7 +427,7 @@ func (cs *consensusV2) Proposal() *proposal.Proposal {
 	return cs.log.RoundProposal(cs.round)
 }
 
-func (cs *consensusV2) HandleQueryProposal(height types.Height, round int16) *proposal.Proposal {
+func (cs *consensusV2) HandleQueryProposal(height types.Height, round types.Round) *proposal.Proposal {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
@@ -456,7 +458,7 @@ func (cs *consensusV2) HandleQueryProposal(height types.Height, round int16) *pr
 }
 
 // TODO: Improve the performance?
-func (cs *consensusV2) HandleQueryVote(height types.Height, round int16) *vote.Vote {
+func (cs *consensusV2) HandleQueryVote(height types.Height, round types.Round) *vote.Vote {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 

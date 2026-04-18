@@ -9,7 +9,6 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
-	"github.com/pactus-project/pactus/util"
 )
 
 type Proposal struct {
@@ -17,12 +16,12 @@ type Proposal struct {
 }
 type proposalData struct {
 	Height    types.Height   `cbor:"1,keyasint"`
-	Round     int16          `cbor:"2,keyasint"`
+	Round     types.Round    `cbor:"2,keyasint"`
 	Block     *block.Block   `cbor:"3,keyasint"`
 	Signature *bls.Signature `cbor:"4,keyasint"`
 }
 
-func NewProposal(height types.Height, round int16, blk *block.Block) *Proposal {
+func NewProposal(height types.Height, round types.Round, blk *block.Block) *Proposal {
 	return &Proposal{
 		data: proposalData{
 			Height: height,
@@ -36,7 +35,7 @@ func (p *Proposal) Height() types.Height {
 	return p.data.Height
 }
 
-func (p *Proposal) Round() int16 {
+func (p *Proposal) Round() types.Round {
 	return p.data.Round
 }
 
@@ -110,15 +109,15 @@ func (p Proposal) LogString() string {
 	return fmt.Sprintf("{%v/%v 🗃 %v}", p.data.Height, p.data.Round, b.LogString())
 }
 
-func SignBytes(blockHash hash.Hash, height types.Height, round int16) []byte {
+func SignBytes(blockHash hash.Hash, height types.Height, round types.Round) []byte {
 	sb := blockHash.Bytes()
 	sb = append(sb, height.EncodeAsSlice()...)
-	sb = append(sb, util.Int16ToSlice(round)...)
+	sb = append(sb, round.EncodeAsSlice()...)
 
 	return sb
 }
 
-func ChecKSignature(blockHash hash.Hash, height types.Height, round int16,
+func ChecKSignature(blockHash hash.Hash, height types.Height, round types.Round,
 	sig *bls.Signature, pubKey *bls.PublicKey,
 ) error {
 	sb := SignBytes(blockHash, height, round)

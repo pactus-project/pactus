@@ -2,17 +2,18 @@ package voteset
 
 import (
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 )
 
 type voteSet struct {
-	round      int16
+	round      types.Round
 	validators map[crypto.Address]*validator.Validator
 	totalPower int64
 }
 
-func newVoteSet(round int16, totalPower int64,
+func newVoteSet(round types.Round, totalPower int64,
 	validators map[crypto.Address]*validator.Validator,
 ) *voteSet {
 	return &voteSet{
@@ -23,7 +24,7 @@ func newVoteSet(round int16, totalPower int64,
 }
 
 // Round returns the round number for the VoteSet.
-func (vs *voteSet) Round() int16 {
+func (vs *voteSet) Round() types.Round {
 	return vs.round
 }
 

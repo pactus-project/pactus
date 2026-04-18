@@ -112,8 +112,8 @@ func (ts *TestSuite) RandHeight(opts ...HeightRangeOption) types.Height {
 }
 
 // RandRound returns a random number between [0, 10) for block round.
-func (ts *TestSuite) RandRound() int16 {
-	return ts.RandInt16(testsuite.WithMax(int16(10)))
+func (ts *TestSuite) RandRound() types.Round {
+	return types.Round(ts.RandInt16(testsuite.WithMax(int16(10))))
 }
 
 // RandInt32NonZero returns a random int32 in [1, max].
@@ -573,7 +573,7 @@ func ProposalWithKey(key *bls.ValidatorKey) func(*ProposalMaker) {
 }
 
 // GenerateTestProposal generates a proposal for testing purposes.
-func (ts *TestSuite) GenerateTestProposal(height types.Height, round int16,
+func (ts *TestSuite) GenerateTestProposal(height types.Height, round types.Round,
 	opts ...func(*ProposalMaker),
 ) *proposal.Proposal {
 	pmk := ts.NewProposalMaker()
@@ -855,7 +855,7 @@ func (ts *TestSuite) GenerateTestWithdrawTx(opts ...TransactionMakerOption) *tx.
 }
 
 // GenerateTestPrecommitVote generates a precommit vote for testing purposes.
-func (ts *TestSuite) GenerateTestPrecommitVote(height types.Height, round int16) (*vote.Vote, *bls.ValidatorKey) {
+func (ts *TestSuite) GenerateTestPrecommitVote(height types.Height, round types.Round) (*vote.Vote, *bls.ValidatorKey) {
 	valKey := ts.RandValKey()
 	vote := vote.NewPrecommitVote(
 		ts.RandHash(),
@@ -867,7 +867,7 @@ func (ts *TestSuite) GenerateTestPrecommitVote(height types.Height, round int16)
 }
 
 // GenerateTestPrepareVote generates a prepare vote for testing purposes.
-func (ts *TestSuite) GenerateTestPrepareVote(height types.Height, round int16) (*vote.Vote, *bls.ValidatorKey) {
+func (ts *TestSuite) GenerateTestPrepareVote(height types.Height, round types.Round) (*vote.Vote, *bls.ValidatorKey) {
 	valKey := ts.RandValKey()
 	vote := vote.NewPrepareVote(
 		ts.RandHash(),

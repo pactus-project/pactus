@@ -41,7 +41,7 @@ func (s *proposeState) decide() {
 	}
 }
 
-func (s *proposeState) createProposal(height types.Height, round int16) {
+func (s *proposeState) createProposal(height types.Height, round types.Round) {
 	block, err := s.bcState.ProposeBlock(s.valKey, s.rewardAddr)
 	if err != nil {
 		s.logger.Error("unable to propose a block!", "error", err)

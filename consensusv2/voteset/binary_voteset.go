@@ -4,6 +4,7 @@ import (
 	"maps"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 )
@@ -38,7 +39,7 @@ type BinaryVoteSet struct {
 	roundVotes []*roundVotes
 }
 
-func NewCPPreVoteVoteSet(round int16, totalPower int64,
+func NewCPPreVoteVoteSet(round types.Round, totalPower int64,
 	validators map[crypto.Address]*validator.Validator,
 ) *BinaryVoteSet {
 	voteSet := newVoteSet(round, totalPower, validators)
@@ -46,7 +47,7 @@ func NewCPPreVoteVoteSet(round int16, totalPower int64,
 	return newBinaryVoteSet(voteSet)
 }
 
-func NewCPMainVoteVoteSet(round int16, totalPower int64,
+func NewCPMainVoteVoteSet(round types.Round, totalPower int64,
 	validators map[crypto.Address]*validator.Validator,
 ) *BinaryVoteSet {
 	voteSet := newVoteSet(round, totalPower, validators)
@@ -54,7 +55,7 @@ func NewCPMainVoteVoteSet(round int16, totalPower int64,
 	return newBinaryVoteSet(voteSet)
 }
 
-func NewCPDecidedVoteSet(round int16, totalPower int64,
+func NewCPDecidedVoteSet(round types.Round, totalPower int64,
 	validators map[crypto.Address]*validator.Validator,
 ) *BinaryVoteSet {
 	voteSet := newVoteSet(round, totalPower, validators)

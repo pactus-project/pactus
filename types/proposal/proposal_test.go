@@ -7,7 +7,6 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/proposal"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -30,7 +29,7 @@ func TestProposalSignBytes(t *testing.T) {
 	prop := ts.GenerateTestProposal(ts.RandHeight(), ts.RandRound())
 	sb := prop.Block().Hash().Bytes()
 	sb = append(sb, prop.Height().EncodeAsSlice()...)
-	sb = append(sb, util.Int16ToSlice(prop.Round())...)
+	sb = append(sb, prop.Round().EncodeAsSlice()...)
 
 	assert.Equal(t, sb, prop.SignBytes())
 	assert.Equal(t, hash.CalcHash(sb), prop.Hash())

@@ -2,6 +2,7 @@ package committee
 
 import (
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/validator"
 )
@@ -10,8 +11,8 @@ type Reader interface {
 	Validators() []*validator.Validator
 	Committers() []int32
 	Contains(addr crypto.Address) bool
-	Proposer(round int16) *validator.Validator
-	IsProposer(addr crypto.Address, round int16) bool
+	Proposer(round types.Round) *validator.Validator
+	IsProposer(addr crypto.Address, round types.Round) bool
 	ProtocolVersions() map[protocol.Version]float64
 	SupportProtocolVersion(version protocol.Version) bool
 	Size() int
@@ -22,5 +23,5 @@ type Reader interface {
 type Committee interface {
 	Reader
 
-	Update(lastRound int16, joined []*validator.Validator)
+	Update(lastround types.Round, joined []*validator.Validator)
 }
