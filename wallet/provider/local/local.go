@@ -24,7 +24,7 @@ func NewLocalBlockchainProvider(state state.Facade) *LocalBlockchainProvider {
 }
 
 func (p *LocalBlockchainProvider) LastBlockHeight() (types.Height, error) {
-	return types.Height(p.state.LastBlockHeight()), nil
+	return p.state.LastBlockHeight(), nil
 }
 
 func (p *LocalBlockchainProvider) GetAccount(addrStr string) (*account.Account, error) {
@@ -61,7 +61,7 @@ func (p *LocalBlockchainProvider) GetTransaction(txID string) (*tx.Tx, types.Hei
 		return nil, 0, err
 	}
 
-	return trx, types.Height(cTrx.Height), nil
+	return trx, cTrx.Height, nil
 }
 
 func (p *LocalBlockchainProvider) SendTx(trx *tx.Tx) (string, error) {

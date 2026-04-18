@@ -57,7 +57,7 @@ func (b *basePub) makeTopicMsg(parts ...any) []byte {
 		case []byte:
 			result = append(result, castedVal...)
 		case uint32:
-			result = binary.BigEndian.AppendUint32(result, uint32(castedVal))
+			result = binary.BigEndian.AppendUint32(result, castedVal)
 		case uint16:
 			result = binary.BigEndian.AppendUint16(result, castedVal)
 		default:

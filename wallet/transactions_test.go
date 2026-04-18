@@ -98,7 +98,7 @@ func TestAddTransaction(t *testing.T) {
 		td.mockStorage.EXPECT().HasTransaction(trx.ID().String()).Return(false)
 		td.mockProvider.EXPECT().
 			GetTransaction(trx.ID().String()).
-			Return(trx, types.Height(td.RandHeight()), nil)
+			Return(trx, td.RandHeight(), nil)
 		td.mockStorage.EXPECT().HasAddress(gomock.Any()).Return(true)
 		td.mockStorage.EXPECT().InsertTransaction(gomock.Any()).Return(nil)
 

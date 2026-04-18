@@ -319,7 +319,7 @@ func TestMakeTransferTx(t *testing.T) {
 
 	t.Run("query parameters from the node", func(t *testing.T) {
 		testHeight := td.RandHeight()
-		td.mockProvider.EXPECT().LastBlockHeight().Return(types.Height(testHeight), nil)
+		td.mockProvider.EXPECT().LastBlockHeight().Return(testHeight, nil)
 
 		trx, err := td.wallet.MakeTransferTx(sender.String(), receiver.String(), amt)
 		require.NoError(t, err)
@@ -378,7 +378,7 @@ func TestMakeBondTx(t *testing.T) {
 		receiver := td.RandValKey()
 
 		testHeight := td.RandHeight()
-		td.mockProvider.EXPECT().LastBlockHeight().Return(types.Height(testHeight), nil)
+		td.mockProvider.EXPECT().LastBlockHeight().Return(testHeight, nil)
 		td.mockProvider.EXPECT().GetValidator(receiver.Address().String()).Return(nil, nil)
 
 		trx, err := td.wallet.MakeBondTx(sender.String(), receiver.Address().String(), receiver.PublicKey().String(), amt)
@@ -389,7 +389,7 @@ func TestMakeBondTx(t *testing.T) {
 
 	t.Run("validator address is not stored in wallet", func(t *testing.T) {
 		receiver := td.RandValKey()
-		td.mockProvider.EXPECT().LastBlockHeight().Return(types.Height(td.RandHeight()), nil).Times(4)
+		td.mockProvider.EXPECT().LastBlockHeight().Return(td.RandHeight(), nil).Times(4)
 		td.mockStorage.EXPECT().AddressInfo(receiver.Address().String()).Return(nil, storage.ErrNotFound).AnyTimes()
 
 		t.Run("validator doesn't exist and public key not set", func(t *testing.T) {
@@ -433,7 +433,7 @@ func TestMakeBondTx(t *testing.T) {
 		require.NoError(t, err)
 
 		td.mockStorage.EXPECT().AddressInfo(receiverInfo.Address).Return(receiverInfo, nil).AnyTimes()
-		td.mockProvider.EXPECT().LastBlockHeight().Return(types.Height(td.RandHeight()), nil).Times(4)
+		td.mockProvider.EXPECT().LastBlockHeight().Return(td.RandHeight(), nil).Times(4)
 
 		t.Run("validator doesn't exist and public key not set", func(t *testing.T) {
 			td.mockProvider.EXPECT().GetValidator(receiverInfo.Address).Return(nil, errors.New("not exist"))
@@ -518,7 +518,7 @@ func TestMakeUnbondTx(t *testing.T) {
 
 	t.Run("query parameters from the node", func(t *testing.T) {
 		testHeight := td.RandHeight()
-		td.mockProvider.EXPECT().LastBlockHeight().Return(types.Height(testHeight), nil)
+		td.mockProvider.EXPECT().LastBlockHeight().Return(testHeight, nil)
 
 		trx, err := td.wallet.MakeUnbondTx(sender.String())
 		require.NoError(t, err)
@@ -568,7 +568,7 @@ func TestMakeWithdrawTx(t *testing.T) {
 
 	t.Run("query parameters from the node", func(t *testing.T) {
 		testHeight := td.RandHeight()
-		td.mockProvider.EXPECT().LastBlockHeight().Return(types.Height(testHeight), nil)
+		td.mockProvider.EXPECT().LastBlockHeight().Return(testHeight, nil)
 
 		trx, err := td.wallet.MakeWithdrawTx(sender.String(), receiver.String(), amt)
 		require.NoError(t, err)

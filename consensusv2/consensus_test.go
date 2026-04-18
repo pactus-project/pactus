@@ -296,7 +296,8 @@ func (td *testData) addCPMainVote(t *testing.T, cons *consensusV2, blockHash has
 	return td.addVote(t, cons, v, valID)
 }
 
-func (td *testData) addCPDecidedVote(t *testing.T, cons *consensusV2, blockHash hash.Hash, height types.Height, round int16,
+func (td *testData) addCPDecidedVote(t *testing.T, cons *consensusV2,
+	blockHash hash.Hash, height types.Height, round int16,
 	cpVal vote.CPValue, just vote.Just, valID int,
 ) *vote.Vote {
 	t.Helper()
@@ -393,7 +394,7 @@ func (td *testData) makeProposal(t *testing.T, height types.Height, round int16,
 	t.Helper()
 
 	var cons *consensusV2
-	switch types.Height(height%4) + types.Height(round%4) {
+	switch uint32(height%4) + uint32(round%4) {
 	case 1:
 		cons = td.consX
 	case 2:

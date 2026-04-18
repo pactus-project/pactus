@@ -195,7 +195,7 @@ func (m *txBuilder) setLockTime() error {
 		if err != nil {
 			return err
 		}
-		m.lockTime = types.Height(height + 1)
+		m.lockTime = height + 1
 	}
 
 	return nil

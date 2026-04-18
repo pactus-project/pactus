@@ -88,7 +88,8 @@ func TestHandlerBlocksRequestParsingMessages(t *testing.T) {
 			})
 
 			t.Run("Peer synced", func(t *testing.T) {
-				msg := message.NewBlocksRequestMessage(sid, curHeight-types.Height(config.BlockPerMessage)+1, config.BlockPerMessage)
+				msg := message.NewBlocksRequestMessage(sid,
+					curHeight-types.Height(config.BlockPerMessage)+1, config.BlockPerMessage)
 				td.receivingNewMessage(td.sync, msg, pid)
 
 				bdl1 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)

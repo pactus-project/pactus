@@ -110,13 +110,9 @@ func NewStore(conf *Config) (Store, error) {
 	}
 
 	currentHeight := lastCert.Height()
-	// startHeight := uint32(1)
-	// if currentHeight > conf.TxCacheWindow {
-	// 	startHeight = currentHeight - conf.TxCacheWindow
-	// }
-	startHeight := currentHeight.SafeDecrease(conf.TxCacheWindow)
-	if startHeight == 0 {
-		startHeight = 1
+	startHeight := types.Height(1)
+	if currentHeight > types.Height(conf.TxCacheWindow) {
+		startHeight = currentHeight.SafeDecrease(conf.TxCacheWindow)
 	}
 
 	for height := startHeight; height < currentHeight+1; height++ {

@@ -14,7 +14,7 @@ func (h Height) SafeIncrease(count uint32) Height {
 	return Height(uint32(h) + count)
 }
 
-// SafeAdd returns the result of subtracting other from h,
+// SafeDecrease returns the result of subtracting other from h,
 // but it returns 0 if the result would be negative.
 func (h Height) SafeDecrease(count uint32) Height {
 	if uint32(h) < count {
