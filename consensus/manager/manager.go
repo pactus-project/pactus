@@ -99,21 +99,21 @@ func (mgr *manager) Proposal() *proposal.Proposal {
 }
 
 // HandleQueryProposal returns the proposal for a specific round from a random consensus instance.
-func (mgr *manager) HandleQueryProposal(height types.Height, round int16) *proposal.Proposal {
+func (mgr *manager) HandleQueryProposal(height types.Height, round types.Round) *proposal.Proposal {
 	cons := mgr.getBestInstance()
 
 	return cons.HandleQueryProposal(height, round)
 }
 
 // HandleQueryVote returns a random vote from a random consensus instance.
-func (mgr *manager) HandleQueryVote(height types.Height, round int16) *vote.Vote {
+func (mgr *manager) HandleQueryVote(height types.Height, round types.Round) *vote.Vote {
 	cons := mgr.getBestInstance()
 
 	return cons.HandleQueryVote(height, round)
 }
 
 // HeightRound retrieves the current height and round from a random consensus instance.
-func (mgr *manager) HeightRound() (types.Height, int16) {
+func (mgr *manager) HeightRound() (types.Height, types.Round) {
 	cons := mgr.getBestInstance()
 
 	return cons.HeightRound()

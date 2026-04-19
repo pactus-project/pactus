@@ -167,7 +167,7 @@ func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensus, ha
 }
 
 func (td *testData) shouldPublishProposal(t *testing.T, cons *consensus,
-	height types.Height, round int16,
+	height types.Height, round types.Round,
 ) *proposal.Proposal {
 	t.Helper()
 
@@ -213,7 +213,7 @@ func (td *testData) shouldPublishQueryProposal(t *testing.T, cons *consensus, he
 	}
 }
 
-func (td *testData) shouldPublishQueryVote(t *testing.T, cons *consensus, height types.Height, round int16) {
+func (td *testData) shouldPublishQueryVote(t *testing.T, cons *consensus, height types.Height, round types.Round) {
 	t.Helper()
 
 	for _, consMsg := range td.consMessages {
@@ -249,7 +249,7 @@ func (td *testData) shouldPublishVote(t *testing.T, cons *consensus, voteType vo
 	return nil
 }
 
-func (*testData) checkHeightRound(t *testing.T, cons *consensus, height types.Height, round int16) {
+func (*testData) checkHeightRound(t *testing.T, cons *consensus, height types.Height, round types.Round) {
 	t.Helper()
 
 	h, r := cons.HeightRound()
@@ -257,7 +257,7 @@ func (*testData) checkHeightRound(t *testing.T, cons *consensus, height types.He
 	assert.Equal(t, r, round)
 }
 
-func (td *testData) addPrepareVote(cons *consensus, blockHash hash.Hash, height types.Height, round int16,
+func (td *testData) addPrepareVote(cons *consensus, blockHash hash.Hash, height types.Height, round types.Round,
 	valID int,
 ) *vote.Vote {
 	v := vote.NewPrepareVote(blockHash, height, round, td.valKeys[valID].Address())
@@ -265,7 +265,7 @@ func (td *testData) addPrepareVote(cons *consensus, blockHash hash.Hash, height 
 	return td.addVote(cons, v, valID)
 }
 
-func (td *testData) addPrecommitVote(cons *consensus, blockHash hash.Hash, height types.Height, round int16,
+func (td *testData) addPrecommitVote(cons *consensus, blockHash hash.Hash, height types.Height, round types.Round,
 	valID int,
 ) *vote.Vote {
 	v := vote.NewPrecommitVote(blockHash, height, round, td.valKeys[valID].Address())
@@ -273,21 +273,21 @@ func (td *testData) addPrecommitVote(cons *consensus, blockHash hash.Hash, heigh
 	return td.addVote(cons, v, valID)
 }
 
-func (td *testData) addCPPreVote(cons *consensus, blockHash hash.Hash, height types.Height, round int16,
+func (td *testData) addCPPreVote(cons *consensus, blockHash hash.Hash, height types.Height, round types.Round,
 	cpVal vote.CPValue, just vote.Just, valID int,
 ) {
 	v := vote.NewCPPreVote(blockHash, height, round, 0, cpVal, just, td.valKeys[valID].Address())
 	td.addVote(cons, v, valID)
 }
 
-func (td *testData) addCPMainVote(cons *consensus, blockHash hash.Hash, height types.Height, round int16,
+func (td *testData) addCPMainVote(cons *consensus, blockHash hash.Hash, height types.Height, round types.Round,
 	cpVal vote.CPValue, just vote.Just, valID int,
 ) {
 	v := vote.NewCPMainVote(blockHash, height, round, 0, cpVal, just, td.valKeys[valID].Address())
 	td.addVote(cons, v, valID)
 }
 
-func (td *testData) addCPDecidedVote(cons *consensus, blockHash hash.Hash, height types.Height, round int16,
+func (td *testData) addCPDecidedVote(cons *consensus, blockHash hash.Hash, height types.Height, round types.Round,
 	cpVal vote.CPValue, just vote.Just, valID int,
 ) {
 	v := vote.NewCPDecidedVote(blockHash, height, round, 0, cpVal, just, td.valKeys[valID].Address())
@@ -367,7 +367,7 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certif
 	return blk, cert
 }
 
-func (td *testData) makeProposal(t *testing.T, height types.Height, round int16) *proposal.Proposal {
+func (td *testData) makeProposal(t *testing.T, height types.Height, round types.Round) *proposal.Proposal {
 	t.Helper()
 
 	var prop *proposal.Proposal
@@ -398,7 +398,7 @@ func (td *testData) makeProposal(t *testing.T, height types.Height, round int16)
 }
 
 func (td *testData) makeMainCertificate(t *testing.T,
-	height types.Height, round, cpRound int16,
+	height types.Height, round types.Round, cpRound int16,
 ) *certificate.Certificate {
 	t.Helper()
 
@@ -546,7 +546,7 @@ func TestConsensusLateProposal(t *testing.T) {
 	td.enterNewHeight(td.consP)
 
 	height := types.Height(2)
-	round := int16(0)
+	round := types.Round(0)
 	prop := td.makeProposal(t, height, round)
 	require.NotNil(t, prop)
 
@@ -568,7 +568,7 @@ func TestSetProposalOnPrepare(t *testing.T) {
 	td.enterNewHeight(td.consP)
 
 	height := types.Height(2)
-	round := int16(0)
+	round := types.Round(0)
 	prop := td.makeProposal(t, height, round)
 	require.NotNil(t, prop)
 
@@ -593,7 +593,7 @@ func TestSetProposalOnPrecommit(t *testing.T) {
 	td.enterNewHeight(td.consP)
 
 	height := types.Height(2)
-	round := int16(0)
+	round := types.Round(0)
 	prop := td.makeProposal(t, height, round)
 	require.NotNil(t, prop)
 
@@ -642,21 +642,21 @@ func TestHandleQueryVote(t *testing.T) {
 		rndVote := td.consP.HandleQueryVote(height, 0)
 		assert.Equal(t, vote.VoteTypeCPDecided, rndVote.Type())
 		assert.Equal(t, height, rndVote.Height())
-		assert.Equal(t, int16(0), rndVote.Round())
+		assert.Equal(t, types.Round(0), rndVote.Round())
 	})
 
 	t.Run("Query vote for round 1: should send the decided vote for the round 1", func(t *testing.T) {
 		rndVote := td.consP.HandleQueryVote(height, 1)
 		assert.Equal(t, vote.VoteTypeCPDecided, rndVote.Type())
 		assert.Equal(t, height, rndVote.Height())
-		assert.Equal(t, int16(1), rndVote.Round())
+		assert.Equal(t, types.Round(1), rndVote.Round())
 	})
 
 	t.Run("Query vote for round 2: should send the prepare vote for the round 2", func(t *testing.T) {
 		rndVote := td.consP.HandleQueryVote(height, 2)
 		assert.Equal(t, vote.VoteTypePrepare, rndVote.Type())
 		assert.Equal(t, height, rndVote.Height())
-		assert.Equal(t, int16(2), rndVote.Round())
+		assert.Equal(t, types.Round(2), rndVote.Round())
 	})
 
 	t.Run("Query vote for round 3: should not send a vote for the next round", func(t *testing.T) {
@@ -735,7 +735,7 @@ func TestDuplicateProposal(t *testing.T) {
 	td.enterNewHeight(td.consX)
 
 	height := types.Height(4)
-	round := int16(0)
+	round := types.Round(0)
 	prop1 := td.makeProposal(t, height, round)
 	trx := tx.NewTransferTx(height, td.consX.rewardAddr, td.RandAccAddress(), 1000,
 		1000, tx.WithMemo("proposal changer"))
@@ -806,7 +806,7 @@ func TestVoteWithBigRound(t *testing.T) {
 
 	td.enterNewHeight(td.consX)
 
-	v := td.addPrepareVote(td.consX, td.RandHash(), 1, util.MaxInt16, tIndexB)
+	v := td.addPrepareVote(td.consX, td.RandHash(), 1, types.Round(util.MaxInt16), tIndexB)
 	assert.True(t, td.consX.HasVote(v.Hash()))
 }
 
@@ -815,7 +815,7 @@ func TestProposalWithBigRound(t *testing.T) {
 
 	td.enterNewHeight(td.consP)
 
-	p := td.makeProposal(t, 1, util.MaxInt16)
+	p := td.makeProposal(t, 1, types.Round(util.MaxInt16))
 	td.consP.SetProposal(p)
 	assert.Nil(t, td.consP.Proposal())
 }
@@ -834,7 +834,7 @@ func TestInvalidProposal(t *testing.T) {
 func TestCases(t *testing.T) {
 	tests := []struct {
 		seed        int64
-		round       int16
+		round       types.Round
 		description string
 	}{
 		{1697898884837384019, 2, "1/3+ cp:PRE-VOTE in Prepare step"},
@@ -896,7 +896,7 @@ func TestByzantine(t *testing.T) {
 	}
 
 	height := types.Height(7)
-	round := int16(0)
+	round := types.Round(0)
 	prop1 := td.makeProposal(t, height, round)
 
 	// =================================

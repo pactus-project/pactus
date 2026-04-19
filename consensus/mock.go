@@ -23,7 +23,7 @@ type MockConsensus struct {
 	Active      bool
 	Proposer    bool
 	Height      types.Height
-	Round       int16
+	Round       types.Round
 }
 
 func MockingConsensus(ts *testsuite.TestSuite, state *state.MockState, valKey *bls.ValidatorKey) *MockConsensus {
@@ -68,11 +68,11 @@ func (m *MockConsensus) Proposal() *proposal.Proposal {
 	return m.CurProposal
 }
 
-func (m *MockConsensus) HandleQueryProposal(_ types.Height, _ int16) *proposal.Proposal {
+func (m *MockConsensus) HandleQueryProposal(_ types.Height, _ types.Round) *proposal.Proposal {
 	return m.CurProposal
 }
 
-func (m *MockConsensus) HeightRound() (types.Height, int16) {
+func (m *MockConsensus) HeightRound() (types.Height, types.Round) {
 	return m.Height, m.Round
 }
 
@@ -80,7 +80,7 @@ func (*MockConsensus) LogString() string {
 	return ""
 }
 
-func (m *MockConsensus) HandleQueryVote(_ types.Height, _ int16) *vote.Vote {
+func (m *MockConsensus) HandleQueryVote(_ types.Height, _ types.Round) *vote.Vote {
 	if len(m.Votes) == 0 {
 		return nil
 	}

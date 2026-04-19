@@ -14,7 +14,7 @@ func TestPrecommitStrongCommit(t *testing.T) {
 
 	td.commitBlockForAllStates(t)
 	height := types.Height(2)
-	round := int16(0)
+	round := types.Round(0)
 
 	td.enterNewHeight(td.consP)
 	prop := td.makeProposal(t, height, round)
@@ -37,7 +37,7 @@ func TestPrecommitQueryProposal(t *testing.T) {
 
 	td.commitBlockForAllStates(t)
 	height := types.Height(2)
-	round := int16(0)
+	round := types.Round(0)
 
 	// ConsP is not the proposer for this round.
 	td.enterNewHeight(td.consP)
@@ -52,7 +52,7 @@ func TestPrecommitQueryVote(t *testing.T) {
 
 	td.commitBlockForAllStates(t)
 	height := types.Height(2)
-	round := int16(0)
+	round := types.Round(0)
 
 	// ConsY is  the proposer for this round.
 	td.enterNewHeight(td.consY)
@@ -76,7 +76,7 @@ func TestPrecommitChangeProposer(t *testing.T) {
 
 	td.commitBlockForAllStates(t)
 	height := types.Height(2)
-	round := int16(0)
+	round := types.Round(0)
 
 	td.enterNewHeight(td.consP)
 	prop := td.makeProposal(t, height, round)
@@ -95,7 +95,7 @@ func TestPrecommitQueryProposalWithCert(t *testing.T) {
 
 	td.commitBlockForAllStates(t)
 	height := types.Height(2)
-	round := int16(0)
+	round := types.Round(0)
 
 	td.enterNewHeight(td.consP)
 	td.consP.cpDecidedCert = td.GenerateTestCertificate(height)
@@ -111,7 +111,7 @@ func TestPrecommitQueryVoteWithCert(t *testing.T) {
 
 	td.commitBlockForAllStates(t)
 	height := types.Height(2)
-	round := int16(0)
+	round := types.Round(0)
 
 	td.enterNewHeight(td.consP)
 	prop := td.makeProposal(t, height, round)

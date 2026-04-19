@@ -16,7 +16,7 @@ func TestPrecommitQueryProposal(t *testing.T) {
 
 	td.commitBlockForAllStates(t)
 	height := types.Height(2)
-	round := int16(0)
+	round := types.Round(0)
 
 	td.enterNewHeight(td.consP)
 
@@ -38,7 +38,7 @@ func TestPrecommitDuplicatedProposal(t *testing.T) {
 
 	td.commitBlockForAllStates(t)
 	height := types.Height(2)
-	round := int16(0)
+	round := types.Round(0)
 
 	prop1 := td.makeProposal(t, height, round)
 	trx := tx.NewTransferTx(height, td.consX.rewardAddr,
@@ -78,7 +78,7 @@ func TestGoToChangeProposerFromPrecommit(t *testing.T) {
 
 	td.commitBlockForAllStates(t)
 	height := types.Height(2)
-	round := int16(0)
+	round := types.Round(0)
 
 	td.enterNewHeight(td.consP)
 	blockHash := td.RandHash()

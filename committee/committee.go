@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/linkedlist"
@@ -56,7 +57,7 @@ func (c *committee) TotalPower() int64 {
 	return power
 }
 
-func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
+func (c *committee) Update(lastRound types.Round, joined []*validator.Validator) {
 	slices.SortStableFunc(joined, func(a, b *validator.Validator) int {
 		return cmp.Compare(a.Number(), b.Number())
 	})
@@ -147,7 +148,7 @@ func (c *committee) find(addr crypto.Address) *validator.Validator {
 }
 
 // IsProposer checks if the given address is the proposer for the specified round.
-func (c *committee) IsProposer(addr crypto.Address, round int16) bool {
+func (c *committee) IsProposer(addr crypto.Address, round types.Round) bool {
 	p := c.proposer(round)
 
 	return p.Address() == addr
@@ -155,11 +156,11 @@ func (c *committee) IsProposer(addr crypto.Address, round int16) bool {
 
 // Proposer returns an instance of the proposer validator for the specified round.
 // A cloned instance of the proposer is returned to avoid modification of the original object.
-func (c *committee) Proposer(round int16) *validator.Validator {
+func (c *committee) Proposer(round types.Round) *validator.Validator {
 	return c.proposer(round).Clone()
 }
 
-func (c *committee) proposer(round int16) *validator.Validator {
+func (c *committee) proposer(round types.Round) *validator.Validator {
 	pos := c.proposerPos
 	for i := 0; i < int(round); i++ {
 		pos = pos.Next

@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 )
@@ -16,7 +17,7 @@ type BlockVoteSet struct {
 	quorumHash *hash.Hash
 }
 
-func NewPrepareVoteSet(round int16, totalPower int64,
+func NewPrepareVoteSet(round types.Round, totalPower int64,
 	validators map[crypto.Address]*validator.Validator,
 ) *BlockVoteSet {
 	voteSet := newVoteSet(round, totalPower, validators)
@@ -24,7 +25,7 @@ func NewPrepareVoteSet(round int16, totalPower int64,
 	return newBlockVoteSet(voteSet)
 }
 
-func NewPrecommitVoteSet(round int16, totalPower int64,
+func NewPrecommitVoteSet(round types.Round, totalPower int64,
 	validators map[crypto.Address]*validator.Validator,
 ) *BlockVoteSet {
 	voteSet := newVoteSet(round, totalPower, validators)

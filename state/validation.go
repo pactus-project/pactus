@@ -2,12 +2,13 @@ package state
 
 import (
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/protocol"
 )
 
-func (st *state) validateBlock(blk *block.Block, round int16) error {
+func (st *state) validateBlock(blk *block.Block, round types.Round) error {
 	if blk.Header().Version() > protocol.ProtocolVersionLatest ||
 		blk.Header().Version() < st.params.BlockVersion {
 		return ErrInvalidBlockVersion

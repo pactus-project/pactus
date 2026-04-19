@@ -34,7 +34,7 @@ func (rs tickerTarget) String() string {
 type ticker struct {
 	Duration time.Duration
 	Height   types.Height
-	Round    int16
+	Round    types.Round
 	Target   tickerTarget
 }
 

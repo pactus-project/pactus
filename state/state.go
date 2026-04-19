@@ -413,7 +413,7 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 	return blk, nil
 }
 
-func (st *state) ValidateBlock(blk *block.Block, round int16) error {
+func (st *state) ValidateBlock(blk *block.Block, round types.Round) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
@@ -567,7 +567,7 @@ func (st *state) LogString() string {
 		st.lastInfo.BlockTime().Format("15.04.05"))
 }
 
-func (st *state) commitSandbox(sbx sandbox.Sandbox, round int16) {
+func (st *state) commitSandbox(sbx sandbox.Sandbox, round types.Round) {
 	joiningCommittee := make([]*validator.Validator, 0)
 	sbx.IterateValidators(func(val *validator.Validator, _ bool, joined bool) {
 		if joined {
@@ -652,14 +652,14 @@ func (st *state) IsInCommittee(addr crypto.Address) bool {
 	return st.committee.Contains(addr)
 }
 
-func (st *state) Proposer(round int16) *validator.Validator {
+func (st *state) Proposer(round types.Round) *validator.Validator {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
 	return st.committee.Proposer(round)
 }
 
-func (st *state) IsProposer(addr crypto.Address, round int16) bool {
+func (st *state) IsProposer(addr crypto.Address, round types.Round) bool {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 

@@ -59,7 +59,7 @@ func (s *precommitState) decide() {
 
 		// TODO: write test for me
 		cpDecide := s.log.CPDecidedVoteSet(s.round)
-		if cpDecide.Has2FP1VotesFor(s.round, vote.CPValueYes) {
+		if cpDecide.Has2FP1VotesFor(s.cpRound, vote.CPValueYes) {
 			s.startChangingProposer()
 		}
 	}

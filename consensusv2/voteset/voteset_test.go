@@ -84,7 +84,7 @@ func TestAddBinaryVote(t *testing.T) {
 	hash2 := ts.RandHash()
 	height := ts.RandHeight()
 	round := ts.RandRound()
-	cpRound := ts.RandRound()
+	cpRound := int16(ts.RandRound())
 	cpVal := ts.RandIntMax(2)
 	just := &vote.JustInitYes{}
 	invKey := ts.RandValKey()

@@ -37,7 +37,7 @@ type consensus struct {
 	cpWeakValidity  *hash.Hash // The change proposer's weak validity that is a prepared block hash
 	cpDecided       int
 	height          types.Height
-	round           int16
+	round           types.Round
 	cpRound         int16
 	valKey          *bls.ValidatorKey
 	rewardAddr      crypto.Address
@@ -136,7 +136,7 @@ func (cs *consensus) ConsensusKey() *bls.PublicKey {
 	return cs.valKey.PublicKey()
 }
 
-func (cs *consensus) HeightRound() (types.Height, int16) {
+func (cs *consensus) HeightRound() (types.Height, types.Round) {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
@@ -158,7 +158,7 @@ func (cs *consensus) AllVotes() []*vote.Vote {
 	defer cs.lk.RUnlock()
 
 	votes := []*vote.Vote{}
-	for r := int16(0); r <= cs.round; r++ {
+	for r := types.Round(0); r <= cs.round; r++ {
 		m := cs.log.RoundMessages(r)
 		votes = append(votes, m.AllVotes()...)
 	}
@@ -185,7 +185,9 @@ func (cs *consensus) MoveToNewHeight() {
 	}
 }
 
-func (cs *consensus) scheduleTimeout(duration time.Duration, height types.Height, round int16, target tickerTarget) {
+func (cs *consensus) scheduleTimeout(duration time.Duration,
+	height types.Height, round types.Round, target tickerTarget,
+) {
 	cs.logger.Trace("new timer scheduled ⏱️", "duration", duration, "height", height, "round", round, "target", target)
 
 	ticker := &ticker{duration, height, round, target}
@@ -314,7 +316,7 @@ func (cs *consensus) AddVote(vte *vote.Vote) {
 	}
 }
 
-func (cs *consensus) proposer(round int16) *validator.Validator {
+func (cs *consensus) proposer(round types.Round) *validator.Validator {
 	return cs.bcState.Proposer(round)
 }
 
@@ -462,7 +464,7 @@ func (cs *consensus) Proposal() *proposal.Proposal {
 	return cs.log.RoundProposal(cs.round)
 }
 
-func (cs *consensus) HandleQueryProposal(height types.Height, round int16) *proposal.Proposal {
+func (cs *consensus) HandleQueryProposal(height types.Height, round types.Round) *proposal.Proposal {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
@@ -493,7 +495,7 @@ func (cs *consensus) HandleQueryProposal(height types.Height, round int16) *prop
 }
 
 // TODO: Improve the performance?
-func (cs *consensus) HandleQueryVote(height types.Height, round int16) *vote.Vote {
+func (cs *consensus) HandleQueryVote(height types.Height, round types.Round) *vote.Vote {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
