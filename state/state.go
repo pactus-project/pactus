@@ -782,16 +782,19 @@ func (st *state) ChainInfo() *ChainInfo {
 func (st *state) calculateAverageScore() float64 {
 	totalScore := 0.0
 	totalWithStake := 0.0
-	st.store.IterateValidators(func(val *validator.Validator) bool {
+	for _, key := range st.valKeys {
+		val, _ := st.store.Validator(key.Address())
+		if val == nil {
+			continue
+		}
+
 		if !val.IsActive() {
-			return false
+			continue
 		}
 
 		totalScore += st.scoreMgr.AvailabilityScore(val.Number())
 		totalWithStake++
-
-		return false
-	})
+	}
 
 	averageScore := 0.0
 	if totalWithStake > 0 {
