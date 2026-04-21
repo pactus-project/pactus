@@ -3,24 +3,23 @@ package http
 import (
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 // passThroughHandler is a minimal handler that records that it was called and
 // optionally sets a body so tests can assert whether the CORS wrapper invoked it.
 func passThroughHandler(t *testing.T, called *bool) http.Handler {
 	t.Helper()
+
 	return http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		if called != nil {
 			*called = true
 		}
 		w.WriteHeader(http.StatusOK)
 		_, err := w.Write([]byte("ok"))
-		require.NoError(t, err)
+		assert.NoError(t, err)
 	})
 }
 
@@ -89,7 +88,12 @@ func TestAllowCORS(t *testing.T) {
 			called := false
 			handler := allowCORS(passThroughHandler(t, &called))
 
-			req := httptest.NewRequest(tt.method, "/http/api/blockchain/get_block_hash", nil)
+			req := httptest.NewRequestWithContext(
+				t.Context(),
+				tt.method,
+				"/http/api/blockchain/get_block_hash",
+				http.NoBody,
+			)
 			if tt.origin != "" {
 				req.Header.Set("Origin", tt.origin)
 			}
@@ -131,21 +135,11 @@ func TestPreflightHandlerSetsAllMethodsAndHeaders(t *testing.T) {
 
 	// Headers must include everything documented in the preflightHandler comment.
 	for _, h := range []string{"Content-Type", "Accept", "Authorization"} {
-		assert.Truef(
-			t,
-			strings.Contains(allowHeaders, h),
-			"preflight Access-Control-Allow-Headers %q missing %q",
-			allowHeaders, h,
-		)
+		assert.Containsf(t, allowHeaders, h, "preflight Access-Control-Allow-Headers %q missing %q", allowHeaders, h)
 	}
 
 	// Methods must include everything documented in the preflightHandler comment.
 	for _, m := range []string{"GET", "HEAD", "POST", "PUT", "DELETE"} {
-		assert.Truef(
-			t,
-			strings.Contains(allowMethods, m),
-			"preflight Access-Control-Allow-Methods %q missing %q",
-			allowMethods, m,
-		)
+		assert.Containsf(t, allowMethods, m, "preflight Access-Control-Allow-Methods %q missing %q", allowMethods, m)
 	}
 }
