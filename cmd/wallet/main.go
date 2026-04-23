@@ -25,7 +25,7 @@ func addPasswordOption(c *cobra.Command) *string {
 }
 
 func openWallet(ctx context.Context) (*wallet.Wallet, error) {
-	wlt, err := wallet.Open(ctx, *pathOpt)
+	wlt, err := wallet.Open(ctx, *pathOpt, wallet.WithLockMode(false))
 	if err != nil {
 		return nil, err
 	}
