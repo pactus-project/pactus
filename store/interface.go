@@ -114,5 +114,6 @@ type Store interface {
 	SaveBlock(blk *block.Block, cert *certificate.Certificate)
 	Prune(callback func(pruned bool, pruningHeight types.Height) bool) error
 	WriteBatch() error
+	
 	Close()
 }

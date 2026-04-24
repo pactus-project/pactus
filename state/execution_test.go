@@ -33,12 +33,13 @@ func TestProposeBlock(t *testing.T) {
 		testsuite.TransactionWithLockTime(lockTime),
 		testsuite.TransactionWithSigner(td.genAccKey))
 
-	require.NoError(t, td.state.AddPendingTx(invTransferTx))
-	require.NoError(t, td.state.AddPendingTx(invBondTx))
-	require.NoError(t, td.state.AddPendingTx(invSortitionTx))
-	require.NoError(t, td.state.AddPendingTx(dupSubsidyTx))
-	require.NoError(t, td.state.AddPendingTx(validTrx1))
-	require.NoError(t, td.state.AddPendingTx(validTrx2))
+	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{
+		invTransferTx,
+		invBondTx,
+		invSortitionTx,
+		dupSubsidyTx,
+		validTrx1,
+		validTrx2}).Times(1)
 
 	rewardAddr := td.RandAccAddress()
 	blk, err := td.state.ProposeBlock(td.state.valKeys[0], rewardAddr)
@@ -57,9 +58,6 @@ func TestProposeBlock(t *testing.T) {
 func TestExecuteBlock(t *testing.T) {
 	td := setup(t)
 
-	blk, cert := td.makeBlockAndCertificate(t, 0)
-	require.NoError(t, td.state.CommitBlock(blk, cert))
-
 	invTransferTx := td.GenerateTestTransferTx()
 	validTx1 := td.GenerateTestTransferTx(
 		testsuite.TransactionWithLockTime(1),
@@ -69,11 +67,6 @@ func TestExecuteBlock(t *testing.T) {
 	proposerAddr := td.state.Proposer(0).Address()
 	invSubsidyTx := td.state.createSubsidyTx(td.genValKeys[0].Address(), td.RandAccAddress(), validTx1.Fee()+1)
 	validSubsidyTx := td.state.createSubsidyTx(td.genValKeys[0].Address(), td.RandAccAddress(), validTx1.Fee())
-
-	require.NoError(t, td.state.AddPendingTx(invTransferTx))
-	require.NoError(t, td.state.AddPendingTx(validSubsidyTx))
-	require.NoError(t, td.state.AddPendingTx(invSubsidyTx))
-	require.NoError(t, td.state.AddPendingTx(validTx1))
 
 	t.Run("Block has invalid subsidy amount", func(t *testing.T) {
 		txs := block.NewTxs()
@@ -93,6 +86,9 @@ func TestExecuteBlock(t *testing.T) {
 			Expected: 1e9 + validTx1.Fee(),
 			Got:      1e9 + validTx1.Fee() + 1,
 		})
+
+		err = td.state.executeBlock(invBlock, sb, false)
+		require.NoError(t, err)
 	})
 
 	t.Run("Block has an invalid transaction", func(t *testing.T) {
@@ -198,7 +194,7 @@ func TestExecuteBlock(t *testing.T) {
 
 		// Check if fee is claimed
 		treasury := sb.Account(crypto.TreasuryAddress)
-		assert.Equal(t, 21*1e15-(10*td.state.params.BlockReward), treasury.Balance()) // Two extra blocks has committed yet
+		assert.Equal(t, 21*1e15-(9*td.state.params.BlockReward), treasury.Balance()) // Two extra blocks has committed yet
 	})
 }
 
@@ -265,7 +261,6 @@ func TestSubsidyTransaction(t *testing.T) {
 	})
 
 	t.Run("Non-delegated proposer rejects 3-recipient subsidy", func(t *testing.T) {
-		td.state.params.BlockVersion = protocol.ProtocolVersion3
 		lockTime := td.RandHeight()
 
 		val, err := td.state.store.Validator(proposerAddr)
@@ -295,7 +290,6 @@ func TestSubsidyTransaction(t *testing.T) {
 	})
 
 	t.Run("Delegated proposer accepts valid 3-recipient subsidy", func(t *testing.T) {
-		td.state.params.BlockVersion = protocol.ProtocolVersion3
 		delegateOwner := td.RandAccAddress()
 		delegateShare := amount.Amount(2e8)
 		lockTime := td.RandHeight()
@@ -361,7 +355,6 @@ func TestSubsidyTransaction(t *testing.T) {
 	})
 
 	t.Run("Delegated proposer with zero share for owner", func(t *testing.T) {
-		td.state.params.BlockVersion = protocol.ProtocolVersion3
 		lockTime := td.RandHeight()
 
 		val, err := td.state.store.Validator(proposerAddr)

@@ -26,16 +26,17 @@ import (
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/mock/gomock"
 	"golang.org/x/exp/slices"
 )
 
 type testData struct {
 	*testsuite.TestSuite
 
-	state        *state
-	genValKeys   []*bls.ValidatorKey
-	genAccKey    *ed25519.PrivateKey
-	commonTxPool *txpool.MockTxPool
+	state      *state
+	mockTxPool *txpool.MockTxPool
+	genValKeys []*bls.ValidatorKey
+	genAccKey  *ed25519.PrivateKey
 }
 
 func setup(t *testing.T) *testData {
@@ -54,7 +55,12 @@ func setup(t *testing.T) *testData {
 		genVals = append(genVals, val)
 	}
 
-	mockTxPool := txpool.MockingTxPool()
+	numBlocks := 8
+	mockTxPool := txpool.NewMockTxPool(ts.Ctrl)
+	mockTxPool.EXPECT().SetNewSandboxAndRecheck(gomock.Any()).Return().AnyTimes()
+	mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(numBlocks)
+	mockTxPool.EXPECT().HandleCommittedBlock(gomock.Any()).Return().AnyTimes()
+
 	mockStore := store.MockingStore(ts)
 
 	genTime := util.RoundNow(10).Add(-8640 * time.Second)
@@ -86,14 +92,14 @@ func setup(t *testing.T) *testData {
 	state, _ := st1.(*state)
 
 	td := &testData{
-		TestSuite:    ts,
-		state:        state,
-		genValKeys:   genValKeys,
-		genAccKey:    genAccPrvKey,
-		commonTxPool: mockTxPool,
+		TestSuite:  ts,
+		state:      state,
+		mockTxPool: mockTxPool,
+		genValKeys: genValKeys,
+		genAccKey:  genAccPrvKey,
 	}
 
-	td.commitBlocks(t, 8)
+	td.commitBlocks(t, numBlocks)
 
 	return td
 }
@@ -644,6 +650,7 @@ func TestLoadState(t *testing.T) {
 		pub.ValidatorAddress(), pub, 1000000000, 100000)
 	td.HelperSignTransaction(td.genAccKey, bondTrx)
 
+	td.mockTxPool.EXPECT().AppendTx(bondTrx).Return(nil).Times(1)
 	require.NoError(t, td.state.AddPendingTx(bondTrx))
 
 	blk5, cert5 := td.makeBlockAndCertificate(t, 1)
@@ -655,7 +662,7 @@ func TestLoadState(t *testing.T) {
 	// Load last state info
 	eventPipe := pipeline.New[any](t.Context())
 	newState, err := LoadOrNewState(td.state.genDoc, td.state.valKeys,
-		td.state.store, td.commonTxPool, eventPipe)
+		td.state.store, td.mockTxPool, eventPipe)
 	require.NoError(t, err)
 
 	assert.Equal(t, td.state.Params(), newState.Params())
@@ -684,7 +691,7 @@ func TestCalculateFee(t *testing.T) {
 	td := setup(t)
 
 	fee := td.state.CalculateFee(td.RandAmount(), payload.TypeTransfer)
-	expectedFee := td.commonTxPool.EstimatedFee(0, payload.TypeTransfer)
+	expectedFee := td.mockTxPool.EstimatedFee(0, payload.TypeTransfer)
 
 	assert.Equal(t, expectedFee, fee)
 }
@@ -697,7 +704,7 @@ func TestCheckMaximumTransactionPerBlock(t *testing.T) {
 	senderAddr := td.genAccKey.PublicKeyNative().AccountAddress()
 	for i := 0; i < td.state.params.MaxTransactionsPerBlock+2; i++ {
 		amt := td.RandAmount()
-		fee := td.state.CalculateFee(amt, payload.TypeTransfer)
+		fee := td.RandFee()
 		trx := tx.NewTransferTx(lockTime, senderAddr, td.RandAccAddress(), amt, fee)
 		err := td.state.AddPendingTx(trx)
 		require.NoError(t, err)
