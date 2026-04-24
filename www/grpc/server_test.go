@@ -26,6 +26,7 @@ type testData struct {
 	*testsuite.TestSuite
 
 	mockState     *state.MockState
+	
 	mockSync      *sync.MockSync
 	consMocks     []*consensus.MockConsensus
 	mockConsMgr   consmgr.Manager

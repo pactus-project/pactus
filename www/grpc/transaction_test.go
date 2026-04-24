@@ -109,7 +109,7 @@ func TestSendRawTransaction(t *testing.T) {
 		assert.NotNil(t, res)
 	})
 	t.Run("Should fail and not broadcast", func(t *testing.T) {
-		td.mockState.TestPool.AppendError = errors.New("some error")
+		td.mockState.MockTxPool.AppendError = errors.New("some error")
 		res, err := client.BroadcastTransaction(t.Context(),
 			&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
 		require.Error(t, err)

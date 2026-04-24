@@ -35,7 +35,7 @@ type MockState struct {
 
 	TestGenesis   *genesis.Genesis
 	TestStore     *store.MockStore
-	TestPool      *txpool.MockTxPool
+	MockTxPool    *txpool.MockTxPool
 	TestCommittee committee.Committee
 	TestValKeys   []*bls.ValidatorKey
 	TestParams    *param.Params
@@ -49,7 +49,7 @@ func MockingState(ts *testsuite.TestSuite) *MockState {
 		ts:            ts,
 		TestGenesis:   genDoc,
 		TestStore:     store.MockingStore(ts),
-		TestPool:      txpool.MockingTxPool(),
+		MockTxPool:    txpool.NewMockTxPool(ts.Ctrl),
 		TestCommittee: cmt,
 		TestValKeys:   valKeys,
 		TestParams:    param.FromGenesis(genDoc),
@@ -197,15 +197,15 @@ func (m *MockState) ValidatorByNumber(n int32) (*validator.Validator, error) {
 }
 
 func (m *MockState) PendingTx(txID tx.ID) *tx.Tx {
-	return m.TestPool.PendingTx(txID)
+	return m.MockTxPool.PendingTx(txID)
 }
 
 func (m *MockState) AddPendingTx(trx *tx.Tx) error {
-	return m.TestPool.AppendTx(trx)
+	return m.MockTxPool.AppendTx(trx)
 }
 
 func (m *MockState) AddPendingTxAndBroadcast(trx *tx.Tx) error {
-	return m.TestPool.AppendTxAndBroadcast(trx)
+	return m.MockTxPool.AppendTxAndBroadcast(trx)
 }
 
 func (m *MockState) Params() *param.Params {
@@ -213,7 +213,7 @@ func (m *MockState) Params() *param.Params {
 }
 
 func (m *MockState) CalculateFee(amt amount.Amount, payloadType payload.Type) amount.Amount {
-	return m.TestPool.EstimatedFee(amt, payloadType)
+	return m.MockTxPool.EstimatedFee(amt, payloadType)
 }
 
 func (m *MockState) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {
@@ -225,7 +225,7 @@ func (*MockState) AvailabilityScore(_ int32) float64 {
 }
 
 func (m *MockState) AllPendingTxs() []*tx.Tx {
-	return m.TestPool.Txs
+	return m.MockTxPool.AllPendingTxs()
 }
 
 func (m *MockState) UpdateValidatorProtocolVersion(addr crypto.Address, ver protocol.Version) {

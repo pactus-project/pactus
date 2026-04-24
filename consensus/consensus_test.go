@@ -77,7 +77,7 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	ts := testsuite.NewTestSuiteFromSeed(t, seed)
 
 	_, valKeys := ts.GenerateTestCommittee(4)
-	txPool := txpool.MockingTxPool()
+	txPool := txpool.NewMockTxPool(ts.Ctrl)
 
 	vals := make([]*validator.Validator, 4)
 	for i, key := range valKeys {
