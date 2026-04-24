@@ -4,7 +4,6 @@ import (
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
@@ -51,9 +50,6 @@ func (e *BondExecutor) Check(strict bool) error {
 	}
 
 	if e.pld.IsDelegated() {
-		if e.sbx.Params().BlockVersion < protocol.ProtocolVersion3 {
-			return ErrInvalidBlockVersion
-		}
 		if e.pld.Stake != e.sbx.Params().MaximumStake {
 			return ErrInvalidDelegation
 		}
