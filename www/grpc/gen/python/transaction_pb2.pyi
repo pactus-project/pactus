@@ -177,11 +177,17 @@ class PayloadBond(_message.Message):
     RECEIVER_FIELD_NUMBER: _ClassVar[int]
     STAKE_FIELD_NUMBER: _ClassVar[int]
     PUBLIC_KEY_FIELD_NUMBER: _ClassVar[int]
+    DELEGATE_OWNER_FIELD_NUMBER: _ClassVar[int]
+    DELEGATE_SHARE_FIELD_NUMBER: _ClassVar[int]
+    DELEGATE_EXPIRY_FIELD_NUMBER: _ClassVar[int]
     sender: str
     receiver: str
     stake: int
     public_key: str
-    def __init__(self, sender: _Optional[str] = ..., receiver: _Optional[str] = ..., stake: _Optional[int] = ..., public_key: _Optional[str] = ...) -> None: ...
+    delegate_owner: str
+    delegate_share: int
+    delegate_expiry: int
+    def __init__(self, sender: _Optional[str] = ..., receiver: _Optional[str] = ..., stake: _Optional[int] = ..., public_key: _Optional[str] = ..., delegate_owner: _Optional[str] = ..., delegate_share: _Optional[int] = ..., delegate_expiry: _Optional[int] = ...) -> None: ...
 
 class PayloadSortition(_message.Message):
     __slots__ = ()
@@ -194,8 +200,10 @@ class PayloadSortition(_message.Message):
 class PayloadUnbond(_message.Message):
     __slots__ = ()
     VALIDATOR_FIELD_NUMBER: _ClassVar[int]
+    DELEGATE_OWNER_FIELD_NUMBER: _ClassVar[int]
     validator: str
-    def __init__(self, validator: _Optional[str] = ...) -> None: ...
+    delegate_owner: str
+    def __init__(self, validator: _Optional[str] = ..., delegate_owner: _Optional[str] = ...) -> None: ...
 
 class PayloadWithdraw(_message.Message):
     __slots__ = ()

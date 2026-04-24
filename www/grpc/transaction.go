@@ -311,7 +311,7 @@ func transactionToProto(trx *tx.Tx, blockHeight types.Height, confirmations int)
 			publicKeyStr = pld.PublicKey.String()
 		}
 
-		trxInfo.Payload = &pactus.TransactionInfo_Bond{
+		payload := &pactus.TransactionInfo_Bond{
 			Bond: &pactus.PayloadBond{
 				Sender:    pld.From.String(),
 				Receiver:  pld.To.String(),
@@ -319,6 +319,15 @@ func transactionToProto(trx *tx.Tx, blockHeight types.Height, confirmations int)
 				PublicKey: publicKeyStr,
 			},
 		}
+
+		// TODO: Cover me with tests
+		if pld.IsDelegated() {
+			payload.Bond.DelegateOwner = pld.DelegateOwner.String()
+			payload.Bond.DelegateShare = pld.DelegateShare.ToNanoPAC()
+			payload.Bond.DelegateExpiry = uint32(pld.DelegateExpiry)
+		}
+
+		trxInfo.Payload = payload
 
 	case payload.TypeSortition:
 		pld := trx.Payload().(*payload.SortitionPayload)
@@ -330,11 +339,19 @@ func transactionToProto(trx *tx.Tx, blockHeight types.Height, confirmations int)
 		}
 	case payload.TypeUnbond:
 		pld := trx.Payload().(*payload.UnbondPayload)
-		trxInfo.Payload = &pactus.TransactionInfo_Unbond{
+		payload := &pactus.TransactionInfo_Unbond{
 			Unbond: &pactus.PayloadUnbond{
 				Validator: pld.Validator.String(),
 			},
 		}
+
+		// TODO: Cover me with tests
+		if pld.IsDelegated() {
+			payload.Unbond.DelegateOwner = pld.DelegateOwner.String()
+		}
+
+		trxInfo.Payload = payload
+
 	case payload.TypeWithdraw:
 		pld := trx.Payload().(*payload.WithdrawPayload)
 		trxInfo.Payload = &pactus.TransactionInfo_Withdraw{

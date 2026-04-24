@@ -321,6 +321,9 @@ const PayloadBond$json = {
     {'1': 'receiver', '3': 2, '4': 1, '5': 9, '10': 'receiver'},
     {'1': 'stake', '3': 3, '4': 1, '5': 3, '10': 'stake'},
     {'1': 'public_key', '3': 4, '4': 1, '5': 9, '10': 'publicKey'},
+    {'1': 'delegate_owner', '3': 5, '4': 1, '5': 9, '10': 'delegateOwner'},
+    {'1': 'delegate_share', '3': 6, '4': 1, '5': 3, '10': 'delegateShare'},
+    {'1': 'delegate_expiry', '3': 7, '4': 1, '5': 13, '10': 'delegateExpiry'},
   ],
 };
 
@@ -328,7 +331,9 @@ const PayloadBond$json = {
 final $typed_data.Uint8List payloadBondDescriptor = $convert.base64Decode(
     'CgtQYXlsb2FkQm9uZBIWCgZzZW5kZXIYASABKAlSBnNlbmRlchIaCghyZWNlaXZlchgCIAEoCV'
     'IIcmVjZWl2ZXISFAoFc3Rha2UYAyABKANSBXN0YWtlEh0KCnB1YmxpY19rZXkYBCABKAlSCXB1'
-    'YmxpY0tleQ==');
+    'YmxpY0tleRIlCg5kZWxlZ2F0ZV9vd25lchgFIAEoCVINZGVsZWdhdGVPd25lchIlCg5kZWxlZ2'
+    'F0ZV9zaGFyZRgGIAEoA1INZGVsZWdhdGVTaGFyZRInCg9kZWxlZ2F0ZV9leHBpcnkYByABKA1S'
+    'DmRlbGVnYXRlRXhwaXJ5');
 
 @$core.Deprecated('Use payloadSortitionDescriptor instead')
 const PayloadSortition$json = {
@@ -349,12 +354,14 @@ const PayloadUnbond$json = {
   '1': 'PayloadUnbond',
   '2': [
     {'1': 'validator', '3': 1, '4': 1, '5': 9, '10': 'validator'},
+    {'1': 'delegate_owner', '3': 2, '4': 1, '5': 9, '10': 'delegateOwner'},
   ],
 };
 
 /// Descriptor for `PayloadUnbond`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List payloadUnbondDescriptor = $convert.base64Decode(
-    'Cg1QYXlsb2FkVW5ib25kEhwKCXZhbGlkYXRvchgBIAEoCVIJdmFsaWRhdG9y');
+    'Cg1QYXlsb2FkVW5ib25kEhwKCXZhbGlkYXRvchgBIAEoCVIJdmFsaWRhdG9yEiUKDmRlbGVnYX'
+    'RlX293bmVyGAIgASgJUg1kZWxlZ2F0ZU93bmVy');
 
 @$core.Deprecated('Use payloadWithdrawDescriptor instead')
 const PayloadWithdraw$json = {
