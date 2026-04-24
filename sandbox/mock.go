@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -34,9 +35,12 @@ type MockSandbox struct {
 func MockingSandbox(ts *testsuite.TestSuite) *MockSandbox {
 	cmt, _ := ts.GenerateTestCommittee(7)
 
+	params := param.FromGenesis(genesis.MainnetGenesis())
+	params.BlockVersion = protocol.ProtocolVersion3
+
 	sbx := &MockSandbox{
 		ts:                   ts,
-		TestParams:           param.FromGenesis(genesis.MainnetGenesis()),
+		TestParams:           params,
 		TestStore:            store.MockingStore(ts),
 		TestCommittee:        cmt,
 		TestJoinedValidators: make(map[crypto.Address]bool),

@@ -5,7 +5,6 @@ import (
 
 	"github.com/pactus-project/pactus/state/param"
 	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/stretchr/testify/assert"
@@ -208,16 +207,7 @@ func TestExecuteDelegatedBondTx(t *testing.T) {
 		return trx
 	}
 
-	t.Run("Should fail, invalid block version", func(t *testing.T) {
-		td.sbx.TestParams.BlockVersion = protocol.ProtocolVersion2
-		trx := makeDelegatedBond(td.sbx.TestParams.MaximumStake)
-
-		td.check(t, trx, true, ErrInvalidBlockVersion)
-		td.check(t, trx, false, ErrInvalidBlockVersion)
-	})
-
 	t.Run("Should fail, delegation stake must equal maximum", func(t *testing.T) {
-		td.sbx.TestParams.BlockVersion = protocol.ProtocolVersion3
 		trx := makeDelegatedBond(td.sbx.TestParams.MaximumStake - 1)
 
 		td.check(t, trx, true, ErrInvalidDelegation)
@@ -225,7 +215,6 @@ func TestExecuteDelegatedBondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, delegate expiry is in past/current height", func(t *testing.T) {
-		td.sbx.TestParams.BlockVersion = protocol.ProtocolVersion3
 		trx := makeDelegatedBond(td.sbx.TestParams.MaximumStake)
 		pld := trx.Payload().(*payload.BondPayload)
 		pld.DelegateExpiry = td.sbx.CurrentHeight()
@@ -235,7 +224,6 @@ func TestExecuteDelegatedBondTx(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		td.sbx.TestParams.BlockVersion = protocol.ProtocolVersion3
 		trx := makeDelegatedBond(td.sbx.TestParams.MaximumStake)
 
 		td.check(t, trx, true, nil)
