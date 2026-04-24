@@ -1026,9 +1026,16 @@ type PayloadBond struct {
 	// The stake amount in NanoPAC.
 	Stake int64 `protobuf:"varint,3,opt,name=stake,proto3" json:"stake,omitempty"`
 	// The public key of the validator.
-	PublicKey     string `protobuf:"bytes,4,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	PublicKey string `protobuf:"bytes,4,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
+	// The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+	DelegateOwner string `protobuf:"bytes,5,opt,name=delegate_owner,json=delegateOwner,proto3" json:"delegate_owner,omitempty"`
+	// The share percentage for the delegate owner. Optional, but required when registering a new validator with delegation.
+	// Must be between 0 and 0.7 PAC in nano PAC.
+	DelegateShare int64 `protobuf:"varint,6,opt,name=delegate_share,json=delegateShare,proto3" json:"delegate_share,omitempty"`
+	// The expiry height for the delegate relationship. Optional, but required when registering a new validator with delegation.
+	DelegateExpiry uint32 `protobuf:"varint,7,opt,name=delegate_expiry,json=delegateExpiry,proto3" json:"delegate_expiry,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *PayloadBond) Reset() {
@@ -1087,6 +1094,27 @@ func (x *PayloadBond) GetPublicKey() string {
 		return x.PublicKey
 	}
 	return ""
+}
+
+func (x *PayloadBond) GetDelegateOwner() string {
+	if x != nil {
+		return x.DelegateOwner
+	}
+	return ""
+}
+
+func (x *PayloadBond) GetDelegateShare() int64 {
+	if x != nil {
+		return x.DelegateShare
+	}
+	return 0
+}
+
+func (x *PayloadBond) GetDelegateExpiry() uint32 {
+	if x != nil {
+		return x.DelegateExpiry
+	}
+	return 0
 }
 
 // Payload for a sortition transaction.
@@ -1148,7 +1176,9 @@ func (x *PayloadSortition) GetProof() string {
 type PayloadUnbond struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The address of the validator to unbond from.
-	Validator     string `protobuf:"bytes,1,opt,name=validator,proto3" json:"validator,omitempty"`
+	Validator string `protobuf:"bytes,1,opt,name=validator,proto3" json:"validator,omitempty"`
+	// The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+	DelegateOwner string `protobuf:"bytes,2,opt,name=delegate_owner,json=delegateOwner,proto3" json:"delegate_owner,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1186,6 +1216,13 @@ func (*PayloadUnbond) Descriptor() ([]byte, []int) {
 func (x *PayloadUnbond) GetValidator() string {
 	if x != nil {
 		return x.Validator
+	}
+	return ""
+}
+
+func (x *PayloadUnbond) GetDelegateOwner() string {
+	if x != nil {
+		return x.DelegateOwner
 	}
 	return ""
 }
@@ -1795,18 +1832,22 @@ const file_transaction_proto_rawDesc = "" +
 	"\x0fPayloadTransfer\x12\x16\n" +
 	"\x06sender\x18\x01 \x01(\tR\x06sender\x12\x1a\n" +
 	"\breceiver\x18\x02 \x01(\tR\breceiver\x12\x16\n" +
-	"\x06amount\x18\x03 \x01(\x03R\x06amount\"v\n" +
+	"\x06amount\x18\x03 \x01(\x03R\x06amount\"\xed\x01\n" +
 	"\vPayloadBond\x12\x16\n" +
 	"\x06sender\x18\x01 \x01(\tR\x06sender\x12\x1a\n" +
 	"\breceiver\x18\x02 \x01(\tR\breceiver\x12\x14\n" +
 	"\x05stake\x18\x03 \x01(\x03R\x05stake\x12\x1d\n" +
 	"\n" +
-	"public_key\x18\x04 \x01(\tR\tpublicKey\"B\n" +
+	"public_key\x18\x04 \x01(\tR\tpublicKey\x12%\n" +
+	"\x0edelegate_owner\x18\x05 \x01(\tR\rdelegateOwner\x12%\n" +
+	"\x0edelegate_share\x18\x06 \x01(\x03R\rdelegateShare\x12'\n" +
+	"\x0fdelegate_expiry\x18\a \x01(\rR\x0edelegateExpiry\"B\n" +
 	"\x10PayloadSortition\x12\x18\n" +
 	"\aaddress\x18\x01 \x01(\tR\aaddress\x12\x14\n" +
-	"\x05proof\x18\x02 \x01(\tR\x05proof\"-\n" +
+	"\x05proof\x18\x02 \x01(\tR\x05proof\"T\n" +
 	"\rPayloadUnbond\x12\x1c\n" +
-	"\tvalidator\x18\x01 \x01(\tR\tvalidator\"\x7f\n" +
+	"\tvalidator\x18\x01 \x01(\tR\tvalidator\x12%\n" +
+	"\x0edelegate_owner\x18\x02 \x01(\tR\rdelegateOwner\"\x7f\n" +
 	"\x0fPayloadWithdraw\x12+\n" +
 	"\x11validator_address\x18\x01 \x01(\tR\x10validatorAddress\x12'\n" +
 	"\x0faccount_address\x18\x02 \x01(\tR\x0eaccountAddress\x12\x16\n" +

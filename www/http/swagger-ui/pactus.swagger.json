@@ -2673,6 +2673,20 @@
         "publicKey": {
           "type": "string",
           "description": "The public key of the validator."
+        },
+        "delegateOwner": {
+          "type": "string",
+          "description": "The address of the delegate owner. Optional, but required when registering a new validator with delegation."
+        },
+        "delegateShare": {
+          "type": "string",
+          "format": "int64",
+          "description": "The share percentage for the delegate owner. Optional, but required when registering a new validator with delegation.\nMust be between 0 and 0.7 PAC in nano PAC."
+        },
+        "delegateExpiry": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The expiry height for the delegate relationship. Optional, but required when registering a new validator with delegation."
         }
       },
       "description": "Payload for a bond transaction."
@@ -2730,6 +2744,10 @@
         "validator": {
           "type": "string",
           "description": "The address of the validator to unbond from."
+        },
+        "delegateOwner": {
+          "type": "string",
+          "description": "The address of the delegate owner. Optional, but required when registering a new validator with delegation."
         }
       },
       "description": "Payload for an unbond transaction."

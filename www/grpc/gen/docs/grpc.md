@@ -423,6 +423,25 @@ For seamless integration with Pactus, you can use these client libraries:
   The public key of the validator.
     </td>
   </tr><tr>
+    <td class="fw-bold">transaction.bond.delegate_owner</td>
+    <td> string</td>
+    <td>
+  The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">transaction.bond.delegate_share</td>
+    <td> int64</td>
+    <td>
+  The share percentage for the delegate owner. Optional, but required when registering a new validator with delegation.
+Must be between 0 and 0.7 PAC in nano PAC.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">transaction.bond.delegate_expiry</td>
+    <td> uint32</td>
+    <td>
+  The expiry height for the delegate relationship. Optional, but required when registering a new validator with delegation.
+    </td>
+  </tr><tr>
     <td class="fw-bold">transaction.sortition</td>
     <td> PayloadSortition</td>
     <td>
@@ -453,6 +472,12 @@ For seamless integration with Pactus, you can use these client libraries:
     <td> string</td>
     <td>
   The address of the validator to unbond from.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">transaction.unbond.delegate_owner</td>
+    <td> string</td>
+    <td>
+  The address of the delegate owner. Optional, but required when registering a new validator with delegation.
     </td>
   </tr><tr>
     <td class="fw-bold">transaction.withdraw</td>
@@ -1164,6 +1189,25 @@ A value of zero means the transaction is unconfirmed and may still in the transa
   The public key of the validator.
     </td>
   </tr><tr>
+    <td class="fw-bold">transaction.bond.delegate_owner</td>
+    <td> string</td>
+    <td>
+  The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">transaction.bond.delegate_share</td>
+    <td> int64</td>
+    <td>
+  The share percentage for the delegate owner. Optional, but required when registering a new validator with delegation.
+Must be between 0 and 0.7 PAC in nano PAC.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">transaction.bond.delegate_expiry</td>
+    <td> uint32</td>
+    <td>
+  The expiry height for the delegate relationship. Optional, but required when registering a new validator with delegation.
+    </td>
+  </tr><tr>
     <td class="fw-bold">transaction.sortition</td>
     <td> PayloadSortition</td>
     <td>
@@ -1194,6 +1238,12 @@ A value of zero means the transaction is unconfirmed and may still in the transa
     <td> string</td>
     <td>
   The address of the validator to unbond from.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">transaction.unbond.delegate_owner</td>
+    <td> string</td>
+    <td>
+  The address of the delegate owner. Optional, but required when registering a new validator with delegation.
     </td>
   </tr><tr>
     <td class="fw-bold">transaction.withdraw</td>
@@ -1563,6 +1613,25 @@ BLOCK_VERBOSITY_TRANSACTIONS.
   The public key of the validator.
     </td>
   </tr><tr>
+    <td class="fw-bold">txs[].bond.delegate_owner</td>
+    <td> string</td>
+    <td>
+  The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">txs[].bond.delegate_share</td>
+    <td> int64</td>
+    <td>
+  The share percentage for the delegate owner. Optional, but required when registering a new validator with delegation.
+Must be between 0 and 0.7 PAC in nano PAC.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">txs[].bond.delegate_expiry</td>
+    <td> uint32</td>
+    <td>
+  The expiry height for the delegate relationship. Optional, but required when registering a new validator with delegation.
+    </td>
+  </tr><tr>
     <td class="fw-bold">txs[].sortition</td>
     <td> PayloadSortition</td>
     <td>
@@ -1593,6 +1662,12 @@ BLOCK_VERBOSITY_TRANSACTIONS.
     <td> string</td>
     <td>
   The address of the validator to unbond from.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">txs[].unbond.delegate_owner</td>
+    <td> string</td>
+    <td>
+  The address of the delegate owner. Optional, but required when registering a new validator with delegation.
     </td>
   </tr><tr>
     <td class="fw-bold">txs[].withdraw</td>
@@ -2727,6 +2802,25 @@ Request Message has no fields.
   The public key of the validator.
     </td>
   </tr><tr>
+    <td class="fw-bold">txs[].bond.delegate_owner</td>
+    <td> string</td>
+    <td>
+  The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">txs[].bond.delegate_share</td>
+    <td> int64</td>
+    <td>
+  The share percentage for the delegate owner. Optional, but required when registering a new validator with delegation.
+Must be between 0 and 0.7 PAC in nano PAC.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">txs[].bond.delegate_expiry</td>
+    <td> uint32</td>
+    <td>
+  The expiry height for the delegate relationship. Optional, but required when registering a new validator with delegation.
+    </td>
+  </tr><tr>
     <td class="fw-bold">txs[].sortition</td>
     <td> PayloadSortition</td>
     <td>
@@ -2757,6 +2851,12 @@ Request Message has no fields.
     <td> string</td>
     <td>
   The address of the validator to unbond from.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">txs[].unbond.delegate_owner</td>
+    <td> string</td>
+    <td>
+  The address of the delegate owner. Optional, but required when registering a new validator with delegation.
     </td>
   </tr><tr>
     <td class="fw-bold">txs[].withdraw</td>

@@ -28,14 +28,14 @@
   "type": "object","required": ["sender","receiver","amount"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
 },"bond": {
-  "type": "object","required": ["sender","receiver","stake","public_key"],
-  "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" }}
+  "type": "object","required": ["sender","receiver","stake","public_key","delegate_owner","delegate_share","delegate_expiry"],
+  "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" },"delegate_owner": { "type": "string" },"delegate_share": { "type": "integer" },"delegate_expiry": { "type": "integer" }}
 },"sortition": {
   "type": "object","required": ["address","proof"],
   "properties": {"address": { "type": "string" },"proof": { "type": "string" }}
 },"unbond": {
-  "type": "object","required": ["validator"],
-  "properties": {"validator": { "type": "string" }}
+  "type": "object","required": ["validator","delegate_owner"],
+  "properties": {"validator": { "type": "string" },"delegate_owner": { "type": "string" }}
 },"withdraw": {
   "type": "object","required": ["validator_address","account_address","amount"],
   "properties": {"validator_address": { "type": "string" },"account_address": { "type": "string" },"amount": { "type": "integer" }}
@@ -293,14 +293,14 @@
   "type": "object","required": ["sender","receiver","amount"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
 },"bond": {
-  "type": "object","required": ["sender","receiver","stake","public_key"],
-  "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" }}
+  "type": "object","required": ["sender","receiver","stake","public_key","delegate_owner","delegate_share","delegate_expiry"],
+  "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" },"delegate_owner": { "type": "string" },"delegate_share": { "type": "integer" },"delegate_expiry": { "type": "integer" }}
 },"sortition": {
   "type": "object","required": ["address","proof"],
   "properties": {"address": { "type": "string" },"proof": { "type": "string" }}
 },"unbond": {
-  "type": "object","required": ["validator"],
-  "properties": {"validator": { "type": "string" }}
+  "type": "object","required": ["validator","delegate_owner"],
+  "properties": {"validator": { "type": "string" },"delegate_owner": { "type": "string" }}
 },"withdraw": {
   "type": "object","required": ["validator_address","account_address","amount"],
   "properties": {"validator_address": { "type": "string" },"account_address": { "type": "string" },"amount": { "type": "integer" }}
@@ -355,14 +355,14 @@
   "type": "object","required": ["sender","receiver","amount"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
 },"bond": {
-  "type": "object","required": ["sender","receiver","stake","public_key"],
-  "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" }}
+  "type": "object","required": ["sender","receiver","stake","public_key","delegate_owner","delegate_share","delegate_expiry"],
+  "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" },"delegate_owner": { "type": "string" },"delegate_share": { "type": "integer" },"delegate_expiry": { "type": "integer" }}
 },"sortition": {
   "type": "object","required": ["address","proof"],
   "properties": {"address": { "type": "string" },"proof": { "type": "string" }}
 },"unbond": {
-  "type": "object","required": ["validator"],
-  "properties": {"validator": { "type": "string" }}
+  "type": "object","required": ["validator","delegate_owner"],
+  "properties": {"validator": { "type": "string" },"delegate_owner": { "type": "string" }}
 },"withdraw": {
   "type": "object","required": ["validator_address","account_address","amount"],
   "properties": {"validator_address": { "type": "string" },"account_address": { "type": "string" },"amount": { "type": "integer" }}
@@ -591,14 +591,14 @@
   "type": "object","required": ["sender","receiver","amount"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
 },"bond": {
-  "type": "object","required": ["sender","receiver","stake","public_key"],
-  "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" }}
+  "type": "object","required": ["sender","receiver","stake","public_key","delegate_owner","delegate_share","delegate_expiry"],
+  "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" },"delegate_owner": { "type": "string" },"delegate_share": { "type": "integer" },"delegate_expiry": { "type": "integer" }}
 },"sortition": {
   "type": "object","required": ["address","proof"],
   "properties": {"address": { "type": "string" },"proof": { "type": "string" }}
 },"unbond": {
-  "type": "object","required": ["validator"],
-  "properties": {"validator": { "type": "string" }}
+  "type": "object","required": ["validator","delegate_owner"],
+  "properties": {"validator": { "type": "string" },"delegate_owner": { "type": "string" }}
 },"withdraw": {
   "type": "object","required": ["validator_address","account_address","amount"],
   "properties": {"validator_address": { "type": "string" },"account_address": { "type": "string" },"amount": { "type": "integer" }}
