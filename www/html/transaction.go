@@ -58,7 +58,7 @@ func txToTable(tmk *tableMaker, trx *pactus.TransactionInfo) {
 		tmk.addRowValAddress("Receiver", pld.Receiver)
 		tmk.addRowAmount("Stake", amount.Amount(pld.Stake))
 		if pld.DelegateOwner != "" {
-			tmk.addRowValAddress("Delegate Owner", pld.DelegateOwner)
+			tmk.addRowAccAddress("Delegate Owner", pld.DelegateOwner)
 			tmk.addRowAmount("Delegate Share", amount.Amount(pld.DelegateShare))
 			tmk.addRowInt("Delegate Expiry", int(pld.DelegateExpiry))
 		}
@@ -72,7 +72,7 @@ func txToTable(tmk *tableMaker, trx *pactus.TransactionInfo) {
 		pld := trx.Payload.(*pactus.TransactionInfo_Unbond).Unbond
 		tmk.addRowValAddress("Validator", pld.Validator)
 		if pld.DelegateOwner != "" {
-			tmk.addRowValAddress("Delegate Owner", pld.DelegateOwner)
+			tmk.addRowAccAddress("Delegate Owner", pld.DelegateOwner)
 		}
 
 	case pactus.PayloadType_PAYLOAD_TYPE_WITHDRAW:
