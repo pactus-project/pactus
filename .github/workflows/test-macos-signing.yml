@@ -9,12 +9,14 @@ jobs:
     runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
-        name: [macos-amd64]
+        name: [macos-amd64, macos-arm64]
         include:
           - name: macos-amd64
             runner: macos-15-intel
             lib_home: /usr/local
-
+          - name: macos-arm64
+            runner: macos-15
+            lib_home: /opt/homebrew
 
     env:
       LIB_HOME: ${{ matrix.lib_home }}
