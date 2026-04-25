@@ -2674,6 +2674,10 @@
           "type": "string",
           "description": "The public key of the validator."
         },
+        "isDelegated": {
+          "type": "boolean",
+          "description": "Indicates whether the bond transaction is a delegation."
+        },
         "delegateOwner": {
           "type": "string",
           "description": "The address of the delegate owner. Optional, but required when registering a new validator with delegation."
@@ -2747,7 +2751,7 @@
         },
         "delegateOwner": {
           "type": "string",
-          "description": "The address of the delegate owner. Optional, but required when registering a new validator with delegation."
+          "description": "The address of the delegate owner. Optional, but required when the validator is a delegated validator."
         }
       },
       "description": "Payload for an unbond transaction."

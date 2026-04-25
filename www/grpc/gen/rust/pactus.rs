@@ -199,15 +199,18 @@ pub struct PayloadBond {
     /// The public key of the validator.
     #[prost(string, tag="4")]
     pub public_key: ::prost::alloc::string::String,
+    /// Indicates whether the bond transaction is a delegation.
+    #[prost(bool, tag="5")]
+    pub is_delegated: bool,
     /// The address of the delegate owner. Optional, but required when registering a new validator with delegation.
-    #[prost(string, tag="5")]
+    #[prost(string, tag="6")]
     pub delegate_owner: ::prost::alloc::string::String,
     /// The share percentage for the delegate owner. Optional, but required when registering a new validator with delegation.
     /// Must be between 0 and 0.7 PAC in nano PAC.
-    #[prost(int64, tag="6")]
+    #[prost(int64, tag="7")]
     pub delegate_share: i64,
     /// The expiry height for the delegate relationship. Optional, but required when registering a new validator with delegation.
-    #[prost(uint32, tag="7")]
+    #[prost(uint32, tag="8")]
     pub delegate_expiry: u32,
 }
 /// Payload for a sortition transaction.
@@ -226,7 +229,7 @@ pub struct PayloadUnbond {
     /// The address of the validator to unbond from.
     #[prost(string, tag="1")]
     pub validator: ::prost::alloc::string::String,
-    /// The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+    /// The address of the delegate owner. Optional, but required when the validator is a delegated validator.
     #[prost(string, tag="2")]
     pub delegate_owner: ::prost::alloc::string::String,
 }

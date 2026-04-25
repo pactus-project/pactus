@@ -57,7 +57,8 @@ func txToTable(tmk *tableMaker, trx *pactus.TransactionInfo) {
 		tmk.addRowAccAddress("Sender", pld.Sender)
 		tmk.addRowValAddress("Receiver", pld.Receiver)
 		tmk.addRowAmount("Stake", amount.Amount(pld.Stake))
-		if pld.DelegateOwner != "" {
+		tmk.addRowBool("Is Delegated", pld.IsDelegated)
+		if pld.IsDelegated {
 			tmk.addRowAccAddress("Delegate Owner", pld.DelegateOwner)
 			tmk.addRowAmount("Delegate Share", amount.Amount(pld.DelegateShare))
 			tmk.addRowInt("Delegate Expiry", int(pld.DelegateExpiry))

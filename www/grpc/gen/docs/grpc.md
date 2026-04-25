@@ -423,6 +423,12 @@ For seamless integration with Pactus, you can use these client libraries:
   The public key of the validator.
     </td>
   </tr><tr>
+    <td class="fw-bold">transaction.bond.is_delegated</td>
+    <td> bool</td>
+    <td>
+  Indicates whether the bond transaction is a delegation.
+    </td>
+  </tr><tr>
     <td class="fw-bold">transaction.bond.delegate_owner</td>
     <td> string</td>
     <td>
@@ -477,7 +483,7 @@ Must be between 0 and 0.7 PAC in nano PAC.
     <td class="fw-bold">transaction.unbond.delegate_owner</td>
     <td> string</td>
     <td>
-  The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+  The address of the delegate owner. Optional, but required when the validator is a delegated validator.
     </td>
   </tr><tr>
     <td class="fw-bold">transaction.withdraw</td>
@@ -1189,6 +1195,12 @@ A value of zero means the transaction is unconfirmed and may still in the transa
   The public key of the validator.
     </td>
   </tr><tr>
+    <td class="fw-bold">transaction.bond.is_delegated</td>
+    <td> bool</td>
+    <td>
+  Indicates whether the bond transaction is a delegation.
+    </td>
+  </tr><tr>
     <td class="fw-bold">transaction.bond.delegate_owner</td>
     <td> string</td>
     <td>
@@ -1243,7 +1255,7 @@ Must be between 0 and 0.7 PAC in nano PAC.
     <td class="fw-bold">transaction.unbond.delegate_owner</td>
     <td> string</td>
     <td>
-  The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+  The address of the delegate owner. Optional, but required when the validator is a delegated validator.
     </td>
   </tr><tr>
     <td class="fw-bold">transaction.withdraw</td>
@@ -1613,6 +1625,12 @@ BLOCK_VERBOSITY_TRANSACTIONS.
   The public key of the validator.
     </td>
   </tr><tr>
+    <td class="fw-bold">txs[].bond.is_delegated</td>
+    <td> bool</td>
+    <td>
+  Indicates whether the bond transaction is a delegation.
+    </td>
+  </tr><tr>
     <td class="fw-bold">txs[].bond.delegate_owner</td>
     <td> string</td>
     <td>
@@ -1667,7 +1685,7 @@ Must be between 0 and 0.7 PAC in nano PAC.
     <td class="fw-bold">txs[].unbond.delegate_owner</td>
     <td> string</td>
     <td>
-  The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+  The address of the delegate owner. Optional, but required when the validator is a delegated validator.
     </td>
   </tr><tr>
     <td class="fw-bold">txs[].withdraw</td>
@@ -2802,6 +2820,12 @@ Request Message has no fields.
   The public key of the validator.
     </td>
   </tr><tr>
+    <td class="fw-bold">txs[].bond.is_delegated</td>
+    <td> bool</td>
+    <td>
+  Indicates whether the bond transaction is a delegation.
+    </td>
+  </tr><tr>
     <td class="fw-bold">txs[].bond.delegate_owner</td>
     <td> string</td>
     <td>
@@ -2856,7 +2880,7 @@ Must be between 0 and 0.7 PAC in nano PAC.
     <td class="fw-bold">txs[].unbond.delegate_owner</td>
     <td> string</td>
     <td>
-  The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+  The address of the delegate owner. Optional, but required when the validator is a delegated validator.
     </td>
   </tr><tr>
     <td class="fw-bold">txs[].withdraw</td>
