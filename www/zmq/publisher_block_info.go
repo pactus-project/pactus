@@ -26,7 +26,7 @@ func (b *blockInfoPub) onNewBlock(blk *block.Block) {
 		blk.Header().ProposerAddress(),
 		blk.Header().UnixTime(),
 		uint16(len(blk.Transactions())),
-		uint32(blk.Height()),
+		blk.Height(),
 	)
 
 	message := zmq4.NewMsg(rawMsg)

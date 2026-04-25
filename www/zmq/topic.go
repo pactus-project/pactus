@@ -35,7 +35,7 @@ func (t Topic) String() string {
 
 func (t Topic) Bytes() []byte {
 	b := make([]byte, 2)
-	binary.BigEndian.PutUint16(b, uint16(t))
+	binary.LittleEndian.PutUint16(b, uint16(t))
 
 	return b
 }
@@ -45,5 +45,5 @@ func TopicFromBytes(b []byte) Topic {
 		return 0
 	}
 
-	return Topic(binary.BigEndian.Uint16(b))
+	return Topic(binary.LittleEndian.Uint16(b))
 }

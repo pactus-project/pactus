@@ -43,10 +43,10 @@ func TestBlockInfoPublisher(t *testing.T) {
 
 	topic := msg[:2]
 	proposerBytes := msg[2:23]
-	timestamp := binary.BigEndian.Uint32(msg[23:27])
-	txCount := binary.BigEndian.Uint16(msg[27:29])
-	height := binary.BigEndian.Uint32(msg[29:33])
-	seqNo := binary.BigEndian.Uint32(msg[33:])
+	timestamp := binary.LittleEndian.Uint32(msg[23:27])
+	txCount := binary.LittleEndian.Uint16(msg[27:29])
+	height := binary.LittleEndian.Uint32(msg[29:33])
+	seqNo := binary.LittleEndian.Uint32(msg[33:])
 
 	require.Equal(t, TopicBlockInfo.Bytes(), topic)
 	require.Equal(t, blk.Header().ProposerAddress().Bytes(), proposerBytes)

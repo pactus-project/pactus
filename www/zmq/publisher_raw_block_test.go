@@ -44,8 +44,8 @@ func TestRawBlockPublisher(t *testing.T) {
 
 	topic := msg[:2]
 	blockHeader := msg[2 : len(msg)-8]
-	height := binary.BigEndian.Uint32(msg[140 : len(msg)-4])
-	seqNo := binary.BigEndian.Uint32(msg[len(msg)-4:])
+	height := binary.LittleEndian.Uint32(msg[140 : len(msg)-4])
+	seqNo := binary.LittleEndian.Uint32(msg[len(msg)-4:])
 
 	buf := bytes.NewBuffer(blockHeader)
 	header := new(block.Header)

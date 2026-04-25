@@ -47,8 +47,8 @@ func TestRawTxPublisher(t *testing.T) {
 		rawTx := msg[2 : len(msg)-8]
 
 		blockNumberOffset := len(msg) - 8
-		height := binary.BigEndian.Uint32(msg[blockNumberOffset : blockNumberOffset+4])
-		seqNo := binary.BigEndian.Uint32(msg[len(msg)-4:])
+		height := binary.LittleEndian.Uint32(msg[blockNumberOffset : blockNumberOffset+4])
+		seqNo := binary.LittleEndian.Uint32(msg[len(msg)-4:])
 
 		txn, err := tx.FromBytes(rawTx)
 		require.NoError(t, err)

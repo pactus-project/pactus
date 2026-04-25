@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-zeromq/zmq4"
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/util/logger"
 )
@@ -54,19 +55,23 @@ func (b *basePub) makeTopicMsg(parts ...any) []byte {
 		switch castedVal := part.(type) {
 		case crypto.Address:
 			result = append(result, castedVal.Bytes()...)
+		case types.Height:
+			result = append(result, castedVal.EncodeAsSlice()...)
+		case types.Round:
+			result = append(result, castedVal.EncodeAsSlice()...)
 		case []byte:
 			result = append(result, castedVal...)
-		case uint32:
-			result = binary.BigEndian.AppendUint32(result, castedVal)
 		case uint16:
-			result = binary.BigEndian.AppendUint16(result, castedVal)
+			result = binary.LittleEndian.AppendUint16(result, castedVal)
+		case uint32:
+			result = binary.LittleEndian.AppendUint32(result, castedVal)
 		default:
 			panic("implement me!!")
 		}
 	}
 
-	// Append sequence number to the message (4 Bytes, Big Endian encoding)
-	result = binary.BigEndian.AppendUint32(result, b.seqNo)
+	// Append sequence number to the message (4 Bytes, Little Endian encoding)
+	result = binary.LittleEndian.AppendUint32(result, b.seqNo)
 
 	return result
 }

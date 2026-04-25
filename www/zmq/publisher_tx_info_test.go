@@ -44,8 +44,8 @@ func TestTxInfoPublisher(t *testing.T) {
 
 		topic := msg[:2]
 		txHash := msg[2:34]
-		height := binary.BigEndian.Uint32(msg[34:38])
-		seqNo := binary.BigEndian.Uint32(msg[38:])
+		height := binary.LittleEndian.Uint32(msg[34:38])
+		seqNo := binary.LittleEndian.Uint32(msg[38:])
 
 		require.Equal(t, TopicTransactionInfo.Bytes(), topic)
 		require.Equal(t, blk.Transactions()[i].ID().Bytes(), txHash)

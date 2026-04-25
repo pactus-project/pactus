@@ -60,8 +60,8 @@ func TestPublisherOnSameSockets(t *testing.T) {
 
 		topic := TopicFromBytes(msg[:2])
 		blockNumberOffset := len(msg) - 8
-		height := binary.BigEndian.Uint32(msg[blockNumberOffset : blockNumberOffset+4])
-		seqNo := binary.BigEndian.Uint32(msg[len(msg)-4:])
+		height := binary.LittleEndian.Uint32(msg[blockNumberOffset : blockNumberOffset+4])
+		seqNo := binary.LittleEndian.Uint32(msg[len(msg)-4:])
 		t.Logf("[%s] %d", topic, seqNo)
 
 		require.Equal(t, types.Height(height), blk.Height())
@@ -96,8 +96,8 @@ func TestPublisherOnSameSockets(t *testing.T) {
 			require.Equal(t, header.StateRoot(), blk.Header().StateRoot())
 		case TopicBlockInfo:
 			proposerBytes := msg[2:23]
-			timestamp := binary.BigEndian.Uint32(msg[23:27])
-			txCount := binary.BigEndian.Uint16(msg[27:29])
+			timestamp := binary.LittleEndian.Uint32(msg[23:27])
+			txCount := binary.LittleEndian.Uint16(msg[27:29])
 
 			require.Equal(t, TopicBlockInfo, topic)
 			require.Equal(t, blk.Header().ProposerAddress().Bytes(), proposerBytes)
