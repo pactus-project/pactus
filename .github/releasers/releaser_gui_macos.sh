@@ -78,13 +78,13 @@ ${BUNDLER} ${GUI_BUNDLE}/gui.bundle
 rm -rf ${ROOT_DIR}/pactus-gui.app/Contents/Resources/Cellar
 
 if [ ! -z "${MACOS_CERT_IDENTITY}" ]; then
-    echo "Signing artifacts..."
+    echo "=== Signing artifacts..."
     codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-daemon
     codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-wallet
     codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-shell
     codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-gui
 
-    echo "Signing app bundle..."
+    echo "=== Signing app bundle..."
     codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${ROOT_DIR}/pactus-gui.app
 fi
 
@@ -105,8 +105,8 @@ if [ ! -z "${APPLE_ID}" ]; then
         --wait
 
     echo "Stapling..."
-    xcrun stapler staple "${ROOT_DIR}/pactus-gui.app"
     xcrun stapler staple "${FILE_NAME}.dmg"
+    xcrun stapler staple "${ROOT_DIR}/pactus-gui.app"
 fi
 
 echo "Creating tar.gz archive"
