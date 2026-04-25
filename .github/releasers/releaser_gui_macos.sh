@@ -97,16 +97,16 @@ create-dmg --skip-jenkins \
   "${ROOT_DIR}/pactus-gui.app"
 
 if [ ! -z "${APPLE_ID}" ]; then
-    echo "Submitting for notarization..."
+    echo "=== Submitting for notarization..."
     xcrun notarytool submit "${FILE_NAME}.dmg" \
         --apple-id "${APPLE_ID}" \
         --password "${APPLE_PASSWORD}" \
         --team-id "${APPLE_TEAM_ID}" \
         --wait
 
-    echo "Stapling..."
-    xcrun stapler staple "${FILE_NAME}.dmg"
+    echo "=== Stapling..."
     xcrun stapler staple "${ROOT_DIR}/pactus-gui.app"
+    xcrun stapler staple "${FILE_NAME}.dmg"
 fi
 
 echo "Creating tar.gz archive"
