@@ -3209,9 +3209,10 @@ sender: jspb.Message.getFieldWithDefault(msg, 1, ""),
 receiver: jspb.Message.getFieldWithDefault(msg, 2, ""),
 stake: jspb.Message.getFieldWithDefault(msg, 3, 0),
 publicKey: jspb.Message.getFieldWithDefault(msg, 4, ""),
-delegateOwner: jspb.Message.getFieldWithDefault(msg, 5, ""),
-delegateShare: jspb.Message.getFieldWithDefault(msg, 6, 0),
-delegateExpiry: jspb.Message.getFieldWithDefault(msg, 7, 0)
+isDelegated: jspb.Message.getBooleanFieldWithDefault(msg, 5, false),
+delegateOwner: jspb.Message.getFieldWithDefault(msg, 6, ""),
+delegateShare: jspb.Message.getFieldWithDefault(msg, 7, 0),
+delegateExpiry: jspb.Message.getFieldWithDefault(msg, 8, 0)
   };
 
   if (includeInstance) {
@@ -3265,14 +3266,18 @@ proto.pactus.PayloadBond.deserializeBinaryFromReader = function(msg, reader) {
       msg.setPublicKey(value);
       break;
     case 5:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setIsDelegated(value);
+      break;
+    case 6:
       var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setDelegateOwner(value);
       break;
-    case 6:
+    case 7:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setDelegateShare(value);
       break;
-    case 7:
+    case 8:
       var value = /** @type {number} */ (reader.readUint32());
       msg.setDelegateExpiry(value);
       break;
@@ -3333,24 +3338,31 @@ proto.pactus.PayloadBond.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
+  f = message.getIsDelegated();
+  if (f) {
+    writer.writeBool(
+      5,
+      f
+    );
+  }
   f = message.getDelegateOwner();
   if (f.length > 0) {
     writer.writeString(
-      5,
+      6,
       f
     );
   }
   f = message.getDelegateShare();
   if (f !== 0) {
     writer.writeInt64(
-      6,
+      7,
       f
     );
   }
   f = message.getDelegateExpiry();
   if (f !== 0) {
     writer.writeUint32(
-      7,
+      8,
       f
     );
   }
@@ -3430,11 +3442,29 @@ proto.pactus.PayloadBond.prototype.setPublicKey = function(value) {
 
 
 /**
- * optional string delegate_owner = 5;
+ * optional bool is_delegated = 5;
+ * @return {boolean}
+ */
+proto.pactus.PayloadBond.prototype.getIsDelegated = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 5, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.pactus.PayloadBond} returns this
+ */
+proto.pactus.PayloadBond.prototype.setIsDelegated = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 5, value);
+};
+
+
+/**
+ * optional string delegate_owner = 6;
  * @return {string}
  */
 proto.pactus.PayloadBond.prototype.getDelegateOwner = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
 };
 
 
@@ -3443,33 +3473,15 @@ proto.pactus.PayloadBond.prototype.getDelegateOwner = function() {
  * @return {!proto.pactus.PayloadBond} returns this
  */
 proto.pactus.PayloadBond.prototype.setDelegateOwner = function(value) {
-  return jspb.Message.setProto3StringField(this, 5, value);
+  return jspb.Message.setProto3StringField(this, 6, value);
 };
 
 
 /**
- * optional int64 delegate_share = 6;
+ * optional int64 delegate_share = 7;
  * @return {number}
  */
 proto.pactus.PayloadBond.prototype.getDelegateShare = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.PayloadBond} returns this
- */
-proto.pactus.PayloadBond.prototype.setDelegateShare = function(value) {
-  return jspb.Message.setProto3IntField(this, 6, value);
-};
-
-
-/**
- * optional uint32 delegate_expiry = 7;
- * @return {number}
- */
-proto.pactus.PayloadBond.prototype.getDelegateExpiry = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
@@ -3478,8 +3490,26 @@ proto.pactus.PayloadBond.prototype.getDelegateExpiry = function() {
  * @param {number} value
  * @return {!proto.pactus.PayloadBond} returns this
  */
-proto.pactus.PayloadBond.prototype.setDelegateExpiry = function(value) {
+proto.pactus.PayloadBond.prototype.setDelegateShare = function(value) {
   return jspb.Message.setProto3IntField(this, 7, value);
+};
+
+
+/**
+ * optional uint32 delegate_expiry = 8;
+ * @return {number}
+ */
+proto.pactus.PayloadBond.prototype.getDelegateExpiry = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.PayloadBond} returns this
+ */
+proto.pactus.PayloadBond.prototype.setDelegateExpiry = function(value) {
+  return jspb.Message.setProto3IntField(this, 8, value);
 };
 
 

@@ -177,6 +177,7 @@ class PayloadBond(_message.Message):
     RECEIVER_FIELD_NUMBER: _ClassVar[int]
     STAKE_FIELD_NUMBER: _ClassVar[int]
     PUBLIC_KEY_FIELD_NUMBER: _ClassVar[int]
+    IS_DELEGATED_FIELD_NUMBER: _ClassVar[int]
     DELEGATE_OWNER_FIELD_NUMBER: _ClassVar[int]
     DELEGATE_SHARE_FIELD_NUMBER: _ClassVar[int]
     DELEGATE_EXPIRY_FIELD_NUMBER: _ClassVar[int]
@@ -184,10 +185,11 @@ class PayloadBond(_message.Message):
     receiver: str
     stake: int
     public_key: str
+    is_delegated: bool
     delegate_owner: str
     delegate_share: int
     delegate_expiry: int
-    def __init__(self, sender: _Optional[str] = ..., receiver: _Optional[str] = ..., stake: _Optional[int] = ..., public_key: _Optional[str] = ..., delegate_owner: _Optional[str] = ..., delegate_share: _Optional[int] = ..., delegate_expiry: _Optional[int] = ...) -> None: ...
+    def __init__(self, sender: _Optional[str] = ..., receiver: _Optional[str] = ..., stake: _Optional[int] = ..., public_key: _Optional[str] = ..., is_delegated: _Optional[bool] = ..., delegate_owner: _Optional[str] = ..., delegate_share: _Optional[int] = ..., delegate_expiry: _Optional[int] = ...) -> None: ...
 
 class PayloadSortition(_message.Message):
     __slots__ = ()

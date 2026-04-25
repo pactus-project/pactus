@@ -28,8 +28,8 @@
   "type": "object","required": ["sender","receiver","amount"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
 },"bond": {
-  "type": "object","required": ["sender","receiver","stake","public_key","delegate_owner","delegate_share","delegate_expiry"],
-  "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" },"delegate_owner": { "type": "string" },"delegate_share": { "type": "integer" },"delegate_expiry": { "type": "integer" }}
+  "type": "object","required": ["sender","receiver","stake","public_key","is_delegated","delegate_owner","delegate_share","delegate_expiry"],
+  "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" },"is_delegated": { "type": "boolean" },"delegate_owner": { "type": "string" },"delegate_share": { "type": "integer" },"delegate_expiry": { "type": "integer" }}
 },"sortition": {
   "type": "object","required": ["address","proof"],
   "properties": {"address": { "type": "string" },"proof": { "type": "string" }}
@@ -293,8 +293,8 @@
   "type": "object","required": ["sender","receiver","amount"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
 },"bond": {
-  "type": "object","required": ["sender","receiver","stake","public_key","delegate_owner","delegate_share","delegate_expiry"],
-  "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" },"delegate_owner": { "type": "string" },"delegate_share": { "type": "integer" },"delegate_expiry": { "type": "integer" }}
+  "type": "object","required": ["sender","receiver","stake","public_key","is_delegated","delegate_owner","delegate_share","delegate_expiry"],
+  "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" },"is_delegated": { "type": "boolean" },"delegate_owner": { "type": "string" },"delegate_share": { "type": "integer" },"delegate_expiry": { "type": "integer" }}
 },"sortition": {
   "type": "object","required": ["address","proof"],
   "properties": {"address": { "type": "string" },"proof": { "type": "string" }}
@@ -355,8 +355,8 @@
   "type": "object","required": ["sender","receiver","amount"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
 },"bond": {
-  "type": "object","required": ["sender","receiver","stake","public_key","delegate_owner","delegate_share","delegate_expiry"],
-  "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" },"delegate_owner": { "type": "string" },"delegate_share": { "type": "integer" },"delegate_expiry": { "type": "integer" }}
+  "type": "object","required": ["sender","receiver","stake","public_key","is_delegated","delegate_owner","delegate_share","delegate_expiry"],
+  "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" },"is_delegated": { "type": "boolean" },"delegate_owner": { "type": "string" },"delegate_share": { "type": "integer" },"delegate_expiry": { "type": "integer" }}
 },"sortition": {
   "type": "object","required": ["address","proof"],
   "properties": {"address": { "type": "string" },"proof": { "type": "string" }}
@@ -591,8 +591,8 @@
   "type": "object","required": ["sender","receiver","amount"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
 },"bond": {
-  "type": "object","required": ["sender","receiver","stake","public_key","delegate_owner","delegate_share","delegate_expiry"],
-  "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" },"delegate_owner": { "type": "string" },"delegate_share": { "type": "integer" },"delegate_expiry": { "type": "integer" }}
+  "type": "object","required": ["sender","receiver","stake","public_key","is_delegated","delegate_owner","delegate_share","delegate_expiry"],
+  "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" },"is_delegated": { "type": "boolean" },"delegate_owner": { "type": "string" },"delegate_share": { "type": "integer" },"delegate_expiry": { "type": "integer" }}
 },"sortition": {
   "type": "object","required": ["address","proof"],
   "properties": {"address": { "type": "string" },"proof": { "type": "string" }}
