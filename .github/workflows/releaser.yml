@@ -127,6 +127,9 @@ jobs:
           p12-file-base64: ${{ secrets.MACOS_CERTIFICATE }}
           p12-password: ${{ secrets.MACOS_CERTIFICATE_PWD }}
 
+      - name: List Identities
+        run: security find-identity -v -p codesigning
+
       - name: Create release files
         run: bash ./.github/releasers/releaser_gui_macos.sh
         env:
