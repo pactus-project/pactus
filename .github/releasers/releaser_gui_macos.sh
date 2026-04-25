@@ -96,6 +96,31 @@ create-dmg --skip-jenkins \
   "${FILE_NAME}.dmg" \
   "${ROOT_DIR}/pactus-gui.app"
 
+
+    # Capture submission ID and check final status
+    SUBMISSION_ID=$(xcrun notarytool submit "${FILE_NAME}.dmg" \
+        --apple-id "${APPLE_ID}" \
+        --password "${APPLE_PASSWORD}" \
+        --team-id "${APPLE_TEAM_ID}" \
+        --wait --output-format json | jq -r '.id')
+
+    STATUS=$(xcrun notarytool info "$SUBMISSION_ID" \
+        --apple-id "${APPLE_ID}" \
+        --password "${APPLE_PASSWORD}" \
+        --team-id "${APPLE_TEAM_ID}" \
+        --output-format json | jq -r '.status')
+
+    if [ "$STATUS" != "Accepted" ]; then
+        echo "Notarization failed with status: $STATUS"
+        xcrun notarytool log "$SUBMISSION_ID" \
+            --apple-id "${APPLE_ID}" \
+            --password "${APPLE_PASSWORD}" \
+            --team-id "${APPLE_TEAM_ID}" \
+            notarization.log
+        cat notarization.log
+        exit 1
+    fi
+
 if [ ! -z "${APPLE_ID}" ]; then
     echo "=== Submitting for notarization..."
     xcrun notarytool submit "${FILE_NAME}.dmg" \
@@ -104,9 +129,12 @@ if [ ! -z "${APPLE_ID}" ]; then
         --team-id "${APPLE_TEAM_ID}" \
         --wait
 
-    echo "=== Stapling..."
-    xcrun stapler staple "${ROOT_DIR}/pactus-gui.app"
+    echo "Stapling DMG only (the app inside gets the ticket automatically)..."
+    # ✅ FIX: Only staple the DMG – the .app was not notarized separately, so stapling it would cause error 65.
     xcrun stapler staple "${FILE_NAME}.dmg"
+
+    # ❌ REMOVED: Stapling the standalone .app
+    # xcrun stapler staple "${ROOT_DIR}/pactus-gui.app"
 fi
 
 echo "Creating tar.gz archive"
