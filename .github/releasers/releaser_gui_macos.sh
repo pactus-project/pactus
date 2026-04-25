@@ -81,44 +81,53 @@ rm -rf ${ROOT_DIR}/pactus-gui.app/Contents/Resources/Cellar
 # After gtk-mac-bundler and your fix-install-names script...
 
 if [ ! -z "${MACOS_CERT_IDENTITY}" ]; then
-    echo "=== Step 1: Signing all .so and .dylib files inside the app bundle..."
+    echo "=== Signing all Mach-O files inside the app bundle (dylibs, .so, executables, etc.)..."
 
-    # Use find to locate all .so and .dylib files, regardless of permissions.
-    find ${ROOT_DIR}/pactus-gui.app/Contents \( -name "*.dylib" -o -name "*.so" \) -print0 | while IFS= read -r -d '' binary; do
+    # Create a temporary file to list all Mach-O binaries
+    find ${ROOT_DIR}/pactus-gui.app/Contents -type f -exec file {} \; | grep "Mach-O" | cut -d: -f1 > /tmp/macho_files.txt
+
+    # First, sign only the .dylib and .so files (if any)
+    grep -E '\.(dylib|so)$' /tmp/macho_files.txt | while read binary; do
+        echo "Signing library: $binary"
+        codesign --force --timestamp --verbose --sign "${MACOS_CERT_IDENTITY}" "$binary"
+        if [ $? -ne 0 ]; then exit 1; fi
+    done
+
+    # Then sign all other Mach-O binaries (executables, helpers, etc.)
+    grep -v -E '\.(dylib|so)$' /tmp/macho_files.txt | while read binary; do
         echo "Signing binary: $binary"
-        codesign --force --timestamp --options runtime --verbose --sign "${MACOS_CERT_IDENTITY}" "$binary"
+        codesign --force --timestamp --verbose --sign "${MACOS_CERT_IDENTITY}" "$binary"
+        if [ $? -ne 0 ]; then exit 1; fi
     done
 
-    echo "=== Step 2: Signing all executable binaries inside the app bundle..."
-
-    # Use find to locate all regular files with executable bits, check for Mach-O, and sign them.
-    find ${ROOT_DIR}/pactus-gui.app/Contents -type f -perm +111 -print0 | while IFS= read -r -d '' binary; do
-        if file "$binary" | grep -q "Mach-O"; then
-            echo "Signing executable: $binary"
-            codesign --force --timestamp --options runtime --verbose --sign "${MACOS_CERT_IDENTITY}" "$binary"
-        fi
-    done
-
-    echo "=== Step 3: Signing standalone binaries in build directory..."
+    # Sign standalone binaries outside the app (if any)
     for bin in pactus-daemon pactus-wallet pactus-shell pactus-gui; do
         if [ -f "${BUILD_DIR}/${bin}" ]; then
-            codesign --force --timestamp --options runtime --verbose --sign "${MACOS_CERT_IDENTITY}" "${BUILD_DIR}/${bin}"
+            echo "Signing standalone binary: ${BUILD_DIR}/${bin}"
+            codesign --force --timestamp --verbose --sign "${MACOS_CERT_IDENTITY}" "${BUILD_DIR}/${bin}"
         fi
     done
 
-    echo "=== Step 4: Finally, signing the whole .app bundle..."
-    codesign --force --timestamp --options runtime --verbose --sign "${MACOS_CERT_IDENTITY}" ${ROOT_DIR}/pactus-gui.app
+    echo "=== Signing the whole app bundle (top-level)..."
+    codesign --force --timestamp --verbose --sign "${MACOS_CERT_IDENTITY}" ${ROOT_DIR}/pactus-gui.app
+
+    echo "=== Verification: checking the final app bundle..."
+    codesign --verify --verbose --deep --strict ${ROOT_DIR}/pactus-gui.app
+    if [ $? -ne 0 ]; then
+        echo "ERROR: App bundle verification failed!"
+        exit 1
+    fi
 fi
 
 # if [ ! -z "${MACOS_CERT_IDENTITY}" ]; then
 #     echo "=== Signing artifacts..."
-#     codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-daemon
-#     codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-wallet
-#     codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-shell
-#     codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-gui
+#     codesign --force --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-daemon
+#     codesign --force --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-wallet
+#     codesign --force --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-shell
+#     codesign --force --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-gui
 
 #     echo "=== Signing app bundle..."
-#     codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${ROOT_DIR}/pactus-gui.app
+#     codesign --force --timestamp --sign "${MACOS_CERT_IDENTITY}" ${ROOT_DIR}/pactus-gui.app
 # fi
 
 echo "Creating dmg"
