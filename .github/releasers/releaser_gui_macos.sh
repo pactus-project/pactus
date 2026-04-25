@@ -77,16 +77,37 @@ ${BUNDLER} ${GUI_BUNDLE}/gui.bundle
 # Removing Cellar as workaround
 rm -rf ${ROOT_DIR}/pactus-gui.app/Contents/Resources/Cellar
 
-if [ ! -z "${MACOS_CERT_IDENTITY}" ]; then
-    echo "=== Signing artifacts..."
-    codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-daemon
-    codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-wallet
-    codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-shell
-    codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-gui
 
-    echo "=== Signing app bundle..."
-    codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${ROOT_DIR}/pactus-gui.app
+# After gtk-mac-bundler and your fix-install-names script...
+
+if [ ! -z "${MACOS_CERT_IDENTITY}" ]; then
+    echo "=== Signing all Mach-O files inside the app bundle (dylibs, .so, executables)..."
+    find ${ROOT_DIR}/pactus-gui.app/Contents -type f -perm +111 -exec file {} \; | grep "Mach-O" | cut -d: -f1 | while read binary; do
+        echo "Signing: $binary"
+        codesign --force --timestamp --options runtime --sign "${MACOS_CERT_IDENTITY}" "$binary"
+    done
+
+    # Also sign standalone binaries outside the bundle (if any)
+    for bin in pactus-daemon pactus-wallet pactus-shell pactus-gui; do
+        if [ -f "${BUILD_DIR}/${bin}" ]; then
+            codesign --force --timestamp --options runtime --sign "${MACOS_CERT_IDENTITY}" "${BUILD_DIR}/${bin}"
+        fi
+    done
+
+    echo "=== Signing the whole app bundle..."
+    codesign --force --timestamp --options runtime --sign "${MACOS_CERT_IDENTITY}" ${ROOT_DIR}/pactus-gui.app
 fi
+
+# if [ ! -z "${MACOS_CERT_IDENTITY}" ]; then
+#     echo "=== Signing artifacts..."
+#     codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-daemon
+#     codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-wallet
+#     codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-shell
+#     codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-gui
+
+#     echo "=== Signing app bundle..."
+#     codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${ROOT_DIR}/pactus-gui.app
+# fi
 
 echo "Creating dmg"
 # https://github.com/create-dmg/create-dmg
@@ -96,6 +117,10 @@ create-dmg --skip-jenkins \
   "${FILE_NAME}.dmg" \
   "${ROOT_DIR}/pactus-gui.app"
 
+
+
+if [ ! -z "${APPLE_ID}" ]; then
+    echo "=== Submitting for notarization..."
 
     # Capture submission ID and check final status
     SUBMISSION_ID=$(xcrun notarytool submit "${FILE_NAME}.dmg" \
@@ -121,20 +146,20 @@ create-dmg --skip-jenkins \
         exit 1
     fi
 
-if [ ! -z "${APPLE_ID}" ]; then
-    echo "=== Submitting for notarization..."
-    xcrun notarytool submit "${FILE_NAME}.dmg" \
-        --apple-id "${APPLE_ID}" \
-        --password "${APPLE_PASSWORD}" \
-        --team-id "${APPLE_TEAM_ID}" \
-        --wait
 
-    echo "Stapling DMG only (the app inside gets the ticket automatically)..."
-    # ✅ FIX: Only staple the DMG – the .app was not notarized separately, so stapling it would cause error 65.
-    xcrun stapler staple "${FILE_NAME}.dmg"
 
-    # ❌ REMOVED: Stapling the standalone .app
-    # xcrun stapler staple "${ROOT_DIR}/pactus-gui.app"
+    # xcrun notarytool submit "${FILE_NAME}.dmg" \
+    #     --apple-id "${APPLE_ID}" \
+    #     --password "${APPLE_PASSWORD}" \
+    #     --team-id "${APPLE_TEAM_ID}" \
+    #     --wait
+
+    # echo "Stapling DMG only (the app inside gets the ticket automatically)..."
+    # # ✅ FIX: Only staple the DMG – the .app was not notarized separately, so stapling it would cause error 65.
+    # xcrun stapler staple "${FILE_NAME}.dmg"
+
+    # # ❌ REMOVED: Stapling the standalone .app
+    # # xcrun stapler staple "${ROOT_DIR}/pactus-gui.app"
 fi
 
 echo "Creating tar.gz archive"
