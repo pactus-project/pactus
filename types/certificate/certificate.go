@@ -236,29 +236,29 @@ func (cert *Certificate) SignBytesPrecommit(blockHash hash.Hash) []byte {
 func (cert *Certificate) SignBytesCPPreVote(blockHash hash.Hash, cpRound int16, cpValue byte) []byte {
 	return cert.signBytes(blockHash,
 		util.StringToBytes("PRE-VOTE"),
-		util.Int16ToSlice(cpRound),
+		util.Int16ToBytesLE(cpRound),
 		[]byte{cpValue})
 }
 
 func (cert *Certificate) SignBytesCPMainVote(blockHash hash.Hash, cpRound int16, cpValue byte) []byte {
 	return cert.signBytes(blockHash,
 		util.StringToBytes("MAIN-VOTE"),
-		util.Int16ToSlice(cpRound),
+		util.Int16ToBytesLE(cpRound),
 		[]byte{cpValue})
 }
 
 func (cert *Certificate) SignBytesCPDecided(blockHash hash.Hash, cpRound int16, cpValue byte) []byte {
 	return cert.signBytes(blockHash,
 		util.StringToBytes("DECIDED"),
-		util.Int16ToSlice(cpRound),
+		util.Int16ToBytesLE(cpRound),
 		[]byte{cpValue})
 }
 
 // signBytes returns the sign bytes for the vote certificate.
 func (cert *Certificate) signBytes(blockHash hash.Hash, extraData ...[]byte) []byte {
 	signBytes := blockHash.Bytes()
-	signBytes = append(signBytes, cert.height.EncodeAsSlice()...)
-	signBytes = append(signBytes, cert.round.EncodeAsSlice()...)
+	signBytes = append(signBytes, cert.height.BytesLE()...)
+	signBytes = append(signBytes, cert.round.BytesLE()...)
 	for _, data := range extraData {
 		signBytes = append(signBytes, data...)
 	}

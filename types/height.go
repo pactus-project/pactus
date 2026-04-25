@@ -4,9 +4,9 @@ import "github.com/pactus-project/pactus/util"
 
 type Height uint32
 
-// HeightFromSlice creates a Height from a byte slice in little-endian format.
-func HeightFromSlice(data []byte) Height {
-	return Height(util.SliceToUint32(data))
+// HeightFromBytesLE creates a Height from a byte slice in little-endian format.
+func HeightFromBytesLE(data []byte) Height {
+	return Height(util.BytesToUint32LE(data))
 }
 
 // SafeIncrease returns a new Height that is the result of adding count to h.
@@ -34,7 +34,7 @@ func (h Height) SafeSub(other Height) uint32 {
 	return uint32(h - other)
 }
 
-// EncodeAsSlice encodes the height as a byte slice in little-endian format.
-func (h Height) EncodeAsSlice() []byte {
-	return util.Uint32ToSlice(uint32(h))
+// BytesLE encodes the height as a byte slice in little-endian format.
+func (h Height) BytesLE() []byte {
+	return util.Uint32ToBytesLE(uint32(h))
 }

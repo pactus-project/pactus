@@ -31,8 +31,8 @@ func TestRoundEncodeAsSlice(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		slice := test.round.EncodeAsSlice()
-		round := types.RoundFromSlice(slice)
+		slice := test.round.BytesLE()
+		round := types.RoundFromBytesLE(slice)
 
 		assert.Equal(t, test.expected, slice)
 		assert.Equal(t, test.round, round)
