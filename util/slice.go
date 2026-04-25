@@ -9,63 +9,63 @@ import (
 	"slices"
 )
 
-func Uint16ToSlice(n uint16) []byte {
+func Uint16ToBytesLE(n uint16) []byte {
 	bs := make([]byte, 2)
 	binary.LittleEndian.PutUint16(bs, n)
 
 	return bs
 }
 
-func Int16ToSlice(n int16) []byte {
-	return Uint16ToSlice(uint16(n))
+func Int16ToBytesLE(n int16) []byte {
+	return Uint16ToBytesLE(uint16(n))
 }
 
-func SliceToUint16(bs []byte) uint16 {
+func BytesToUint16LE(bs []byte) uint16 {
 	return binary.LittleEndian.Uint16(bs)
 }
 
-func SliceToInt16(bs []byte) int16 {
-	return int16(SliceToUint16(bs))
+func BytesToInt16LE(bs []byte) int16 {
+	return int16(BytesToUint16LE(bs))
 }
 
-func Uint32ToSlice(n uint32) []byte {
+func Uint32ToBytesLE(n uint32) []byte {
 	bs := make([]byte, 4)
 	binary.LittleEndian.PutUint32(bs, n)
 
 	return bs
 }
 
-func Int32ToSlice(n int32) []byte {
-	return Uint32ToSlice(uint32(n))
+func Int32ToBytesLE(n int32) []byte {
+	return Uint32ToBytesLE(uint32(n))
 }
 
-func SliceToUint32(bs []byte) uint32 {
+func BytesToUint32LE(bs []byte) uint32 {
 	return binary.LittleEndian.Uint32(bs)
 }
 
-func SliceToInt32(bs []byte) int32 {
-	return int32(SliceToUint32(bs))
+func BytesToInt32LE(bs []byte) int32 {
+	return int32(BytesToUint32LE(bs))
 }
 
-func Uint64ToSlice(n uint64) []byte {
+func Uint64ToBytesLE(n uint64) []byte {
 	bs := make([]byte, 8)
 	binary.LittleEndian.PutUint64(bs, n)
 
 	return bs
 }
 
-func Int64ToSlice(n int64) []byte {
-	return Uint64ToSlice(uint64(n))
+func Int64ToBytesLE(n int64) []byte {
+	return Uint64ToBytesLE(uint64(n))
 }
 
-func SliceToUint64(bs []byte) uint64 {
+func BytesToUint64LE(bs []byte) uint64 {
 	n := binary.LittleEndian.Uint64(bs)
 
 	return n
 }
 
-func SliceToInt64(bs []byte) int64 {
-	return int64(SliceToUint64(bs))
+func BytesToInt64LE(bs []byte) int64 {
+	return int64(BytesToUint64LE(bs))
 }
 
 // StringToBytes converts a string to a slice of bytes.

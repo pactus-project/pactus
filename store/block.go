@@ -17,7 +17,7 @@ import (
 )
 
 func blockKey(height types.Height) []byte {
-	return append(blockPrefix, height.EncodeAsSlice()...)
+	return append(blockPrefix, height.BytesLE()...)
 }
 
 func publicKeyKey(addr crypto.Address) []byte {
@@ -99,7 +99,7 @@ func (bs *blockStore) saveBlock(batch *leveldb.Batch, height types.Height, blk *
 	blockHashKey := blockHashKey(blockHash)
 
 	batch.Put(blockKey, buf.Bytes())
-	batch.Put(blockHashKey, height.EncodeAsSlice())
+	batch.Put(blockHashKey, height.BytesLE())
 
 	sortitionSeed := blk.Header().SortitionSeed()
 	bs.addToCache(height, sortitionSeed)
@@ -122,7 +122,7 @@ func (bs *blockStore) blockHeight(h hash.Hash) types.Height {
 		return 0
 	}
 
-	return types.HeightFromSlice(data)
+	return types.HeightFromBytesLE(data)
 }
 
 func (bs *blockStore) sortitionSeed(blockHeight types.Height) *sortition.VerifiableSeed {

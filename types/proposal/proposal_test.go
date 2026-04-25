@@ -28,8 +28,8 @@ func TestProposalSignBytes(t *testing.T) {
 
 	prop := ts.GenerateTestProposal(ts.RandHeight(), ts.RandRound())
 	sb := prop.Block().Hash().Bytes()
-	sb = append(sb, prop.Height().EncodeAsSlice()...)
-	sb = append(sb, prop.Round().EncodeAsSlice()...)
+	sb = append(sb, prop.Height().BytesLE()...)
+	sb = append(sb, prop.Round().BytesLE()...)
 
 	assert.Equal(t, sb, prop.SignBytes())
 	assert.Equal(t, hash.CalcHash(sb), prop.Hash())
