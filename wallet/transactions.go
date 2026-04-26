@@ -147,11 +147,9 @@ func (t *transactions) getPendingTransaction() map[string]*wtypes.TransactionInf
 		return nil
 	}
 
-	for txID, pendingInfo := range pendingTxs {
+	for _, pendingInfo := range pendingTxs {
 		trx, err := tx.FromBytes(pendingInfo.Data)
 		if err != nil {
-			logger.Warn("failed to deserialize transaction", "error", err, "id", txID)
-
 			continue
 		}
 
@@ -160,8 +158,6 @@ func (t *transactions) getPendingTransaction() map[string]*wtypes.TransactionInf
 		// Re-broadcast the transaction
 		_, err = t.provider.SendTx(trx)
 		if err != nil {
-			logger.Warn("failed to broadcast transaction", "error", err, "id", txID, "fee", trx.Fee())
-
 			continue
 		}
 	}
