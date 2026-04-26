@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/encoding"
 	"github.com/pactus-project/pactus/util/pairslice"
 	"github.com/syndtr/goleveldb/leveldb"
@@ -76,24 +77,23 @@ func (bs *blockStore) saveBlock(batch *leveldb.Batch, height types.Height, blk *
 		regs[i].height = height
 		regs[i].offset = uint32(offset)
 
+		var encodeOpts []tx.EncodeOption
 		pubKey := trx.PublicKey()
 		if pubKey != nil {
 			if !bs.hasPublicKey(trx.Payload().Signer()) {
 				publicKeyKey := publicKeyKey(trx.Payload().Signer())
 				batch.Put(publicKeyKey, pubKey.Bytes())
 			} else {
-				// we have indexed this public key, se we can remove it
-				trx.SetPublicKey(nil)
+				// we have indexed this public key, so we can skip encoding it
+				encodeOpts = append(encodeOpts, tx.StripPublicKey())
 			}
 		}
 
-		err := trx.Encode(buf)
+		err := trx.Encode(buf, encodeOpts...)
 		if err != nil {
 			panic(err) // Should we panic?
 		}
 		regs[i].length = uint32(buf.Len() - offset)
-
-		trx.SetPublicKey(pubKey)
 	}
 	blockKey := blockKey(height)
 	blockHashKey := blockHashKey(blockHash)
