@@ -36,7 +36,6 @@ type Tx struct {
 }
 
 type txData struct {
-	Flags     uint8
 	Version   uint8
 	LockTime  types.Height
 	Fee       amount.Amount
@@ -56,7 +55,6 @@ func WithMemo(memo string) TxOption {
 
 func newTx(lockTime types.Height, pld payload.Payload, fee amount.Amount, opts ...TxOption) *Tx {
 	data := txData{
-		Flags:    flagNotSigned,
 		LockTime: lockTime,
 		Version:  versionLatest,
 		Payload:  pld,
@@ -127,24 +125,11 @@ func (tx *Tx) IsFreeTx() bool {
 func (tx *Tx) SetSignature(sig crypto.Signature) {
 	tx.basicChecked = false
 	tx.data.Signature = sig
-
-	if sig == nil {
-		tx.data.Flags = util.SetFlag(tx.data.Flags, flagNotSigned)
-	} else {
-		tx.data.Flags = util.UnsetFlag(tx.data.Flags, flagNotSigned)
-	}
 }
 
 func (tx *Tx) SetPublicKey(pub crypto.PublicKey) {
 	tx.basicChecked = false
 	tx.data.PublicKey = pub
-	if pub == nil {
-		if !tx.IsSubsidyTx() {
-			tx.data.Flags = util.SetFlag(tx.data.Flags, flagStripedPublicKey)
-		}
-	} else {
-		tx.data.Flags = util.UnsetFlag(tx.data.Flags, flagStripedPublicKey)
-	}
 }
 
 func (tx *Tx) BasicCheck() error {
@@ -295,8 +280,51 @@ func (tx *Tx) SerializeSize() int {
 	return size
 }
 
-func (tx *Tx) Encode(w io.Writer) error {
-	err := tx.encodeWithNoSignatory(w)
+type EncodeOption func(*encodeOptions)
+
+type encodeOptions struct {
+	stripPublicKey bool
+}
+
+func defaultEncodeOptions() *encodeOptions {
+	return &encodeOptions{
+		stripPublicKey: false,
+	}
+}
+
+func StripPublicKey() EncodeOption {
+	return func(opts *encodeOptions) {
+		opts.stripPublicKey = true
+	}
+}
+
+func (tx *Tx) Encode(w io.Writer, opts ...EncodeOption) error {
+	encOpts := defaultEncodeOptions()
+	for _, opt := range opts {
+		opt(encOpts)
+	}
+
+	flags := uint8(flagNotSigned)
+	if tx.IsSigned() {
+		flags = util.UnsetFlag(flags, flagNotSigned)
+		if encOpts.stripPublicKey || tx.IsPublicKeyStriped() {
+			flags = util.SetFlag(flags, flagStripedPublicKey)
+		}
+	}
+
+	if pld, ok := tx.data.Payload.(*payload.BondPayload); ok && pld.IsDelegated() {
+		flags = util.SetFlag(flags, flagWithDelegation)
+	}
+	if pld, ok := tx.data.Payload.(*payload.UnbondPayload); ok && pld.IsDelegated() {
+		flags = util.SetFlag(flags, flagWithDelegation)
+	}
+
+	err := encoding.WriteElement(w, flags)
+	if err != nil {
+		return err
+	}
+
+	err = tx.encodeWithNoSignatory(w)
 	if err != nil {
 		return err
 	}
@@ -307,7 +335,7 @@ func (tx *Tx) Encode(w io.Writer) error {
 			return err
 		}
 	}
-	if tx.data.PublicKey != nil {
+	if tx.data.PublicKey != nil && !encOpts.stripPublicKey {
 		err = tx.data.PublicKey.Encode(w)
 		if err != nil {
 			return err
@@ -318,14 +346,7 @@ func (tx *Tx) Encode(w io.Writer) error {
 }
 
 func (tx *Tx) encodeWithNoSignatory(w io.Writer) error {
-	flags := tx.data.Flags
-	if pld, ok := tx.data.Payload.(*payload.BondPayload); ok && pld.IsDelegated() {
-		flags = util.SetFlag(flags, flagWithDelegation)
-	}
-	if pld, ok := tx.data.Payload.(*payload.UnbondPayload); ok && pld.IsDelegated() {
-		flags = util.SetFlag(flags, flagWithDelegation)
-	}
-	err := encoding.WriteElements(w, flags, tx.data.Version, tx.data.LockTime)
+	err := encoding.WriteElements(w, tx.data.Version, tx.data.LockTime)
 	if err != nil {
 		return err
 	}
@@ -350,7 +371,8 @@ func (tx *Tx) encodeWithNoSignatory(w io.Writer) error {
 }
 
 func (tx *Tx) Decode(r io.Reader) error {
-	err := encoding.ReadElements(r, &tx.data.Flags, &tx.data.Version, &tx.data.LockTime)
+	flags := uint8(0)
+	err := encoding.ReadElements(r, &flags, &tx.data.Version, &tx.data.LockTime)
 	if err != nil {
 		return err
 	}
@@ -393,17 +415,16 @@ func (tx *Tx) Decode(r io.Reader) error {
 	}
 
 	ctx := payload.DecodeContext{
-		WithDelegation: util.IsFlagSet(tx.data.Flags, flagWithDelegation),
+		WithDelegation: util.IsFlagSet(flags, flagWithDelegation),
 	}
 	err = tx.data.Payload.Decode(ctx, r)
 	if err != nil {
 		return err
 	}
 
-	if !tx.IsSigned() {
+	if util.IsFlagSet(flags, flagNotSigned) {
 		return nil
 	}
-
 	// It is a signed transaction, Decode signatory.
 	sig, err := tx.decodeSignature(r)
 	if err != nil {
@@ -411,13 +432,15 @@ func (tx *Tx) Decode(r io.Reader) error {
 	}
 	tx.data.Signature = sig
 
-	if !tx.IsPublicKeyStriped() {
-		pub, err := tx.decodePublicKey(r)
-		if err != nil {
-			return err
-		}
-		tx.data.PublicKey = pub
+	if util.IsFlagSet(flags, flagStripedPublicKey) {
+		return nil
 	}
+	// It has a public key, decode it.
+	pub, err := tx.decodePublicKey(r)
+	if err != nil {
+		return err
+	}
+	tx.data.PublicKey = pub
 
 	return nil
 }
@@ -483,7 +506,7 @@ func (tx *Tx) SignBytes() []byte {
 		return nil
 	}
 
-	return buf.Bytes()[1:] // Exclude flags
+	return buf.Bytes()
 }
 
 func (tx *Tx) ID() ID {
@@ -532,10 +555,19 @@ func (tx *Tx) StripPublicKey() {
 
 // IsPublicKeyStriped returns true if the public key stripped from the transaction.
 func (tx *Tx) IsPublicKeyStriped() bool {
-	return util.IsFlagSet(tx.data.Flags, flagStripedPublicKey)
+	if tx.data.PublicKey != nil {
+		return false
+	}
+
+	if tx.IsSubsidyTx() {
+		// Subsidy transactions do not have a public key, but they are not considered striped.
+		return false
+	}
+
+	return true
 }
 
 // IsSigned returns true if the transaction has been signed and includes the signature.
 func (tx *Tx) IsSigned() bool {
-	return !util.IsFlagSet(tx.data.Flags, flagNotSigned)
+	return tx.data.Signature != nil
 }
