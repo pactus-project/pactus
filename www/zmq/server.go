@@ -6,6 +6,7 @@ import (
 	"github.com/ezex-io/gopkg/pipeline"
 	"github.com/go-zeromq/zmq4"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
@@ -98,6 +99,8 @@ func (s *Server) publishEvent(event any) {
 		for _, pub := range s.publishers {
 			pub.onNewBlock(evt)
 		}
+	case *tx.Tx:
+		// Ignore this event for now, as we only publish transactions that are included in a block.
 	default:
 		s.logger.Warn("invalid event type")
 	}
