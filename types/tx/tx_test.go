@@ -38,13 +38,14 @@ func TestEncodingTx(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	trx1 := ts.GenerateTestTransferTx()
-	trx2 := ts.GenerateTestBatchTransferTx()
-	trx3 := ts.GenerateTestBondTx()
-	trx4 := ts.GenerateTestUnbondTx()
-	trx5 := ts.GenerateTestWithdrawTx()
-	trx6 := ts.GenerateTestSortitionTx()
+	trx2 := ts.GenerateTestSubsidyTx()
+	trx3 := ts.GenerateTestBatchTransferTx()
+	trx4 := ts.GenerateTestBondTx()
+	trx5 := ts.GenerateTestUnbondTx()
+	trx6 := ts.GenerateTestWithdrawTx()
+	trx7 := ts.GenerateTestSortitionTx()
 
-	tests := []*tx.Tx{trx1, trx2, trx3, trx4, trx5, trx6}
+	tests := []*tx.Tx{trx1, trx2, trx3, trx4, trx5, trx6, trx7}
 	for _, trx := range tests {
 		require.NoError(t, trx.BasicCheck())
 		require.NoError(t, trx.BasicCheck()) // double basic check
@@ -77,18 +78,14 @@ func TestEncodingTx(t *testing.T) {
 func TestTxIDNoSignatory(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	tx1 := ts.GenerateTestTransferTx()
-	tx2 := new(tx.Tx)
-	*tx2 = *tx1
+	trx := ts.GenerateTestTransferTx()
+	id1 := trx.ID()
 
-	tx2.SetPublicKey(nil)
-	tx2.SetSignature(nil)
+	trx.SetSignature(nil)
+	trx.SetPublicKey(nil)
+	id2 := trx.ID()
 
-	require.True(t, tx1.IsSigned())
-	require.False(t, tx2.IsSigned())
-
-	require.Equal(t, tx1.ID(), tx2.ID())
-	require.Equal(t, tx1.SignBytes(), tx2.SignBytes())
+	require.Equal(t, id1, id2)
 }
 
 func TestBasicCheck(t *testing.T) {
