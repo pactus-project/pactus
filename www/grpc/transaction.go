@@ -322,6 +322,7 @@ func transactionToProto(trx *tx.Tx, blockHeight types.Height, confirmations int)
 
 		// TODO: Cover me with tests
 		if pld.IsDelegated() {
+			payload.Bond.IsDelegated = true
 			payload.Bond.DelegateOwner = pld.DelegateOwner.String()
 			payload.Bond.DelegateShare = pld.DelegateShare.ToNanoPAC()
 			payload.Bond.DelegateExpiry = uint32(pld.DelegateExpiry)

@@ -321,9 +321,10 @@ const PayloadBond$json = {
     {'1': 'receiver', '3': 2, '4': 1, '5': 9, '10': 'receiver'},
     {'1': 'stake', '3': 3, '4': 1, '5': 3, '10': 'stake'},
     {'1': 'public_key', '3': 4, '4': 1, '5': 9, '10': 'publicKey'},
-    {'1': 'delegate_owner', '3': 5, '4': 1, '5': 9, '10': 'delegateOwner'},
-    {'1': 'delegate_share', '3': 6, '4': 1, '5': 3, '10': 'delegateShare'},
-    {'1': 'delegate_expiry', '3': 7, '4': 1, '5': 13, '10': 'delegateExpiry'},
+    {'1': 'is_delegated', '3': 5, '4': 1, '5': 8, '10': 'isDelegated'},
+    {'1': 'delegate_owner', '3': 6, '4': 1, '5': 9, '10': 'delegateOwner'},
+    {'1': 'delegate_share', '3': 7, '4': 1, '5': 3, '10': 'delegateShare'},
+    {'1': 'delegate_expiry', '3': 8, '4': 1, '5': 13, '10': 'delegateExpiry'},
   ],
 };
 
@@ -331,9 +332,9 @@ const PayloadBond$json = {
 final $typed_data.Uint8List payloadBondDescriptor = $convert.base64Decode(
     'CgtQYXlsb2FkQm9uZBIWCgZzZW5kZXIYASABKAlSBnNlbmRlchIaCghyZWNlaXZlchgCIAEoCV'
     'IIcmVjZWl2ZXISFAoFc3Rha2UYAyABKANSBXN0YWtlEh0KCnB1YmxpY19rZXkYBCABKAlSCXB1'
-    'YmxpY0tleRIlCg5kZWxlZ2F0ZV9vd25lchgFIAEoCVINZGVsZWdhdGVPd25lchIlCg5kZWxlZ2'
-    'F0ZV9zaGFyZRgGIAEoA1INZGVsZWdhdGVTaGFyZRInCg9kZWxlZ2F0ZV9leHBpcnkYByABKA1S'
-    'DmRlbGVnYXRlRXhwaXJ5');
+    'YmxpY0tleRIhCgxpc19kZWxlZ2F0ZWQYBSABKAhSC2lzRGVsZWdhdGVkEiUKDmRlbGVnYXRlX2'
+    '93bmVyGAYgASgJUg1kZWxlZ2F0ZU93bmVyEiUKDmRlbGVnYXRlX3NoYXJlGAcgASgDUg1kZWxl'
+    'Z2F0ZVNoYXJlEicKD2RlbGVnYXRlX2V4cGlyeRgIIAEoDVIOZGVsZWdhdGVFeHBpcnk=');
 
 @$core.Deprecated('Use payloadSortitionDescriptor instead')
 const PayloadSortition$json = {

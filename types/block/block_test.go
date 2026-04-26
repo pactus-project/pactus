@@ -360,7 +360,7 @@ func TestBlockHash(t *testing.T) {
 	hashData := headerData
 	hashData = append(hashData, certHash.Bytes()...)
 	hashData = append(hashData, txRoot.Bytes()...)
-	hashData = append(hashData, util.Int32ToSlice(int32(blk.Transactions().Len()))...)
+	hashData = append(hashData, util.Int32ToBytesLE(int32(blk.Transactions().Len()))...)
 
 	expected1 := hash.CalcHash(hashData)
 	expected2, _ := hash.FromString("43399fa59adcfb7d8c515460ec9ca27b6a1cb865f5b7d9bde8fe56c18eaec9ab")

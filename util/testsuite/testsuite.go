@@ -268,7 +268,7 @@ func (ts *TestSuite) RandEd25519Signature() *ed25519.Signature {
 
 // RandHash generates a random hash for testing purposes.
 func (ts *TestSuite) RandHash() hash.Hash {
-	return hash.CalcHash(util.Int64ToSlice(ts.RandInt64(testsuite.WithMax(util.MaxInt64))))
+	return hash.CalcHash(util.Int64ToBytesLE(ts.RandInt64(testsuite.WithMax(util.MaxInt64))))
 }
 
 // RandAccAddress generates a random account address for testing purposes.

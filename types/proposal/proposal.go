@@ -111,8 +111,8 @@ func (p Proposal) LogString() string {
 
 func SignBytes(blockHash hash.Hash, height types.Height, round types.Round) []byte {
 	sb := blockHash.Bytes()
-	sb = append(sb, height.EncodeAsSlice()...)
-	sb = append(sb, round.EncodeAsSlice()...)
+	sb = append(sb, height.BytesLE()...)
+	sb = append(sb, round.BytesLE()...)
 
 	return sb
 }

@@ -11931,10 +11931,20 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
 
     /**
      * <pre>
+     * Indicates whether the bond transaction is a delegation.
+     * </pre>
+     *
+     * <code>bool is_delegated = 5 [json_name = "isDelegated"];</code>
+     * @return The isDelegated.
+     */
+    boolean getIsDelegated();
+
+    /**
+     * <pre>
      * The address of the delegate owner. Optional, but required when registering a new validator with delegation.
      * </pre>
      *
-     * <code>string delegate_owner = 5 [json_name = "delegateOwner"];</code>
+     * <code>string delegate_owner = 6 [json_name = "delegateOwner"];</code>
      * @return The delegateOwner.
      */
     java.lang.String getDelegateOwner();
@@ -11943,7 +11953,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
      * The address of the delegate owner. Optional, but required when registering a new validator with delegation.
      * </pre>
      *
-     * <code>string delegate_owner = 5 [json_name = "delegateOwner"];</code>
+     * <code>string delegate_owner = 6 [json_name = "delegateOwner"];</code>
      * @return The bytes for delegateOwner.
      */
     com.google.protobuf.ByteString
@@ -11955,7 +11965,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
      * Must be between 0 and 0.7 PAC in nano PAC.
      * </pre>
      *
-     * <code>int64 delegate_share = 6 [json_name = "delegateShare"];</code>
+     * <code>int64 delegate_share = 7 [json_name = "delegateShare"];</code>
      * @return The delegateShare.
      */
     long getDelegateShare();
@@ -11965,7 +11975,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
      * The expiry height for the delegate relationship. Optional, but required when registering a new validator with delegation.
      * </pre>
      *
-     * <code>uint32 delegate_expiry = 7 [json_name = "delegateExpiry"];</code>
+     * <code>uint32 delegate_expiry = 8 [json_name = "delegateExpiry"];</code>
      * @return The delegateExpiry.
      */
     int getDelegateExpiry();
@@ -12171,7 +12181,22 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       }
     }
 
-    public static final int DELEGATE_OWNER_FIELD_NUMBER = 5;
+    public static final int IS_DELEGATED_FIELD_NUMBER = 5;
+    private boolean isDelegated_ = false;
+    /**
+     * <pre>
+     * Indicates whether the bond transaction is a delegation.
+     * </pre>
+     *
+     * <code>bool is_delegated = 5 [json_name = "isDelegated"];</code>
+     * @return The isDelegated.
+     */
+    @java.lang.Override
+    public boolean getIsDelegated() {
+      return isDelegated_;
+    }
+
+    public static final int DELEGATE_OWNER_FIELD_NUMBER = 6;
     @SuppressWarnings("serial")
     private volatile java.lang.Object delegateOwner_ = "";
     /**
@@ -12179,7 +12204,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
      * The address of the delegate owner. Optional, but required when registering a new validator with delegation.
      * </pre>
      *
-     * <code>string delegate_owner = 5 [json_name = "delegateOwner"];</code>
+     * <code>string delegate_owner = 6 [json_name = "delegateOwner"];</code>
      * @return The delegateOwner.
      */
     @java.lang.Override
@@ -12200,7 +12225,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
      * The address of the delegate owner. Optional, but required when registering a new validator with delegation.
      * </pre>
      *
-     * <code>string delegate_owner = 5 [json_name = "delegateOwner"];</code>
+     * <code>string delegate_owner = 6 [json_name = "delegateOwner"];</code>
      * @return The bytes for delegateOwner.
      */
     @java.lang.Override
@@ -12218,7 +12243,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       }
     }
 
-    public static final int DELEGATE_SHARE_FIELD_NUMBER = 6;
+    public static final int DELEGATE_SHARE_FIELD_NUMBER = 7;
     private long delegateShare_ = 0L;
     /**
      * <pre>
@@ -12226,7 +12251,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
      * Must be between 0 and 0.7 PAC in nano PAC.
      * </pre>
      *
-     * <code>int64 delegate_share = 6 [json_name = "delegateShare"];</code>
+     * <code>int64 delegate_share = 7 [json_name = "delegateShare"];</code>
      * @return The delegateShare.
      */
     @java.lang.Override
@@ -12234,14 +12259,14 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       return delegateShare_;
     }
 
-    public static final int DELEGATE_EXPIRY_FIELD_NUMBER = 7;
+    public static final int DELEGATE_EXPIRY_FIELD_NUMBER = 8;
     private int delegateExpiry_ = 0;
     /**
      * <pre>
      * The expiry height for the delegate relationship. Optional, but required when registering a new validator with delegation.
      * </pre>
      *
-     * <code>uint32 delegate_expiry = 7 [json_name = "delegateExpiry"];</code>
+     * <code>uint32 delegate_expiry = 8 [json_name = "delegateExpiry"];</code>
      * @return The delegateExpiry.
      */
     @java.lang.Override
@@ -12275,14 +12300,17 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(publicKey_)) {
         com.google.protobuf.GeneratedMessage.writeString(output, 4, publicKey_);
       }
+      if (isDelegated_ != false) {
+        output.writeBool(5, isDelegated_);
+      }
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(delegateOwner_)) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 5, delegateOwner_);
+        com.google.protobuf.GeneratedMessage.writeString(output, 6, delegateOwner_);
       }
       if (delegateShare_ != 0L) {
-        output.writeInt64(6, delegateShare_);
+        output.writeInt64(7, delegateShare_);
       }
       if (delegateExpiry_ != 0) {
-        output.writeUInt32(7, delegateExpiry_);
+        output.writeUInt32(8, delegateExpiry_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -12306,16 +12334,20 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(publicKey_)) {
         size += com.google.protobuf.GeneratedMessage.computeStringSize(4, publicKey_);
       }
+      if (isDelegated_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(5, isDelegated_);
+      }
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(delegateOwner_)) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(5, delegateOwner_);
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(6, delegateOwner_);
       }
       if (delegateShare_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(6, delegateShare_);
+          .computeInt64Size(7, delegateShare_);
       }
       if (delegateExpiry_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeUInt32Size(7, delegateExpiry_);
+          .computeUInt32Size(8, delegateExpiry_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -12340,6 +12372,8 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
           != other.getStake()) return false;
       if (!getPublicKey()
           .equals(other.getPublicKey())) return false;
+      if (getIsDelegated()
+          != other.getIsDelegated()) return false;
       if (!getDelegateOwner()
           .equals(other.getDelegateOwner())) return false;
       if (getDelegateShare()
@@ -12366,6 +12400,9 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
           getStake());
       hash = (37 * hash) + PUBLIC_KEY_FIELD_NUMBER;
       hash = (53 * hash) + getPublicKey().hashCode();
+      hash = (37 * hash) + IS_DELEGATED_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getIsDelegated());
       hash = (37 * hash) + DELEGATE_OWNER_FIELD_NUMBER;
       hash = (53 * hash) + getDelegateOwner().hashCode();
       hash = (37 * hash) + DELEGATE_SHARE_FIELD_NUMBER;
@@ -12512,6 +12549,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
         receiver_ = "";
         stake_ = 0L;
         publicKey_ = "";
+        isDelegated_ = false;
         delegateOwner_ = "";
         delegateShare_ = 0L;
         delegateExpiry_ = 0;
@@ -12561,12 +12599,15 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
           result.publicKey_ = publicKey_;
         }
         if (((from_bitField0_ & 0x00000010) != 0)) {
-          result.delegateOwner_ = delegateOwner_;
+          result.isDelegated_ = isDelegated_;
         }
         if (((from_bitField0_ & 0x00000020) != 0)) {
-          result.delegateShare_ = delegateShare_;
+          result.delegateOwner_ = delegateOwner_;
         }
         if (((from_bitField0_ & 0x00000040) != 0)) {
+          result.delegateShare_ = delegateShare_;
+        }
+        if (((from_bitField0_ & 0x00000080) != 0)) {
           result.delegateExpiry_ = delegateExpiry_;
         }
       }
@@ -12601,9 +12642,12 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
           bitField0_ |= 0x00000008;
           onChanged();
         }
+        if (other.getIsDelegated() != false) {
+          setIsDelegated(other.getIsDelegated());
+        }
         if (!other.getDelegateOwner().isEmpty()) {
           delegateOwner_ = other.delegateOwner_;
-          bitField0_ |= 0x00000010;
+          bitField0_ |= 0x00000020;
           onChanged();
         }
         if (other.getDelegateShare() != 0L) {
@@ -12658,21 +12702,26 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
                 bitField0_ |= 0x00000008;
                 break;
               } // case 34
-              case 42: {
-                delegateOwner_ = input.readStringRequireUtf8();
+              case 40: {
+                isDelegated_ = input.readBool();
                 bitField0_ |= 0x00000010;
                 break;
-              } // case 42
-              case 48: {
-                delegateShare_ = input.readInt64();
+              } // case 40
+              case 50: {
+                delegateOwner_ = input.readStringRequireUtf8();
                 bitField0_ |= 0x00000020;
                 break;
-              } // case 48
+              } // case 50
               case 56: {
-                delegateExpiry_ = input.readUInt32();
+                delegateShare_ = input.readInt64();
                 bitField0_ |= 0x00000040;
                 break;
               } // case 56
+              case 64: {
+                delegateExpiry_ = input.readUInt32();
+                bitField0_ |= 0x00000080;
+                break;
+              } // case 64
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -13010,13 +13059,57 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
         return this;
       }
 
+      private boolean isDelegated_ ;
+      /**
+       * <pre>
+       * Indicates whether the bond transaction is a delegation.
+       * </pre>
+       *
+       * <code>bool is_delegated = 5 [json_name = "isDelegated"];</code>
+       * @return The isDelegated.
+       */
+      @java.lang.Override
+      public boolean getIsDelegated() {
+        return isDelegated_;
+      }
+      /**
+       * <pre>
+       * Indicates whether the bond transaction is a delegation.
+       * </pre>
+       *
+       * <code>bool is_delegated = 5 [json_name = "isDelegated"];</code>
+       * @param value The isDelegated to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsDelegated(boolean value) {
+
+        isDelegated_ = value;
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Indicates whether the bond transaction is a delegation.
+       * </pre>
+       *
+       * <code>bool is_delegated = 5 [json_name = "isDelegated"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearIsDelegated() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        isDelegated_ = false;
+        onChanged();
+        return this;
+      }
+
       private java.lang.Object delegateOwner_ = "";
       /**
        * <pre>
        * The address of the delegate owner. Optional, but required when registering a new validator with delegation.
        * </pre>
        *
-       * <code>string delegate_owner = 5 [json_name = "delegateOwner"];</code>
+       * <code>string delegate_owner = 6 [json_name = "delegateOwner"];</code>
        * @return The delegateOwner.
        */
       public java.lang.String getDelegateOwner() {
@@ -13036,7 +13129,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
        * The address of the delegate owner. Optional, but required when registering a new validator with delegation.
        * </pre>
        *
-       * <code>string delegate_owner = 5 [json_name = "delegateOwner"];</code>
+       * <code>string delegate_owner = 6 [json_name = "delegateOwner"];</code>
        * @return The bytes for delegateOwner.
        */
       public com.google.protobuf.ByteString
@@ -13057,7 +13150,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
        * The address of the delegate owner. Optional, but required when registering a new validator with delegation.
        * </pre>
        *
-       * <code>string delegate_owner = 5 [json_name = "delegateOwner"];</code>
+       * <code>string delegate_owner = 6 [json_name = "delegateOwner"];</code>
        * @param value The delegateOwner to set.
        * @return This builder for chaining.
        */
@@ -13065,7 +13158,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
           java.lang.String value) {
         if (value == null) { throw new NullPointerException(); }
         delegateOwner_ = value;
-        bitField0_ |= 0x00000010;
+        bitField0_ |= 0x00000020;
         onChanged();
         return this;
       }
@@ -13074,12 +13167,12 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
        * The address of the delegate owner. Optional, but required when registering a new validator with delegation.
        * </pre>
        *
-       * <code>string delegate_owner = 5 [json_name = "delegateOwner"];</code>
+       * <code>string delegate_owner = 6 [json_name = "delegateOwner"];</code>
        * @return This builder for chaining.
        */
       public Builder clearDelegateOwner() {
         delegateOwner_ = getDefaultInstance().getDelegateOwner();
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000020);
         onChanged();
         return this;
       }
@@ -13088,7 +13181,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
        * The address of the delegate owner. Optional, but required when registering a new validator with delegation.
        * </pre>
        *
-       * <code>string delegate_owner = 5 [json_name = "delegateOwner"];</code>
+       * <code>string delegate_owner = 6 [json_name = "delegateOwner"];</code>
        * @param value The bytes for delegateOwner to set.
        * @return This builder for chaining.
        */
@@ -13097,7 +13190,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
         if (value == null) { throw new NullPointerException(); }
         checkByteStringIsUtf8(value);
         delegateOwner_ = value;
-        bitField0_ |= 0x00000010;
+        bitField0_ |= 0x00000020;
         onChanged();
         return this;
       }
@@ -13109,7 +13202,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
        * Must be between 0 and 0.7 PAC in nano PAC.
        * </pre>
        *
-       * <code>int64 delegate_share = 6 [json_name = "delegateShare"];</code>
+       * <code>int64 delegate_share = 7 [json_name = "delegateShare"];</code>
        * @return The delegateShare.
        */
       @java.lang.Override
@@ -13122,14 +13215,14 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
        * Must be between 0 and 0.7 PAC in nano PAC.
        * </pre>
        *
-       * <code>int64 delegate_share = 6 [json_name = "delegateShare"];</code>
+       * <code>int64 delegate_share = 7 [json_name = "delegateShare"];</code>
        * @param value The delegateShare to set.
        * @return This builder for chaining.
        */
       public Builder setDelegateShare(long value) {
 
         delegateShare_ = value;
-        bitField0_ |= 0x00000020;
+        bitField0_ |= 0x00000040;
         onChanged();
         return this;
       }
@@ -13139,11 +13232,11 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
        * Must be between 0 and 0.7 PAC in nano PAC.
        * </pre>
        *
-       * <code>int64 delegate_share = 6 [json_name = "delegateShare"];</code>
+       * <code>int64 delegate_share = 7 [json_name = "delegateShare"];</code>
        * @return This builder for chaining.
        */
       public Builder clearDelegateShare() {
-        bitField0_ = (bitField0_ & ~0x00000020);
+        bitField0_ = (bitField0_ & ~0x00000040);
         delegateShare_ = 0L;
         onChanged();
         return this;
@@ -13155,7 +13248,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
        * The expiry height for the delegate relationship. Optional, but required when registering a new validator with delegation.
        * </pre>
        *
-       * <code>uint32 delegate_expiry = 7 [json_name = "delegateExpiry"];</code>
+       * <code>uint32 delegate_expiry = 8 [json_name = "delegateExpiry"];</code>
        * @return The delegateExpiry.
        */
       @java.lang.Override
@@ -13167,14 +13260,14 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
        * The expiry height for the delegate relationship. Optional, but required when registering a new validator with delegation.
        * </pre>
        *
-       * <code>uint32 delegate_expiry = 7 [json_name = "delegateExpiry"];</code>
+       * <code>uint32 delegate_expiry = 8 [json_name = "delegateExpiry"];</code>
        * @param value The delegateExpiry to set.
        * @return This builder for chaining.
        */
       public Builder setDelegateExpiry(int value) {
 
         delegateExpiry_ = value;
-        bitField0_ |= 0x00000040;
+        bitField0_ |= 0x00000080;
         onChanged();
         return this;
       }
@@ -13183,11 +13276,11 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
        * The expiry height for the delegate relationship. Optional, but required when registering a new validator with delegation.
        * </pre>
        *
-       * <code>uint32 delegate_expiry = 7 [json_name = "delegateExpiry"];</code>
+       * <code>uint32 delegate_expiry = 8 [json_name = "delegateExpiry"];</code>
        * @return This builder for chaining.
        */
       public Builder clearDelegateExpiry() {
-        bitField0_ = (bitField0_ & ~0x00000040);
+        bitField0_ = (bitField0_ & ~0x00000080);
         delegateExpiry_ = 0;
         onChanged();
         return this;
@@ -14008,7 +14101,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
 
     /**
      * <pre>
-     * The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+     * The address of the delegate owner. Optional, but required when the validator is a delegated validator.
      * </pre>
      *
      * <code>string delegate_owner = 2 [json_name = "delegateOwner"];</code>
@@ -14017,7 +14110,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
     java.lang.String getDelegateOwner();
     /**
      * <pre>
-     * The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+     * The address of the delegate owner. Optional, but required when the validator is a delegated validator.
      * </pre>
      *
      * <code>string delegate_owner = 2 [json_name = "delegateOwner"];</code>
@@ -14121,7 +14214,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
     private volatile java.lang.Object delegateOwner_ = "";
     /**
      * <pre>
-     * The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+     * The address of the delegate owner. Optional, but required when the validator is a delegated validator.
      * </pre>
      *
      * <code>string delegate_owner = 2 [json_name = "delegateOwner"];</code>
@@ -14142,7 +14235,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
     }
     /**
      * <pre>
-     * The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+     * The address of the delegate owner. Optional, but required when the validator is a delegated validator.
      * </pre>
      *
      * <code>string delegate_owner = 2 [json_name = "delegateOwner"];</code>
@@ -14580,7 +14673,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       private java.lang.Object delegateOwner_ = "";
       /**
        * <pre>
-       * The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+       * The address of the delegate owner. Optional, but required when the validator is a delegated validator.
        * </pre>
        *
        * <code>string delegate_owner = 2 [json_name = "delegateOwner"];</code>
@@ -14600,7 +14693,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       }
       /**
        * <pre>
-       * The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+       * The address of the delegate owner. Optional, but required when the validator is a delegated validator.
        * </pre>
        *
        * <code>string delegate_owner = 2 [json_name = "delegateOwner"];</code>
@@ -14621,7 +14714,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       }
       /**
        * <pre>
-       * The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+       * The address of the delegate owner. Optional, but required when the validator is a delegated validator.
        * </pre>
        *
        * <code>string delegate_owner = 2 [json_name = "delegateOwner"];</code>
@@ -14638,7 +14731,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       }
       /**
        * <pre>
-       * The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+       * The address of the delegate owner. Optional, but required when the validator is a delegated validator.
        * </pre>
        *
        * <code>string delegate_owner = 2 [json_name = "delegateOwner"];</code>
@@ -14652,7 +14745,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       }
       /**
        * <pre>
-       * The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+       * The address of the delegate owner. Optional, but required when the validator is a delegated validator.
        * </pre>
        *
        * <code>string delegate_owner = 2 [json_name = "delegateOwner"];</code>
@@ -22456,78 +22549,79 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       "\n\017raw_transaction\030\001 \001(\tR\016rawTransaction\022" +
       "\016\n\002id\030\002 \001(\tR\002id\"]\n\017PayloadTransfer\022\026\n\006se" +
       "nder\030\001 \001(\tR\006sender\022\032\n\010receiver\030\002 \001(\tR\010re" +
-      "ceiver\022\026\n\006amount\030\003 \001(\003R\006amount\"\355\001\n\013Paylo" +
+      "ceiver\022\026\n\006amount\030\003 \001(\003R\006amount\"\220\002\n\013Paylo" +
       "adBond\022\026\n\006sender\030\001 \001(\tR\006sender\022\032\n\010receiv" +
       "er\030\002 \001(\tR\010receiver\022\024\n\005stake\030\003 \001(\003R\005stake" +
-      "\022\035\n\npublic_key\030\004 \001(\tR\tpublicKey\022%\n\016deleg" +
-      "ate_owner\030\005 \001(\tR\rdelegateOwner\022%\n\016delega" +
-      "te_share\030\006 \001(\003R\rdelegateShare\022\'\n\017delegat" +
-      "e_expiry\030\007 \001(\rR\016delegateExpiry\"B\n\020Payloa" +
-      "dSortition\022\030\n\007address\030\001 \001(\tR\007address\022\024\n\005" +
-      "proof\030\002 \001(\tR\005proof\"T\n\rPayloadUnbond\022\034\n\tv" +
-      "alidator\030\001 \001(\tR\tvalidator\022%\n\016delegate_ow" +
-      "ner\030\002 \001(\tR\rdelegateOwner\"\177\n\017PayloadWithd" +
-      "raw\022+\n\021validator_address\030\001 \001(\tR\020validato" +
-      "rAddress\022\'\n\017account_address\030\002 \001(\tR\016accou" +
-      "ntAddress\022\026\n\006amount\030\003 \001(\003R\006amount\"a\n\024Pay" +
-      "loadBatchTransfer\022\026\n\006sender\030\001 \001(\tR\006sende" +
-      "r\0221\n\nrecipients\030\002 \003(\0132\021.pactus.Recipient" +
-      "R\nrecipients\"?\n\tRecipient\022\032\n\010receiver\030\001 " +
-      "\001(\tR\010receiver\022\026\n\006amount\030\002 \001(\003R\006amount\"\332\005" +
-      "\n\017TransactionInfo\022\016\n\002id\030\001 \001(\tR\002id\022\022\n\004dat" +
-      "a\030\002 \001(\tR\004data\022\030\n\007version\030\003 \001(\005R\007version\022" +
-      "\033\n\tlock_time\030\004 \001(\rR\010lockTime\022\024\n\005value\030\005 " +
-      "\001(\003R\005value\022\020\n\003fee\030\006 \001(\003R\003fee\0226\n\014payload_" +
-      "type\030\007 \001(\0162\023.pactus.PayloadTypeR\013payload" +
-      "Type\0225\n\010transfer\030\036 \001(\0132\027.pactus.PayloadT" +
-      "ransferH\000R\010transfer\022)\n\004bond\030\037 \001(\0132\023.pact" +
-      "us.PayloadBondH\000R\004bond\0228\n\tsortition\030  \001(" +
-      "\0132\030.pactus.PayloadSortitionH\000R\tsortition" +
-      "\022/\n\006unbond\030! \001(\0132\025.pactus.PayloadUnbondH" +
-      "\000R\006unbond\0225\n\010withdraw\030\" \001(\0132\027.pactus.Pay" +
-      "loadWithdrawH\000R\010withdraw\022E\n\016batch_transf" +
-      "er\030# \001(\0132\034.pactus.PayloadBatchTransferH\000" +
-      "R\rbatchTransfer\022\022\n\004memo\030\010 \001(\tR\004memo\022\035\n\np" +
-      "ublic_key\030\t \001(\tR\tpublicKey\022\034\n\tsignature\030" +
-      "\n \001(\tR\tsignature\022!\n\014block_height\030\013 \001(\rR\013" +
-      "blockHeight\022\034\n\tconfirmed\030\014 \001(\010R\tconfirme" +
-      "d\022$\n\rconfirmations\030\r \001(\005R\rconfirmationsB" +
-      "\t\n\007payload\"F\n\033DecodeRawTransactionReques" +
-      "t\022\'\n\017raw_transaction\030\001 \001(\tR\016rawTransacti" +
-      "on\"Y\n\034DecodeRawTransactionResponse\0229\n\013tr" +
-      "ansaction\030\001 \001(\0132\027.pactus.TransactionInfo" +
-      "R\013transaction*\316\001\n\013PayloadType\022\034\n\030PAYLOAD" +
-      "_TYPE_UNSPECIFIED\020\000\022\031\n\025PAYLOAD_TYPE_TRAN" +
-      "SFER\020\001\022\025\n\021PAYLOAD_TYPE_BOND\020\002\022\032\n\026PAYLOAD" +
-      "_TYPE_SORTITION\020\003\022\027\n\023PAYLOAD_TYPE_UNBOND" +
-      "\020\004\022\031\n\025PAYLOAD_TYPE_WITHDRAW\020\005\022\037\n\033PAYLOAD" +
-      "_TYPE_BATCH_TRANSFER\020\006*V\n\024TransactionVer" +
-      "bosity\022\036\n\032TRANSACTION_VERBOSITY_DATA\020\000\022\036" +
-      "\n\032TRANSACTION_VERBOSITY_INFO\020\0012\377\006\n\013Trans" +
-      "action\022O\n\016GetTransaction\022\035.pactus.GetTra" +
-      "nsactionRequest\032\036.pactus.GetTransactionR" +
-      "esponse\022I\n\014CalculateFee\022\033.pactus.Calcula" +
-      "teFeeRequest\032\034.pactus.CalculateFeeRespon" +
-      "se\022a\n\024BroadcastTransaction\022#.pactus.Broa" +
-      "dcastTransactionRequest\032$.pactus.Broadca" +
-      "stTransactionResponse\022h\n\031GetRawTransferT" +
-      "ransaction\022(.pactus.GetRawTransferTransa" +
-      "ctionRequest\032!.pactus.GetRawTransactionR" +
-      "esponse\022`\n\025GetRawBondTransaction\022$.pactu" +
-      "s.GetRawBondTransactionRequest\032!.pactus." +
-      "GetRawTransactionResponse\022d\n\027GetRawUnbon" +
-      "dTransaction\022&.pactus.GetRawUnbondTransa" +
-      "ctionRequest\032!.pactus.GetRawTransactionR" +
-      "esponse\022h\n\031GetRawWithdrawTransaction\022(.p" +
-      "actus.GetRawWithdrawTransactionRequest\032!" +
-      ".pactus.GetRawTransactionResponse\022r\n\036Get" +
-      "RawBatchTransferTransaction\022-.pactus.Get" +
-      "RawBatchTransferTransactionRequest\032!.pac" +
-      "tus.GetRawTransactionResponse\022a\n\024DecodeR" +
-      "awTransaction\022#.pactus.DecodeRawTransact" +
-      "ionRequest\032$.pactus.DecodeRawTransaction" +
-      "ResponseB:\n\006pactusZ0github.com/pactus-pr" +
-      "oject/pactus/www/grpc/pactusb\006proto3"
+      "\022\035\n\npublic_key\030\004 \001(\tR\tpublicKey\022!\n\014is_de" +
+      "legated\030\005 \001(\010R\013isDelegated\022%\n\016delegate_o" +
+      "wner\030\006 \001(\tR\rdelegateOwner\022%\n\016delegate_sh" +
+      "are\030\007 \001(\003R\rdelegateShare\022\'\n\017delegate_exp" +
+      "iry\030\010 \001(\rR\016delegateExpiry\"B\n\020PayloadSort" +
+      "ition\022\030\n\007address\030\001 \001(\tR\007address\022\024\n\005proof" +
+      "\030\002 \001(\tR\005proof\"T\n\rPayloadUnbond\022\034\n\tvalida" +
+      "tor\030\001 \001(\tR\tvalidator\022%\n\016delegate_owner\030\002" +
+      " \001(\tR\rdelegateOwner\"\177\n\017PayloadWithdraw\022+" +
+      "\n\021validator_address\030\001 \001(\tR\020validatorAddr" +
+      "ess\022\'\n\017account_address\030\002 \001(\tR\016accountAdd" +
+      "ress\022\026\n\006amount\030\003 \001(\003R\006amount\"a\n\024PayloadB" +
+      "atchTransfer\022\026\n\006sender\030\001 \001(\tR\006sender\0221\n\n" +
+      "recipients\030\002 \003(\0132\021.pactus.RecipientR\nrec" +
+      "ipients\"?\n\tRecipient\022\032\n\010receiver\030\001 \001(\tR\010" +
+      "receiver\022\026\n\006amount\030\002 \001(\003R\006amount\"\332\005\n\017Tra" +
+      "nsactionInfo\022\016\n\002id\030\001 \001(\tR\002id\022\022\n\004data\030\002 \001" +
+      "(\tR\004data\022\030\n\007version\030\003 \001(\005R\007version\022\033\n\tlo" +
+      "ck_time\030\004 \001(\rR\010lockTime\022\024\n\005value\030\005 \001(\003R\005" +
+      "value\022\020\n\003fee\030\006 \001(\003R\003fee\0226\n\014payload_type\030" +
+      "\007 \001(\0162\023.pactus.PayloadTypeR\013payloadType\022" +
+      "5\n\010transfer\030\036 \001(\0132\027.pactus.PayloadTransf" +
+      "erH\000R\010transfer\022)\n\004bond\030\037 \001(\0132\023.pactus.Pa" +
+      "yloadBondH\000R\004bond\0228\n\tsortition\030  \001(\0132\030.p" +
+      "actus.PayloadSortitionH\000R\tsortition\022/\n\006u" +
+      "nbond\030! \001(\0132\025.pactus.PayloadUnbondH\000R\006un" +
+      "bond\0225\n\010withdraw\030\" \001(\0132\027.pactus.PayloadW" +
+      "ithdrawH\000R\010withdraw\022E\n\016batch_transfer\030# " +
+      "\001(\0132\034.pactus.PayloadBatchTransferH\000R\rbat" +
+      "chTransfer\022\022\n\004memo\030\010 \001(\tR\004memo\022\035\n\npublic" +
+      "_key\030\t \001(\tR\tpublicKey\022\034\n\tsignature\030\n \001(\t" +
+      "R\tsignature\022!\n\014block_height\030\013 \001(\rR\013block" +
+      "Height\022\034\n\tconfirmed\030\014 \001(\010R\tconfirmed\022$\n\r" +
+      "confirmations\030\r \001(\005R\rconfirmationsB\t\n\007pa" +
+      "yload\"F\n\033DecodeRawTransactionRequest\022\'\n\017" +
+      "raw_transaction\030\001 \001(\tR\016rawTransaction\"Y\n" +
+      "\034DecodeRawTransactionResponse\0229\n\013transac" +
+      "tion\030\001 \001(\0132\027.pactus.TransactionInfoR\013tra" +
+      "nsaction*\316\001\n\013PayloadType\022\034\n\030PAYLOAD_TYPE" +
+      "_UNSPECIFIED\020\000\022\031\n\025PAYLOAD_TYPE_TRANSFER\020" +
+      "\001\022\025\n\021PAYLOAD_TYPE_BOND\020\002\022\032\n\026PAYLOAD_TYPE" +
+      "_SORTITION\020\003\022\027\n\023PAYLOAD_TYPE_UNBOND\020\004\022\031\n" +
+      "\025PAYLOAD_TYPE_WITHDRAW\020\005\022\037\n\033PAYLOAD_TYPE" +
+      "_BATCH_TRANSFER\020\006*V\n\024TransactionVerbosit" +
+      "y\022\036\n\032TRANSACTION_VERBOSITY_DATA\020\000\022\036\n\032TRA" +
+      "NSACTION_VERBOSITY_INFO\020\0012\377\006\n\013Transactio" +
+      "n\022O\n\016GetTransaction\022\035.pactus.GetTransact" +
+      "ionRequest\032\036.pactus.GetTransactionRespon" +
+      "se\022I\n\014CalculateFee\022\033.pactus.CalculateFee" +
+      "Request\032\034.pactus.CalculateFeeResponse\022a\n" +
+      "\024BroadcastTransaction\022#.pactus.Broadcast" +
+      "TransactionRequest\032$.pactus.BroadcastTra" +
+      "nsactionResponse\022h\n\031GetRawTransferTransa" +
+      "ction\022(.pactus.GetRawTransferTransaction" +
+      "Request\032!.pactus.GetRawTransactionRespon" +
+      "se\022`\n\025GetRawBondTransaction\022$.pactus.Get" +
+      "RawBondTransactionRequest\032!.pactus.GetRa" +
+      "wTransactionResponse\022d\n\027GetRawUnbondTran" +
+      "saction\022&.pactus.GetRawUnbondTransaction" +
+      "Request\032!.pactus.GetRawTransactionRespon" +
+      "se\022h\n\031GetRawWithdrawTransaction\022(.pactus" +
+      ".GetRawWithdrawTransactionRequest\032!.pact" +
+      "us.GetRawTransactionResponse\022r\n\036GetRawBa" +
+      "tchTransferTransaction\022-.pactus.GetRawBa" +
+      "tchTransferTransactionRequest\032!.pactus.G" +
+      "etRawTransactionResponse\022a\n\024DecodeRawTra" +
+      "nsaction\022#.pactus.DecodeRawTransactionRe" +
+      "quest\032$.pactus.DecodeRawTransactionRespo" +
+      "nseB:\n\006pactusZ0github.com/pactus-project" +
+      "/pactus/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -22616,7 +22710,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
     internal_static_pactus_PayloadBond_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_PayloadBond_descriptor,
-        new java.lang.String[] { "Sender", "Receiver", "Stake", "PublicKey", "DelegateOwner", "DelegateShare", "DelegateExpiry", });
+        new java.lang.String[] { "Sender", "Receiver", "Stake", "PublicKey", "IsDelegated", "DelegateOwner", "DelegateShare", "DelegateExpiry", });
     internal_static_pactus_PayloadSortition_descriptor =
       getDescriptor().getMessageType(14);
     internal_static_pactus_PayloadSortition_fieldAccessorTable = new

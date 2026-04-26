@@ -32,8 +32,8 @@ func TestHeightEncodeAsSlice(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		slice := test.height.EncodeAsSlice()
-		height := types.HeightFromSlice(slice)
+		slice := test.height.BytesLE()
+		height := types.HeightFromBytesLE(slice)
 
 		assert.Equal(t, test.expected, slice)
 		assert.Equal(t, test.height, height)

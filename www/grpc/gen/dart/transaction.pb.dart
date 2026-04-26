@@ -1192,6 +1192,7 @@ class PayloadBond extends $pb.GeneratedMessage {
     $core.String? receiver,
     $fixnum.Int64? stake,
     $core.String? publicKey,
+    $core.bool? isDelegated,
     $core.String? delegateOwner,
     $fixnum.Int64? delegateShare,
     $core.int? delegateExpiry,
@@ -1201,6 +1202,7 @@ class PayloadBond extends $pb.GeneratedMessage {
     if (receiver != null) result.receiver = receiver;
     if (stake != null) result.stake = stake;
     if (publicKey != null) result.publicKey = publicKey;
+    if (isDelegated != null) result.isDelegated = isDelegated;
     if (delegateOwner != null) result.delegateOwner = delegateOwner;
     if (delegateShare != null) result.delegateShare = delegateShare;
     if (delegateExpiry != null) result.delegateExpiry = delegateExpiry;
@@ -1224,9 +1226,10 @@ class PayloadBond extends $pb.GeneratedMessage {
     ..aOS(2, _omitFieldNames ? '' : 'receiver')
     ..aInt64(3, _omitFieldNames ? '' : 'stake')
     ..aOS(4, _omitFieldNames ? '' : 'publicKey')
-    ..aOS(5, _omitFieldNames ? '' : 'delegateOwner')
-    ..aInt64(6, _omitFieldNames ? '' : 'delegateShare')
-    ..aI(7, _omitFieldNames ? '' : 'delegateExpiry',
+    ..aOB(5, _omitFieldNames ? '' : 'isDelegated')
+    ..aOS(6, _omitFieldNames ? '' : 'delegateOwner')
+    ..aInt64(7, _omitFieldNames ? '' : 'delegateShare')
+    ..aI(8, _omitFieldNames ? '' : 'delegateExpiry',
         fieldType: $pb.PbFieldType.OU3)
     ..hasRequiredFields = false;
 
@@ -1289,36 +1292,46 @@ class PayloadBond extends $pb.GeneratedMessage {
   @$pb.TagNumber(4)
   void clearPublicKey() => $_clearField(4);
 
+  /// Indicates whether the bond transaction is a delegation.
+  @$pb.TagNumber(5)
+  $core.bool get isDelegated => $_getBF(4);
+  @$pb.TagNumber(5)
+  set isDelegated($core.bool value) => $_setBool(4, value);
+  @$pb.TagNumber(5)
+  $core.bool hasIsDelegated() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearIsDelegated() => $_clearField(5);
+
   /// The address of the delegate owner. Optional, but required when registering a new validator with delegation.
-  @$pb.TagNumber(5)
-  $core.String get delegateOwner => $_getSZ(4);
-  @$pb.TagNumber(5)
-  set delegateOwner($core.String value) => $_setString(4, value);
-  @$pb.TagNumber(5)
-  $core.bool hasDelegateOwner() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearDelegateOwner() => $_clearField(5);
+  @$pb.TagNumber(6)
+  $core.String get delegateOwner => $_getSZ(5);
+  @$pb.TagNumber(6)
+  set delegateOwner($core.String value) => $_setString(5, value);
+  @$pb.TagNumber(6)
+  $core.bool hasDelegateOwner() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearDelegateOwner() => $_clearField(6);
 
   /// The share percentage for the delegate owner. Optional, but required when registering a new validator with delegation.
   /// Must be between 0 and 0.7 PAC in nano PAC.
-  @$pb.TagNumber(6)
-  $fixnum.Int64 get delegateShare => $_getI64(5);
-  @$pb.TagNumber(6)
-  set delegateShare($fixnum.Int64 value) => $_setInt64(5, value);
-  @$pb.TagNumber(6)
-  $core.bool hasDelegateShare() => $_has(5);
-  @$pb.TagNumber(6)
-  void clearDelegateShare() => $_clearField(6);
+  @$pb.TagNumber(7)
+  $fixnum.Int64 get delegateShare => $_getI64(6);
+  @$pb.TagNumber(7)
+  set delegateShare($fixnum.Int64 value) => $_setInt64(6, value);
+  @$pb.TagNumber(7)
+  $core.bool hasDelegateShare() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearDelegateShare() => $_clearField(7);
 
   /// The expiry height for the delegate relationship. Optional, but required when registering a new validator with delegation.
-  @$pb.TagNumber(7)
-  $core.int get delegateExpiry => $_getIZ(6);
-  @$pb.TagNumber(7)
-  set delegateExpiry($core.int value) => $_setUnsignedInt32(6, value);
-  @$pb.TagNumber(7)
-  $core.bool hasDelegateExpiry() => $_has(6);
-  @$pb.TagNumber(7)
-  void clearDelegateExpiry() => $_clearField(7);
+  @$pb.TagNumber(8)
+  $core.int get delegateExpiry => $_getIZ(7);
+  @$pb.TagNumber(8)
+  set delegateExpiry($core.int value) => $_setUnsignedInt32(7, value);
+  @$pb.TagNumber(8)
+  $core.bool hasDelegateExpiry() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearDelegateExpiry() => $_clearField(8);
 }
 
 /// Payload for a sortition transaction.
@@ -1448,7 +1461,7 @@ class PayloadUnbond extends $pb.GeneratedMessage {
   @$pb.TagNumber(1)
   void clearValidator() => $_clearField(1);
 
-  /// The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+  /// The address of the delegate owner. Optional, but required when the validator is a delegated validator.
   @$pb.TagNumber(2)
   $core.String get delegateOwner => $_getSZ(1);
   @$pb.TagNumber(2)

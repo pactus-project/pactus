@@ -23,13 +23,13 @@ func TestSliceToInt16(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		s1 := Uint16ToSlice(uint16(tt.in))
-		s2 := Int16ToSlice(tt.in)
+		s1 := Uint16ToBytesLE(uint16(tt.in))
+		s2 := Int16ToBytesLE(tt.in)
 		assert.Equal(t, s1, s2)
 		assert.Equal(t, tt.slice, s1)
 
-		v1 := SliceToInt16(tt.slice)
-		v2 := SliceToUint16(tt.slice)
+		v1 := BytesToInt16LE(tt.slice)
+		v2 := BytesToUint16LE(tt.slice)
 		assert.Equal(t, int16(v2), v1)
 		assert.Equal(t, tt.in, v1)
 	}
@@ -50,13 +50,13 @@ func TestSliceToInt32(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		s1 := Uint32ToSlice(uint32(tt.in))
-		s2 := Int32ToSlice(tt.in)
+		s1 := Uint32ToBytesLE(uint32(tt.in))
+		s2 := Int32ToBytesLE(tt.in)
 		assert.Equal(t, s1, s2)
 		assert.Equal(t, tt.slice, s1)
 
-		v1 := SliceToInt32(tt.slice)
-		v2 := SliceToUint32(tt.slice)
+		v1 := BytesToInt32LE(tt.slice)
+		v2 := BytesToUint32LE(tt.slice)
 		assert.Equal(t, int32(v2), v1)
 		assert.Equal(t, tt.in, v1)
 	}
@@ -77,13 +77,13 @@ func TestSliceToInt64(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		s1 := Uint64ToSlice(uint64(tt.in))
-		s2 := Int64ToSlice(tt.in)
+		s1 := Uint64ToBytesLE(uint64(tt.in))
+		s2 := Int64ToBytesLE(tt.in)
 		assert.Equal(t, s1, s2)
 		assert.Equal(t, tt.slice, s1)
 
-		v1 := SliceToInt64(tt.slice)
-		v2 := SliceToUint64(tt.slice)
+		v1 := BytesToInt64LE(tt.slice)
+		v2 := BytesToUint64LE(tt.slice)
 		assert.Equal(t, int64(v2), v1)
 		assert.Equal(t, tt.in, v1)
 	}

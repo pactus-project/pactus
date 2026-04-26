@@ -271,7 +271,7 @@ func (s *store) Transaction(txID tx.ID) (*CommittedTx, error) {
 	if end > uint32(len(data)) {
 		return nil, ErrBadOffset
 	}
-	blockTime := util.SliceToUint32(data[hash.HashSize+1 : hash.HashSize+5])
+	blockTime := util.BytesToUint32LE(data[hash.HashSize+1 : hash.HashSize+5])
 
 	return &CommittedTx{
 		store:     s,

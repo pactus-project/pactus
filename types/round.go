@@ -4,9 +4,9 @@ import "github.com/pactus-project/pactus/util"
 
 type Round int16
 
-// RoundFromSlice creates a Round from a byte slice in little-endian format.
-func RoundFromSlice(data []byte) Round {
-	return Round(util.SliceToInt16(data))
+// RoundFromBytesLE creates a Round from a byte slice in little-endian format.
+func RoundFromBytesLE(data []byte) Round {
+	return Round(util.BytesToInt16LE(data))
 }
 
 // SafeIncrease returns a new Round that is the result of adding count to h.
@@ -34,7 +34,7 @@ func (h Round) SafeSub(other Round) uint32 {
 	return uint32(h - other)
 }
 
-// EncodeAsSlice encodes the Round as a byte slice in little-endian format.
-func (h Round) EncodeAsSlice() []byte {
-	return util.Int16ToSlice(int16(h))
+// BytesLE encodes the Round as a byte slice in little-endian format.
+func (h Round) BytesLE() []byte {
+	return util.Int16ToBytesLE(int16(h))
 }

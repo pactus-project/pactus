@@ -9586,6 +9586,9 @@ impl serde::Serialize for PayloadBond {
         if !self.public_key.is_empty() {
             len += 1;
         }
+        if self.is_delegated {
+            len += 1;
+        }
         if !self.delegate_owner.is_empty() {
             len += 1;
         }
@@ -9609,6 +9612,9 @@ impl serde::Serialize for PayloadBond {
         }
         if !self.public_key.is_empty() {
             struct_ser.serialize_field("publicKey", &self.public_key)?;
+        }
+        if self.is_delegated {
+            struct_ser.serialize_field("isDelegated", &self.is_delegated)?;
         }
         if !self.delegate_owner.is_empty() {
             struct_ser.serialize_field("delegateOwner", &self.delegate_owner)?;
@@ -9636,6 +9642,8 @@ impl<'de> serde::Deserialize<'de> for PayloadBond {
             "stake",
             "public_key",
             "publicKey",
+            "is_delegated",
+            "isDelegated",
             "delegate_owner",
             "delegateOwner",
             "delegate_share",
@@ -9650,6 +9658,7 @@ impl<'de> serde::Deserialize<'de> for PayloadBond {
             Receiver,
             Stake,
             PublicKey,
+            IsDelegated,
             DelegateOwner,
             DelegateShare,
             DelegateExpiry,
@@ -9678,6 +9687,7 @@ impl<'de> serde::Deserialize<'de> for PayloadBond {
                             "receiver" => Ok(GeneratedField::Receiver),
                             "stake" => Ok(GeneratedField::Stake),
                             "publicKey" | "public_key" => Ok(GeneratedField::PublicKey),
+                            "isDelegated" | "is_delegated" => Ok(GeneratedField::IsDelegated),
                             "delegateOwner" | "delegate_owner" => Ok(GeneratedField::DelegateOwner),
                             "delegateShare" | "delegate_share" => Ok(GeneratedField::DelegateShare),
                             "delegateExpiry" | "delegate_expiry" => Ok(GeneratedField::DelegateExpiry),
@@ -9704,6 +9714,7 @@ impl<'de> serde::Deserialize<'de> for PayloadBond {
                 let mut receiver__ = None;
                 let mut stake__ = None;
                 let mut public_key__ = None;
+                let mut is_delegated__ = None;
                 let mut delegate_owner__ = None;
                 let mut delegate_share__ = None;
                 let mut delegate_expiry__ = None;
@@ -9735,6 +9746,12 @@ impl<'de> serde::Deserialize<'de> for PayloadBond {
                             }
                             public_key__ = Some(map_.next_value()?);
                         }
+                        GeneratedField::IsDelegated => {
+                            if is_delegated__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("isDelegated"));
+                            }
+                            is_delegated__ = Some(map_.next_value()?);
+                        }
                         GeneratedField::DelegateOwner => {
                             if delegate_owner__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("delegateOwner"));
@@ -9764,6 +9781,7 @@ impl<'de> serde::Deserialize<'de> for PayloadBond {
                     receiver: receiver__.unwrap_or_default(),
                     stake: stake__.unwrap_or_default(),
                     public_key: public_key__.unwrap_or_default(),
+                    is_delegated: is_delegated__.unwrap_or_default(),
                     delegate_owner: delegate_owner__.unwrap_or_default(),
                     delegate_share: delegate_share__.unwrap_or_default(),
                     delegate_expiry: delegate_expiry__.unwrap_or_default(),

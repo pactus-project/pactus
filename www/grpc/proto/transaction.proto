@@ -185,13 +185,15 @@ message PayloadBond {
   // The public key of the validator.
   string public_key = 4;
 
+  // Indicates whether the bond transaction is a delegation.
+  bool is_delegated = 5;
   // The address of the delegate owner. Optional, but required when registering a new validator with delegation.
-	string delegate_owner = 5;
+	string delegate_owner = 6;
   // The share percentage for the delegate owner. Optional, but required when registering a new validator with delegation.
   // Must be between 0 and 0.7 PAC in nano PAC.
-	int64 delegate_share = 6;
+	int64 delegate_share = 7;
   // The expiry height for the delegate relationship. Optional, but required when registering a new validator with delegation.
-	uint32 delegate_expiry = 7;
+	uint32 delegate_expiry = 8;
 }
 
 // Payload for a sortition transaction.
@@ -206,7 +208,7 @@ message PayloadSortition {
 message PayloadUnbond {
   // The address of the validator to unbond from.
   string validator = 1;
-  // The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+  // The address of the delegate owner. Optional, but required when the validator is a delegated validator.
 	string delegate_owner = 2;
 }
 

@@ -142,7 +142,7 @@ func (b *Block) Hash() hash.Hash {
 		buf.Write(b.data.PrevCert.Hash().Bytes())
 	}
 	buf.Write(b.data.Txs.Root().Bytes())
-	buf.Write(util.Int32ToSlice(int32(b.data.Txs.Len())))
+	buf.Write(util.Int32ToBytesLE(int32(b.data.Txs.Len())))
 
 	h := hash.CalcHash(buf.Bytes())
 	b.memorizedHash = &h
