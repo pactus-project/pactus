@@ -58,7 +58,8 @@ message GetAccountResponse {
 }
 
 // Request message for retrieving validator addresses.
-message GetValidatorAddressesRequest {}
+message GetValidatorAddressesRequest {
+}
 
 // Response message contains list of validator addresses.
 message GetValidatorAddressesResponse {
@@ -148,7 +149,8 @@ message GetBlockHeightResponse {
 }
 
 // Request message for retrieving blockchain information.
-message GetBlockchainInfoRequest {}
+message GetBlockchainInfoRequest {
+}
 
 // Response message contains general blockchain information.
 message GetBlockchainInfoResponse {
@@ -182,7 +184,8 @@ message GetBlockchainInfoResponse {
 }
 
 // Request message for retrieving committee information.
-message GetCommitteeInfoRequest {}
+message GetCommitteeInfoRequest {
+}
 
 // Response message contains committee information.
 message GetCommitteeInfoResponse {
@@ -199,7 +202,8 @@ message GetCommitteeInfoResponse {
 }
 
 // Request message for retrieving consensus information.
-message GetConsensusInfoRequest {}
+message GetConsensusInfoRequest {
+}
 
 // Response message contains consensus information.
 message GetConsensusInfoResponse {

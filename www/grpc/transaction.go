@@ -154,6 +154,17 @@ func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 	lockTime := s.getLockTime(req.LockTime)
 
 	bondTx := tx.NewBondTx(lockTime, sender, receiver, publicKey, amt, fee, tx.WithMemo(req.Memo))
+	if req.DelegateOwner != "" {
+		delegateOwner, err := crypto.AddressFromString(req.DelegateOwner)
+		if err != nil {
+			return nil, err
+		}
+
+		bondPld := bondTx.Payload().(*payload.BondPayload)
+		bondPld.DelegateOwner = delegateOwner
+		bondPld.DelegateShare = amount.Amount(req.DelegateShare)
+		bondPld.DelegateExpiry = types.Height(req.DelegateExpiry)
+	}
 	rawTx, err := bondTx.Bytes()
 	if err != nil {
 		return nil, err
@@ -175,6 +186,16 @@ func (s *transactionServer) GetRawUnbondTransaction(_ context.Context,
 	lockTime := s.getLockTime(req.LockTime)
 
 	unbondTx := tx.NewUnbondTx(lockTime, validatorAddr, tx.WithMemo(req.Memo))
+	if req.DelegateOwner != "" {
+		delegateOwner, err := crypto.AddressFromString(req.DelegateOwner)
+		if err != nil {
+			return nil, err
+		}
+
+		unbondPld := unbondTx.Payload().(*payload.UnbondPayload)
+		unbondPld.DelegateOwner = delegateOwner
+	}
+
 	rawTx, err := unbondTx.Bytes()
 	if err != nil {
 		return nil, err

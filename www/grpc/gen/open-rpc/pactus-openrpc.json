@@ -154,7 +154,7 @@
           "schema": { "type": "integer" }
         },{
           "name": "public_key",
-          "description": "The public key of the validator. Optional, but required when registering a new validator.",
+          "description": "The public key of the validator. Optional, but required when registering a new validator.;",
           "schema": { "type": "string" }
         },{
           "name": "fee",
@@ -164,6 +164,18 @@
           "name": "memo",
           "description": "A memo string for the transaction.",
           "schema": { "type": "string" }
+        },{
+          "name": "delegate_owner",
+          "description": "The address of the delegate owner. Optional, but required when registering a new validator with delegation.;",
+          "schema": { "type": "string" }
+        },{
+          "name": "delegate_share",
+          "description": "The share percentage for the delegate owner. Optional, but required when registering a new validator with delegation.; Must be between 0 and 0.7 PAC in nano PAC.",
+          "schema": { "type": "integer" }
+        },{
+          "name": "delegate_expiry",
+          "description": "The expiry height for the delegate relationship. Optional, but required when registering a new validator with delegation.;",
+          "schema": { "type": "integer" }
         }],
       "result": {
         "name": "fields",
@@ -188,6 +200,10 @@
         },{
           "name": "memo",
           "description": "A memo string for the transaction.",
+          "schema": { "type": "string" }
+        },{
+          "name": "delegate_owner",
+          "description": "The address of the delegate owner. Optional, but required when the validator is a delegated validator.;",
           "schema": { "type": "string" }
         }],
       "result": {

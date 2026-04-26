@@ -104,6 +104,9 @@ class GetRawBondTransactionRequest(_message.Message):
     PUBLIC_KEY_FIELD_NUMBER: _ClassVar[int]
     FEE_FIELD_NUMBER: _ClassVar[int]
     MEMO_FIELD_NUMBER: _ClassVar[int]
+    DELEGATE_OWNER_FIELD_NUMBER: _ClassVar[int]
+    DELEGATE_SHARE_FIELD_NUMBER: _ClassVar[int]
+    DELEGATE_EXPIRY_FIELD_NUMBER: _ClassVar[int]
     lock_time: int
     sender: str
     receiver: str
@@ -111,17 +114,22 @@ class GetRawBondTransactionRequest(_message.Message):
     public_key: str
     fee: int
     memo: str
-    def __init__(self, lock_time: _Optional[int] = ..., sender: _Optional[str] = ..., receiver: _Optional[str] = ..., stake: _Optional[int] = ..., public_key: _Optional[str] = ..., fee: _Optional[int] = ..., memo: _Optional[str] = ...) -> None: ...
+    delegate_owner: str
+    delegate_share: int
+    delegate_expiry: int
+    def __init__(self, lock_time: _Optional[int] = ..., sender: _Optional[str] = ..., receiver: _Optional[str] = ..., stake: _Optional[int] = ..., public_key: _Optional[str] = ..., fee: _Optional[int] = ..., memo: _Optional[str] = ..., delegate_owner: _Optional[str] = ..., delegate_share: _Optional[int] = ..., delegate_expiry: _Optional[int] = ...) -> None: ...
 
 class GetRawUnbondTransactionRequest(_message.Message):
     __slots__ = ()
     LOCK_TIME_FIELD_NUMBER: _ClassVar[int]
     VALIDATOR_ADDRESS_FIELD_NUMBER: _ClassVar[int]
     MEMO_FIELD_NUMBER: _ClassVar[int]
+    DELEGATE_OWNER_FIELD_NUMBER: _ClassVar[int]
     lock_time: int
     validator_address: str
     memo: str
-    def __init__(self, lock_time: _Optional[int] = ..., validator_address: _Optional[str] = ..., memo: _Optional[str] = ...) -> None: ...
+    delegate_owner: str
+    def __init__(self, lock_time: _Optional[int] = ..., validator_address: _Optional[str] = ..., memo: _Optional[str] = ..., delegate_owner: _Optional[str] = ...) -> None: ...
 
 class GetRawWithdrawTransactionRequest(_message.Message):
     __slots__ = ()

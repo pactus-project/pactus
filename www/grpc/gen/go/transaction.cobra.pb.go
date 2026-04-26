@@ -250,9 +250,12 @@ func _TransactionGetRawBondTransactionCommand(cfg *client.Config) *cobra.Command
 	cmd.PersistentFlags().StringVar(&req.Sender, cfg.FlagNamer("Sender"), "", "The sender's account address.")
 	cmd.PersistentFlags().StringVar(&req.Receiver, cfg.FlagNamer("Receiver"), "", "The receiver's validator address.")
 	cmd.PersistentFlags().Int64Var(&req.Stake, cfg.FlagNamer("Stake"), 0, "The stake amount in NanoPAC. Must be greater than 0.")
-	cmd.PersistentFlags().StringVar(&req.PublicKey, cfg.FlagNamer("PublicKey"), "", "The public key of the validator. Optional, but required when registering a new validator.")
+	cmd.PersistentFlags().StringVar(&req.PublicKey, cfg.FlagNamer("PublicKey"), "", "The public key of the validator.\n Optional, but required when registering a new validator.;")
 	cmd.PersistentFlags().Int64Var(&req.Fee, cfg.FlagNamer("Fee"), 0, "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.")
 	cmd.PersistentFlags().StringVar(&req.Memo, cfg.FlagNamer("Memo"), "", "A memo string for the transaction.")
+	cmd.PersistentFlags().StringVar(&req.DelegateOwner, cfg.FlagNamer("DelegateOwner"), "", "The address of the delegate owner.\n Optional, but required when registering a new validator with delegation.;")
+	cmd.PersistentFlags().Int64Var(&req.DelegateShare, cfg.FlagNamer("DelegateShare"), 0, "The share percentage for the delegate owner.\n Optional, but required when registering a new validator with delegation.;\n Must be between 0 and 0.7 PAC in nano PAC.")
+	cmd.PersistentFlags().Uint32Var(&req.DelegateExpiry, cfg.FlagNamer("DelegateExpiry"), 0, "The expiry height for the delegate relationship.\n Optional, but required when registering a new validator with delegation.;")
 
 	return cmd
 }
@@ -297,6 +300,7 @@ func _TransactionGetRawUnbondTransactionCommand(cfg *client.Config) *cobra.Comma
 	cmd.PersistentFlags().Uint32Var(&req.LockTime, cfg.FlagNamer("LockTime"), 0, "The lock time for the transaction. If not set, defaults to the last block height.")
 	cmd.PersistentFlags().StringVar(&req.ValidatorAddress, cfg.FlagNamer("ValidatorAddress"), "", "The address of the validator to unbond from.")
 	cmd.PersistentFlags().StringVar(&req.Memo, cfg.FlagNamer("Memo"), "", "A memo string for the transaction.")
+	cmd.PersistentFlags().StringVar(&req.DelegateOwner, cfg.FlagNamer("DelegateOwner"), "", "The address of the delegate owner.\n Optional, but required when the validator is a delegated validator.;")
 
 	return cmd
 }

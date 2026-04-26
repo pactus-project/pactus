@@ -57,7 +57,8 @@ message ListPeersResponse {
 }
 
 // Request message for retrieving information of the node.
-message GetNodeInfoRequest {}
+message GetNodeInfoRequest {
+}
 
 // Response message contains information about a specific node in the network.
 message GetNodeInfoResponse {

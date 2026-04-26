@@ -571,14 +571,25 @@ type GetRawBondTransactionRequest struct {
 	Receiver string `protobuf:"bytes,3,opt,name=receiver,proto3" json:"receiver,omitempty"`
 	// The stake amount in NanoPAC. Must be greater than 0.
 	Stake int64 `protobuf:"varint,4,opt,name=stake,proto3" json:"stake,omitempty"`
-	// The public key of the validator. Optional, but required when registering a new validator.
+	// The public key of the validator.
+	// Optional, but required when registering a new validator.;
 	PublicKey string `protobuf:"bytes,5,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
 	// The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
 	Fee int64 `protobuf:"varint,6,opt,name=fee,proto3" json:"fee,omitempty"`
 	// A memo string for the transaction.
-	Memo          string `protobuf:"bytes,7,opt,name=memo,proto3" json:"memo,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Memo string `protobuf:"bytes,7,opt,name=memo,proto3" json:"memo,omitempty"`
+	// The address of the delegate owner.
+	// Optional, but required when registering a new validator with delegation.;
+	DelegateOwner string `protobuf:"bytes,8,opt,name=delegate_owner,json=delegateOwner,proto3" json:"delegate_owner,omitempty"`
+	// The share percentage for the delegate owner.
+	// Optional, but required when registering a new validator with delegation.;
+	// Must be between 0 and 0.7 PAC in nano PAC.
+	DelegateShare int64 `protobuf:"varint,9,opt,name=delegate_share,json=delegateShare,proto3" json:"delegate_share,omitempty"`
+	// The expiry height for the delegate relationship.
+	// Optional, but required when registering a new validator with delegation.;
+	DelegateExpiry uint32 `protobuf:"varint,10,opt,name=delegate_expiry,json=delegateExpiry,proto3" json:"delegate_expiry,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *GetRawBondTransactionRequest) Reset() {
@@ -660,15 +671,39 @@ func (x *GetRawBondTransactionRequest) GetMemo() string {
 	return ""
 }
 
+func (x *GetRawBondTransactionRequest) GetDelegateOwner() string {
+	if x != nil {
+		return x.DelegateOwner
+	}
+	return ""
+}
+
+func (x *GetRawBondTransactionRequest) GetDelegateShare() int64 {
+	if x != nil {
+		return x.DelegateShare
+	}
+	return 0
+}
+
+func (x *GetRawBondTransactionRequest) GetDelegateExpiry() uint32 {
+	if x != nil {
+		return x.DelegateExpiry
+	}
+	return 0
+}
+
 // Request message for retrieving raw details of an unbond transaction.
 type GetRawUnbondTransactionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The lock time for the transaction. If not set, defaults to the last block height.
 	LockTime uint32 `protobuf:"varint,1,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
 	// The address of the validator to unbond from.
-	ValidatorAddress string `protobuf:"bytes,3,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
+	ValidatorAddress string `protobuf:"bytes,2,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
 	// A memo string for the transaction.
-	Memo          string `protobuf:"bytes,4,opt,name=memo,proto3" json:"memo,omitempty"`
+	Memo string `protobuf:"bytes,3,opt,name=memo,proto3" json:"memo,omitempty"`
+	// The address of the delegate owner.
+	// Optional, but required when the validator is a delegated validator.;
+	DelegateOwner string `protobuf:"bytes,4,opt,name=delegate_owner,json=delegateOwner,proto3" json:"delegate_owner,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -720,6 +755,13 @@ func (x *GetRawUnbondTransactionRequest) GetValidatorAddress() string {
 func (x *GetRawUnbondTransactionRequest) GetMemo() string {
 	if x != nil {
 		return x.Memo
+	}
+	return ""
+}
+
+func (x *GetRawUnbondTransactionRequest) GetDelegateOwner() string {
+	if x != nil {
+		return x.DelegateOwner
 	}
 	return ""
 }
@@ -1029,12 +1071,15 @@ type PayloadBond struct {
 	PublicKey string `protobuf:"bytes,4,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
 	// Indicates whether the bond transaction is a delegation.
 	IsDelegated bool `protobuf:"varint,5,opt,name=is_delegated,json=isDelegated,proto3" json:"is_delegated,omitempty"`
-	// The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+	// The address of the delegate owner.
+	// Optional, but required when registering a new validator with delegation.;
 	DelegateOwner string `protobuf:"bytes,6,opt,name=delegate_owner,json=delegateOwner,proto3" json:"delegate_owner,omitempty"`
-	// The share percentage for the delegate owner. Optional, but required when registering a new validator with delegation.
+	// The share percentage for the delegate owner.
+	// Optional, but required when registering a new validator with delegation.;
 	// Must be between 0 and 0.7 PAC in nano PAC.
 	DelegateShare int64 `protobuf:"varint,7,opt,name=delegate_share,json=delegateShare,proto3" json:"delegate_share,omitempty"`
-	// The expiry height for the delegate relationship. Optional, but required when registering a new validator with delegation.
+	// The expiry height for the delegate relationship.
+	// Optional, but required when registering a new validator with delegation.;
 	DelegateExpiry uint32 `protobuf:"varint,8,opt,name=delegate_expiry,json=delegateExpiry,proto3" json:"delegate_expiry,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
@@ -1186,7 +1231,8 @@ type PayloadUnbond struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The address of the validator to unbond from.
 	Validator string `protobuf:"bytes,1,opt,name=validator,proto3" json:"validator,omitempty"`
-	// The address of the delegate owner. Optional, but required when the validator is a delegated validator.
+	// The address of the delegate owner.
+	// Optional, but required when the validator is a delegated validator.;
 	DelegateOwner string `protobuf:"bytes,2,opt,name=delegate_owner,json=delegateOwner,proto3" json:"delegate_owner,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1806,7 +1852,7 @@ const file_transaction_proto_rawDesc = "" +
 	"\breceiver\x18\x03 \x01(\tR\breceiver\x12\x16\n" +
 	"\x06amount\x18\x04 \x01(\x03R\x06amount\x12\x10\n" +
 	"\x03fee\x18\x05 \x01(\x03R\x03fee\x12\x12\n" +
-	"\x04memo\x18\x06 \x01(\tR\x04memo\"\xca\x01\n" +
+	"\x04memo\x18\x06 \x01(\tR\x04memo\"\xc1\x02\n" +
 	"\x1cGetRawBondTransactionRequest\x12\x1b\n" +
 	"\tlock_time\x18\x01 \x01(\rR\blockTime\x12\x16\n" +
 	"\x06sender\x18\x02 \x01(\tR\x06sender\x12\x1a\n" +
@@ -1815,11 +1861,16 @@ const file_transaction_proto_rawDesc = "" +
 	"\n" +
 	"public_key\x18\x05 \x01(\tR\tpublicKey\x12\x10\n" +
 	"\x03fee\x18\x06 \x01(\x03R\x03fee\x12\x12\n" +
-	"\x04memo\x18\a \x01(\tR\x04memo\"~\n" +
+	"\x04memo\x18\a \x01(\tR\x04memo\x12%\n" +
+	"\x0edelegate_owner\x18\b \x01(\tR\rdelegateOwner\x12%\n" +
+	"\x0edelegate_share\x18\t \x01(\x03R\rdelegateShare\x12'\n" +
+	"\x0fdelegate_expiry\x18\n" +
+	" \x01(\rR\x0edelegateExpiry\"\xa5\x01\n" +
 	"\x1eGetRawUnbondTransactionRequest\x12\x1b\n" +
 	"\tlock_time\x18\x01 \x01(\rR\blockTime\x12+\n" +
-	"\x11validator_address\x18\x03 \x01(\tR\x10validatorAddress\x12\x12\n" +
-	"\x04memo\x18\x04 \x01(\tR\x04memo\"\xd3\x01\n" +
+	"\x11validator_address\x18\x02 \x01(\tR\x10validatorAddress\x12\x12\n" +
+	"\x04memo\x18\x03 \x01(\tR\x04memo\x12%\n" +
+	"\x0edelegate_owner\x18\x04 \x01(\tR\rdelegateOwner\"\xd3\x01\n" +
 	" GetRawWithdrawTransactionRequest\x12\x1b\n" +
 	"\tlock_time\x18\x01 \x01(\rR\blockTime\x12+\n" +
 	"\x11validator_address\x18\x02 \x01(\tR\x10validatorAddress\x12'\n" +

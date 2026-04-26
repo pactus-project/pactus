@@ -5681,6 +5681,15 @@ impl serde::Serialize for GetRawBondTransactionRequest {
         if !self.memo.is_empty() {
             len += 1;
         }
+        if !self.delegate_owner.is_empty() {
+            len += 1;
+        }
+        if self.delegate_share != 0 {
+            len += 1;
+        }
+        if self.delegate_expiry != 0 {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.GetRawBondTransactionRequest", len)?;
         if self.lock_time != 0 {
             struct_ser.serialize_field("lockTime", &self.lock_time)?;
@@ -5707,6 +5716,17 @@ impl serde::Serialize for GetRawBondTransactionRequest {
         if !self.memo.is_empty() {
             struct_ser.serialize_field("memo", &self.memo)?;
         }
+        if !self.delegate_owner.is_empty() {
+            struct_ser.serialize_field("delegateOwner", &self.delegate_owner)?;
+        }
+        if self.delegate_share != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("delegateShare", ToString::to_string(&self.delegate_share).as_str())?;
+        }
+        if self.delegate_expiry != 0 {
+            struct_ser.serialize_field("delegateExpiry", &self.delegate_expiry)?;
+        }
         struct_ser.end()
     }
 }
@@ -5726,6 +5746,12 @@ impl<'de> serde::Deserialize<'de> for GetRawBondTransactionRequest {
             "publicKey",
             "fee",
             "memo",
+            "delegate_owner",
+            "delegateOwner",
+            "delegate_share",
+            "delegateShare",
+            "delegate_expiry",
+            "delegateExpiry",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -5737,6 +5763,9 @@ impl<'de> serde::Deserialize<'de> for GetRawBondTransactionRequest {
             PublicKey,
             Fee,
             Memo,
+            DelegateOwner,
+            DelegateShare,
+            DelegateExpiry,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -5765,6 +5794,9 @@ impl<'de> serde::Deserialize<'de> for GetRawBondTransactionRequest {
                             "publicKey" | "public_key" => Ok(GeneratedField::PublicKey),
                             "fee" => Ok(GeneratedField::Fee),
                             "memo" => Ok(GeneratedField::Memo),
+                            "delegateOwner" | "delegate_owner" => Ok(GeneratedField::DelegateOwner),
+                            "delegateShare" | "delegate_share" => Ok(GeneratedField::DelegateShare),
+                            "delegateExpiry" | "delegate_expiry" => Ok(GeneratedField::DelegateExpiry),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -5791,6 +5823,9 @@ impl<'de> serde::Deserialize<'de> for GetRawBondTransactionRequest {
                 let mut public_key__ = None;
                 let mut fee__ = None;
                 let mut memo__ = None;
+                let mut delegate_owner__ = None;
+                let mut delegate_share__ = None;
+                let mut delegate_expiry__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::LockTime => {
@@ -5841,6 +5876,28 @@ impl<'de> serde::Deserialize<'de> for GetRawBondTransactionRequest {
                             }
                             memo__ = Some(map_.next_value()?);
                         }
+                        GeneratedField::DelegateOwner => {
+                            if delegate_owner__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("delegateOwner"));
+                            }
+                            delegate_owner__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::DelegateShare => {
+                            if delegate_share__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("delegateShare"));
+                            }
+                            delegate_share__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::DelegateExpiry => {
+                            if delegate_expiry__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("delegateExpiry"));
+                            }
+                            delegate_expiry__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
                     }
                 }
                 Ok(GetRawBondTransactionRequest {
@@ -5851,6 +5908,9 @@ impl<'de> serde::Deserialize<'de> for GetRawBondTransactionRequest {
                     public_key: public_key__.unwrap_or_default(),
                     fee: fee__.unwrap_or_default(),
                     memo: memo__.unwrap_or_default(),
+                    delegate_owner: delegate_owner__.unwrap_or_default(),
+                    delegate_share: delegate_share__.unwrap_or_default(),
+                    delegate_expiry: delegate_expiry__.unwrap_or_default(),
                 })
             }
         }
@@ -6170,6 +6230,9 @@ impl serde::Serialize for GetRawUnbondTransactionRequest {
         if !self.memo.is_empty() {
             len += 1;
         }
+        if !self.delegate_owner.is_empty() {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.GetRawUnbondTransactionRequest", len)?;
         if self.lock_time != 0 {
             struct_ser.serialize_field("lockTime", &self.lock_time)?;
@@ -6179,6 +6242,9 @@ impl serde::Serialize for GetRawUnbondTransactionRequest {
         }
         if !self.memo.is_empty() {
             struct_ser.serialize_field("memo", &self.memo)?;
+        }
+        if !self.delegate_owner.is_empty() {
+            struct_ser.serialize_field("delegateOwner", &self.delegate_owner)?;
         }
         struct_ser.end()
     }
@@ -6195,6 +6261,8 @@ impl<'de> serde::Deserialize<'de> for GetRawUnbondTransactionRequest {
             "validator_address",
             "validatorAddress",
             "memo",
+            "delegate_owner",
+            "delegateOwner",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -6202,6 +6270,7 @@ impl<'de> serde::Deserialize<'de> for GetRawUnbondTransactionRequest {
             LockTime,
             ValidatorAddress,
             Memo,
+            DelegateOwner,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -6226,6 +6295,7 @@ impl<'de> serde::Deserialize<'de> for GetRawUnbondTransactionRequest {
                             "lockTime" | "lock_time" => Ok(GeneratedField::LockTime),
                             "validatorAddress" | "validator_address" => Ok(GeneratedField::ValidatorAddress),
                             "memo" => Ok(GeneratedField::Memo),
+                            "delegateOwner" | "delegate_owner" => Ok(GeneratedField::DelegateOwner),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -6248,6 +6318,7 @@ impl<'de> serde::Deserialize<'de> for GetRawUnbondTransactionRequest {
                 let mut lock_time__ = None;
                 let mut validator_address__ = None;
                 let mut memo__ = None;
+                let mut delegate_owner__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::LockTime => {
@@ -6270,12 +6341,19 @@ impl<'de> serde::Deserialize<'de> for GetRawUnbondTransactionRequest {
                             }
                             memo__ = Some(map_.next_value()?);
                         }
+                        GeneratedField::DelegateOwner => {
+                            if delegate_owner__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("delegateOwner"));
+                            }
+                            delegate_owner__ = Some(map_.next_value()?);
+                        }
                     }
                 }
                 Ok(GetRawUnbondTransactionRequest {
                     lock_time: lock_time__.unwrap_or_default(),
                     validator_address: validator_address__.unwrap_or_default(),
                     memo: memo__.unwrap_or_default(),
+                    delegate_owner: delegate_owner__.unwrap_or_default(),
                 })
             }
         }

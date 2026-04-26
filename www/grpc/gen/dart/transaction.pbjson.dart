@@ -196,6 +196,9 @@ const GetRawBondTransactionRequest$json = {
     {'1': 'public_key', '3': 5, '4': 1, '5': 9, '10': 'publicKey'},
     {'1': 'fee', '3': 6, '4': 1, '5': 3, '10': 'fee'},
     {'1': 'memo', '3': 7, '4': 1, '5': 9, '10': 'memo'},
+    {'1': 'delegate_owner', '3': 8, '4': 1, '5': 9, '10': 'delegateOwner'},
+    {'1': 'delegate_share', '3': 9, '4': 1, '5': 3, '10': 'delegateShare'},
+    {'1': 'delegate_expiry', '3': 10, '4': 1, '5': 13, '10': 'delegateExpiry'},
   ],
 };
 
@@ -204,7 +207,9 @@ final $typed_data.Uint8List getRawBondTransactionRequestDescriptor = $convert.ba
     'ChxHZXRSYXdCb25kVHJhbnNhY3Rpb25SZXF1ZXN0EhsKCWxvY2tfdGltZRgBIAEoDVIIbG9ja1'
     'RpbWUSFgoGc2VuZGVyGAIgASgJUgZzZW5kZXISGgoIcmVjZWl2ZXIYAyABKAlSCHJlY2VpdmVy'
     'EhQKBXN0YWtlGAQgASgDUgVzdGFrZRIdCgpwdWJsaWNfa2V5GAUgASgJUglwdWJsaWNLZXkSEA'
-    'oDZmVlGAYgASgDUgNmZWUSEgoEbWVtbxgHIAEoCVIEbWVtbw==');
+    'oDZmVlGAYgASgDUgNmZWUSEgoEbWVtbxgHIAEoCVIEbWVtbxIlCg5kZWxlZ2F0ZV9vd25lchgI'
+    'IAEoCVINZGVsZWdhdGVPd25lchIlCg5kZWxlZ2F0ZV9zaGFyZRgJIAEoA1INZGVsZWdhdGVTaG'
+    'FyZRInCg9kZWxlZ2F0ZV9leHBpcnkYCiABKA1SDmRlbGVnYXRlRXhwaXJ5');
 
 @$core.Deprecated('Use getRawUnbondTransactionRequestDescriptor instead')
 const GetRawUnbondTransactionRequest$json = {
@@ -213,12 +218,13 @@ const GetRawUnbondTransactionRequest$json = {
     {'1': 'lock_time', '3': 1, '4': 1, '5': 13, '10': 'lockTime'},
     {
       '1': 'validator_address',
-      '3': 3,
+      '3': 2,
       '4': 1,
       '5': 9,
       '10': 'validatorAddress'
     },
-    {'1': 'memo', '3': 4, '4': 1, '5': 9, '10': 'memo'},
+    {'1': 'memo', '3': 3, '4': 1, '5': 9, '10': 'memo'},
+    {'1': 'delegate_owner', '3': 4, '4': 1, '5': 9, '10': 'delegateOwner'},
   ],
 };
 
@@ -226,8 +232,8 @@ const GetRawUnbondTransactionRequest$json = {
 final $typed_data.Uint8List getRawUnbondTransactionRequestDescriptor =
     $convert.base64Decode(
         'Ch5HZXRSYXdVbmJvbmRUcmFuc2FjdGlvblJlcXVlc3QSGwoJbG9ja190aW1lGAEgASgNUghsb2'
-        'NrVGltZRIrChF2YWxpZGF0b3JfYWRkcmVzcxgDIAEoCVIQdmFsaWRhdG9yQWRkcmVzcxISCgRt'
-        'ZW1vGAQgASgJUgRtZW1v');
+        'NrVGltZRIrChF2YWxpZGF0b3JfYWRkcmVzcxgCIAEoCVIQdmFsaWRhdG9yQWRkcmVzcxISCgRt'
+        'ZW1vGAMgASgJUgRtZW1vEiUKDmRlbGVnYXRlX293bmVyGAQgASgJUg1kZWxlZ2F0ZU93bmVy');
 
 @$core.Deprecated('Use getRawWithdrawTransactionRequestDescriptor instead')
 const GetRawWithdrawTransactionRequest$json = {

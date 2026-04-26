@@ -1801,7 +1801,10 @@ receiver: jspb.Message.getFieldWithDefault(msg, 3, ""),
 stake: jspb.Message.getFieldWithDefault(msg, 4, 0),
 publicKey: jspb.Message.getFieldWithDefault(msg, 5, ""),
 fee: jspb.Message.getFieldWithDefault(msg, 6, 0),
-memo: jspb.Message.getFieldWithDefault(msg, 7, "")
+memo: jspb.Message.getFieldWithDefault(msg, 7, ""),
+delegateOwner: jspb.Message.getFieldWithDefault(msg, 8, ""),
+delegateShare: jspb.Message.getFieldWithDefault(msg, 9, 0),
+delegateExpiry: jspb.Message.getFieldWithDefault(msg, 10, 0)
   };
 
   if (includeInstance) {
@@ -1865,6 +1868,18 @@ proto.pactus.GetRawBondTransactionRequest.deserializeBinaryFromReader = function
     case 7:
       var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setMemo(value);
+      break;
+    case 8:
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      msg.setDelegateOwner(value);
+      break;
+    case 9:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setDelegateShare(value);
+      break;
+    case 10:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setDelegateExpiry(value);
       break;
     default:
       reader.skipField();
@@ -1941,6 +1956,27 @@ proto.pactus.GetRawBondTransactionRequest.serializeBinaryToWriter = function(mes
   if (f.length > 0) {
     writer.writeString(
       7,
+      f
+    );
+  }
+  f = message.getDelegateOwner();
+  if (f.length > 0) {
+    writer.writeString(
+      8,
+      f
+    );
+  }
+  f = message.getDelegateShare();
+  if (f !== 0) {
+    writer.writeInt64(
+      9,
+      f
+    );
+  }
+  f = message.getDelegateExpiry();
+  if (f !== 0) {
+    writer.writeUint32(
+      10,
       f
     );
   }
@@ -2073,6 +2109,60 @@ proto.pactus.GetRawBondTransactionRequest.prototype.setMemo = function(value) {
 };
 
 
+/**
+ * optional string delegate_owner = 8;
+ * @return {string}
+ */
+proto.pactus.GetRawBondTransactionRequest.prototype.getDelegateOwner = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.pactus.GetRawBondTransactionRequest} returns this
+ */
+proto.pactus.GetRawBondTransactionRequest.prototype.setDelegateOwner = function(value) {
+  return jspb.Message.setProto3StringField(this, 8, value);
+};
+
+
+/**
+ * optional int64 delegate_share = 9;
+ * @return {number}
+ */
+proto.pactus.GetRawBondTransactionRequest.prototype.getDelegateShare = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetRawBondTransactionRequest} returns this
+ */
+proto.pactus.GetRawBondTransactionRequest.prototype.setDelegateShare = function(value) {
+  return jspb.Message.setProto3IntField(this, 9, value);
+};
+
+
+/**
+ * optional uint32 delegate_expiry = 10;
+ * @return {number}
+ */
+proto.pactus.GetRawBondTransactionRequest.prototype.getDelegateExpiry = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetRawBondTransactionRequest} returns this
+ */
+proto.pactus.GetRawBondTransactionRequest.prototype.setDelegateExpiry = function(value) {
+  return jspb.Message.setProto3IntField(this, 10, value);
+};
+
+
 
 
 
@@ -2106,8 +2196,9 @@ proto.pactus.GetRawUnbondTransactionRequest.prototype.toObject = function(opt_in
 proto.pactus.GetRawUnbondTransactionRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
 lockTime: jspb.Message.getFieldWithDefault(msg, 1, 0),
-validatorAddress: jspb.Message.getFieldWithDefault(msg, 3, ""),
-memo: jspb.Message.getFieldWithDefault(msg, 4, "")
+validatorAddress: jspb.Message.getFieldWithDefault(msg, 2, ""),
+memo: jspb.Message.getFieldWithDefault(msg, 3, ""),
+delegateOwner: jspb.Message.getFieldWithDefault(msg, 4, "")
   };
 
   if (includeInstance) {
@@ -2148,13 +2239,17 @@ proto.pactus.GetRawUnbondTransactionRequest.deserializeBinaryFromReader = functi
       var value = /** @type {number} */ (reader.readUint32());
       msg.setLockTime(value);
       break;
-    case 3:
+    case 2:
       var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setValidatorAddress(value);
       break;
-    case 4:
+    case 3:
       var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setMemo(value);
+      break;
+    case 4:
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      msg.setDelegateOwner(value);
       break;
     default:
       reader.skipField();
@@ -2195,11 +2290,18 @@ proto.pactus.GetRawUnbondTransactionRequest.serializeBinaryToWriter = function(m
   f = message.getValidatorAddress();
   if (f.length > 0) {
     writer.writeString(
-      3,
+      2,
       f
     );
   }
   f = message.getMemo();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
+  f = message.getDelegateOwner();
   if (f.length > 0) {
     writer.writeString(
       4,
@@ -2228,11 +2330,11 @@ proto.pactus.GetRawUnbondTransactionRequest.prototype.setLockTime = function(val
 
 
 /**
- * optional string validator_address = 3;
+ * optional string validator_address = 2;
  * @return {string}
  */
 proto.pactus.GetRawUnbondTransactionRequest.prototype.getValidatorAddress = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
@@ -2241,16 +2343,16 @@ proto.pactus.GetRawUnbondTransactionRequest.prototype.getValidatorAddress = func
  * @return {!proto.pactus.GetRawUnbondTransactionRequest} returns this
  */
 proto.pactus.GetRawUnbondTransactionRequest.prototype.setValidatorAddress = function(value) {
-  return jspb.Message.setProto3StringField(this, 3, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
 /**
- * optional string memo = 4;
+ * optional string memo = 3;
  * @return {string}
  */
 proto.pactus.GetRawUnbondTransactionRequest.prototype.getMemo = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
 
@@ -2259,6 +2361,24 @@ proto.pactus.GetRawUnbondTransactionRequest.prototype.getMemo = function() {
  * @return {!proto.pactus.GetRawUnbondTransactionRequest} returns this
  */
 proto.pactus.GetRawUnbondTransactionRequest.prototype.setMemo = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional string delegate_owner = 4;
+ * @return {string}
+ */
+proto.pactus.GetRawUnbondTransactionRequest.prototype.getDelegateOwner = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.pactus.GetRawUnbondTransactionRequest} returns this
+ */
+proto.pactus.GetRawUnbondTransactionRequest.prototype.setDelegateOwner = function(value) {
   return jspb.Message.setProto3StringField(this, 4, value);
 };
 
