@@ -45,7 +45,7 @@ func buildTransactionAddCmd(parentCmd *cobra.Command) {
 		id, err := hash.FromString(txID)
 		terminal.FatalErrorCheck(err)
 
-		err = wlt.AddTransaction(id)
+		err = wlt.AddTransactionByID(id)
 		terminal.FatalErrorCheck(err)
 
 		terminal.PrintInfoMsgf("Transaction successfully added to the wallet.")

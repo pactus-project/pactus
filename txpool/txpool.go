@@ -27,7 +27,8 @@ type txPool struct {
 	sbx            sandbox.Sandbox
 	pools          map[payload.Type]pool
 	consumptionMap map[crypto.Address]int
-	messagePipe    pipeline.Pipeline[message.Message]
+	broadcastPipe  pipeline.Pipeline[message.Message]
+	eventPipe      pipeline.Pipeline[any]
 	store          store.Reader
 	logger         *logger.SubLogger
 }
@@ -35,7 +36,10 @@ type txPool struct {
 // NewTxPool constructs a new transaction pool with sub-pools per transaction
 // type. The pool also maintains a consumption map for tracking per-address
 // daily byte usage.
-func NewTxPool(conf *Config, storeReader store.Reader, messagePipe pipeline.Pipeline[message.Message]) TxPool {
+func NewTxPool(conf *Config, storeReader store.Reader,
+	broadcastPipe pipeline.Pipeline[message.Message],
+	eventPipe pipeline.Pipeline[any],
+) TxPool {
 	pools := make(map[payload.Type]pool)
 	pools[payload.TypeTransfer] = newPool(conf.transferPoolSize(), conf.fixedFee())
 	pools[payload.TypeBond] = newPool(conf.bondPoolSize(), conf.fixedFee())
@@ -49,7 +53,8 @@ func NewTxPool(conf *Config, storeReader store.Reader, messagePipe pipeline.Pipe
 		pools:          pools,
 		consumptionMap: make(map[crypto.Address]int),
 		store:          storeReader,
-		messagePipe:    messagePipe,
+		broadcastPipe:  broadcastPipe,
+		eventPipe:      eventPipe,
 	}
 
 	pool.logger = logger.NewSubLogger("_pool", pool)
@@ -116,7 +121,8 @@ func (p *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 
 	go func(t *tx.Tx) {
 		msg := message.NewTransactionsMessage([]*tx.Tx{t})
-		p.messagePipe.Send(msg)
+		p.broadcastPipe.Send(msg)
+		p.eventPipe.Send(t)
 	}(trx)
 
 	return nil

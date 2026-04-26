@@ -77,7 +77,7 @@ func TestAddTransaction(t *testing.T) {
 			GetTransaction(txID.String()).
 			Return(nil, types.Height(0), errors.New("not exists"))
 
-		err := td.wallet.AddTransaction(txID)
+		err := td.wallet.AddTransactionByID(txID)
 		require.Error(t, err)
 	})
 
@@ -87,7 +87,7 @@ func TestAddTransaction(t *testing.T) {
 		td.mockStorage.EXPECT().IsLegacy().Return(false)
 		td.mockStorage.EXPECT().HasTransaction(txID.String()).Return(true)
 
-		err := td.wallet.AddTransaction(txID)
+		err := td.wallet.AddTransactionByID(txID)
 		require.ErrorIs(t, err, ErrTransactionExists)
 	})
 
@@ -102,7 +102,7 @@ func TestAddTransaction(t *testing.T) {
 		td.mockStorage.EXPECT().HasAddress(gomock.Any()).Return(true)
 		td.mockStorage.EXPECT().InsertTransaction(gomock.Any()).Return(nil)
 
-		err := td.wallet.AddTransaction(trx.ID())
+		err := td.wallet.AddTransactionByID(trx.ID())
 		require.NoError(t, err)
 	})
 }

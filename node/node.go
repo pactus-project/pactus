@@ -75,7 +75,7 @@ func NewNode(ctx context.Context, genDoc *genesis.Genesis, conf *config.Config,
 		"version", version.NodeVersion().StringWithAlias(),
 		"network", chainType, "pruned", store.IsPruned())
 
-	txPool := txpool.NewTxPool(conf.TxPool, store, broadcastPipe)
+	txPool := txpool.NewTxPool(conf.TxPool, store, broadcastPipe, eventPipe)
 
 	state, err := state.LoadOrNewState(genDoc, valKeys, store, txPool, eventPipe)
 	if err != nil {

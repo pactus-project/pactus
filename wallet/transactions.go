@@ -4,7 +4,6 @@ import (
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/wallet/provider"
 	"github.com/pactus-project/pactus/wallet/storage"
@@ -23,49 +22,6 @@ func newTransactions(storage storage.IStorage,
 		storage:  storage,
 		provider: provider,
 	}
-}
-
-func (t *transactions) AddTransaction(txID tx.ID) error {
-	if t.storage.IsLegacy() {
-		return nil
-	}
-
-	idStr := txID.String()
-	if t.storage.HasTransaction(idStr) {
-		return ErrTransactionExists
-	}
-
-	trx, height, err := t.provider.GetTransaction(idStr)
-	if err != nil {
-		return err
-	}
-
-	return t.addTransactionWithStatus(trx, wtypes.TransactionStatusConfirmed, height)
-}
-
-func (t *transactions) addTransactionWithStatus(trx *tx.Tx, status wtypes.TransactionStatus,
-	blockHeight types.Height,
-) error {
-	txInfos, err := wtypes.MakeTransactionInfos(trx, status, blockHeight)
-	if err != nil {
-		return err
-	}
-
-	for _, info := range txInfos {
-		if t.storage.HasAddress(info.Sender) {
-			info.Direction = wtypes.TxDirectionOutgoing
-		} else if t.storage.HasAddress(info.Receiver) {
-			info.Direction = wtypes.TxDirectionIncoming
-		} else {
-			continue
-		}
-
-		if err := t.storage.InsertTransaction(info); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
 
 // listTransactionsConfig contains options for listing transactions.
@@ -150,81 +106,15 @@ func (t *transactions) processEvent(event any) {
 	switch evt := event.(type) {
 	case *block.Block:
 		t.processBlock(evt)
+	case *tx.Tx:
+		t.processTransaction(evt)
 	default:
 		// ignore other events
 	}
 }
 
-func collectReceivers(trx *tx.Tx) []string {
-	switch pld := trx.Payload().(type) {
-	case *payload.TransferPayload:
-		return []string{pld.To.String()}
-	case *payload.BondPayload:
-		return []string{pld.To.String()}
-	case *payload.UnbondPayload:
-		return []string{pld.Validator.String()}
-	case *payload.WithdrawPayload:
-		return []string{pld.To.String()}
-	case *payload.SortitionPayload:
-		return nil
-	case *payload.BatchTransferPayload:
-		receivers := make([]string, 0, len(pld.Recipients))
-		for _, recipient := range pld.Recipients {
-			receivers = append(receivers, recipient.To.String())
-		}
-
-		return receivers
-	default:
-		return nil
-	}
-}
-
-func (t *transactions) addIncomingIfWallet(trx *tx.Tx, receivers []string, blockHeight types.Height) bool {
-	for _, receiver := range receivers {
-		if !t.storage.HasAddress(receiver) {
-			continue
-		}
-
-		if err := t.addTransactionWithStatus(trx, wtypes.TransactionStatusConfirmed, blockHeight); err != nil {
-			logger.Warn("failed to add incoming transaction to wallet", "error", err, "id", trx.ID())
-
-			continue
-		}
-
-		logger.Info("added incoming transaction to wallet", "id", trx.ID())
-
-		return true
-	}
-
-	return false
-}
-
 func (t *transactions) processBlock(blk *block.Block) {
-	pendingTxs, err := t.storage.GetPendingTransactions()
-	if err != nil {
-		logger.Warn("failed to get pending transactions", "error", err)
-
-		return
-	}
-
-	for txID, pendingInfo := range pendingTxs {
-		trx, err := tx.FromBytes(pendingInfo.Data)
-		if err != nil {
-			logger.Warn("failed to deserialize transaction", "error", err, "id", txID)
-
-			continue
-		}
-
-		// TODO: cehck for expired and failed transactions
-
-		// Re-broadcast the transaction
-		_, err = t.provider.SendTx(trx)
-		if err != nil {
-			logger.Warn("failed to broadcast transaction", "error", err, "id", txID, "fee", trx.Fee())
-
-			continue
-		}
-	}
+	pendingTxs := t.getPendingTransaction()
 
 	for _, trx := range blk.Transactions() {
 		txID := trx.ID().String()
@@ -241,25 +131,84 @@ func (t *transactions) processBlock(blk *block.Block) {
 			continue
 		}
 
-		if t.addIncomingIfWallet(trx, collectReceivers(trx), blk.Height()) {
-			continue
-		}
-
-		if trx.IsSubsidyTx() {
-			continue
-		}
-
-		signer := trx.Payload().Signer().String()
-		if !t.storage.HasAddress(signer) {
-			continue
-		}
-
-		if err := t.addTransactionWithStatus(trx, wtypes.TransactionStatusConfirmed, blk.Height()); err != nil {
-			logger.Warn("failed to add outgoing transaction to wallet", "error", err, "id", trx.ID())
-
-			continue
-		}
-
-		logger.Info("added outgoing transaction to wallet", "id", trx.ID())
+		_ = t.addTransactionWithStatus(trx, wtypes.TransactionStatusConfirmed, blk.Height())
 	}
+}
+
+func (t *transactions) processTransaction(trx *tx.Tx) {
+	_ = t.addTransactionWithStatus(trx, wtypes.TransactionStatusPending, 0)
+}
+
+func (t *transactions) getPendingTransaction() map[string]*wtypes.TransactionInfo {
+	pendingTxs, err := t.storage.GetPendingTransactions()
+	if err != nil {
+		logger.Warn("failed to get pending transactions", "error", err)
+
+		return nil
+	}
+
+	for _, pendingInfo := range pendingTxs {
+		trx, err := tx.FromBytes(pendingInfo.Data)
+		if err != nil {
+			continue
+		}
+
+		// TODO: check for expired and failed transactions
+
+		// Re-broadcast the transaction
+		_, err = t.provider.SendTx(trx)
+		if err != nil {
+			continue
+		}
+	}
+
+	return pendingTxs
+}
+
+func (t *transactions) AddTransactionByID(txID tx.ID) error {
+	if t.storage.IsLegacy() {
+		return nil
+	}
+
+	idStr := txID.String()
+	if t.storage.HasTransaction(idStr) {
+		return ErrTransactionExists
+	}
+
+	trx, height, err := t.provider.GetTransaction(idStr)
+	if err != nil {
+		return err
+	}
+
+	return t.addTransactionWithStatus(trx, wtypes.TransactionStatusConfirmed, height)
+}
+
+func (t *transactions) addTransactionWithStatus(trx *tx.Tx,
+	status wtypes.TransactionStatus, blockHeight types.Height,
+) error {
+	txInfos, err := wtypes.MakeTransactionInfos(trx, status, blockHeight)
+	if err != nil {
+		return err
+	}
+
+	for _, info := range txInfos {
+		if t.storage.HasAddress(info.Sender) {
+			info.Direction = wtypes.TxDirectionOutgoing
+		} else if t.storage.HasAddress(info.Receiver) {
+			info.Direction = wtypes.TxDirectionIncoming
+		} else {
+			continue
+		}
+
+		if err := t.storage.InsertTransaction(info); err != nil {
+			logger.Warn("failed to insert transaction into storage", "error", err, "id", trx.ID())
+
+			return err
+		}
+
+		logger.Info("added outgoing transaction to wallet",
+			"id", trx.ID(), "status", status, "blockHeight", blockHeight)
+	}
+
+	return nil
 }

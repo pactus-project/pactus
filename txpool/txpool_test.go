@@ -26,9 +26,10 @@ import (
 type testData struct {
 	*testsuite.TestSuite
 
-	pool *txPool
-	sbx  *sandbox.MockSandbox
-	pipe pipeline.Pipeline[message.Message]
+	pool          *txPool
+	sbx           *sandbox.MockSandbox
+	broadcastPipe pipeline.Pipeline[message.Message]
+	eventPipe     pipeline.Pipeline[any]
 }
 
 func testDefaultConfig() *Config {
@@ -52,13 +53,14 @@ func setup(t *testing.T, cfg *Config) *testData {
 
 	ts := testsuite.NewTestSuiteFromSeed(t, 1776497511988844581)
 
-	pipe := pipeline.New[message.Message](t.Context())
+	broadcastPipe := pipeline.New[message.Message](t.Context())
+	eventPipe := pipeline.New[any](t.Context())
 	sbx := sandbox.MockingSandbox(ts)
 	config := testDefaultConfig()
 	if cfg != nil {
 		config = cfg
 	}
-	poolInt := NewTxPool(config, sbx.TestStore, pipe)
+	poolInt := NewTxPool(config, sbx.TestStore, broadcastPipe, eventPipe)
 	poolInt.SetNewSandboxAndRecheck(sbx)
 	pool := poolInt.(*txPool)
 	assert.NotNil(t, pool)
@@ -70,10 +72,11 @@ func setup(t *testing.T, cfg *Config) *testData {
 	_ = sbx.TestStore.AddTestBlock(randHeight)
 
 	return &testData{
-		TestSuite: ts,
-		pool:      pool,
-		sbx:       sbx,
-		pipe:      pipe,
+		TestSuite:     ts,
+		pool:          pool,
+		sbx:           sbx,
+		broadcastPipe: broadcastPipe,
+		eventPipe:     eventPipe,
 	}
 }
 
@@ -89,7 +92,7 @@ func (td *testData) shouldPublishTransaction(t *testing.T, txID tx.ID) {
 
 			return
 
-		case msg := <-td.pipe.UnsafeGetChannel():
+		case msg := <-td.broadcastPipe.UnsafeGetChannel():
 			logger.Info("shouldPublishTransaction", "msg", msg)
 
 			if msg.Type() == message.TypeTransaction {
