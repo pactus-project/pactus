@@ -60,6 +60,11 @@ class TransactionStub(object):
                 request_serializer=transaction__pb2.DecodeRawTransactionRequest.SerializeToString,
                 response_deserializer=transaction__pb2.DecodeRawTransactionResponse.FromString,
                 _registered_method=True)
+        self.CheckTransaction = channel.unary_unary(
+                '/pactus.Transaction/CheckTransaction',
+                request_serializer=transaction__pb2.CheckTransactionRequest.SerializeToString,
+                response_deserializer=transaction__pb2.CheckTransactionResponse.FromString,
+                _registered_method=True)
 
 
 class TransactionServicer(object):
@@ -129,6 +134,13 @@ class TransactionServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def CheckTransaction(self, request, context):
+        """CheckTransaction checks if the transaction is valid and can be included in the blockchain.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_TransactionServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -176,6 +188,11 @@ def add_TransactionServicer_to_server(servicer, server):
                     servicer.DecodeRawTransaction,
                     request_deserializer=transaction__pb2.DecodeRawTransactionRequest.FromString,
                     response_serializer=transaction__pb2.DecodeRawTransactionResponse.SerializeToString,
+            ),
+            'CheckTransaction': grpc.unary_unary_rpc_method_handler(
+                    servicer.CheckTransaction,
+                    request_deserializer=transaction__pb2.CheckTransactionRequest.FromString,
+                    response_serializer=transaction__pb2.CheckTransactionResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -422,6 +439,33 @@ class Transaction(object):
             '/pactus.Transaction/DecodeRawTransaction',
             transaction__pb2.DecodeRawTransactionRequest.SerializeToString,
             transaction__pb2.DecodeRawTransactionResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def CheckTransaction(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/pactus.Transaction/CheckTransaction',
+            transaction__pb2.CheckTransactionRequest.SerializeToString,
+            transaction__pb2.CheckTransactionResponse.FromString,
             options,
             channel_credentials,
             insecure,

@@ -113,6 +113,10 @@ curl --location 'http://localhost:8545/' \
           <a href="#pactus.transaction.decode_raw_transaction">
           <span class="rpc-badge"></span>pactus.transaction.decode_raw_transaction</a>
         </li>
+        <li>
+          <a href="#pactus.transaction.check_transaction">
+          <span class="rpc-badge"></span>pactus.transaction.check_transaction</a>
+        </li>
       </ul>
     </li>
     <li> Blockchain Service
@@ -1426,6 +1430,49 @@ A value of zero means the transaction is unconfirmed and may still in the transa
     <td>
   The number of blocks that have been added to the chain after this transaction was included in a block.
 A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+    </td>
+  </tr>
+   </tbody>
+</table>
+
+#### pactus.transaction.check_transaction <span id="pactus.transaction.check_transaction" class="rpc-badge"></span>
+
+<p>CheckTransaction checks if the transaction is valid and can be included in the blockchain.</p>
+
+<h4>Parameters</h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">raw_transaction</td>
+    <td> string</td>
+    <td>
+  The raw transaction data to be checked.
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<h4>Result</h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+  <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider"><tr>
+    <td class="fw-bold">is_valid</td>
+    <td> boolean</td>
+    <td>
+  Indicates whether the transaction is valid.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">error_message</td>
+    <td> string</td>
+    <td>
+  An error message if the transaction is invalid.
+Empty if the transaction is valid.
     </td>
   </tr>
    </tbody>

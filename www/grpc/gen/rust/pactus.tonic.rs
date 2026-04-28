@@ -319,6 +319,30 @@ pub mod transaction_client {
                 .insert(GrpcMethod::new("pactus.Transaction", "DecodeRawTransaction"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn check_transaction(
+            &mut self,
+            request: impl tonic::IntoRequest<super::CheckTransactionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::CheckTransactionResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pactus.Transaction/CheckTransaction",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pactus.Transaction", "CheckTransaction"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -395,6 +419,13 @@ pub mod transaction_server {
             request: tonic::Request<super::DecodeRawTransactionRequest>,
         ) -> std::result::Result<
             tonic::Response<super::DecodeRawTransactionResponse>,
+            tonic::Status,
+        >;
+        async fn check_transaction(
+            &self,
+            request: tonic::Request<super::CheckTransactionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::CheckTransactionResponse>,
             tonic::Status,
         >;
     }
@@ -897,6 +928,51 @@ pub mod transaction_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = DecodeRawTransactionSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pactus.Transaction/CheckTransaction" => {
+                    #[allow(non_camel_case_types)]
+                    struct CheckTransactionSvc<T: Transaction>(pub Arc<T>);
+                    impl<
+                        T: Transaction,
+                    > tonic::server::UnaryService<super::CheckTransactionRequest>
+                    for CheckTransactionSvc<T> {
+                        type Response = super::CheckTransactionResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::CheckTransactionRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Transaction>::check_transaction(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = CheckTransactionSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

@@ -39,6 +39,8 @@ abstract class TransactionServiceBase extends $pb.GeneratedService {
       $pb.ServerContext ctx, $0.GetRawBatchTransferTransactionRequest request);
   $async.Future<$0.DecodeRawTransactionResponse> decodeRawTransaction(
       $pb.ServerContext ctx, $0.DecodeRawTransactionRequest request);
+  $async.Future<$0.CheckTransactionResponse> checkTransaction(
+      $pb.ServerContext ctx, $0.CheckTransactionRequest request);
 
   $pb.GeneratedMessage createRequest($core.String methodName) {
     switch (methodName) {
@@ -60,6 +62,8 @@ abstract class TransactionServiceBase extends $pb.GeneratedService {
         return $0.GetRawBatchTransferTransactionRequest();
       case 'DecodeRawTransaction':
         return $0.DecodeRawTransactionRequest();
+      case 'CheckTransaction':
+        return $0.CheckTransactionRequest();
       default:
         throw $core.ArgumentError('Unknown method: $methodName');
     }
@@ -93,6 +97,8 @@ abstract class TransactionServiceBase extends $pb.GeneratedService {
       case 'DecodeRawTransaction':
         return decodeRawTransaction(
             ctx, request as $0.DecodeRawTransactionRequest);
+      case 'CheckTransaction':
+        return checkTransaction(ctx, request as $0.CheckTransactionRequest);
       default:
         throw $core.ArgumentError('Unknown method: $methodName');
     }

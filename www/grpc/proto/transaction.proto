@@ -32,6 +32,9 @@ service Transaction {
 
   // DecodeRawTransaction accepts raw transaction and returns decoded transaction.
   rpc DecodeRawTransaction(DecodeRawTransactionRequest) returns (DecodeRawTransactionResponse);
+
+  // CheckTransaction checks if the transaction is valid and can be included in the blockchain.
+  rpc CheckTransaction(CheckTransactionRequest) returns (CheckTransactionResponse);
 }
 
 // Request message for retrieving transaction details.
@@ -342,4 +345,20 @@ message DecodeRawTransactionRequest {
 message DecodeRawTransactionResponse {
   // The decoded transaction information.
   TransactionInfo transaction = 1;
+}
+
+
+// Request message for checking a transaction.
+message CheckTransactionRequest {
+  // The raw transaction data to be checked.
+  string raw_transaction = 1;
+}
+
+// Response message contains the result of the transaction check.
+message CheckTransactionResponse {
+  // Indicates whether the transaction is valid.
+  bool is_valid = 1;
+  // An error message if the transaction is invalid.
+  // Empty if the transaction is valid.
+  string error_message = 2;
 }

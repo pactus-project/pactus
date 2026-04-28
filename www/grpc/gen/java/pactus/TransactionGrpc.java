@@ -294,6 +294,37 @@ public final class TransactionGrpc {
     return getDecodeRawTransactionMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pactus.TransactionOuterClass.CheckTransactionRequest,
+      pactus.TransactionOuterClass.CheckTransactionResponse> getCheckTransactionMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "CheckTransaction",
+      requestType = pactus.TransactionOuterClass.CheckTransactionRequest.class,
+      responseType = pactus.TransactionOuterClass.CheckTransactionResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.TransactionOuterClass.CheckTransactionRequest,
+      pactus.TransactionOuterClass.CheckTransactionResponse> getCheckTransactionMethod() {
+    io.grpc.MethodDescriptor<pactus.TransactionOuterClass.CheckTransactionRequest, pactus.TransactionOuterClass.CheckTransactionResponse> getCheckTransactionMethod;
+    if ((getCheckTransactionMethod = TransactionGrpc.getCheckTransactionMethod) == null) {
+      synchronized (TransactionGrpc.class) {
+        if ((getCheckTransactionMethod = TransactionGrpc.getCheckTransactionMethod) == null) {
+          TransactionGrpc.getCheckTransactionMethod = getCheckTransactionMethod =
+              io.grpc.MethodDescriptor.<pactus.TransactionOuterClass.CheckTransactionRequest, pactus.TransactionOuterClass.CheckTransactionResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "CheckTransaction"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.TransactionOuterClass.CheckTransactionRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.TransactionOuterClass.CheckTransactionResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new TransactionMethodDescriptorSupplier("CheckTransaction"))
+              .build();
+        }
+      }
+    }
+    return getCheckTransactionMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -449,6 +480,16 @@ public final class TransactionGrpc {
         io.grpc.stub.StreamObserver<pactus.TransactionOuterClass.DecodeRawTransactionResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDecodeRawTransactionMethod(), responseObserver);
     }
+
+    /**
+     * <pre>
+     * CheckTransaction checks if the transaction is valid and can be included in the blockchain.
+     * </pre>
+     */
+    default void checkTransaction(pactus.TransactionOuterClass.CheckTransactionRequest request,
+        io.grpc.stub.StreamObserver<pactus.TransactionOuterClass.CheckTransactionResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getCheckTransactionMethod(), responseObserver);
+    }
   }
 
   /**
@@ -582,6 +623,17 @@ public final class TransactionGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getDecodeRawTransactionMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * CheckTransaction checks if the transaction is valid and can be included in the blockchain.
+     * </pre>
+     */
+    public void checkTransaction(pactus.TransactionOuterClass.CheckTransactionRequest request,
+        io.grpc.stub.StreamObserver<pactus.TransactionOuterClass.CheckTransactionResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getCheckTransactionMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -692,6 +744,16 @@ public final class TransactionGrpc {
       return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getDecodeRawTransactionMethod(), getCallOptions(), request);
     }
+
+    /**
+     * <pre>
+     * CheckTransaction checks if the transaction is valid and can be included in the blockchain.
+     * </pre>
+     */
+    public pactus.TransactionOuterClass.CheckTransactionResponse checkTransaction(pactus.TransactionOuterClass.CheckTransactionRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getCheckTransactionMethod(), getCallOptions(), request);
+    }
   }
 
   /**
@@ -801,6 +863,16 @@ public final class TransactionGrpc {
     public pactus.TransactionOuterClass.DecodeRawTransactionResponse decodeRawTransaction(pactus.TransactionOuterClass.DecodeRawTransactionRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getDecodeRawTransactionMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * CheckTransaction checks if the transaction is valid and can be included in the blockchain.
+     * </pre>
+     */
+    public pactus.TransactionOuterClass.CheckTransactionResponse checkTransaction(pactus.TransactionOuterClass.CheckTransactionRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getCheckTransactionMethod(), getCallOptions(), request);
     }
   }
 
@@ -921,6 +993,17 @@ public final class TransactionGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getDecodeRawTransactionMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * CheckTransaction checks if the transaction is valid and can be included in the blockchain.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.TransactionOuterClass.CheckTransactionResponse> checkTransaction(
+        pactus.TransactionOuterClass.CheckTransactionRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getCheckTransactionMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_TRANSACTION = 0;
@@ -932,6 +1015,7 @@ public final class TransactionGrpc {
   private static final int METHODID_GET_RAW_WITHDRAW_TRANSACTION = 6;
   private static final int METHODID_GET_RAW_BATCH_TRANSFER_TRANSACTION = 7;
   private static final int METHODID_DECODE_RAW_TRANSACTION = 8;
+  private static final int METHODID_CHECK_TRANSACTION = 9;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -985,6 +1069,10 @@ public final class TransactionGrpc {
         case METHODID_DECODE_RAW_TRANSACTION:
           serviceImpl.decodeRawTransaction((pactus.TransactionOuterClass.DecodeRawTransactionRequest) request,
               (io.grpc.stub.StreamObserver<pactus.TransactionOuterClass.DecodeRawTransactionResponse>) responseObserver);
+          break;
+        case METHODID_CHECK_TRANSACTION:
+          serviceImpl.checkTransaction((pactus.TransactionOuterClass.CheckTransactionRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.TransactionOuterClass.CheckTransactionResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -1067,6 +1155,13 @@ public final class TransactionGrpc {
               pactus.TransactionOuterClass.DecodeRawTransactionRequest,
               pactus.TransactionOuterClass.DecodeRawTransactionResponse>(
                 service, METHODID_DECODE_RAW_TRANSACTION)))
+        .addMethod(
+          getCheckTransactionMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              pactus.TransactionOuterClass.CheckTransactionRequest,
+              pactus.TransactionOuterClass.CheckTransactionResponse>(
+                service, METHODID_CHECK_TRANSACTION)))
         .build();
   }
 
@@ -1124,6 +1219,7 @@ public final class TransactionGrpc {
               .addMethod(getGetRawWithdrawTransactionMethod())
               .addMethod(getGetRawBatchTransferTransactionMethod())
               .addMethod(getDecodeRawTransactionMethod())
+              .addMethod(getCheckTransactionMethod())
               .build();
         }
       }

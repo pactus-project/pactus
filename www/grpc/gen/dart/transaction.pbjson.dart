@@ -563,6 +563,35 @@ final $typed_data.Uint8List decodeRawTransactionResponseDescriptor =
         'ChxEZWNvZGVSYXdUcmFuc2FjdGlvblJlc3BvbnNlEjkKC3RyYW5zYWN0aW9uGAEgASgLMhcucG'
         'FjdHVzLlRyYW5zYWN0aW9uSW5mb1ILdHJhbnNhY3Rpb24=');
 
+@$core.Deprecated('Use checkTransactionRequestDescriptor instead')
+const CheckTransactionRequest$json = {
+  '1': 'CheckTransactionRequest',
+  '2': [
+    {'1': 'raw_transaction', '3': 1, '4': 1, '5': 9, '10': 'rawTransaction'},
+  ],
+};
+
+/// Descriptor for `CheckTransactionRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List checkTransactionRequestDescriptor =
+    $convert.base64Decode(
+        'ChdDaGVja1RyYW5zYWN0aW9uUmVxdWVzdBInCg9yYXdfdHJhbnNhY3Rpb24YASABKAlSDnJhd1'
+        'RyYW5zYWN0aW9u');
+
+@$core.Deprecated('Use checkTransactionResponseDescriptor instead')
+const CheckTransactionResponse$json = {
+  '1': 'CheckTransactionResponse',
+  '2': [
+    {'1': 'is_valid', '3': 1, '4': 1, '5': 8, '10': 'isValid'},
+    {'1': 'error_message', '3': 2, '4': 1, '5': 9, '10': 'errorMessage'},
+  ],
+};
+
+/// Descriptor for `CheckTransactionResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List checkTransactionResponseDescriptor =
+    $convert.base64Decode(
+        'ChhDaGVja1RyYW5zYWN0aW9uUmVzcG9uc2USGQoIaXNfdmFsaWQYASABKAhSB2lzVmFsaWQSIw'
+        'oNZXJyb3JfbWVzc2FnZRgCIAEoCVIMZXJyb3JNZXNzYWdl');
+
 const $core.Map<$core.String, $core.dynamic> TransactionServiceBase$json = {
   '1': 'Transaction',
   '2': [
@@ -611,6 +640,11 @@ const $core.Map<$core.String, $core.dynamic> TransactionServiceBase$json = {
       '2': '.pactus.DecodeRawTransactionRequest',
       '3': '.pactus.DecodeRawTransactionResponse'
     },
+    {
+      '1': 'CheckTransaction',
+      '2': '.pactus.CheckTransactionRequest',
+      '3': '.pactus.CheckTransactionResponse'
+    },
   ],
 };
 
@@ -642,6 +676,8 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>>
       GetRawBatchTransferTransactionRequest$json,
   '.pactus.DecodeRawTransactionRequest': DecodeRawTransactionRequest$json,
   '.pactus.DecodeRawTransactionResponse': DecodeRawTransactionResponse$json,
+  '.pactus.CheckTransactionRequest': CheckTransactionRequest$json,
+  '.pactus.CheckTransactionResponse': CheckTransactionResponse$json,
 };
 
 /// Descriptor for `Transaction`. Decode as a `google.protobuf.ServiceDescriptorProto`.
@@ -662,4 +698,5 @@ final $typed_data.Uint8List transactionServiceDescriptor = $convert.base64Decode
     'VzLkdldFJhd0JhdGNoVHJhbnNmZXJUcmFuc2FjdGlvblJlcXVlc3QaIS5wYWN0dXMuR2V0UmF3'
     'VHJhbnNhY3Rpb25SZXNwb25zZRJhChREZWNvZGVSYXdUcmFuc2FjdGlvbhIjLnBhY3R1cy5EZW'
     'NvZGVSYXdUcmFuc2FjdGlvblJlcXVlc3QaJC5wYWN0dXMuRGVjb2RlUmF3VHJhbnNhY3Rpb25S'
-    'ZXNwb25zZQ==');
+    'ZXNwb25zZRJVChBDaGVja1RyYW5zYWN0aW9uEh8ucGFjdHVzLkNoZWNrVHJhbnNhY3Rpb25SZX'
+    'F1ZXN0GiAucGFjdHVzLkNoZWNrVHJhbnNhY3Rpb25SZXNwb25zZQ==');

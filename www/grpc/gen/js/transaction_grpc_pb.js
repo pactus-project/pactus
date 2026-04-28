@@ -48,6 +48,28 @@ function deserialize_pactus_CalculateFeeResponse(buffer_arg) {
   return transaction_pb.CalculateFeeResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_CheckTransactionRequest(arg) {
+  if (!(arg instanceof transaction_pb.CheckTransactionRequest)) {
+    throw new Error('Expected argument of type pactus.CheckTransactionRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_CheckTransactionRequest(buffer_arg) {
+  return transaction_pb.CheckTransactionRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_CheckTransactionResponse(arg) {
+  if (!(arg instanceof transaction_pb.CheckTransactionResponse)) {
+    throw new Error('Expected argument of type pactus.CheckTransactionResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_CheckTransactionResponse(buffer_arg) {
+  return transaction_pb.CheckTransactionResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_DecodeRawTransactionRequest(arg) {
   if (!(arg instanceof transaction_pb.DecodeRawTransactionRequest)) {
     throw new Error('Expected argument of type pactus.DecodeRawTransactionRequest');
@@ -268,6 +290,18 @@ decodeRawTransaction: {
     requestDeserialize: deserialize_pactus_DecodeRawTransactionRequest,
     responseSerialize: serialize_pactus_DecodeRawTransactionResponse,
     responseDeserialize: deserialize_pactus_DecodeRawTransactionResponse,
+  },
+  // CheckTransaction checks if the transaction is valid and can be included in the blockchain.
+checkTransaction: {
+    path: '/pactus.Transaction/CheckTransaction',
+    requestStream: false,
+    responseStream: false,
+    requestType: transaction_pb.CheckTransactionRequest,
+    responseType: transaction_pb.CheckTransactionResponse,
+    requestSerialize: serialize_pactus_CheckTransactionRequest,
+    requestDeserialize: deserialize_pactus_CheckTransactionRequest,
+    responseSerialize: serialize_pactus_CheckTransactionResponse,
+    responseDeserialize: deserialize_pactus_CheckTransactionResponse,
   },
 };
 

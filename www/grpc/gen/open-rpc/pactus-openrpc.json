@@ -334,6 +334,23 @@
           }
         }
       },{
+      "name": "pactus.transaction.check_transaction",
+      "description": "CheckTransaction checks if the transaction is valid and can be included in the blockchain.",
+      "tags": [{ "name": "transaction"}],
+      "paramStructure": "by-name",
+      "params": [{
+          "name": "raw_transaction",
+          "description": "The raw transaction data to be checked.",
+          "schema": { "type": "string" }
+        }],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object","required": ["is_valid","error_message"],
+          "properties": {"is_valid": { "type": "boolean" },"error_message": { "type": "string" }}
+          }
+        }
+      },{
       "name": "pactus.blockchain.get_block",
       "description": "GetBlock retrieves information about a block based on the provided request parameters.",
       "tags": [{ "name": "blockchain"}],

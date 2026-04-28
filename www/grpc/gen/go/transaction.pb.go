@@ -1822,6 +1822,108 @@ func (x *DecodeRawTransactionResponse) GetTransaction() *TransactionInfo {
 	return nil
 }
 
+// Request message for checking a transaction.
+type CheckTransactionRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The raw transaction data to be checked.
+	RawTransaction string `protobuf:"bytes,1,opt,name=raw_transaction,json=rawTransaction,proto3" json:"raw_transaction,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *CheckTransactionRequest) Reset() {
+	*x = CheckTransactionRequest{}
+	mi := &file_transaction_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckTransactionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckTransactionRequest) ProtoMessage() {}
+
+func (x *CheckTransactionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_transaction_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckTransactionRequest.ProtoReflect.Descriptor instead.
+func (*CheckTransactionRequest) Descriptor() ([]byte, []int) {
+	return file_transaction_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *CheckTransactionRequest) GetRawTransaction() string {
+	if x != nil {
+		return x.RawTransaction
+	}
+	return ""
+}
+
+// Response message contains the result of the transaction check.
+type CheckTransactionResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Indicates whether the transaction is valid.
+	IsValid bool `protobuf:"varint,1,opt,name=is_valid,json=isValid,proto3" json:"is_valid,omitempty"`
+	// An error message if the transaction is invalid.
+	// Empty if the transaction is valid.
+	ErrorMessage  string `protobuf:"bytes,2,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckTransactionResponse) Reset() {
+	*x = CheckTransactionResponse{}
+	mi := &file_transaction_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckTransactionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckTransactionResponse) ProtoMessage() {}
+
+func (x *CheckTransactionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_transaction_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckTransactionResponse.ProtoReflect.Descriptor instead.
+func (*CheckTransactionResponse) Descriptor() ([]byte, []int) {
+	return file_transaction_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *CheckTransactionResponse) GetIsValid() bool {
+	if x != nil {
+		return x.IsValid
+	}
+	return false
+}
+
+func (x *CheckTransactionResponse) GetErrorMessage() string {
+	if x != nil {
+		return x.ErrorMessage
+	}
+	return ""
+}
+
 var File_transaction_proto protoreflect.FileDescriptor
 
 const file_transaction_proto_rawDesc = "" +
@@ -1947,7 +2049,12 @@ const file_transaction_proto_rawDesc = "" +
 	"\x1bDecodeRawTransactionRequest\x12'\n" +
 	"\x0fraw_transaction\x18\x01 \x01(\tR\x0erawTransaction\"Y\n" +
 	"\x1cDecodeRawTransactionResponse\x129\n" +
-	"\vtransaction\x18\x01 \x01(\v2\x17.pactus.TransactionInfoR\vtransaction*\xce\x01\n" +
+	"\vtransaction\x18\x01 \x01(\v2\x17.pactus.TransactionInfoR\vtransaction\"B\n" +
+	"\x17CheckTransactionRequest\x12'\n" +
+	"\x0fraw_transaction\x18\x01 \x01(\tR\x0erawTransaction\"Z\n" +
+	"\x18CheckTransactionResponse\x12\x19\n" +
+	"\bis_valid\x18\x01 \x01(\bR\aisValid\x12#\n" +
+	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage*\xce\x01\n" +
 	"\vPayloadType\x12\x1c\n" +
 	"\x18PAYLOAD_TYPE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15PAYLOAD_TYPE_TRANSFER\x10\x01\x12\x15\n" +
@@ -1958,7 +2065,7 @@ const file_transaction_proto_rawDesc = "" +
 	"\x1bPAYLOAD_TYPE_BATCH_TRANSFER\x10\x06*V\n" +
 	"\x14TransactionVerbosity\x12\x1e\n" +
 	"\x1aTRANSACTION_VERBOSITY_DATA\x10\x00\x12\x1e\n" +
-	"\x1aTRANSACTION_VERBOSITY_INFO\x10\x012\xff\x06\n" +
+	"\x1aTRANSACTION_VERBOSITY_INFO\x10\x012\xd6\a\n" +
 	"\vTransaction\x12O\n" +
 	"\x0eGetTransaction\x12\x1d.pactus.GetTransactionRequest\x1a\x1e.pactus.GetTransactionResponse\x12I\n" +
 	"\fCalculateFee\x12\x1b.pactus.CalculateFeeRequest\x1a\x1c.pactus.CalculateFeeResponse\x12a\n" +
@@ -1968,7 +2075,8 @@ const file_transaction_proto_rawDesc = "" +
 	"\x17GetRawUnbondTransaction\x12&.pactus.GetRawUnbondTransactionRequest\x1a!.pactus.GetRawTransactionResponse\x12h\n" +
 	"\x19GetRawWithdrawTransaction\x12(.pactus.GetRawWithdrawTransactionRequest\x1a!.pactus.GetRawTransactionResponse\x12r\n" +
 	"\x1eGetRawBatchTransferTransaction\x12-.pactus.GetRawBatchTransferTransactionRequest\x1a!.pactus.GetRawTransactionResponse\x12a\n" +
-	"\x14DecodeRawTransaction\x12#.pactus.DecodeRawTransactionRequest\x1a$.pactus.DecodeRawTransactionResponseB:\n" +
+	"\x14DecodeRawTransaction\x12#.pactus.DecodeRawTransactionRequest\x1a$.pactus.DecodeRawTransactionResponse\x12U\n" +
+	"\x10CheckTransaction\x12\x1f.pactus.CheckTransactionRequest\x1a .pactus.CheckTransactionResponseB:\n" +
 	"\x06pactusZ0github.com/pactus-project/pactus/www/grpc/pactusb\x06proto3"
 
 var (
@@ -1984,7 +2092,7 @@ func file_transaction_proto_rawDescGZIP() []byte {
 }
 
 var file_transaction_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_transaction_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
+var file_transaction_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
 var file_transaction_proto_goTypes = []any{
 	(PayloadType)(0),                              // 0: pactus.PayloadType
 	(TransactionVerbosity)(0),                     // 1: pactus.TransactionVerbosity
@@ -2010,6 +2118,8 @@ var file_transaction_proto_goTypes = []any{
 	(*TransactionInfo)(nil),                       // 21: pactus.TransactionInfo
 	(*DecodeRawTransactionRequest)(nil),           // 22: pactus.DecodeRawTransactionRequest
 	(*DecodeRawTransactionResponse)(nil),          // 23: pactus.DecodeRawTransactionResponse
+	(*CheckTransactionRequest)(nil),               // 24: pactus.CheckTransactionRequest
+	(*CheckTransactionResponse)(nil),              // 25: pactus.CheckTransactionResponse
 }
 var file_transaction_proto_depIdxs = []int32{
 	1,  // 0: pactus.GetTransactionRequest.verbosity:type_name -> pactus.TransactionVerbosity
@@ -2034,17 +2144,19 @@ var file_transaction_proto_depIdxs = []int32{
 	11, // 19: pactus.Transaction.GetRawWithdrawTransaction:input_type -> pactus.GetRawWithdrawTransactionRequest
 	12, // 20: pactus.Transaction.GetRawBatchTransferTransaction:input_type -> pactus.GetRawBatchTransferTransactionRequest
 	22, // 21: pactus.Transaction.DecodeRawTransaction:input_type -> pactus.DecodeRawTransactionRequest
-	3,  // 22: pactus.Transaction.GetTransaction:output_type -> pactus.GetTransactionResponse
-	5,  // 23: pactus.Transaction.CalculateFee:output_type -> pactus.CalculateFeeResponse
-	7,  // 24: pactus.Transaction.BroadcastTransaction:output_type -> pactus.BroadcastTransactionResponse
-	13, // 25: pactus.Transaction.GetRawTransferTransaction:output_type -> pactus.GetRawTransactionResponse
-	13, // 26: pactus.Transaction.GetRawBondTransaction:output_type -> pactus.GetRawTransactionResponse
-	13, // 27: pactus.Transaction.GetRawUnbondTransaction:output_type -> pactus.GetRawTransactionResponse
-	13, // 28: pactus.Transaction.GetRawWithdrawTransaction:output_type -> pactus.GetRawTransactionResponse
-	13, // 29: pactus.Transaction.GetRawBatchTransferTransaction:output_type -> pactus.GetRawTransactionResponse
-	23, // 30: pactus.Transaction.DecodeRawTransaction:output_type -> pactus.DecodeRawTransactionResponse
-	22, // [22:31] is the sub-list for method output_type
-	13, // [13:22] is the sub-list for method input_type
+	24, // 22: pactus.Transaction.CheckTransaction:input_type -> pactus.CheckTransactionRequest
+	3,  // 23: pactus.Transaction.GetTransaction:output_type -> pactus.GetTransactionResponse
+	5,  // 24: pactus.Transaction.CalculateFee:output_type -> pactus.CalculateFeeResponse
+	7,  // 25: pactus.Transaction.BroadcastTransaction:output_type -> pactus.BroadcastTransactionResponse
+	13, // 26: pactus.Transaction.GetRawTransferTransaction:output_type -> pactus.GetRawTransactionResponse
+	13, // 27: pactus.Transaction.GetRawBondTransaction:output_type -> pactus.GetRawTransactionResponse
+	13, // 28: pactus.Transaction.GetRawUnbondTransaction:output_type -> pactus.GetRawTransactionResponse
+	13, // 29: pactus.Transaction.GetRawWithdrawTransaction:output_type -> pactus.GetRawTransactionResponse
+	13, // 30: pactus.Transaction.GetRawBatchTransferTransaction:output_type -> pactus.GetRawTransactionResponse
+	23, // 31: pactus.Transaction.DecodeRawTransaction:output_type -> pactus.DecodeRawTransactionResponse
+	25, // 32: pactus.Transaction.CheckTransaction:output_type -> pactus.CheckTransactionResponse
+	23, // [23:33] is the sub-list for method output_type
+	13, // [13:23] is the sub-list for method input_type
 	13, // [13:13] is the sub-list for extension type_name
 	13, // [13:13] is the sub-list for extension extendee
 	0,  // [0:13] is the sub-list for field type_name
@@ -2069,7 +2181,7 @@ func file_transaction_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_transaction_proto_rawDesc), len(file_transaction_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   22,
+			NumMessages:   24,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

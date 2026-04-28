@@ -2219,6 +2219,134 @@ class DecodeRawTransactionResponse extends $pb.GeneratedMessage {
   TransactionInfo ensureTransaction() => $_ensure(0);
 }
 
+/// Request message for checking a transaction.
+class CheckTransactionRequest extends $pb.GeneratedMessage {
+  factory CheckTransactionRequest({
+    $core.String? rawTransaction,
+  }) {
+    final result = create();
+    if (rawTransaction != null) result.rawTransaction = rawTransaction;
+    return result;
+  }
+
+  CheckTransactionRequest._();
+
+  factory CheckTransactionRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory CheckTransactionRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'CheckTransactionRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'rawTransaction')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  CheckTransactionRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  CheckTransactionRequest copyWith(
+          void Function(CheckTransactionRequest) updates) =>
+      super.copyWith((message) => updates(message as CheckTransactionRequest))
+          as CheckTransactionRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static CheckTransactionRequest create() => CheckTransactionRequest._();
+  @$core.override
+  CheckTransactionRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static CheckTransactionRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<CheckTransactionRequest>(create);
+  static CheckTransactionRequest? _defaultInstance;
+
+  /// The raw transaction data to be checked.
+  @$pb.TagNumber(1)
+  $core.String get rawTransaction => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set rawTransaction($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasRawTransaction() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearRawTransaction() => $_clearField(1);
+}
+
+/// Response message contains the result of the transaction check.
+class CheckTransactionResponse extends $pb.GeneratedMessage {
+  factory CheckTransactionResponse({
+    $core.bool? isValid,
+    $core.String? errorMessage,
+  }) {
+    final result = create();
+    if (isValid != null) result.isValid = isValid;
+    if (errorMessage != null) result.errorMessage = errorMessage;
+    return result;
+  }
+
+  CheckTransactionResponse._();
+
+  factory CheckTransactionResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory CheckTransactionResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'CheckTransactionResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOB(1, _omitFieldNames ? '' : 'isValid')
+    ..aOS(2, _omitFieldNames ? '' : 'errorMessage')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  CheckTransactionResponse clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  CheckTransactionResponse copyWith(
+          void Function(CheckTransactionResponse) updates) =>
+      super.copyWith((message) => updates(message as CheckTransactionResponse))
+          as CheckTransactionResponse;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static CheckTransactionResponse create() => CheckTransactionResponse._();
+  @$core.override
+  CheckTransactionResponse createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static CheckTransactionResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<CheckTransactionResponse>(create);
+  static CheckTransactionResponse? _defaultInstance;
+
+  /// Indicates whether the transaction is valid.
+  @$pb.TagNumber(1)
+  $core.bool get isValid => $_getBF(0);
+  @$pb.TagNumber(1)
+  set isValid($core.bool value) => $_setBool(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasIsValid() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearIsValid() => $_clearField(1);
+
+  /// An error message if the transaction is invalid.
+  /// Empty if the transaction is valid.
+  @$pb.TagNumber(2)
+  $core.String get errorMessage => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set errorMessage($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasErrorMessage() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearErrorMessage() => $_clearField(2);
+}
+
 /// Transaction service defines various RPC methods for interacting with transactions.
 class TransactionApi {
   final $pb.RpcClient _client;
@@ -2283,6 +2411,12 @@ class TransactionApi {
           $pb.ClientContext? ctx, DecodeRawTransactionRequest request) =>
       _client.invoke<DecodeRawTransactionResponse>(ctx, 'Transaction',
           'DecodeRawTransaction', request, DecodeRawTransactionResponse());
+
+  /// CheckTransaction checks if the transaction is valid and can be included in the blockchain.
+  $async.Future<CheckTransactionResponse> checkTransaction(
+          $pb.ClientContext? ctx, CheckTransactionRequest request) =>
+      _client.invoke<CheckTransactionResponse>(ctx, 'Transaction',
+          'CheckTransaction', request, CheckTransactionResponse());
 }
 
 const $core.bool _omitFieldNames =
