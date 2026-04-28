@@ -419,3 +419,24 @@ func (*transactionServer) DecodeRawTransaction(_ context.Context,
 		Transaction: transactionToProto(trx, 0, 0),
 	}, nil
 }
+
+func (s *transactionServer) CheckTransaction(_ context.Context,
+	req *pactus.CheckTransactionRequest,
+) (*pactus.CheckTransactionResponse, error) {
+	trx, err := tx.FromString(req.RawTransaction)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
+	}
+
+	err = s.state.CheckTransaction(trx)
+	if err != nil {
+		return &pactus.CheckTransactionResponse{
+			IsValid:      false,
+			ErrorMessage: err.Error(),
+		}, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
+	}
+
+	return &pactus.CheckTransactionResponse{
+		IsValid: true,
+	}, nil
+}

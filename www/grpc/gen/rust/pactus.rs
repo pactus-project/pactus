@@ -375,6 +375,24 @@ pub struct DecodeRawTransactionResponse {
     #[prost(message, optional, tag="1")]
     pub transaction: ::core::option::Option<TransactionInfo>,
 }
+/// Request message for checking a transaction.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CheckTransactionRequest {
+    /// The raw transaction data to be checked.
+    #[prost(string, tag="1")]
+    pub raw_transaction: ::prost::alloc::string::String,
+}
+/// Response message contains the result of the transaction check.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CheckTransactionResponse {
+    /// Indicates whether the transaction is valid.
+    #[prost(bool, tag="1")]
+    pub is_valid: bool,
+    /// An error message if the transaction is invalid.
+    /// Empty if the transaction is valid.
+    #[prost(string, tag="2")]
+    pub error_message: ::prost::alloc::string::String,
+}
 /// Enumeration for different types of transaction payloads.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]

@@ -294,3 +294,17 @@ class DecodeRawTransactionResponse(_message.Message):
     TRANSACTION_FIELD_NUMBER: _ClassVar[int]
     transaction: TransactionInfo
     def __init__(self, transaction: _Optional[_Union[TransactionInfo, _Mapping]] = ...) -> None: ...
+
+class CheckTransactionRequest(_message.Message):
+    __slots__ = ()
+    RAW_TRANSACTION_FIELD_NUMBER: _ClassVar[int]
+    raw_transaction: str
+    def __init__(self, raw_transaction: _Optional[str] = ...) -> None: ...
+
+class CheckTransactionResponse(_message.Message):
+    __slots__ = ()
+    IS_VALID_FIELD_NUMBER: _ClassVar[int]
+    ERROR_MESSAGE_FIELD_NUMBER: _ClassVar[int]
+    is_valid: bool
+    error_message: str
+    def __init__(self, is_valid: _Optional[bool] = ..., error_message: _Optional[str] = ...) -> None: ...

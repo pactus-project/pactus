@@ -29,6 +29,7 @@ func TransactionClientCommand(options ...client.Option) *cobra.Command {
 		_TransactionGetRawWithdrawTransactionCommand(cfg),
 		_TransactionGetRawBatchTransferTransactionCommand(cfg),
 		_TransactionDecodeRawTransactionCommand(cfg),
+		_TransactionCheckTransactionCommand(cfg),
 	)
 	return cmd
 }
@@ -436,6 +437,48 @@ func _TransactionDecodeRawTransactionCommand(cfg *client.Config) *cobra.Command 
 	}
 
 	cmd.PersistentFlags().StringVar(&req.RawTransaction, cfg.FlagNamer("RawTransaction"), "", "The raw transaction data in hexadecimal format.")
+
+	return cmd
+}
+
+func _TransactionCheckTransactionCommand(cfg *client.Config) *cobra.Command {
+	req := &CheckTransactionRequest{}
+
+	cmd := &cobra.Command{
+		Use:   cfg.CommandNamer("CheckTransaction"),
+		Short: "CheckTransaction RPC client",
+		Long:  "CheckTransaction checks if the transaction is valid and can be included in the blockchain.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction", "CheckTransaction"); err != nil {
+					return err
+				}
+			}
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+				cli := NewTransactionClient(cc)
+				v := &CheckTransactionRequest{}
+
+				if err := in(v); err != nil {
+					return err
+				}
+				proto.Merge(v, req)
+
+				res, err := cli.CheckTransaction(cmd.Context(), v)
+
+				if err != nil {
+					return err
+				}
+
+				return out(res)
+
+			})
+		},
+	}
+
+	cmd.PersistentFlags().StringVar(&req.RawTransaction, cfg.FlagNamer("RawTransaction"), "", "The raw transaction data to be checked.")
 
 	return cmd
 }

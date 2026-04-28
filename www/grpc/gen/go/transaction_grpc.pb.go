@@ -28,6 +28,7 @@ const (
 	Transaction_GetRawWithdrawTransaction_FullMethodName      = "/pactus.Transaction/GetRawWithdrawTransaction"
 	Transaction_GetRawBatchTransferTransaction_FullMethodName = "/pactus.Transaction/GetRawBatchTransferTransaction"
 	Transaction_DecodeRawTransaction_FullMethodName           = "/pactus.Transaction/DecodeRawTransaction"
+	Transaction_CheckTransaction_FullMethodName               = "/pactus.Transaction/CheckTransaction"
 )
 
 // TransactionClient is the client API for Transaction service.
@@ -54,6 +55,8 @@ type TransactionClient interface {
 	GetRawBatchTransferTransaction(ctx context.Context, in *GetRawBatchTransferTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
 	// DecodeRawTransaction accepts raw transaction and returns decoded transaction.
 	DecodeRawTransaction(ctx context.Context, in *DecodeRawTransactionRequest, opts ...grpc.CallOption) (*DecodeRawTransactionResponse, error)
+	// CheckTransaction checks if the transaction is valid and can be included in the blockchain.
+	CheckTransaction(ctx context.Context, in *CheckTransactionRequest, opts ...grpc.CallOption) (*CheckTransactionResponse, error)
 }
 
 type transactionClient struct {
@@ -154,6 +157,16 @@ func (c *transactionClient) DecodeRawTransaction(ctx context.Context, in *Decode
 	return out, nil
 }
 
+func (c *transactionClient) CheckTransaction(ctx context.Context, in *CheckTransactionRequest, opts ...grpc.CallOption) (*CheckTransactionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckTransactionResponse)
+	err := c.cc.Invoke(ctx, Transaction_CheckTransaction_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TransactionServer is the server API for Transaction service.
 // All implementations should embed UnimplementedTransactionServer
 // for forward compatibility.
@@ -178,6 +191,8 @@ type TransactionServer interface {
 	GetRawBatchTransferTransaction(context.Context, *GetRawBatchTransferTransactionRequest) (*GetRawTransactionResponse, error)
 	// DecodeRawTransaction accepts raw transaction and returns decoded transaction.
 	DecodeRawTransaction(context.Context, *DecodeRawTransactionRequest) (*DecodeRawTransactionResponse, error)
+	// CheckTransaction checks if the transaction is valid and can be included in the blockchain.
+	CheckTransaction(context.Context, *CheckTransactionRequest) (*CheckTransactionResponse, error)
 }
 
 // UnimplementedTransactionServer should be embedded to have
@@ -213,6 +228,9 @@ func (UnimplementedTransactionServer) GetRawBatchTransferTransaction(context.Con
 }
 func (UnimplementedTransactionServer) DecodeRawTransaction(context.Context, *DecodeRawTransactionRequest) (*DecodeRawTransactionResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DecodeRawTransaction not implemented")
+}
+func (UnimplementedTransactionServer) CheckTransaction(context.Context, *CheckTransactionRequest) (*CheckTransactionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CheckTransaction not implemented")
 }
 func (UnimplementedTransactionServer) testEmbeddedByValue() {}
 
@@ -396,6 +414,24 @@ func _Transaction_DecodeRawTransaction_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Transaction_CheckTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckTransactionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TransactionServer).CheckTransaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Transaction_CheckTransaction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TransactionServer).CheckTransaction(ctx, req.(*CheckTransactionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Transaction_ServiceDesc is the grpc.ServiceDesc for Transaction service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -438,6 +474,10 @@ var Transaction_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DecodeRawTransaction",
 			Handler:    _Transaction_DecodeRawTransaction_Handler,
+		},
+		{
+			MethodName: "CheckTransaction",
+			Handler:    _Transaction_CheckTransaction_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

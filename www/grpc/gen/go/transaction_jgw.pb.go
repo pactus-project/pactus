@@ -189,5 +189,22 @@ func (s *TransactionJsonRPC) Methods() map[string]func(ctx context.Context, mess
 
 			return s.client.DecodeRawTransaction(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
+
+		"pactus.transaction.check_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(CheckTransactionRequest)
+
+			var jrpcData paramsAndHeadersTransaction
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.CheckTransaction(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
 	}
 }

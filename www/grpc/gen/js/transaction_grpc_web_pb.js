@@ -623,5 +623,66 @@ proto.pactus.TransactionPromiseClient.prototype.decodeRawTransaction =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.CheckTransactionRequest,
+ *   !proto.pactus.CheckTransactionResponse>}
+ */
+const methodDescriptor_Transaction_CheckTransaction = new grpc.web.MethodDescriptor(
+  '/pactus.Transaction/CheckTransaction',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.CheckTransactionRequest,
+  proto.pactus.CheckTransactionResponse,
+  /**
+   * @param {!proto.pactus.CheckTransactionRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.CheckTransactionResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.CheckTransactionRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.CheckTransactionResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.CheckTransactionResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.TransactionClient.prototype.checkTransaction =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Transaction/CheckTransaction',
+      request,
+      metadata || {},
+      methodDescriptor_Transaction_CheckTransaction,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.CheckTransactionRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.CheckTransactionResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.TransactionPromiseClient.prototype.checkTransaction =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Transaction/CheckTransaction',
+      request,
+      metadata || {},
+      methodDescriptor_Transaction_CheckTransaction);
+};
+
+
 module.exports = proto.pactus;
 
