@@ -257,6 +257,6 @@ func (m *MockState) ChainInfo() *ChainInfo {
 	}
 }
 
-func (*MockState) CheckTransaction(trx *tx.Tx) error {
+func (*MockState) CheckTransaction(*tx.Tx) error {
 	return nil
 }
