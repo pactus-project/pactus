@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/wallet/types"
 )
 
@@ -196,10 +197,10 @@ func (c *WalletWidgetController) RefreshTransactions() {
 					cmd.ShortHash(trx.TxId),
 					cmd.ShortAddress(trx.Sender),
 					cmd.ShortAddress(trx.Receiver),
-					trx.PayloadType.String(),
+					payload.Type(trx.PayloadType).String(),
 					amount.Amount(trx.Amount).String(),
 					getDirectionTextWithIcon(types.TxDirection(trx.Direction)),
-					trx.Status.String(),
+					types.TransactionStatus(trx.Status).String(),
 					trx.Comment,
 				},
 			)
