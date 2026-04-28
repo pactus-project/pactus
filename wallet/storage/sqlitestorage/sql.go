@@ -62,6 +62,20 @@ const (
 			WHERE no = OLD.no;
 		END`
 
+	createAddressesLastUpdateTriggerSQL = `
+		CREATE TRIGGER IF NOT EXISTS trg_addresses_last_update
+		AFTER INSERT OR UPDATE OR DELETE ON addresses
+		BEGIN
+			UPDATE wallet SET value = CURRENT_TIMESTAMP WHERE name = 'last_update';
+		END`
+
+	createTransactionsLastUpdateTriggerSQL = `
+		CREATE TRIGGER IF NOT EXISTS trg_transactions_last_update
+		AFTER INSERT OR UPDATE OR DELETE ON transactions
+		BEGIN
+			UPDATE wallet SET value = CURRENT_TIMESTAMP WHERE name = 'last_update';
+		END`
+
 	// Partial index to speed up pending-transaction queries ordered by creation time.
 	createPendingNoIdxSQL = `
 		CREATE INDEX IF NOT EXISTS idx_transactions_pending_no
@@ -86,6 +100,9 @@ const (
 
 	selectAllWalletEntriesSQL = `
 		SELECT name, value FROM wallet`
+
+	incrementLastUpdateSQL = `
+		UPDATE wallet SET value = CURRENT_TIMESTAMP WHERE name = 'last_update'`
 
 	// Address table operations.
 	insertAddressSQL = `
