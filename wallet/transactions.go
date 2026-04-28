@@ -153,11 +153,22 @@ func (t *transactions) getPendingTransaction() map[string]*wtypes.TransactionInf
 			continue
 		}
 
-		// TODO: check for expired and failed transactions
+		err = t.provider.CheckTransaction(pendingInfo.Data)
+		if err != nil {
+			logger.Warn("pending transaction is invalid", "error", err, "id", pendingInfo.TxID)
+			if err := t.storage.UpdateTransactionStatus(pendingInfo.No,
+				wtypes.TransactionStatusFailed, 0); err != nil {
+				logger.Warn("failed to update transaction status", "error", err, "id", pendingInfo.TxID)
+			}
+
+			continue
+		}
 
 		// Re-broadcast the transaction
 		_, err = t.provider.SendTx(trx)
 		if err != nil {
+			logger.Debug("failed to re-broadcast pending transaction", "error", err, "id", pendingInfo.TxID)
+
 			continue
 		}
 	}

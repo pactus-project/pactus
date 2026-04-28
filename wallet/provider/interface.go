@@ -12,6 +12,7 @@ type IBlockchainProvider interface {
 	GetAccount(addrStr string) (*account.Account, error)
 	GetValidator(addrStr string) (*validator.Validator, error)
 	GetTransaction(txID string) (*tx.Tx, types.Height, error)
+	CheckTransaction(data []byte) error
 
 	SendTx(trx *tx.Tx) (string, error)
 

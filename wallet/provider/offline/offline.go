@@ -44,3 +44,7 @@ func (*OfflineBlockchainProvider) SendTx(*tx.Tx) (string, error) {
 func (*OfflineBlockchainProvider) Close() error {
 	return nil
 }
+
+func (*OfflineBlockchainProvider) CheckTransaction([]byte) error {
+	return ErrOffline
+}
