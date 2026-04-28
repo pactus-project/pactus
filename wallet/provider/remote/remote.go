@@ -262,3 +262,20 @@ func (p *RemoteBlockchainProvider) GetTransaction(txID string) (*tx.Tx, types.He
 
 	return tx, types.Height(res.BlockHeight), nil
 }
+
+func (p *RemoteBlockchainProvider) CheckTransaction(data []byte) error {
+	if err := p.connect(); err != nil {
+		return err
+	}
+
+	ctx, cancel := context.WithTimeout(p.ctx, p.timeout)
+	defer cancel()
+
+	_, err := p.transactionClient.CheckTransaction(ctx,
+		&pactus.CheckTransactionRequest{RawTransaction: hex.EncodeToString(data)})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -43,6 +43,20 @@ func (m *MockIBlockchainProvider) EXPECT() *MockIBlockchainProviderMockRecorder 
 	return m.recorder
 }
 
+// CheckTransaction mocks base method.
+func (m *MockIBlockchainProvider) CheckTransaction(data []byte) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CheckTransaction", data)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CheckTransaction indicates an expected call of CheckTransaction.
+func (mr *MockIBlockchainProviderMockRecorder) CheckTransaction(data any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckTransaction", reflect.TypeOf((*MockIBlockchainProvider)(nil).CheckTransaction), data)
+}
+
 // Close mocks base method.
 func (m *MockIBlockchainProvider) Close() error {
 	m.ctrl.T.Helper()

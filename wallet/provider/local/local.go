@@ -75,3 +75,12 @@ func (p *LocalBlockchainProvider) SendTx(trx *tx.Tx) (string, error) {
 func (*LocalBlockchainProvider) Close() error {
 	return nil
 }
+
+func (p *LocalBlockchainProvider) CheckTransaction(data []byte) error {
+	trx, err := tx.FromBytes(data)
+	if err != nil {
+		return err
+	}
+
+	return p.state.CheckTransaction(trx)
+}
