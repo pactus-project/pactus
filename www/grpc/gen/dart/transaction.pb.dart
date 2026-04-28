@@ -587,6 +587,9 @@ class GetRawBondTransactionRequest extends $pb.GeneratedMessage {
     $core.String? publicKey,
     $fixnum.Int64? fee,
     $core.String? memo,
+    $core.String? delegateOwner,
+    $fixnum.Int64? delegateShare,
+    $core.int? delegateExpiry,
   }) {
     final result = create();
     if (lockTime != null) result.lockTime = lockTime;
@@ -596,6 +599,9 @@ class GetRawBondTransactionRequest extends $pb.GeneratedMessage {
     if (publicKey != null) result.publicKey = publicKey;
     if (fee != null) result.fee = fee;
     if (memo != null) result.memo = memo;
+    if (delegateOwner != null) result.delegateOwner = delegateOwner;
+    if (delegateShare != null) result.delegateShare = delegateShare;
+    if (delegateExpiry != null) result.delegateExpiry = delegateExpiry;
     return result;
   }
 
@@ -619,6 +625,10 @@ class GetRawBondTransactionRequest extends $pb.GeneratedMessage {
     ..aOS(5, _omitFieldNames ? '' : 'publicKey')
     ..aInt64(6, _omitFieldNames ? '' : 'fee')
     ..aOS(7, _omitFieldNames ? '' : 'memo')
+    ..aOS(8, _omitFieldNames ? '' : 'delegateOwner')
+    ..aInt64(9, _omitFieldNames ? '' : 'delegateShare')
+    ..aI(10, _omitFieldNames ? '' : 'delegateExpiry',
+        fieldType: $pb.PbFieldType.OU3)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -683,7 +693,8 @@ class GetRawBondTransactionRequest extends $pb.GeneratedMessage {
   @$pb.TagNumber(4)
   void clearStake() => $_clearField(4);
 
-  /// The public key of the validator. Optional, but required when registering a new validator.
+  /// The public key of the validator.
+  /// Optional, but required when registering a new validator.;
   @$pb.TagNumber(5)
   $core.String get publicKey => $_getSZ(4);
   @$pb.TagNumber(5)
@@ -712,6 +723,40 @@ class GetRawBondTransactionRequest extends $pb.GeneratedMessage {
   $core.bool hasMemo() => $_has(6);
   @$pb.TagNumber(7)
   void clearMemo() => $_clearField(7);
+
+  /// The address of the delegate owner.
+  /// Optional, but required when registering a new validator with delegation.;
+  @$pb.TagNumber(8)
+  $core.String get delegateOwner => $_getSZ(7);
+  @$pb.TagNumber(8)
+  set delegateOwner($core.String value) => $_setString(7, value);
+  @$pb.TagNumber(8)
+  $core.bool hasDelegateOwner() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearDelegateOwner() => $_clearField(8);
+
+  /// The share percentage for the delegate owner.
+  /// Optional, but required when registering a new validator with delegation.;
+  /// Must be between 0 and 0.7 PAC in nano PAC.
+  @$pb.TagNumber(9)
+  $fixnum.Int64 get delegateShare => $_getI64(8);
+  @$pb.TagNumber(9)
+  set delegateShare($fixnum.Int64 value) => $_setInt64(8, value);
+  @$pb.TagNumber(9)
+  $core.bool hasDelegateShare() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearDelegateShare() => $_clearField(9);
+
+  /// The expiry height for the delegate relationship.
+  /// Optional, but required when registering a new validator with delegation.;
+  @$pb.TagNumber(10)
+  $core.int get delegateExpiry => $_getIZ(9);
+  @$pb.TagNumber(10)
+  set delegateExpiry($core.int value) => $_setUnsignedInt32(9, value);
+  @$pb.TagNumber(10)
+  $core.bool hasDelegateExpiry() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearDelegateExpiry() => $_clearField(10);
 }
 
 /// Request message for retrieving raw details of an unbond transaction.
@@ -720,11 +765,13 @@ class GetRawUnbondTransactionRequest extends $pb.GeneratedMessage {
     $core.int? lockTime,
     $core.String? validatorAddress,
     $core.String? memo,
+    $core.String? delegateOwner,
   }) {
     final result = create();
     if (lockTime != null) result.lockTime = lockTime;
     if (validatorAddress != null) result.validatorAddress = validatorAddress;
     if (memo != null) result.memo = memo;
+    if (delegateOwner != null) result.delegateOwner = delegateOwner;
     return result;
   }
 
@@ -742,8 +789,9 @@ class GetRawUnbondTransactionRequest extends $pb.GeneratedMessage {
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
     ..aI(1, _omitFieldNames ? '' : 'lockTime', fieldType: $pb.PbFieldType.OU3)
-    ..aOS(3, _omitFieldNames ? '' : 'validatorAddress')
-    ..aOS(4, _omitFieldNames ? '' : 'memo')
+    ..aOS(2, _omitFieldNames ? '' : 'validatorAddress')
+    ..aOS(3, _omitFieldNames ? '' : 'memo')
+    ..aOS(4, _omitFieldNames ? '' : 'delegateOwner')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -779,24 +827,35 @@ class GetRawUnbondTransactionRequest extends $pb.GeneratedMessage {
   void clearLockTime() => $_clearField(1);
 
   /// The address of the validator to unbond from.
-  @$pb.TagNumber(3)
+  @$pb.TagNumber(2)
   $core.String get validatorAddress => $_getSZ(1);
-  @$pb.TagNumber(3)
+  @$pb.TagNumber(2)
   set validatorAddress($core.String value) => $_setString(1, value);
-  @$pb.TagNumber(3)
+  @$pb.TagNumber(2)
   $core.bool hasValidatorAddress() => $_has(1);
-  @$pb.TagNumber(3)
-  void clearValidatorAddress() => $_clearField(3);
+  @$pb.TagNumber(2)
+  void clearValidatorAddress() => $_clearField(2);
 
   /// A memo string for the transaction.
-  @$pb.TagNumber(4)
+  @$pb.TagNumber(3)
   $core.String get memo => $_getSZ(2);
-  @$pb.TagNumber(4)
+  @$pb.TagNumber(3)
   set memo($core.String value) => $_setString(2, value);
-  @$pb.TagNumber(4)
+  @$pb.TagNumber(3)
   $core.bool hasMemo() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearMemo() => $_clearField(3);
+
+  /// The address of the delegate owner.
+  /// Optional, but required when the validator is a delegated validator.;
   @$pb.TagNumber(4)
-  void clearMemo() => $_clearField(4);
+  $core.String get delegateOwner => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set delegateOwner($core.String value) => $_setString(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasDelegateOwner() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearDelegateOwner() => $_clearField(4);
 }
 
 /// Request message for retrieving raw details of a withdraw transaction.
@@ -1302,7 +1361,8 @@ class PayloadBond extends $pb.GeneratedMessage {
   @$pb.TagNumber(5)
   void clearIsDelegated() => $_clearField(5);
 
-  /// The address of the delegate owner. Optional, but required when registering a new validator with delegation.
+  /// The address of the delegate owner.
+  /// Optional, but required when registering a new validator with delegation.;
   @$pb.TagNumber(6)
   $core.String get delegateOwner => $_getSZ(5);
   @$pb.TagNumber(6)
@@ -1312,7 +1372,8 @@ class PayloadBond extends $pb.GeneratedMessage {
   @$pb.TagNumber(6)
   void clearDelegateOwner() => $_clearField(6);
 
-  /// The share percentage for the delegate owner. Optional, but required when registering a new validator with delegation.
+  /// The share percentage for the delegate owner.
+  /// Optional, but required when registering a new validator with delegation.;
   /// Must be between 0 and 0.7 PAC in nano PAC.
   @$pb.TagNumber(7)
   $fixnum.Int64 get delegateShare => $_getI64(6);
@@ -1323,7 +1384,8 @@ class PayloadBond extends $pb.GeneratedMessage {
   @$pb.TagNumber(7)
   void clearDelegateShare() => $_clearField(7);
 
-  /// The expiry height for the delegate relationship. Optional, but required when registering a new validator with delegation.
+  /// The expiry height for the delegate relationship.
+  /// Optional, but required when registering a new validator with delegation.;
   @$pb.TagNumber(8)
   $core.int get delegateExpiry => $_getIZ(7);
   @$pb.TagNumber(8)
@@ -1461,7 +1523,8 @@ class PayloadUnbond extends $pb.GeneratedMessage {
   @$pb.TagNumber(1)
   void clearValidator() => $_clearField(1);
 
-  /// The address of the delegate owner. Optional, but required when the validator is a delegated validator.
+  /// The address of the delegate owner.
+  /// Optional, but required when the validator is a delegated validator.;
   @$pb.TagNumber(2)
   $core.String get delegateOwner => $_getSZ(1);
   @$pb.TagNumber(2)
