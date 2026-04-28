@@ -797,3 +797,10 @@ func (st *state) calculateAverageScore() float64 {
 
 	return averageScore
 }
+
+func (st *state) CheckTransaction(trx *tx.Tx) error {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
+	return execution.CheckAndExecute(trx, st.concreteSandbox(), false)
+}
