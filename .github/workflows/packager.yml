@@ -122,8 +122,6 @@ jobs:
           else
             npm publish --access public
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
 
   publish-npm-jsonrpc:
     name: Publish pactus-jsonrpc package to npm
@@ -153,8 +151,6 @@ jobs:
           else
             npm publish --access public
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
 
   publish-pypi-grpc:
     name: Publish pactus-grpc package to PyPI
