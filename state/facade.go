@@ -79,6 +79,7 @@ type Facade interface {
 	AvailabilityScore(valNum int32) float64
 	AllPendingTxs() []*tx.Tx
 	ChainInfo() *ChainInfo
+	CheckTransaction(trx *tx.Tx) error
 
 	Close()
 }

@@ -256,3 +256,7 @@ func (m *MockState) ChainInfo() *ChainInfo {
 		PruningHeight:    m.TestStore.PruningHeight(),
 	}
 }
+
+func (m *MockState) CheckTransaction(trx *tx.Tx) error {
+	return nil
+}
