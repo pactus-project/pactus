@@ -44,6 +44,7 @@ func (m *MockStore) Block(height types.Height) (*CommittedBlock, error) {
 		d, _ := b.Bytes()
 
 		return &CommittedBlock{
+			store:     m,
 			BlockHash: b.Hash(),
 			Height:    height,
 			Data:      d,

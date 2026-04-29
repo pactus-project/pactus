@@ -21,7 +21,7 @@ import (
 // TODO: How to undo or rollback at least for last 21 blocks
 
 type CommittedBlock struct {
-	store *store
+	store Store
 
 	BlockHash hash.Hash
 	Height    types.Height
