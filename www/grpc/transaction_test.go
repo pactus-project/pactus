@@ -12,6 +12,7 @@ import (
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/mock/gomock"
 )
 
 func TestGetTransaction(t *testing.T) {
@@ -103,7 +104,7 @@ func TestSendRawTransaction(t *testing.T) {
 	trx := td.GenerateTestTransferTx()
 	data, _ := trx.Bytes()
 	t.Run("Should pass", func(t *testing.T) {
-		td.mockState.MockTxPool.EXPECT().AppendTxAndBroadcast(trx).Return(nil).Times(1)
+		td.mockState.MockTxPool.EXPECT().AppendTxAndBroadcast(gomock.Any()).Return(nil).Times(1)
 
 		res, err := client.BroadcastTransaction(t.Context(),
 			&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
@@ -112,7 +113,7 @@ func TestSendRawTransaction(t *testing.T) {
 	})
 
 	t.Run("Should fail and not broadcast", func(t *testing.T) {
-		td.mockState.MockTxPool.EXPECT().AppendTxAndBroadcast(trx).Return(errors.New("some error")).Times(1)
+		td.mockState.MockTxPool.EXPECT().AppendTxAndBroadcast(gomock.Any()).Return(errors.New("some error")).Times(1)
 
 		res, err := client.BroadcastTransaction(t.Context(),
 			&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
@@ -124,6 +125,8 @@ func TestSendRawTransaction(t *testing.T) {
 func TestGetRawTransaction(t *testing.T) {
 	td := setup(t, nil)
 	client := td.transactionClient(t)
+
+	td.mockState.MockTxPool.EXPECT().EstimatedFee(gomock.Any(), gomock.Any()).Return(td.RandFee()).AnyTimes()
 
 	t.Run("Transfer", func(t *testing.T) {
 		amt := td.RandAmount()
@@ -275,9 +278,11 @@ func TestCalculateFee(t *testing.T) {
 	td := setup(t, nil)
 	client := td.transactionClient(t)
 
+	expectedFee := td.RandFee()
+	td.mockState.MockTxPool.EXPECT().EstimatedFee(gomock.Any(), gomock.Any()).Return(expectedFee).AnyTimes()
+
 	t.Run("Not fixed amount", func(t *testing.T) {
-		amt := amount.Amount(100e9)
-		expectedFee := amount.Amount(0.1e9)
+		amt := td.RandAmount()
 		res, err := client.CalculateFee(t.Context(),
 			&pactus.CalculateFeeRequest{
 				Amount:      amt.ToNanoPAC(),
@@ -290,11 +295,10 @@ func TestCalculateFee(t *testing.T) {
 	})
 
 	t.Run("Fixed amount", func(t *testing.T) {
-		amt := amount.Amount(100e9)
-		expectedFee := amount.Amount(0.1e9)
+		amt := td.RandAmount()
 		res, err := client.CalculateFee(t.Context(),
 			&pactus.CalculateFeeRequest{
-				Amount:      100e9,
+				Amount:      amt.ToNanoPAC(),
 				PayloadType: pactus.PayloadType_PAYLOAD_TYPE_TRANSFER,
 				FixedAmount: true,
 			})
@@ -304,8 +308,7 @@ func TestCalculateFee(t *testing.T) {
 	})
 
 	t.Run("Insufficient amount to pay fee", func(t *testing.T) {
-		amt := amount.Amount(1)
-		expectedFee := amount.Amount(0.1e9)
+		amt := amount.Amount(0)
 		res, err := client.CalculateFee(t.Context(),
 			&pactus.CalculateFeeRequest{
 				Amount:      amt.ToNanoPAC(),

@@ -5,7 +5,6 @@ import (
 
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestHandlerTransactionsParsingMessages(t *testing.T) {
@@ -16,9 +15,8 @@ func TestHandlerTransactionsParsingMessages(t *testing.T) {
 		msg := message.NewTransactionsMessage([]*tx.Tx{trx1})
 		pid := td.RandPeerID()
 
+		td.state.MockTxPool.EXPECT().AppendTx(trx1).Return(nil).Times(1)
 		td.receivingNewMessage(td.sync, msg, pid)
-
-		assert.NotNil(t, td.sync.state.PendingTx(trx1.ID()))
 	})
 }
 
