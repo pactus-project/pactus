@@ -39,15 +39,15 @@ func MockingStore(ts *testsuite.TestSuite) *MockStore {
 }
 
 func (m *MockStore) Block(height types.Height) (*CommittedBlock, error) {
-	b, ok := m.Blocks[height]
+	blk, ok := m.Blocks[height]
 	if ok {
-		d, _ := b.Bytes()
+		data, _ := blk.Bytes()
 
 		return &CommittedBlock{
 			store:     m,
-			BlockHash: b.Hash(),
+			BlockHash: blk.Hash(),
 			Height:    height,
-			Data:      d,
+			Data:      data,
 		}, nil
 	}
 
