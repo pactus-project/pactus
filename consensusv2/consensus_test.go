@@ -1,7 +1,6 @@
 package consensusv2
 
 import (
-	"errors"
 	"fmt"
 	"testing"
 	"time"
@@ -27,6 +26,7 @@ import (
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/mock/gomock"
 	"golang.org/x/exp/slices"
 )
 
@@ -45,14 +45,14 @@ type consMessage struct {
 type testData struct {
 	*testsuite.TestSuite
 
-	valKeys []*bls.ValidatorKey
-	txPool  *txpool.MockTxPool
-	genDoc  *genesis.Genesis
-	consX   *consensusV2  // Good peer
-	consY   *consensusV2  // Good peer
-	consB   *consensusV2  // Byzantine or offline peer
-	consP   *consensusV2  // Partitioned peer
-	network []consMessage // Network messages
+	valKeys    []*bls.ValidatorKey
+	mockTxPool *txpool.MockTxPool
+	genDoc     *genesis.Genesis
+	consX      *consensusV2  // Good peer
+	consY      *consensusV2  // Good peer
+	consB      *consensusV2  // Byzantine or offline peer
+	consP      *consensusV2  // Partitioned peer
+	network    []consMessage // Network messages
 }
 
 func testConfig() *Config {
@@ -77,7 +77,10 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	ts := testsuite.NewTestSuiteFromSeed(t, seed)
 
 	_, valKeys := ts.GenerateTestCommittee(4)
-	txPool := txpool.MockingTxPool()
+	mockTxPool := txpool.NewMockTxPool(ts.Ctrl)
+	mockTxPool.EXPECT().SetNewSandboxAndRecheck(gomock.Any()).Return().AnyTimes()
+	mockTxPool.EXPECT().PrepareBlockTransactions().Return(nil).AnyTimes()
+	mockTxPool.EXPECT().HandleCommittedBlock(gomock.Any()).Return().AnyTimes()
 
 	vals := make([]*validator.Validator, 4)
 	for i, key := range valKeys {
@@ -98,25 +101,25 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	genDoc := genesis.MakeGenesis(getTime, accs, vals, params)
 	eventPipe := pipeline.New[any](t.Context())
 	stateX, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexX]},
-		store.MockingStore(ts), txPool, eventPipe)
+		store.MockingStore(ts), mockTxPool, eventPipe)
 	require.NoError(t, err)
 	stateY, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexY]},
-		store.MockingStore(ts), txPool, eventPipe)
+		store.MockingStore(ts), mockTxPool, eventPipe)
 	require.NoError(t, err)
 	stateB, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexB]},
-		store.MockingStore(ts), txPool, eventPipe)
+		store.MockingStore(ts), mockTxPool, eventPipe)
 	require.NoError(t, err)
 	stateP, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexP]},
-		store.MockingStore(ts), txPool, eventPipe)
+		store.MockingStore(ts), mockTxPool, eventPipe)
 	require.NoError(t, err)
 
 	network := make([]consMessage, 0)
 	td := &testData{
-		TestSuite: ts,
-		valKeys:   valKeys,
-		txPool:    txPool,
-		genDoc:    genDoc,
-		network:   network,
+		TestSuite:  ts,
+		valKeys:    valKeys,
+		mockTxPool: mockTxPool,
+		genDoc:     genDoc,
+		network:    network,
 	}
 	broadcasterFunc := func(sender crypto.Address, msg message.Message) {
 		for _, key := range valKeys {
@@ -161,7 +164,7 @@ func (td *testData) shouldNotPublish(t *testing.T, cons *consensusV2, msgType me
 	for _, consMsg := range td.network {
 		if consMsg.sender == cons.valKey.Address() &&
 			consMsg.message.Type() == msgType {
-			require.Error(t, fmt.Errorf("should not publish %s", msgType))
+			require.Fail(t, fmt.Sprintf("should not publish %s", msgType))
 		}
 	}
 }
@@ -178,7 +181,7 @@ func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensusV2, 
 			return
 		}
 	}
-	require.NoError(t, errors.New("Block announce message not published"))
+	require.Fail(t, fmt.Sprintf("should publish block announce for block hash %s", hash))
 }
 
 func (td *testData) shouldPublishProposal(t *testing.T, cons *consensusV2,
@@ -196,7 +199,7 @@ func (td *testData) shouldPublishProposal(t *testing.T, cons *consensusV2,
 			return m.Proposal
 		}
 	}
-	require.NoError(t, errors.New("Proposal message not published"))
+	require.Fail(t, fmt.Sprintf("should publish proposal for height %d and round %d", height, round))
 
 	return nil
 }
@@ -219,7 +222,7 @@ func (td *testData) shouldPublishQueryProposal(t *testing.T, cons *consensusV2,
 
 		return
 	}
-	require.NoError(t, errors.New("Query proposal message not published"))
+	require.Fail(t, fmt.Sprintf("should publish query proposal message for height %d and round %d", height, round))
 }
 
 func (td *testData) shouldPublishQueryVote(t *testing.T, cons *consensusV2, height types.Height, round types.Round) {
@@ -238,7 +241,7 @@ func (td *testData) shouldPublishQueryVote(t *testing.T, cons *consensusV2, heig
 
 		return
 	}
-	require.NoError(t, errors.New("Query proposal message not published"))
+	require.Fail(t, fmt.Sprintf("should publish query vote message for height %d and round %d", height, round))
 }
 
 func (td *testData) shouldPublishVote(t *testing.T, cons *consensusV2, voteType vote.Type, hash hash.Hash) *vote.Vote {
@@ -255,7 +258,7 @@ func (td *testData) shouldPublishVote(t *testing.T, cons *consensusV2, voteType 
 			}
 		}
 	}
-	require.NoError(t, errors.New("Vote message not published"))
+	require.Fail(t, fmt.Sprintf("should publish %s vote for block hash %s", voteType, hash))
 
 	return nil
 }
@@ -511,7 +514,7 @@ func TestNotInCommittee(t *testing.T) {
 	valKey := td.RandValKey()
 	str := store.MockingStore(td.TestSuite)
 
-	state, _ := state.LoadOrNewState(td.genDoc, []*bls.ValidatorKey{valKey}, str, td.txPool, nil)
+	state, _ := state.LoadOrNewState(td.genDoc, []*bls.ValidatorKey{valKey}, str, td.mockTxPool, nil)
 	pipe := pipeline.New[message.Message](t.Context())
 	consInst := NewConsensus(t.Context(), testConfig(), state, valKey, valKey.Address(), pipe,
 		newConcreteMediator())

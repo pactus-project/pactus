@@ -5,10 +5,8 @@ import (
 
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types"
-	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestPrecommitQueryProposal(t *testing.T) {
@@ -41,12 +39,7 @@ func TestPrecommitDuplicatedProposal(t *testing.T) {
 	round := types.Round(0)
 
 	prop1 := td.makeProposal(t, height, round)
-	trx := tx.NewTransferTx(height, td.consX.rewardAddr,
-		td.RandAccAddress(), 1000, 1000, tx.WithMemo("invalid proposal"))
-	td.HelperSignTransaction(td.consX.valKey.PrivateKey(), trx)
-
-	require.NoError(t, td.txPool.AppendTx(trx))
-	prop2 := td.makeProposal(t, height, round)
+	prop2 := td.makeProposal(t, height, round, td.RandAccAddress())
 	assert.NotEqual(t, prop1.Hash(), prop2.Hash())
 
 	td.enterNewHeight(td.consP)

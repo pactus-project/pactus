@@ -21,7 +21,7 @@ import (
 // TODO: How to undo or rollback at least for last 21 blocks
 
 type CommittedBlock struct {
-	store *store
+	store Store
 
 	BlockHash hash.Hash
 	Height    types.Height
@@ -114,5 +114,6 @@ type Store interface {
 	SaveBlock(blk *block.Block, cert *certificate.Certificate)
 	Prune(callback func(pruned bool, pruningHeight types.Height) bool) error
 	WriteBatch() error
+
 	Close()
 }

@@ -1,7 +1,6 @@
 package consensus
 
 import (
-	"errors"
 	"fmt"
 	"testing"
 	"time"
@@ -20,7 +19,6 @@ import (
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/proposal"
-	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
@@ -28,6 +26,7 @@ import (
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/mock/gomock"
 	"golang.org/x/exp/slices"
 )
 
@@ -46,7 +45,7 @@ type testData struct {
 	*testsuite.TestSuite
 
 	valKeys      []*bls.ValidatorKey
-	txPool       *txpool.MockTxPool
+	mockTxPool   *txpool.MockTxPool
 	genDoc       *genesis.Genesis
 	consX        *consensus // Good peer
 	consY        *consensus // Good peer
@@ -77,7 +76,10 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	ts := testsuite.NewTestSuiteFromSeed(t, seed)
 
 	_, valKeys := ts.GenerateTestCommittee(4)
-	txPool := txpool.MockingTxPool()
+	mockTxPool := txpool.NewMockTxPool(ts.Ctrl)
+	mockTxPool.EXPECT().SetNewSandboxAndRecheck(gomock.Any()).Return().AnyTimes()
+	mockTxPool.EXPECT().PrepareBlockTransactions().Return(nil).AnyTimes()
+	mockTxPool.EXPECT().HandleCommittedBlock(gomock.Any()).Return().AnyTimes()
 
 	vals := make([]*validator.Validator, 4)
 	for i, key := range valKeys {
@@ -98,23 +100,23 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	genDoc := genesis.MakeGenesis(getTime, accs, vals, params)
 	eventPipe := pipeline.New[any](t.Context())
 	stateX, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexX]},
-		store.MockingStore(ts), txPool, eventPipe)
+		store.MockingStore(ts), mockTxPool, eventPipe)
 	require.NoError(t, err)
 	stateY, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexY]},
-		store.MockingStore(ts), txPool, eventPipe)
+		store.MockingStore(ts), mockTxPool, eventPipe)
 	require.NoError(t, err)
 	stateB, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexB]},
-		store.MockingStore(ts), txPool, eventPipe)
+		store.MockingStore(ts), mockTxPool, eventPipe)
 	require.NoError(t, err)
 	stateP, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexP]},
-		store.MockingStore(ts), txPool, eventPipe)
+		store.MockingStore(ts), mockTxPool, eventPipe)
 	require.NoError(t, err)
 
 	consMessages := make([]consMessage, 0)
 	td := &testData{
 		TestSuite:    ts,
 		valKeys:      valKeys,
-		txPool:       txPool,
+		mockTxPool:   mockTxPool,
 		genDoc:       genDoc,
 		consMessages: consMessages,
 	}
@@ -163,7 +165,7 @@ func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensus, ha
 			return
 		}
 	}
-	require.NoError(t, errors.New("Not found"))
+	require.Fail(t, fmt.Sprintf("should publish block announce for block hash %s", hash))
 }
 
 func (td *testData) shouldPublishProposal(t *testing.T, cons *consensus,
@@ -182,6 +184,8 @@ func (td *testData) shouldPublishProposal(t *testing.T, cons *consensus,
 		}
 	}
 
+	require.Fail(t, fmt.Sprintf("should publish proposal for height %d and round %d", height, round))
+
 	return nil
 }
 
@@ -191,7 +195,7 @@ func (td *testData) shouldNotPublish(t *testing.T, cons *consensus, msgType mess
 	for _, consMsg := range td.consMessages {
 		if consMsg.sender == cons.valKey.Address() &&
 			consMsg.message.Type() == msgType {
-			require.Error(t, fmt.Errorf("should not public %s", msgType))
+			require.Fail(t, fmt.Sprintf("should not publish %s", msgType))
 		}
 	}
 }
@@ -211,6 +215,7 @@ func (td *testData) shouldPublishQueryProposal(t *testing.T, cons *consensus, he
 
 		return
 	}
+	require.Fail(t, fmt.Sprintf("should publish query proposal message for height %d", height))
 }
 
 func (td *testData) shouldPublishQueryVote(t *testing.T, cons *consensus, height types.Height, round types.Round) {
@@ -229,6 +234,8 @@ func (td *testData) shouldPublishQueryVote(t *testing.T, cons *consensus, height
 
 		return
 	}
+
+	require.Fail(t, fmt.Sprintf("should publish query vote message for height %d and round %d", height, round))
 }
 
 func (td *testData) shouldPublishVote(t *testing.T, cons *consensus, voteType vote.Type, hash hash.Hash) *vote.Vote {
@@ -245,6 +252,8 @@ func (td *testData) shouldPublishVote(t *testing.T, cons *consensus, voteType vo
 			}
 		}
 	}
+
+	require.Fail(t, fmt.Sprintf("should publish %s vote for block hash %s", voteType, hash))
 
 	return nil
 }
@@ -367,34 +376,36 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certif
 	return blk, cert
 }
 
-func (td *testData) makeProposal(t *testing.T, height types.Height, round types.Round) *proposal.Proposal {
+// makeProposal generates a signed and valid proposal for the given height and round.
+// If rewardAddr is provided, it will be used instead of the consensus instance's default reward address.
+func (td *testData) makeProposal(t *testing.T, height types.Height, round types.Round, rewardAddr ...crypto.Address,
+) *proposal.Proposal {
 	t.Helper()
 
-	var prop *proposal.Proposal
+	var cons *consensus
 	switch uint32(height%4) + uint32(round%4) {
 	case 1:
-		blk, err := td.consX.bcState.ProposeBlock(td.consX.valKey, td.consX.rewardAddr)
-		require.NoError(t, err)
-		prop = proposal.NewProposal(height, round, blk)
-		td.HelperSignProposal(td.consX.valKey, prop)
+		cons = td.consX
 	case 2:
-		blk, err := td.consY.bcState.ProposeBlock(td.consY.valKey, td.consY.rewardAddr)
-		require.NoError(t, err)
-		prop = proposal.NewProposal(height, round, blk)
-		td.HelperSignProposal(td.consY.valKey, prop)
+		cons = td.consY
 	case 3:
-		blk, err := td.consB.bcState.ProposeBlock(td.consB.valKey, td.consB.rewardAddr)
-		require.NoError(t, err)
-		prop = proposal.NewProposal(height, round, blk)
-		td.HelperSignProposal(td.consB.valKey, prop)
-	case 0, 4:
-		blk, err := td.consP.bcState.ProposeBlock(td.consP.valKey, td.consP.rewardAddr)
-		require.NoError(t, err)
-		prop = proposal.NewProposal(height, round, blk)
-		td.HelperSignProposal(td.consP.valKey, prop)
+		cons = td.consB
+	case 4, 0:
+		cons = td.consP
 	}
 
-	return prop
+	// Use provided reward address or fall back to consensus instance's default
+	addr := cons.rewardAddr
+	if len(rewardAddr) > 0 {
+		addr = rewardAddr[0]
+	}
+
+	blk, err := cons.bcState.ProposeBlock(cons.valKey, addr)
+	require.NoError(t, err)
+	p := proposal.NewProposal(height, round, blk)
+	td.HelperSignProposal(cons.valKey, p)
+
+	return p
 }
 
 func (td *testData) makeMainCertificate(t *testing.T,
@@ -737,16 +748,12 @@ func TestDuplicateProposal(t *testing.T) {
 	height := types.Height(4)
 	round := types.Round(0)
 	prop1 := td.makeProposal(t, height, round)
-	trx := tx.NewTransferTx(height, td.consX.rewardAddr, td.RandAccAddress(), 1000,
-		1000, tx.WithMemo("proposal changer"))
-	td.HelperSignTransaction(td.consX.valKey.PrivateKey(), trx)
 
-	require.NoError(t, td.txPool.AppendTx(trx))
-	p2 := td.makeProposal(t, height, round)
-	assert.NotEqual(t, prop1.Hash(), p2.Hash())
+	prop2 := td.makeProposal(t, height, round, td.RandAccAddress())
+	assert.NotEqual(t, prop1.Hash(), prop2.Hash())
 
 	td.consX.SetProposal(prop1)
-	td.consX.SetProposal(p2)
+	td.consX.SetProposal(prop2)
 
 	assert.Equal(t, prop1.Hash(), td.consX.Proposal().Hash())
 }
@@ -940,11 +947,7 @@ func TestByzantine(t *testing.T) {
 	// =================================
 	// P votes
 	// Byzantine node create the second proposal and send it to the partitioned node P
-	byzTrx := tx.NewTransferTx(height,
-		td.consB.rewardAddr, td.RandAccAddress(), 1000, 1000)
-	td.HelperSignTransaction(td.consB.valKey.PrivateKey(), byzTrx)
-	require.NoError(t, td.txPool.AppendTx(byzTrx))
-	prop2 := td.makeProposal(t, height, round)
+	prop2 := td.makeProposal(t, height, round, td.RandAccAddress())
 
 	require.NotEqual(t, prop1.Block().Hash(), prop2.Block().Hash())
 	require.Equal(t, td.consB.valKey.Address(), prop1.Block().Header().ProposerAddress())

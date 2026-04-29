@@ -17,6 +17,7 @@ func TestBlockValidation(t *testing.T) {
 	td := setup(t)
 
 	round := td.RandRound()
+	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).AnyTimes()
 
 	t.Run("Invalid version, greater than latest", func(t *testing.T) {
 		blk0, _ := td.makeBlockAndCertificate(t, round)

@@ -1,7 +1,6 @@
 package txpool
 
 import (
-	"errors"
 	"testing"
 	"time"
 
@@ -88,7 +87,7 @@ func (td *testData) shouldPublishTransaction(t *testing.T, txID tx.ID) {
 	for {
 		select {
 		case <-timer.C:
-			require.NoError(t, errors.New("Timeout"))
+			require.Fail(t, "Publish transaction timeout")
 
 			return
 

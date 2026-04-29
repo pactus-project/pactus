@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/types"
+	"github.com/pactus-project/pactus/types/tx"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -396,14 +397,17 @@ func TestGetTxPoolContent(t *testing.T) {
 	td := setup(t, nil)
 	client := td.blockchainClient(t)
 
-	_ = td.mockState.AddPendingTx(td.GenerateTestBondTx())
-	_ = td.mockState.AddPendingTx(td.GenerateTestBondTx())
-	_ = td.mockState.AddPendingTx(td.GenerateTestTransferTx())
-	_ = td.mockState.AddPendingTx(td.GenerateTestUnbondTx())
-	_ = td.mockState.AddPendingTx(td.GenerateTestSortitionTx())
-	_ = td.mockState.AddPendingTx(td.GenerateTestSortitionTx())
-	_ = td.mockState.AddPendingTx(td.GenerateTestTransferTx())
-	_ = td.mockState.AddPendingTx(td.GenerateTestWithdrawTx())
+	trx1 := td.GenerateTestTransferTx()
+	trx2 := td.GenerateTestBatchTransferTx()
+	trx3 := td.GenerateTestSubsidyTx()
+	trx4 := td.GenerateTestBondTx()
+	trx5 := td.GenerateTestUnbondTx()
+	trx6 := td.GenerateTestSortitionTx()
+	trx7 := td.GenerateTestWithdrawTx()
+
+	td.mockState.MockTxPool.EXPECT().AllPendingTxs().Return([]*tx.Tx{
+		trx1, trx2, trx3, trx4, trx5, trx6, trx7,
+	}).AnyTimes()
 
 	t.Run("Should return all transactions", func(t *testing.T) {
 		in := &pactus.GetTxPoolContentRequest{
@@ -414,81 +418,32 @@ func TestGetTxPoolContent(t *testing.T) {
 		require.NoError(t, err)
 		assert.NotNil(t, resp)
 
-		assert.Len(t, resp.Txs, 8)
+		assert.Len(t, resp.Txs, 7)
 	})
 
-	t.Run("Should return all Bond transactions", func(t *testing.T) {
-		in := &pactus.GetTxPoolContentRequest{
-			PayloadType: pactus.PayloadType_PAYLOAD_TYPE_BOND,
+	t.Run("Should return transactions by type", func(t *testing.T) {
+		payloadTypes := []pactus.PayloadType{
+			pactus.PayloadType_PAYLOAD_TYPE_TRANSFER,
+			pactus.PayloadType_PAYLOAD_TYPE_BOND,
+			pactus.PayloadType_PAYLOAD_TYPE_SORTITION,
+			pactus.PayloadType_PAYLOAD_TYPE_UNBOND,
+			pactus.PayloadType_PAYLOAD_TYPE_WITHDRAW,
+			pactus.PayloadType_PAYLOAD_TYPE_BATCH_TRANSFER,
 		}
-		resp, err := client.GetTxPoolContent(t.Context(), in)
 
-		require.NoError(t, err)
-		assert.NotNil(t, resp)
-		assert.NotEmpty(t, resp.Txs)
+		for _, payloadType := range payloadTypes {
+			in := &pactus.GetTxPoolContentRequest{
+				PayloadType: payloadType,
+			}
+			resp, err := client.GetTxPoolContent(t.Context(), in)
 
-		for _, tx := range resp.Txs {
-			assert.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_BOND, tx.PayloadType)
-		}
-	})
+			require.NoError(t, err)
+			assert.NotNil(t, resp)
+			assert.NotEmpty(t, resp.Txs)
 
-	t.Run("Should return all Transfer transactions", func(t *testing.T) {
-		in := &pactus.GetTxPoolContentRequest{
-			PayloadType: pactus.PayloadType_PAYLOAD_TYPE_TRANSFER,
-		}
-		resp, err := client.GetTxPoolContent(t.Context(), in)
-
-		require.NoError(t, err)
-		assert.NotNil(t, resp)
-		assert.NotEmpty(t, resp.Txs)
-
-		for _, tx := range resp.Txs {
-			assert.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_TRANSFER, tx.PayloadType)
-		}
-	})
-
-	t.Run("Should return all Unbond transactions", func(t *testing.T) {
-		in := &pactus.GetTxPoolContentRequest{
-			PayloadType: pactus.PayloadType_PAYLOAD_TYPE_UNBOND,
-		}
-		resp, err := client.GetTxPoolContent(t.Context(), in)
-
-		require.NoError(t, err)
-		assert.NotNil(t, resp)
-		assert.NotEmpty(t, resp.Txs)
-
-		for _, tx := range resp.Txs {
-			assert.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_UNBOND, tx.PayloadType)
-		}
-	})
-
-	t.Run("Should return all Sortition transactions", func(t *testing.T) {
-		in := &pactus.GetTxPoolContentRequest{
-			PayloadType: pactus.PayloadType_PAYLOAD_TYPE_SORTITION,
-		}
-		resp, err := client.GetTxPoolContent(t.Context(), in)
-
-		require.NoError(t, err)
-		assert.NotNil(t, resp)
-		assert.NotEmpty(t, resp.Txs)
-
-		for _, tx := range resp.Txs {
-			assert.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_SORTITION, tx.PayloadType)
-		}
-	})
-
-	t.Run("Should return all Withdraw transactions", func(t *testing.T) {
-		in := &pactus.GetTxPoolContentRequest{
-			PayloadType: pactus.PayloadType_PAYLOAD_TYPE_WITHDRAW,
-		}
-		resp, err := client.GetTxPoolContent(t.Context(), in)
-
-		require.NoError(t, err)
-		assert.NotNil(t, resp)
-		assert.NotEmpty(t, resp.Txs)
-
-		for _, tx := range resp.Txs {
-			assert.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_WITHDRAW, tx.PayloadType)
+			for _, tx := range resp.Txs {
+				assert.Equal(t, payloadType, tx.PayloadType)
+			}
 		}
 	})
 }

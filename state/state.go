@@ -530,7 +530,8 @@ func (st *state) evaluateSortition() bool {
 			continue
 		}
 
-		ok, proof := sortition.EvaluateSortition(st.lastInfo.SortitionSeed(), key.PrivateKey(), st.totalPower, val.Power())
+		ok, proof := sortition.EvaluateSortition(st.lastInfo.SortitionSeed(),
+			key.PrivateKey(), st.totalPower, int64(val.Stake()))
 		if ok {
 			trx := tx.NewSortitionTx(st.lastInfo.BlockHeight(), val.Address(), proof)
 			sig := key.Sign(trx.SignBytes())
