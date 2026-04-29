@@ -431,10 +431,9 @@ func TestGetTxPoolContent(t *testing.T) {
 			pactus.PayloadType_PAYLOAD_TYPE_BATCH_TRANSFER,
 		}
 
-		for _, pt := range payloadTypes {
-
+		for _, payloadType := range payloadTypes {
 			in := &pactus.GetTxPoolContentRequest{
-				PayloadType: pt,
+				PayloadType: payloadType,
 			}
 			resp, err := client.GetTxPoolContent(t.Context(), in)
 
@@ -443,7 +442,7 @@ func TestGetTxPoolContent(t *testing.T) {
 			assert.NotEmpty(t, resp.Txs)
 
 			for _, tx := range resp.Txs {
-				assert.Equal(t, pt, tx.PayloadType)
+				assert.Equal(t, payloadType, tx.PayloadType)
 			}
 		}
 	})
