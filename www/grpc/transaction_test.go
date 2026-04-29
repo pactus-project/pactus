@@ -103,13 +103,17 @@ func TestSendRawTransaction(t *testing.T) {
 	trx := td.GenerateTestTransferTx()
 	data, _ := trx.Bytes()
 	t.Run("Should pass", func(t *testing.T) {
+		td.mockState.MockTxPool.EXPECT().AppendTxAndBroadcast(trx).Return(nil).Times(1)
+
 		res, err := client.BroadcastTransaction(t.Context(),
 			&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
 		require.NoError(t, err)
 		assert.NotNil(t, res)
 	})
+
 	t.Run("Should fail and not broadcast", func(t *testing.T) {
-		td.mockState.TestPool.AppendError = errors.New("some error")
+		td.mockState.MockTxPool.EXPECT().AppendTxAndBroadcast(trx).Return(errors.New("some error")).Times(1)
+
 		res, err := client.BroadcastTransaction(t.Context(),
 			&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
 		require.Error(t, err)

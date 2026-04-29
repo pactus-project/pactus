@@ -26,16 +26,17 @@ import (
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/mock/gomock"
 	"golang.org/x/exp/slices"
 )
 
 type testData struct {
 	*testsuite.TestSuite
 
-	state        *state
-	genValKeys   []*bls.ValidatorKey
-	genAccKey    *ed25519.PrivateKey
-	commonTxPool *txpool.MockTxPool
+	state      *state
+	mockTxPool *txpool.MockTxPool
+	genValKeys []*bls.ValidatorKey
+	genAccKey  *ed25519.PrivateKey
 }
 
 func setup(t *testing.T) *testData {
@@ -54,7 +55,14 @@ func setup(t *testing.T) *testData {
 		genVals = append(genVals, val)
 	}
 
-	mockTxPool := txpool.MockingTxPool()
+	numBlocks := ts.RandHeight(
+		testsuite.HeightWithMin(1),
+		testsuite.HeightWithMax(10))
+	mockTxPool := txpool.NewMockTxPool(ts.Ctrl)
+	mockTxPool.EXPECT().SetNewSandboxAndRecheck(gomock.Any()).Return().AnyTimes()
+	mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(int(numBlocks))
+	mockTxPool.EXPECT().HandleCommittedBlock(gomock.Any()).Return().AnyTimes()
+
 	mockStore := store.MockingStore(ts)
 
 	genTime := util.RoundNow(10).Add(-8640 * time.Second)
@@ -86,16 +94,27 @@ func setup(t *testing.T) *testData {
 	state, _ := st1.(*state)
 
 	td := &testData{
-		TestSuite:    ts,
-		state:        state,
-		genValKeys:   genValKeys,
-		genAccKey:    genAccPrvKey,
-		commonTxPool: mockTxPool,
+		TestSuite:  ts,
+		state:      state,
+		mockTxPool: mockTxPool,
+		genValKeys: genValKeys,
+		genAccKey:  genAccPrvKey,
 	}
 
-	td.commitBlocks(t, 8)
+	td.commitBlocks(t, numBlocks)
 
 	return td
+}
+
+func (td *testData) proposerKey(t *testing.T, round types.Round) *bls.ValidatorKey {
+	t.Helper()
+
+	blockProposer := td.state.Proposer(round)
+	valKeyIndex := slices.IndexFunc(td.genValKeys, func(e *bls.ValidatorKey) bool {
+		return e.Address() == blockProposer.Address()
+	})
+
+	return td.genValKeys[valKeyIndex]
 }
 
 func (td *testData) makeBlockAndCertificate(t *testing.T, round types.Round) (
@@ -103,11 +122,7 @@ func (td *testData) makeBlockAndCertificate(t *testing.T, round types.Round) (
 ) {
 	t.Helper()
 
-	blockProposer := td.state.Proposer(round)
-	valKeyIndex := slices.IndexFunc(td.genValKeys, func(e *bls.ValidatorKey) bool {
-		return e.Address() == blockProposer.Address()
-	})
-	valKey := td.genValKeys[valKeyIndex]
+	valKey := td.proposerKey(t, round)
 	blk, _ := td.state.ProposeBlock(valKey, td.RandAccAddress())
 	cert := td.makeCertificateAndSign(t, blk.Hash(), round)
 
@@ -137,10 +152,10 @@ func (td *testData) makeCertificateAndSign(t *testing.T, blockHash hash.Hash,
 	return cert
 }
 
-func (td *testData) commitBlocks(t *testing.T, count int) {
+func (td *testData) commitBlocks(t *testing.T, count types.Height) {
 	t.Helper()
 
-	for i := 0; i < count; i++ {
+	for i := types.Height(0); i < count; i++ {
 		blk, cert := td.makeBlockAndCertificate(t, 0)
 		require.NoError(t, td.state.CommitBlock(blk, cert))
 	}
@@ -208,7 +223,8 @@ func TestBlockSubsidyWithDelegationTx(t *testing.T) {
 	rewardAddr := td.RandAccAddress()
 	dlgOwnerAddr := td.RandAccAddress()
 	proposerAddr := td.state.Proposer(0).Address()
-	foundationAddr := td.state.params.FoundationAddress[td.state.LastBlockHeight()+1]
+	addressIndex := int(td.state.LastBlockHeight()+1) % len(td.state.params.FoundationAddress)
+	foundationAddr := td.state.params.FoundationAddress[addressIndex]
 
 	tests := []struct {
 		name               string
@@ -282,7 +298,7 @@ func TestBlockSubsidyWithDelegationTx(t *testing.T) {
 
 			trx := td.state.createSubsidyTx(proposerAddr, rewardAddr, tt.accumulatedFee)
 
-			err := td.state.checkSubsidy(trx, td.genValKeys[0].Address(), true)
+			err := td.state.checkSubsidy(trx, proposerAddr, true)
 			require.NoError(t, err)
 
 			payload := trx.Payload().(*payload.BatchTransferPayload)
@@ -298,6 +314,8 @@ func TestBlockSubsidyWithDelegationTx(t *testing.T) {
 func TestTryCommitInvalidCertificate(t *testing.T) {
 	td := setup(t)
 
+	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(1)
+
 	blk, _ := td.makeBlockAndCertificate(t, td.RandRound())
 	invCert := td.GenerateTestCertificate(td.state.LastBlockHeight() + 1)
 
@@ -307,8 +325,9 @@ func TestTryCommitInvalidCertificate(t *testing.T) {
 func TestTryCommitValidBlocks(t *testing.T) {
 	td := setup(t)
 
-	blk, cert := td.makeBlockAndCertificate(t, 0)
+	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(1)
 
+	blk, cert := td.makeBlockAndCertificate(t, 0)
 	require.NoError(t, td.state.CommitBlock(blk, cert))
 
 	// Commit again
@@ -318,7 +337,7 @@ func TestTryCommitValidBlocks(t *testing.T) {
 	assert.Equal(t, blk.Hash(), td.state.LastBlockHash())
 	assert.Equal(t, blk.Header().Time(), td.state.LastBlockTime())
 	assert.Equal(t, cert.Hash(), td.state.LastCertificate().Hash())
-	assert.Equal(t, types.Height(9), td.state.LastBlockHeight())
+	assert.Equal(t, cert.Height(), td.state.LastBlockHeight())
 }
 
 func TestCommitSandbox(t *testing.T) {
@@ -416,6 +435,7 @@ func TestCommitSandbox(t *testing.T) {
 func TestUpdateLastCertificate(t *testing.T) {
 	td := setup(t)
 
+	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(1)
 	blk, cert := td.makeBlockAndCertificate(t, 1)
 	_ = td.state.CommitBlock(blk, cert)
 
@@ -460,30 +480,12 @@ func TestUpdateLastCertificate(t *testing.T) {
 	}
 }
 
-func TestBlockProposal(t *testing.T) {
-	td := setup(t)
-
-	t.Run("validity of the proposed block", func(t *testing.T) {
-		blk, err := td.state.ProposeBlock(td.state.valKeys[0], td.RandAccAddress())
-		require.NoError(t, err)
-		require.NoError(t, td.state.ValidateBlock(blk, 0))
-	})
-
-	t.Run("Tx pool has two subsidy transactions", func(t *testing.T) {
-		trx := td.state.createSubsidyTx(td.genValKeys[0].Address(), td.RandAccAddress(), 0)
-		require.NoError(t, td.state.AddPendingTx(trx))
-
-		blk, err := td.state.ProposeBlock(td.state.valKeys[0], td.RandAccAddress())
-		require.NoError(t, err)
-		require.NoError(t, td.state.ValidateBlock(blk, 0))
-		assert.Equal(t, 1, blk.Transactions().Len())
-	})
-}
-
 func TestForkDetection(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Two blocks with different previous block hashes", func(t *testing.T) {
+		td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(1)
+
 		assert.Panics(t, func() {
 			blk0, _ := td.makeBlockAndCertificate(t, 0)
 			blkFork := block.MakeBlock(
@@ -505,31 +507,40 @@ func TestForkDetection(t *testing.T) {
 func TestSortition(t *testing.T) {
 	td := setup(t)
 
-	secValKey := td.state.valKeys[1]
+	valKey := td.state.valKeys[1]
 	assert.False(t, td.state.evaluateSortition()) //  not a validator
 	assert.Equal(t, int64(4), td.state.ChainInfo().CommitteePower)
 
 	trx := tx.NewBondTx(1, td.genAccKey.PublicKeyNative().AccountAddress(),
-		secValKey.Address(), secValKey.PublicKey(), 1000000000, 100000)
-	td.HelperSignTransaction(td.genAccKey, trx)
-	require.NoError(t, td.state.AddPendingTx(trx))
+		valKey.Address(), valKey.PublicKey(), 1000000000, 100000)
 
+	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{trx}).Times(1)
 	td.commitBlocks(t, 1)
 
 	assert.False(t, td.state.evaluateSortition()) // bonding period
 	assert.Equal(t, int64(4), td.state.ChainInfo().CommitteePower)
-	assert.False(t, td.state.committee.Contains(secValKey.Address())) // Not in the committee
+	assert.False(t, td.state.committee.Contains(valKey.Address())) // Not in the committee
 
 	// Committing another 10 blocks
+	var sortitionTrx *tx.Tx
+
+	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(10)
+	td.mockTxPool.EXPECT().AppendTxAndBroadcast(gomock.Any()).Do(func(trx *tx.Tx) {
+		sortitionTrx = trx // Capture the input argument here
+	}).Return(nil).Times(1)
 	td.commitBlocks(t, 10)
 
-	assert.True(t, td.state.evaluateSortition())                      // OK
-	assert.False(t, td.state.committee.Contains(secValKey.Address())) // Still not in the committee
+	assert.Equal(t, payload.TypeSortition, sortitionTrx.Payload().Type())
+	assert.Equal(t, valKey.Address(), sortitionTrx.Payload().Signer())
+	assert.False(t, td.state.committee.Contains(valKey.Address())) // Still not in the committee
+
+	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{sortitionTrx}).Times(1)
+	td.mockTxPool.EXPECT().AppendTxAndBroadcast(gomock.Any()).Return(nil).Times(1)
 
 	td.commitBlocks(t, 1)
 
 	assert.Equal(t, int64(1000000004), td.state.ChainInfo().CommitteePower)
-	assert.True(t, td.state.committee.Contains(secValKey.Address())) // In the committee
+	assert.True(t, td.state.committee.Contains(valKey.Address())) // In the committee
 }
 
 func TestValidateBlockTime(t *testing.T) {
@@ -642,20 +653,19 @@ func TestLoadState(t *testing.T) {
 	lockTime := td.state.LastBlockHeight()
 	bondTrx := tx.NewBondTx(lockTime, td.genAccKey.PublicKeyNative().AccountAddress(),
 		pub.ValidatorAddress(), pub, 1000000000, 100000)
-	td.HelperSignTransaction(td.genAccKey, bondTrx)
 
-	require.NoError(t, td.state.AddPendingTx(bondTrx))
-
+	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{bondTrx}).Times(1)
 	blk5, cert5 := td.makeBlockAndCertificate(t, 1)
 	assert.Equal(t, 2, blk5.Transactions().Len())
 	require.NoError(t, td.state.CommitBlock(blk5, cert5))
 
+	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(1)
 	blk6, cert6 := td.makeBlockAndCertificate(t, 0)
 
 	// Load last state info
 	eventPipe := pipeline.New[any](t.Context())
 	newState, err := LoadOrNewState(td.state.genDoc, td.state.valKeys,
-		td.state.store, td.commonTxPool, eventPipe)
+		td.state.store, td.mockTxPool, eventPipe)
 	require.NoError(t, err)
 
 	assert.Equal(t, td.state.Params(), newState.Params())
@@ -669,10 +679,12 @@ func TestLoadState(t *testing.T) {
 func TestIsInCommittee(t *testing.T) {
 	td := setup(t)
 
-	assert.True(t, td.state.IsInCommittee(td.genValKeys[0].Address()))
-	assert.True(t, td.state.IsProposer(td.genValKeys[0].Address(), 0))
-	assert.True(t, td.state.IsProposer(td.genValKeys[1].Address(), 1))
-	assert.True(t, td.state.IsInCommittee(td.genValKeys[1].Address()))
+	proposer0 := td.proposerKey(t, 0).Address()
+	proposer1 := td.proposerKey(t, 1).Address()
+	assert.True(t, td.state.IsInCommittee(proposer0))
+	assert.True(t, td.state.IsProposer(proposer0, 0))
+	assert.True(t, td.state.IsInCommittee(proposer1))
+	assert.True(t, td.state.IsProposer(proposer1, 1))
 
 	addr := td.RandAccAddress()
 	assert.False(t, td.state.IsInCommittee(addr))
@@ -683,8 +695,10 @@ func TestIsInCommittee(t *testing.T) {
 func TestCalculateFee(t *testing.T) {
 	td := setup(t)
 
+	expectedFee := td.RandFee()
+	td.mockTxPool.EXPECT().EstimatedFee(gomock.Any(), payload.TypeTransfer).Return(expectedFee).Times(1)
+
 	fee := td.state.CalculateFee(td.RandAmount(), payload.TypeTransfer)
-	expectedFee := td.commonTxPool.EstimatedFee(0, payload.TypeTransfer)
 
 	assert.Equal(t, expectedFee, fee)
 }
@@ -692,17 +706,18 @@ func TestCalculateFee(t *testing.T) {
 func TestCheckMaximumTransactionPerBlock(t *testing.T) {
 	td := setup(t)
 
+	txs := block.Txs{}
 	td.state.params.MaxTransactionsPerBlock = 10
 	lockTime := td.state.LastBlockHeight()
 	senderAddr := td.genAccKey.PublicKeyNative().AccountAddress()
 	for i := 0; i < td.state.params.MaxTransactionsPerBlock+2; i++ {
-		amt := td.RandAmount()
-		fee := td.state.CalculateFee(amt, payload.TypeTransfer)
-		trx := tx.NewTransferTx(lockTime, senderAddr, td.RandAccAddress(), amt, fee)
-		err := td.state.AddPendingTx(trx)
-		require.NoError(t, err)
+		trx := tx.NewTransferTx(lockTime, senderAddr,
+			td.RandAccAddress(), td.RandAmount(), td.RandFee())
+
+		txs = append(txs, trx)
 	}
 
+	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(txs).Times(1)
 	blk, err := td.state.ProposeBlock(td.state.valKeys[0], td.RandAccAddress())
 	require.NoError(t, err)
 	assert.Equal(t, td.state.params.MaxTransactionsPerBlock, blk.Transactions().Len())

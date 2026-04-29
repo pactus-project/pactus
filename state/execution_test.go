@@ -5,7 +5,6 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/execution/executor"
-	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/protocol"
@@ -33,22 +32,25 @@ func TestProposeBlock(t *testing.T) {
 		testsuite.TransactionWithLockTime(lockTime),
 		testsuite.TransactionWithSigner(td.genAccKey))
 
-	require.NoError(t, td.state.AddPendingTx(invTransferTx))
-	require.NoError(t, td.state.AddPendingTx(invBondTx))
-	require.NoError(t, td.state.AddPendingTx(invSortitionTx))
-	require.NoError(t, td.state.AddPendingTx(dupSubsidyTx))
-	require.NoError(t, td.state.AddPendingTx(validTrx1))
-	require.NoError(t, td.state.AddPendingTx(validTrx2))
+	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{
+		invTransferTx,
+		invBondTx,
+		invSortitionTx,
+		dupSubsidyTx,
+		validTrx1,
+		validTrx2,
+	}).Times(1)
 
 	rewardAddr := td.RandAccAddress()
-	blk, err := td.state.ProposeBlock(td.state.valKeys[0], rewardAddr)
+	proposerKey := td.proposerKey(t, 0)
+	blk, err := td.state.ProposeBlock(proposerKey, rewardAddr)
 	require.NoError(t, err)
 
 	blockTrxs := blk.Transactions()
 	rewardTrx := blockTrxs[0]
 
 	assert.Equal(t, protocol.ProtocolVersionLatest, blk.Header().Version())
-	assert.Equal(t, td.state.valKeys[0].Address(), blk.Header().ProposerAddress())
+	assert.Equal(t, td.state.Proposer(0).Address(), blk.Header().ProposerAddress())
 	assert.Equal(t, td.state.LastBlockHash(), blk.Header().PrevBlockHash())
 	assert.Equal(t, block.Txs{rewardTrx, validTrx1, validTrx2}, blockTrxs)
 	assert.Equal(t, td.state.params.BlockReward+validTrx1.Fee()+validTrx2.Fee(), rewardTrx.Payload().Value())
@@ -57,23 +59,15 @@ func TestProposeBlock(t *testing.T) {
 func TestExecuteBlock(t *testing.T) {
 	td := setup(t)
 
-	blk, cert := td.makeBlockAndCertificate(t, 0)
-	require.NoError(t, td.state.CommitBlock(blk, cert))
-
 	invTransferTx := td.GenerateTestTransferTx()
 	validTx1 := td.GenerateTestTransferTx(
 		testsuite.TransactionWithLockTime(1),
 		testsuite.TransactionWithSigner(td.genAccKey))
 
-	blockHeight := types.Height(2)
-	proposerAddr := td.state.Proposer(0).Address()
-	invSubsidyTx := td.state.createSubsidyTx(td.genValKeys[0].Address(), td.RandAccAddress(), validTx1.Fee()+1)
-	validSubsidyTx := td.state.createSubsidyTx(td.genValKeys[0].Address(), td.RandAccAddress(), validTx1.Fee())
-
-	require.NoError(t, td.state.AddPendingTx(invTransferTx))
-	require.NoError(t, td.state.AddPendingTx(validSubsidyTx))
-	require.NoError(t, td.state.AddPendingTx(invSubsidyTx))
-	require.NoError(t, td.state.AddPendingTx(validTx1))
+	blockHeight := td.state.LastBlockHeight() + 1
+	proposerAddr := td.proposerKey(t, 0).Address()
+	invSubsidyTx := td.state.createSubsidyTx(proposerAddr, td.RandAccAddress(), validTx1.Fee()+1)
+	validSubsidyTx := td.state.createSubsidyTx(proposerAddr, td.RandAccAddress(), validTx1.Fee())
 
 	t.Run("Block has invalid subsidy amount", func(t *testing.T) {
 		txs := block.NewTxs()
@@ -198,7 +192,7 @@ func TestExecuteBlock(t *testing.T) {
 
 		// Check if fee is claimed
 		treasury := sb.Account(crypto.TreasuryAddress)
-		assert.Equal(t, 21*1e15-(10*td.state.params.BlockReward), treasury.Balance()) // Two extra blocks has committed yet
+		assert.Equal(t, 21*1e15-(amount.Amount(blockHeight)*td.state.params.BlockReward), treasury.Balance())
 	})
 }
 
