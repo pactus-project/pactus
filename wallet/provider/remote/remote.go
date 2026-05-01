@@ -20,6 +20,8 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+const DefaultWalletTimeoutSecond = 10
+
 var _ provider.IBlockchainProvider = (*RemoteBlockchainProvider)(nil)
 
 type remoteProviderConfig struct {
@@ -28,7 +30,7 @@ type remoteProviderConfig struct {
 }
 
 var defaultOpenWalletConfig = remoteProviderConfig{
-	timeout: 5 * time.Second,
+	timeout: DefaultWalletTimeoutSecond * time.Second,
 	servers: nil,
 }
 

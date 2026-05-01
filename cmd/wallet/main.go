@@ -78,7 +78,7 @@ func main() {
 		cmd.PactusDefaultWalletPath(cmd.PactusDefaultHomeDir()), "the path to the wallet file")
 	offlineOpt = rootCmd.PersistentFlags().Bool("offline", false, "offline mode")
 	serverAddrsOpt = rootCmd.PersistentFlags().StringSlice("servers", nil, "servers gRPC address")
-	timeoutOpt = rootCmd.PersistentFlags().Int("timeout", 1,
+	timeoutOpt = rootCmd.PersistentFlags().Int("timeout", remote.DefaultWalletTimeoutSecond,
 		"specifies the timeout duration for the connection in seconds")
 
 	buildCreateCmd(rootCmd)
