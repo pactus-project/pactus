@@ -1,5 +1,43 @@
 # Changelog
 
+## [1.14.0](https://github.com/pactus-project/pactus/compare/v1.13.0...v1.14.0) (2026-05-03)
+
+### Feat
+
+- **grpc**: add CheckTransaction API ([#2177](https://github.com/pactus-project/pactus/pull/2177))
+- **state**: add CheckTransaction API ([#2176](https://github.com/pactus-project/pactus/pull/2176))
+- **grpc**: support create delegation transactions using gRPC ([#2174](https://github.com/pactus-project/pactus/pull/2174))
+- **wallet**: add pending transactions ([#2162](https://github.com/pactus-project/pactus/pull/2162))
+- **state, grpc**: calculate the average availability score ([#2138](https://github.com/pactus-project/pactus/pull/2138))
+- **wallet**: define wallet config for locking mode ([#2136](https://github.com/pactus-project/pactus/pull/2136))
+- **wallet**: add new option for offline wallet mode ([#2133](https://github.com/pactus-project/pactus/pull/2133))
+
+### Fix
+
+- **wallet**: increase wallet timeout ([#2181](https://github.com/pactus-project/pactus/pull/2181))
+- **wallet**: check Pending transactions ([#2178](https://github.com/pactus-project/pactus/pull/2178))
+- **gtk**: string conversion for type and status of transactions ([#2179](https://github.com/pactus-project/pactus/pull/2179))
+- **zeromq**: process tx messages ([#2172](https://github.com/pactus-project/pactus/pull/2172))
+- **types**: define encode options for transaction ([#2171](https://github.com/pactus-project/pactus/pull/2171))
+- **grpc**: add IsDelegated field to bond transaction info ([#2161](https://github.com/pactus-project/pactus/pull/2161))
+- **html**: use account address render for delegation owner ([#2158](https://github.com/pactus-project/pactus/pull/2158))
+- **html**: add delegation fields in HTML service ([#2157](https://github.com/pactus-project/pactus/pull/2157))
+- **grpc**: add delegation fields in gRPC response message ([#2148](https://github.com/pactus-project/pactus/pull/2148))
+- **state**: remove upgrader code to version 3 ([#2146](https://github.com/pactus-project/pactus/pull/2146))
+- **cmd**: unlock wallet for wallet commands ([#2145](https://github.com/pactus-project/pactus/pull/2145))
+- **config**: update Node39 contact details and address ([#2142](https://github.com/pactus-project/pactus/pull/2142))
+- **state**: fix average score calculation ([#2143](https://github.com/pactus-project/pactus/pull/2143))
+- **state**: update average score calculation ([#2139](https://github.com/pactus-project/pactus/pull/2139))
+- **wallet**: mitigate database lock contention ([#2131](https://github.com/pactus-project/pactus/pull/2131))
+- **state**: load block version from last state ([#2130](https://github.com/pactus-project/pactus/pull/2130))
+- **sync**: bypass old protocol version ([#2129](https://github.com/pactus-project/pactus/pull/2129))
+- **linter**: enable testifylint linter with usetesting settings ([#2121](https://github.com/pactus-project/pactus/pull/2121))
+
+### Refactor
+
+- **types**: define block round type ([#2141](https://github.com/pactus-project/pactus/pull/2141))
+- **types**: define block height type ([#2140](https://github.com/pactus-project/pactus/pull/2140))
+
 ## [1.13.0](https://github.com/pactus-project/pactus/compare/v1.12.0...v1.13.0) (2026-04-03)
 
 ### Feat
