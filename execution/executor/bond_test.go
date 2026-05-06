@@ -13,14 +13,12 @@ import (
 func TestExecuteBondTx(t *testing.T) {
 	td := setup(t)
 
-	senderAddr, senderAcc := td.sbx.TestStore.RandomTestAcc()
+	senderAcc, senderAddr := td.addTestAccount(t)
 	senderBalance := senderAcc.Balance()
 	valPub, _ := td.RandBLSKeyPair()
 	receiverAddr := valPub.ValidatorAddress()
 
-	amt := td.RandAmountRange(
-		td.sbx.TestParams.MinimumStake,
-		td.sbx.TestParams.MaximumStake)
+	amt := td.RandAmountRange(td.params.MinimumStake, td.params.MaximumStake)
 	fee := td.RandFee()
 	lockTime := td.sbx.CurrentHeight()
 
@@ -69,22 +67,23 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, amount less than MinimumStake", func(t *testing.T) {
-		trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, valPub, td.sbx.TestParams.MinimumStake-1, fee)
+		trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, valPub, td.params.MinimumStake-1, fee)
 
-		td.check(t, trx, true, SmallStakeError{td.sbx.TestParams.MinimumStake})
-		td.check(t, trx, false, SmallStakeError{td.sbx.TestParams.MinimumStake})
+		td.check(t, trx, true, SmallStakeError{td.params.MinimumStake})
+		td.check(t, trx, false, SmallStakeError{td.params.MinimumStake})
 	})
 
 	t.Run("Should fail, validator's stake exceeds the MaximumStake", func(t *testing.T) {
-		trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, valPub, td.sbx.TestParams.MaximumStake+1, fee)
+		trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, valPub, td.params.MaximumStake+1, fee)
 
-		td.check(t, trx, true, MaximumStakeError{td.sbx.TestParams.MaximumStake})
-		td.check(t, trx, false, MaximumStakeError{td.sbx.TestParams.MaximumStake})
+		td.check(t, trx, true, MaximumStakeError{td.params.MaximumStake})
+		td.check(t, trx, false, MaximumStakeError{td.params.MaximumStake})
 	})
 
 	t.Run("Should fail, inside committee", func(t *testing.T) {
-		pub0 := td.sbx.Committee().Proposer(0).PublicKey()
-		trx := tx.NewBondTx(lockTime, senderAddr, pub0.ValidatorAddress(), nil, 1e9, fee)
+		trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, valPub, amt, fee)
+
+		td.committee.EXPECT().Contains(receiverAddr).Return(true).Times(1)
 
 		td.check(t, trx, true, ErrValidatorInCommittee)
 		td.check(t, trx, false, nil)
@@ -94,8 +93,10 @@ func TestExecuteBondTx(t *testing.T) {
 		randPub, _ := td.RandBLSKeyPair()
 		val := td.sbx.MakeNewValidator(randPub)
 		td.sbx.UpdateValidator(val)
-		td.sbx.JoinedToCommittee(val.Address())
-		trx := tx.NewBondTx(lockTime, senderAddr, randPub.ValidatorAddress(), nil, amt, fee)
+		trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, valPub, amt, fee)
+
+		td.committee.EXPECT().Contains(receiverAddr).Return(false).Times(1)
+		td.sbx.EXPECT().IsJoinedCommittee(receiverAddr).Return(true).Times(1)
 
 		td.check(t, trx, true, ErrValidatorInCommittee)
 		td.check(t, trx, false, nil)
@@ -103,6 +104,10 @@ func TestExecuteBondTx(t *testing.T) {
 
 	t.Run("Ok", func(t *testing.T) {
 		trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, valPub, amt, fee)
+
+		td.committee.EXPECT().Contains(receiverAddr).Return(false).Times(1)
+		td.sbx.EXPECT().IsJoinedCommittee(receiverAddr).Return(false).Times(1)
+		td.sbx.EXPECT().UpdatePowerDelta(amt.ToNanoPAC()).Times(1)
 
 		td.check(t, trx, true, nil)
 		td.check(t, trx, false, nil)
@@ -121,19 +126,19 @@ func TestExecuteBondTx(t *testing.T) {
 func TestPowerDeltaBond(t *testing.T) {
 	td := setup(t)
 
-	senderAddr, _ := td.sbx.TestStore.RandomTestAcc()
+	_, senderAddr := td.addTestAccount(t)
 	pub, _ := td.RandBLSKeyPair()
 	receiverAddr := pub.ValidatorAddress()
 	amt := td.RandAmountRange(
-		td.sbx.TestParams.MinimumStake,
-		td.sbx.TestParams.MaximumStake)
+		td.params.MinimumStake,
+		td.params.MaximumStake)
 	fee := td.RandFee()
 	lockTime := td.sbx.CurrentHeight()
 	trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, pub, amt, fee)
 
-	td.execute(t, trx)
+	td.sbx.EXPECT().UpdatePowerDelta(amt.ToNanoPAC()).Times(1)
 
-	assert.Equal(t, int64(amt), td.sbx.PowerDelta())
+	td.execute(t, trx)
 }
 
 // TestSmallBond tests scenarios involving small and zero stake amounts in bond transactions.
@@ -142,11 +147,11 @@ func TestPowerDeltaBond(t *testing.T) {
 func TestSmallBond(t *testing.T) {
 	td := setup(t)
 
-	senderAddr, _ := td.sbx.TestStore.RandomTestAcc()
+	_, senderAddr := td.addTestAccount(t)
 	receiverPub, _ := td.RandBLSKeyPair()
 	receiverAddr := receiverPub.ValidatorAddress()
 	receiverVal := td.sbx.MakeNewValidator(receiverPub)
-	receiverVal.AddToStake(td.sbx.TestParams.MaximumStake - 2)
+	receiverVal.AddToStake(td.params.MaximumStake - 2)
 	td.sbx.UpdateValidator(receiverVal)
 	lockTime := td.sbx.CurrentHeight()
 	fee := td.RandFee()
@@ -154,15 +159,15 @@ func TestSmallBond(t *testing.T) {
 	t.Run("Rejects bond transaction with zero amount", func(t *testing.T) {
 		trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, nil, 0, fee)
 
-		td.check(t, trx, true, SmallStakeError{td.sbx.TestParams.MinimumStake})
-		td.check(t, trx, false, SmallStakeError{td.sbx.TestParams.MinimumStake})
+		td.check(t, trx, true, SmallStakeError{td.params.MinimumStake})
+		td.check(t, trx, false, SmallStakeError{td.params.MinimumStake})
 	})
 
 	t.Run("Rejects bond transaction below full validator stake", func(t *testing.T) {
 		trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, nil, 1, fee)
 
-		td.check(t, trx, true, SmallStakeError{td.sbx.TestParams.MinimumStake})
-		td.check(t, trx, false, SmallStakeError{td.sbx.TestParams.MinimumStake})
+		td.check(t, trx, true, SmallStakeError{td.params.MinimumStake})
+		td.check(t, trx, false, SmallStakeError{td.params.MinimumStake})
 	})
 
 	t.Run("Accepts bond transaction reaching full validator stake", func(t *testing.T) {
@@ -176,18 +181,18 @@ func TestSmallBond(t *testing.T) {
 	t.Run("Rejects bond transaction with zero amount on full validator", func(t *testing.T) {
 		trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, nil, 0, fee)
 
-		td.check(t, trx, true, SmallStakeError{td.sbx.TestParams.MinimumStake})
-		td.check(t, trx, false, SmallStakeError{td.sbx.TestParams.MinimumStake})
+		td.check(t, trx, true, SmallStakeError{td.params.MinimumStake})
+		td.check(t, trx, false, SmallStakeError{td.params.MinimumStake})
 	})
 
-	receiverValAfterExecution, _ := td.sbx.TestStore.Validator(receiverVal.Address())
+	receiverValAfterExecution, _ := td.validators[receiverVal.Address()]
 	assert.Equal(t, td.sbx.Params().MaximumStake, receiverValAfterExecution.Stake())
 }
 
 func TestExecuteDelegatedBondTx(t *testing.T) {
 	td := setup(t)
 
-	senderAddr, senderAcc := td.sbx.TestStore.RandomTestAcc()
+	senderAcc, senderAddr := td.addTestAccount(t)
 	senderBalance := senderAcc.Balance()
 	valPub, _ := td.RandBLSKeyPair()
 	receiverAddr := valPub.ValidatorAddress()
@@ -208,14 +213,14 @@ func TestExecuteDelegatedBondTx(t *testing.T) {
 	}
 
 	t.Run("Should fail, delegation stake must equal maximum", func(t *testing.T) {
-		trx := makeDelegatedBond(td.sbx.TestParams.MaximumStake - 1)
+		trx := makeDelegatedBond(td.params.MaximumStake - 1)
 
 		td.check(t, trx, true, ErrInvalidDelegation)
 		td.check(t, trx, false, ErrInvalidDelegation)
 	})
 
 	t.Run("Should fail, delegate expiry is in past/current height", func(t *testing.T) {
-		trx := makeDelegatedBond(td.sbx.TestParams.MaximumStake)
+		trx := makeDelegatedBond(td.params.MaximumStake)
 		pld := trx.Payload().(*payload.BondPayload)
 		pld.DelegateExpiry = td.sbx.CurrentHeight()
 
@@ -224,7 +229,7 @@ func TestExecuteDelegatedBondTx(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		trx := makeDelegatedBond(td.sbx.TestParams.MaximumStake)
+		trx := makeDelegatedBond(td.params.MaximumStake)
 
 		td.check(t, trx, true, nil)
 		td.check(t, trx, false, nil)
@@ -233,8 +238,8 @@ func TestExecuteDelegatedBondTx(t *testing.T) {
 
 	updatedSenderAcc := td.sbx.Account(senderAddr)
 	updatedReceiverVal := td.sbx.Validator(receiverAddr)
-	assert.Equal(t, senderBalance-(td.sbx.TestParams.MaximumStake+fee), updatedSenderAcc.Balance())
-	assert.Equal(t, td.sbx.TestParams.MaximumStake, updatedReceiverVal.Stake())
+	assert.Equal(t, senderBalance-(td.params.MaximumStake+fee), updatedSenderAcc.Balance())
+	assert.Equal(t, td.params.MaximumStake, updatedReceiverVal.Stake())
 	assert.Equal(t, owner, updatedReceiverVal.DelegateOwner())
 	assert.Equal(t, delegateShare, updatedReceiverVal.DelegateShare())
 	assert.Equal(t, delegateExpiry, updatedReceiverVal.DelegateExpiry())

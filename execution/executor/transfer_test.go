@@ -10,7 +10,7 @@ import (
 func TestExecuteTransferTx(t *testing.T) {
 	td := setup(t)
 
-	senderAddr, senderAcc := td.sbx.TestStore.RandomTestAcc()
+	senderAcc, senderAddr := td.addTestAccount(t)
 	senderBalance := senderAcc.Balance()
 	receiverAddr := td.RandAccAddress()
 
@@ -53,7 +53,8 @@ func TestExecuteTransferTx(t *testing.T) {
 func TestTransferToSelf(t *testing.T) {
 	td := setup(t)
 
-	senderAddr, senderAcc := td.sbx.TestStore.RandomTestAcc()
+	senderAcc, senderAddr := td.addTestAccount(t)
+	firstBalance := senderAcc.Balance()
 	amt := td.RandAmountRange(0, senderAcc.Balance())
 	fee := td.RandFee()
 	lockTime := td.sbx.CurrentHeight()
@@ -63,9 +64,8 @@ func TestTransferToSelf(t *testing.T) {
 	td.check(t, trx, false, nil)
 	td.execute(t, trx)
 
-	expectedBalance := senderAcc.Balance() - fee // Fee should be deducted
-	updatedAcc := td.sbx.Account(senderAddr)
-	assert.Equal(t, expectedBalance, updatedAcc.Balance())
+	secondBalance := senderAcc.Balance()
+	assert.Equal(t, firstBalance-secondBalance, fee, "balance should only decrease by fee")
 
 	td.checkTotalCoin(t, fee)
 }

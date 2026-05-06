@@ -50,7 +50,7 @@ func testConsumptionalConfig() *Config {
 func setup(t *testing.T, cfg *Config) *testData {
 	t.Helper()
 
-	ts := testsuite.NewTestSuiteFromSeed(t, 1776497511988844581)
+	ts := testsuite.NewTestSuite(t)
 
 	broadcastPipe := pipeline.New[message.Message](t.Context())
 	eventPipe := pipeline.New[any](t.Context())

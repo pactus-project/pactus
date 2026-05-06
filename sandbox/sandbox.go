@@ -241,10 +241,6 @@ func (sb *sandbox) CurrentHeight() types.Height {
 	return sb.height + 1
 }
 
-func (sb *sandbox) IsMainnet() bool {
-	return sb.isMainnet
-}
-
 func (sb *sandbox) IterateAccounts(
 	consumer func(crypto.Address, *account.Account, bool),
 ) {

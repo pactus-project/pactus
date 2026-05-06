@@ -80,8 +80,8 @@ type HeightRange struct {
 
 func NewHeightRange() *HeightRange {
 	return &HeightRange{
-		Min: 1e3,
-		Max: 1e6,
+		Min: 1e6,
+		Max: 1e7,
 	}
 }
 
@@ -99,7 +99,7 @@ func HeightWithMax(max uint32) HeightRangeOption {
 	}
 }
 
-// RandHeight returns a random number between [1,000, 1,000,000] for block height.
+// RandHeight returns a random number between [1,000,000, 10,000,000] for block height.
 func (ts *TestSuite) RandHeight(opts ...HeightRangeOption) types.Height {
 	h := NewHeightRange()
 	for _, opt := range opts {

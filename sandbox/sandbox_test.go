@@ -399,3 +399,15 @@ func TestVerifyProof(t *testing.T) {
 		assert.True(t, td.sbx.VerifyProof(validLockTime, validProof, validVal))
 	})
 }
+
+func TestJoinedToCommittee(t *testing.T) {
+	td := setup(t)
+
+	pub, _ := td.RandBLSKeyPair()
+	td.sbx.MakeNewValidator(pub)
+	assert.False(t, td.sbx.IsJoinedCommittee(pub.ValidatorAddress()))
+	assert.False(t, td.sbx.IsJoinedCommittee(td.RandValAddress()))
+
+	td.sbx.JoinedToCommittee(pub.ValidatorAddress())
+	assert.True(t, td.sbx.IsJoinedCommittee(pub.ValidatorAddress()))
+}
