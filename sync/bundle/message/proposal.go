@@ -19,7 +19,11 @@ func NewProposalMessage(p *proposal.Proposal) *ProposalMessage {
 	}
 }
 
-func (*ProposalMessage) BasicCheck() error {
+func (m *ProposalMessage) BasicCheck() error {
+	if m.Proposal == nil {
+		return BasicCheckError{Reason: "no proposal"}
+	}
+
 	// Basic checks for the proposal are deferred to the consensus phase
 	// to avoid unnecessary validation for validators outside the committee.
 	return nil
