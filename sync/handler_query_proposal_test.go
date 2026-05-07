@@ -36,3 +36,12 @@ func TestHandlerQueryProposalParsingMessages(t *testing.T) {
 		assert.Equal(t, prop.Hash(), bdl.Message.(*message.ProposalMessage).Proposal.Hash())
 	})
 }
+
+func TestHandlerQueryProposalBroadcastingMessages(t *testing.T) {
+	td := setup(t, nil)
+
+	msg := message.NewQueryProposalMessage(td.RandHeight(), td.RandRound(), td.RandValAddress())
+	td.sync.broadcast(msg)
+
+	td.shouldPublishMessageWithThisType(t, message.TypeQueryProposal)
+}

@@ -36,7 +36,5 @@ func (handler *blockAnnounceHandler) ParseMessage(m message.Message, pid peer.ID
 }
 
 func (*blockAnnounceHandler) PrepareBundle(m message.Message) *bundle.Bundle {
-	bdl := bundle.NewBundle(m)
-
-	return bdl
+	return bundle.NewBundle(m)
 }

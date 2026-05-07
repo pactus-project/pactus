@@ -9,7 +9,7 @@ import (
 func TestHandlerVoteParsingMessages(t *testing.T) {
 	td := setup(t, nil)
 
-	t.Run("Parsing vote message", func(t *testing.T) {
+	t.Run("Parsing vote message", func(*testing.T) {
 		vte, _ := td.GenerateTestPrecommitVote(1, 0)
 		msg := message.NewVoteMessage(vte)
 		pid := td.RandPeerID()

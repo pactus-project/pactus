@@ -34,3 +34,12 @@ func TestHandlerQueryVoteParsingMessages(t *testing.T) {
 		assert.Equal(t, vote.Hash(), bdl.Message.(*message.VoteMessage).Vote.Hash())
 	})
 }
+
+func TestHandlerQueryVoteBroadcastingMessages(t *testing.T) {
+	td := setup(t, nil)
+
+	msg := message.NewQueryVoteMessage(td.RandHeight(), td.RandRound(), td.RandValAddress())
+	td.sync.broadcast(msg)
+
+	td.shouldPublishMessageWithThisType(t, message.TypeQueryVote)
+}

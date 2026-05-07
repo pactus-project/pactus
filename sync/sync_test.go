@@ -8,7 +8,6 @@ import (
 
 	"github.com/ezex-io/gopkg/pipeline"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
-	"github.com/pactus-project/pactus/consensus/manager"
 	consmgr "github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
@@ -34,8 +33,8 @@ type testData struct {
 
 	config    *Config
 	state     *state.MockState
-	consV1Mgr *manager.MockManager
-	consV2Mgr *manager.MockManager
+	consV1Mgr *consmgr.MockManager
+	consV2Mgr *consmgr.MockManager
 	network   *network.MockNetwork
 	sync      *synchronizer
 }
@@ -199,24 +198,6 @@ func (td *testData) addPeer(t *testing.T, status status.Status, services service
 	return pid
 }
 
-// func (td *testData) addValidatorToCommittee(t *testing.T, pub *bls.PublicKey) {
-// 	t.Helper()
-
-// 	if pub == nil {
-// 		pub, _ = td.RandBLSKeyPair()
-// 	}
-// 	val := td.GenerateTestValidator(testsuite.ValidatorWithPublicKey(pub))
-// 	// Note: This may not be completely accurate, but it has no harm for testing purposes.
-// 	val.UpdateLastSortitionHeight(td.state.TestCommittee.Proposer(0).LastSortitionHeight() + 1)
-// 	td.state.TestStore.UpdateValidator(val)
-// 	td.state.TestCommittee.Update(0, []*validator.Validator{val})
-// 	require.True(t, td.state.TestCommittee.Contains(pub.ValidatorAddress()))
-
-// 	for _, cons := range td.consMocks {
-// 		cons.SetActive(cons.ValKey.PublicKey().EqualsTo(pub))
-// 	}
-// }
-
 func (td *testData) checkPeerStatus(t *testing.T, pid peer.ID, code status.Status) {
 	t.Helper()
 
@@ -330,8 +311,8 @@ func TestTestNetFlags(t *testing.T) {
 	td := setup(t, nil)
 
 	td.state.TestGenesis = genesis.TestnetGenesis()
-	// td.addValidatorToCommittee(t, td.sync.valKeys[0].PublicKey())
-	bdl := td.sync.prepareBundle(message.NewQueryProposalMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
+	bdl := td.sync.prepareBundle(message.NewQueryProposalMessage(
+		td.RandHeight(), td.RandRound(), td.RandValAddress()))
 
 	require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkMainnet), "invalid flag: %v", bdl)
 	require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkTestnet), "invalid flag: %v", bdl)
