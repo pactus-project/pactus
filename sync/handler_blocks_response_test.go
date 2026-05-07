@@ -2,7 +2,6 @@ package sync
 
 import (
 	"fmt"
-	"sync"
 	"testing"
 	"time"
 
@@ -283,16 +282,18 @@ func TestHandlerBlocksResponseSyncing(t *testing.T) {
 	assert.Equal(t, types.Height(0), nets.syncAlice.state.LastBlockHeight())
 	assert.Equal(t, types.Height(100), nets.syncBob.state.LastBlockHeight())
 
+	assert.Equal(t, uint32(11), nets.syncAlice.config.BlockPerMessage)
+	assert.Equal(t, uint32(27), nets.syncAlice.config.BlockPerSession)
+
 	// Announcing a block
 	blk, cert := nets.GenerateTestBlock(nets.RandHeight())
 	msg := message.NewBlockAnnounceMessage(blk, cert, nil)
 	nets.syncBob.broadcast(msg)
 	shouldPublishMessageWithThisType(t, nets.networkBob, message.TypeBlockAnnounce)
 
-	// Perform block syncing
-	assert.Equal(t, uint32(11), nets.syncAlice.config.BlockPerMessage)
-	assert.Equal(t, uint32(27), nets.syncAlice.config.BlockPerSession)
+	nets.consV1MgrAlice.EXPECT().MoveToNewHeight().Return().AnyTimes()
 
+	// Syncing process:
 	shouldPublishBlockRequest(t, nets.networkAlice, 1)
 	shouldPublishBlockResponse(t, nets.networkBob, 1, 11, message.ResponseCodeMoreBlocks)  // 1-11
 	shouldPublishBlockResponse(t, nets.networkBob, 12, 11, message.ResponseCodeMoreBlocks) // 12-22
@@ -315,8 +316,6 @@ func TestHandlerBlocksResponseSyncing(t *testing.T) {
 	shouldPublishBlockResponse(t, nets.networkBob, 82, 11, message.ResponseCodeMoreBlocks) // 82-92
 	shouldPublishBlockResponse(t, nets.networkBob, 93, 8, message.ResponseCodeMoreBlocks)  // 93-100
 	shouldPublishBlockResponse(t, nets.networkBob, 100, 0, message.ResponseCodeSynced)     // Synced
-
-	nets.consV1MgrAlice.EXPECT().MoveToNewHeight().Return().Times(1)
 
 	assert.Eventually(t, func() bool {
 		return nets.syncAlice.state.LastBlockHeight() == types.Height(100)
@@ -350,17 +349,13 @@ func TestHandlerBlocksResponseSyncingHasBlockInCache(t *testing.T) {
 	nets.syncAlice.cache.AddBlock(blk2)
 	nets.syncAlice.cache.AddBlock(blk3)
 
-	var wg sync.WaitGroup
-	defer wg.Wait()
-
-	wg.Add(1)
-	nets.consV1MgrAlice.EXPECT().MoveToNewHeight().Return().Do(func() { wg.Done() }).Times(1)
-
 	// Announcing a block
 	blk, cert := nets.GenerateTestBlock(nets.RandHeight())
 	msg := message.NewBlockAnnounceMessage(blk, cert, nil)
 	nets.syncBob.broadcast(msg)
 	shouldPublishMessageWithThisType(t, nets.networkBob, message.TypeBlockAnnounce)
+
+	nets.consV1MgrAlice.EXPECT().MoveToNewHeight().Return().AnyTimes()
 
 	// blocks 1-2 are inside the cache
 	shouldPublishBlockRequest(t, nets.networkAlice, 4)
