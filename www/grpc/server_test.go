@@ -5,9 +5,7 @@ import (
 	"net"
 	"testing"
 
-	"github.com/pactus-project/pactus/consensus"
 	consmgr "github.com/pactus-project/pactus/consensus/manager"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
@@ -27,8 +25,8 @@ type testData struct {
 
 	mockState     *state.MockState
 	mockSync      *sync.MockSync
-	consMocks     []*consensus.MockConsensus
-	mockConsMgr   consmgr.Manager
+	mockCons      *consmgr.MockReader
+	mockConsMgr   *consmgr.MockManagerReader
 	mockWalletMgr *wltmgr.MockIManager
 	listener      *bufconn.Listener
 	server        *Server
@@ -55,11 +53,16 @@ func setup(t *testing.T, conf *Config) *testData {
 	const bufSize = 1024 * 1024
 
 	listener := bufconn.Listen(bufSize)
-	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
 	mockState := state.MockingState(ts)
 	mockNet := network.MockingNetwork(ts, ts.RandPeerID())
 	mockSync := sync.MockingSync(ts)
-	mockConsMgr, consMocks := consmgr.MockingManager(ts, mockState, valKeys)
+	mockConsMgr := consmgr.NewMockManagerReader(ts.Ctrl)
+	mockCons := consmgr.NewMockReader(ts.Ctrl)
+
+	pub, _ := ts.RandBLSKeyPair()
+	mockCons.EXPECT().ConsensusKey().Return(pub).AnyTimes()
+
+	mockConsMgr.EXPECT().Instances().Return([]consmgr.Reader{mockCons}).AnyTimes()
 
 	mockState.CommitTestBlocks(10)
 	mockWalletMgr := wltmgr.NewMockIManager(ts.MockingController())
@@ -79,7 +82,7 @@ func setup(t *testing.T, conf *Config) *testData {
 		TestSuite:     ts,
 		mockState:     mockState,
 		mockSync:      mockSync,
-		consMocks:     consMocks,
+		mockCons:      mockCons,
 		mockConsMgr:   mockConsMgr,
 		mockWalletMgr: mockWalletMgr,
 		server:        server,
