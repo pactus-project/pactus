@@ -350,6 +350,13 @@ func TestHandlerBlocksResponseSyncingHasBlockInCache(t *testing.T) {
 	nets.syncAlice.cache.AddBlock(blk2)
 	nets.syncAlice.cache.AddBlock(blk3)
 
+	var wg sync.WaitGroup
+	wg.Add(1)
+	nets.consV1MgrAlice.EXPECT().MoveToNewHeight().Return().Do(func() {
+		wg.Done()
+	}).Times(1)
+	wg.Wait()
+
 	// Announcing a block
 	blk, cert := nets.GenerateTestBlock(nets.RandHeight())
 	msg := message.NewBlockAnnounceMessage(blk, cert, nil)
@@ -362,11 +369,4 @@ func TestHandlerBlocksResponseSyncingHasBlockInCache(t *testing.T) {
 	shouldPublishBlockResponse(t, nets.networkBob, 15, 9, message.ResponseCodeMoreBlocks) // 15-23
 	shouldPublishBlockResponse(t, nets.networkBob, 23, 0, message.ResponseCodeSynced)     // Synced
 
-	var wg sync.WaitGroup
-
-	wg.Add(1)
-	nets.consV1MgrAlice.EXPECT().MoveToNewHeight().Return().Do(func() {
-		wg.Done()
-	}).Times(1)
-	wg.Wait()
 }
