@@ -95,6 +95,8 @@ func (e *SortitionExecutor) canJoinCommittee() error {
 		return cmp.Compare(a.LastSortitionHeight(), b.LastSortitionHeight())
 	})
 	leavingPower := int64(0)
+	// The number of leaving validators is the same as the number of joining validators,
+	// and the leaving validators are the ones with the oldest sortition height.
 	for i := 0; i < joiningNum; i++ {
 		leavingPower += vals[i].Power()
 	}

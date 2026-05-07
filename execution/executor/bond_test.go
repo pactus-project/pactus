@@ -7,13 +7,15 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestExecuteBondTx(t *testing.T) {
 	td := setup(t)
 
-	senderAcc, senderAddr := td.addTestAccount(t)
+	senderAcc, senderAddr := td.addTestAccount(t,
+		testsuite.AccountWithBalance(10_000e9))
 	senderBalance := senderAcc.Balance()
 	valPub, _ := td.RandBLSKeyPair()
 	receiverAddr := valPub.ValidatorAddress()
@@ -56,11 +58,10 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, unbonded before", func(t *testing.T) {
-		randPub, _ := td.RandBLSKeyPair()
-		val := td.sbx.MakeNewValidator(randPub)
-		val.UpdateUnbondingHeight(td.RandHeight())
-		td.sbx.UpdateValidator(val)
-		trx := tx.NewBondTx(lockTime, senderAddr, randPub.ValidatorAddress(), nil, amt, fee)
+		unbondedVal := td.addTestValidator(t)
+		unbondedVal.UpdateUnbondingHeight(td.RandHeight())
+
+		trx := tx.NewBondTx(lockTime, senderAddr, unbondedVal.Address(), nil, amt, fee)
 
 		td.check(t, trx, true, ErrValidatorUnbonded)
 		td.check(t, trx, false, ErrValidatorUnbonded)

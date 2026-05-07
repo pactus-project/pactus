@@ -6,12 +6,13 @@ import (
 	"github.com/pactus-project/pactus/types/tx/payload"
 )
 
-type Executor interface {
-	Check(strict bool) error
-	Execute()
-}
+var DefaultFactory func(trx *tx.Tx, sbx sandbox.Sandbox) (Executor, error) = MakeExecutorImpl
 
 func MakeExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (Executor, error) {
+	return DefaultFactory(trx, sbx)
+}
+
+func MakeExecutorImpl(trx *tx.Tx, sbx sandbox.Sandbox) (Executor, error) {
 	var exe Executor
 	var err error
 	switch typ := trx.Payload().Type(); typ {

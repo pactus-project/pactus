@@ -48,7 +48,7 @@ func TestExecuteUnbondTx(t *testing.T) {
 
 		td.committee.EXPECT().Contains(val.Address()).Return(false).Times(1)
 		td.sbx.EXPECT().IsJoinedCommittee(val.Address()).Return(false).Times(1)
-		td.sbx.EXPECT().UpdatePowerDelta(int64(-stake)).Return().Times(1)
+		td.sbx.EXPECT().UpdatePowerDelta(int64(-val.Stake())).Return().Times(1)
 
 		td.check(t, trx, true, nil)
 		td.check(t, trx, false, nil)
@@ -107,6 +107,10 @@ func TestExecuteDelegatedUnbondTx(t *testing.T) {
 		trx := tx.NewUnbondTx(lockTime, valAddr)
 		pld := trx.Payload().(*payload.UnbondPayload)
 		pld.DelegateOwner = owner
+
+		td.committee.EXPECT().Contains(val.Address()).Return(false).Times(1)
+		td.sbx.EXPECT().IsJoinedCommittee(val.Address()).Return(false).Times(1)
+		td.sbx.EXPECT().UpdatePowerDelta(int64(-val.Stake())).Return().Times(1)
 
 		td.check(t, trx, true, nil)
 		td.check(t, trx, false, nil)

@@ -34,10 +34,11 @@ type testData struct {
 func setup(t *testing.T) *testData {
 	t.Helper()
 
-	ts := testsuite.NewTestSuiteFromSeed(t, 1777976313957240453)
+	ts := testsuite.NewTestSuite(t)
 
 	params := param.FromGenesis(genesis.MainnetGenesis())
 	params.BlockVersion = protocol.ProtocolVersion3
+	params.CommitteeSize = 7
 	committee := committee.NewMockCommittee(ts.Ctrl)
 
 	accounts := make(map[crypto.Address]*account.Account)
@@ -102,22 +103,21 @@ func setup(t *testing.T) *testData {
 		sbx:        sbx,
 	}
 }
-func (td *testData) addTestValidator(t *testing.T) *validator.Validator {
+func (td *testData) addTestValidator(t *testing.T, opts ...testsuite.ValidatorMakerOption) *validator.Validator {
 	t.Helper()
 
-	val := td.GenerateTestValidator(
-		testsuite.ValidatorWithStake(td.RandAmountRange(1_001e9, 10_000e9)))
+	val := td.GenerateTestValidator(opts...)
 	td.validators[val.Address()] = val
 	td.totalCoin += val.Stake()
 
 	return val
 }
 
-func (td *testData) addTestAccount(t *testing.T) (*account.Account, crypto.Address) {
+func (td *testData) addTestAccount(t *testing.T, opts ...testsuite.AccountMakerOption) (
+	*account.Account, crypto.Address) {
 	t.Helper()
 
-	acc, addr := td.GenerateTestAccount(
-		testsuite.AccountWithBalance(td.RandAmountRange(1_001e9, 10_000e9)))
+	acc, addr := td.GenerateTestAccount(opts...)
 	td.accounts[addr] = acc
 	td.totalCoin += acc.Balance()
 

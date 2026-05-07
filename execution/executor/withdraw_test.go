@@ -27,16 +27,6 @@ func TestExecuteWithdrawTx(t *testing.T) {
 		td.check(t, trx, false, ValidatorNotFoundError{Address: randomAddr})
 	})
 
-	t.Run("Should fail, hasn't unbonded yet", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr, amt, fee)
-
-		td.check(t, trx, true, ErrValidatorBonded)
-		td.check(t, trx, false, ErrValidatorBonded)
-	})
-
-	val.UpdateUnbondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().UnbondInterval) + 1)
-	td.sbx.UpdateValidator(val)
-
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
 		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr, totalStake, 1)
 
@@ -44,7 +34,15 @@ func TestExecuteWithdrawTx(t *testing.T) {
 		td.check(t, trx, false, ErrInsufficientFunds)
 	})
 
+	t.Run("Should fail, hasn't unbonded yet", func(t *testing.T) {
+		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr, amt, fee)
+
+		td.check(t, trx, true, ErrValidatorBonded)
+		td.check(t, trx, false, ErrValidatorBonded)
+	})
+
 	t.Run("Should fail, hasn't passed unbonding period", func(t *testing.T) {
+		val.UpdateUnbondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().UnbondInterval - 1))
 		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr, amt, fee)
 
 		td.check(t, trx, true, ErrUnbondingPeriod)
@@ -52,7 +50,6 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	})
 
 	val.UpdateUnbondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().UnbondInterval))
-	td.sbx.UpdateValidator(val)
 
 	t.Run("Should pass, Everything is Ok!", func(t *testing.T) {
 		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr, amt, fee)
@@ -80,7 +77,7 @@ func TestExecuteDelegatedWithdrawTx(t *testing.T) {
 	val.AddToStake(totalStake)
 	owner := td.RandAccAddress()
 	val.SetDelegation(owner, amount.Amount(0.3e9), td.sbx.CurrentHeight()+10)
-	val.UpdateUnbondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().UnbondInterval) + 1)
+	val.UpdateUnbondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().UnbondInterval + 1))
 	td.sbx.UpdateValidator(val)
 
 	fee := td.RandFee()

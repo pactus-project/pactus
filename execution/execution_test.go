@@ -1,16 +1,16 @@
 package execution
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/pactus-project/pactus/execution/executor"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/state/param"
 	"github.com/pactus-project/pactus/types"
-	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/require"
-	"go.uber.org/mock/gomock"
 )
 
 func TestTransferLockTime(t *testing.T) {
@@ -213,17 +213,23 @@ func TestExecute(t *testing.T) {
 	t.Run("Invalid transaction", func(t *testing.T) {
 		trx := ts.GenerateTestTransferTx()
 
-		sbx.EXPECT().Account(gomock.Any()).Return(nil).Times(1)
+		executor.DefaultFactory = func(*tx.Tx, sandbox.Sandbox) (executor.Executor, error) {
+			return nil, errors.New("some Error")
+		}
 
 		err := Execute(trx, sbx)
-		require.ErrorIs(t, err, executor.AccountNotFoundError{Address: trx.Payload().Signer()})
+		require.Error(t, err)
 	})
+
+	mockExe := executor.NewMockExecutor(ts.Ctrl)
+	executor.DefaultFactory = func(*tx.Tx, sandbox.Sandbox) (executor.Executor, error) {
+		return mockExe, nil
+	}
 
 	t.Run("Valid transaction", func(t *testing.T) {
 		trx := ts.GenerateTestTransferTx()
 
-		sbx.EXPECT().Account(gomock.Any()).Return(account.NewAccount(0)).Times(2)
-		sbx.EXPECT().UpdateAccount(gomock.Any(), gomock.Any()).Times(2)
+		mockExe.EXPECT().Execute().Return().Times(1)
 		sbx.EXPECT().CommitTransaction(trx).Return().Times(1)
 
 		err := Execute(trx, sbx)
@@ -239,16 +245,22 @@ func TestCheck(t *testing.T) {
 	t.Run("Invalid transaction", func(t *testing.T) {
 		trx := ts.GenerateTestTransferTx()
 
-		sbx.EXPECT().Account(trx.Payload().Signer()).Return(nil).Times(1)
+		executor.DefaultFactory = func(*tx.Tx, sandbox.Sandbox) (executor.Executor, error) {
+			return nil, errors.New("some Error")
+		}
 
 		err := CheckAndExecute(trx, sbx, true)
-		require.ErrorIs(t, err, executor.AccountNotFoundError{Address: trx.Payload().Signer()})
+		require.Error(t, err)
 	})
+
+	mockExe := executor.NewMockExecutor(ts.Ctrl)
+	executor.DefaultFactory = func(*tx.Tx, sandbox.Sandbox) (executor.Executor, error) {
+		return mockExe, nil
+	}
 
 	t.Run("Banned account", func(t *testing.T) {
 		trx := ts.GenerateTestTransferTx()
 
-		sbx.EXPECT().Account(gomock.Any()).Return(account.NewAccount(0)).Times(2)
 		sbx.EXPECT().IsBanned(trx.Payload().Signer()).Return(true).Times(1)
 
 		err := CheckAndExecute(trx, sbx, true)
@@ -259,7 +271,6 @@ func TestCheck(t *testing.T) {
 		trx := ts.GenerateTestTransferTx(
 			testsuite.TransactionWithLockTime(lockTime))
 
-		sbx.EXPECT().Account(gomock.Any()).Return(account.NewAccount(0)).Times(2)
 		sbx.EXPECT().IsBanned(trx.Payload().Signer()).Return(false).Times(1)
 		sbx.EXPECT().RecentTransaction(trx.ID()).Return(true).Times(1)
 
@@ -271,7 +282,6 @@ func TestCheck(t *testing.T) {
 		trx := ts.GenerateTestTransferTx(
 			testsuite.TransactionWithLockTime(lockTime))
 
-		sbx.EXPECT().Account(gomock.Any()).Return(account.NewAccount(0)).Times(2)
 		sbx.EXPECT().IsBanned(trx.Payload().Signer()).Return(false).Times(1)
 		sbx.EXPECT().RecentTransaction(trx.ID()).Return(false).Times(1)
 		sbx.EXPECT().CurrentHeight().Return(lockTime - 1).Times(3)
@@ -285,33 +295,26 @@ func TestCheck(t *testing.T) {
 		trx := ts.GenerateTestTransferTx(
 			testsuite.TransactionWithLockTime(lockTime))
 
-		sbx.EXPECT().Account(trx.Payload().Signer()).Return(account.NewAccount(0)).Times(1)
-		sbx.EXPECT().Account(gomock.Any()).Return(account.NewAccount(0)).Times(1)
 		sbx.EXPECT().IsBanned(trx.Payload().Signer()).Return(false).Times(1)
 		sbx.EXPECT().RecentTransaction(trx.ID()).Return(false).Times(1)
 		sbx.EXPECT().Params().Return(&param.Params{}).Times(1)
 		sbx.EXPECT().CurrentHeight().Return(lockTime).Times(3)
+		mockExe.EXPECT().Check(true).Return(errors.New("Some error")).Times(1)
 
 		err := CheckAndExecute(trx, sbx, true)
-		require.Error(t, err, executor.ErrInsufficientFunds)
+		require.Error(t, err)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		trx := ts.GenerateTestTransferTx(
 			testsuite.TransactionWithLockTime(lockTime))
 
-		acc, _ := ts.GenerateTestAccount(
-			testsuite.AccountWithAddress(trx.Payload().Signer()),
-			testsuite.AccountWithBalance(trx.Payload().Value()+trx.Fee()+1),
-		)
-
-		sbx.EXPECT().Account(trx.Payload().Signer()).Return(acc).Times(1)
-		sbx.EXPECT().Account(gomock.Any()).Return(account.NewAccount(0)).Times(1)
-		sbx.EXPECT().UpdateAccount(gomock.Any(), gomock.Any()).Return().Times(2)
 		sbx.EXPECT().IsBanned(trx.Payload().Signer()).Return(false).Times(1)
 		sbx.EXPECT().RecentTransaction(trx.ID()).Return(false).Times(1)
-		sbx.EXPECT().CurrentHeight().Return(lockTime).Times(3)
 		sbx.EXPECT().Params().Return(&param.Params{}).Times(1)
+		sbx.EXPECT().CurrentHeight().Return(lockTime).Times(3)
+		mockExe.EXPECT().Check(true).Return(nil).Times(1)
+		mockExe.EXPECT().Execute().Return().Times(1)
 		sbx.EXPECT().CommitTransaction(trx).Return().Times(1)
 
 		err := CheckAndExecute(trx, sbx, true)

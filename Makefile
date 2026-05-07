@@ -47,6 +47,7 @@ mocks:
 	@echo "Generating mocks..."
 	mockgen -source=consensus/interface.go -destination=consensus/consensus_mock.go -package=consensus
 	mockgen -source=consensus/manager/interface.go -destination=consensus/manager/manager_mock.go -package=manager
+	mockgen -source=execution/executor/interface.go -destination=execution/executor/executor_mock.go -package=executor
 	mockgen -source=committee/interface.go -destination=committee/committee_mock.go -package=committee
 	mockgen -source=sandbox/interface.go -destination=sandbox/sandbox_mock.go -package=sandbox
 	mockgen -source=txpool/interface.go -destination=txpool/txpool_mock.go -package=txpool
