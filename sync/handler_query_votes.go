@@ -28,7 +28,5 @@ func (handler *queryVoteHandler) ParseMessage(m message.Message, _ peer.ID) {
 }
 
 func (*queryVoteHandler) PrepareBundle(m message.Message) *bundle.Bundle {
-	bdl := bundle.NewBundle(m)
-
-	return bdl
+	return bundle.NewBundle(m)
 }

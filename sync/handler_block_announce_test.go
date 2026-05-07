@@ -30,6 +30,8 @@ func TestHandlerBlockAnnounceParsingMessages(t *testing.T) {
 	})
 
 	t.Run("Receiving missed block, should commit both blocks", func(t *testing.T) {
+		td.consV1Mgr.EXPECT().MoveToNewHeight()
+
 		td.receivingNewMessage(td.sync, msg1, pid)
 
 		assert.Equal(t, lastHeight+2, td.sync.state.LastBlockHeight())

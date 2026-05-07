@@ -6,6 +6,7 @@ import (
 
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/vote"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -353,42 +354,32 @@ func TestConsensusInfo(t *testing.T) {
 	td := setup(t, nil)
 	client := td.blockchainClient(t)
 
-	consHeight := td.RandHeight()
-	consRound := td.RandRound()
-	vote1, _ := td.GenerateTestPrepareVote(consHeight, consRound)
-	vote2, _ := td.GenerateTestPrecommitVote(consHeight, consRound)
-	prop := td.GenerateTestProposal(consHeight, consRound)
-
-	td.consMocks[0].Active = true
-	td.consMocks[0].Height = consHeight
-	td.consMocks[0].Round = consRound
-	td.consMocks[0].AddVote(vote1)
-	td.consMocks[0].AddVote(vote2)
-	td.consMocks[0].SetProposal(prop)
-
-	td.consMocks[1].Active = false
-	td.consMocks[1].Height = consHeight
-	td.consMocks[1].Round = consRound
-
 	t.Run("Should return the consensus info", func(t *testing.T) {
+		height := td.RandHeight()
+		round := td.RandRound()
+		vote1, _ := td.GenerateTestPrepareVote(height, round)
+		vote2, _ := td.GenerateTestPrecommitVote(height, round)
+		prop := td.GenerateTestProposal(height, round)
+
+		td.mockCons.EXPECT().HeightRound().Return(height, round).Times(1)
+		td.mockCons.EXPECT().AllVotes().Return([]*vote.Vote{vote1, vote2}).Times(1)
+		td.mockCons.EXPECT().IsActive().Return(true).Times(1)
+		td.mockConsMgr.EXPECT().Proposal().Return(prop).Times(1)
+
 		res, err := client.GetConsensusInfo(t.Context(), &pactus.GetConsensusInfoRequest{})
 
 		require.NoError(t, err)
 		assert.NotNil(t, res)
 
 		assert.True(t, res.Instances[0].Active)
-		assert.Equal(t, uint32(consHeight), res.Instances[0].Height)
-		assert.Equal(t, int32(consRound), res.Instances[0].Round)
+		assert.Equal(t, uint32(height), res.Instances[0].Height)
+		assert.Equal(t, int32(round), res.Instances[0].Round)
 		assert.Len(t, res.Instances[0].Votes, 2)
 		assert.Equal(t, pactus.VoteType_VOTE_TYPE_PREPARE, res.Instances[0].Votes[0].Type)
 		assert.Equal(t, pactus.VoteType_VOTE_TYPE_PRECOMMIT, res.Instances[0].Votes[1].Type)
 
-		assert.False(t, res.Instances[1].Active)
-		assert.Equal(t, uint32(consHeight), res.Instances[1].Height)
-		assert.Equal(t, int32(consRound), res.Instances[1].Round)
-
-		assert.Equal(t, uint32(consHeight), res.Proposal.Height)
-		assert.Equal(t, int32(consRound), res.Proposal.Round)
+		assert.Equal(t, uint32(height), res.Proposal.Height)
+		assert.Equal(t, int32(round), res.Proposal.Round)
 		assert.Equal(t, prop.Signature().String(), res.Proposal.Signature)
 	})
 }

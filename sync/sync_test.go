@@ -8,7 +8,6 @@ import (
 
 	"github.com/ezex-io/gopkg/pipeline"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
-	"github.com/pactus-project/pactus/consensus"
 	consmgr "github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
@@ -20,7 +19,7 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset/peer"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
-	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -34,7 +33,8 @@ type testData struct {
 
 	config    *Config
 	state     *state.MockState
-	consMocks []*consensus.MockConsensus
+	consV1Mgr *consmgr.MockManager
+	consV2Mgr *consmgr.MockManager
 	network   *network.MockNetwork
 	sync      *synchronizer
 }
@@ -65,11 +65,14 @@ func setup(t *testing.T, config *Config) *testData {
 	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
 	mockState := state.MockingState(ts)
 
-	consV1Mgr, consMocks := consmgr.MockingManager(ts, mockState, []*bls.ValidatorKey{valKeys[0], valKeys[1]})
-	consV1Mgr.MoveToNewHeight()
+	curHeight := types.Height(11) // TODO: make me random
+	curRound := types.Round(0)    // TODO: make me random
 
-	consV2Mgr, _ := consmgr.MockingManager(ts, mockState, []*bls.ValidatorKey{valKeys[0], valKeys[1]})
-	consV2Mgr.MoveToNewHeight()
+	consV1Mgr := consmgr.NewMockManager(ts.Ctrl)
+	consV2Mgr := consmgr.NewMockManager(ts.Ctrl)
+
+	consV1Mgr.EXPECT().IsDeprecated().Return(false).AnyTimes()
+	consV1Mgr.EXPECT().HeightRound().Return(curHeight, curRound).AnyTimes()
 
 	mockNetwork := network.MockingNetwork(ts, ts.RandPeerID())
 	broadcastPipe := pipeline.New[message.Message](t.Context())
@@ -83,7 +86,8 @@ func setup(t *testing.T, config *Config) *testData {
 		TestSuite: ts,
 		config:    config,
 		state:     mockState,
-		consMocks: consMocks,
+		consV1Mgr: consV1Mgr,
+		consV2Mgr: consV2Mgr,
 		network:   mockNetwork,
 		sync:      sync,
 	}
@@ -192,24 +196,6 @@ func (td *testData) addPeer(t *testing.T, status status.Status, services service
 	td.sync.peerSet.UpdateStatus(pid, status)
 
 	return pid
-}
-
-func (td *testData) addValidatorToCommittee(t *testing.T, pub *bls.PublicKey) {
-	t.Helper()
-
-	if pub == nil {
-		pub, _ = td.RandBLSKeyPair()
-	}
-	val := td.GenerateTestValidator(testsuite.ValidatorWithPublicKey(pub))
-	// Note: This may not be completely accurate, but it has no harm for testing purposes.
-	val.UpdateLastSortitionHeight(td.state.TestCommittee.Proposer(0).LastSortitionHeight() + 1)
-	td.state.TestStore.UpdateValidator(val)
-	td.state.TestCommittee.Update(0, []*validator.Validator{val})
-	require.True(t, td.state.TestCommittee.Contains(pub.ValidatorAddress()))
-
-	for _, cons := range td.consMocks {
-		cons.SetActive(cons.ValKey.PublicKey().EqualsTo(pub))
-	}
 }
 
 func (td *testData) checkPeerStatus(t *testing.T, pid peer.ID, code status.Status) {
@@ -325,8 +311,8 @@ func TestTestNetFlags(t *testing.T) {
 	td := setup(t, nil)
 
 	td.state.TestGenesis = genesis.TestnetGenesis()
-	td.addValidatorToCommittee(t, td.sync.valKeys[0].PublicKey())
-	bdl := td.sync.prepareBundle(message.NewQueryProposalMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
+	bdl := td.sync.prepareBundle(message.NewQueryProposalMessage(
+		td.RandHeight(), td.RandRound(), td.RandValAddress()))
 
 	require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkMainnet), "invalid flag: %v", bdl)
 	require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkTestnet), "invalid flag: %v", bdl)

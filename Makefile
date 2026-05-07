@@ -45,6 +45,8 @@ build_gui:
 ### Testing
 mocks:
 	@echo "Generating mocks..."
+	mockgen -source=consensus/interface.go -destination=consensus/consensus_mock.go -package=consensus
+	mockgen -source=consensus/manager/interface.go -destination=consensus/manager/manager_mock.go -package=manager
 	mockgen -source=txpool/interface.go -destination=txpool/txpool_mock.go -package=txpool
 	mockgen -source=wallet/manager/interface.go -destination=wallet/manager/manager_mock.go -package=manager
 	mockgen -source=wallet/provider/interface.go -destination=wallet/provider/provider_mock.go -package=provider

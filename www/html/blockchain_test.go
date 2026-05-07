@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
+	"github.com/pactus-project/pactus/types/vote"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -281,14 +282,16 @@ func TestValidatorByNumber(t *testing.T) {
 func TestConsensusInfo(t *testing.T) {
 	td := setup(t)
 
-	height, _ := td.mockConsMgr.HeightRound()
-	vote1, _ := td.GenerateTestPrepareVote(height, 1)
-	vote2, _ := td.GenerateTestPrecommitVote(height, 2)
-	prop := td.GenerateTestProposal(height, 2)
+	height := td.RandHeight()
+	round := td.RandRound()
+	vote1, _ := td.GenerateTestPrepareVote(height, round)
+	vote2, _ := td.GenerateTestPrecommitVote(height, round)
+	prop := td.GenerateTestProposal(height, round)
 
-	td.mockConsMgr.AddVote(vote1)
-	td.mockConsMgr.AddVote(vote2)
-	td.mockConsMgr.SetProposal(prop)
+	td.mockCons.EXPECT().HeightRound().Return(height, round).Times(1)
+	td.mockCons.EXPECT().AllVotes().Return([]*vote.Vote{vote1, vote2}).Times(1)
+	td.mockCons.EXPECT().IsActive().Return(true).Times(1)
+	td.mockConsMgr.EXPECT().Proposal().Return(prop).Times(1)
 
 	w := httptest.NewRecorder()
 	r := new(http.Request)
@@ -296,7 +299,8 @@ func TestConsensusInfo(t *testing.T) {
 	td.httpServer.ConsensusHandler(w, r)
 
 	assert.Equal(t, 200, w.Code)
-	assert.Contains(t, w.Body.String(), "<td>2</td>")
+	assert.Contains(t, w.Body.String(), "<td>BlockData</td>")
+	assert.Contains(t, w.Body.String(), vote1.Signer().String())
 	assert.Contains(t, w.Body.String(), vote2.Signer().String())
 	assert.Contains(t, w.Body.String(), prop.Signature().String())
 

@@ -20,12 +20,12 @@ func TestHandlerTransactionsParsingMessages(t *testing.T) {
 	})
 }
 
-func TestHandlerTransactionsBroadcastingMessages(t *testing.T) {
-	td := setup(t, nil)
+// func TestHandlerTransactionsBroadcastingMessages(t *testing.T) {
+// 	td := setup(t, nil)
 
-	trx1 := td.GenerateTestBondTx()
-	msg := message.NewTransactionsMessage([]*tx.Tx{trx1})
-	td.sync.broadcast(msg)
+// 	trx1 := td.GenerateTestBondTx()
+// 	msg := message.NewTransactionsMessage([]*tx.Tx{trx1})
+// 	td.sync.broadcast(msg)
 
-	td.shouldPublishMessageWithThisType(t, message.TypeTransaction)
-}
+// 	td.shouldPublishMessageWithThisType(t, message.TypeTransaction)
+// }

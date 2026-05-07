@@ -7,7 +7,7 @@ import (
 
 	"github.com/ezex-io/gopkg/pipeline"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
-	consmgr "github.com/pactus-project/pactus/consensus/manager"
+	"github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
@@ -62,6 +62,9 @@ func TestHandlerBlocksResponseOneBlockShorter(t *testing.T) {
 	sid := td.RandIntMax(1000)
 	msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, t.Name(), sid,
 		lastHeight+1, [][]byte{d1}, cert1)
+
+	td.consV1Mgr.EXPECT().MoveToNewHeight().Return().Times(1)
+
 	td.receivingNewMessage(td.sync, msg, pid)
 
 	assert.Equal(t, lastHeight+1, td.state.LastBlockHeight())
@@ -151,12 +154,16 @@ func shouldPublishBlockResponse(t *testing.T, net *network.MockNetwork,
 type networkAliceBob struct {
 	*testsuite.TestSuite
 
-	stateAlice   *state.MockState
-	stateBob     *state.MockState
-	networkAlice *network.MockNetwork
-	networkBob   *network.MockNetwork
-	syncAlice    *synchronizer
-	syncBob      *synchronizer
+	stateAlice     *state.MockState
+	stateBob       *state.MockState
+	networkAlice   *network.MockNetwork
+	networkBob     *network.MockNetwork
+	consV1MgrAlice *manager.MockManager
+	consV2MgrAlice *manager.MockManager
+	consV1MgrBob   *manager.MockManager
+	consV2MgrBob   *manager.MockManager
+	syncAlice      *synchronizer
+	syncBob        *synchronizer
 }
 
 func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
@@ -171,13 +178,16 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	valKeyBob := []*bls.ValidatorKey{ts.RandValKey()}
 	stateAlice := state.MockingState(ts)
 	stateBob := state.MockingState(ts)
-	consV1MgrAlice, _ := consmgr.MockingManager(ts, stateAlice, valKeyAlice)
-	consV2MgrAlice, _ := consmgr.MockingManager(ts, stateAlice, valKeyAlice)
-	consV1MgrBob, _ := consmgr.MockingManager(ts, stateBob, valKeyBob)
-	consV2MgrBob, _ := consmgr.MockingManager(ts, stateBob, valKeyBob)
+	consV1MgrAlice := manager.NewMockManager(ts.Ctrl)
+	consV2MgrAlice := manager.NewMockManager(ts.Ctrl)
+	consV1MgrBob := manager.NewMockManager(ts.Ctrl)
+	consV2MgrBob := manager.NewMockManager(ts.Ctrl)
 	broadcastPipe := pipeline.New[message.Message](t.Context())
 	networkAlice := network.MockingNetwork(ts, ts.RandPeerID())
 	networkBob := network.MockingNetwork(ts, ts.RandPeerID())
+
+	consV1MgrAlice.EXPECT().IsDeprecated().Return(false).AnyTimes()
+	consV1MgrBob.EXPECT().IsDeprecated().Return(false).AnyTimes()
 
 	sync1, err := NewSynchronizer(t.Context(), configAlice, valKeyAlice, stateAlice,
 		consV1MgrAlice, consV2MgrAlice, networkAlice, broadcastPipe, networkAlice.EventPipe)
@@ -222,18 +232,22 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	}, 2*time.Second, 100*time.Millisecond)
 
 	return &networkAliceBob{
-		TestSuite:    ts,
-		syncAlice:    syncAlice,
-		stateAlice:   stateAlice,
-		networkAlice: networkAlice,
-		syncBob:      syncBob,
-		stateBob:     stateBob,
-		networkBob:   networkBob,
+		TestSuite:      ts,
+		syncAlice:      syncAlice,
+		stateAlice:     stateAlice,
+		networkAlice:   networkAlice,
+		syncBob:        syncBob,
+		stateBob:       stateBob,
+		consV1MgrAlice: consV1MgrAlice,
+		consV2MgrAlice: consV2MgrAlice,
+		consV1MgrBob:   consV1MgrBob,
+		consV2MgrBob:   consV2MgrBob,
+		networkBob:     networkBob,
 	}
 }
 
-// TestIdenticalBundles tests if two different peers publish the same message,
-// whether the bundle data is also the same.
+// TestIdenticalBundles verifies that when different peers publish bundles from
+// the same message, the resulting bundles are identical.
 func TestHandlerBlocksResponseIdenticalBundles(t *testing.T) {
 	nets := makeAliceAndBobNetworks(t)
 
@@ -262,8 +276,14 @@ func TestHandlerBlocksResponseSyncing(t *testing.T) {
 		blockTime = blockTime.Add(blockInterval)
 	}
 
+	nets.consV1MgrAlice.EXPECT().HeightRound().Return(types.Height(100), types.Round(0)).AnyTimes()
+	nets.consV1MgrBob.EXPECT().HeightRound().Return(types.Height(0), types.Round(0)).AnyTimes()
+
 	assert.Equal(t, types.Height(0), nets.syncAlice.state.LastBlockHeight())
 	assert.Equal(t, types.Height(100), nets.syncBob.state.LastBlockHeight())
+
+	assert.Equal(t, uint32(11), nets.syncAlice.config.BlockPerMessage)
+	assert.Equal(t, uint32(27), nets.syncAlice.config.BlockPerSession)
 
 	// Announcing a block
 	blk, cert := nets.GenerateTestBlock(nets.RandHeight())
@@ -271,10 +291,9 @@ func TestHandlerBlocksResponseSyncing(t *testing.T) {
 	nets.syncBob.broadcast(msg)
 	shouldPublishMessageWithThisType(t, nets.networkBob, message.TypeBlockAnnounce)
 
-	// Perform block syncing
-	assert.Equal(t, uint32(11), nets.syncAlice.config.BlockPerMessage)
-	assert.Equal(t, uint32(27), nets.syncAlice.config.BlockPerSession)
+	nets.consV1MgrAlice.EXPECT().MoveToNewHeight().Return().AnyTimes()
 
+	// Syncing process:
 	shouldPublishBlockRequest(t, nets.networkAlice, 1)
 	shouldPublishBlockResponse(t, nets.networkBob, 1, 11, message.ResponseCodeMoreBlocks)  // 1-11
 	shouldPublishBlockResponse(t, nets.networkBob, 12, 11, message.ResponseCodeMoreBlocks) // 12-22
@@ -306,7 +325,7 @@ func TestHandlerBlocksResponseSyncing(t *testing.T) {
 func TestHandlerBlocksResponseSyncingHasBlockInCache(t *testing.T) {
 	nets := makeAliceAndBobNetworks(t)
 
-	// Adding 100 blocks for Bob
+	// Adding some blocks for Bob
 	blockInterval := nets.syncBob.state.Genesis().Params().BlockInterval()
 	blockTime := nets.syncBob.state.Genesis().GenesisTime()
 	for i := types.Height(0); i < 23; i++ {
@@ -315,6 +334,9 @@ func TestHandlerBlocksResponseSyncingHasBlockInCache(t *testing.T) {
 
 		blockTime = blockTime.Add(blockInterval)
 	}
+
+	nets.consV1MgrAlice.EXPECT().HeightRound().Return(types.Height(23), types.Round(0)).AnyTimes()
+	nets.consV1MgrBob.EXPECT().HeightRound().Return(types.Height(0), types.Round(0)).AnyTimes()
 
 	assert.Equal(t, types.Height(0), nets.syncAlice.state.LastBlockHeight())
 	assert.Equal(t, types.Height(23), nets.syncBob.state.LastBlockHeight())
@@ -332,6 +354,8 @@ func TestHandlerBlocksResponseSyncingHasBlockInCache(t *testing.T) {
 	msg := message.NewBlockAnnounceMessage(blk, cert, nil)
 	nets.syncBob.broadcast(msg)
 	shouldPublishMessageWithThisType(t, nets.networkBob, message.TypeBlockAnnounce)
+
+	nets.consV1MgrAlice.EXPECT().MoveToNewHeight().Return().AnyTimes()
 
 	// blocks 1-2 are inside the cache
 	shouldPublishBlockRequest(t, nets.networkAlice, 4)

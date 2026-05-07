@@ -14,6 +14,9 @@ func TestHandlerQueryVoteParsingMessages(t *testing.T) {
 	t.Run("doesn't have any votes", func(t *testing.T) {
 		pid := td.RandPeerID()
 		msg := message.NewQueryVoteMessage(consHeight, consRound, td.RandValAddress())
+
+		td.consV1Mgr.EXPECT().HandleQueryVote(consHeight, consRound).Return(nil).Times(1)
+
 		td.receivingNewMessage(td.sync, msg, pid)
 
 		td.shouldNotPublishAnyMessage(t)
@@ -21,9 +24,10 @@ func TestHandlerQueryVoteParsingMessages(t *testing.T) {
 
 	t.Run("should respond to the query votes message", func(t *testing.T) {
 		vote, _ := td.GenerateTestPrecommitVote(consHeight, consRound)
-		td.sync.getConsMgr().AddVote(vote)
 		pid := td.RandPeerID()
 		msg := message.NewQueryVoteMessage(consHeight, consRound, td.RandValAddress())
+
+		td.consV1Mgr.EXPECT().HandleQueryVote(consHeight, consRound).Return(vote).Times(1)
 		td.receivingNewMessage(td.sync, msg, pid)
 
 		bdl := td.shouldPublishMessageWithThisType(t, message.TypeVote)
@@ -34,8 +38,7 @@ func TestHandlerQueryVoteParsingMessages(t *testing.T) {
 func TestHandlerQueryVoteBroadcastingMessages(t *testing.T) {
 	td := setup(t, nil)
 
-	consensusHeight := td.state.LastBlockHeight() + 1
-	msg := message.NewQueryVoteMessage(consensusHeight, 1, td.RandValAddress())
+	msg := message.NewQueryVoteMessage(td.RandHeight(), td.RandRound(), td.RandValAddress())
 	td.sync.broadcast(msg)
 
 	td.shouldPublishMessageWithThisType(t, message.TypeQueryVote)

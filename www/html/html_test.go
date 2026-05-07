@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	consmgr "github.com/pactus-project/pactus/consensus/manager"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
@@ -24,7 +23,8 @@ type testData struct {
 
 	mockState   *state.MockState
 	mockSync    *sync.MockSync
-	mockConsMgr consmgr.Manager
+	mockCons    *consmgr.MockReader
+	mockConsMgr *consmgr.MockManagerReader
 	gRPCServer  *grpc.Server
 	httpServer  *Server
 }
@@ -44,13 +44,19 @@ func setup(t *testing.T) *testData {
 	//
 	http.DefaultServeMux = new(http.ServeMux)
 
-	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
 	mockState := state.MockingState(ts)
 	mockSync := sync.MockingSync(ts)
 	mockNet := network.MockingNetwork(ts, ts.RandPeerID())
-	mockConsMgr, _ := consmgr.MockingManager(ts, mockState, valKeys)
+	mockConsMgr := consmgr.NewMockManagerReader(ts.Ctrl)
+	mockCons := consmgr.NewMockReader(ts.Ctrl)
 
-	mockConsMgr.MoveToNewHeight()
+	pub, _ := ts.RandBLSKeyPair()
+	mockCons.EXPECT().ConsensusKey().Return(pub).AnyTimes()
+
+	mockConsMgr.EXPECT().Instances().Return([]consmgr.Reader{mockCons}).AnyTimes()
+	mockWalletMgr := wltmgr.NewMockIManager(ts.MockingController())
+
+	mockState.CommitTestBlocks(10)
 
 	grpcConf := &grpc.Config{
 		Enable: true,
@@ -60,8 +66,6 @@ func setup(t *testing.T) *testData {
 		Enable: true,
 		Listen: "[::]:0",
 	}
-
-	mockWalletMgr := wltmgr.NewMockIManager(ts.MockingController())
 
 	zmqPublishers := []zmq.Publisher{
 		zmq.MockingPublisher("zmq_address", "zmq_topic", 100),
@@ -80,6 +84,7 @@ func setup(t *testing.T) *testData {
 		TestSuite:   ts,
 		mockState:   mockState,
 		mockSync:    mockSync,
+		mockCons:    mockCons,
 		mockConsMgr: mockConsMgr,
 		gRPCServer:  gRPCServer,
 		httpServer:  httpServer,
