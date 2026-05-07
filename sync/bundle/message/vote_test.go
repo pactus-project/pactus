@@ -17,6 +17,12 @@ func TestVoteType(t *testing.T) {
 func TestVoteMessage(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
+	t.Run("No vote", func(t *testing.T) {
+		msg := NewVoteMessage(nil)
+
+		require.ErrorIs(t, msg.BasicCheck(), BasicCheckError{Reason: "no vote"})
+	})
+
 	t.Run("Invalid vote", func(t *testing.T) {
 		vte := vote.NewPrepareVote(ts.RandHash(), ts.RandHeight(), -1, ts.RandValAddress())
 		msg := NewVoteMessage(vte)
