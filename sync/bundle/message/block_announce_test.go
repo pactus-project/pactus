@@ -1,9 +1,9 @@
 package message
 
 import (
-	"fmt"
 	"testing"
 
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -42,12 +42,12 @@ func TestBlockAnnounceMessage(t *testing.T) {
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		height := ts.RandHeight()
-		blk, cert := ts.GenerateTestBlock(height)
+		blk, cert := ts.GenerateTestBlock(100)
 		msg := NewBlockAnnounceMessage(blk, cert, nil)
 
 		require.NoError(t, msg.BasicCheck())
-		assert.Equal(t, height, msg.ConsensusHeight())
-		assert.Contains(t, msg.LogString(), fmt.Sprintf("%d", height))
+		assert.Equal(t, types.Height(100), msg.Height())
+		assert.Equal(t, types.Height(100), msg.ConsensusHeight())
+		assert.Contains(t, msg.LogString(), "100")
 	})
 }

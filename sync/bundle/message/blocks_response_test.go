@@ -42,6 +42,7 @@ func TestBlocksResponseMessage(t *testing.T) {
 			sid, 100, [][]byte{d1, d2}, cert2)
 
 		require.NoError(t, msg.BasicCheck())
+		assert.Zero(t, msg.ConsensusHeight())
 		assert.Contains(t, msg.LogString(), "100")
 		assert.Equal(t, ResponseCodeMoreBlocks.String(), msg.Reason)
 	})

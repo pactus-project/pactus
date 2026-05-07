@@ -3,6 +3,7 @@ package message
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -21,6 +22,7 @@ func TestProposalMessage(t *testing.T) {
 		msg := NewProposalMessage(prop)
 
 		require.NoError(t, msg.BasicCheck())
+		assert.Equal(t, types.Height(100), msg.ConsensusHeight())
 		assert.Contains(t, msg.LogString(), "100")
 	})
 }
