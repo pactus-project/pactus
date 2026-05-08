@@ -40,11 +40,10 @@ func setup(t *testing.T) *testData {
 	params.BlockVersion = protocol.ProtocolVersion3
 	params.CommitteeSize = 7
 	committee := committee.NewMockCommittee(ts.Ctrl)
+	sbx := sandbox.NewMockSandbox(ts.Ctrl)
 
 	accounts := make(map[crypto.Address]*account.Account)
 	validators := make(map[crypto.Address]*validator.Validator)
-
-	sbx := sandbox.NewMockSandbox(ts.Ctrl)
 
 	sbx.EXPECT().Account(gomock.Any()).DoAndReturn(
 		func(addr crypto.Address) *account.Account {

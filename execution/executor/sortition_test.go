@@ -3,7 +3,6 @@ package executor
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/stretchr/testify/assert"
 )
@@ -44,6 +43,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	})
 
 	val.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
+
 	t.Run("Should fail, invalid proof", func(t *testing.T) {
 		trx := tx.NewSortitionTx(lockTime, val.Address(), proof)
 
@@ -159,31 +159,25 @@ func TestChangePower1(t *testing.T) {
 
 // 	// Let's create validators first
 // 	pub1, _ := td.RandBLSKeyPair()
+// 	amt1 := td.sbx.Committee().TotalPower() / 3
 // 	val1 := td.sbx.MakeNewValidator(pub1)
-// 	val1.AddToStake(1)
+// 	val1.AddToStake(amount.Amount(amt1 - 1))
 // 	val1.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
 // 	val1.UpdateLastSortitionHeight(lockTime - 1)
 // 	td.sbx.UpdateValidator(val1)
 
 // 	pub2, _ := td.RandBLSKeyPair()
 // 	val2 := td.sbx.MakeNewValidator(pub2)
-// 	val2.AddToStake(1)
+// 	val2.AddToStake(2)
 // 	val2.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
 // 	val2.UpdateLastSortitionHeight(lockTime - 1)
 // 	td.sbx.UpdateValidator(val2)
 
-// 	pub3, _ := td.RandBLSKeyPair()
-// 	val3 := td.sbx.MakeNewValidator(pub3)
-// 	val3.AddToStake(1)
-// 	val3.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
+// 	val3 := td.sbx.Committee().Proposer(0)
 // 	val3.UpdateLastSortitionHeight(lockTime - 1)
 // 	td.sbx.UpdateValidator(val3)
 
-// 	val4 := td.sbx.Committee().Proposer(0)
-// 	val4.UpdateLastSortitionHeight(lockTime - 1)
-// 	td.sbx.UpdateValidator(val4)
-
-// 	td.sbx.TestParams.CommitteeSize = 7
+// 	td.sbx.TestParams.CommitteeSize = 4
 // 	td.sbx.TestAcceptSortition = true
 // 	trx1 := tx.NewSortitionTx(lockTime, val1.Address(), proof)
 // 	td.check(t, trx1, true, nil)
@@ -191,12 +185,12 @@ func TestChangePower1(t *testing.T) {
 // 	td.execute(t, trx1)
 
 // 	trx2 := tx.NewSortitionTx(lockTime, val2.Address(), proof)
-// 	td.check(t, trx2, true, nil)
+// 	td.check(t, trx2, true, ErrCommitteeJoinLimitExceeded)
 // 	td.check(t, trx2, false, nil)
-// 	td.execute(t, trx2)
 
+// 	// Val3 is a Committee member
 // 	trx3 := tx.NewSortitionTx(lockTime, val3.Address(), proof)
-// 	td.check(t, trx3, true, ErrCommitteeLeaveLimitExceeded)
+// 	td.check(t, trx3, true, nil)
 // 	td.check(t, trx3, false, nil)
 
 // 	// Committee member
@@ -206,66 +200,66 @@ func TestChangePower1(t *testing.T) {
 // 	td.execute(t, trx4)
 // }
 
-// // TestOldestDidNotPropose tests if the oldest validator in the committee had
-// // chance to propose a block or not.
-// func TestOldestDidNotPropose(t *testing.T) {
-// 	td := setup(t)
+// // // TestOldestDidNotPropose tests if the oldest validator in the committee had
+// // // chance to propose a block or not.
+// // func TestOldestDidNotPropose(t *testing.T) {
+// // 	td := setup(t)
 
-// 	// Let's create validators first
-// 	vals := make([]*validator.Validator, 9)
-// 	for index := 0; index < 9; index++ {
-// 		pub, _ := td.RandBLSKeyPair()
-// 		val := td.sbx.MakeNewValidator(pub)
-// 		val.AddToStake(10 * 1e9)
-// 		val.UpdateLastBondingHeight(
-// 			td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
-// 		td.sbx.UpdateValidator(val)
-// 		vals[index] = val
-// 	}
+// // 	// Let's create validators first
+// // 	vals := make([]*validator.Validator, 9)
+// // 	for index := 0; index < 9; index++ {
+// // 		pub, _ := td.RandBLSKeyPair()
+// // 		val := td.sbx.MakeNewValidator(pub)
+// // 		val.AddToStake(10 * 1e9)
+// // 		val.UpdateLastBondingHeight(
+// // 			td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
+// // 		td.sbx.UpdateValidator(val)
+// // 		vals[index] = val
+// // 	}
 
-// 	td.sbx.TestParams.CommitteeSize = 7
-// 	td.sbx.TestAcceptSortition = true
+// // 	td.sbx.TestParams.CommitteeSize = 7
+// // 	td.sbx.TestAcceptSortition = true
 
-// 	// This moves proposer to the next validator
-// 	updateCommittee(td)
+// // 	// This moves proposer to the next validator
+// // 	updateCommittee(td)
 
-// 	// Let's update committee
-// 	height := td.sbx.CurrentHeight()
-// 	for i := uint32(0); i < 7; i++ {
-// 		height++
-// 		_ = td.sbx.TestStore.AddTestBlock(height)
+// // 	// Let's update committee
+// // 	height := td.sbx.CurrentHeight()
+// // 	for i := uint32(0); i < 7; i++ {
+// // 		height++
+// // 		_ = td.sbx.TestStore.AddTestBlock(height)
 
-// 		lockTime := height
-// 		trx := tx.NewSortitionTx(lockTime, vals[i].Address(), td.RandProof())
+// // 		lockTime := height
+// // 		trx := tx.NewSortitionTx(lockTime, vals[i].Address(), td.RandProof())
 
-// 		td.check(t, trx, true, nil)
-// 		td.check(t, trx, false, nil)
-// 		td.execute(t, trx)
+// // 		td.check(t, trx, true, nil)
+// // 		td.check(t, trx, false, nil)
+// // 		td.execute(t, trx)
 
-// 		updateCommittee(td)
-// 	}
+// // 		updateCommittee(td)
+// // 	}
 
-// 	height++
-// 	_ = td.sbx.TestStore.AddTestBlock(height)
-// 	lockTime := td.sbx.CurrentHeight()
+// // 	height++
+// // 	_ = td.sbx.TestStore.AddTestBlock(height)
+// // 	lockTime := td.sbx.CurrentHeight()
 
-// 	trx1 := tx.NewSortitionTx(lockTime, vals[7].Address(), td.RandProof())
-// 	td.check(t, trx1, true, nil)
-// 	td.check(t, trx1, false, nil)
-// 	td.execute(t, trx1)
+// // 	trx1 := tx.NewSortitionTx(lockTime, vals[7].Address(), td.RandProof())
+// // 	td.check(t, trx1, true, nil)
+// // 	td.check(t, trx1, false, nil)
+// // 	td.execute(t, trx1)
 
-// 	trx2 := tx.NewSortitionTx(lockTime, vals[8].Address(), td.RandProof())
-// 	td.check(t, trx2, true, nil)
-// 	td.check(t, trx2, false, nil)
-// 	td.execute(t, trx2)
+// // 	trx2 := tx.NewSortitionTx(lockTime, vals[8].Address(), td.RandProof())
+// // 	td.check(t, trx2, true, nil)
+// // 	td.check(t, trx2, false, nil)
+// // 	td.execute(t, trx2)
 
-// 	updateCommittee(td)
+// // 	updateCommittee(td)
 
-// 	height++
-// 	_ = td.sbx.TestStore.AddTestBlock(height)
-// 	// Entering validator 16
-// 	trx3 := tx.NewSortitionTx(lockTime+1, vals[8].Address(), td.RandProof())
-// 	td.check(t, trx3, true, ErrOldestValidatorNotProposed)
-// 	td.check(t, trx3, false, nil)
-// 	td.execute(t, trx3)
-// }
+// // 	height++
+// // 	_ = td.sbx.TestStore.AddTestBlock(height)
+// // 	// Entering validator 16
+// // 	trx3 := tx.NewSortitionTx(lockTime+1, vals[8].Address(), td.RandProof())
+// // 	td.check(t, trx3, true, ErrOldestValidatorNotProposed)
+// // 	td.check(t, trx3, false, nil)
+// // 	td.execute(t, trx3)
+// // }
