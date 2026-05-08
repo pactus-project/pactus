@@ -65,7 +65,7 @@ func TestProposerMove(t *testing.T) {
 	require.NoError(t, err)
 
 	//
-	// +*+-+-+-+-+-+-+    +-+*+-+-+-+-+-+    +-+-+-+-+-+*+-+    +*+-+-+-+-+-+-+
+	// +v+-+-+-+-+-+-+    +-+v+-+-+-+-+-+    +-+-+-+-+-+v+-+    +v+-+-+-+-+-+-+
 	// |1|2|3|4|5|6|7| => |1|2|3|4|5|6|7| => |1|2|3|4|5|6|7| => |1|2|3|4|5|6|7|
 	// +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+
 	//
@@ -131,7 +131,7 @@ func TestProposerJoin(t *testing.T) {
 
 	//
 	// h=1000, r=0  h=1001, r=0    h=1002, r=1    h=1003, r=1        h=1004, r=0
-	// +-+*+-+-+    +-+$+-+*+-+    +*+-+-+!+-+    +$+$+-+!+*+-+-+    +-+-+-+-+-+*+-+
+	// +-+v+-+-+    +-+#+-+v+-+    +v+-+-+!+-+    +#+#+-+!+v+-+-+    +-+-+-+-+-+v+-+
 	// |1|2|3|4| => |1|5|2|3|4| => |1|5|2|3|4| => |6|7|1|5|2|3|4| => |6|7|1|5|2|3|4|
 	// +-+-+-+-+    +-+-+-+-+-+    +-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+
 	//
@@ -213,32 +213,32 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	// This code comment explains how the committee changes when new validators join.
 	//
 	// The symbols used in the explanation are as follows:
-	// * represents the current proposer
-	// ! represents a failed proposer
-	// $ represents a joined validator
-	// h is height and r is round number
+	// `v` represents the current proposer
+	// `!` represents a failed proposer
+	// `#` represents a joined validator
+	// `h` is height and `r` is round number
 	//
 	// Initially, the committee consists of validators numbered from 1 to 7.
 	// Validator 1 is the oldest and the current proposer.
 	// The committee configuration is represented as:
-	// +*+-+-+-+-+-+-+
+	// +v+-+-+-+-+-+-+
 	// |1|2|3|4|5|6|7|
 	// +-+-+-+-+-+-+-+
 	//
 	// When new validators join, they are inserted before the current proposer.
 	// For example, validator 8 joins the committee:
-	// +$+*+-+-+-+-+-+-+
+	// +#+v+-+-+-+-+-+-+
 	// |8|1|2|3|4|5|6|7|
 	// +-+-+-+-+-+-+-+-+
 	//
 	// After the addition of a new validator, the committee needs to be adjusted,
 	// and the oldest validator should leave:
-	// +$+-+-+-+-+-+-+
+	// +#+-+-+-+-+-+-+
 	// |8|2|3|4|5|6|7|
 	// +-+-+-+-+-+-+-+
 	//
 	// Next, we move to the next proposer.
-	// +-+*+-+-+-+-+-+
+	// +-+v+-+-+-+-+-+
 	// |8|2|3|4|5|6|7|
 	// +-+-+-+-+-+-+-+
 	//
@@ -246,14 +246,14 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	// In this test, we cover the following movements:
 	//
 	// h=1000, r=0        h=1001, r=0        h=1002, r=3        h=1003, r=0
-	// +*+-+-+-+-+-+-+    +$+*+-+-+-+-+-+    +-+-+!+!+!+*+-+    +-+$+-+-+$+-+*+
+	// +v+-+-+-+-+-+-+    +#+v+-+-+-+-+-+    +-+-+!+!+!+v+-+    +-+#+-+-+#+-+v+
 	// |1|2|3|4|5|6|7| => |8|2|3|4|5|6|7| => |8|2|3|4|5|6|7| => |8|2|3|5|9|6|7| =>
-	// +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+$+-+-+-+-+    +-+-+-+-+-+-+-+
+	// +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+#+-+-+-+-+    +-+-+-+-+-+-+-+
 	//
 	// h=1004, r=1        h=1005, r=0        h=1006, r=2        h=1007, r=4
-	// +!+*+-+-+-+$+-+    +-+$+$+-+*+-+-+    +*+-+-+$+-+!+!+    +*+$+-+!+!+!+!+
+	// +!+v+-+-+-+#+-+    +-+#+#+-+v+-+-+    +v+-+-+#+-+!+!+    +v+#+-+!+!+!+!+
 	// |8|2|3|9|6|A|7| => |8|B|C|2|3|9|A| => |B|C|2|1|3|9|A| => |5|6|B|C|2|1|3|
-	// +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +$+-+-+-+$+-+$+
+	// +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +#+-+-+-+#+-+#+
 
 	// Height 1001
 	val8.UpdateLastSortitionHeight(1001)
