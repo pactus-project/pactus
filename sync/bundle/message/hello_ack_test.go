@@ -13,6 +13,9 @@ func TestHelloAckType(t *testing.T) {
 }
 
 func TestHelloAckMessage(t *testing.T) {
-	msg := NewHelloAckMessage(ResponseCodeRejected, "rejected", 0)
+	msg := NewHelloAckMessage(ResponseCodeRejected, "rejected", 100)
+
 	require.NoError(t, msg.BasicCheck())
+	assert.Zero(t, msg.ConsensusHeight())
+	assert.Contains(t, msg.LogString(), "100")
 }

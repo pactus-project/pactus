@@ -21,7 +21,7 @@ func TestBlocksRequestMessage(t *testing.T) {
 		require.ErrorIs(t, err, BasicCheckError{Reason: "invalid height"})
 	})
 	t.Run("Invalid count", func(t *testing.T) {
-		msg := NewBlocksRequestMessage(1, 200, 0)
+		msg := NewBlocksRequestMessage(1, 100, 0)
 
 		err := msg.BasicCheck()
 		require.ErrorIs(t, err, BasicCheckError{Reason: "count is zero"})
@@ -32,6 +32,7 @@ func TestBlocksRequestMessage(t *testing.T) {
 
 		require.NoError(t, msg.BasicCheck())
 		assert.Equal(t, types.Height(106), msg.To())
+		assert.Zero(t, msg.ConsensusHeight())
 		assert.Contains(t, msg.LogString(), "100")
 	})
 }

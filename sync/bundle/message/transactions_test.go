@@ -24,11 +24,22 @@ func TestTransactionsMessage(t *testing.T) {
 		require.ErrorIs(t, err, BasicCheckError{Reason: "no transaction"})
 	})
 
+	t.Run("Invalid transactions", func(t *testing.T) {
+		trx := ts.GenerateTestTransferTx()
+		trx.SetSignature(nil)
+
+		msg := NewTransactionsMessage([]*tx.Tx{trx})
+
+		err := msg.BasicCheck()
+		require.ErrorIs(t, err, tx.BasicCheckError{Reason: "no signature"})
+	})
+
 	t.Run("OK", func(t *testing.T) {
 		trx := ts.GenerateTestTransferTx()
 		msg := NewTransactionsMessage([]*tx.Tx{trx})
 
 		require.NoError(t, msg.BasicCheck())
+		assert.Zero(t, msg.ConsensusHeight())
 		assert.Contains(t, msg.LogString(), trx.ID().LogString())
 	})
 }
