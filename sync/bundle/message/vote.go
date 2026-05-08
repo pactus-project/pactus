@@ -17,6 +17,10 @@ func NewVoteMessage(v *vote.Vote) *VoteMessage {
 }
 
 func (m *VoteMessage) BasicCheck() error {
+	if m.Vote == nil {
+		return BasicCheckError{Reason: "no vote"}
+	}
+
 	return m.Vote.BasicCheck()
 }
 
