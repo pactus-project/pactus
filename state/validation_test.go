@@ -33,17 +33,21 @@ func TestBlockValidation(t *testing.T) {
 			blk0.Header().ProposerAddress())
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
 		err := td.state.ValidateBlock(blk, round)
-		require.ErrorIs(t, err, ErrInvalidBlockVersion)
+		require.ErrorIs(t, err, InvalidBlockVersionError{
+			Version: protocol.ProtocolVersionLatest + 1,
+		})
 
-		// Receiving a block with version 2 and rejects it.
-		// It is possible that the same block would be considered valid by other nodes (Hard Fork).
+		// Receiving a block with unsupported version.
+		// It is possible that the same block would be considered valid by other nodes.
 		err = td.state.CommitBlock(blk, cert)
-		require.ErrorIs(t, err, ErrInvalidBlockVersion)
+		require.ErrorIs(t, err, InvalidBlockVersionError{
+			Version: protocol.ProtocolVersionLatest + 1,
+		})
 	})
 
 	t.Run("Invalid version, less than current", func(t *testing.T) {
 		blk0, _ := td.makeBlockAndCertificate(t, round)
-		invBlockVersion := protocol.ProtocolVersion1
+		invBlockVersion := protocol.ProtocolVersion2
 		blk := block.MakeBlock(
 			invBlockVersion,
 			blk0.Header().Time(),
@@ -55,12 +59,16 @@ func TestBlockValidation(t *testing.T) {
 			blk0.Header().ProposerAddress())
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
 		err := td.state.ValidateBlock(blk, round)
-		require.ErrorIs(t, err, ErrInvalidBlockVersion)
+		require.ErrorIs(t, err, InvalidBlockVersionError{
+			Version: protocol.ProtocolVersion2,
+		})
 
-		// Receiving a block with version 2 and rejects it.
-		// It is possible that the same block would be considered valid by other nodes (Hard Fork).
+		// Receiving a block with unsupported version.
+		// It is possible that the same block would be considered valid by other nodes
 		err = td.state.CommitBlock(blk, cert)
-		require.ErrorIs(t, err, ErrInvalidBlockVersion)
+		require.ErrorIs(t, err, InvalidBlockVersionError{
+			Version: protocol.ProtocolVersion2,
+		})
 	})
 
 	t.Run("Invalid time", func(t *testing.T) {

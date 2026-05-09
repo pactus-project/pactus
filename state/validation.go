@@ -11,7 +11,9 @@ import (
 func (st *state) validateBlock(blk *block.Block, round types.Round) error {
 	if blk.Header().Version() > protocol.ProtocolVersionLatest ||
 		blk.Header().Version() < st.params.BlockVersion {
-		return ErrInvalidBlockVersion
+		return InvalidBlockVersionError{
+			Version: blk.Header().Version(),
+		}
 	}
 
 	if blk.Header().StateRoot() != st.stateRoot() {

@@ -52,9 +52,6 @@ var ErrCommitteeLeaveLimitExceeded = errors.New(
 // ErrOldestValidatorNotProposed indicates that the oldest validator has not proposed any block yet.
 var ErrOldestValidatorNotProposed = errors.New("oldest validator has not proposed any block yet")
 
-// ErrInvalidBlockVersion is returned when the block version is invalid.
-var ErrInvalidBlockVersion = errors.New("invalid block version")
-
 // ErrInvalidDelegation is returned when the delegation parameters are invalid.
 var ErrInvalidDelegation = errors.New("invalid delegation")
 
