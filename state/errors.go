@@ -7,11 +7,9 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/vote"
 )
-
-// ErrInvalidBlockVersion indicates that the block version is not valid.
-var ErrInvalidBlockVersion = errors.New("invalid block version")
 
 // ErrInvalidSubsidyTransaction indicates that the subsidy transaction is not valid.
 var ErrInvalidSubsidyTransaction = errors.New("invalid subsidy transaction")
@@ -25,6 +23,15 @@ var ErrInvalidSortitionSeed = errors.New("invalid sortition seed")
 
 // ErrInvalidCertificate indicates that the block certificate is invalid.
 var ErrInvalidCertificate = errors.New("invalid certificate")
+
+// InvalidBlockVersionError indicates that the block version is invalid.
+type InvalidBlockVersionError struct {
+	Version protocol.Version
+}
+
+func (e InvalidBlockVersionError) Error() string {
+	return fmt.Sprintf("invalid block version: %v", e.Version)
+}
 
 // InvalidSubsidyAmountError is returned when the amount of the subsidy transaction is not as expected.
 type InvalidSubsidyAmountError struct {
