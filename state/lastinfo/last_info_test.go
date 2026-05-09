@@ -75,7 +75,7 @@ func setup(t *testing.T) *testData {
 	lastHeight := ts.RandHeight()
 	prevCert := ts.GenerateTestCertificate(lastHeight - 1)
 	lastSeed := ts.RandSeed()
-	lastBlock := block.MakeBlock(protocol.ProtocolVersion2, time.Now(), block.Txs{trx},
+	lastBlock := block.MakeBlock(protocol.ProtocolVersionLatest, time.Now(), block.Txs{trx},
 		prevHash,
 		ts.RandHash(),
 		prevCert, lastSeed, val2.Address())
@@ -99,12 +99,12 @@ func setup(t *testing.T) *testData {
 	}
 }
 
-func TestRestoreCommittee(t *testing.T) {
+func TestRestoreLastInfo(t *testing.T) {
 	td := setup(t)
 
 	lastInfo := NewLastInfo()
 
-	cmt, _, err := lastInfo.RestoreLastInfo(td.store, 4)
+	cmt, ver, err := lastInfo.RestoreLastInfo(td.store, 4)
 	require.NoError(t, err)
 
 	val0, _ := td.store.ValidatorByNumber(0)
@@ -117,6 +117,7 @@ func TestRestoreCommittee(t *testing.T) {
 	assert.Equal(t, td.lastInfo.BlockHash(), lastInfo.BlockHash())
 	assert.Equal(t, td.lastInfo.Certificate().Hash(), lastInfo.Certificate().Hash())
 	assert.Equal(t, td.lastInfo.BlockTime(), lastInfo.BlockTime())
+	assert.Equal(t, protocol.ProtocolVersionLatest, ver)
 	assert.Equal(t, []*validator.Validator{val0, val1, val2, val3}, td.lastInfo.Validators())
 	assert.Equal(t, []int32{1, 4, 2, 3}, cmt.Committers())
 }
