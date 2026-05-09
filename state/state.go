@@ -162,8 +162,10 @@ func (st *state) tryLoadLastInfo() error {
 	st.params.BlockVersion = blockVersion
 
 	logger.Info("last state restored",
-		"last height", st.lastInfo.BlockHeight(),
-		"last block time", st.lastInfo.BlockTime())
+		"version", st.params.BlockVersion,
+		"height", st.lastInfo.BlockHeight(),
+		"hash", st.lastInfo.BlockHash(),
+		"block time", st.lastInfo.BlockTime())
 
 	return nil
 }
