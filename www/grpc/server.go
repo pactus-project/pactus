@@ -14,6 +14,8 @@ import (
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/pactus-project/pactus/www/zmq"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 )
 
 type Server struct {
@@ -67,15 +69,21 @@ func (s *Server) StartServer() error {
 }
 
 func (s *Server) startListening(listener net.Listener) error {
-	opts := make([]grpc.UnaryServerInterceptor, 0)
+	unaryOpts := make([]grpc.UnaryServerInterceptor, 0)
+	streamOpts := make([]grpc.StreamServerInterceptor, 0)
 
 	if s.config.BasicAuth != "" {
-		opts = append(opts, BasicAuth(s.config.BasicAuth))
+		unaryOpts = append(unaryOpts, BasicAuth(s.config.BasicAuth))
+		streamOpts = append(streamOpts, BasicAuthStream(s.config.BasicAuth))
 	}
 
-	opts = append(opts, s.Recovery())
+	unaryOpts = append(unaryOpts, s.Recovery())
+	streamOpts = append(streamOpts, s.RecoveryStream())
 
-	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(opts...))
+	grpcServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(unaryOpts...),
+		grpc.ChainStreamInterceptor(streamOpts...),
+	)
 
 	blockchainServer := newBlockchainServer(s)
 	transactionServer := newTransactionServer(s)
@@ -87,10 +95,21 @@ func (s *Server) startListening(listener net.Listener) error {
 	pactus.RegisterNetworkServer(grpcServer, networkServer)
 	pactus.RegisterUtilsServer(grpcServer, utilServer)
 
+	healthServer := health.NewServer()
+	healthServer.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)
+	setServiceServingStatus(healthServer,
+		pactus.Blockchain_ServiceDesc,
+		pactus.Transaction_ServiceDesc,
+		pactus.Network_ServiceDesc,
+		pactus.Utils_ServiceDesc,
+	)
+	healthpb.RegisterHealthServer(grpcServer, healthServer)
+
 	if s.config.EnableWallet {
 		walletServer := newWalletServer(s, s.walletMgr)
 
 		pactus.RegisterWalletServer(grpcServer, walletServer)
+		setServiceServingStatus(healthServer, pactus.Wallet_ServiceDesc)
 	}
 
 	s.listener = listener
@@ -111,5 +130,14 @@ func (s *Server) StopServer() {
 	if s.server != nil {
 		s.server.Stop()
 		_ = s.listener.Close()
+	}
+}
+
+func setServiceServingStatus(healthServer *health.Server, services ...grpc.ServiceDesc) {
+	for _, service := range services {
+		healthServer.SetServingStatus(
+			service.ServiceName,
+			healthpb.HealthCheckResponse_SERVING,
+		)
 	}
 }

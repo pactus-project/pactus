@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"encoding/base64"
 	"net"
 	"testing"
 
@@ -14,9 +15,14 @@ import (
 	wltmgr "github.com/pactus-project/pactus/wallet/manager"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/pactus-project/pactus/www/zmq"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 	"google.golang.org/grpc/test/bufconn"
 )
 
@@ -143,4 +149,109 @@ func (td *testData) utilClient(t *testing.T) pactus.UtilsClient {
 	t.Helper()
 
 	return pactus.NewUtilsClient(td.newClient(t))
+}
+
+func (td *testData) healthClient(t *testing.T) healthpb.HealthClient {
+	t.Helper()
+
+	return healthpb.NewHealthClient(td.newClient(t))
+}
+
+func TestHealthCheck(t *testing.T) {
+	td := setup(t, nil)
+	client := td.healthClient(t)
+
+	services := []struct {
+		name string
+		id   string
+	}{
+		{name: "Aggregate"},
+		{name: "Blockchain", id: pactus.Blockchain_ServiceDesc.ServiceName},
+		{name: "Transaction", id: pactus.Transaction_ServiceDesc.ServiceName},
+		{name: "Network", id: pactus.Network_ServiceDesc.ServiceName},
+		{name: "Utils", id: pactus.Utils_ServiceDesc.ServiceName},
+	}
+
+	for _, service := range services {
+		t.Run(service.name, func(t *testing.T) {
+			response, err := client.Check(t.Context(), &healthpb.HealthCheckRequest{
+				Service: service.id,
+			})
+			require.NoError(t, err)
+			assert.Equal(t, healthpb.HealthCheckResponse_SERVING, response.Status)
+		})
+	}
+
+	_, err := client.Check(t.Context(), &healthpb.HealthCheckRequest{
+		Service: pactus.Wallet_ServiceDesc.ServiceName,
+	})
+	assert.Equal(t, codes.NotFound, status.Code(err))
+}
+
+func TestHealthWatch(t *testing.T) {
+	td := setup(t, nil)
+	client := td.healthClient(t)
+
+	stream, err := client.Watch(t.Context(), &healthpb.HealthCheckRequest{
+		Service: pactus.Blockchain_ServiceDesc.ServiceName,
+	})
+	require.NoError(t, err)
+
+	response, err := stream.Recv()
+	require.NoError(t, err)
+	assert.Equal(t, healthpb.HealthCheckResponse_SERVING, response.Status)
+}
+
+func TestHealthCheckWithWallet(t *testing.T) {
+	conf := testConfig()
+	conf.EnableWallet = true
+	td := setup(t, conf)
+	client := td.healthClient(t)
+
+	response, err := client.Check(t.Context(), &healthpb.HealthCheckRequest{
+		Service: pactus.Wallet_ServiceDesc.ServiceName,
+	})
+	require.NoError(t, err)
+	assert.Equal(t, healthpb.HealthCheckResponse_SERVING, response.Status)
+}
+
+func TestHealthCheckBasicAuth(t *testing.T) {
+	conf := testConfig()
+	conf.BasicAuth = "user:$2y$10$5Kjd955BDWLouqckHzBjKuCF6hFOUD61lhm8QpjDVHTUwMIrYUdq2"
+	td := setup(t, conf)
+	client := td.healthClient(t)
+
+	_, err := client.Check(t.Context(), &healthpb.HealthCheckRequest{})
+	assert.Equal(t, codes.Unauthenticated, status.Code(err))
+
+	ctx := contextWithBasicAuth(t.Context(), "user", "password")
+	response, err := client.Check(ctx, &healthpb.HealthCheckRequest{})
+	require.NoError(t, err)
+	assert.Equal(t, healthpb.HealthCheckResponse_SERVING, response.Status)
+}
+
+func TestHealthWatchBasicAuth(t *testing.T) {
+	conf := testConfig()
+	conf.BasicAuth = "user:$2y$10$5Kjd955BDWLouqckHzBjKuCF6hFOUD61lhm8QpjDVHTUwMIrYUdq2"
+	td := setup(t, conf)
+	client := td.healthClient(t)
+
+	stream, err := client.Watch(t.Context(), &healthpb.HealthCheckRequest{})
+	require.NoError(t, err)
+	_, err = stream.Recv()
+	assert.Equal(t, codes.Unauthenticated, status.Code(err))
+
+	ctx := contextWithBasicAuth(t.Context(), "user", "password")
+	stream, err = client.Watch(ctx, &healthpb.HealthCheckRequest{})
+	require.NoError(t, err)
+
+	response, err := stream.Recv()
+	require.NoError(t, err)
+	assert.Equal(t, healthpb.HealthCheckResponse_SERVING, response.Status)
+}
+
+func contextWithBasicAuth(ctx context.Context, user, password string) context.Context {
+	auth := "Basic " + base64.StdEncoding.EncodeToString([]byte(user+":"+password))
+
+	return metadata.NewOutgoingContext(ctx, metadata.Pairs("authorization", auth))
 }
