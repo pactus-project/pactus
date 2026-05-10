@@ -70,22 +70,37 @@ func (s *Server) StartServer() error {
 }
 
 func (s *Server) startListening(listener net.Listener) error {
-	opts := make([]grpc.UnaryServerInterceptor, 0)
+	unaryOpts := make([]grpc.UnaryServerInterceptor, 0)
+	streamOpts := make([]grpc.StreamServerInterceptor, 0)
 
 	if s.config.BasicAuth != "" {
-		opts = append(opts, BasicAuth(s.config.BasicAuth))
+		unaryOpts = append(unaryOpts, BasicAuth(s.config.BasicAuth))
+		streamOpts = append(streamOpts, BasicAuthStream(s.config.BasicAuth))
 	}
 
-	opts = append(opts, s.Recovery())
+	unaryOpts = append(unaryOpts, s.Recovery())
+	streamOpts = append(streamOpts, s.RecoveryStream())
 
-	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(opts...))
+	grpcServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(unaryOpts...),
+		grpc.ChainStreamInterceptor(streamOpts...),
+	)
 
 	blockchainServer := newBlockchainServer(s)
 	transactionServer := newTransactionServer(s)
 	networkServer := newNetworkServer(s)
 	utilServer := newUtilsServer(s)
 	healthServer := health.NewServer()
-	healthServer.SetServingStatus("", grpcHealthV1.HealthCheckResponse_SERVING)
+	servingStatus := grpcHealthV1.HealthCheckResponse_SERVING
+	for _, service := range []string{
+		"",
+		pactus.Blockchain_ServiceDesc.ServiceName,
+		pactus.Transaction_ServiceDesc.ServiceName,
+		pactus.Network_ServiceDesc.ServiceName,
+		pactus.Utils_ServiceDesc.ServiceName,
+	} {
+		healthServer.SetServingStatus(service, servingStatus)
+	}
 
 	pactus.RegisterBlockchainServer(grpcServer, blockchainServer)
 	pactus.RegisterTransactionServer(grpcServer, transactionServer)
@@ -97,6 +112,7 @@ func (s *Server) startListening(listener net.Listener) error {
 		walletServer := newWalletServer(s, s.walletMgr)
 
 		pactus.RegisterWalletServer(grpcServer, walletServer)
+		healthServer.SetServingStatus(pactus.Wallet_ServiceDesc.ServiceName, servingStatus)
 	}
 
 	s.listener = listener
