@@ -14,6 +14,8 @@ import (
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/pactus-project/pactus/www/zmq"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
+	grpc_health_v1 "google.golang.org/grpc/health/grpc_health_v1"
 )
 
 type Server struct {
@@ -21,6 +23,7 @@ type Server struct {
 	config        *Config
 	listener      net.Listener
 	server        *grpc.Server
+	healthServer  *health.Server
 	address       string
 	state         state.Facade
 	net           network.Network
@@ -76,6 +79,8 @@ func (s *Server) startListening(listener net.Listener) error {
 	opts = append(opts, s.Recovery())
 
 	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(opts...))
+	healthServer := health.NewServer()
+	grpc_health_v1.RegisterHealthServer(grpcServer, healthServer)
 
 	blockchainServer := newBlockchainServer(s)
 	transactionServer := newTransactionServer(s)
@@ -87,15 +92,30 @@ func (s *Server) startListening(listener net.Listener) error {
 	pactus.RegisterNetworkServer(grpcServer, networkServer)
 	pactus.RegisterUtilsServer(grpcServer, utilServer)
 
+	for _, serviceName := range []string{
+		"",
+		pactus.Blockchain_ServiceDesc.ServiceName,
+		pactus.Transaction_ServiceDesc.ServiceName,
+		pactus.Network_ServiceDesc.ServiceName,
+		pactus.Utils_ServiceDesc.ServiceName,
+	} {
+		healthServer.SetServingStatus(serviceName, grpc_health_v1.HealthCheckResponse_SERVING)
+	}
+
 	if s.config.EnableWallet {
 		walletServer := newWalletServer(s, s.walletMgr)
 
 		pactus.RegisterWalletServer(grpcServer, walletServer)
+		healthServer.SetServingStatus(
+			pactus.Wallet_ServiceDesc.ServiceName,
+			grpc_health_v1.HealthCheckResponse_SERVING,
+		)
 	}
 
 	s.listener = listener
 	s.address = listener.Addr().String()
 	s.server = grpcServer
+	s.healthServer = healthServer
 
 	go func() {
 		s.logger.Info("gRPC server start listening", "address", listener.Addr())
@@ -109,6 +129,9 @@ func (s *Server) startListening(listener net.Listener) error {
 
 func (s *Server) StopServer() {
 	if s.server != nil {
+		if s.healthServer != nil {
+			s.healthServer.Shutdown()
+		}
 		s.server.Stop()
 		_ = s.listener.Close()
 	}

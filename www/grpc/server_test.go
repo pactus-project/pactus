@@ -17,6 +17,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	grpc_health_v1 "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/test/bufconn"
 )
 
@@ -143,4 +144,45 @@ func (td *testData) utilClient(t *testing.T) pactus.UtilsClient {
 	t.Helper()
 
 	return pactus.NewUtilsClient(td.newClient(t))
+}
+
+func (td *testData) healthClient(t *testing.T) grpc_health_v1.HealthClient {
+	t.Helper()
+
+	return grpc_health_v1.NewHealthClient(td.newClient(t))
+}
+
+func TestHealthCheckReportsServing(t *testing.T) {
+	td := setup(t, nil)
+	client := td.healthClient(t)
+
+	for _, service := range []string{
+		"",
+		pactus.Blockchain_ServiceDesc.ServiceName,
+		pactus.Transaction_ServiceDesc.ServiceName,
+		pactus.Network_ServiceDesc.ServiceName,
+		pactus.Utils_ServiceDesc.ServiceName,
+	} {
+		resp, err := client.Check(
+			t.Context(),
+			&grpc_health_v1.HealthCheckRequest{Service: service},
+		)
+		require.NoError(t, err)
+		require.Equal(t, grpc_health_v1.HealthCheckResponse_SERVING, resp.Status)
+	}
+}
+
+func TestHealthCheckReportsWalletServingWhenEnabled(t *testing.T) {
+	conf := testConfig()
+	conf.EnableWallet = true
+
+	td := setup(t, conf)
+	client := td.healthClient(t)
+
+	resp, err := client.Check(
+		t.Context(),
+		&grpc_health_v1.HealthCheckRequest{Service: pactus.Wallet_ServiceDesc.ServiceName},
+	)
+	require.NoError(t, err)
+	require.Equal(t, grpc_health_v1.HealthCheckResponse_SERVING, resp.Status)
 }
