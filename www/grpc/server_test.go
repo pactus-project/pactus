@@ -12,12 +12,16 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	wltmgr "github.com/pactus-project/pactus/wallet/manager"
+	grpcBasicAuth "github.com/pactus-project/pactus/www/grpc/basicauth"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/pactus-project/pactus/www/zmq"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
 	grpcHealthV1 "google.golang.org/grpc/health/grpc_health_v1"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 	"google.golang.org/grpc/test/bufconn"
 )
 
@@ -100,12 +104,15 @@ func (td *testData) bufDialer(context.Context, string) (net.Conn, error) {
 	return td.listener.Dial()
 }
 
-func (td *testData) newClient(t *testing.T) *grpc.ClientConn {
+func (td *testData) newClient(t *testing.T, opts ...grpc.DialOption) *grpc.ClientConn {
 	t.Helper()
 
-	conn, err := grpc.NewClient("passthrough://bufnet",
+	opts = append([]grpc.DialOption{
 		grpc.WithContextDialer(td.bufDialer),
-		grpc.WithTransportCredentials(insecure.NewCredentials()))
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	}, opts...)
+
+	conn, err := grpc.NewClient("passthrough://bufnet", opts...)
 	require.NoError(t, err)
 
 	t.Cleanup(func() {
@@ -156,7 +163,81 @@ func TestHealthCheck(t *testing.T) {
 	td := setup(t, nil)
 	client := td.healthClient(t)
 
-	response, err := client.Check(t.Context(), &grpcHealthV1.HealthCheckRequest{})
+	services := []string{
+		"",
+		pactus.Blockchain_ServiceDesc.ServiceName,
+		pactus.Transaction_ServiceDesc.ServiceName,
+		pactus.Network_ServiceDesc.ServiceName,
+		pactus.Utils_ServiceDesc.ServiceName,
+	}
+	for _, service := range services {
+		response, err := client.Check(t.Context(), &grpcHealthV1.HealthCheckRequest{
+			Service: service,
+		})
+		require.NoError(t, err)
+		require.Equal(t, grpcHealthV1.HealthCheckResponse_SERVING, response.Status)
+	}
+
+	_, err := client.Check(t.Context(), &grpcHealthV1.HealthCheckRequest{
+		Service: pactus.Wallet_ServiceDesc.ServiceName,
+	})
+	require.Equal(t, codes.NotFound, status.Code(err))
+}
+
+func TestHealthCheckWithWallet(t *testing.T) {
+	conf := testConfig()
+	conf.EnableWallet = true
+	td := setup(t, conf)
+	client := td.healthClient(t)
+
+	response, err := client.Check(t.Context(), &grpcHealthV1.HealthCheckRequest{
+		Service: pactus.Wallet_ServiceDesc.ServiceName,
+	})
 	require.NoError(t, err)
 	require.Equal(t, grpcHealthV1.HealthCheckResponse_SERVING, response.Status)
+}
+
+func TestHealthWatch(t *testing.T) {
+	td := setup(t, nil)
+	client := td.healthClient(t)
+
+	stream, err := client.Watch(t.Context(), &grpcHealthV1.HealthCheckRequest{
+		Service: pactus.Blockchain_ServiceDesc.ServiceName,
+	})
+	require.NoError(t, err)
+
+	response, err := stream.Recv()
+	require.NoError(t, err)
+	require.Equal(t, grpcHealthV1.HealthCheckResponse_SERVING, response.Status)
+}
+
+func TestHealthRequiresBasicAuth(t *testing.T) {
+	conf := testConfig()
+	conf.BasicAuth = "user:$2y$10$5Kjd955BDWLouqckHzBjKuCF6hFOUD61lhm8QpjDVHTUwMIrYUdq2"
+	td := setup(t, conf)
+	client := td.healthClient(t)
+
+	_, err := client.Check(t.Context(), &grpcHealthV1.HealthCheckRequest{})
+	require.Equal(t, codes.Unauthenticated, status.Code(err))
+
+	stream, err := client.Watch(t.Context(), &grpcHealthV1.HealthCheckRequest{})
+	if err == nil {
+		_, err = stream.Recv()
+	}
+	require.Equal(t, codes.Unauthenticated, status.Code(err))
+
+	ctx := metadata.NewOutgoingContext(t.Context(), metadata.Pairs(
+		"authorization", grpcBasicAuth.EncodeBasicAuth("user", "password"),
+	))
+
+	checkResponse, err := client.Check(ctx, &grpcHealthV1.HealthCheckRequest{})
+	require.NoError(t, err)
+	require.Equal(t, grpcHealthV1.HealthCheckResponse_SERVING, checkResponse.Status)
+
+	watchStream, err := client.Watch(ctx, &grpcHealthV1.HealthCheckRequest{})
+	require.NoError(t, err)
+
+	watchResponse, err := watchStream.Recv()
+	require.NoError(t, err)
+	require.Equal(t, grpcHealthV1.HealthCheckResponse_SERVING, watchResponse.Status)
 }
