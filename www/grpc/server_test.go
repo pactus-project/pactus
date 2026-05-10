@@ -17,6 +17,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	grpcHealthV1 "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/test/bufconn"
 )
 
@@ -143,4 +144,19 @@ func (td *testData) utilClient(t *testing.T) pactus.UtilsClient {
 	t.Helper()
 
 	return pactus.NewUtilsClient(td.newClient(t))
+}
+
+func (td *testData) healthClient(t *testing.T) grpcHealthV1.HealthClient {
+	t.Helper()
+
+	return grpcHealthV1.NewHealthClient(td.newClient(t))
+}
+
+func TestHealthCheck(t *testing.T) {
+	td := setup(t, nil)
+	client := td.healthClient(t)
+
+	response, err := client.Check(t.Context(), &grpcHealthV1.HealthCheckRequest{})
+	require.NoError(t, err)
+	require.Equal(t, grpcHealthV1.HealthCheckResponse_SERVING, response.Status)
 }
