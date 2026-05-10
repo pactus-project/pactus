@@ -14,6 +14,8 @@ import (
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/pactus-project/pactus/www/zmq"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 )
 
 type Server struct {
@@ -67,30 +69,44 @@ func (s *Server) StartServer() error {
 }
 
 func (s *Server) startListening(listener net.Listener) error {
-	opts := make([]grpc.UnaryServerInterceptor, 0)
+	unaryInterceptors := make([]grpc.UnaryServerInterceptor, 0)
+	streamInterceptors := make([]grpc.StreamServerInterceptor, 0)
 
 	if s.config.BasicAuth != "" {
-		opts = append(opts, BasicAuth(s.config.BasicAuth))
+		unaryInterceptors = append(unaryInterceptors, BasicAuth(s.config.BasicAuth))
+		streamInterceptors = append(streamInterceptors, BasicAuthStream(s.config.BasicAuth))
 	}
 
-	opts = append(opts, s.Recovery())
+	unaryInterceptors = append(unaryInterceptors, s.Recovery())
+	streamInterceptors = append(streamInterceptors, s.RecoveryStream())
 
-	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(opts...))
+	grpcServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(unaryInterceptors...),
+		grpc.ChainStreamInterceptor(streamInterceptors...),
+	)
+	healthServer := health.NewServer()
 
 	blockchainServer := newBlockchainServer(s)
 	transactionServer := newTransactionServer(s)
 	networkServer := newNetworkServer(s)
 	utilServer := newUtilsServer(s)
 
+	healthpb.RegisterHealthServer(grpcServer, healthServer)
 	pactus.RegisterBlockchainServer(grpcServer, blockchainServer)
 	pactus.RegisterTransactionServer(grpcServer, transactionServer)
 	pactus.RegisterNetworkServer(grpcServer, networkServer)
 	pactus.RegisterUtilsServer(grpcServer, utilServer)
+	registerHealthStatus(healthServer, "")
+	registerHealthStatus(healthServer, pactus.Blockchain_ServiceDesc.ServiceName)
+	registerHealthStatus(healthServer, pactus.Transaction_ServiceDesc.ServiceName)
+	registerHealthStatus(healthServer, pactus.Network_ServiceDesc.ServiceName)
+	registerHealthStatus(healthServer, pactus.Utils_ServiceDesc.ServiceName)
 
 	if s.config.EnableWallet {
 		walletServer := newWalletServer(s, s.walletMgr)
 
 		pactus.RegisterWalletServer(grpcServer, walletServer)
+		registerHealthStatus(healthServer, pactus.Wallet_ServiceDesc.ServiceName)
 	}
 
 	s.listener = listener
@@ -105,6 +121,10 @@ func (s *Server) startListening(listener net.Listener) error {
 	}()
 
 	return nil
+}
+
+func registerHealthStatus(healthServer *health.Server, service string) {
+	healthServer.SetServingStatus(service, healthpb.HealthCheckResponse_SERVING)
 }
 
 func (s *Server) StopServer() {

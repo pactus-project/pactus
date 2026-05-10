@@ -21,6 +21,19 @@ func mockUnaryPanicHandler(_ context.Context, _ any) (any, error) {
 	panic("panic happen!!!")
 }
 
+type mockServerStream struct {
+	grpc.ServerStream
+	ctx context.Context
+}
+
+func (s mockServerStream) Context() context.Context {
+	return s.ctx
+}
+
+func mockStreamHandler(any, grpc.ServerStream) error {
+	return nil
+}
+
 func TestBasicAuth(t *testing.T) {
 	auth := "Basic " + base64.StdEncoding.EncodeToString([]byte("user:password"))
 	invalidAuth := "Basic " + base64.StdEncoding.EncodeToString([]byte("invalid:invalid"))
@@ -64,6 +77,55 @@ func TestBasicAuth(t *testing.T) {
 			interceptor := BasicAuth("user:$2y$10$5Kjd955BDWLouqckHzBjKuCF6hFOUD61lhm8QpjDVHTUwMIrYUdq2")
 
 			_, err := interceptor(ctx, nil, &grpc.UnaryServerInfo{}, mockUnaryHandler)
+
+			got, want := status.Code(err), tt.expectedError
+			assert.Equal(t, want, got)
+		})
+	}
+}
+
+func TestBasicAuthStream(t *testing.T) {
+	auth := "Basic " + base64.StdEncoding.EncodeToString([]byte("user:password"))
+	invalidAuth := "Basic " + base64.StdEncoding.EncodeToString([]byte("invalid:invalid"))
+	malformedAuth := "Malformed"
+
+	tests := []struct {
+		name          string
+		authHeader    string
+		expectedError codes.Code
+	}{
+		{
+			name:          "ValidCredentials",
+			authHeader:    auth,
+			expectedError: codes.OK,
+		},
+		{
+			name:          "InvalidCredentials",
+			authHeader:    invalidAuth,
+			expectedError: codes.Unauthenticated,
+		},
+		{
+			name:          "NoMetadata",
+			authHeader:    "",
+			expectedError: codes.Unauthenticated,
+		},
+		{
+			name:          "MalformedAuthHeader",
+			authHeader:    malformedAuth,
+			expectedError: codes.Unauthenticated,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx := t.Context()
+			if tt.authHeader != "" {
+				md := metadata.New(map[string]string{"authorization": tt.authHeader})
+				ctx = metadata.NewIncomingContext(ctx, md)
+			}
+
+			interceptor := BasicAuthStream("user:$2y$10$5Kjd955BDWLouqckHzBjKuCF6hFOUD61lhm8QpjDVHTUwMIrYUdq2")
+			err := interceptor(nil, mockServerStream{ctx: ctx}, &grpc.StreamServerInfo{}, mockStreamHandler)
 
 			got, want := status.Code(err), tt.expectedError
 			assert.Equal(t, want, got)

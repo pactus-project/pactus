@@ -15,17 +15,35 @@ func BasicAuth(storedCredential string) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (
 		any, error,
 	) {
-		user, password, err := htpasswd.ExtractBasicAuthFromContext(ctx)
-		if err != nil {
-			return nil, status.Error(codes.Unauthenticated, "failed to extract basic auth from header")
-		}
-
-		if err := htpasswd.CompareBasicAuth(storedCredential, user, password); err != nil {
-			return nil, status.Error(codes.Unauthenticated, "username or password is invalid")
+		if err := checkBasicAuth(ctx, storedCredential); err != nil {
+			return nil, err
 		}
 
 		return handler(ctx, req)
 	}
+}
+
+func BasicAuthStream(storedCredential string) grpc.StreamServerInterceptor {
+	return func(srv any, ss grpc.ServerStream, _ *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+		if err := checkBasicAuth(ss.Context(), storedCredential); err != nil {
+			return err
+		}
+
+		return handler(srv, ss)
+	}
+}
+
+func checkBasicAuth(ctx context.Context, storedCredential string) error {
+	user, password, err := htpasswd.ExtractBasicAuthFromContext(ctx)
+	if err != nil {
+		return status.Error(codes.Unauthenticated, "failed to extract basic auth from header")
+	}
+
+	if err := htpasswd.CompareBasicAuth(storedCredential, user, password); err != nil {
+		return status.Error(codes.Unauthenticated, "username or password is invalid")
+	}
+
+	return nil
 }
 
 func (s *Server) Recovery() grpc.UnaryServerInterceptor {
@@ -45,4 +63,23 @@ func (s *Server) Recovery() grpc.UnaryServerInterceptor {
 	}
 
 	return rec.UnaryServerInterceptor(opts...)
+}
+
+func (s *Server) RecoveryStream() grpc.StreamServerInterceptor {
+	recovery := func(p any) (err error) {
+		err = status.Errorf(codes.Unknown, "%v", p)
+		stackTrace := debug.Stack()
+		s.logger.Error(
+			"recovery panic triggered in grpc server stream",
+			"error", err,
+			"stacktrace", string(stackTrace),
+		)
+
+		return err
+	}
+	opts := []rec.Option{
+		rec.WithRecoveryHandler(recovery),
+	}
+
+	return rec.StreamServerInterceptor(opts...)
 }

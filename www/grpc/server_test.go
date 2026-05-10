@@ -16,7 +16,10 @@ import (
 	"github.com/pactus-project/pactus/www/zmq"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
+	"google.golang.org/grpc/status"
 	"google.golang.org/grpc/test/bufconn"
 )
 
@@ -143,4 +146,61 @@ func (td *testData) utilClient(t *testing.T) pactus.UtilsClient {
 	t.Helper()
 
 	return pactus.NewUtilsClient(td.newClient(t))
+}
+
+func TestHealthCheck(t *testing.T) {
+	td := setup(t, nil)
+	client := healthpb.NewHealthClient(td.newClient(t))
+
+	services := []string{
+		"",
+		pactus.Blockchain_ServiceDesc.ServiceName,
+		pactus.Transaction_ServiceDesc.ServiceName,
+		pactus.Network_ServiceDesc.ServiceName,
+		pactus.Utils_ServiceDesc.ServiceName,
+	}
+	for _, service := range services {
+		t.Run(service, func(t *testing.T) {
+			resp, err := client.Check(t.Context(), &healthpb.HealthCheckRequest{
+				Service: service,
+			})
+			require.NoError(t, err)
+			require.Equal(t, healthpb.HealthCheckResponse_SERVING, resp.Status)
+		})
+	}
+
+	_, err := client.Check(t.Context(), &healthpb.HealthCheckRequest{
+		Service: pactus.Wallet_ServiceDesc.ServiceName,
+	})
+	require.Equal(t, codes.NotFound, status.Code(err))
+}
+
+func TestHealthWatch(t *testing.T) {
+	td := setup(t, nil)
+	client := healthpb.NewHealthClient(td.newClient(t))
+
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+
+	stream, err := client.Watch(ctx, &healthpb.HealthCheckRequest{
+		Service: pactus.Blockchain_ServiceDesc.ServiceName,
+	})
+	require.NoError(t, err)
+
+	resp, err := stream.Recv()
+	require.NoError(t, err)
+	require.Equal(t, healthpb.HealthCheckResponse_SERVING, resp.Status)
+}
+
+func TestHealthCheckWithWallet(t *testing.T) {
+	conf := testConfig()
+	conf.EnableWallet = true
+	td := setup(t, conf)
+	client := healthpb.NewHealthClient(td.newClient(t))
+
+	resp, err := client.Check(t.Context(), &healthpb.HealthCheckRequest{
+		Service: pactus.Wallet_ServiceDesc.ServiceName,
+	})
+	require.NoError(t, err)
+	require.Equal(t, healthpb.HealthCheckResponse_SERVING, resp.Status)
 }
