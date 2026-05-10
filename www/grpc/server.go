@@ -14,6 +14,8 @@ import (
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/pactus-project/pactus/www/zmq"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
+	grpcHealthV1 "google.golang.org/grpc/health/grpc_health_v1"
 )
 
 type Server struct {
@@ -21,6 +23,7 @@ type Server struct {
 	config        *Config
 	listener      net.Listener
 	server        *grpc.Server
+	healthServer  *health.Server
 	address       string
 	state         state.Facade
 	net           network.Network
@@ -81,11 +84,14 @@ func (s *Server) startListening(listener net.Listener) error {
 	transactionServer := newTransactionServer(s)
 	networkServer := newNetworkServer(s)
 	utilServer := newUtilsServer(s)
+	healthServer := health.NewServer()
+	healthServer.SetServingStatus("", grpcHealthV1.HealthCheckResponse_SERVING)
 
 	pactus.RegisterBlockchainServer(grpcServer, blockchainServer)
 	pactus.RegisterTransactionServer(grpcServer, transactionServer)
 	pactus.RegisterNetworkServer(grpcServer, networkServer)
 	pactus.RegisterUtilsServer(grpcServer, utilServer)
+	grpcHealthV1.RegisterHealthServer(grpcServer, healthServer)
 
 	if s.config.EnableWallet {
 		walletServer := newWalletServer(s, s.walletMgr)
@@ -96,6 +102,7 @@ func (s *Server) startListening(listener net.Listener) error {
 	s.listener = listener
 	s.address = listener.Addr().String()
 	s.server = grpcServer
+	s.healthServer = healthServer
 
 	go func() {
 		s.logger.Info("gRPC server start listening", "address", listener.Addr())
@@ -109,6 +116,9 @@ func (s *Server) startListening(listener net.Listener) error {
 
 func (s *Server) StopServer() {
 	if s.server != nil {
+		if s.healthServer != nil {
+			s.healthServer.Shutdown()
+		}
 		s.server.Stop()
 		_ = s.listener.Close()
 	}
