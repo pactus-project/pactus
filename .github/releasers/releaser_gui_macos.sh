@@ -77,17 +77,113 @@ ${BUNDLER} ${GUI_BUNDLE}/gui.bundle
 # Removing Cellar as workaround
 rm -rf ${ROOT_DIR}/pactus-gui.app/Contents/Resources/Cellar
 
+
+# After gtk-mac-bundler and your fix-install-names script...
+
+if [ ! -z "${MACOS_CERT_IDENTITY}" ]; then
+    echo "=== Signing all Mach-O files inside the app bundle (dylibs, .so, executables, etc.)..."
+
+    # Create a temporary file to list all Mach-O binaries
+    find ${ROOT_DIR}/pactus-gui.app/Contents -type f -exec file {} \; | grep "Mach-O" | cut -d: -f1 > /tmp/macho_files.txt
+
+    # First, sign only the .dylib and .so files (if any)
+    grep -E '\.(dylib|so)$' /tmp/macho_files.txt | while read binary; do
+        echo "Signing library: $binary"
+        codesign --force --timestamp --verbose --sign "${MACOS_CERT_IDENTITY}" "$binary"
+        if [ $? -ne 0 ]; then exit 1; fi
+    done
+
+    # Then sign all other Mach-O binaries (executables, helpers, etc.)
+    grep -v -E '\.(dylib|so)$' /tmp/macho_files.txt | while read binary; do
+        echo "Signing binary: $binary"
+        codesign --force --timestamp --verbose --sign "${MACOS_CERT_IDENTITY}" "$binary"
+        if [ $? -ne 0 ]; then exit 1; fi
+    done
+
+    # Sign standalone binaries outside the app (if any)
+    for bin in pactus-daemon pactus-wallet pactus-shell pactus-gui; do
+        if [ -f "${BUILD_DIR}/${bin}" ]; then
+            echo "Signing standalone binary: ${BUILD_DIR}/${bin}"
+            codesign --force --timestamp --verbose --sign "${MACOS_CERT_IDENTITY}" "${BUILD_DIR}/${bin}"
+        fi
+    done
+
+    echo "=== Signing the whole app bundle (top-level)..."
+    codesign --force --timestamp --verbose --sign "${MACOS_CERT_IDENTITY}" ${ROOT_DIR}/pactus-gui.app
+
+    echo "=== Verification: checking the final app bundle..."
+    codesign --verify --verbose --deep --strict ${ROOT_DIR}/pactus-gui.app
+    if [ $? -ne 0 ]; then
+        echo "ERROR: App bundle verification failed!"
+        exit 1
+    fi
+fi
+
+# if [ ! -z "${MACOS_CERT_IDENTITY}" ]; then
+#     echo "=== Signing artifacts..."
+#     codesign --force --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-daemon
+#     codesign --force --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-wallet
+#     codesign --force --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-shell
+#     codesign --force --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-gui
+
+#     echo "=== Signing app bundle..."
+#     codesign --force --timestamp --sign "${MACOS_CERT_IDENTITY}" ${ROOT_DIR}/pactus-gui.app
+# fi
+
 echo "Creating dmg"
 # https://github.com/create-dmg/create-dmg
-
 create-dmg --version
-
 create-dmg --skip-jenkins \
   --volname "Pactus GUI" \
   "${FILE_NAME}.dmg" \
   "${ROOT_DIR}/pactus-gui.app"
 
-echo "Creating archive"
+
+
+if [ ! -z "${APPLE_ID}" ]; then
+    echo "=== Submitting for notarization..."
+
+    # Capture submission ID and check final status
+    SUBMISSION_ID=$(xcrun notarytool submit "${FILE_NAME}.dmg" \
+        --apple-id "${APPLE_ID}" \
+        --password "${APPLE_PASSWORD}" \
+        --team-id "${APPLE_TEAM_ID}" \
+        --wait --output-format json | jq -r '.id')
+
+    STATUS=$(xcrun notarytool info "$SUBMISSION_ID" \
+        --apple-id "${APPLE_ID}" \
+        --password "${APPLE_PASSWORD}" \
+        --team-id "${APPLE_TEAM_ID}" \
+        --output-format json | jq -r '.status')
+
+    if [ "$STATUS" != "Accepted" ]; then
+        echo "Notarization failed with status: $STATUS"
+        xcrun notarytool log "$SUBMISSION_ID" \
+            --apple-id "${APPLE_ID}" \
+            --password "${APPLE_PASSWORD}" \
+            --team-id "${APPLE_TEAM_ID}" \
+            notarization.log
+        cat notarization.log
+        exit 1
+    fi
+
+
+
+    # xcrun notarytool submit "${FILE_NAME}.dmg" \
+    #     --apple-id "${APPLE_ID}" \
+    #     --password "${APPLE_PASSWORD}" \
+    #     --team-id "${APPLE_TEAM_ID}" \
+    #     --wait
+
+    # echo "Stapling DMG only (the app inside gets the ticket automatically)..."
+    # # ✅ FIX: Only staple the DMG – the .app was not notarized separately, so stapling it would cause error 65.
+    # xcrun stapler staple "${FILE_NAME}.dmg"
+
+    # # ❌ REMOVED: Stapling the standalone .app
+    # # xcrun stapler staple "${ROOT_DIR}/pactus-gui.app"
+fi
+
+echo "Creating tar.gz archive"
 cp ${BUILD_DIR}/pactus-daemon     ${PACKAGE_DIR}
 cp ${BUILD_DIR}/pactus-wallet     ${PACKAGE_DIR}
 cp ${BUILD_DIR}/pactus-shell      ${PACKAGE_DIR}
