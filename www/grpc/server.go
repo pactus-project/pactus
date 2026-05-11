@@ -14,6 +14,8 @@ import (
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/pactus-project/pactus/www/zmq"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 )
 
 type Server struct {
@@ -76,6 +78,7 @@ func (s *Server) startListening(listener net.Listener) error {
 	opts = append(opts, s.Recovery())
 
 	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(opts...))
+	healthServer := health.NewServer()
 
 	blockchainServer := newBlockchainServer(s)
 	transactionServer := newTransactionServer(s)
@@ -86,6 +89,8 @@ func (s *Server) startListening(listener net.Listener) error {
 	pactus.RegisterTransactionServer(grpcServer, transactionServer)
 	pactus.RegisterNetworkServer(grpcServer, networkServer)
 	pactus.RegisterUtilsServer(grpcServer, utilServer)
+	healthpb.RegisterHealthServer(grpcServer, healthServer)
+	healthServer.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)
 
 	if s.config.EnableWallet {
 		walletServer := newWalletServer(s, s.walletMgr)
