@@ -15,12 +15,7 @@ func BasicAuth(storedCredential string) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (
 		any, error,
 	) {
-		user, password, err := htpasswd.ExtractBasicAuthFromContext(ctx)
-		if err != nil {
-			return nil, status.Error(codes.Unauthenticated, "failed to extract basic auth from header")
-		}
-
-		if err := htpasswd.CompareBasicAuth(storedCredential, user, password); err != nil {
+		if err := checkBasicAuth(ctx, storedCredential); err != nil {
 			return nil, status.Error(codes.Unauthenticated, "username or password is invalid")
 		}
 
@@ -28,7 +23,34 @@ func BasicAuth(storedCredential string) grpc.UnaryServerInterceptor {
 	}
 }
 
+func BasicAuthStream(storedCredential string) grpc.StreamServerInterceptor {
+	return func(srv any, ss grpc.ServerStream, _ *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+		if err := checkBasicAuth(ss.Context(), storedCredential); err != nil {
+			return status.Error(codes.Unauthenticated, "username or password is invalid")
+		}
+
+		return handler(srv, ss)
+	}
+}
+
+func checkBasicAuth(ctx context.Context, storedCredential string) error {
+	user, password, err := htpasswd.ExtractBasicAuthFromContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	return htpasswd.CompareBasicAuth(storedCredential, user, password)
+}
+
 func (s *Server) Recovery() grpc.UnaryServerInterceptor {
+	return rec.UnaryServerInterceptor(s.recoveryOptions()...)
+}
+
+func (s *Server) RecoveryStream() grpc.StreamServerInterceptor {
+	return rec.StreamServerInterceptor(s.recoveryOptions()...)
+}
+
+func (s *Server) recoveryOptions() []rec.Option {
 	recovery := func(p any) (err error) {
 		err = status.Errorf(codes.Unknown, "%v", p)
 		stackTrace := debug.Stack()
@@ -40,9 +62,8 @@ func (s *Server) Recovery() grpc.UnaryServerInterceptor {
 
 		return err
 	}
-	opts := []rec.Option{
+
+	return []rec.Option{
 		rec.WithRecoveryHandler(recovery),
 	}
-
-	return rec.UnaryServerInterceptor(opts...)
 }

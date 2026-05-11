@@ -16,7 +16,10 @@ import (
 	"github.com/pactus-project/pactus/www/zmq"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
+	"google.golang.org/grpc/status"
 	"google.golang.org/grpc/test/bufconn"
 )
 
@@ -143,4 +146,44 @@ func (td *testData) utilClient(t *testing.T) pactus.UtilsClient {
 	t.Helper()
 
 	return pactus.NewUtilsClient(td.newClient(t))
+}
+
+func (td *testData) healthClient(t *testing.T) healthpb.HealthClient {
+	t.Helper()
+
+	return healthpb.NewHealthClient(td.newClient(t))
+}
+
+func TestHealthCheck(t *testing.T) {
+	td := setup(t, nil)
+	client := td.healthClient(t)
+
+	serviceNames := []string{
+		"",
+		pactus.Blockchain_ServiceDesc.ServiceName,
+		pactus.Transaction_ServiceDesc.ServiceName,
+		pactus.Network_ServiceDesc.ServiceName,
+		pactus.Utils_ServiceDesc.ServiceName,
+	}
+
+	for _, serviceName := range serviceNames {
+		resp, err := client.Check(t.Context(), &healthpb.HealthCheckRequest{
+			Service: serviceName,
+		})
+		require.NoError(t, err)
+		require.Equal(t, healthpb.HealthCheckResponse_SERVING, resp.GetStatus())
+	}
+}
+
+func TestHealthWatchRequiresBasicAuth(t *testing.T) {
+	conf := testConfig()
+	conf.BasicAuth = "user:$2y$10$5Kjd955BDWLouqckHzBjKuCF6hFOUD61lhm8QpjDVHTUwMIrYUdq2"
+	td := setup(t, conf)
+
+	stream, err := td.healthClient(t).Watch(t.Context(), &healthpb.HealthCheckRequest{})
+	require.NoError(t, err)
+
+	_, err = stream.Recv()
+	require.Error(t, err)
+	require.Equal(t, codes.Unauthenticated, status.Code(err))
 }
