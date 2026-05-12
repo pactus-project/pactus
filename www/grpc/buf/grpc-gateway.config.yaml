@@ -80,8 +80,14 @@ http:
     - selector: pactus.Network.GetNetworkInfo
       get: "/pactus/network/get_network_info"
 
+    - selector: pactus.Network.ListPeers
+      get: "/pactus/network/list_peers"
+
     - selector: pactus.Network.GetNodeInfo
       get: "/pactus/network/get_node_info"
+
+    - selector: pactus.Network.Ping
+      get: "/pactus/network/ping"
 
     # Wallet APIs
     - selector: pactus.Wallet.GetValidatorAddress
@@ -159,6 +165,3 @@ http:
     - selector: pactus.Utils.SignatureAggregation
       post: "/pactus/Utils/signature_aggregation"
       body: "*"
-
-    - selector: pactus.Network.Ping
-      get: "/pactus/network/ping"

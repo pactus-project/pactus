@@ -19,7 +19,7 @@ service Network {
   // GetNetworkInfo retrieves information about the overall network.
   rpc GetNetworkInfo(GetNetworkInfoRequest) returns (GetNetworkInfoResponse);
 
-  // ListPeers lists all peers in the network.
+  // ListPeers lists all connected peers to this node.
   rpc ListPeers(ListPeersRequest) returns (ListPeersResponse);
 
   // GetNodeInfo retrieves information about a specific node in the network.

@@ -3212,7 +3212,7 @@ Parameters has no fields.
 
 #### pactus.network.list_peers <span id="pactus.network.list_peers" class="rpc-badge"></span>
 
-<p>ListPeers lists all peers in the network.</p>
+<p>ListPeers lists all connected peers to this node.</p>
 
 <h4>Parameters</h4>
 <table class="table table-bordered table-responsive table-sm">

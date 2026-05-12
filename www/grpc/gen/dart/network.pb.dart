@@ -1226,7 +1226,7 @@ class NetworkApi {
       _client.invoke<GetNetworkInfoResponse>(
           ctx, 'Network', 'GetNetworkInfo', request, GetNetworkInfoResponse());
 
-  /// ListPeers lists all peers in the network.
+  /// ListPeers lists all connected peers to this node.
   $async.Future<ListPeersResponse> listPeers(
           $pb.ClientContext? ctx, ListPeersRequest request) =>
       _client.invoke<ListPeersResponse>(
