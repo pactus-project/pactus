@@ -1,6 +1,7 @@
 package ed25519_test
 
 import (
+	"encoding/hex"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -10,21 +11,31 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestSigning(t *testing.T) {
-	msg := []byte("pactus")
-	prv, _ := ed25519.PrivateKeyFromString(
-		"SECRET1R3K02X58V70X9RFVWN5QUN0CKHKYXWD7R40G3HX47L8W9HXJQHMASKGEPH2")
-	pub, _ := ed25519.PublicKeyFromString(
-		"public1rd5p573yq3j5wkvnasslqa7ne5vw87qcj5a0wlwxcj2t2xlaca9lstzm8u5")
-	sig, _ := ed25519.SignatureFromString(
-		"d444363761156890e781e73ae545951826d640a9d5ba44effa67fd5a77fad92a" +
-			"fb3d46f82a86c7d283d7713e72bbd8ed39e7ac505d996f4f214e39b0a3b95f0a")
-	addr, _ := crypto.AddressFromString("pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3")
+func TestEncoding(t *testing.T) {
+	prvData, _ := hex.DecodeString("000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f")
+	pubData, _ := hex.DecodeString("03a107bff3ce10be1d70dd18e74bc09967e4d6309ba50d5f1ddc8664125531b8")
+	addrData, _ := hex.DecodeString("0396a882c41ef85a07c75a6416a57fcce95aad4a3f")
 
-	sig1 := prv.Sign(msg)
-	assert.Equal(t, sig.Bytes(), sig1.Bytes())
+	prvStr := "SECRET1RQQQSYQCYQ5RQWZQFPG9SCRGWPUGPZYSNZS23V9CCRYDPK8QARC0SW5D8X2"
+	pubStr := "public1rqwss00lnecgtu8tsm5vwwj7qn9n7f43snwjs6hcamjrxgyj4xxuq5agu5g"
+	addrStr := "pc1rj65g93q7lpdq0366vst22l7va9d26j3l2vr0em"
+
+	prv, _ := ed25519.PrivateKeyFromString(prvStr)
+	pub, _ := ed25519.PublicKeyFromString(pubStr)
+	addr, _ := crypto.AddressFromString(addrStr)
+
+	assert.Equal(t, prvData, prv.Bytes())
+	assert.Equal(t, pubData, pub.Bytes())
+	assert.Equal(t, addrData, addr.Bytes())
+
+	msg := []byte("pactus")
+	sig, _ := ed25519.SignatureFromString(
+		"1fc2c800499342d08242db9c3eb654027cb7b821e6af9ede56dfdb67e824f15b" +
+			"ddb419d2db3fd5aaf3ef1a9ebb9a9deb749380f0d6a110cbe95319fe9f794305")
+
 	require.NoError(t, pub.Verify(msg, sig))
-	assert.Equal(t, pub, prv.PublicKey())
+	assert.Equal(t, sig.Bytes(), prv.Sign(msg).Bytes())
+	assert.True(t, pub.EqualsTo(prv.PublicKey()))
 	assert.Equal(t, addr, pub.AccountAddress())
 }
 

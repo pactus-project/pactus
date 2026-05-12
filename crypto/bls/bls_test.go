@@ -12,22 +12,37 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestSigning(t *testing.T) {
-	msg := []byte("pactus")
-	prv, _ := bls.PrivateKeyFromString(
-		"SECRET1P9QAUKRJAU7SQ7AT6ZZ6HXHYLMKPQSQYTGDL2VMH5Q5N0P5Q2QW0QL45AY3")
-	pub, _ := bls.PublicKeyFromString(
-		"public1p5dwsgfwmacjpuhaxhy0522j87qc5390v56ndh92f7flxge7vt3zfuxlvuwpnk7tdeed4s4l2r5nj" +
-			"5zuyjfh0uzjmvrauf4t5xfvff5cpljvpqqpk7pzhv0hxfhf9gt5896vnllsf89ux8kc7anqlu7nxvvxcclw7")
-	sig, _ := bls.SignatureFromString(
-		"8c3ba687e8e4c016293a2c369493faa565065987544a59baba7aadae3f17ada07883552b6c7d1d7eb49f46fbdf0975c4")
-	accAddr, _ := crypto.AddressFromString("pc1z0m0vw8sjfgv7f2zgq2hfxutg8rwn7gpffhe8tf")
-	valAddr, _ := crypto.AddressFromString("pc1p0m0vw8sjfgv7f2zgq2hfxutg8rwn7gpf5uf6u5")
+func TestEncoding(t *testing.T) {
+	prvData, _ := hex.DecodeString("000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f")
+	pubData, _ := hex.DecodeString(
+		"a7290fc800d2d14f2dc5e5cb416bebf3267dfed1c6c3a79c6edc4ebd1e657d956daa06a2fcaafd42c94b65b32d4d43ea" +
+			"1368f861006829c475b7d54763a502dfd717e9d51c5cc7deae2981e56090a821c9c5bcafc129b8599203ab99031f4ce7")
+	valAddrData, _ := hex.DecodeString("01c40b914373d4fc9c1e4611ad0acd5f23abf58a0d")
+	accAddrData, _ := hex.DecodeString("02c40b914373d4fc9c1e4611ad0acd5f23abf58a0d")
 
-	sig1 := prv.Sign(msg)
-	assert.Equal(t, sig.Bytes(), sig1.Bytes())
+	prvStr := "SECRET1PQQQSYQCYQ5RQWZQFPG9SCRGWPUGPZYSNZS23V9CCRYDPK8QARC0SEZYD4L"
+	pubStr := "public1p5u5sljqq6tg57tw9uh95z6lt7vn8mlk3cmp608rwm38t68n90k2km2sx5t724l2ze99ktvedf4p7" +
+		"5ymglpssq6pfc36m0428vwjs9h7hzl5a28zucl02u2vpu4sfp2ppe8zmet7p9xu9nysr4wvsx86vuujrva2z"
+	valAddrStr := "pc1pcs9ezsmn6n7fc8jxzxks4n2lyw4ltzsdc9v8qn"
+	accAddrStr := "pc1zcs9ezsmn6n7fc8jxzxks4n2lyw4ltzsd9wu6hw"
+
+	prv, _ := bls.PrivateKeyFromString(prvStr)
+	pub, _ := bls.PublicKeyFromString(pubStr)
+	valAddr, _ := crypto.AddressFromString(valAddrStr)
+	accAddr, _ := crypto.AddressFromString(accAddrStr)
+
+	assert.Equal(t, prvData, prv.Bytes())
+	assert.Equal(t, pubData, pub.Bytes())
+	assert.Equal(t, valAddrData, valAddr.Bytes())
+	assert.Equal(t, accAddrData, accAddr.Bytes())
+
+	msg := []byte("pactus")
+	sig, _ := bls.SignatureFromString(
+		"8bdda74336efdf43b428a3811d3d6867a19e20889c91261b02a6b950b130f5bb22621394667c27660bfed2a8719d9c52")
+
 	require.NoError(t, pub.Verify(msg, sig))
-	assert.Equal(t, pub, prv.PublicKey())
+	assert.Equal(t, sig.Bytes(), prv.Sign(msg).Bytes())
+	assert.True(t, pub.EqualsTo(prv.PublicKey()))
 	assert.Equal(t, valAddr, pub.ValidatorAddress())
 	assert.Equal(t, accAddr, pub.AccountAddress())
 }
