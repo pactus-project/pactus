@@ -107,7 +107,7 @@ getNetworkInfo: {
     responseSerialize: serialize_pactus_GetNetworkInfoResponse,
     responseDeserialize: deserialize_pactus_GetNetworkInfoResponse,
   },
-  // ListPeers lists all peers in the network.
+  // ListPeers lists all connected peers to this node.
 listPeers: {
     path: '/pactus.Network/ListPeers',
     requestStream: false,

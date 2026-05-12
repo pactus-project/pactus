@@ -74,7 +74,7 @@ func _NetworkListPeersCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("ListPeers"),
 		Short: "ListPeers RPC client",
-		Long:  "ListPeers lists all peers in the network.",
+		Long:  "ListPeers lists all connected peers to this node.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Network"); err != nil {
