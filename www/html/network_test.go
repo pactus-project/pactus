@@ -1,4 +1,4 @@
-package html
+package html_test
 
 import (
 	"net/http"
@@ -21,8 +21,6 @@ func TestNodeInfo(t *testing.T) {
 	assert.Equal(t, 200, w.Code)
 	assert.Contains(t, w.Body.String(), version.NodeAgent.String())
 	assert.Contains(t, w.Body.String(), "zmq_topic")
-
-	td.StopServers()
 }
 
 func TestNetworkInfo(t *testing.T) {
@@ -38,8 +36,6 @@ func TestNetworkInfo(t *testing.T) {
 	assert.Contains(t, w.Body.String(), "Network Name")
 	assert.Contains(t, w.Body.String(), "Connected Peers Count")
 	assert.Contains(t, w.Body.String(), "/network/peers")
-
-	td.StopServers()
 }
 
 func TestPeerList(t *testing.T) {
@@ -53,6 +49,4 @@ func TestPeerList(t *testing.T) {
 
 	assert.Equal(t, 200, w.Code)
 	assert.Contains(t, w.Body.String(), "Peers")
-
-	td.StopServers()
 }

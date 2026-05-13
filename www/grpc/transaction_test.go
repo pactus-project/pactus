@@ -1,4 +1,4 @@
-package grpc
+package grpc_test
 
 import (
 	"encoding/hex"
@@ -25,7 +25,7 @@ func TestGetTransaction(t *testing.T) {
 		testsuite.TransactionWithValidatorPublicKey(valPubKey))
 	testBlock, testCert := td.GenerateTestBlock(blockHeight,
 		testsuite.BlockWithTransactions([]*tx.Tx{textTrx}))
-	td.mockState.TestStore.SaveBlock(testBlock, testCert)
+	td.server.MockState.TestStore.SaveBlock(testBlock, testCert)
 
 	t.Run("Should return transaction (verbosity: 0)", func(t *testing.T) {
 		res, err := client.GetTransaction(t.Context(),
@@ -104,7 +104,7 @@ func TestSendRawTransaction(t *testing.T) {
 	trx := td.GenerateTestTransferTx()
 	data, _ := trx.Bytes()
 	t.Run("Should pass", func(t *testing.T) {
-		td.mockState.MockTxPool.EXPECT().AppendTxAndBroadcast(gomock.Any()).Return(nil).Times(1)
+		td.server.MockState.MockTxPool.EXPECT().AppendTxAndBroadcast(gomock.Any()).Return(nil).Times(1)
 
 		res, err := client.BroadcastTransaction(t.Context(),
 			&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
@@ -113,7 +113,7 @@ func TestSendRawTransaction(t *testing.T) {
 	})
 
 	t.Run("Should fail and not broadcast", func(t *testing.T) {
-		td.mockState.MockTxPool.EXPECT().AppendTxAndBroadcast(gomock.Any()).Return(errors.New("some error")).Times(1)
+		td.server.MockState.MockTxPool.EXPECT().AppendTxAndBroadcast(gomock.Any()).Return(errors.New("some error")).Times(1)
 
 		res, err := client.BroadcastTransaction(t.Context(),
 			&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
@@ -126,7 +126,7 @@ func TestGetRawTransaction(t *testing.T) {
 	td := setup(t, nil)
 	client := td.transactionClient(t)
 
-	td.mockState.MockTxPool.EXPECT().EstimatedFee(gomock.Any(), gomock.Any()).Return(td.RandFee()).AnyTimes()
+	td.server.MockState.MockTxPool.EXPECT().EstimatedFee(gomock.Any(), gomock.Any()).Return(td.RandFee()).AnyTimes()
 
 	t.Run("Transfer", func(t *testing.T) {
 		amt := td.RandAmount()
@@ -142,8 +142,8 @@ func TestGetRawTransaction(t *testing.T) {
 
 		decodedTrx, err := tx.FromString(res.RawTransaction)
 		require.NoError(t, err)
-		expectedLockTime := td.mockState.LastBlockHeight()
-		expectedFee := td.mockState.CalculateFee(amt, payload.TypeTransfer)
+		expectedLockTime := td.server.MockState.LastBlockHeight()
+		expectedFee := td.server.MockState.CalculateFee(amt, payload.TypeTransfer)
 
 		assert.Equal(t, amt, decodedTrx.Payload().Value())
 		assert.Equal(t, expectedLockTime, decodedTrx.LockTime())
@@ -176,8 +176,8 @@ func TestGetRawTransaction(t *testing.T) {
 
 		decodedTrx, err := tx.FromString(res.RawTransaction)
 		require.NoError(t, err)
-		expectedLockTime := td.mockState.LastBlockHeight()
-		expectedFee := td.mockState.CalculateFee(totalAmt, payload.TypeBatchTransfer)
+		expectedLockTime := td.server.MockState.LastBlockHeight()
+		expectedFee := td.server.MockState.CalculateFee(totalAmt, payload.TypeBatchTransfer)
 
 		assert.Equal(t, totalAmt, decodedTrx.Payload().Value())
 		assert.Equal(t, expectedLockTime, decodedTrx.LockTime())
@@ -201,8 +201,8 @@ func TestGetRawTransaction(t *testing.T) {
 
 		decodedTrx, err := tx.FromString(res.RawTransaction)
 		require.NoError(t, err)
-		expectedLockTime := td.mockState.LastBlockHeight()
-		expectedFee := td.mockState.CalculateFee(amt, payload.TypeBond)
+		expectedLockTime := td.server.MockState.LastBlockHeight()
+		expectedFee := td.server.MockState.CalculateFee(amt, payload.TypeBond)
 
 		assert.Equal(t, amt, decodedTrx.Payload().Value())
 		assert.Equal(t, expectedLockTime, decodedTrx.LockTime())
@@ -224,8 +224,8 @@ func TestGetRawTransaction(t *testing.T) {
 
 		decodedTrx, err := tx.FromString(res.RawTransaction)
 		require.NoError(t, err)
-		expectedLockTime := td.mockState.LastBlockHeight()
-		expectedFee := td.mockState.CalculateFee(amt, payload.TypeBond)
+		expectedLockTime := td.server.MockState.LastBlockHeight()
+		expectedFee := td.server.MockState.CalculateFee(amt, payload.TypeBond)
 
 		assert.Equal(t, amt, decodedTrx.Payload().Value())
 		assert.Equal(t, expectedLockTime, decodedTrx.LockTime())
@@ -243,7 +243,7 @@ func TestGetRawTransaction(t *testing.T) {
 
 		decodedTrx, err := tx.FromString(res.RawTransaction)
 		require.NoError(t, err)
-		expectedLockTime := td.mockState.LastBlockHeight()
+		expectedLockTime := td.server.MockState.LastBlockHeight()
 
 		assert.Zero(t, decodedTrx.Payload().Value())
 		assert.Equal(t, expectedLockTime, decodedTrx.LockTime())
@@ -265,8 +265,8 @@ func TestGetRawTransaction(t *testing.T) {
 
 		decodedTrx, err := tx.FromString(res.RawTransaction)
 		require.NoError(t, err)
-		expectedLockTime := td.mockState.LastBlockHeight()
-		expectedFee := td.mockState.CalculateFee(amt, payload.TypeWithdraw)
+		expectedLockTime := td.server.MockState.LastBlockHeight()
+		expectedFee := td.server.MockState.CalculateFee(amt, payload.TypeWithdraw)
 
 		assert.Equal(t, amt, decodedTrx.Payload().Value())
 		assert.Equal(t, expectedLockTime, decodedTrx.LockTime())
@@ -279,7 +279,7 @@ func TestCalculateFee(t *testing.T) {
 	client := td.transactionClient(t)
 
 	expectedFee := td.RandFee()
-	td.mockState.MockTxPool.EXPECT().EstimatedFee(gomock.Any(), gomock.Any()).Return(expectedFee).AnyTimes()
+	td.server.MockState.MockTxPool.EXPECT().EstimatedFee(gomock.Any(), gomock.Any()).Return(expectedFee).AnyTimes()
 
 	t.Run("Not fixed amount", func(t *testing.T) {
 		amt := td.RandAmount()

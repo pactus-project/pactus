@@ -1,4 +1,4 @@
-package html
+package html_test
 
 import (
 	"fmt"
@@ -15,7 +15,7 @@ import (
 func TestBlockchainInfo(t *testing.T) {
 	td := setup(t)
 
-	td.mockState.CommitTestBlocks(10)
+	td.gRPCServer.MockState.CommitTestBlocks(10)
 
 	w := httptest.NewRecorder()
 	r := new(http.Request)
@@ -24,15 +24,13 @@ func TestBlockchainInfo(t *testing.T) {
 
 	assert.Equal(t, 200, w.Code)
 	assert.Contains(t, w.Body.String(), "10")
-
-	td.StopServers()
 }
 
 func TestBlock(t *testing.T) {
 	td := setup(t)
 
 	height := td.RandHeight()
-	blk := td.mockState.TestStore.AddTestBlock(height)
+	blk := td.gRPCServer.MockState.TestStore.AddTestBlock(height)
 
 	t.Run("Shall return a block", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -99,14 +97,12 @@ func TestBlock(t *testing.T) {
 
 		assert.Equal(t, 400, w.Code)
 	})
-
-	td.StopServers()
 }
 
 func TestAccount(t *testing.T) {
 	td := setup(t)
 
-	addr, acc := td.mockState.TestStore.AddTestAccount()
+	addr, acc := td.gRPCServer.MockState.TestStore.AddTestAccount()
 
 	t.Run("Shall return an account", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -156,14 +152,12 @@ func TestAccount(t *testing.T) {
 		assert.Equal(t, 400, w.Code)
 		fmt.Println(w.Body)
 	})
-
-	td.StopServers()
 }
 
 func TestValidator(t *testing.T) {
 	td := setup(t)
 
-	val := td.mockState.TestStore.AddTestValidator()
+	val := td.gRPCServer.MockState.TestStore.AddTestValidator()
 
 	t.Run("Shall return an error, non exist", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -214,14 +208,12 @@ func TestValidator(t *testing.T) {
 		assert.Contains(t, w.Body.String(), "0.987")
 		fmt.Println(w.Body)
 	})
-
-	td.StopServers()
 }
 
 func TestValidatorByNumber(t *testing.T) {
 	td := setup(t)
 
-	val := td.mockState.TestStore.AddTestValidator()
+	val := td.gRPCServer.MockState.TestStore.AddTestValidator()
 
 	t.Run("Shall return a validator", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -275,8 +267,6 @@ func TestValidatorByNumber(t *testing.T) {
 		assert.Equal(t, 400, w.Code)
 		fmt.Println(w.Body)
 	})
-
-	td.StopServers()
 }
 
 func TestConsensusInfo(t *testing.T) {
@@ -288,10 +278,10 @@ func TestConsensusInfo(t *testing.T) {
 	vote2, _ := td.GenerateTestPrecommitVote(height, round)
 	prop := td.GenerateTestProposal(height, round)
 
-	td.mockCons.EXPECT().HeightRound().Return(height, round).Times(1)
-	td.mockCons.EXPECT().AllVotes().Return([]*vote.Vote{vote1, vote2}).Times(1)
-	td.mockCons.EXPECT().IsActive().Return(true).Times(1)
-	td.mockConsMgr.EXPECT().Proposal().Return(prop).Times(1)
+	td.gRPCServer.MockCons.EXPECT().HeightRound().Return(height, round).Times(1)
+	td.gRPCServer.MockCons.EXPECT().AllVotes().Return([]*vote.Vote{vote1, vote2}).Times(1)
+	td.gRPCServer.MockCons.EXPECT().IsActive().Return(true).Times(1)
+	td.gRPCServer.MockConsMgr.EXPECT().Proposal().Return(prop).Times(1)
 
 	w := httptest.NewRecorder()
 	r := new(http.Request)
@@ -303,6 +293,4 @@ func TestConsensusInfo(t *testing.T) {
 	assert.Contains(t, w.Body.String(), vote1.Signer().String())
 	assert.Contains(t, w.Body.String(), vote2.Signer().String())
 	assert.Contains(t, w.Body.String(), prop.Signature().String())
-
-	td.StopServers()
 }

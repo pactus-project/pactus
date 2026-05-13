@@ -1,4 +1,4 @@
-package html
+package html_test
 
 import (
 	"encoding/base64"
@@ -7,12 +7,13 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/pactus-project/pactus/www/html"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/metadata"
 )
 
 func TestBasicAuthMiddleware(t *testing.T) {
-	handler := basicAuth(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+	handler := html.BasicAuth(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		_, err := w.Write([]byte("authorized"))
 		assert.NoError(t, err)
@@ -44,7 +45,7 @@ func TestBasicAuthMiddleware(t *testing.T) {
 		req.SetBasicAuth("username", "password")
 		rec := httptest.NewRecorder()
 
-		checkMetadataHandler := basicAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		checkMetadataHandler := html.BasicAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			md, ok := metadata.FromOutgoingContext(r.Context())
 			assert.True(t, ok, "No metadata in context")
 

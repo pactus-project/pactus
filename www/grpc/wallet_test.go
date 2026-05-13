@@ -1,4 +1,4 @@
-package grpc
+package grpc_test
 
 import (
 	"errors"
@@ -50,7 +50,7 @@ func TestCreateWallet(t *testing.T) {
 	})
 
 	t.Run("Create wallet failed", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			CreateWallet("test", "password").
 			Return("", errors.New("error on creating wallet"))
 
@@ -64,7 +64,7 @@ func TestCreateWallet(t *testing.T) {
 	})
 
 	t.Run("Create wallet successfully", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			CreateWallet("test", "password").
 			Return("mnemonic", nil)
 
@@ -107,7 +107,7 @@ func TestRestoreWallet(t *testing.T) {
 		mnemonic, err := wallet.GenerateMnemonic(128)
 		require.NoError(t, err)
 
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			RestoreWallet("test", mnemonic, "password").
 			Return(errors.New("error on restoring wallet"))
 
@@ -125,7 +125,7 @@ func TestRestoreWallet(t *testing.T) {
 		mnemonic, err := wallet.GenerateMnemonic(128)
 		require.NoError(t, err)
 
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			RestoreWallet("test", mnemonic, "password").
 			Return(nil)
 
@@ -149,7 +149,7 @@ func TestGetTotalBalance(t *testing.T) {
 	client := td.walletClient(t)
 
 	t.Run("Error on getting total balance", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			TotalBalance("test").
 			Return(amount.Amount(0), errors.New("error on getting total balance"))
 
@@ -162,7 +162,7 @@ func TestGetTotalBalance(t *testing.T) {
 	})
 
 	t.Run("Get total balance successfully", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			TotalBalance("test").
 			Return(amount.Amount(123), nil)
 
@@ -184,7 +184,7 @@ func TestGetTotalStake(t *testing.T) {
 	client := td.walletClient(t)
 
 	t.Run("Error on getting total stake", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			TotalStake("test").
 			Return(amount.Amount(0), errors.New("error on getting total stake"))
 
@@ -197,7 +197,7 @@ func TestGetTotalStake(t *testing.T) {
 	})
 
 	t.Run("Get total stake successfully", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			TotalStake("test").
 			Return(amount.Amount(123), nil)
 
@@ -230,7 +230,7 @@ func TestSignRawTransaction(t *testing.T) {
 	})
 
 	t.Run("Error on signing raw transaction", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			SignRawTransaction("test", "", gomock.Any()).
 			Return(nil, nil, errors.New("error on signing raw transaction"))
 
@@ -244,7 +244,7 @@ func TestSignRawTransaction(t *testing.T) {
 	})
 
 	t.Run("Sign raw transaction successfully", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			SignRawTransaction("test", "", gomock.Any()).
 			Return(nil, nil, nil)
 
@@ -266,7 +266,7 @@ func TestGetValidatorAddress(t *testing.T) {
 	client := td.walletClient(t)
 
 	t.Run("Error on getting validator address", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			GetValidatorAddress("pubKey").
 			Return("", errors.New("error on getting validator address"))
 
@@ -279,7 +279,7 @@ func TestGetValidatorAddress(t *testing.T) {
 	})
 
 	t.Run("Get validator address successfully", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			GetValidatorAddress("pubKey").
 			Return("valAddr", nil)
 
@@ -301,7 +301,7 @@ func TestSignMessage(t *testing.T) {
 	client := td.walletClient(t)
 
 	t.Run("Error on signing message", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			SignMessage("test", "password", "addr", "hello").
 			Return("", errors.New("error on signing message"))
 
@@ -317,7 +317,7 @@ func TestSignMessage(t *testing.T) {
 	})
 
 	t.Run("Sign message successfully", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			SignMessage("test", "password", "addr", "hello").
 			Return("signature", nil)
 
@@ -342,7 +342,7 @@ func TestNewAddress(t *testing.T) {
 	client := td.walletClient(t)
 
 	t.Run("Error on getting new address", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			NewAddress("test", crypto.AddressTypeBLSAccount, "label", gomock.Any()).
 			Return(nil, errors.New("error on getting new address"))
 
@@ -358,7 +358,7 @@ func TestNewAddress(t *testing.T) {
 	})
 
 	t.Run("Get new address successfully", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			NewAddress("test", crypto.AddressTypeBLSAccount, "label", gomock.Any()).
 			Return(&types.AddressInfo{
 				Address:   "addr",
@@ -393,7 +393,7 @@ func TestAddressInfo(t *testing.T) {
 	client := td.walletClient(t)
 
 	t.Run("Error on getting address info", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			AddressInfo("test", "addr").
 			Return(nil, errors.New("error on getting address info"))
 
@@ -407,7 +407,7 @@ func TestAddressInfo(t *testing.T) {
 	})
 
 	t.Run("Get address info successfully", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			AddressInfo("test", "addr").
 			Return(&types.AddressInfo{
 				Address:   "addr",
@@ -439,7 +439,7 @@ func TestSetAddressLabel(t *testing.T) {
 	client := td.walletClient(t)
 
 	t.Run("Error on setting address label", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			SetAddressLabel("test", "addr", "label").
 			Return(errors.New("error on setting address label"))
 
@@ -455,7 +455,7 @@ func TestSetAddressLabel(t *testing.T) {
 	})
 
 	t.Run("Set address label successfully", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			SetAddressLabel("test", "addr", "label").
 			Return(nil)
 
@@ -482,7 +482,7 @@ func TestListWallet(t *testing.T) {
 	client := td.walletClient(t)
 
 	t.Run("Error on listing wallets", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			ListWallets().
 			Return(nil, errors.New("error on listing wallets"))
 
@@ -492,7 +492,7 @@ func TestListWallet(t *testing.T) {
 	})
 
 	t.Run("List wallets successfully", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			ListWallets().
 			Return([]string{"w1", "w2"}, nil)
 
@@ -511,7 +511,7 @@ func TestGetWalletInfo(t *testing.T) {
 	client := td.walletClient(t)
 
 	t.Run("Error on getting wallet info", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			WalletInfo("test").
 			Return(nil, errors.New("error on getting wallet info"))
 
@@ -523,7 +523,7 @@ func TestGetWalletInfo(t *testing.T) {
 
 	t.Run("Get wallet info successfully", func(t *testing.T) {
 		createdAt := time.Unix(123, 0).UTC()
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			WalletInfo("test").
 			Return(&types.WalletInfo{
 				Version:    7,
@@ -556,7 +556,7 @@ func TestListAddress(t *testing.T) {
 	client := td.walletClient(t)
 
 	t.Run("Error on listing addresses", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			ListAddresses("test", gomock.Any()).
 			Return(nil, errors.New("error on listing addresses"))
 
@@ -567,7 +567,7 @@ func TestListAddress(t *testing.T) {
 	})
 
 	t.Run("List addresses successfully", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
+		td.server.MockWalletMgr.EXPECT().
 			ListAddresses("test", gomock.Any()).
 			Return([]types.AddressInfo{
 				{

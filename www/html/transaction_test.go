@@ -1,4 +1,4 @@
-package html
+package html_test
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ import (
 func TestTransaction(t *testing.T) {
 	td := setup(t)
 
-	testBlock := td.mockState.TestStore.AddTestBlock(1)
+	testBlock := td.gRPCServer.MockState.TestStore.AddTestBlock(1)
 	testTx := testBlock.Transactions()[1]
 
 	t.Run("Shall return a transaction", func(t *testing.T) {
@@ -36,6 +36,4 @@ func TestTransaction(t *testing.T) {
 		assert.Equal(t, 400, w.Code)
 		fmt.Println(w.Body)
 	})
-
-	td.StopServers()
 }
