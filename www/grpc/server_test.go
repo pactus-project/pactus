@@ -1,19 +1,14 @@
-package grpc
+package grpc_test
 
 import (
 	"context"
 	"net"
 	"testing"
 
-	consmgr "github.com/pactus-project/pactus/consensus/manager"
-	"github.com/pactus-project/pactus/network"
-	"github.com/pactus-project/pactus/state"
-	"github.com/pactus-project/pactus/sync"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
-	wltmgr "github.com/pactus-project/pactus/wallet/manager"
+	pactusgrpc "github.com/pactus-project/pactus/www/grpc"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
-	"github.com/pactus-project/pactus/www/zmq"
+	"github.com/pactus-project/pactus/www/grpc/mock"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -23,22 +18,18 @@ import (
 type testData struct {
 	*testsuite.TestSuite
 
-	mockState     *state.MockState
-	mockSync      *sync.MockSync
-	mockCons      *consmgr.MockReader
-	mockConsMgr   *consmgr.MockManagerReader
-	mockWalletMgr *wltmgr.MockIManager
-	listener      *bufconn.Listener
-	server        *Server
+	listener *bufconn.Listener
+	server   *mock.MockGRPCServer
 }
 
-func testConfig() *Config {
-	conf := DefaultConfig()
+func testConfig() *pactusgrpc.Config {
+	conf := pactusgrpc.DefaultConfig()
+	conf.Listen = ""
 
 	return conf
 }
 
-func setup(t *testing.T, conf *Config) *testData {
+func setup(t *testing.T, conf *pactusgrpc.Config) *testData {
 	t.Helper()
 
 	if conf == nil {
@@ -46,53 +37,23 @@ func setup(t *testing.T, conf *Config) *testData {
 	}
 
 	ts := testsuite.NewTestSuite(t)
-
-	// for saving test wallets in temp directory
-	t.Chdir(util.TempDirPath())
+	gRPCServer := mock.SetupServer(t, ts, conf)
 
 	const bufSize = 1024 * 1024
-
 	listener := bufconn.Listen(bufSize)
-	mockState := state.MockingState(ts)
-	mockNet := network.MockingNetwork(ts, ts.RandPeerID())
-	mockSync := sync.MockingSync(ts)
-	mockConsMgr := consmgr.NewMockManagerReader(ts.Ctrl)
-	mockCons := consmgr.NewMockReader(ts.Ctrl)
 
-	pub, _ := ts.RandBLSKeyPair()
-	mockCons.EXPECT().ConsensusKey().Return(pub).AnyTimes()
-
-	mockConsMgr.EXPECT().Instances().Return([]consmgr.Reader{mockCons}).AnyTimes()
-
-	mockState.CommitTestBlocks(10)
-	mockWalletMgr := wltmgr.NewMockIManager(ts.MockingController())
-
-	zmqPublishers := []zmq.Publisher{
-		zmq.MockingPublisher("zmq_address", "zmq_topic", 100),
-	}
-
-	server := NewServer(t.Context(), conf,
-		mockState, mockSync, mockNet, mockConsMgr,
-		mockWalletMgr, zmqPublishers,
-	)
-	err := server.startListening(listener)
+	err := gRPCServer.Server.StartListening(listener)
 	require.NoError(t, err)
 
-	return &testData{
-		TestSuite:     ts,
-		mockState:     mockState,
-		mockSync:      mockSync,
-		mockCons:      mockCons,
-		mockConsMgr:   mockConsMgr,
-		mockWalletMgr: mockWalletMgr,
-		server:        server,
-		listener:      listener,
-	}
-}
+	t.Cleanup(func() {
+		require.NoError(t, listener.Close())
+	})
 
-func (td *testData) StopServer() {
-	td.server.StopServer()
-	_ = td.listener.Close()
+	return &testData{
+		TestSuite: ts,
+		listener:  listener,
+		server:    gRPCServer,
+	}
 }
 
 func (td *testData) bufDialer(context.Context, string) (net.Conn, error) {
@@ -109,7 +70,6 @@ func (td *testData) newClient(t *testing.T) *grpc.ClientConn {
 
 	t.Cleanup(func() {
 		require.NoError(t, conn.Close())
-		td.StopServer()
 	})
 
 	return conn

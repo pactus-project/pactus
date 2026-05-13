@@ -1,10 +1,11 @@
-package grpc
+package grpc_test
 
 import (
 	"context"
 	"encoding/base64"
 	"testing"
 
+	pactusgrpc "github.com/pactus-project/pactus/www/grpc"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -61,7 +62,7 @@ func TestBasicAuth(t *testing.T) {
 				ctx = metadata.NewIncomingContext(ctx, md)
 			}
 
-			interceptor := BasicAuth("user:$2y$10$5Kjd955BDWLouqckHzBjKuCF6hFOUD61lhm8QpjDVHTUwMIrYUdq2")
+			interceptor := pactusgrpc.BasicAuth("user:$2y$10$5Kjd955BDWLouqckHzBjKuCF6hFOUD61lhm8QpjDVHTUwMIrYUdq2")
 
 			_, err := interceptor(ctx, nil, &grpc.UnaryServerInfo{}, mockUnaryHandler)
 
@@ -74,7 +75,7 @@ func TestBasicAuth(t *testing.T) {
 func TestGrpcRecovery(t *testing.T) {
 	s := setup(t, nil)
 
-	interceptor := s.server.Recovery()
+	interceptor := s.server.Server.Recovery()
 
 	_, err := interceptor(t.Context(), nil, &grpc.UnaryServerInfo{}, mockUnaryPanicHandler)
 	assert.Equal(t, codes.Unknown, status.Code(err))

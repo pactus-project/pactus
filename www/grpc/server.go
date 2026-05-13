@@ -63,10 +63,10 @@ func (s *Server) StartServer() error {
 		return err
 	}
 
-	return s.startListening(listener)
+	return s.StartListening(listener)
 }
 
-func (s *Server) startListening(listener net.Listener) error {
+func (s *Server) StartListening(listener net.Listener) error {
 	opts := make([]grpc.UnaryServerInterceptor, 0)
 
 	if s.config.BasicAuth != "" {

@@ -1,4 +1,4 @@
-package grpc
+package grpc_test
 
 import (
 	"encoding/hex"
@@ -17,7 +17,7 @@ func TestGetBlock(t *testing.T) {
 	client := td.blockchainClient(t)
 
 	height := types.Height(100)
-	blk := td.mockState.TestStore.AddTestBlock(height)
+	blk := td.server.MockState.TestStore.AddTestBlock(height)
 	data, _ := blk.Bytes()
 
 	t.Run("Should return nil for non existing block ", func(t *testing.T) {
@@ -100,7 +100,7 @@ func TestGetBlockHash(t *testing.T) {
 	client := td.blockchainClient(t)
 
 	height := td.RandHeight()
-	blk := td.mockState.TestStore.AddTestBlock(height)
+	blk := td.server.MockState.TestStore.AddTestBlock(height)
 
 	t.Run("Should return error for non existing block", func(t *testing.T) {
 		res, err := client.GetBlockHash(t.Context(),
@@ -124,7 +124,7 @@ func TestGetBlockHeight(t *testing.T) {
 	client := td.blockchainClient(t)
 
 	height := td.RandHeight()
-	blk := td.mockState.TestStore.AddTestBlock(height)
+	blk := td.server.MockState.TestStore.AddTestBlock(height)
 
 	t.Run("Should return error for invalid hash", func(t *testing.T) {
 		res, err := client.GetBlockHeight(t.Context(),
@@ -160,7 +160,7 @@ func TestGetBlockchainInfo(t *testing.T) {
 			&pactus.GetBlockchainInfoRequest{})
 
 		require.NoError(t, err)
-		assert.Equal(t, uint32(td.mockState.TestStore.LastHeight), res.LastBlockHeight)
+		assert.Equal(t, uint32(td.server.MockState.TestStore.LastHeight), res.LastBlockHeight)
 		assert.NotEmpty(t, res.LastBlockHash)
 		assert.Zero(t, res.PruningHeight)
 		assert.False(t, res.IsPruned)
@@ -186,7 +186,7 @@ func TestGetAccount(t *testing.T) {
 	td := setup(t, nil)
 	client := td.blockchainClient(t)
 
-	addr, acc := td.mockState.TestStore.AddTestAccount()
+	addr, acc := td.server.MockState.TestStore.AddTestAccount()
 
 	t.Run("Should return error for non-parsable address ", func(t *testing.T) {
 		res, err := client.GetAccount(t.Context(),
@@ -219,7 +219,7 @@ func TestGetValidator(t *testing.T) {
 	td := setup(t, nil)
 	client := td.blockchainClient(t)
 
-	val1 := td.mockState.TestStore.AddTestValidator()
+	val1 := td.server.MockState.TestStore.AddTestValidator()
 
 	t.Run("Should return nil value due to invalid address", func(t *testing.T) {
 		res, err := client.GetValidator(t.Context(),
@@ -252,7 +252,7 @@ func TestGetValidator(t *testing.T) {
 		dlgExpiry := td.RandHeight()
 
 		val1.SetDelegation(dlgOwnerAddr, dlgOwnerShare, dlgExpiry)
-		td.mockState.TestStore.UpdateValidator(val1)
+		td.server.MockState.TestStore.UpdateValidator(val1)
 
 		res, err := client.GetValidator(t.Context(),
 			&pactus.GetValidatorRequest{Address: val1.Address().String()})
@@ -272,7 +272,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 	td := setup(t, nil)
 	client := td.blockchainClient(t)
 
-	val1 := td.mockState.TestStore.AddTestValidator()
+	val1 := td.server.MockState.TestStore.AddTestValidator()
 
 	t.Run("Should return nil value due to invalid number", func(t *testing.T) {
 		res, err := client.GetValidatorByNumber(t.Context(),
@@ -306,8 +306,8 @@ func TestGetValidatorAddresses(t *testing.T) {
 	client := td.blockchainClient(t)
 
 	t.Run("should return list of validator addresses", func(t *testing.T) {
-		td.mockState.TestStore.AddTestValidator()
-		td.mockState.TestStore.AddTestValidator()
+		td.server.MockState.TestStore.AddTestValidator()
+		td.server.MockState.TestStore.AddTestValidator()
 
 		res, err := client.GetValidatorAddresses(t.Context(),
 			&pactus.GetValidatorAddressesRequest{})
@@ -322,7 +322,7 @@ func TestGetPublicKey(t *testing.T) {
 	td := setup(t, nil)
 	client := td.blockchainClient(t)
 
-	val := td.mockState.TestStore.AddTestValidator()
+	val := td.server.MockState.TestStore.AddTestValidator()
 
 	t.Run("Should return error for non-parsable address ", func(t *testing.T) {
 		res, err := client.GetPublicKey(t.Context(),
@@ -361,10 +361,10 @@ func TestConsensusInfo(t *testing.T) {
 		vote2, _ := td.GenerateTestPrecommitVote(height, round)
 		prop := td.GenerateTestProposal(height, round)
 
-		td.mockCons.EXPECT().HeightRound().Return(height, round).Times(1)
-		td.mockCons.EXPECT().AllVotes().Return([]*vote.Vote{vote1, vote2}).Times(1)
-		td.mockCons.EXPECT().IsActive().Return(true).Times(1)
-		td.mockConsMgr.EXPECT().Proposal().Return(prop).Times(1)
+		td.server.MockCons.EXPECT().HeightRound().Return(height, round).Times(1)
+		td.server.MockCons.EXPECT().AllVotes().Return([]*vote.Vote{vote1, vote2}).Times(1)
+		td.server.MockCons.EXPECT().IsActive().Return(true).Times(1)
+		td.server.MockConsMgr.EXPECT().Proposal().Return(prop).Times(1)
 
 		res, err := client.GetConsensusInfo(t.Context(), &pactus.GetConsensusInfoRequest{})
 
@@ -396,7 +396,7 @@ func TestGetTxPoolContent(t *testing.T) {
 	trx6 := td.GenerateTestSortitionTx()
 	trx7 := td.GenerateTestWithdrawTx()
 
-	td.mockState.MockTxPool.EXPECT().AllPendingTxs().Return([]*tx.Tx{
+	td.server.MockState.MockTxPool.EXPECT().AllPendingTxs().Return([]*tx.Tx{
 		trx1, trx2, trx3, trx4, trx5, trx6, trx7,
 	}).AnyTimes()
 

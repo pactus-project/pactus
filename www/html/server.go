@@ -103,7 +103,7 @@ func (s *Server) StartServer(grpcServer string) error {
 	}
 
 	if s.enableAuth {
-		http.Handle("/", handlers.RecoveryHandler()(basicAuth(s.router)))
+		http.Handle("/", handlers.RecoveryHandler()(BasicAuth(s.router)))
 	} else {
 		http.Handle("/", handlers.RecoveryHandler()(s.router))
 	}

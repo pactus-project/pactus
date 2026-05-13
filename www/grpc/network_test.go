@@ -1,4 +1,4 @@
-package grpc
+package grpc_test
 
 import (
 	"testing"
@@ -34,7 +34,7 @@ func TestListPeers(t *testing.T) {
 		assert.NotEmpty(t, peer.PeerId)
 		require.NoError(t, err)
 		pid, _ := lp2ppeer.Decode(peer.PeerId)
-		pp := td.mockSync.PeerSet().GetPeer(pid)
+		pp := td.server.MockSync.PeerSet().GetPeer(pid)
 		assert.Equal(t, peer.Agent, pp.Agent)
 		assert.Equal(t, peer.Moniker, pp.Moniker)
 		assert.Equal(t, types.Height(peer.Height), pp.Height)
@@ -53,7 +53,7 @@ func TestGetNodeInfo(t *testing.T) {
 		&pactus.GetNodeInfoRequest{})
 	require.NoError(t, err)
 	assert.Equal(t, version.NodeAgent.String(), res.Agent)
-	assert.Equal(t, td.mockSync.SelfID().String(), res.PeerId)
+	assert.Equal(t, td.server.MockSync.SelfID().String(), res.PeerId)
 	assert.Equal(t, "test-moniker", res.Moniker)
 	assert.Equal(t, "zmq_address", res.ZmqPublishers[0].Address)
 	assert.Equal(t, "zmq_topic", res.ZmqPublishers[0].Topic)
@@ -61,8 +61,7 @@ func TestGetNodeInfo(t *testing.T) {
 }
 
 func TestPing(t *testing.T) {
-	conf := testConfig()
-	td := setup(t, conf)
+	td := setup(t, nil)
 	client := td.networkClient(t)
 
 	t.Run("Should return empty response for ping", func(t *testing.T) {
