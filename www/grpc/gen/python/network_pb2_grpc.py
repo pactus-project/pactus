@@ -49,7 +49,7 @@ class NetworkServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def ListPeers(self, request, context):
-        """ListPeers lists all peers in the network.
+        """ListPeers lists all connected peers to this node.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')

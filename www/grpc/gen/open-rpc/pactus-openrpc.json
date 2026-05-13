@@ -680,7 +680,7 @@
         }
       },{
       "name": "pactus.network.list_peers",
-      "description": "ListPeers lists all peers in the network.",
+      "description": "ListPeers lists all connected peers to this node.",
       "tags": [{ "name": "network"}],
       "paramStructure": "by-name",
       "params": [{

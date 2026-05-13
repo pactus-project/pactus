@@ -217,7 +217,7 @@ public final class NetworkGrpc {
 
     /**
      * <pre>
-     * ListPeers lists all peers in the network.
+     * ListPeers lists all connected peers to this node.
      * </pre>
      */
     default void listPeers(pactus.NetworkOuterClass.ListPeersRequest request,
@@ -292,7 +292,7 @@ public final class NetworkGrpc {
 
     /**
      * <pre>
-     * ListPeers lists all peers in the network.
+     * ListPeers lists all connected peers to this node.
      * </pre>
      */
     public void listPeers(pactus.NetworkOuterClass.ListPeersRequest request,
@@ -355,7 +355,7 @@ public final class NetworkGrpc {
 
     /**
      * <pre>
-     * ListPeers lists all peers in the network.
+     * ListPeers lists all connected peers to this node.
      * </pre>
      */
     public pactus.NetworkOuterClass.ListPeersResponse listPeers(pactus.NetworkOuterClass.ListPeersRequest request) throws io.grpc.StatusException {
@@ -415,7 +415,7 @@ public final class NetworkGrpc {
 
     /**
      * <pre>
-     * ListPeers lists all peers in the network.
+     * ListPeers lists all connected peers to this node.
      * </pre>
      */
     public pactus.NetworkOuterClass.ListPeersResponse listPeers(pactus.NetworkOuterClass.ListPeersRequest request) {
@@ -476,7 +476,7 @@ public final class NetworkGrpc {
 
     /**
      * <pre>
-     * ListPeers lists all peers in the network.
+     * ListPeers lists all connected peers to this node.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.NetworkOuterClass.ListPeersResponse> listPeers(

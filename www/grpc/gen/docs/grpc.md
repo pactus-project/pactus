@@ -3185,7 +3185,7 @@ Request Message has no fields.
 
 #### ListPeers <span id="pactus.Network.ListPeers" class="rpc-badge"></span>
 
-<p>ListPeers lists all peers in the network.</p>
+<p>ListPeers lists all connected peers to this node.</p>
 
 <h4>ListPeersRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 <table class="table table-bordered table-responsive table-sm">
