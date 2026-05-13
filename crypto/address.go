@@ -13,8 +13,9 @@ import (
 // hrp + `1` + type + data + checksum
 
 const (
-	SignatureTypeBLS     byte = 1
-	SignatureTypeEd25519 byte = 3
+	SignatureTypeBLS       byte = 1
+	SignatureTypeEd25519   byte = 3
+	SignatureTypeSecp256k1 byte = 4
 )
 
 const (
@@ -49,6 +50,7 @@ func AddressFromString(text string) (Address, error) {
 		AddressTypeValidator,
 		AddressTypeBLSAccount,
 		AddressTypeEd25519Account,
+		AddressTypeSecp256k1Account,
 	}
 	if !slices.Contains(validTypes, AddressType(typ)) {
 		return Address{}, InvalidAddressTypeError(typ)
@@ -116,7 +118,8 @@ func (addr Address) Encode(w io.Writer) error {
 		return encoding.WriteElement(w, uint8(0))
 	case AddressTypeValidator,
 		AddressTypeBLSAccount,
-		AddressTypeEd25519Account:
+		AddressTypeEd25519Account,
+		AddressTypeSecp256k1Account:
 		return encoding.WriteElement(w, addr)
 	default:
 		return InvalidAddressTypeError(typ)
@@ -133,7 +136,8 @@ func (addr *Address) Decode(r io.Reader) error {
 		return nil
 	case AddressTypeValidator,
 		AddressTypeBLSAccount,
-		AddressTypeEd25519Account:
+		AddressTypeEd25519Account,
+		AddressTypeSecp256k1Account:
 		return encoding.ReadElement(r, addr[1:])
 	default:
 		return InvalidAddressTypeError(typ)
@@ -147,7 +151,8 @@ func (addr Address) SerializeSize() int {
 		return 1
 	case AddressTypeValidator,
 		AddressTypeBLSAccount,
-		AddressTypeEd25519Account:
+		AddressTypeEd25519Account,
+		AddressTypeSecp256k1Account:
 		return AddressSize
 	default:
 		return 0
@@ -161,7 +166,8 @@ func (addr Address) IsTreasuryAddress() bool {
 func (addr Address) IsAccountAddress() bool {
 	return addr.Type() == AddressTypeTreasury ||
 		addr.Type() == AddressTypeBLSAccount ||
-		addr.Type() == AddressTypeEd25519Account
+		addr.Type() == AddressTypeEd25519Account ||
+		addr.Type() == AddressTypeSecp256k1Account
 }
 
 func (addr Address) IsValidatorAddress() bool {
