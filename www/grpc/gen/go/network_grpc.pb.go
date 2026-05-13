@@ -33,7 +33,7 @@ const (
 type NetworkClient interface {
 	// GetNetworkInfo retrieves information about the overall network.
 	GetNetworkInfo(ctx context.Context, in *GetNetworkInfoRequest, opts ...grpc.CallOption) (*GetNetworkInfoResponse, error)
-	// ListPeers lists all peers in the network.
+	// ListPeers lists all connected peers to this node.
 	ListPeers(ctx context.Context, in *ListPeersRequest, opts ...grpc.CallOption) (*ListPeersResponse, error)
 	// GetNodeInfo retrieves information about a specific node in the network.
 	GetNodeInfo(ctx context.Context, in *GetNodeInfoRequest, opts ...grpc.CallOption) (*GetNodeInfoResponse, error)
@@ -97,7 +97,7 @@ func (c *networkClient) Ping(ctx context.Context, in *PingRequest, opts ...grpc.
 type NetworkServer interface {
 	// GetNetworkInfo retrieves information about the overall network.
 	GetNetworkInfo(context.Context, *GetNetworkInfoRequest) (*GetNetworkInfoResponse, error)
-	// ListPeers lists all peers in the network.
+	// ListPeers lists all connected peers to this node.
 	ListPeers(context.Context, *ListPeersRequest) (*ListPeersResponse, error)
 	// GetNodeInfo retrieves information about a specific node in the network.
 	GetNodeInfo(context.Context, *GetNodeInfoRequest) (*GetNodeInfoResponse, error)
