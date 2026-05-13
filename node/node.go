@@ -33,7 +33,7 @@ type Node struct {
 	ctx           context.Context
 	genesisDoc    *genesis.Genesis
 	config        *config.Config
-	state         state.Facade
+	state         state.State
 	store         store.Store
 	txPool        txpool.TxPool
 	consV1Mgr     consmgr.Manager // Deprecated:: replaced by new consensus algorithm
@@ -235,7 +235,7 @@ func (n *Node) Sync() sync.Synchronizer {
 	return n.sync
 }
 
-func (n *Node) State() state.Facade {
+func (n *Node) State() state.State {
 	return n.state
 }
 

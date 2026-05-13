@@ -39,7 +39,7 @@ type consensusV2 struct {
 	round       types.Round
 	valKey      *bls.ValidatorKey
 	rewardAddr  crypto.Address
-	bcState     state.Facade // Blockchain state
+	bcState     state.State // Blockchain state
 	broadcaster broadcaster
 	mediator    mediator
 	active      bool
@@ -62,7 +62,7 @@ type consensusV2 struct {
 func NewConsensus(
 	ctx context.Context,
 	conf *Config,
-	bcState state.Facade,
+	bcState state.State,
 	valKey *bls.ValidatorKey,
 	rewardAddr crypto.Address,
 	broadcastPipe pipeline.Pipeline[message.Message],
@@ -79,7 +79,7 @@ func NewConsensus(
 func makeConsensus(
 	ctx context.Context,
 	conf *Config,
-	bcState state.Facade,
+	bcState state.State,
 	valKey *bls.ValidatorKey,
 	rewardAddr crypto.Address,
 	broadcaster broadcaster,
