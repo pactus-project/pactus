@@ -36,7 +36,6 @@ type Sandbox interface {
 
 	Params() *param.Params
 	CurrentHeight() types.Height
-	IsMainnet() bool
 
 	IterateAccounts(consumer func(crypto.Address, *account.Account, bool))
 	IterateValidators(consumer func(*validator.Validator, bool, bool))

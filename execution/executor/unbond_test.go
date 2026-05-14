@@ -12,19 +12,8 @@ import (
 func TestExecuteUnbondTx(t *testing.T) {
 	td := setup(t)
 
-	bonderAddr, bonderAcc := td.sbx.TestStore.RandomTestAcc()
-	bonderBalance := bonderAcc.Balance()
-	stake := td.RandAmountRange(
-		td.sbx.TestParams.MinimumStake,
-		bonderBalance)
-	bonderAcc.SubtractFromBalance(stake)
-	td.sbx.UpdateAccount(bonderAddr, bonderAcc)
-
-	valPub, _ := td.RandBLSKeyPair()
-	valAddr := valPub.ValidatorAddress()
-	val := td.sbx.MakeNewValidator(valPub)
-	val.AddToStake(stake)
-	td.sbx.UpdateValidator(val)
+	val := td.addTestValidator(t)
+	stake := val.Stake()
 	lockTime := td.sbx.CurrentHeight()
 
 	t.Run("Should fail, unknown address", func(t *testing.T) {
@@ -36,26 +25,30 @@ func TestExecuteUnbondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, inside committee", func(t *testing.T) {
-		val0 := td.sbx.Committee().Proposer(0)
-		trx := tx.NewUnbondTx(lockTime, val0.Address())
+		trx := tx.NewUnbondTx(lockTime, val.Address())
+
+		td.committee.EXPECT().Contains(val.Address()).Return(true).Times(1)
 
 		td.check(t, trx, true, ErrValidatorInCommittee)
 		td.check(t, trx, false, nil)
 	})
 
 	t.Run("Should fail, joining committee", func(t *testing.T) {
-		randPub, _ := td.RandBLSKeyPair()
-		randVal := td.sbx.MakeNewValidator(randPub)
-		td.sbx.UpdateValidator(randVal)
-		td.sbx.JoinedToCommittee(randVal.Address())
-		trx := tx.NewUnbondTx(lockTime, randPub.ValidatorAddress())
+		trx := tx.NewUnbondTx(lockTime, val.Address())
+
+		td.committee.EXPECT().Contains(val.Address()).Return(false).Times(1)
+		td.sbx.EXPECT().IsJoinedCommittee(val.Address()).Return(true).Times(1)
 
 		td.check(t, trx, true, ErrValidatorInCommittee)
 		td.check(t, trx, false, nil)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewUnbondTx(lockTime, valAddr)
+		trx := tx.NewUnbondTx(lockTime, val.Address())
+
+		td.committee.EXPECT().Contains(val.Address()).Return(false).Times(1)
+		td.sbx.EXPECT().IsJoinedCommittee(val.Address()).Return(false).Times(1)
+		td.sbx.EXPECT().UpdatePowerDelta(int64(-val.Stake())).Return().Times(1)
 
 		td.check(t, trx, true, nil)
 		td.check(t, trx, false, nil)
@@ -63,18 +56,17 @@ func TestExecuteUnbondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, Cannot unbond if already unbonded", func(t *testing.T) {
-		trx := tx.NewUnbondTx(lockTime, valAddr)
+		trx := tx.NewUnbondTx(lockTime, val.Address())
 
 		td.check(t, trx, true, ErrValidatorUnbonded)
 		td.check(t, trx, false, ErrValidatorUnbonded)
 	})
 
-	updatedVal := td.sbx.Validator(valAddr)
+	updatedVal := td.sbx.Validator(val.Address())
 
 	assert.Equal(t, stake, updatedVal.Stake())
 	assert.Zero(t, updatedVal.Power())
-	assert.Equal(t, lockTime, updatedVal.UnbondingHeight())
-	assert.Equal(t, int64(-stake), td.sbx.PowerDelta())
+	assert.Equal(t, td.sbx.CurrentHeight(), updatedVal.UnbondingHeight())
 
 	td.checkTotalCoin(t, 0)
 }
@@ -82,18 +74,12 @@ func TestExecuteUnbondTx(t *testing.T) {
 func TestPowerDeltaUnbond(t *testing.T) {
 	td := setup(t)
 
-	pub, _ := td.RandBLSKeyPair()
-	valAddr := pub.ValidatorAddress()
-	val := td.sbx.MakeNewValidator(pub)
-	amt := td.RandAmount()
-	val.AddToStake(amt)
-	td.sbx.UpdateValidator(val)
-	lockTime := td.sbx.CurrentHeight()
-	trx := tx.NewUnbondTx(lockTime, valAddr)
+	val := td.addTestValidator(t)
+	trx := tx.NewUnbondTx(td.RandHeight(), val.Address())
+
+	td.sbx.EXPECT().UpdatePowerDelta(int64(-val.Stake())).Return().Times(1)
 
 	td.execute(t, trx)
-
-	assert.Equal(t, int64(-amt), td.sbx.PowerDelta())
 }
 
 func TestExecuteDelegatedUnbondTx(t *testing.T) {
@@ -102,7 +88,7 @@ func TestExecuteDelegatedUnbondTx(t *testing.T) {
 	valPub, _ := td.RandBLSKeyPair()
 	valAddr := valPub.ValidatorAddress()
 	val := td.sbx.MakeNewValidator(valPub)
-	val.AddToStake(td.sbx.TestParams.MaximumStake)
+	val.AddToStake(td.params.MaximumStake)
 	owner := td.RandAccAddress()
 	val.SetDelegation(owner, amount.Amount(0.2e9), td.sbx.CurrentHeight()+10)
 	td.sbx.UpdateValidator(val)
@@ -121,6 +107,10 @@ func TestExecuteDelegatedUnbondTx(t *testing.T) {
 		trx := tx.NewUnbondTx(lockTime, valAddr)
 		pld := trx.Payload().(*payload.UnbondPayload)
 		pld.DelegateOwner = owner
+
+		td.committee.EXPECT().Contains(val.Address()).Return(false).Times(1)
+		td.sbx.EXPECT().IsJoinedCommittee(val.Address()).Return(false).Times(1)
+		td.sbx.EXPECT().UpdatePowerDelta(int64(-val.Stake())).Return().Times(1)
 
 		td.check(t, trx, true, nil)
 		td.check(t, trx, false, nil)
