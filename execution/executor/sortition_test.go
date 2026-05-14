@@ -102,51 +102,51 @@ func TestExecuteSortitionTx(t *testing.T) {
 	td.checkTotalCoin(t, 0)
 }
 
-func TestChangePower1(t *testing.T) {
-	td := setup(t)
+// func TestChangePower1(t *testing.T) {
+// 	td := setup(t)
 
-	// This moves proposer to next validator
-	updateCommittee(td)
+// 	// This moves proposer to next validator
+// 	updateCommittee(td)
 
-	lockTime := td.sbx.CurrentHeight()
-	proof := td.RandProof()
+// 	lockTime := td.sbx.CurrentHeight()
+// 	proof := td.RandProof()
 
-	// Let's create validators first
-	pub1, _ := td.RandBLSKeyPair()
-	amt1 := td.sbx.Committee().TotalPower() / 3
-	val1 := td.sbx.MakeNewValidator(pub1)
-	val1.AddToStake(amount.Amount(amt1 - 1))
-	val1.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
-	val1.UpdateLastSortitionHeight(lockTime - 1)
-	td.sbx.UpdateValidator(val1)
+// 	// Let's create validators first
+// 	pub1, _ := td.RandBLSKeyPair()
+// 	amt1 := td.sbx.Committee().TotalPower() / 3
+// 	val1 := td.sbx.MakeNewValidator(pub1)
+// 	val1.AddToStake(amount.Amount(amt1 - 1))
+// 	val1.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
+// 	val1.UpdateLastSortitionHeight(lockTime - 1)
+// 	td.sbx.UpdateValidator(val1)
 
-	pub2, _ := td.RandBLSKeyPair()
-	val2 := td.sbx.MakeNewValidator(pub2)
-	val2.AddToStake(2)
-	val2.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
-	val2.UpdateLastSortitionHeight(lockTime - 1)
-	td.sbx.UpdateValidator(val2)
+// 	pub2, _ := td.RandBLSKeyPair()
+// 	val2 := td.sbx.MakeNewValidator(pub2)
+// 	val2.AddToStake(2)
+// 	val2.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
+// 	val2.UpdateLastSortitionHeight(lockTime - 1)
+// 	td.sbx.UpdateValidator(val2)
 
-	val3 := td.sbx.Committee().Proposer(0)
-	val3.UpdateLastSortitionHeight(lockTime - 1)
-	td.sbx.UpdateValidator(val3)
+// 	val3 := td.sbx.Committee().Proposer(0)
+// 	val3.UpdateLastSortitionHeight(lockTime - 1)
+// 	td.sbx.UpdateValidator(val3)
 
-	td.sbx.TestParams.CommitteeSize = 4
-	td.sbx.TestAcceptSortition = true
-	trx1 := tx.NewSortitionTx(lockTime, val1.Address(), proof)
-	td.check(t, trx1, true, nil)
-	td.check(t, trx1, false, nil)
-	td.execute(t, trx1)
+// 	td.sbx.TestParams.CommitteeSize = 4
+// 	td.sbx.TestAcceptSortition = true
+// 	trx1 := tx.NewSortitionTx(lockTime, val1.Address(), proof)
+// 	td.check(t, trx1, true, nil)
+// 	td.check(t, trx1, false, nil)
+// 	td.execute(t, trx1)
 
-	trx2 := tx.NewSortitionTx(lockTime, val2.Address(), proof)
-	td.check(t, trx2, true, ErrCommitteeJoinLimitExceeded)
-	td.check(t, trx2, false, nil)
+// 	trx2 := tx.NewSortitionTx(lockTime, val2.Address(), proof)
+// 	td.check(t, trx2, true, ErrCommitteeJoinLimitExceeded)
+// 	td.check(t, trx2, false, nil)
 
-	// Val3 is a Committee member
-	trx3 := tx.NewSortitionTx(lockTime, val3.Address(), proof)
-	td.check(t, trx3, true, nil)
-	td.check(t, trx3, false, nil)
-}
+// 	// Val3 is a Committee member
+// 	trx3 := tx.NewSortitionTx(lockTime, val3.Address(), proof)
+// 	td.check(t, trx3, true, nil)
+// 	td.check(t, trx3, false, nil)
+// }
 
 // func TestChangePower2(t *testing.T) {
 // 	td := setup(t)

@@ -40,11 +40,9 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, public key should not set for existing validators", func(t *testing.T) {
-		randPub, _ := td.RandBLSKeyPair()
-		val := td.sbx.MakeNewValidator(randPub)
-		td.sbx.UpdateValidator(val)
+		val := td.addTestValidator(t)
 
-		trx := tx.NewBondTx(lockTime, senderAddr, randPub.ValidatorAddress(), randPub, amt, fee)
+		trx := tx.NewBondTx(lockTime, senderAddr, val.Address(), val.PublicKey(), amt, fee)
 
 		td.check(t, trx, true, ErrPublicKeyAlreadySet)
 		td.check(t, trx, false, ErrPublicKeyAlreadySet)
@@ -91,9 +89,6 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, joining committee", func(t *testing.T) {
-		randPub, _ := td.RandBLSKeyPair()
-		val := td.sbx.MakeNewValidator(randPub)
-		td.sbx.UpdateValidator(val)
 		trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, valPub, amt, fee)
 
 		td.committee.EXPECT().Contains(receiverAddr).Return(false).Times(1)
@@ -127,7 +122,8 @@ func TestExecuteBondTx(t *testing.T) {
 func TestPowerDeltaBond(t *testing.T) {
 	td := setup(t)
 
-	_, senderAddr := td.addTestAccount(t)
+	_, senderAddr := td.addTestAccount(t,
+		testsuite.AccountWithBalance(10_000e9))
 	pub, _ := td.RandBLSKeyPair()
 	receiverAddr := pub.ValidatorAddress()
 	amt := td.RandAmountRange(
@@ -149,13 +145,14 @@ func TestSmallBond(t *testing.T) {
 	td := setup(t)
 
 	_, senderAddr := td.addTestAccount(t)
-	receiverPub, _ := td.RandBLSKeyPair()
-	receiverAddr := receiverPub.ValidatorAddress()
-	receiverVal := td.sbx.MakeNewValidator(receiverPub)
-	receiverVal.AddToStake(td.params.MaximumStake - 2)
-	td.sbx.UpdateValidator(receiverVal)
+	val := td.addTestValidator(t,
+		testsuite.ValidatorWithStake(td.params.MaximumStake-2))
+	receiverAddr := val.Address()
 	lockTime := td.sbx.CurrentHeight()
 	fee := td.RandFee()
+
+	td.committee.EXPECT().Contains(receiverAddr).Return(false).AnyTimes()
+	td.sbx.EXPECT().IsJoinedCommittee(receiverAddr).Return(false).AnyTimes()
 
 	t.Run("Rejects bond transaction with zero amount", func(t *testing.T) {
 		trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, nil, 0, fee)
@@ -174,6 +171,8 @@ func TestSmallBond(t *testing.T) {
 	t.Run("Accepts bond transaction reaching full validator stake", func(t *testing.T) {
 		trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, nil, 2, fee)
 
+		td.sbx.EXPECT().UpdatePowerDelta(int64(2)).Times(1)
+
 		td.check(t, trx, true, nil)
 		td.check(t, trx, false, nil)
 		td.execute(t, trx)
@@ -186,14 +185,15 @@ func TestSmallBond(t *testing.T) {
 		td.check(t, trx, false, SmallStakeError{td.params.MinimumStake})
 	})
 
-	receiverValAfterExecution, _ := td.validators[receiverVal.Address()]
+	receiverValAfterExecution, _ := td.validators[receiverAddr]
 	assert.Equal(t, td.sbx.Params().MaximumStake, receiverValAfterExecution.Stake())
 }
 
 func TestExecuteDelegatedBondTx(t *testing.T) {
 	td := setup(t)
 
-	senderAcc, senderAddr := td.addTestAccount(t)
+	senderAcc, senderAddr := td.addTestAccount(t,
+		testsuite.AccountWithBalance(10_000e9))
 	senderBalance := senderAcc.Balance()
 	valPub, _ := td.RandBLSKeyPair()
 	receiverAddr := valPub.ValidatorAddress()
@@ -231,6 +231,10 @@ func TestExecuteDelegatedBondTx(t *testing.T) {
 
 	t.Run("Ok", func(t *testing.T) {
 		trx := makeDelegatedBond(td.params.MaximumStake)
+
+		td.committee.EXPECT().Contains(receiverAddr).Return(false).Times(1)
+		td.sbx.EXPECT().IsJoinedCommittee(receiverAddr).Return(false).Times(1)
+		td.sbx.EXPECT().UpdatePowerDelta(int64(td.params.MaximumStake)).Times(1)
 
 		td.check(t, trx, true, nil)
 		td.check(t, trx, false, nil)
