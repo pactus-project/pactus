@@ -295,9 +295,9 @@ func newNode(ctx context.Context, workingDir string, statusCb statusReporter) (*
 	configModifier := func(cfg *config.Config) *config.Config {
 		if !cfg.GRPC.Enable {
 			cfg.GRPC.Enable = true
-			cfg.GRPC.EnableWallet = true
 			cfg.GRPC.Listen = "localhost:0"
 		}
+		cfg.GRPC.EnableWallet = true
 
 		return cfg
 	}
