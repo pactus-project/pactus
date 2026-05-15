@@ -22,7 +22,7 @@ type Server struct {
 	listener      net.Listener
 	server        *grpc.Server
 	address       string
-	state         state.Facade
+	state         state.State
 	net           network.Network
 	sync          sync.Synchronizer
 	consMgr       consmgr.ManagerReader
@@ -31,7 +31,7 @@ type Server struct {
 	logger        *logger.SubLogger
 }
 
-func NewServer(ctx context.Context, conf *Config, state state.Facade, sync sync.Synchronizer,
+func NewServer(ctx context.Context, conf *Config, state state.State, sync sync.Synchronizer,
 	network network.Network, consMgr consmgr.ManagerReader,
 	walletMgr wltmgr.IManager,
 	zmqPublishers []zmq.Publisher,

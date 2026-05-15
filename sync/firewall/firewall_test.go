@@ -7,7 +7,6 @@ import (
 	"time"
 
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
-	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle"
@@ -38,7 +37,7 @@ func setup(t *testing.T, conf *Config) *testData {
 	ts := testsuite.NewTestSuite(t)
 
 	peerSet := peerset.NewPeerSet(1 * time.Minute)
-	state := state.MockingState(ts)
+	state := state.NewMockState(ts.Ctrl)
 	net := network.MockingNetwork(ts, ts.RandPeerID())
 
 	if conf == nil {
@@ -363,7 +362,6 @@ func TestNetworkFlagsMainnet(t *testing.T) {
 
 func TestNetworkFlagsTestnet(t *testing.T) {
 	td := setup(t, nil)
-	td.state.TestGenesis = genesis.TestnetGenesis()
 
 	bdl := bundle.NewBundle(message.NewQueryVoteMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)

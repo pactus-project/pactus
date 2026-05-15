@@ -41,7 +41,7 @@ type consensus struct {
 	cpRound         int16
 	valKey          *bls.ValidatorKey
 	rewardAddr      crypto.Address
-	bcState         state.Facade // Blockchain state
+	bcState         state.State // Blockchain state
 	changeProposer  *changeProposer
 	newHeightState  consState
 	proposeState    consState
@@ -60,7 +60,7 @@ type consensus struct {
 func NewConsensus(
 	ctx context.Context,
 	conf *Config,
-	bcState state.Facade,
+	bcState state.State,
 	valKey *bls.ValidatorKey,
 	rewardAddr crypto.Address,
 	broadcastPipe pipeline.Pipeline[message.Message],
@@ -77,7 +77,7 @@ func NewConsensus(
 func makeConsensus(
 	ctx context.Context,
 	conf *Config,
-	bcState state.Facade,
+	bcState state.State,
 	valKey *bls.ValidatorKey,
 	rewardAddr crypto.Address,
 	broadcaster broadcaster,

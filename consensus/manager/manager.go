@@ -17,14 +17,14 @@ import (
 )
 
 type manager struct {
-	instances []Consensus
+	instances []consensus.Consensus
 
 	// Caching future votes and proposals due to potential server time misalignments.
 	// Votes and proposals for upcoming blocks may be received before
 	// the current block's consensus is complete.
 	upcomingVotes     []*vote.Vote         // Map to cache votes for future block heights
 	upcomingProposals []*proposal.Proposal // Map to cache proposals for future block heights
-	state             state.Facade
+	state             state.State
 }
 
 // NewManagerV1 creates a new manager instance that manages a set of consensus instances,
@@ -33,57 +33,53 @@ type manager struct {
 func NewManagerV1(
 	ctx context.Context,
 	conf *consensus.Config,
-	state state.Facade,
+	state state.State,
 	valKeys []*bls.ValidatorKey,
 	rewardAddrs []crypto.Address,
 	broadcastPipe pipeline.Pipeline[message.Message],
 ) Manager {
-	mgr := &manager{
-		instances:         make([]Consensus, len(valKeys)),
-		upcomingVotes:     make([]*vote.Vote, 0),
-		upcomingProposals: make([]*proposal.Proposal, 0),
-		state:             state,
-	}
+	instances := make([]consensus.Consensus, len(valKeys))
 	mediatorConcrete := consensus.NewConcreteMediator()
-
 	for i, key := range valKeys {
-		cons := consensus.NewConsensus(ctx, conf, state, key, rewardAddrs[i], broadcastPipe, mediatorConcrete)
-
-		mgr.instances[i] = cons
+		instances[i] = consensus.NewConsensus(
+			ctx, conf, state, key, rewardAddrs[i], broadcastPipe, mediatorConcrete)
 	}
 
-	return mgr
+	return NewManager(state, instances)
 }
 
 func NewManagerV2(
 	ctx context.Context,
 	conf *consensusv2.Config,
-	state state.Facade,
+	state state.State,
 	valKeys []*bls.ValidatorKey,
 	rewardAddrs []crypto.Address,
 	broadcastPipe pipeline.Pipeline[message.Message],
 ) Manager {
-	mgr := &manager{
-		instances:         make([]Consensus, len(valKeys)),
+	instances := make([]consensus.Consensus, len(valKeys))
+	mediatorConcrete := consensus.NewConcreteMediator()
+
+	for i, key := range valKeys {
+		instances[i] = consensusv2.NewConsensus(
+			ctx, conf, state, key, rewardAddrs[i], broadcastPipe, mediatorConcrete)
+	}
+
+	return NewManager(state, instances)
+}
+
+func NewManager(state state.State, instances []consensus.Consensus) Manager {
+	return &manager{
+		instances:         instances,
 		upcomingVotes:     make([]*vote.Vote, 0),
 		upcomingProposals: make([]*proposal.Proposal, 0),
 		state:             state,
 	}
-	mediatorConcrete := consensus.NewConcreteMediator()
-
-	for i, key := range valKeys {
-		cons := consensusv2.NewConsensus(ctx, conf, state, key, rewardAddrs[i], broadcastPipe, mediatorConcrete)
-
-		mgr.instances[i] = cons
-	}
-
-	return mgr
 }
 
 // Instances return all consensus instances that are read-only and
 // can be safely accessed without modifying their state.
-func (mgr *manager) Instances() []Reader {
-	readers := make([]Reader, len(mgr.instances))
+func (mgr *manager) Instances() []consensus.Reader {
+	readers := make([]consensus.Reader, len(mgr.instances))
 	for i, cons := range mgr.instances {
 		readers[i] = cons
 	}
@@ -221,7 +217,7 @@ func (mgr *manager) SetProposal(prop *proposal.Proposal) {
 //
 // Note that all active instances are assumed to be in the same state, and all inactive
 // instances are assumed to be in the same state as well.
-func (mgr *manager) getBestInstance() Consensus {
+func (mgr *manager) getBestInstance() consensus.Reader {
 	for _, cons := range mgr.instances {
 		if cons.IsActive() {
 			return cons

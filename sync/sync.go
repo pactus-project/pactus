@@ -38,7 +38,7 @@ import (
 type synchronizer struct {
 	config        *Config
 	valKeys       []*bls.ValidatorKey
-	state         state.Facade
+	state         state.State
 	consV1Mgr     consmgr.Manager
 	consV2Mgr     consmgr.Manager
 	peerSet       *peerset.PeerSet
@@ -57,7 +57,7 @@ func NewSynchronizer(
 	ctx context.Context,
 	conf *Config,
 	valKeys []*bls.ValidatorKey,
-	state state.Facade,
+	state state.State,
 	consV1Mgr consmgr.Manager,
 	consV2Mgr consmgr.Manager,
 	network network.Network,

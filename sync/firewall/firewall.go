@@ -24,7 +24,7 @@ type Firewall struct {
 	config               *Config
 	network              network.Network
 	peerSet              *peerset.PeerSet
-	state                state.Facade
+	state                state.State
 	ipBlocker            *ipblocker.IPBlocker
 	blockRateLimit       *ratelimit.RateLimit
 	transactionRateLimit *ratelimit.RateLimit
@@ -32,7 +32,7 @@ type Firewall struct {
 	logger               *logger.SubLogger
 }
 
-func NewFirewall(conf *Config, network network.Network, peerSet *peerset.PeerSet, state state.Facade,
+func NewFirewall(conf *Config, network network.Network, peerSet *peerset.PeerSet, state state.State,
 ) (*Firewall, error) {
 	blocker, err := ipblocker.New(conf.BannedNets)
 	if err != nil {
