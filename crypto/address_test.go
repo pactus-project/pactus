@@ -31,6 +31,7 @@ func TestAddressType(t *testing.T) {
 		{address: "pc1pjneygutecly9gtandrdt8j36v8g4fl42k4y5xp", account: false, validator: true},
 		{address: "pc1z0m0vw8sjfgv7f2zgq2hfxutg8rwn7gpffhe8tf", account: true, validator: false},
 		{address: "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3", account: true, validator: false},
+		{address: "pc1y90qakls8jlz9hyvdcsqsj0yj2lrqz26vqu7l0z", account: true, validator: false},
 	}
 
 	for _, tt := range tests {
@@ -103,10 +104,13 @@ func TestFromString(t *testing.T) {
 			0,
 		},
 		{
-			"pc1y0hrct7eflrpw4ccrttxzs4qud2axex4dksmred",
-			crypto.InvalidAddressTypeError(4),
+			"pc1y90qakls8jlz9hyvdcsqsj0yj2lrqz26vqu7l0z",
 			nil,
-			0,
+			[]byte{
+				0x04, 0x2b, 0xc1, 0xdb, 0x7e, 0x07, 0x97, 0xc4, 0x5b, 0x91,
+				0x8d, 0xc4, 0x01, 0x09, 0x3c, 0x92, 0x57, 0xc6, 0x01, 0x2b, 0x4c,
+			},
+			crypto.AddressTypeSecp256k1Account,
 		},
 		{
 			"PC1P0HRCT7EFLRPW4CCRTTXZS4QUD2AXEX4DCDZDFR", // UPPERCASE
@@ -170,14 +174,14 @@ func TestAddressDecoding(t *testing.T) {
 			nil,
 		},
 		{
-			0,
+			21,
 			"040000000000000000000000000000000000000000",
-			crypto.InvalidAddressTypeError(4),
+			nil,
 		},
 		{
-			0,
-			"04000102030405060708090a0b0c0d0e0f0001020304",
-			crypto.InvalidAddressTypeError(4),
+			21,
+			"04000102030405060708090a0b0c0d0e0f00010203",
+			nil,
 		},
 		{
 			21,
@@ -202,6 +206,11 @@ func TestAddressDecoding(t *testing.T) {
 		{
 			21,
 			"03000102030405060708090a0b0c0d0e0f00010203",
+			nil,
+		},
+		{
+			21,
+			"04000102030405060708090a0b0c0d0e0f00010203",
 			nil,
 		},
 	}
