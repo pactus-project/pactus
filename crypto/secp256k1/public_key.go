@@ -137,7 +137,7 @@ func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 		return crypto.ErrInvalidSignature
 	}
 
-	if !ecdsa.NewSignature(&r, &s).Verify(msg, pub.inner) {
+	if !ecdsa.NewSignature(&r, &s).Verify(hash.Hash256(msg), pub.inner) {
 		return crypto.ErrInvalidSignature
 	}
 

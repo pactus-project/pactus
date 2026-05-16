@@ -29,7 +29,7 @@ func TestEncoding(t *testing.T) {
 	assert.Equal(t, addrData, addr.Bytes())
 
 	msg := []byte("pactus")
-	sig, _ := secp256k1.SignatureFromString("16e6f8bcdb92964a35773aae200628a5b470b6488d42ceef6538da0b4ffd3b42098dd821eea96f66ba02c9c4473443ab51c411ab78adfbb90d53b07ca1d6862b")
+	sig, _ := secp256k1.SignatureFromString("c86779676d217b04979434e5bd37eddd02b671e9a54b48d3a812c7862dcb539631bb5e8459fec007608f50ea5661e0a5215aac976705404cb4f36ee623e63199")
 
 	require.NoError(t, pub.Verify(msg, sig))
 	assert.Equal(t, sig.Bytes(), prv.Sign(msg).Bytes())
