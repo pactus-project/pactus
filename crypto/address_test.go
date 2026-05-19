@@ -246,3 +246,49 @@ func TestShortString(t *testing.T) {
 	assert.Equal(t, "pc1p0hrc-dzdfr", h.ShortString())
 	assert.Equal(t, h.ShortString(), h.LogString())
 }
+
+func TestAddressTypeString(t *testing.T) {
+	tests := []struct {
+		str string
+		typ crypto.AddressType
+		err error
+	}{
+		{
+			str: "invalid_type",
+			typ: crypto.AddressType(255),
+			err: crypto.ErrInvalidAddressType,
+		},
+		{
+			str: "validator",
+			typ: crypto.AddressType(1),
+			err: nil,
+		},
+		{
+			str: "bls_account",
+			typ: crypto.AddressType(2),
+			err: nil,
+		},
+		{
+			str: "ed25519_account",
+			typ: crypto.AddressType(3),
+			err: nil,
+		},
+		{
+			str: "secp256k1_account",
+			typ: crypto.AddressType(4),
+			err: nil,
+		},
+	}
+
+	for no, tt := range tests {
+		typ, err := crypto.AddressTypeFromString(tt.str)
+		if tt.err != nil {
+			require.ErrorIs(t, err, tt.err, "test %v: error not matched", no)
+			assert.Equal(t, tt.typ, typ)
+		} else {
+			require.NoError(t, err, "test %v expected no error", no)
+			assert.Equal(t, tt.typ, typ)
+			assert.Equal(t, tt.str, typ.String())
+		}
+	}
+}
