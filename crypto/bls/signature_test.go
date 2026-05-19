@@ -150,7 +150,7 @@ func TestPointG1(t *testing.T) {
 			false,
 		},
 		{
-			"invalid point",
+			"invalid signature",
 			"c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
 			false,
 		},

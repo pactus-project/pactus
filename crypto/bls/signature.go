@@ -111,7 +111,7 @@ func (sig *Signature) PointG1() (*bls12381.G1Affine, error) {
 		return nil, err
 	}
 	if g1Aff.IsInfinity() || !g1Aff.IsInSubGroup() {
-		return nil, crypto.ErrInvalidPublicKey
+		return nil, crypto.ErrInvalidSignature
 	}
 
 	sig.pointG1 = g1Aff
