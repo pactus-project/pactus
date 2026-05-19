@@ -128,6 +128,18 @@ func (model *WalletModel) AddressInfo(addr string) *pactus.AddressInfo {
 	return res.Addr
 }
 
+func (model *WalletModel) ListAccountAddresses() []*pactus.AddressInfo {
+	return model.ListAddresses(
+		crypto.AddressTypeBLSAccount,
+		crypto.AddressTypeEd25519Account,
+		crypto.AddressTypeSecp256k1Account,
+	)
+}
+
+func (model *WalletModel) ListValidatorAddresses() []*pactus.AddressInfo {
+	return model.ListAddresses(crypto.AddressTypeValidator)
+}
+
 func (model *WalletModel) ListAddresses(addressTypes ...crypto.AddressType) []*pactus.AddressInfo {
 	addressTypesPB := make([]pactus.AddressType, 0, len(addressTypes))
 	for _, at := range addressTypes {

@@ -9,7 +9,6 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
 )
@@ -40,10 +39,10 @@ func (c *TxBondDialogController) Run() {
 		c.view.FeeEntry.SetText(fmt.Sprintf("%g", info.DefaultFee.ToPAC()))
 	}
 
-	for _, ai := range c.model.ListAddresses(crypto.AddressTypeBLSAccount, crypto.AddressTypeEd25519Account) {
+	for _, ai := range c.model.ListAccountAddresses() {
 		c.view.SenderCombo.Append(ai.Address, ai.Address)
 	}
-	for _, vi := range c.model.ListAddresses(crypto.AddressTypeValidator) {
+	for _, vi := range c.model.ListValidatorAddresses() {
 		c.view.ReceiverCombo.Append(vi.Address, vi.Address)
 	}
 	c.view.SenderCombo.SetActive(0)

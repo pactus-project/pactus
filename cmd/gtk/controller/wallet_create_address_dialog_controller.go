@@ -23,7 +23,8 @@ func NewWalletCreateAddressDialogController(
 
 func (c *WalletCreateAddressDialogController) Run() {
 	combo := c.view.AddressTypeCombo
-	combo.Append(crypto.AddressTypeEd25519Account.String(), "ED25519 Account")
+	combo.Append(crypto.AddressTypeSecp256k1Account.String(), "Secp256k1 Account")
+	combo.Append(crypto.AddressTypeEd25519Account.String(), "Ed25519 Account")
 	combo.Append(crypto.AddressTypeBLSAccount.String(), "BLS Account")
 	combo.Append(crypto.AddressTypeValidator.String(), "Validator")
 	combo.SetActive(0)
@@ -49,6 +50,8 @@ func (c *WalletCreateAddressDialogController) Run() {
 			)
 		case crypto.AddressTypeBLSAccount.String():
 			_, err = c.model.NewAddress(crypto.AddressTypeBLSAccount, label, "")
+		case crypto.AddressTypeSecp256k1Account.String():
+			_, err = c.model.NewAddress(crypto.AddressTypeSecp256k1Account, label, "")
 		case crypto.AddressTypeValidator.String():
 			_, err = c.model.NewAddress(crypto.AddressTypeValidator, label, "")
 		default:
