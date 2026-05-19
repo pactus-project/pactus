@@ -14,6 +14,9 @@ var ErrInvalidPublicKey = errors.New("invalid public key")
 // ErrInvalidPrivateKey is returned when a private key is invalid.
 var ErrInvalidPrivateKey = errors.New("invalid private key")
 
+// ErrInvalidAddressType is returned when a address type is not valid.
+var ErrInvalidAddressType = errors.New("invalid address type")
+
 // InvalidLengthError is returned when the length of the data
 // does not match the expected length.
 type InvalidLengthError int

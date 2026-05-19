@@ -10,6 +10,21 @@ const (
 	AddressTypeSecp256k1Account AddressType = 4
 )
 
+func AddressTypeFromString(str string) (AddressType, error) {
+	switch str {
+	case AddressTypeValidator.String():
+		return AddressTypeValidator, nil
+	case AddressTypeBLSAccount.String():
+		return AddressTypeBLSAccount, nil
+	case AddressTypeEd25519Account.String():
+		return AddressTypeEd25519Account, nil
+	case AddressTypeSecp256k1Account.String():
+		return AddressTypeSecp256k1Account, nil
+	default:
+		return AddressType(255), ErrInvalidAddressType
+	}
+}
+
 func (t AddressType) String() string {
 	switch t {
 	case AddressTypeTreasury:

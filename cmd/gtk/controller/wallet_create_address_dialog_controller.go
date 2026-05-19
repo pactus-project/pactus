@@ -23,48 +23,39 @@ func NewWalletCreateAddressDialogController(
 
 func (c *WalletCreateAddressDialogController) Run() {
 	combo := c.view.AddressTypeCombo
-	combo.Append(crypto.AddressTypeSecp256k1Account.String(), "Secp256k1 Account")
-	combo.Append(crypto.AddressTypeEd25519Account.String(), "Ed25519 Account")
-	combo.Append(crypto.AddressTypeBLSAccount.String(), "BLS Account")
 	combo.Append(crypto.AddressTypeValidator.String(), "Validator")
-	combo.SetActive(0)
+	combo.Append(crypto.AddressTypeBLSAccount.String(), "BLS Account")
+	combo.Append(crypto.AddressTypeEd25519Account.String(), "Ed25519 Account")
+	combo.Append(crypto.AddressTypeSecp256k1Account.String(), "Secp256k1 Account")
+
+	combo.SetActive(2) // Edd25519 ia active.
 
 	onOk := func() {
-		c.view.ButtonOK.SetSensitive(false)
-		defer c.view.ButtonOK.SetSensitive(true)
+		defer c.view.Dialog.Close()
 
 		label := gtkutil.GetEntryText(c.view.LabelEntry)
-		typ := combo.GetActiveID()
-
-		var err error
-		switch typ {
-		case crypto.AddressTypeEd25519Account.String():
-			password, ok := PasswordProvider(c.model)
-			if !ok {
-				return
-			}
-			_, err = c.model.NewAddress(
-				crypto.AddressTypeEd25519Account,
-				label,
-				password,
-			)
-		case crypto.AddressTypeBLSAccount.String():
-			_, err = c.model.NewAddress(crypto.AddressTypeBLSAccount, label, "")
-		case crypto.AddressTypeSecp256k1Account.String():
-			_, err = c.model.NewAddress(crypto.AddressTypeSecp256k1Account, label, "")
-		case crypto.AddressTypeValidator.String():
-			_, err = c.model.NewAddress(crypto.AddressTypeValidator, label, "")
-		default:
-			return
-		}
-
+		typ, err := crypto.AddressTypeFromString(combo.GetActiveID())
 		if err != nil {
 			gtkutil.ShowError(err)
 
 			return
 		}
 
-		c.view.Dialog.Close()
+		password := ""
+		if typ == crypto.AddressTypeEd25519Account {
+			pwd, ok := PasswordProvider(c.model)
+			if !ok {
+				return
+			}
+			password = pwd
+		}
+
+		_, err = c.model.NewAddress(typ, label, password)
+		if err != nil {
+			gtkutil.ShowError(err)
+
+			return
+		}
 	}
 
 	onCancel := func() { c.view.Dialog.Close() }
