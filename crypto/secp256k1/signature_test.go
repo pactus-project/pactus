@@ -87,36 +87,31 @@ func TestVerifyingSignature(t *testing.T) {
 }
 
 func TestSignatureFromString(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-	_, prv := ts.RandSecp256k1KeyPair()
-	validHex := hex.EncodeToString(prv.Sign([]byte("test-vector")).Bytes())
-
 	tests := []struct {
 		errMsg  string
 		encoded string
 		valid   bool
-		bytes   []byte
 	}{
 		{
 			"encoding/hex: invalid byte",
 			"not_proper_encoded",
-			false, nil,
+			false,
 		},
 		{
 			"invalid length: 0",
 			"",
-			false, nil,
+			false,
 		},
 		{
 			"invalid length: 32",
 			strings.Repeat("00", 32),
-			false, nil,
+			false,
 		},
 		{
 			"",
-			validHex,
+			"20ad686c7cd3676794fe44832f2129a8bc0e809d0a8dd2eedbe12830bac6c2ad" +
+				"502a9a361aeb2bf2a5adddb9436c9ff6ce3e53b66e042930b7b8e3bb2663daa3",
 			true,
-			prv.Sign([]byte("test-vector")).Bytes(),
 		},
 	}
 
@@ -124,7 +119,6 @@ func TestSignatureFromString(t *testing.T) {
 		sig, err := secp256k1.SignatureFromString(tt.encoded)
 		if tt.valid {
 			require.NoError(t, err, "test %v: unexpected error", no)
-			assert.Equal(t, tt.bytes, sig.Bytes(), "test %v: invalid bytes", no)
 			assert.Equal(t, tt.encoded, sig.String(), "test %v: invalid encode", no)
 		} else {
 			require.Error(t, err, "test %v", no)

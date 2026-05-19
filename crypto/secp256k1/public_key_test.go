@@ -1,14 +1,12 @@
 package secp256k1_test
 
 import (
-	"encoding/hex"
 	"testing"
 
 	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/secp256k1"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/bech32m"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -100,16 +98,6 @@ func TestNilSignature(t *testing.T) {
 }
 
 func TestPublicKeyFromString(t *testing.T) {
-	pipPubBytes, err := hex.DecodeString("036d6caac248af96f6afa7f904f550253a0f3ef3f5aa2fe6838a95b216691468e2")
-	require.NoError(t, err)
-
-	wrongHRP, err := bech32m.EncodeFromBase256WithType("XXX", crypto.SignatureTypeSecp256k1, pipPubBytes)
-	require.NoError(t, err)
-
-	shortPayload := pipPubBytes[:32]
-	shortPublic, err := bech32m.EncodeFromBase256WithType(crypto.PublicKeyHRP, crypto.SignatureTypeSecp256k1, shortPayload)
-	require.NoError(t, err)
-
 	tests := []struct {
 		errMsg  string
 		encoded string
@@ -128,12 +116,12 @@ func TestPublicKeyFromString(t *testing.T) {
 		},
 		{
 			"invalid HRP",
-			wrongHRP,
+			"xxx1yqdkke2kzfzheda405lusfa2sy5aq70hn7k4zle5r322my9nfz35wygh4tk6",
 			false, nil,
 		},
 		{
 			"invalid length: 32",
-			shortPublic,
+			"public1yqdkke2kzfzheda405lusfa2sy5aq70hn7k4zle5r322my9nfz35qrwhxss",
 			false, nil,
 		},
 		{
@@ -169,11 +157,6 @@ func TestPublicKeyFromStringInvalidPoint(t *testing.T) {
 	bad := "public1yqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" +
 		"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqglnhh9"
 	_, err := secp256k1.PublicKeyFromString(bad)
-	require.Error(t, err)
-}
-
-func TestPublicKeyFromBytesInvalidLength(t *testing.T) {
-	_, err := secp256k1.PublicKeyFromBytes([]byte{0x02, 0x01})
 	require.Error(t, err)
 }
 

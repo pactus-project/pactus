@@ -183,6 +183,7 @@ func TestPublicKeyFromString(t *testing.T) {
 			assert.Equal(t, tt.result, pub.Bytes(), "test %v: invalid bytes", no)
 			assert.Equal(t, tt.encoded, pub.String(), "test %v: invalid encoded", no)
 		} else {
+			require.Error(t, err, "test %v", no)
 			assert.Contains(t, err.Error(), tt.errMsg, "test %v: error not matched", no)
 		}
 	}
@@ -207,7 +208,7 @@ func TestPointG2(t *testing.T) {
 			false,
 		},
 		{
-			"invalid public key",
+			"invalid point",
 			"public1pcqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" +
 				"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqglnhh9",
 			false,
