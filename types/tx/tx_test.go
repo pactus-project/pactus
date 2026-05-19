@@ -115,7 +115,7 @@ func TestBasicCheck(t *testing.T) {
 
 	t.Run("Invalid payload, Should returns error", func(t *testing.T) {
 		invAddr := ts.RandAccAddress()
-		invAddr[0] = 4
+		invAddr[0] = 5
 		trx := tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), invAddr, 1e9, ts.RandFee())
 
 		err := trx.BasicCheck()
