@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/crypto/secp256k1"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
@@ -245,6 +246,19 @@ func (ts *TestSuite) RandEd25519KeyPair() (*ed25519.PublicKey, *ed25519.PrivateK
 	return pub, prv
 }
 
+// RandSecp256k1KeyPair generates a random secp256k1 key pair for testing purposes.
+func (ts *TestSuite) RandSecp256k1KeyPair() (*secp256k1.PublicKey, *secp256k1.PrivateKey) {
+	for {
+		buf := ts.RandBytes(secp256k1.PrivateKeySize)
+		prv, err := secp256k1.PrivateKeyFromBytes(buf)
+		if err == nil {
+			pub := prv.PublicKeyNative()
+
+			return pub, prv
+		}
+	}
+}
+
 // RandValKey generates a random validator key for testing purposes.
 func (ts *TestSuite) RandValKey() *bls.ValidatorKey {
 	_, prv := ts.RandBLSKeyPair()
@@ -262,6 +276,13 @@ func (ts *TestSuite) RandBLSSignature() *bls.Signature {
 // RandEd25519Signature generates a random BLS signature for testing purposes.
 func (ts *TestSuite) RandEd25519Signature() *ed25519.Signature {
 	_, prv := ts.RandEd25519KeyPair()
+
+	return prv.SignNative(ts.RandBytes(8))
+}
+
+// RandSecp256k1Signature generates a random secp256k1 signature for testing purposes.
+func (ts *TestSuite) RandSecp256k1Signature() *secp256k1.Signature {
+	_, prv := ts.RandSecp256k1KeyPair()
 
 	return prv.SignNative(ts.RandBytes(8))
 }

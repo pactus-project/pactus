@@ -248,6 +248,8 @@ func (a *addresses) NewAddress(addressType crypto.AddressType, label string, opt
 		info, err = vault.NewBLSAccountAddress(label)
 	case crypto.AddressTypeEd25519Account:
 		info, err = vault.NewEd25519AccountAddress(label, cfg.password)
+	case crypto.AddressTypeSecp256k1Account:
+		return nil, ErrInvalidAddressType
 	case crypto.AddressTypeTreasury:
 		return nil, ErrInvalidAddressType
 

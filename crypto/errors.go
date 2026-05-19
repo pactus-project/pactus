@@ -11,6 +11,9 @@ var ErrInvalidSignature = errors.New("invalid signature")
 // ErrInvalidPublicKey is returned when a public key is invalid.
 var ErrInvalidPublicKey = errors.New("invalid public key")
 
+// ErrInvalidPrivateKey is returned when a private key is invalid.
+var ErrInvalidPrivateKey = errors.New("invalid private key")
+
 // InvalidLengthError is returned when the length of the data
 // does not match the expected length.
 type InvalidLengthError int
