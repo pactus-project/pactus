@@ -9,7 +9,6 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
 )
@@ -42,7 +41,7 @@ func (c *TxTransferDialogController) Run() {
 	}
 
 	// Fill sender accounts
-	for _, ai := range c.model.ListAddresses(crypto.AddressTypeBLSAccount, crypto.AddressTypeEd25519Account) {
+	for _, ai := range c.model.ListAccountAddresses() {
 		c.view.SenderCombo.Append(ai.Address, ai.Address)
 	}
 	c.view.SenderCombo.SetActive(0)

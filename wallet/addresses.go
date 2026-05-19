@@ -65,6 +65,7 @@ func OnlyAccountAddresses() ListAddressOption {
 		cfg.addressTypes = []crypto.AddressType{
 			crypto.AddressTypeBLSAccount,
 			crypto.AddressTypeEd25519Account,
+			crypto.AddressTypeSecp256k1Account,
 		}
 	}
 }
