@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/crypto/secp256k1"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -460,6 +461,12 @@ func (tx *Tx) decodeSignature(r io.Reader) (crypto.Signature, error) {
 
 		return sig, err
 
+	case crypto.AddressTypeSecp256k1Account:
+		sig := new(secp256k1.Signature)
+		err := sig.Decode(r)
+
+		return sig, err
+
 	case crypto.AddressTypeTreasury:
 		return nil, ErrInvalidSigner
 
@@ -479,6 +486,12 @@ func (tx *Tx) decodePublicKey(r io.Reader) (crypto.PublicKey, error) {
 
 	case crypto.AddressTypeEd25519Account:
 		pub := new(ed25519.PublicKey)
+		err := pub.Decode(r)
+
+		return pub, err
+
+	case crypto.AddressTypeSecp256k1Account:
+		pub := new(secp256k1.PublicKey)
 		err := pub.Decode(r)
 
 		return pub, err

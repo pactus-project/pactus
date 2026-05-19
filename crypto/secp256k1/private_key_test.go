@@ -33,7 +33,8 @@ func TestPrivateKeyFromString(t *testing.T) {
 	require.NoError(t, err)
 
 	shortPayload := pipPrvBytes[:31]
-	shortSecret, err := bech32m.EncodeFromBase256WithType(crypto.PrivateKeyHRP, crypto.SignatureTypeSecp256k1, shortPayload)
+	shortSecret, err := bech32m.EncodeFromBase256WithType(
+		crypto.PrivateKeyHRP, crypto.SignatureTypeSecp256k1, shortPayload)
 	require.NoError(t, err)
 
 	tests := []struct {

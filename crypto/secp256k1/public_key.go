@@ -6,7 +6,7 @@ import (
 	"io"
 
 	secp "github.com/decred/dcrd/dcrec/secp256k1/v4"
-	ecdsa "github.com/decred/dcrd/dcrec/secp256k1/v4/ecdsa"
+	"github.com/decred/dcrd/dcrec/secp256k1/v4/ecdsa"
 	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
@@ -133,10 +133,6 @@ func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 	if r.SetByteSlice(rBytes) || s.SetByteSlice(sBytes) {
 		return crypto.ErrInvalidSignature
 	}
-	if r.IsZero() || s.IsZero() || s.IsOverHalfOrder() {
-		return crypto.ErrInvalidSignature
-	}
-
 	if !ecdsa.NewSignature(&r, &s).Verify(hash.Hash256(msg), pub.inner) {
 		return crypto.ErrInvalidSignature
 	}

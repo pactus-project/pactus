@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/crypto/secp256k1"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
@@ -164,6 +165,12 @@ func (bs *blockStore) publicKey(addr crypto.Address) (crypto.PublicKey, error) {
 		}
 	case crypto.AddressTypeEd25519Account:
 		pubKey, err = ed25519.PublicKeyFromBytes(data)
+		if err != nil {
+			return nil, err
+		}
+
+	case crypto.AddressTypeSecp256k1Account:
+		pubKey, err = secp256k1.PublicKeyFromBytes(data)
 		if err != nil {
 			return nil, err
 		}

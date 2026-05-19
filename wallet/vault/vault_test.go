@@ -143,6 +143,8 @@ func TestGetPrivateKeys(t *testing.T) {
 			case crypto.AddressTypeEd25519Account:
 				pub, _ := ed25519.PublicKeyFromString(info.PublicKey)
 				require.True(t, prv[0].PublicKey().EqualsTo(pub))
+			case crypto.AddressTypeSecp256k1Account:
+				assert.Fail(t, "not supported")
 			case crypto.AddressTypeTreasury:
 				assert.Fail(t, "not supported")
 			}

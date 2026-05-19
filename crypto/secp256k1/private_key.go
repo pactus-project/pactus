@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	secp "github.com/decred/dcrd/dcrec/secp256k1/v4"
-	ecdsa "github.com/decred/dcrd/dcrec/secp256k1/v4/ecdsa"
+	"github.com/decred/dcrd/dcrec/secp256k1/v4/ecdsa"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/util/bech32m"
@@ -81,16 +81,16 @@ func (prv *PrivateKey) SignNative(msg []byte) *Signature {
 	// RFC6979 deterministic ECDSA with low-s canonicalization.
 	sig := ecdsa.Sign(prv.inner, hash.Hash256(msg))
 
-	var bs [SignatureSize]byte
+	var data [SignatureSize]byte
 	rScalar := sig.R()
 	sScalar := sig.S()
 	r := rScalar.Bytes()
 	s := sScalar.Bytes()
-	copy(bs[:32], r[:])
-	copy(bs[32:], s[:])
+	copy(data[:32], r[:])
+	copy(data[32:], s[:])
 
 	return &Signature{
-		data: bs[:],
+		data: data[:],
 	}
 }
 
