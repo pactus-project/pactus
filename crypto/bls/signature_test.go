@@ -94,37 +94,31 @@ func TestSignatureFromString(t *testing.T) {
 		errMsg  string
 		encoded string
 		valid   bool
-		bytes   []byte
 	}{
 		{
 			"encoding/hex: invalid byte: U+006E 'n'",
 			"not_proper_encoded",
-			false, nil,
+			false,
 		},
 		{
 			"invalid length: 0",
 			"",
-			false, nil,
+			false,
 		},
 		{
 			"encoding/hex: odd length hex string",
 			"0",
-			false, nil,
+			false,
 		},
 		{
 			"invalid length: 1",
 			"00",
-			false, nil,
+			false,
 		},
 		{
 			"",
 			"ad0f88cec815e9b8af3f0136297cb242ed8b6369af723fbdac077fa927f5780db7df47c77fb53f3a22324673f000c792",
 			true,
-			[]byte{
-				0xad, 0x0f, 0x88, 0xce, 0xc8, 0x15, 0xe9, 0xb8, 0xaf, 0x3f, 0x01, 0x36, 0x29, 0x7c, 0xb2, 0x42,
-				0xed, 0x8b, 0x63, 0x69, 0xaf, 0x72, 0x3f, 0xbd, 0xac, 0x07, 0x7f, 0xa9, 0x27, 0xf5, 0x78, 0x0d,
-				0xb7, 0xdf, 0x47, 0xc7, 0x7f, 0xb5, 0x3f, 0x3a, 0x22, 0x32, 0x46, 0x73, 0xf0, 0x00, 0xc7, 0x92,
-			},
 		},
 	}
 
@@ -132,7 +126,6 @@ func TestSignatureFromString(t *testing.T) {
 		sig, err := bls.SignatureFromString(tt.encoded)
 		if tt.valid {
 			require.NoError(t, err, "test %v: unexpected error", no)
-			assert.Equal(t, tt.bytes, sig.Bytes(), "test %v: invalid bytes", no)
 			assert.Equal(t, tt.encoded, sig.String(), "test %v: invalid encode", no)
 		} else {
 			assert.Contains(t, err.Error(), tt.errMsg, "test %v: error not matched", no)
@@ -157,7 +150,7 @@ func TestPointG1(t *testing.T) {
 			false,
 		},
 		{
-			"invalid public key",
+			"invalid signature",
 			"c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
 			false,
 		},
@@ -176,6 +169,7 @@ func TestPointG1(t *testing.T) {
 		if tt.valid {
 			require.NoError(t, err, "test %v: unexpected error", no)
 		} else {
+			require.Error(t, err, "test %v", no)
 			assert.Contains(t, err.Error(), tt.errMsg, "test %v: error not matched", no)
 		}
 	}

@@ -6,7 +6,6 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/secp256k1"
-	"github.com/pactus-project/pactus/util/bech32m"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -25,18 +24,6 @@ func TestPrivateKeyEqualsTo(t *testing.T) {
 }
 
 func TestPrivateKeyFromString(t *testing.T) {
-	pipPrvBytes := []byte{
-		0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
-		0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
-	}
-	wrongHRP, err := bech32m.EncodeFromBase256WithType("XXX", crypto.SignatureTypeSecp256k1, pipPrvBytes)
-	require.NoError(t, err)
-
-	shortPayload := pipPrvBytes[:31]
-	shortSecret, err := bech32m.EncodeFromBase256WithType(
-		crypto.PrivateKeyHRP, crypto.SignatureTypeSecp256k1, shortPayload)
-	require.NoError(t, err)
-
 	tests := []struct {
 		errMsg  string
 		encoded string
@@ -55,7 +42,7 @@ func TestPrivateKeyFromString(t *testing.T) {
 		},
 		{
 			"invalid HRP",
-			strings.ToUpper(wrongHRP),
+			"xxx1yqqqsyqcyq5rqwzqfpg9scrgwpugpzysnzs23v9ccrydpk8qarc0s6zk30h",
 			false, nil,
 		},
 		{
@@ -65,7 +52,7 @@ func TestPrivateKeyFromString(t *testing.T) {
 		},
 		{
 			"invalid length: 31",
-			strings.ToUpper(shortSecret),
+			"secret1yqqqsyqcyq5rqwzqfpg9scrgwpugpzysnzs23v9ccrydpk8qarc5lhvxu",
 			false, nil,
 		},
 		{

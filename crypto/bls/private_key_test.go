@@ -96,6 +96,7 @@ func TestPrivateKeyFromString(t *testing.T) {
 			assert.Equal(t, tt.result, prv.Bytes(), "test %v: invalid bytes", no)
 			assert.Equal(t, strings.ToUpper(tt.encoded), prv.String(), "test %v: invalid encoded", no)
 		} else {
+			require.Error(t, err, "test %v", no)
 			assert.Contains(t, err.Error(), tt.errMsg, "test %v: error not matched", no)
 		}
 	}

@@ -91,29 +91,22 @@ func TestSignatureFromString(t *testing.T) {
 		errMsg  string
 		encoded string
 		valid   bool
-		bytes   []byte
 	}{
 		{
 			"encoding/hex: invalid byte: U+006E 'n'",
 			"not_proper_encoded",
-			false, nil,
+			false,
 		},
 		{
 			"invalid length: 0",
 			"",
-			false, nil,
+			false,
 		},
 		{
 			"",
 			"7d6af02f788422319781b03d7f4ed575b78c4c4dc8060ce145624fc8dc9ad92b" +
 				"ae2d28c70242f03a644f313009ad9cc88b5dc37d501e43279c8fbc40b973af04",
 			true,
-			[]byte{
-				0x7d, 0x6a, 0xf0, 0x2f, 0x78, 0x84, 0x22, 0x31, 0x97, 0x81, 0xb0, 0x3d, 0x7f, 0x4e, 0xd5, 0x75,
-				0xb7, 0x8c, 0x4c, 0x4d, 0xc8, 0x06, 0x0c, 0xe1, 0x45, 0x62, 0x4f, 0xc8, 0xdc, 0x9a, 0xd9, 0x2b,
-				0xae, 0x2d, 0x28, 0xc7, 0x02, 0x42, 0xf0, 0x3a, 0x64, 0x4f, 0x31, 0x30, 0x09, 0xad, 0x9c, 0xc8,
-				0x8b, 0x5d, 0xc3, 0x7d, 0x50, 0x1e, 0x43, 0x27, 0x9c, 0x8f, 0xbc, 0x40, 0xb9, 0x73, 0xaf, 0x04,
-			},
 		},
 	}
 
@@ -121,9 +114,9 @@ func TestSignatureFromString(t *testing.T) {
 		sig, err := ed25519.SignatureFromString(tt.encoded)
 		if tt.valid {
 			require.NoError(t, err, "test %v: unexpected error", no)
-			assert.Equal(t, tt.bytes, sig.Bytes(), "test %v: invalid bytes", no)
 			assert.Equal(t, tt.encoded, sig.String(), "test %v: invalid encode", no)
 		} else {
+			require.Error(t, err, "test %v", no)
 			assert.Contains(t, err.Error(), tt.errMsg, "test %v: error not matched", no)
 		}
 	}
