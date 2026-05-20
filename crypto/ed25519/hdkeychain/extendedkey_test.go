@@ -5,6 +5,7 @@ import (
 	"io"
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util/bech32m"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -107,37 +108,6 @@ func TestDerivation(t *testing.T) {
 			"mismatched serialized public key for test #%v", no+1)
 
 		require.Equal(t, tt.path, extKey.Path())
-	}
-}
-
-// TestGenerateSeed ensures the GenerateSeed function works as intended.
-func TestGenerateSeed(t *testing.T) {
-	tests := []struct {
-		name   string
-		length uint8
-		err    error
-	}{
-		// Test various valid lengths.
-		{name: "16 bytes", length: 16},
-		{name: "17 bytes", length: 17},
-		{name: "20 bytes", length: 20},
-		{name: "32 bytes", length: 32},
-		{name: "64 bytes", length: 64},
-
-		// Test invalid lengths.
-		{name: "15 bytes", length: 15, err: ErrInvalidSeedLen},
-		{name: "65 bytes", length: 65, err: ErrInvalidSeedLen},
-	}
-
-	for no, tt := range tests {
-		seed, err := GenerateSeed(tt.length)
-		require.ErrorIs(t, err, tt.err)
-
-		if tt.err == nil {
-			assert.Len(t, seed, int(tt.length),
-				"GenerateSeed #%d (%s): length mismatch -- got %d, want %d",
-				no+1, tt.name, len(seed), tt.length)
-		}
 	}
 }
 
@@ -303,7 +273,7 @@ func TestInvalidString(t *testing.T) {
 		{
 			desc:          "invalid hrp",
 			str:           "SECRET1RQGQQQQYQQYQQPQPQ5VSYYHMH6X6UY5Z6DVDJWWPTXUMGAEJQUD2HCV25Z6QPYS649U2QQG936ZADGP9LXHD8SKNYEGDV2JEXZUS36FMHD9HML7HJPRM5DT5Y7GYQ7VAT",
-			expectedError: ErrInvalidHRP,
+			expectedError: crypto.InvalidHRPError("secret"),
 		},
 	}
 

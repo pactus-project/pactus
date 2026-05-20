@@ -7,7 +7,6 @@ package hdkeychain
 import (
 	"bytes"
 	"crypto/hmac"
-	"crypto/rand"
 	"crypto/sha512"
 	"encoding/binary"
 	"math/big"
@@ -458,7 +457,7 @@ func NewKeyFromString(str string) (*ExtendedKey, error) {
 		isPrivate = false
 
 	default:
-		return nil, ErrInvalidHRP
+		return nil, crypto.InvalidHRPError(hrp)
 	}
 
 	return newExtendedKey(key, chainCode, path, isPrivate, pubOnG1), nil
@@ -496,25 +495,4 @@ func NewMaster(seed []byte, pubOnG1 bool) (*ExtendedKey, error) {
 	}
 
 	return newExtendedKey(privKey.Bytes(), chainCode, []uint32{}, true, pubOnG1), nil
-}
-
-// GenerateSeed returns a cryptographically secure random seed that can be used
-// as the input for the NewMaster function to generate a new master node.
-//
-// The length is in bytes and it must be between 16 and 64 (128 to 512 bits).
-// The recommended length is 32 (256 bits) as defined by the RecommendedSeedLen
-// constant.
-func GenerateSeed(length uint8) ([]byte, error) {
-	// Per [BIP32], the seed must be in range [MinSeedBytes, MaxSeedBytes].
-	if length < MinSeedBytes || length > MaxSeedBytes {
-		return nil, ErrInvalidSeedLen
-	}
-
-	buf := make([]byte, length)
-	_, err := rand.Read(buf)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
 }
