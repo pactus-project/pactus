@@ -5,6 +5,7 @@ import (
 	"io"
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/util/bech32m"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -232,37 +233,6 @@ func TestInvalidDerivation(t *testing.T) {
 	})
 }
 
-// TestGenerateSeed ensures the GenerateSeed function works as intended.
-func TestGenerateSeed(t *testing.T) {
-	tests := []struct {
-		name   string
-		length uint8
-		err    error
-	}{
-		// Test various valid lengths.
-		{name: "16 bytes", length: 16},
-		{name: "17 bytes", length: 17},
-		{name: "20 bytes", length: 20},
-		{name: "32 bytes", length: 32},
-		{name: "64 bytes", length: 64},
-
-		// Test invalid lengths.
-		{name: "15 bytes", length: 15, err: ErrInvalidSeedLen},
-		{name: "65 bytes", length: 65, err: ErrInvalidSeedLen},
-	}
-
-	for no, tt := range tests {
-		seed, err := GenerateSeed(tt.length)
-		require.ErrorIs(t, err, tt.err)
-
-		if tt.err == nil {
-			assert.Len(t, seed, int(tt.length),
-				"GenerateSeed #%d (%s): length mismatch -- got %d, want %d",
-				no, tt.name, len(seed), tt.length)
-		}
-	}
-}
-
 // TestNewMaster ensures the NewMaster function works as intended.
 func TestNewMaster(t *testing.T) {
 	tests := []struct {
@@ -431,9 +401,7 @@ func TestKeyToString(t *testing.T) {
 	}
 }
 
-// TestInvalidString checks errors corresponding to the invalid strings
-//
-//nolint:lll // long extended private keys
+// TestInvalidString checks errors corresponding to the invalid strings.
 func TestInvalidString(t *testing.T) {
 	tests := []struct {
 		desc          string
@@ -441,8 +409,9 @@ func TestInvalidString(t *testing.T) {
 		expectedError error
 	}{
 		{
-			desc:          "invalid checksum",
-			str:           "XSECRET1PQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJAT3FD4",
+			desc: "invalid checksum",
+			str: "XSECRET1PQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68" +
+				"JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJAT3FD4",
 			expectedError: bech32m.InvalidChecksumError{Expected: "at3f4d", Actual: "at3fd4"},
 		},
 		{
@@ -461,34 +430,40 @@ func TestInvalidString(t *testing.T) {
 			expectedError: io.EOF,
 		},
 		{
-			desc:          "no group",
-			str:           "XSECRET1PQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGS579U6",
+			desc: "no group",
+			str: "XSECRET1PQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68" +
+				"JHCVGS579U6",
 			expectedError: io.EOF,
 		},
 		{
-			desc:          "no key",
-			str:           "XSECRET1PQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGPJCMNNE",
+			desc: "no key",
+			str: "XSECRET1PQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68" +
+				"JHCVGPJCMNNE",
 			expectedError: io.EOF,
 		},
 		{
-			desc:          "invalid type",
-			str:           "XSECRET1ZQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJPJKVRX",
+			desc: "invalid type",
+			str: "XSECRET1ZQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68" +
+				"JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJPJKVRX",
 			expectedError: ErrInvalidKeyData,
 		},
 		{
-			desc:          "invalid type",
-			str:           "XPUBLIC1ZQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJ3HALEC",
+			desc: "invalid type",
+			str: "XPUBLIC1ZQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68" +
+				"JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJ3HALEC",
 			expectedError: ErrInvalidKeyData,
 		},
 		{
-			desc:          "invalid hrp",
-			str:           "SECRET1PQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJ98PYV5",
-			expectedError: ErrInvalidHRP,
+			desc: "invalid hrp: secret",
+			str: "SECRET1PQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68" +
+				"JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJ98PYV5",
+			expectedError: crypto.InvalidHRPError("secret"),
 		},
 		{
-			desc:          "invalid hrp",
-			str:           "PUBLIC1PQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJ4Z2HK2",
-			expectedError: ErrInvalidHRP,
+			desc: "invalid hrp: secret",
+			str: "PUBLIC1PQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68" +
+				"JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJ4Z2HK2",
+			expectedError: crypto.InvalidHRPError("public"),
 		},
 	}
 
@@ -499,13 +474,14 @@ func TestInvalidString(t *testing.T) {
 }
 
 // TestNeuter ensures the Neuter function works as intended.
-//
-//nolint:lll // Long extended private key
 func TestNeuter(t *testing.T) {
-	extKey, _ := NewKeyFromString("XSECRET1PQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJAT3F4D")
+	extKey, _ := NewKeyFromString(
+		"XSECRET1PQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99" +
+			"Y68JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJAT3F4D")
 	neuterKey := extKey.Neuter()
 	assert.Equal(t,
-		"xpublic1pq5qqqqyqqyqqqqqzqqqgqqsqqqqqpj568vs9lz67jkww0p6tqy9ny58lv0pcvrqqtaemkgv6uljns99y68jhcvgpxzvmgpqnpgdwddkajrwl9gjudyh5q4fklms3q3390mtt5ytznugp4kqxtrrpcqulq53aunrwnav2tjqzv47re",
+		"xpublic1pq5qqqqyqqyqqqqqzqqqgqqsqqqqqpj568vs9lz67jkww0p6tqy9ny58lv0pcvrqqtaemkgv6uljns99"+
+			"y68jhcvgpxzvmgpqnpgdwddkajrwl9gjudyh5q4fklms3q3390mtt5ytznugp4kqxtrrpcqulq53aunrwnav2tjqzv47re",
 		neuterKey.String())
 	assert.Equal(t, neuterKey, neuterKey.Neuter())
 }

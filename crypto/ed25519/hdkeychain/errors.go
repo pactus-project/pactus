@@ -15,9 +15,6 @@ var (
 	// not valid.
 	ErrInvalidKeyData = errors.New("key data is invalid")
 
-	// ErrInvalidHRP describes an error in which the HRP is not valid.
-	ErrInvalidHRP = errors.New("HRP is invalid")
-
 	// ErrNonHardenedPath is returned when a non-hardened derivation path is used,
 	// which is not supported by ed25519.
 	ErrNonHardenedPath = errors.New("non-hardened derivation not supported")

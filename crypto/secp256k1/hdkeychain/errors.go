@@ -18,8 +18,7 @@ var (
 
 	// ErrUnusableSeed describes an error in which the provided seed is not
 	// usable due to the derived key falling outside of the valid range for
-	// BLS private keys.  This error indicates the caller must choose
-	// another seed.
+	// secp256k1 private keys.
 	ErrUnusableSeed = errors.New("unusable seed")
 
 	// ErrInvalidSeedLen describes an error in which the provided seed or

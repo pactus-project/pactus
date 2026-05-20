@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"crypto/ed25519"
 	"crypto/hmac"
-	"crypto/rand"
 	"crypto/sha512"
 	"encoding/binary"
 	"strings"
@@ -195,7 +194,7 @@ func NewKeyFromString(str string) (*ExtendedKey, error) {
 	}
 
 	if hrp != crypto.XPrivateKeyHRP {
-		return nil, ErrInvalidHRP
+		return nil, crypto.InvalidHRPError(hrp)
 	}
 
 	reader := bytes.NewReader(data)
@@ -255,25 +254,4 @@ func NewMaster(seed []byte) (*ExtendedKey, error) {
 	masterKey := ilr[:32]
 
 	return newExtendedKey(masterKey, masterChainCode, []uint32{}), nil
-}
-
-// GenerateSeed returns a cryptographically secure random seed that can be used
-// as the input for the NewMaster function to generate a new master node.
-//
-// The length is in bytes and it must be between 16 and 64 (128 to 512 bits).
-// The recommended length is 32 (256 bits) as defined by the RecommendedSeedLen
-// constant.
-func GenerateSeed(length uint8) ([]byte, error) {
-	// Per [BIP32], the seed must be in range [MinSeedBytes, MaxSeedBytes].
-	if length < MinSeedBytes || length > MaxSeedBytes {
-		return nil, ErrInvalidSeedLen
-	}
-
-	buf := make([]byte, length)
-	_, err := rand.Read(buf)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
 }
