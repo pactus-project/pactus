@@ -8,7 +8,6 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
 )
@@ -50,12 +49,12 @@ func (c *TxWithdrawDialogController) applyDefaults() {
 }
 
 func (c *TxWithdrawDialogController) populateCombos() {
-	for _, ai := range c.model.ListAddresses(crypto.AddressTypeValidator) {
+	for _, ai := range c.model.ListValidatorAddresses() {
 		c.view.ValidatorCombo.Append(ai.Address, ai.Address)
 	}
 	c.view.ValidatorCombo.SetActive(0)
 
-	for _, ai := range c.model.ListAddresses(crypto.AddressTypeBLSAccount, crypto.AddressTypeEd25519Account) {
+	for _, ai := range c.model.ListAccountAddresses() {
 		c.view.ReceiverCombo.Append(ai.Address, ai.Address)
 	}
 }
