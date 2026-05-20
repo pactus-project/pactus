@@ -61,9 +61,7 @@ func AddressFromString(text string) (Address, error) {
 		return Address{}, InvalidLengthError(len(data) + 1)
 	}
 
-	var addr Address
-	addr[0] = typ
-	copy(addr[1:], data)
+	addr := NewAddress(AddressType(typ), data)
 
 	return addr, nil
 }
