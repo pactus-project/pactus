@@ -11,8 +11,7 @@ import (
 func TestBlockStore(t *testing.T) {
 	td := setup(t, nil)
 
-	lastCert := td.store.LastCertificate()
-	lastHeight := lastCert.Height()
+	lastHeight := td.RandHeight()
 	nextBlk, nextCert := td.GenerateTestBlock(lastHeight + 1)
 
 	t.Run("Add block, don't batch write", func(t *testing.T) {

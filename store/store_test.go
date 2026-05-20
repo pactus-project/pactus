@@ -132,9 +132,21 @@ func TestIndexingPublicKeys(t *testing.T) {
 	td := setup(t, nil)
 
 	t.Run("Query existing public key", func(t *testing.T) {
-		cBlk, _ := td.store.Block(1)
-		blk, _ := cBlk.ToBlock()
-		for _, trx := range blk.Transactions()[1:] {
+		_, prv1 := td.RandBLSKeyPair()
+		_, prv2 := td.RandEd25519KeyPair()
+		_, prv3 := td.RandSecp256k1KeyPair()
+		trx1 := td.GenerateTestTransferTx(testsuite.TransactionWithSigner(prv1))
+		trx2 := td.GenerateTestTransferTx(testsuite.TransactionWithSigner(prv2))
+		trx3 := td.GenerateTestTransferTx(testsuite.TransactionWithSigner(prv3))
+		trxs := []*tx.Tx{trx1, trx2, trx3}
+		blk, cert := td.GenerateTestBlock(
+			td.RandHeight(),
+			testsuite.BlockWithTransactions(trxs))
+		td.store.SaveBlock(blk, cert)
+		err := td.store.WriteBatch()
+		require.NoError(t, err)
+
+		for _, trx := range trxs {
 			addr := trx.Payload().Signer()
 			pub, err := td.store.PublicKey(addr)
 			require.NoError(t, err)

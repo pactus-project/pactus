@@ -248,15 +248,11 @@ func (ts *TestSuite) RandEd25519KeyPair() (*ed25519.PublicKey, *ed25519.PrivateK
 
 // RandSecp256k1KeyPair generates a random secp256k1 key pair for testing purposes.
 func (ts *TestSuite) RandSecp256k1KeyPair() (*secp256k1.PublicKey, *secp256k1.PrivateKey) {
-	for {
-		buf := ts.RandBytes(secp256k1.PrivateKeySize)
-		prv, err := secp256k1.PrivateKeyFromBytes(buf)
-		if err == nil {
-			pub := prv.PublicKeyNative()
+	buf := ts.RandBytes(secp256k1.PrivateKeySize)
+	prv, _ := secp256k1.PrivateKeyFromBytes(buf)
+	pub := prv.PublicKeyNative()
 
-			return pub, prv
-		}
-	}
+	return pub, prv
 }
 
 // RandValKey generates a random validator key for testing purposes.
@@ -627,9 +623,13 @@ func (tm *TransactionMaker) SignerAccountAddress() crypto.Address {
 	if ok {
 		return blsPub.AccountAddress()
 	}
-	ed25519Pub := tm.Signer.PublicKey().(*ed25519.PublicKey)
+	ed25519Pub, ok := tm.Signer.PublicKey().(*ed25519.PublicKey)
+	if ok {
+		return ed25519Pub.AccountAddress()
+	}
+	secp256k1Pub := tm.Signer.PublicKey().(*secp256k1.PublicKey)
 
-	return ed25519Pub.AccountAddress()
+	return secp256k1Pub.AccountAddress()
 }
 
 func (tm *TransactionMaker) SignerValidatorAddress() crypto.Address {
