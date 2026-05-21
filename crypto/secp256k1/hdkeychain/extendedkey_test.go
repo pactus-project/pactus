@@ -114,7 +114,7 @@ func TestInvalidDerivation(t *testing.T) {
 	t.Run("private key is 31 bytes", func(t *testing.T) {
 		key := [31]byte{0}
 		chainCode := [32]byte{0}
-		ext := newExtendedKey(key[:], chainCode[:], []uint32{}, true, 0)
+		ext := newExtendedKey(key[:], chainCode[:], []uint32{}, true)
 		_, err := ext.Derive(hardenedKeyStart)
 		require.ErrorIs(t, err, ErrInvalidKeyData)
 	})
@@ -122,7 +122,7 @@ func TestInvalidDerivation(t *testing.T) {
 	t.Run("public key is invalid length", func(t *testing.T) {
 		key := [32]byte{0}
 		chainCode := [32]byte{0}
-		ext := newExtendedKey(key[:], chainCode[:], []uint32{}, false, 0)
+		ext := newExtendedKey(key[:], chainCode[:], []uint32{}, false)
 		_, err := ext.Derive(0)
 		require.ErrorIs(t, err, ErrInvalidKeyData)
 	})
@@ -131,7 +131,7 @@ func TestInvalidDerivation(t *testing.T) {
 		pub, err := hex.DecodeString("0339a36013301597daef41fbe593a02cc513d0b55527ec2df1050e2e8ff49c85c2")
 		require.NoError(t, err)
 		chainCode := [32]byte{0}
-		ext := newExtendedKey(pub, chainCode[:], []uint32{}, false, 0)
+		ext := newExtendedKey(pub, chainCode[:], []uint32{}, false)
 		_, err = ext.Derive(hardenedKeyStart)
 		require.ErrorIs(t, err, ErrDeriveHardFromPublic)
 	})
