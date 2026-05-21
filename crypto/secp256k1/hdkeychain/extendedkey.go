@@ -1,13 +1,14 @@
 package hdkeychain
 
 // References:
-//   BIP-32: Hierarchical Deterministic Wallets
+// - BIP-32: Hierarchical Deterministic Wallets
 //   https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki
+// - SLIP-0010 : Universal private key derivation from master private key
+//   https://github.com/satoshilabs/slips/blob/master/slip-0010.md
 
 import (
 	"bytes"
 	"crypto/hmac"
-	"crypto/sha256"
 	"crypto/sha512"
 	"encoding/binary"
 	"strings"
@@ -16,7 +17,6 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util/bech32m"
 	"github.com/pactus-project/pactus/util/encoding"
-	"golang.org/x/crypto/ripemd160" //nolint:all // BIP-32 uses Bitcoin HASH160.
 )
 
 const (
@@ -44,30 +44,18 @@ type ExtendedKey struct {
 	chainCode []byte
 	path      []uint32
 	isPrivate bool
-	parentFP  uint32
 }
 
 // newExtendedKey returns a new instance of an extended key with the given
 // fields. No error checking is performed here as it's only intended to be a
 // convenience method used to create a populated struct.
-func newExtendedKey(key, chainCode []byte, path []uint32, isPrivate bool, parentFP uint32) *ExtendedKey {
+func newExtendedKey(key, chainCode []byte, path []uint32, isPrivate bool) *ExtendedKey {
 	return &ExtendedKey{
 		key:       key,
 		chainCode: chainCode,
 		path:      path,
 		isPrivate: isPrivate,
-		parentFP:  parentFP,
 	}
-}
-
-func fingerprint(pubKey []byte) uint32 {
-	sha := sha256.Sum256(pubKey)
-	//nolint:all // BIP-32 uses Bitcoin HASH160: RIPEMD160(SHA256(pubkey)).
-	hasher := ripemd160.New()
-	_, _ = hasher.Write(sha[:])
-	digest := hasher.Sum(nil)
-
-	return binary.BigEndian.Uint32(digest[:4])
 }
 
 func isValidPrivateKey(key []byte) bool {
@@ -137,22 +125,20 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 
 	var childChainCode, il []byte
 
-	for {
-		hmac512 := hmac.New(sha512.New, k.chainCode)
-		_, _ = hmac512.Write(data)
-		ilr := hmac512.Sum(nil)
+	hmac512 := hmac.New(sha512.New, k.chainCode)
+	_, _ = hmac512.Write(data)
+	ilr := hmac512.Sum(nil)
 
-		il = ilr[:len(ilr)/2]
-		childChainCode = ilr[len(ilr)/2:]
+	il = ilr[:len(ilr)/2]
+	childChainCode = ilr[len(ilr)/2:]
 
-		if isValidPrivateKey(il) {
-			break
-		}
-
-		data = make([]byte, 0, 1+len(childChainCode)+len(indexData))
-		data = append(data, 0x01)
-		data = append(data, childChainCode...)
-		data = append(data, indexData...)
+	// Both derived public or private keys rely on treating the left 32-byte
+	// sequence calculated above (Il) as a 256-bit integer that must be
+	// within the valid range for a secp256k1 private key.  There is a small
+	// chance (< 1 in 2^127) this condition will not hold, and in that case,
+	// a child extended key can't be created for this index.
+	if !isValidPrivateKey(il) {
+		return nil, ErrInvalidKeyData
 	}
 
 	var childKey []byte
@@ -191,22 +177,12 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 	newPath = append(newPath, k.path...)
 	newPath = append(newPath, index)
 
-	return newExtendedKey(childKey, childChainCode, newPath, k.isPrivate, k.fingerprint()), nil
+	return newExtendedKey(childKey, childChainCode, newPath, k.isPrivate), nil
 }
 
 // Path returns the path of derived key.
 func (k *ExtendedKey) Path() []uint32 {
 	return k.path
-}
-
-// ParentFingerprint returns the parent key fingerprint per BIP-32.
-func (k *ExtendedKey) ParentFingerprint() uint32 {
-	return k.parentFP
-}
-
-// fingerprint returns the fingerprint of this extended key.
-func (k *ExtendedKey) fingerprint() uint32 {
-	return fingerprint(k.pubKeyBytes())
 }
 
 // ChainCode returns a copy of the chain code.
@@ -234,7 +210,7 @@ func (k *ExtendedKey) Neuter() *ExtendedKey {
 		return k
 	}
 
-	return newExtendedKey(k.pubKeyBytes(), k.chainCode, k.path, false, k.parentFP)
+	return newExtendedKey(k.pubKeyBytes(), k.chainCode, k.path, false)
 }
 
 // String returns the extended key as a bech32-encoded string.
@@ -354,7 +330,7 @@ func NewKeyFromString(str string) (*ExtendedKey, error) {
 		return nil, crypto.InvalidHRPError(hrp)
 	}
 
-	return newExtendedKey(key, chainCode, path, isPrivate, 0), nil
+	return newExtendedKey(key, chainCode, path, isPrivate), nil
 }
 
 // NewMaster creates a new master node for use in creating a hierarchical
@@ -371,6 +347,9 @@ func NewMaster(seed []byte) (*ExtendedKey, error) {
 	_, _ = hmac512.Write(seed)
 	ilr := hmac512.Sum(nil)
 
+	// Split "I" into two 32-byte sequences Il and Ir where:
+	//   Il = master secret key
+	//   Ir = master chain code
 	key := ilr[:32]
 	chainCode := ilr[32:]
 
@@ -378,5 +357,5 @@ func NewMaster(seed []byte) (*ExtendedKey, error) {
 		return nil, ErrUnusableSeed
 	}
 
-	return newExtendedKey(key, chainCode, []uint32{}, true, 0), nil
+	return newExtendedKey(key, chainCode, []uint32{}, true), nil
 }
