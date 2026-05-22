@@ -243,6 +243,8 @@ func (a *addresses) NewAddress(addressType crypto.AddressType, label string, opt
 	var info *types.AddressInfo
 	var err error
 	switch addressType {
+	case crypto.AddressTypeTreasury:
+		return nil, ErrInvalidAddressType
 	case crypto.AddressTypeValidator:
 		info, err = vault.NewValidatorAddress(label)
 	case crypto.AddressTypeBLSAccount:
@@ -250,9 +252,7 @@ func (a *addresses) NewAddress(addressType crypto.AddressType, label string, opt
 	case crypto.AddressTypeEd25519Account:
 		info, err = vault.NewEd25519AccountAddress(label, cfg.password)
 	case crypto.AddressTypeSecp256k1Account:
-		return nil, ErrInvalidAddressType
-	case crypto.AddressTypeTreasury:
-		return nil, ErrInvalidAddressType
+		info, err = vault.NewSecp256k1AccountAddress(label)
 
 	default:
 		return nil, ErrInvalidAddressType
@@ -275,6 +275,12 @@ func (a *addresses) NewAddress(addressType crypto.AddressType, label string, opt
 	return info, nil
 }
 
+// NewValidatorAddress creates a new BLS validator address and
+// associates it with the given label.
+func (a *addresses) NewValidatorAddress(label string) (*types.AddressInfo, error) {
+	return a.NewAddress(crypto.AddressTypeValidator, label)
+}
+
 // NewBLSAccountAddress create a new BLS-based account address and
 // associates it with the given label.
 func (a *addresses) NewBLSAccountAddress(label string) (*types.AddressInfo, error) {
@@ -288,10 +294,10 @@ func (a *addresses) NewEd25519AccountAddress(label, password string) (*types.Add
 	return a.NewAddress(crypto.AddressTypeEd25519Account, label, WithPassword(password))
 }
 
-// NewValidatorAddress creates a new BLS validator address and
+// NewSecp256k1AccountAddress create a new Secp256k1-based account address and
 // associates it with the given label.
-func (a *addresses) NewValidatorAddress(label string) (*types.AddressInfo, error) {
-	return a.NewAddress(crypto.AddressTypeValidator, label)
+func (a *addresses) NewSecp256k1AccountAddress(label string) (*types.AddressInfo, error) {
+	return a.NewAddress(crypto.AddressTypeSecp256k1Account, label)
 }
 
 func (a *addresses) HasAddress(addr string) bool {

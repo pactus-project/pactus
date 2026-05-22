@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/ed25519"
+	"github.com/pactus-project/pactus/crypto/secp256k1"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/encrypter"
@@ -37,22 +38,24 @@ func setup(t *testing.T) *testData {
 	require.NoError(t, err)
 
 	// Create some test address
+	addr3, err := vault.NewValidatorAddress("validator-address")
+	require.NoError(t, err)
 	addr1, err := vault.NewBLSAccountAddress("bls-account-address")
 	require.NoError(t, err)
 	addr2, err := vault.NewEd25519AccountAddress("ed25519-account-address", "")
 	require.NoError(t, err)
-	addr3, err := vault.NewValidatorAddress("validator-address")
+	addr4, err := vault.NewSecp256k1AccountAddress("secp256k1-account-address")
 	require.NoError(t, err)
 
 	_, importedBLSPrv := ts.RandBLSKeyPair()
-	addr4, addr5, err := vault.ImportBLSPrivateKey("", importedBLSPrv)
+	addr5, addr6, err := vault.ImportBLSPrivateKey("", importedBLSPrv)
 	require.NoError(t, err)
 
 	_, importedEd25519Prv := ts.RandEd25519KeyPair()
-	addr6, err := vault.ImportEd25519PrivateKey("", importedEd25519Prv)
+	addr7, err := vault.ImportEd25519PrivateKey("", importedEd25519Prv)
 	require.NoError(t, err)
 
-	testAddrs := []*types.AddressInfo{addr1, addr2, addr3, addr4, addr5, addr6}
+	testAddrs := []*types.AddressInfo{addr1, addr2, addr3, addr4, addr5, addr6, addr7}
 
 	assert.False(t, vault.IsEncrypted())
 
@@ -97,11 +100,13 @@ func TestCreateVaultFromMnemonic(t *testing.T) {
 		assert.Zero(t, recovered.Purposes.PurposeBIP44.NextEd25519Index)
 
 		// Recover addresses
+		_, err = recovered.NewValidatorAddress("validator-address")
+		require.NoError(t, err)
 		_, err = recovered.NewBLSAccountAddress("bls-account-address")
 		require.NoError(t, err)
 		_, err = recovered.NewEd25519AccountAddress("ed25519-account-address", "")
 		require.NoError(t, err)
-		_, err = recovered.NewValidatorAddress("validator-address")
+		_, err = recovered.NewSecp256k1AccountAddress("secp256k1-account-address")
 		require.NoError(t, err)
 
 		assert.Equal(t, recovered.Purposes, td.vault.Purposes)
@@ -144,7 +149,8 @@ func TestGetPrivateKeys(t *testing.T) {
 				pub, _ := ed25519.PublicKeyFromString(info.PublicKey)
 				require.True(t, prv[0].PublicKey().EqualsTo(pub))
 			case crypto.AddressTypeSecp256k1Account:
-				assert.Fail(t, "not supported")
+				pub, _ := secp256k1.PublicKeyFromString(info.PublicKey)
+				require.True(t, prv[0].PublicKey().EqualsTo(pub))
 			case crypto.AddressTypeTreasury:
 				assert.Fail(t, "not supported")
 			}

@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/ed25519"
+	"github.com/pactus-project/pactus/crypto/secp256k1"
 	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/pactus-project/pactus/wallet/storage"
 	"github.com/pactus-project/pactus/wallet/types"
@@ -151,6 +152,23 @@ func TestNewE225519AccountAddress(t *testing.T) {
 	assert.Equal(t, "m/44'/21888'/3'/0'", addressInfo.Path)
 
 	pub, _ := ed25519.PublicKeyFromString(addressInfo.PublicKey)
+	assert.Equal(t, pub.AccountAddress().String(), addressInfo.Address)
+}
+
+func TestNewSecp256k1AccountAddress(t *testing.T) {
+	td := setup(t)
+
+	td.mockStorage.EXPECT().InsertAddress(gomock.Any()).Return(nil)
+	td.mockStorage.EXPECT().UpdateVault(td.testVault).Return(nil)
+	label := td.RandString(16)
+	addressInfo, err := td.wallet.NewSecp256k1AccountAddress(label)
+	require.NoError(t, err)
+	assert.NotEmpty(t, addressInfo.Address)
+	assert.NotEmpty(t, addressInfo.PublicKey)
+	assert.Equal(t, label, addressInfo.Label)
+	assert.Equal(t, "m/44'/21888'/4'/0", addressInfo.Path)
+
+	pub, _ := secp256k1.PublicKeyFromString(addressInfo.PublicKey)
 	assert.Equal(t, pub.AccountAddress().String(), addressInfo.Address)
 }
 
