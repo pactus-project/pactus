@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/go-zeromq/zmq4"
 	"github.com/pactus-project/pactus/crypto/hash"
@@ -25,9 +26,6 @@ func TestPublisherOnSameSockets(t *testing.T) {
 	conf.ZmqPubBlockInfo = addr
 
 	td := setup(t, conf)
-	defer td.closeServer()
-
-	td.server.Publishers()
 
 	sub := zmq4.NewSub(t.Context(), zmq4.WithAutomaticReconnect(false))
 
@@ -45,6 +43,8 @@ func TestPublisherOnSameSockets(t *testing.T) {
 
 	err = sub.SetOption(zmq4.OptionSubscribe, string(TopicRawBlock.Bytes()))
 	require.NoError(t, err)
+
+	time.Sleep(100 * time.Millisecond)
 
 	blk, _ := td.TestSuite.GenerateTestBlock(td.RandHeight())
 	td.pipe.Send(blk)

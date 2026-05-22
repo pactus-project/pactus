@@ -27,16 +27,16 @@ func setup(t *testing.T, conf *Config) *testData {
 	server, err := New(t.Context(), conf, pipe)
 	require.NoError(t, err)
 
+	t.Cleanup(func() {
+		server.Close()
+	})
+
 	return &testData{
 		TestSuite: ts,
 		mockState: mockState,
 		server:    server,
 		pipe:      pipe,
 	}
-}
-
-func (ts *testData) closeServer() {
-	ts.server.Close()
 }
 
 func TestTopicsWithSameSocket(t *testing.T) {
@@ -50,7 +50,6 @@ func TestTopicsWithSameSocket(t *testing.T) {
 	conf.ZmqPubRawTx = addr
 
 	td := setup(t, conf)
-	defer td.closeServer()
 
 	require.Len(t, td.server.Publishers(), 4)
 	require.Len(t, td.server.sockets, 1)
@@ -71,7 +70,6 @@ func TestTopicsWithDifferentSockets(t *testing.T) {
 	conf.ZmqPubRawTx = fmt.Sprintf("tcp://127.0.0.1:%d", testsuite.FindFreePort())
 
 	td := setup(t, conf)
-	defer td.closeServer()
 
 	require.Len(t, td.server.Publishers(), 4)
 	require.Len(t, td.server.sockets, 4)
