@@ -10,6 +10,8 @@ import (
 	blshdkeychain "github.com/pactus-project/pactus/crypto/bls/hdkeychain"
 	"github.com/pactus-project/pactus/crypto/ed25519"
 	ed25519hdkeychain "github.com/pactus-project/pactus/crypto/ed25519/hdkeychain"
+	"github.com/pactus-project/pactus/crypto/secp256k1"
+	secp256k1hdkeychain "github.com/pactus-project/pactus/crypto/secp256k1/hdkeychain"
 	"github.com/pactus-project/pactus/util/bip39"
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/encrypter"
@@ -94,8 +96,8 @@ type masterNode struct {
 }
 
 type Purposes struct {
-	PurposeBLS   purposeBLS   `json:"purpose_bls"`   // BLS Purpose: m/12381'/21888'/1' or 2'/0
-	PurposeBIP44 purposeBIP44 `json:"purpose_bip44"` // BIP44 Purpose: m/44'/21888'/3'/0'
+	PurposeBLS   purposeBLS   `json:"purpose_bls"`   // BLS Purpose: m/12381'/21888'/1' or 2'
+	PurposeBIP44 purposeBIP44 `json:"purpose_bip44"` // BIP44 Purpose: m/44'/21888'/3' or 4'
 }
 
 type purposeBLS struct {
@@ -106,7 +108,9 @@ type purposeBLS struct {
 }
 
 type purposeBIP44 struct {
-	NextEd25519Index uint32 `json:"next_ed25519_index"` // Index of next Ed25519 derived account: m/44'/21888/3'/0'
+	NextEd25519Index   uint32 `json:"next_ed25519_index"`   // Index of next Ed25519 derived account: m/44'/21888'/3'/0'
+	NextSexp256k1Index uint32 `json:"next_secp256k1_index"` // Index of next Secp256k1 derived account: m/44'/21888'/4'/0
+	XPubSecp256K1      string `json:"xpub_secp256k1"`       // Extended public key for account: m/44'/21888'/4'/0
 }
 
 func CreateVaultFromMnemonic(mnemonic string, coinType addresspath.CoinType) (*Vault, error) {
@@ -114,13 +118,13 @@ func CreateVaultFromMnemonic(mnemonic string, coinType addresspath.CoinType) (*V
 	if err != nil {
 		return nil, err
 	}
-	masterKey, err := blshdkeychain.NewMaster(seed, false)
+	blsMasterKey, err := blshdkeychain.NewMaster(seed, false)
 	if err != nil {
 		return nil, err
 	}
 	enc := encrypter.NopeEncrypter()
 
-	xPubValidator, err := masterKey.DerivePath([]uint32{
+	xPubBLSValidator, err := blsMasterKey.DerivePath([]uint32{
 		addresspath.Harden(addresspath.PurposeBLS12381),
 		addresspath.Harden(coinType),
 		addresspath.Harden(crypto.AddressTypeValidator),
@@ -129,10 +133,23 @@ func CreateVaultFromMnemonic(mnemonic string, coinType addresspath.CoinType) (*V
 		return nil, err
 	}
 
-	xPubAccount, err := masterKey.DerivePath([]uint32{
+	xPubBLSAccount, err := blsMasterKey.DerivePath([]uint32{
 		addresspath.Harden(addresspath.PurposeBLS12381),
 		addresspath.Harden(coinType),
 		addresspath.Harden(crypto.AddressTypeBLSAccount),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	secp256k1MasterKey, err := secp256k1hdkeychain.NewMaster(seed)
+	if err != nil {
+		return nil, err
+	}
+	xPubSecp256k1, err := secp256k1MasterKey.DerivePath([]uint32{
+		addresspath.Harden(addresspath.PurposeBIP44),
+		addresspath.Harden(coinType),
+		addresspath.Harden(crypto.AddressTypeSecp256k1Account),
 	})
 	if err != nil {
 		return nil, err
@@ -157,8 +174,11 @@ func CreateVaultFromMnemonic(mnemonic string, coinType addresspath.CoinType) (*V
 		KeyStore:  string(storeDate),
 		Purposes: Purposes{
 			PurposeBLS: purposeBLS{
-				XPubValidator: xPubValidator.Neuter().String(),
-				XPubAccount:   xPubAccount.Neuter().String(),
+				XPubValidator: xPubBLSValidator.Neuter().String(),
+				XPubAccount:   xPubBLSAccount.Neuter().String(),
+			},
+			PurposeBIP44: purposeBIP44{
+				XPubSecp256K1: xPubSecp256k1.Neuter().String(),
 			},
 		},
 	}, nil
@@ -313,11 +333,26 @@ func (v *Vault) PrivateKeys(password string, paths []addresspath.Path) ([]crypto
 			}
 			keys[i] = prvKey
 		case addresspath.PurposeBIP44:
-			prvKey, err := v.deriveEd25519PrivateKey(seed, path)
-			if err != nil {
-				return nil, err
+			switch path.AddressType() {
+			case crypto.AddressTypeEd25519Account:
+				prvKey, err := v.deriveEd25519PrivateKey(seed, path)
+				if err != nil {
+					return nil, err
+				}
+				keys[i] = prvKey
+
+			case crypto.AddressTypeSecp256k1Account:
+				prvKey, err := v.deriveSecp256k1PrivateKey(seed, path)
+				if err != nil {
+					return nil, err
+				}
+				keys[i] = prvKey
+
+			case crypto.AddressTypeTreasury,
+				crypto.AddressTypeValidator,
+				crypto.AddressTypeBLSAccount:
+				// Unsupported Path
 			}
-			keys[i] = prvKey
 		case addresspath.PurposeImportPrivateKey:
 			index := addresspath.UnHarden(path.AddressIndex())
 			str := keyStore.ImportedKeys[index]
@@ -358,16 +393,16 @@ func (v *Vault) NewValidatorAddress(label string) (*types.AddressInfo, error) {
 		return nil, err
 	}
 
-	blsPubKey, err := bls.PublicKeyFromBytes(ext.RawPublicKey())
+	pubKey, err := bls.PublicKeyFromBytes(ext.RawPublicKey())
 	if err != nil {
 		return nil, err
 	}
 
-	addr := blsPubKey.ValidatorAddress().String()
+	addr := pubKey.ValidatorAddress().String()
 	info := types.AddressInfo{
 		Address:   addr,
 		Label:     label,
-		PublicKey: blsPubKey.String(),
+		PublicKey: pubKey.String(),
 		Path:      addresspath.NewPath(ext.Path()...).String(),
 	}
 
@@ -400,16 +435,16 @@ func (*Vault) deriveBLSAccountAddressAt(ext *blshdkeychain.ExtendedKey,
 		return nil, err
 	}
 
-	blsPubKey, err := bls.PublicKeyFromBytes(ext.RawPublicKey())
+	pubKey, err := bls.PublicKeyFromBytes(ext.RawPublicKey())
 	if err != nil {
 		return nil, err
 	}
 
-	addr := blsPubKey.AccountAddress().String()
+	addr := pubKey.AccountAddress().String()
 	info := types.AddressInfo{
 		Address:   addr,
 		Label:     label,
-		PublicKey: blsPubKey.String(),
+		PublicKey: pubKey.String(),
 		Path:      addresspath.NewPath(ext.Path()...).String(),
 	}
 
@@ -450,16 +485,56 @@ func (v *Vault) deriveEd25519AccountAddressAt(masterKey *ed25519hdkeychain.Exten
 		return nil, err
 	}
 
-	ed25519PubKey, err := ed25519.PublicKeyFromBytes(ext.RawPublicKey())
+	pubKey, err := ed25519.PublicKeyFromBytes(ext.RawPublicKey())
 	if err != nil {
 		return nil, err
 	}
 
-	addr := ed25519PubKey.AccountAddress().String()
+	addr := pubKey.AccountAddress().String()
 	info := types.AddressInfo{
 		Address:   addr,
 		Label:     label,
-		PublicKey: ed25519PubKey.String(),
+		PublicKey: pubKey.String(),
+		Path:      addresspath.NewPath(ext.Path()...).String(),
+	}
+
+	return &info, nil
+}
+
+func (v *Vault) NewSecp256k1AccountAddress(label string) (*types.AddressInfo, error) {
+	ext, err := secp256k1hdkeychain.NewKeyFromString(v.Purposes.PurposeBIP44.XPubSecp256K1)
+	if err != nil {
+		return nil, err
+	}
+	index := v.Purposes.PurposeBIP44.NextSexp256k1Index
+	info, err := v.deriveSecp256k1AccountAddressAt(ext, index, label)
+	if err != nil {
+		return nil, err
+	}
+
+	v.Purposes.PurposeBIP44.NextSexp256k1Index++
+
+	return info, nil
+}
+
+func (*Vault) deriveSecp256k1AccountAddressAt(ext *secp256k1hdkeychain.ExtendedKey,
+	index uint32, label string,
+) (*types.AddressInfo, error) {
+	ext, err := ext.DerivePath([]uint32{index})
+	if err != nil {
+		return nil, err
+	}
+
+	pubKey, err := secp256k1.PublicKeyFromBytes(ext.RawPublicKey())
+	if err != nil {
+		return nil, err
+	}
+
+	addr := pubKey.AccountAddress().String()
+	info := types.AddressInfo{
+		Address:   addr,
+		Label:     label,
+		PublicKey: pubKey.String(),
 		Path:      addresspath.NewPath(ext.Path()...).String(),
 	}
 
@@ -548,6 +623,23 @@ func (*Vault) deriveEd25519PrivateKey(mnemonicSeed []byte, path []uint32) (*ed25
 	prvBytes := ext.RawPrivateKey()
 
 	return ed25519.PrivateKeyFromBytes(prvBytes)
+}
+
+func (*Vault) deriveSecp256k1PrivateKey(mnemonicSeed []byte, path []uint32) (*secp256k1.PrivateKey, error) {
+	masterKey, err := secp256k1hdkeychain.NewMaster(mnemonicSeed)
+	if err != nil {
+		return nil, err
+	}
+	ext, err := masterKey.DerivePath(path)
+	if err != nil {
+		return nil, err
+	}
+	prvBytes, err := ext.RawPrivateKey()
+	if err != nil {
+		return nil, err
+	}
+
+	return secp256k1.PrivateKeyFromBytes(prvBytes)
 }
 
 // RecoverAddresses automatically recovers used addresses when restoring a wallet from a mnemonic phrase.
