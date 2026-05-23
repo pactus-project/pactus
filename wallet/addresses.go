@@ -47,27 +47,21 @@ func WithAddressTypes(addressTypes []crypto.AddressType) ListAddressOption {
 
 // WithAddressType filters addresses by the specified type.
 func WithAddressType(addressType crypto.AddressType) ListAddressOption {
-	return func(cfg *listAddressConfig) {
-		cfg.addressTypes = []crypto.AddressType{addressType}
-	}
+	return WithAddressTypes([]crypto.AddressType{addressType})
 }
 
 // OnlyValidatorAddresses filters to show only validator addresses.
 func OnlyValidatorAddresses() ListAddressOption {
-	return func(cfg *listAddressConfig) {
-		cfg.addressTypes = []crypto.AddressType{crypto.AddressTypeValidator}
-	}
+	return WithAddressType(crypto.AddressTypeValidator)
 }
 
 // OnlyAccountAddresses filters to show only account addresses (BLS and Ed25519).
 func OnlyAccountAddresses() ListAddressOption {
-	return func(cfg *listAddressConfig) {
-		cfg.addressTypes = []crypto.AddressType{
-			crypto.AddressTypeBLSAccount,
-			crypto.AddressTypeEd25519Account,
-			crypto.AddressTypeSecp256k1Account,
-		}
-	}
+	return WithAddressTypes([]crypto.AddressType{
+		crypto.AddressTypeBLSAccount,
+		crypto.AddressTypeEd25519Account,
+		crypto.AddressTypeSecp256k1Account,
+	})
 }
 
 func (a *addresses) ListAddresses(opts ...ListAddressOption) []types.AddressInfo {
@@ -252,7 +246,7 @@ func (a *addresses) NewAddress(addressType crypto.AddressType, label string, opt
 	case crypto.AddressTypeEd25519Account:
 		info, err = vault.NewEd25519AccountAddress(label, cfg.password)
 	case crypto.AddressTypeSecp256k1Account:
-		info, err = vault.NewSecp256k1AccountAddress(label)
+		info, err = vault.NewSecp256k1AccountAddress(label, cfg.password)
 
 	default:
 		return nil, ErrInvalidAddressType

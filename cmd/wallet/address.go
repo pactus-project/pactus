@@ -101,8 +101,9 @@ func buildAddressNewCmd(parentCmd *cobra.Command) {
 		terminal.FatalErrorCheck(err)
 
 		password := ""
-		if typ == crypto.AddressTypeEd25519Account && wlt.IsEncrypted() {
-			password = prompt.PromptPassword("Password", false)
+		if typ == crypto.AddressTypeEd25519Account ||
+			typ == crypto.AddressTypeSecp256k1Account {
+			password = getPassword(wlt, "")
 		}
 
 		addressInfo, err = wlt.NewAddress(typ, *label, wallet.WithPassword(password))
