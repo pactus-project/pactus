@@ -501,26 +501,36 @@ func (v *Vault) deriveEd25519AccountAddressAt(masterKey *ed25519hdkeychain.Exten
 	return &info, nil
 }
 
-func (v *Vault) NewSecp256k1AccountAddress(label string) (*types.AddressInfo, error) {
-	ext, err := secp256k1hdkeychain.NewKeyFromString(v.Purposes.PurposeBIP44.XPubSecp256K1)
-	if err != nil {
-		return nil, err
-	}
-	index := v.Purposes.PurposeBIP44.NextSexp256k1Index
-	info, err := v.deriveSecp256k1AccountAddressAt(ext, index, label)
+func (v *Vault) NewSecp256k1AccountAddress(label, password string) (*types.AddressInfo, error) {
+	seed, err := v.MnemonicSeed(password)
 	if err != nil {
 		return nil, err
 	}
 
+	masterKey, err := secp256k1hdkeychain.NewMaster(seed)
+	if err != nil {
+		return nil, err
+	}
+
+	index := v.Purposes.PurposeBIP44.NextSexp256k1Index
+	info, err := v.deriveSecp256k1AccountAddressAt(masterKey, index, label)
+	if err != nil {
+		return nil, err
+	}
 	v.Purposes.PurposeBIP44.NextSexp256k1Index++
 
 	return info, nil
 }
 
-func (*Vault) deriveSecp256k1AccountAddressAt(ext *secp256k1hdkeychain.ExtendedKey,
+func (v *Vault) deriveSecp256k1AccountAddressAt(masterKey *secp256k1hdkeychain.ExtendedKey,
 	index uint32, label string,
 ) (*types.AddressInfo, error) {
-	ext, err := ext.DerivePath([]uint32{index})
+	ext, err := masterKey.DerivePath([]uint32{
+		addresspath.Harden(addresspath.PurposeBIP44),
+		addresspath.Harden(v.CoinType),
+		addresspath.Harden(crypto.AddressTypeSecp256k1Account),
+		addresspath.Harden(index),
+	})
 	if err != nil {
 		return nil, err
 	}

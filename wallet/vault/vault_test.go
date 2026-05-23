@@ -44,7 +44,7 @@ func setup(t *testing.T) *testData {
 	require.NoError(t, err)
 	addr2, err := vault.NewEd25519AccountAddress("ed25519-account-address", "")
 	require.NoError(t, err)
-	addr4, err := vault.NewSecp256k1AccountAddress("secp256k1-account-address")
+	addr4, err := vault.NewSecp256k1AccountAddress("secp256k1-account-address", "")
 	require.NoError(t, err)
 
 	_, importedBLSPrv := ts.RandBLSKeyPair()
@@ -106,7 +106,7 @@ func TestCreateVaultFromMnemonic(t *testing.T) {
 		require.NoError(t, err)
 		_, err = recovered.NewEd25519AccountAddress("ed25519-account-address", "")
 		require.NoError(t, err)
-		_, err = recovered.NewSecp256k1AccountAddress("secp256k1-account-address")
+		_, err = recovered.NewSecp256k1AccountAddress("secp256k1-account-address", "")
 		require.NoError(t, err)
 
 		assert.Equal(t, recovered.Purposes, td.vault.Purposes)

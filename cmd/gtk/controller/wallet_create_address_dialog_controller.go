@@ -42,7 +42,8 @@ func (c *WalletCreateAddressDialogController) Run() {
 		}
 
 		password := ""
-		if typ == crypto.AddressTypeEd25519Account {
+		if typ == crypto.AddressTypeEd25519Account ||
+			typ == crypto.AddressTypeSecp256k1Account {
 			pwd, ok := PasswordProvider(c.model)
 			if !ok {
 				return

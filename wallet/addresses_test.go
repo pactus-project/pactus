@@ -166,7 +166,7 @@ func TestNewSecp256k1AccountAddress(t *testing.T) {
 	assert.NotEmpty(t, addressInfo.Address)
 	assert.NotEmpty(t, addressInfo.PublicKey)
 	assert.Equal(t, label, addressInfo.Label)
-	assert.Equal(t, "m/44'/21888'/4'/0", addressInfo.Path)
+	assert.Equal(t, "m/44'/21888'/4'/0'", addressInfo.Path)
 
 	pub, _ := secp256k1.PublicKeyFromString(addressInfo.PublicKey)
 	assert.Equal(t, pub.AccountAddress().String(), addressInfo.Address)
