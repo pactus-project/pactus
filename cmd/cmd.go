@@ -94,42 +94,30 @@ func CreateNode(ctx context.Context, numValidators int, chain genesis.ChainType,
 		return nil, "", err
 	}
 
-	confPath := PactusConfigPath(workingDir)
-	genPath := PactusGenesisPath(workingDir)
-
+	var genDoc *genesis.Genesis
 	switch chain {
 	case genesis.Mainnet:
-		genDoc := genesis.MainnetGenesis()
-		if err := genDoc.SaveToFile(genPath); err != nil {
-			return nil, "", err
-		}
-		err := config.SaveMainnetConfig(confPath)
-		if err != nil {
-			return nil, "", err
-		}
+		genDoc = genesis.MainnetGenesis()
+
 	case genesis.Testnet:
-		genDoc := genesis.TestnetGenesis()
-		if err := genDoc.SaveToFile(genPath); err != nil {
-			return nil, "", err
-		}
-		conf := config.DefaultConfigTestnet()
-		if err := conf.Save(confPath); err != nil {
-			return nil, "", err
-		}
+		genDoc = genesis.TestnetGenesis()
 
 	case genesis.Localnet:
 		if numValidators < 4 {
 			return nil, "", errors.New("localnet needs at least 4 validators")
 		}
-		genDoc := makeLocalGenesis(wlt)
-		if err := genDoc.SaveToFile(genPath); err != nil {
-			return nil, "", err
-		}
+		genDoc = makeLocalGenesis(wlt)
+	}
 
-		conf := config.DefaultConfigLocalnet()
-		if err := conf.Save(confPath); err != nil {
-			return nil, "", err
-		}
+	genPath := PactusGenesisPath(workingDir)
+	if err := genDoc.SaveToFile(genPath); err != nil {
+		return nil, "", err
+	}
+
+	conf := config.DefaultConfigForChain(chain)
+	confPath := PactusConfigPath(workingDir)
+	if err := conf.Save(confPath); err != nil {
+		return nil, "", err
 	}
 
 	return wlt, rewardAddrInfo.Address, nil
@@ -229,24 +217,14 @@ func MakeConfig(workingDir string) (*config.Config, *genesis.Genesis, error) {
 		return nil, nil, err
 	}
 
-	if !gen.ChainType().IsMainnet() {
+	chainType := gen.ChainType()
+	if !chainType.IsMainnet() {
 		crypto.ToTestnetHRP()
 	}
 
 	walletsDir := PactusWalletDir(workingDir)
 	confPath := PactusConfigPath(workingDir)
-
-	var defConf *config.Config
-	chainType := gen.ChainType()
-
-	switch chainType {
-	case genesis.Mainnet:
-		defConf = config.DefaultConfigMainnet()
-	case genesis.Testnet:
-		defConf = config.DefaultConfigTestnet()
-	case genesis.Localnet:
-		defConf = config.DefaultConfigLocalnet()
-	}
+	defConf := config.DefaultConfigForChain(chainType)
 
 	conf, err := config.LoadFromFile(confPath, true, defConf)
 	if err != nil {

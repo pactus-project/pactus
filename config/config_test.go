@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -15,12 +16,12 @@ func TestSaveMainnetConfig(t *testing.T) {
 	path := util.TempFilePath()
 	require.NoError(t, SaveMainnetConfig(path))
 
-	defConf := DefaultConfigMainnet()
+	defConf := defaultConfigMainnet()
 	conf, err := LoadFromFile(path, true, defConf)
 	require.NoError(t, err)
 
 	require.NoError(t, conf.BasicCheck())
-	assert.Equal(t, conf, DefaultConfigMainnet())
+	assert.Equal(t, conf, defaultConfigMainnet())
 
 	confData, _ := util.ReadFile(path)
 	exampleData, _ := util.ReadFile("example_config.toml")
@@ -32,12 +33,12 @@ func TestSaveTestnetConfig(t *testing.T) {
 	defer crypto.ToMainnetHRP()
 
 	path := util.TempFilePath()
-	defConf := DefaultConfigTestnet()
+	defConf := defaultConfigTestnet()
 	require.NoError(t, defConf.Save(path))
 
 	conf, err := LoadFromFile(path, true, defConf)
 	require.NoError(t, err)
-	assert.Equal(t, conf, DefaultConfigTestnet())
+	assert.Equal(t, conf, defaultConfigTestnet())
 
 	require.NoError(t, conf.BasicCheck())
 }
@@ -62,7 +63,7 @@ func TestDefaultConfig(t *testing.T) {
 }
 
 func TestMainnetConfig(t *testing.T) {
-	conf := DefaultConfigMainnet()
+	conf := DefaultConfigForChain(genesis.Mainnet)
 
 	require.NoError(t, conf.BasicCheck())
 	assert.Empty(t, conf.Network.ListenAddrStrings)
@@ -84,7 +85,7 @@ func TestTestnetConfig(t *testing.T) {
 	crypto.ToTestnetHRP()
 	defer crypto.ToMainnetHRP()
 
-	conf := DefaultConfigTestnet()
+	conf := DefaultConfigForChain(genesis.Testnet)
 
 	require.NoError(t, conf.BasicCheck())
 	assert.Empty(t, conf.Network.ListenAddrStrings)
@@ -103,7 +104,7 @@ func TestTestnetConfig(t *testing.T) {
 }
 
 func TestLocalnetConfig(t *testing.T) {
-	conf := DefaultConfigLocalnet()
+	conf := DefaultConfigForChain(genesis.Localnet)
 
 	require.NoError(t, conf.BasicCheck())
 	assert.Empty(t, conf.Network.ListenAddrStrings)
@@ -123,7 +124,7 @@ func TestLocalnetConfig(t *testing.T) {
 
 func TestLoadFromFile(t *testing.T) {
 	path := util.TempFilePath()
-	defConf := DefaultConfigMainnet()
+	defConf := defaultConfigMainnet()
 
 	_, err := LoadFromFile(path, true, defConf)
 	require.Error(t, err, "not exists")
@@ -152,8 +153,10 @@ func TestExampleConfig(t *testing.T) {
 		}
 	}
 
-	defaultConf := DefaultConfigMainnet()
-	defaultToml := string(defaultConf.toTOML())
+	defaultConf := defaultConfigMainnet()
+	defaultTomlBytes, err := defaultConf.toTOML()
+	require.NoError(t, err)
+	defaultToml := string(defaultTomlBytes)
 
 	exampleToml = strings.ReplaceAll(exampleToml, "\r\n", "\n") // For Windows
 	exampleToml = strings.ReplaceAll(exampleToml, "\n\n", "\n")
