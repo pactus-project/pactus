@@ -255,24 +255,24 @@ func DefaultConfigForChain(chain genesis.ChainType) *Config {
 }
 
 func (conf *Config) Save(path string) error {
-	data, err := conf.toTOML()
+	toml, err := conf.ToTOML()
 	if err != nil {
 		return err
 	}
 
-	return util.WriteFile(path, data)
+	return util.WriteFile(path, []byte(toml))
 }
 
-func (conf *Config) toTOML() ([]byte, error) {
+func (conf *Config) ToTOML() (string, error) {
 	buf := new(bytes.Buffer)
 	encoder := toml.NewEncoder(buf)
 	encoder.SetIndentTables(true)
 	err := encoder.Encode(conf)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return buf.Bytes(), nil
+	return buf.String(), nil
 }
 
 func LoadFromFile(file string, strict bool, defaultConfig *Config) (*Config, error) {
@@ -281,8 +281,12 @@ func LoadFromFile(file string, strict bool, defaultConfig *Config) (*Config, err
 		return nil, err
 	}
 
+	return LoadFromToml(string(data), strict, defaultConfig)
+}
+
+func LoadFromToml(str string, strict bool, defaultConfig *Config) (*Config, error) {
 	conf := defaultConfig
-	buf := bytes.NewBuffer(data)
+	buf := bytes.NewBufferString(str)
 	decoder := toml.NewDecoder(buf)
 	if strict {
 		decoder.DisallowUnknownFields()

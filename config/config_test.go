@@ -142,7 +142,6 @@ func TestExampleConfig(t *testing.T) {
 	lines := strings.Split(string(exampleConfigBytes), "\n")
 	exampleToml := ""
 	for _, line := range lines {
-		//lint:ignore QF1001 Reason for ignoring (e.g., readability)
 		if !strings.HasPrefix(line, "# ") &&
 			!strings.HasPrefix(line, "###") &&
 			!strings.HasPrefix(line, "  # ") &&
@@ -154,9 +153,8 @@ func TestExampleConfig(t *testing.T) {
 	}
 
 	defaultConf := defaultConfigMainnet()
-	defaultTomlBytes, err := defaultConf.toTOML()
+	defaultToml, err := defaultConf.ToTOML()
 	require.NoError(t, err)
-	defaultToml := string(defaultTomlBytes)
 
 	exampleToml = strings.ReplaceAll(exampleToml, "\r\n", "\n") // For Windows
 	exampleToml = strings.ReplaceAll(exampleToml, "\n\n", "\n")
