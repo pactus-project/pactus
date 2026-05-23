@@ -33,7 +33,7 @@ func TestRunningNode(t *testing.T) {
 	gen := genesis.MakeGenesis(time.Now(),
 		map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc},
 		[]*validator.Validator{val}, genesis.DefaultGenesisParams())
-	conf := config.DefaultConfigMainnet()
+	conf := config.DefaultConfigForChain(genesis.Mainnet)
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "0.0.0.0:0"
 	conf.HTML.Enable = true
