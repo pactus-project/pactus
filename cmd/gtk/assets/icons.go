@@ -53,6 +53,10 @@ var (
 	//go:embed icons/next.svg
 	iconNextData     []byte
 	IconNextPixbuf16 *gdk.Pixbuf
+
+	//go:embed icons/save.svg
+	iconSaveData     []byte
+	IconSavePixbuf16 *gdk.Pixbuf
 )
 
 func initIcons() {
@@ -76,4 +80,5 @@ func initIcons() {
 	IconRefreshPixbuf16 = toPixbuf(iconRefreshData)
 	IconPrevPixbuf16 = toPixbuf(iconPrevData)
 	IconNextPixbuf16 = toPixbuf(iconNextData)
+	IconSavePixbuf16 = toPixbuf(iconSaveData)
 }

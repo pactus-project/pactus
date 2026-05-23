@@ -356,6 +356,7 @@ func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amt amount.Amount,
 		// Let's check if we can get public key from the wallet
 		info, _ := w.AddressInfo(receiver)
 		if info != nil {
+			// TODO: check is address is a validator address
 			pubKey = info.PublicKey
 		}
 	}

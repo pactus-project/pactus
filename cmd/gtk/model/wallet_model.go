@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/ed25519"
+	"github.com/pactus-project/pactus/crypto/secp256k1"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
@@ -210,6 +211,8 @@ func (model *WalletModel) PrivateKey(password, addr string) (crypto.PrivateKey, 
 		return bls.PrivateKeyFromString(res.PrivateKey)
 	case crypto.SignatureTypeEd25519:
 		return ed25519.PrivateKeyFromString(res.PrivateKey)
+	case crypto.SignatureTypeSecp256k1:
+		return secp256k1.PrivateKeyFromString(res.PrivateKey)
 	default:
 		return nil, crypto.InvalidSignatureTypeError(typ)
 	}

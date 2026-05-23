@@ -139,8 +139,5 @@
         </child>
       </object>
     </child>
-    <action-widgets>
-      <action-widget response="-7">id_button_close</action-widget>
-    </action-widgets>
   </object>
 </interface>
