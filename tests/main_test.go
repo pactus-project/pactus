@@ -69,7 +69,7 @@ func TestMain(m *testing.M) {
 		tValKeys[i][0] = bls.NewValidatorKey(key0)
 		tValKeys[i][1] = bls.NewValidatorKey(key1)
 		tValKeys[i][2] = bls.NewValidatorKey(key2)
-		tConfigs[i] = config.DefaultConfigMainnet()
+		tConfigs[i] = config.DefaultConfigForChain(genesis.Mainnet)
 
 		tConfigs[i].TxPool.Fee = &txpool.FeeConfig{
 			FixedFee:   0.000001,

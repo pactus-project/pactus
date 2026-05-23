@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/consensusv2"
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync"
@@ -113,7 +114,7 @@ func defaultConfig() *Config {
 	return conf
 }
 
-func DefaultConfigMainnet() *Config {
+func defaultConfigMainnet() *Config {
 	conf := defaultConfig()
 
 	bootstrapNodes := make([]BootstrapInfo, 0)
@@ -167,7 +168,7 @@ func DefaultConfigMainnet() *Config {
 	return conf
 }
 
-func DefaultConfigTestnet() *Config {
+func defaultConfigTestnet() *Config {
 	conf := defaultConfig()
 	conf.Network.DefaultBootstrapAddrStrings = []string{
 		"/dns/testnet1.pactus.org/tcp/21777/p2p/12D3KooWR7ZB3nGih1Fz7Yg83Zap8Cpxr73T6PPihBsEpTG5BZyk",
@@ -201,7 +202,7 @@ func DefaultConfigTestnet() *Config {
 	return conf
 }
 
-func DefaultConfigLocalnet() *Config {
+func defaultConfigLocalnet() *Config {
 	conf := defaultConfig()
 	conf.Network.EnableRelay = false
 	conf.Network.EnableNATService = false
@@ -239,20 +240,39 @@ func SaveMainnetConfig(path string) error {
 	return util.WriteFile(path, []byte(conf))
 }
 
-func (conf *Config) Save(path string) error {
-	return util.WriteFile(path, conf.toTOML())
+// DefaultConfigForChain returns the default configuration for the given chain type.
+func DefaultConfigForChain(chain genesis.ChainType) *Config {
+	switch chain {
+	case genesis.Mainnet:
+		return defaultConfigMainnet()
+	case genesis.Testnet:
+		return defaultConfigTestnet()
+	case genesis.Localnet:
+		return defaultConfigLocalnet()
+	default:
+		return nil
+	}
 }
 
-func (conf *Config) toTOML() []byte {
+func (conf *Config) Save(path string) error {
+	toml, err := conf.ToTOML()
+	if err != nil {
+		return err
+	}
+
+	return util.WriteFile(path, []byte(toml))
+}
+
+func (conf *Config) ToTOML() (string, error) {
 	buf := new(bytes.Buffer)
 	encoder := toml.NewEncoder(buf)
 	encoder.SetIndentTables(true)
 	err := encoder.Encode(conf)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
-	return buf.Bytes()
+	return buf.String(), nil
 }
 
 func LoadFromFile(file string, strict bool, defaultConfig *Config) (*Config, error) {
@@ -261,8 +281,12 @@ func LoadFromFile(file string, strict bool, defaultConfig *Config) (*Config, err
 		return nil, err
 	}
 
+	return LoadFromToml(string(data), strict, defaultConfig)
+}
+
+func LoadFromToml(str string, strict bool, defaultConfig *Config) (*Config, error) {
 	conf := defaultConfig
-	buf := bytes.NewBuffer(data)
+	buf := bytes.NewBufferString(str)
 	decoder := toml.NewDecoder(buf)
 	if strict {
 		decoder.DisallowUnknownFields()
