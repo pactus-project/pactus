@@ -75,7 +75,7 @@ func (c *TxUnbondDialogController) onSend() {
 	msg := fmt.Sprintf(`
 📝 Transaction Details:
 <tt>
-Type:     Unbond
+Type:      Unbond
 Validator: %s
 Fee:       %s
 Memo:      %s
@@ -108,7 +108,7 @@ Do you want to continue with this transaction?`, validatorAddr, trx.Fee(), trx.M
 
 	gtkutil.ShowInfoDialog(c.view.Dialog,
 		fmt.Sprintf("✅ Transaction sent successfully!\n\n"+
-			"Transaction ID: <a href=\"https://pacviewer.com/transaction/%s\">%s</a>", txID, txID))
+			"Transaction ID: <a href=\"https://pactusscan.com/transaction/%s\">%s</a>", txID, txID))
 	c.view.Dialog.Close()
 }
 
