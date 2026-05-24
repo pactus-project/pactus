@@ -197,14 +197,18 @@ func main() {
 				gtkutil.FatalErrorCheck(err)
 
 				var connectionLabel, connectionValue string
+				var isLocal bool
 				if *grpcAddrOpt == "" {
+					isLocal = true
 					connectionLabel = "📁 Working directory"
 					connectionValue = workingDir
 				} else {
+					isLocal = false
 					connectionLabel = "📡 Remote address"
 					connectionValue = *grpcAddrOpt
 				}
-				gui, err = gtkapp.Run(ctx, grpcConn, app, notify, connectionLabel, connectionValue)
+				gui, err = gtkapp.Run(ctx, grpcConn, app, notify,
+					connectionLabel, connectionValue, workingDir, isLocal)
 				gtkutil.FatalErrorCheck(err)
 
 				gtkutil.IdleAddSync(func() {

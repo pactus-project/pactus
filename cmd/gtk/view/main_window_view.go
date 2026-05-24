@@ -14,6 +14,7 @@ type MainWindowView struct {
 
 	Window *gtk.ApplicationWindow
 
+	MenuEditConfig   *gtk.MenuItem
 	BoxNode          *gtk.Box
 	BoxDefaultWallet *gtk.Box
 	BoxValidators    *gtk.Box
@@ -24,21 +25,16 @@ type MainWindowView struct {
 func NewMainWindowView() *MainWindowView {
 	builder := NewViewBuilder(assets.MainWindowUI)
 
-	boxNode := builder.GetBoxObj("id_box_node")
-	boxDefaultWallet := builder.GetBoxObj("id_box_default_wallet")
-	boxValidators := builder.GetBoxObj("id_box_validators")
-	boxCommittee := builder.GetBoxObj("id_box_committee")
-	boxNetwork := builder.GetBoxObj("id_box_network")
-
 	view := &MainWindowView{
 		ViewBuilder: builder,
 		Window:      builder.GetApplicationWindowObj("id_main_window"),
 
-		BoxNode:          boxNode,
-		BoxDefaultWallet: boxDefaultWallet,
-		BoxValidators:    boxValidators,
-		BoxCommittee:     boxCommittee,
-		BoxNetwork:       boxNetwork,
+		MenuEditConfig:   builder.GetMenuItem("id_menu_edit_config"),
+		BoxNode:          builder.GetBoxObj("id_box_node"),
+		BoxDefaultWallet: builder.GetBoxObj("id_box_default_wallet"),
+		BoxValidators:    builder.GetBoxObj("id_box_validators"),
+		BoxCommittee:     builder.GetBoxObj("id_box_committee"),
+		BoxNetwork:       builder.GetBoxObj("id_box_network"),
 	}
 
 	// apply custom css

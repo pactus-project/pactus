@@ -167,8 +167,5 @@
         </child>
       </object>
     </child>
-    <action-widgets>
-      <action-widget response="-6">id_button_cancel</action-widget>
-    </action-widgets>
   </object>
 </interface>

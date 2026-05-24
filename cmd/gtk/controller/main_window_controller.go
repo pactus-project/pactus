@@ -15,9 +15,16 @@ func NewMainWindowController(view *view.MainWindowView) *MainWindowController {
 	return &MainWindowController{view: view}
 }
 
-func (c *MainWindowController) BuildView(nav *Navigator) {
+func (c *MainWindowController) BuildView(nav *Navigator, isLocal bool) {
 	gtkutil.IdleAddSync(func() {
+		if !isLocal {
+			c.view.MenuEditConfig.SetSensitive(false)
+			c.view.MenuEditConfig.SetVisible(false)
+			c.view.MenuEditConfig.Hide()
+		}
+
 		c.view.ConnectSignals(map[string]any{
+			"on_edit_config":            nav.ShowConfigEditor,
 			"on_quit":                   nav.Quit,
 			"on_transaction_transfer":   nav.ShowTransactionTransfer,
 			"on_transaction_bond":       nav.ShowTransactionBond,

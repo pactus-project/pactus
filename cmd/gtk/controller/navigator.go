@@ -14,16 +14,18 @@ import (
 type Navigator struct {
 	walletModel *model.WalletModel
 	walletCtrl  *WalletWidgetController
+	configModel *model.ConfigModel
 	gtkApp      *gtk.Application
 }
 
 func NewNavigator(gtkApp *gtk.Application,
-	walletModel *model.WalletModel, walletCtrl *WalletWidgetController,
+	walletModel *model.WalletModel, walletCtrl *WalletWidgetController, configModel *model.ConfigModel,
 ) *Navigator {
 	return &Navigator{
 		walletModel: walletModel,
 		walletCtrl:  walletCtrl,
 		gtkApp:      gtkApp,
+		configModel: configModel,
 	}
 }
 
@@ -40,6 +42,14 @@ func (*Navigator) ShowAboutGtk() {
 		dlg := view.NewAboutGTKDialog()
 		dlg.Dialog.SetModal(true)
 		gtkutil.RunDialog(&dlg.Dialog)
+	})
+}
+
+func (n *Navigator) ShowConfigEditor() {
+	gtkutil.IdleAddSync(func() {
+		dlgView := view.NewConfigEditorDialogView()
+		dlgCtrl := NewConfigEditorDialogController(dlgView, n.configModel)
+		dlgCtrl.Run()
 	})
 }
 

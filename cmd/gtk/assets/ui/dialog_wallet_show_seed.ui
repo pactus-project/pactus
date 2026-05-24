@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.38.2 -->
+<!-- Generated with glade 3.40.0 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkDialog" id="id_dialog_wallet_show_seed">
@@ -111,8 +111,5 @@
         </child>
       </object>
     </child>
-    <action-widgets>
-      <action-widget response="-3">id_button_close</action-widget>
-    </action-widgets>
   </object>
 </interface>

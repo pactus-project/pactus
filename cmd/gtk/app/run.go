@@ -27,10 +27,11 @@ type GUI struct {
 // Run builds and shows the main window, wiring views/controllers.
 // It accepts a gRPC connection to the node (standard grpc.ClientConn or gRPC-Web).
 // connectionLabel is "Remote address" or "Working directory"; connectionValue is the address or path.
+// workingDir is the local node data directory; isLocal is true when running a local node.
 // It returns a cleanup function that closes the window and stops timers.
 func Run(ctx context.Context, conn grpc.ClientConnInterface,
 	gtkApp *gtk.Application, notify func(string),
-	connectionLabel, connectionValue string,
+	connectionLabel, connectionValue, workingDir string, isLocal bool,
 ) (*GUI, error) {
 	blockchainClient := pactus.NewBlockchainClient(conn)
 	transactionClient := pactus.NewTransactionClient(conn)
@@ -54,11 +55,15 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 	validatorCtrl := controller.NewValidatorWidgetController(validatorView, validatorModel)
 	committeeCtrl := controller.NewCommitteeWidgetController(committeeView, committeeModel)
 	networkCtrl := controller.NewNetworkWidgetController(networkView, networkModel)
+	configModel, err := model.NewConfigModel(workingDir, isLocal)
+	if err != nil {
+		return nil, err
+	}
 
-	nav := controller.NewNavigator(gtkApp, walletModel, walletCtrl)
+	nav := controller.NewNavigator(gtkApp, walletModel, walletCtrl, configModel)
 
 	notify("Fetching Node info...")
-	err := nodeCtrl.BuildView(ctx, connectionLabel, connectionValue)
+	err = nodeCtrl.BuildView(ctx, connectionLabel, connectionValue)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +102,7 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 		mwView.BoxNetwork.Add(networkView.Box)
 
 		mwCtrl := controller.NewMainWindowController(mwView)
-		mwCtrl.BuildView(nav)
+		mwCtrl.BuildView(nav, isLocal)
 
 		mwView.Window.ShowAll()
 		gtkApp.AddWindow(mwView.Window)
