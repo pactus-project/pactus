@@ -37,6 +37,10 @@ func Create(path string, network genesis.ChainType, vault *vault.Vault) (*Storag
 }
 
 func Open(path string) (*Storage, error) {
+	if err := upgrade(path); err != nil {
+		return nil, err
+	}
+
 	data, err := util.ReadFile(path)
 	if err != nil {
 		return nil, err

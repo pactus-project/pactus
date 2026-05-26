@@ -107,10 +107,6 @@ func Open(ctx context.Context, walletPath string, opts ...OpenWalletOption) (*Wa
 	}
 
 	// Fallback to JSON storage for legacy wallets
-	if err := jsonstorage.Upgrade(walletPath); err != nil {
-		return nil, err
-	}
-
 	jsonStrg, err := jsonstorage.Open(walletPath)
 	if err != nil {
 		return nil, err

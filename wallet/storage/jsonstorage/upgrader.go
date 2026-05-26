@@ -16,25 +16,6 @@ import (
 	"github.com/pactus-project/pactus/wallet/vault"
 )
 
-type upgrader struct {
-	path string
-	data []byte
-}
-
-func Upgrade(path string) error {
-	data, err := util.ReadFile(path)
-	if err != nil {
-		return err
-	}
-
-	u := upgrader{
-		path: path,
-		data: data,
-	}
-
-	return u.upgrade()
-}
-
 type legacyVault struct {
 	Encrypter  encrypter.Encrypter          `json:"encrypter"`
 	Purposes   vault.Purposes               `json:"purposes"` // Contains Purposes of the vault
@@ -46,15 +27,20 @@ type legacyStore struct {
 	Vault legacyVault `json:"vault"`
 }
 
-func (u *upgrader) upgrade() error {
+func upgrade(path string) error {
+	data, err := util.ReadFile(path)
+	if err != nil {
+		return err
+	}
+
 	store := new(store)
-	err := json.Unmarshal(u.data, store)
+	err = json.Unmarshal(data, store)
 	if err != nil {
 		return err
 	}
 
 	legacyStore := new(legacyStore)
-	err = json.Unmarshal(u.data, &legacyStore)
+	err = json.Unmarshal(data, &legacyStore)
 	if err != nil {
 		return err
 	}
@@ -65,7 +51,7 @@ func (u *upgrader) upgrade() error {
 
 	switch store.Version {
 	case Version1:
-		if err := u.setPublicKeys(legacyStore); err != nil {
+		if err := setPublicKeys(legacyStore); err != nil {
 			return err
 		}
 
@@ -92,7 +78,6 @@ func (u *upgrader) upgrade() error {
 	case Version4:
 		store.DefaultFee = legacyStore.Vault.DefaultFee
 		store.Addresses = make(map[string]types.AddressInfo)
-		store.Version = Version5
 		store.VaultCRC = store.calcVaultCRC()
 
 		for addr, ai := range legacyStore.Vault.Addresses {
@@ -106,9 +91,17 @@ func (u *upgrader) upgrade() error {
 
 		logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d", Version4, Version5))
 
-		return store.Save(u.path)
+		fallthrough
 
 	case Version5:
+		store.Version = Version6
+		store.Vault.Purposes.PurposeBIP44.NextSexp256k1Index = 0
+
+		logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d", Version5, Version6))
+
+		return store.Save(path)
+
+	case Version6:
 		// Latest version, no need to upgrade.
 		return nil
 
@@ -120,7 +113,7 @@ func (u *upgrader) upgrade() error {
 	}
 }
 
-func (*upgrader) setPublicKeys(store *legacyStore) error {
+func setPublicKeys(store *legacyStore) error {
 	for addrKey, info := range store.Vault.Addresses {
 		if info.PublicKey != "" {
 			continue
