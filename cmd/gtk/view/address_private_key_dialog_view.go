@@ -25,8 +25,8 @@ func NewAddressPrivateKeyDialogView() *AddressPrivateKeyDialogView {
 		ViewBuilder: builder,
 		Dialog:      builder.GetDialogObj("id_dialog_address_private_key"),
 
-		AddressEntry: builder.GetEntryObj("id_entry_address"),
-		PrvKeyEntry:  builder.GetEntryObj("id_entry_private_key"),
+		AddressEntry: builder.BuildExtendedEntry("id_entry_address"),
+		PrvKeyEntry:  builder.BuildExtendedEntry("id_entry_private_key"),
 		ButtonClose:  builder.GetButtonObj("id_button_close"),
 	}
 

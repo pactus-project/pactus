@@ -132,30 +132,10 @@ You are going to sign and broadcast this transaction.
 <b>⚠️ This action cannot be undone.</b>
 Do you want to continue with this transaction?`, sender, receiver, amt, trx.Fee(), trx.Memo())
 
-	if !gtkutil.ShowQuestionDialog(c.view.Dialog, msg) {
+	if !confirmAndSend(c.view.Dialog, c.model, msg, trx) {
 		return
 	}
 
-	password, ok := PasswordProvider(c.model)
-	if !ok {
-		return
-	}
-
-	if err := c.model.SignTransaction(password, trx); err != nil {
-		gtkutil.ShowError(err)
-
-		return
-	}
-	txID, err := c.model.BroadcastTransaction(trx)
-	if err != nil {
-		gtkutil.ShowError(err)
-
-		return
-	}
-
-	gtkutil.ShowInfoDialog(c.view.Dialog,
-		fmt.Sprintf("✅ Transaction sent successfully!\n\n"+
-			"Transaction ID: <a href=\"https://pactusscan.com/transaction/%s\">%s</a>", txID, txID))
 	c.view.Dialog.Close()
 }
 
