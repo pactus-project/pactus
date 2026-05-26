@@ -21,9 +21,10 @@ func (s *Storage) upgrade() error {
 			return err
 		}
 
+		s.info.Version = Version2
 		logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d", Version1, Version2))
 
-		fallthrough
+		return s.updateWalletEntry(keyVersion, fmt.Sprintf("%d", s.info.Version))
 
 	case Version2:
 		// Latest version, no need to upgrade.

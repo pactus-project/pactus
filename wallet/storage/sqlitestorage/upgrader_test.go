@@ -34,7 +34,6 @@ func TestUnsupportedWallet(t *testing.T) {
 // TestUpgrade ensures that old JSON wallets can be safely upgraded to the latest version.
 // Encryption parameters are intentionally reduced to speed up the test.
 func TestUpgrade(t *testing.T) {
-
 	t.Run("Upgrade Wallet From Version 1", func(t *testing.T) {
 		// This test ensures that wallet supports Secp256k1.
 		strg, err := openTestStorage(t, "./testdata/wallet_version_1")
@@ -55,7 +54,6 @@ func TestUpgrade(t *testing.T) {
 
 		assert.Equal(t, VersionLatest, strg.WalletInfo().Version)
 	})
-
 }
 
 func TestUpgradeTestnet(t *testing.T) {
