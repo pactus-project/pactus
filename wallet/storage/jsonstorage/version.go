@@ -6,6 +6,7 @@ const (
 	Version3 = 3 // Supporting AEC-256-CBC encryption method
 	Version4 = 4 // Set Default Fee for the Wallet
 	Version5 = 5 // Define Storage Interface
+	Version6 = 6 // Supporting Secp256k1
 
-	VersionLatest = Version5
+	VersionLatest = Version6
 )

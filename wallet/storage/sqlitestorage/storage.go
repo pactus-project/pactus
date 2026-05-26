@@ -184,6 +184,13 @@ func open(ctx context.Context, db *sql.DB, path string) (*Storage, error) {
 		return nil, fmt.Errorf("failed to load addresses: %w", err)
 	}
 
+	// Upgrade the wallet
+	if err := strg.upgrade(); err != nil {
+		_ = db.Close()
+
+		return nil, fmt.Errorf("failed to upgrade wallet: %w", err)
+	}
+
 	return strg, nil
 }
 

@@ -38,5 +38,5 @@ func TestOpenNeuterWallet(t *testing.T) {
 	strg, err := Open(tempPath)
 	require.NoError(t, err)
 
-	assert.False(t, strg.Vault().IsNeutered())
+	assert.True(t, strg.Vault().IsNeutered())
 }
