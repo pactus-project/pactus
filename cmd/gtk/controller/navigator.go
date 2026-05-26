@@ -150,7 +150,7 @@ func (n *Navigator) BrowseWebsite() {
 }
 
 func (n *Navigator) BrowseExplorer() {
-	n.openWebsite("https://pacviewer.com/")
+	n.openWebsite("https://pactusscan.com/")
 }
 
 func (n *Navigator) BrowseDocs() {
