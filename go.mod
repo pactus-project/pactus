@@ -7,6 +7,8 @@ require (
 	github.com/beevik/ntp v1.5.0
 	github.com/c-bata/go-prompt v0.2.6
 	github.com/consensys/gnark-crypto v0.20.1
+	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.1
+	github.com/diamondburned/gotk4/pkg v0.3.1
 	github.com/ezex-io/gopkg/pipeline v0.0.0-20260127151556-579a32f19aa7
 	github.com/ezex-io/gopkg/scheduler v0.0.0-20260127151556-579a32f19aa7
 	github.com/ezex-io/gopkg/signal v0.0.0-20260127151556-579a32f19aa7
@@ -19,7 +21,6 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/handlers v1.5.2
 	github.com/gorilla/mux v1.8.1
-	github.com/gotk3/gotk3 v0.6.2
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0
 	github.com/hashicorp/golang-lru/v2 v2.0.7
@@ -55,6 +56,7 @@ require (
 require (
 	filippo.io/bigmod v0.1.1-0.20260103110540-f8a47775ebe5 // indirect
 	filippo.io/keygen v0.0.0-20260114151900-8e2790ea4c5b // indirect
+	github.com/KarpelesLab/weak v0.1.1 // indirect
 	github.com/benbjohnson/clock v1.3.5 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bits-and-blooms/bitset v1.24.4 // indirect
@@ -65,7 +67,6 @@ require (
 	github.com/creachadair/mds v0.27.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/davidlazar/go-crypto v0.0.0-20200604182044-b73af7476f6c // indirect
-	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.1 // indirect
 	github.com/dunglas/httpsfv v1.1.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
@@ -167,6 +168,7 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.1 // indirect
 	go.yaml.in/yaml/v2 v2.4.4 // indirect
+	go4.org/unsafe/assume-no-moving-gc v0.0.0-20231121144256-b99613f794b6 // indirect
 	golang.org/x/mod v0.35.0 // indirect
 	golang.org/x/net v0.53.0 // indirect
 	golang.org/x/sync v0.20.0 // indirect

@@ -1,4 +1,4 @@
-//go:build gtk
+//go111:build gtk
 
 package controller
 
@@ -9,13 +9,12 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/ezex-io/gopkg/scheduler"
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/util/logger"
 )
 
 // clockOutOfSyncThreshold is the clock offset above which we show a warning.
@@ -120,17 +119,10 @@ func (c *NodeWidgetController) timeout10() {
 			ci.Connections, ci.InboundConnections, ci.OutboundConnections)
 		reachability = nodeInfo.Reachability
 	}
-	committeeStake := amount.Amount(chainInfo.CommitteePower)
 	totalStake := amount.Amount(chainInfo.TotalPower)
 
 	gtkutil.IdleAddSync(func() {
-		styleContext, err := c.view.LabelClockOffset.GetStyleContext()
-		if err != nil {
-			logger.Error("failed to get style context", "err", err)
-
-			return
-		}
-
+		styleContext := c.view.LabelClockOffset.StyleContext()
 		c.view.LabelClockOffset.SetTooltipText(
 			"Difference between time of your machine and network time (NTP) " +
 				"for synchronization.",
@@ -138,10 +130,8 @@ func (c *NodeWidgetController) timeout10() {
 
 		c.setClockOffset(styleContext, clockOffset, clockOffsetErr)
 
-		c.view.LabelCommitteeSize.SetText(fmt.Sprintf("%v", chainInfo.CommitteeSize))
 		c.view.LabelActiveValidator.SetText(fmt.Sprintf("%v", chainInfo.ActiveValidators))
-		c.view.LabelCommitteeStake.SetText(committeeStake.String())
-		c.view.LabelTotalStake.SetText(totalStake.String())
+		c.view.LabelTotalPower.SetText(totalStake.String())
 		c.view.LabelAverageScore.SetText(fmt.Sprintf("%.2f", chainInfo.AverageScore))
 		c.view.LabelNumConnections.SetText(numConnections)
 		c.view.LabelReachability.SetText(reachability)
@@ -169,6 +159,7 @@ func (c *NodeWidgetController) setClockOffset(styleContext *gtk.StyleContext, of
 
 		return
 	}
+
 	styleContext.RemoveClass("warning")
 }
 

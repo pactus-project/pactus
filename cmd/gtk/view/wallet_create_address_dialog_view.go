@@ -1,9 +1,9 @@
-//go:build gtk
+//go111:build gtk
 
 package view
 
 import (
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd/gtk/assets"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 )
@@ -11,7 +11,7 @@ import (
 type WalletCreateAddressDialogView struct {
 	ViewBuilder
 
-	Dialog *gtk.Dialog
+	Window *gtk.Window
 
 	LabelEntry       *gtk.Entry
 	AddressTypeCombo *gtk.ComboBoxText
@@ -24,7 +24,7 @@ func NewWalletCreateAddressDialogView() *WalletCreateAddressDialogView {
 
 	view := &WalletCreateAddressDialogView{
 		ViewBuilder: builder,
-		Dialog:      builder.GetDialogObj("id_dialog_wallet_create_address"),
+		Window:      builder.GetWindowObj("id_dialog_wallet_create_address"),
 
 		LabelEntry:       builder.GetEntryObj("id_entry_account_label"),
 		AddressTypeCombo: builder.GetComboBoxTextObj("id_combo_address_type"),
@@ -32,8 +32,8 @@ func NewWalletCreateAddressDialogView() *WalletCreateAddressDialogView {
 		ButtonCancel:     builder.GetButtonObj("id_button_cancel"),
 	}
 
-	view.ButtonOK.SetImage(gtkutil.ImageFromPixbuf(assets.IconOkPixbuf16))
-	view.ButtonCancel.SetImage(gtkutil.ImageFromPixbuf(assets.IconCancelPixbuf16))
+	gtkutil.AddImageToButton(view.ButtonOK, assets.IconOk16)
+	gtkutil.AddImageToButton(view.ButtonCancel, assets.IconCancel16)
 
 	return view
 }

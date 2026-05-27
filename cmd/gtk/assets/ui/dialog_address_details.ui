@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.38.2 -->
 <interface>
-  <requires lib="gtk+" version="3.24"/>
+  <requires lib="gtk+" version="4.14"/>
   <object class="GtkDialog" id="id_dialog_address_details">
     <property name="can-focus">False</property>
-    <property name="title" translatable="yes">Address details</property>
+    <property name="title" >Address details</property>
     <property name="default-width">480</property>
     <property name="type-hint">dialog</property>
     <child internal-child="vbox">
@@ -34,18 +33,8 @@
                 <signal name="activate" handler="on_close" swapped="no"/>
                 <signal name="clicked" handler="on_close" swapped="no"/>
               </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
             </child>
           </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
         </child>
         <child>
           <object class="GtkBox">
@@ -58,61 +47,39 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">Address:</property>
+                <property name="label" >Address:</property>
               </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
+
             </child>
             <child>
               <object class="GtkOverlay" id="id_overlay_address">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
               </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
+
             </child>
             <child>
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">Public Key:</property>
+                <property name="label" >Public Key:</property>
               </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
-              </packing>
+
             </child>
             <child>
               <object class="GtkOverlay" id="id_overlay_public_key">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
               </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">3</property>
-              </packing>
             </child>
             <child>
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">Derivation path:</property>
+                <property name="label" >Derivation path:</property>
               </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">4</property>
-              </packing>
             </child>
             <child>
               <object class="GtkEntry" id="id_entry_path">
@@ -123,19 +90,8 @@
                 <property name="width-chars">32</property>
                 <property name="caps-lock-warning">False</property>
               </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">5</property>
-              </packing>
             </child>
           </object>
-          <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
-            <property name="padding">8</property>
-            <property name="position">1</property>
-          </packing>
         </child>
       </object>
     </child>

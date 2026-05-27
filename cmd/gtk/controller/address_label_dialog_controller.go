@@ -1,4 +1,4 @@
-//go:build gtk
+//go111:build gtk
 
 package controller
 
@@ -31,10 +31,10 @@ func (c *AddressLabelDialogController) Run(address string) {
 
 			return
 		}
-		c.view.Dialog.Close()
+		c.view.Window.Close()
 	}
 	onCancel := func() {
-		c.view.Dialog.Close()
+		c.view.Window.Close()
 	}
 
 	c.view.ConnectSignals(map[string]any{
@@ -42,6 +42,5 @@ func (c *AddressLabelDialogController) Run(address string) {
 		"on_cancel": onCancel,
 	})
 
-	c.view.Dialog.SetModal(true)
-	gtkutil.RunDialog(c.view.Dialog)
+	gtkutil.ShowModalDialog(c.view.Window)
 }

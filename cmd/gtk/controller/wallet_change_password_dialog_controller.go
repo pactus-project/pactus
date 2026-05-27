@@ -1,4 +1,4 @@
-//go:build gtk
+//go111:build gtk
 
 package controller
 
@@ -32,7 +32,7 @@ func (c *WalletChangePasswordDialogController) Run() {
 		repeatPassword := gtkutil.GetEntryText(c.view.RepeatEntry)
 
 		if newPassword != repeatPassword {
-			gtkutil.ShowWarningDialog(c.view.Dialog, "Passwords do not match")
+			gtkutil.ShowWarningDialog(c.view.Window, "Passwords do not match")
 
 			return
 		}
@@ -41,16 +41,15 @@ func (c *WalletChangePasswordDialogController) Run() {
 
 			return
 		}
-		c.view.Dialog.Close()
+		c.view.Window.Close()
 	}
 
-	onCancel := func() { c.view.Dialog.Close() }
+	onCancel := func() { c.view.Window.Close() }
 
 	c.view.ConnectSignals(map[string]any{
 		"on_ok":     onOk,
 		"on_cancel": onCancel,
 	})
 
-	c.view.Dialog.SetModal(true)
-	gtkutil.RunDialog(c.view.Dialog)
+	gtkutil.ShowModalDialog(c.view.Window)
 }

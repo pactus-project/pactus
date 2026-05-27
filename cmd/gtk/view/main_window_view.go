@@ -1,12 +1,11 @@
-//go:build gtk
+//go111:build gtk
 
 package view
 
 import (
-	"github.com/gotk3/gotk3/gdk"
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/diamondburned/gotk4/pkg/gdk/v4"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd/gtk/assets"
-	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 )
 
 type MainWindowView struct {
@@ -14,7 +13,7 @@ type MainWindowView struct {
 
 	Window *gtk.ApplicationWindow
 
-	MenuEditConfig   *gtk.MenuItem
+	// MenuEditConfig   *gtk.Button
 	BoxNode          *gtk.Box
 	BoxDefaultWallet *gtk.Box
 	BoxValidators    *gtk.Box
@@ -29,7 +28,7 @@ func NewMainWindowView() *MainWindowView {
 		ViewBuilder: builder,
 		Window:      builder.GetApplicationWindowObj("id_main_window"),
 
-		MenuEditConfig:   builder.GetMenuItem("id_menu_edit_config"),
+		// MenuEditConfig:   builder.GetButtonObj("id_menu_edit_config"),
 		BoxNode:          builder.GetBoxObj("id_box_node"),
 		BoxDefaultWallet: builder.GetBoxObj("id_box_default_wallet"),
 		BoxValidators:    builder.GetBoxObj("id_box_validators"),
@@ -38,16 +37,11 @@ func NewMainWindowView() *MainWindowView {
 	}
 
 	// apply custom css
-	provider, err := gtk.CssProviderNew()
-	gtkutil.FatalErrorCheck(err)
+	provider := gtk.NewCSSProvider()
+	provider.LoadFromData(assets.MainWindowCSS)
+	display := gdk.DisplayGetDefault()
 
-	err = provider.LoadFromData(assets.MainWindowCSS)
-	gtkutil.FatalErrorCheck(err)
-
-	screen, err := gdk.ScreenGetDefault()
-	gtkutil.FatalErrorCheck(err)
-
-	gtk.AddProviderForScreen(screen, provider, gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+	gtk.StyleContextAddProviderForDisplay(display, provider, gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
 	return view
 }

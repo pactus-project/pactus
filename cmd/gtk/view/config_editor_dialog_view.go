@@ -1,9 +1,9 @@
-//go:build gtk
+//go111:build gtk
 
 package view
 
 import (
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd/gtk/assets"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 )
@@ -11,7 +11,7 @@ import (
 type ConfigEditorDialogView struct {
 	ViewBuilder
 
-	Dialog *gtk.Dialog
+	Window *gtk.Window
 
 	TextView      *gtk.TextView
 	ButtonSave    *gtk.Button
@@ -23,15 +23,15 @@ func NewConfigEditorDialogView() *ConfigEditorDialogView {
 
 	view := &ConfigEditorDialogView{
 		ViewBuilder: builder,
-		Dialog:      builder.GetDialogObj("id_dialog_config_editor"),
+		Window:      builder.GetWindowObj("id_dialog_config_editor"),
 
 		TextView:      builder.GetTextViewObj("id_textview_config"),
 		ButtonSave:    builder.GetButtonObj("id_button_save_config"),
 		ButtonRestore: builder.GetButtonObj("id_button_restore_default"),
 	}
 
-	view.ButtonSave.SetImage(gtkutil.ImageFromPixbuf(assets.IconSavePixbuf16))
-	view.ButtonRestore.SetImage(gtkutil.ImageFromPixbuf(assets.IconRefreshPixbuf16))
+	gtkutil.AddImageToButton(view.ButtonSave, assets.IconSave16)
+	gtkutil.AddImageToButton(view.ButtonRestore, assets.IconRefresh16)
 
 	return view
 }

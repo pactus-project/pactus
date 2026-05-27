@@ -1,4 +1,4 @@
-//go:build gtk
+//go111:build gtk
 
 package controller
 
@@ -37,9 +37,8 @@ func (c *AddressPrivateKeyDialogController) Run(addr string) {
 	c.view.PrvKeyEntry.SetText(prv.String())
 
 	c.view.ConnectSignals(map[string]any{
-		"on_close": func() { c.view.Dialog.Close() },
+		"on_close": func() { c.view.Window.Close() },
 	})
 
-	c.view.Dialog.SetModal(true)
-	gtkutil.RunDialog(c.view.Dialog)
+	gtkutil.ShowModalDialog(c.view.Window)
 }

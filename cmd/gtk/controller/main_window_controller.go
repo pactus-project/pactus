@@ -1,4 +1,4 @@
-//go:build gtk
+//go111:build gtk
 
 package controller
 
@@ -16,12 +16,14 @@ func NewMainWindowController(view *view.MainWindowView) *MainWindowController {
 }
 
 func (c *MainWindowController) BuildView(nav *Navigator, isLocal bool) {
+	c.view.Window.ShowMenubar()
+	
 	gtkutil.IdleAddSync(func() {
-		if !isLocal {
-			c.view.MenuEditConfig.SetSensitive(false)
-			c.view.MenuEditConfig.SetVisible(false)
-			c.view.MenuEditConfig.Hide()
-		}
+		// if !isLocal {
+		// 	c.view.MenuEditConfig.SetSensitive(false)
+		// 	c.view.MenuEditConfig.SetVisible(false)
+		// 	c.view.MenuEditConfig.Hide()
+		// }
 
 		c.view.ConnectSignals(map[string]any{
 			"on_edit_config":            nav.ShowConfigEditor,

@@ -1,4 +1,4 @@
-//go:build gtk
+//go111:build gtk
 
 package gtkutil
 
@@ -12,62 +12,73 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/gotk3/gotk3/gdk"
-	"github.com/gotk3/gotk3/glib"
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/diamondburned/gotk4/pkg/gdk/v4"
+	"github.com/diamondburned/gotk4/pkg/glib/v2"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 )
 
 // updateMessageDialog makes MessageDialog labels selectable and markup-enabled.
 // https://stackoverflow.com/questions/3249053/copying-the-text-from-a-gtk-messagedialog
 func updateMessageDialog(dlg *gtk.MessageDialog) {
-	area, err := dlg.GetMessageArea()
-	if err == nil {
-		children := area.GetChildren()
-		children.Foreach(func(item any) {
-			label, err := gtk.WidgetToLabel(item.(*gtk.Widget))
-			if err == nil {
-				label.SetSelectable(true)
-				label.SetUseMarkup(true)
-			}
-		})
-	}
+	// area, err := dlg.GetMessageArea()
+	// if err == nil {
+	// 	children := area.GetChildren()
+	// 	children.Foreach(func(item any) {
+	// 		label, err := gtk.WidgetToLabel(item.(*gtk.Widget))
+	// 		if err == nil {
+	// 			label.SetSelectable(true)
+	// 			label.SetUseMarkup(true)
+	// 		}
+	// 	})
+	// }
 }
 
-func ShowQuestionDialog(parent gtk.IWindow, msg string) bool {
+func ShowQuestionDialog(parent *gtk.Window, msg string) bool {
 	return IdleAddSyncT(func() bool {
-		dlg := gtk.MessageDialogNew(parent,
-			gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, "%s", msg)
+		dlg := gtk.NewMessageDialog(parent,
+			gtk.DialogModal, gtk.MessageQuestion, gtk.ButtonsYesNo)
+		dlg.SetMarkup(msg)
 		updateMessageDialog(dlg)
-		res := RunDialog(&dlg.Dialog)
 
-		return res == gtk.RESPONSE_YES
+		responseChan := make(chan gtk.ResponseType, 1)
+		dlg.Connect("response", func(responseID int) {
+			responseChan <- gtk.ResponseType(responseID)
+			dlg.Destroy()
+		})
+		dlg.SetVisible(true)
+		response := <-responseChan
+
+		return response == gtk.ResponseYes
 	})
 }
 
-func ShowInfoDialog(parent gtk.IWindow, msg string) {
+func ShowInfoDialog(parent *gtk.Window, msg string) {
 	IdleAddSync(func() {
-		dlg := gtk.MessageDialogNew(parent,
-			gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, "%s", msg)
+		dlg := gtk.NewMessageDialog(parent,
+			gtk.DialogModal, gtk.MessageInfo, gtk.ButtonsOK)
+		dlg.SetMarkup(msg)
 		updateMessageDialog(dlg)
-		RunDialog(&dlg.Dialog)
+		ShowModalDialog(&dlg.Window)
 	})
 }
 
-func ShowWarningDialog(parent gtk.IWindow, msg string) {
+func ShowWarningDialog(parent *gtk.Window, msg string) {
 	IdleAddSync(func() {
-		dlg := gtk.MessageDialogNew(parent,
-			gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, "%s", msg)
+		dlg := gtk.NewMessageDialog(parent,
+			gtk.DialogModal, gtk.MessageWarning, gtk.ButtonsOK)
+		dlg.SetMarkup(msg)
 		updateMessageDialog(dlg)
-		RunDialog(&dlg.Dialog)
+		ShowModalDialog(&dlg.Window)
 	})
 }
 
-func ShowErrorDialog(parent gtk.IWindow, msg string) {
+func ShowErrorDialog(parent *gtk.Window, msg string) {
 	IdleAddSync(func() {
-		dlg := gtk.MessageDialogNew(parent,
-			gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, "%s", msg)
+		dlg := gtk.NewMessageDialog(parent,
+			gtk.DialogModal, gtk.MessageError, gtk.ButtonsOK)
+		dlg.SetMarkup(msg)
 		updateMessageDialog(dlg)
-		RunDialog(&dlg.Dialog)
+		ShowModalDialog(&dlg.Window)
 	})
 }
 
@@ -86,88 +97,63 @@ func FatalErrorCheck(err error) {
 	}
 }
 
-// PixbufOption represents an option for PixbufFromBytes.
-type PixbufOption func(*pixbufOptions)
+// ImageOption represents an option for ImageFromBytes.
+type ImageOption func(*ImageOptions)
 
-type pixbufOptions struct {
+type ImageOptions struct {
 	width  int
 	height int
 }
 
-// WithSize sets the desired width and height for the pixbuf.
-func WithSize(width, height int) PixbufOption {
-	return func(opts *pixbufOptions) {
+// WithImageSize sets the desired width and height for the image.
+func WithImageSize(width, height int) ImageOption {
+	return func(opts *ImageOptions) {
 		opts.width = width
 		opts.height = height
 	}
 }
 
-// PixbufFromBytes decodes image bytes (PNG/SVG/etc) into a gdk.Pixbuf.
-// Use WithSize() option to resize the image.
-func PixbufFromBytes(data []byte, opts ...PixbufOption) (*gdk.Pixbuf, error) {
-	options := &pixbufOptions{}
-	for _, opt := range opts {
-		opt(options)
-	}
-
-	loader, err := gdk.PixbufLoaderNew()
+// ImageFromBytes creates a gtk.Image from a byte slice and applies a marginEnd.
+// It returns an empty gtk.Image if an error occurs.
+func ImageFromBytes(data []byte, opts ...ImageOption) *gtk.Image {
+	texture, err := gdk.NewTextureFromBytes(glib.NewBytes(data))
 	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		err = loader.Close()
-		if err != nil {
-			Logf("error closing pixbuf loader: %v", err)
-		}
-	}()
+		Logf("Error creating texture from bytes: %v\n", err)
 
-	pixbuf, err := loader.WriteAndReturnPixbuf(data)
-	if err != nil {
-		return nil, err
+		return gtk.NewImage()
 	}
 
-	// Resize if size options provided
-	if options.width > 0 && options.height > 0 {
-		resized, err := pixbuf.ScaleSimple(options.width, options.height, gdk.INTERP_NEAREST)
-		if err != nil {
-			return nil, err
+	img := gtk.NewImageFromPaintable(&texture.Paintable)
+
+	if len(opts) > 0 {
+		options := &ImageOptions{}
+		for _, opt := range opts {
+			opt(options)
 		}
 
-		return resized, nil
+		img = ResizeImage(img, options.width, options.height)
 	}
 
-	return pixbuf, nil
+	return img
 }
 
-// ImageFromPixbuf creates a gtk.Image from a pixbuf and applies a marginEnd.
-// If pixbuf is nil, it returns an empty gtk.Image.
-func ImageFromPixbuf(pixbuf *gdk.Pixbuf) *gtk.Image {
-	image, err := gtk.ImageNewFromPixbuf(pixbuf)
-	if err != nil {
-		return nil
-	}
+func ResizeImage(img *gtk.Image, width, height int) *gtk.Image {
+	img2 := gtk.NewImageFromPaintable(img.Paintable())
+	img2.SetSizeRequest(int(width), int(height))
 
-	image.ShowAll()
-
-	return image
+	return img2
 }
 
 func GetTextViewContent(tv *gtk.TextView) string {
-	buf, _ := tv.GetBuffer()
-	startIter, endIter := buf.GetBounds()
-	content, err := buf.GetText(startIter, endIter, true)
-	if err != nil {
-		return ""
-	}
+	buf := tv.Buffer()
+	startIter, endIter := buf.Bounds()
+	content := buf.Text(startIter, endIter, true)
 
 	return content
 }
 
 func SetTextViewContent(tv *gtk.TextView, content string) {
-	buf, err := tv.GetBuffer()
-	if err != nil {
-		return
-	}
+	buf := tv.Buffer()
 	buf.SetText(content)
 }
 
@@ -202,13 +188,11 @@ func OpenURLInBrowser(address string) error {
 }
 
 func BuildExtendedEntry(builder *gtk.Builder, overlayID string) *gtk.Entry {
-	obj, err := builder.GetObject(overlayID)
-	FatalErrorCheck(err)
-	overlay := obj.(*gtk.Overlay)
+	obj := builder.GetObject(overlayID)
+	overlay := obj.Cast().(*gtk.Overlay)
 
 	// Create a new Entry
-	entry, err := gtk.EntryNew()
-	FatalErrorCheck(err)
+	entry := gtk.NewEntry()
 	entry.SetCanFocus(true)
 	entry.SetHExpand(true)
 	entry.SetEditable(false)
@@ -216,73 +200,66 @@ func BuildExtendedEntry(builder *gtk.Builder, overlayID string) *gtk.Entry {
 	SetCSSClass(&entry.Widget, "copyable_entry")
 
 	// Create a new Button
-	button, err := gtk.ButtonNewFromIconName("edit-copy-symbolic", gtk.ICON_SIZE_BUTTON)
-	FatalErrorCheck(err)
+	button := gtk.NewButtonFromIconName("edit-copy-symbolic")
 
-	button.SetTooltipText("Copy to Clipboard") // TODO: Not working!
-	button.SetHAlign(gtk.ALIGN_END)
-	button.SetVAlign(gtk.ALIGN_CENTER)
+	button.SetTooltipText("Copy to Clipboard")
+	button.SetHAlign(gtk.AlignEnd)
+	button.SetVAlign(gtk.AlignCenter)
 	button.SetHExpand(false)
 	button.SetVExpand(false)
-	button.SetBorderWidth(0)
 
 	SetCSSClass(&button.Widget, "inline_button")
 
 	// Set the click event for the Button
 	button.Connect("clicked", func() {
 		buffer := GetEntryText(entry)
-		clipboard, _ := gtk.ClipboardGet(gdk.SELECTION_CLIPBOARD)
+		clipboard := button.Clipboard()
 		clipboard.SetText(buffer)
 	})
 
-	overlay.Add(entry)
+	overlay.SetChild(entry)
 	overlay.AddOverlay(button)
 
-	overlay.ShowAll() // Ensure all child widgets are shown
+	overlay.SetVisible(true)
 
 	return entry
 }
 
 func SetCSSClass(widget *gtk.Widget, name string) {
-	styleContext, err := widget.GetStyleContext()
-	FatalErrorCheck(err)
+	styleContext := widget.StyleContext()
 
 	styleContext.AddClass(name)
 }
 
-func RunDialog(dlg *gtk.Dialog) gtk.ResponseType {
-	return IdleAddSyncT(func() gtk.ResponseType {
-		response := dlg.Run()
+func ShowNonModalDialog(dlg *gtk.Window) {
+	IdleAddSync(func() {
+		dlg.SetModal(false)
+		dlg.SetVisible(true)
+	})
+}
 
-		// Destroy should be done after the dialog is closed
-		// Read more here: https://docs.gtk.org/gtk3/method.Dialog.run.html
-		dlg.Destroy()
-
-		return response
+func ShowModalDialog(dlg *gtk.Window) {
+	IdleAddSync(func() {
+		dlg.SetModal(true)
+		dlg.SetVisible(true)
 	})
 }
 
 func ComboBoxActiveValue(combo *gtk.ComboBox) int {
-	iter, err := combo.GetActiveIter()
-	FatalErrorCheck(err)
-
-	model, err := combo.GetModel()
-	FatalErrorCheck(err)
-
-	val, err := model.ToTreeModel().GetValue(iter, 0)
-	FatalErrorCheck(err)
-
-	valueInterface, err := val.GoValue()
-	FatalErrorCheck(err)
+	iter, _ := combo.ActiveIter()
+	model := combo.Model()
+	val := model.Cast().(*gtk.TreeModel).Value(iter, 0)
+	valueInterface := val.GoValue()
 
 	return valueInterface.(int)
 }
 
 func GetEntryText(entry *gtk.Entry) string {
-	txt, err := entry.GetText()
-	FatalErrorCheck(err)
+	return entry.Text()
+}
 
-	return txt
+func GetDropDown(drop *gtk.DropDown) string {
+	return drop.SelectedItem().Type().String()
 }
 
 // Color represents different text colors for UI elements.
@@ -390,4 +367,18 @@ func GoroutineID() int64 {
 	_, _ = fmt.Sscanf(string(buf[:n]), "goroutine %d ", &id)
 
 	return id
+}
+
+func AddImageToButton(button *gtk.Button, image *gtk.Image) {
+
+	button.SetChild(image)
+}
+
+func AppendRowToListStore(listStore *gtk.ListStore, cols []int, values []any) {
+	iter := listStore.Append()
+	glibValues := make([]glib.Value, len(values))
+	for i, v := range values {
+		glibValues[i] = *glib.NewValue(v)
+	}
+	listStore.Set(iter, cols, glibValues)
 }

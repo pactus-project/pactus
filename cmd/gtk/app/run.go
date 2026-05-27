@@ -1,11 +1,11 @@
-//go:build gtk
+//go111:build gtk
 
 package app
 
 import (
 	"context"
 
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/cmd/gtk/controller"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
@@ -30,7 +30,7 @@ type GUI struct {
 // workingDir is the local node data directory; isLocal is true when running a local node.
 // It returns a cleanup function that closes the window and stops timers.
 func Run(ctx context.Context, conn grpc.ClientConnInterface,
-	gtkApp *gtk.Application, notify func(string),
+	gtkApp *gtk.Application, notify func(string, int),
 	connectionLabel, connectionValue, workingDir string, isLocal bool,
 ) (*GUI, error) {
 	blockchainClient := pactus.NewBlockchainClient(conn)
@@ -62,32 +62,32 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 
 	nav := controller.NewNavigator(gtkApp, walletModel, walletCtrl, configModel)
 
-	notify("Fetching Node info...")
+	notify("Fetching Node info...", 0)
 	err = nodeCtrl.BuildView(ctx, connectionLabel, connectionValue)
 	if err != nil {
 		return nil, err
 	}
 
-	notify("Fetching Validators info...")
+	notify("Fetching Validators info...", 20)
 	err = validatorCtrl.BuildView(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	notify("Fetching Wallet info...")
-	err = walletCtrl.BuildView(ctx, nav)
-	if err != nil {
-		return nil, err
-	}
-
-	notify("Fetching Committee info...")
+	notify("Fetching Committee info...", 40)
 	err = committeeCtrl.BuildView(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	notify("Fetching Network info...")
+	notify("Fetching Network info...", 60)
 	err = networkCtrl.BuildView(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	notify("Fetching Wallet info...", 80)
+	err = walletCtrl.BuildView(ctx, nav)
 	if err != nil {
 		return nil, err
 	}
@@ -95,17 +95,17 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 	mwView := gtkutil.IdleAddSyncT(func() *view.MainWindowView {
 		mwView := view.NewMainWindowView()
 
-		mwView.BoxNode.Add(nodeView.Box)
-		mwView.BoxDefaultWallet.Add(walletView.Box)
-		mwView.BoxValidators.Add(validatorView.Box)
-		mwView.BoxCommittee.Add(committeeView.Box)
-		mwView.BoxNetwork.Add(networkView.Box)
+		mwView.BoxNode.Append(nodeView.Box)
+		mwView.BoxDefaultWallet.Append(walletView.Box)
+		mwView.BoxValidators.Append(validatorView.Box)
+		mwView.BoxCommittee.Append(committeeView.Box)
+		mwView.BoxNetwork.Append(networkView.Box)
 
 		mwCtrl := controller.NewMainWindowController(mwView)
 		mwCtrl.BuildView(nav, isLocal)
 
-		mwView.Window.ShowAll()
-		gtkApp.AddWindow(mwView.Window)
+		mwView.Window.Show()
+		gtkApp.AddWindow(&mwView.Window.Window)
 
 		return mwView
 	})

@@ -1,21 +1,15 @@
-//go:build gtk
+//go111:build gtk
 
 package controller
 
 import (
 	"context"
-	"strconv"
 	"time"
 
 	"github.com/ezex-io/gopkg/scheduler"
-	"github.com/gotk3/gotk3/gdk"
-	"github.com/gotk3/gotk3/gtk"
-	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
-	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/wallet/types"
 )
 
@@ -47,54 +41,54 @@ func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) 
 		}
 
 		c.view.ConnectSignals(map[string]any{
-			"on_new_address":     nav.ShowWalletNewAddress,
-			"on_set_default_fee": nav.ShowWalletSetDefaultFee,
-			"on_change_password": nav.ShowWalletChangePassword,
-			"on_show_seed":       nav.ShowWalletShowSeed,
+			// "on_new_address":     nav.ShowWalletNewAddress,
+			// "on_set_default_fee": nav.ShowWalletSetDefaultFee,
+			// "on_change_password": nav.ShowWalletChangePassword,
+			// "on_show_seed":       nav.ShowWalletShowSeed,
 
-			"on_address_refresh": c.RefreshAddresses,
-			"on_tx_refresh":      c.RefreshTransactions,
-			"on_tx_prev":         c.prevTransactionsPage,
-			"on_tx_next":         c.nextTransactionsPage,
+			// "on_address_refresh": c.RefreshAddresses,
+			// "on_tx_refresh":      c.RefreshTransactions,
+			// "on_tx_prev":         c.prevTransactionsPage,
+			// "on_tx_next":         c.nextTransactionsPage,
 		})
 
 		// Context menu actions.
-		c.view.MenuItemUpdateLabel.Connect("activate", func(_ *gtk.MenuItem) {
-			addr := c.selectedAddress()
-			if addr != "" {
-				c.ShowUpdateLabel(addr)
-			}
-		})
-		c.view.MenuItemDetails.Connect("activate", func(_ *gtk.MenuItem) {
-			addr := c.selectedAddress()
-			if addr != "" {
-				c.ShowAddressDetails(addr)
-			}
-		})
-		c.view.MenuItemPrivateKey.Connect("activate", func(_ *gtk.MenuItem) {
-			addr := c.selectedAddress()
-			if addr != "" {
-				c.ShowPrivateKey(addr)
-			}
-		})
+		// c.view.MenuItemUpdateLabel.Connect("activate", func(_ *gtk.MenuItem) {
+		// 	addr := c.selectedAddress()
+		// 	if addr != "" {
+		// 		c.ShowUpdateLabel(addr)
+		// 	}
+		// })
+		// c.view.MenuItemDetails.Connect("activate", func(_ *gtk.MenuItem) {
+		// 	addr := c.selectedAddress()
+		// 	if addr != "" {
+		// 		c.ShowAddressDetails(addr)
+		// 	}
+		// })
+		// c.view.MenuItemPrivateKey.Connect("activate", func(_ *gtk.MenuItem) {
+		// 	addr := c.selectedAddress()
+		// 	if addr != "" {
+		// 		c.ShowPrivateKey(addr)
+		// 	}
+		// })
 
-		// Right-click popup.
-		c.view.TreeViewWallet.Connect("button-press-event", func(_ *gtk.TreeView, event *gdk.Event) bool {
-			eventButton := gdk.EventButtonNewFromEvent(event)
-			if eventButton.Type() == gdk.EVENT_BUTTON_PRESS && eventButton.Button() == gdk.BUTTON_SECONDARY {
-				c.view.ContextMenu.PopupAtPointer(event)
-			}
+		// // Right-click popup.
+		// c.view.ListViewAddresses.Connect("button-press-event", func(_ *gtk.TreeView, event *gdk.Event) bool {
+		// 	eventButton := gdk.EventButtonNewFromEvent(event)
+		// 	if eventButton.Type() == gdk.EVENT_BUTTON_PRESS && eventButton.Button() == gdk.BUTTON_SECONDARY {
+		// 		c.view.ContextMenu.PopupAtPointer(event)
+		// 	}
 
-			return false
-		})
+		// 	return false
+		// })
 
 		// Double-click opens details.
-		c.view.TreeViewWallet.Connect("row-activated", func(_ *gtk.TreeView, _ *gtk.TreePath, _ *gtk.TreeViewColumn) {
-			addr := c.selectedAddress()
-			if addr != "" {
-				c.ShowAddressDetails(addr)
-			}
-		})
+		// c.view.ColViewAddresses.Connect("row-activated", func(_ *gtk.TreeView, _ *gtk.TreePath, _ *gtk.TreeViewColumn) {
+		// 	addr := c.selectedAddress()
+		// 	if addr != "" {
+		// 		c.ShowAddressDetails(addr)
+		// 	}
+		// })
 
 		totalBalance1, _ := c.model.TotalBalance()
 		scheduler.Every(15*time.Second).Do(ctx, func(context.Context) {
@@ -114,12 +108,12 @@ func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) 
 }
 
 func (c *WalletWidgetController) selectedAddress() string {
-	addr, ok, err := c.view.SelectionAddress(1)
-	if err != nil || !ok {
-		return ""
-	}
+	// addr, ok, err := c.view.SelectionAddress(1)
+	// if err != nil || !ok {
+	// 	return ""
+	// }
 
-	return addr
+	return "addr"
 }
 
 // getDirectionTextWithIcon returns formatted text with icon for the transaction direction.
@@ -163,51 +157,51 @@ func (c *WalletWidgetController) RefreshInfo() {
 }
 
 func (c *WalletWidgetController) RefreshAddresses() {
-	rows := c.model.AddressRows()
+	// rows := c.model.AddressRows()
 
-	gtkutil.IdleAddSync(func() {
-		c.view.ClearRows()
-		for _, item := range rows {
-			c.view.AppendRow(
-				[]int{0, 1, 2, 3, 4},
-				[]any{
-					strconv.Itoa(item.No),
-					item.Address,
-					gtkutil.ImportedLabel(item.Label, item.Imported),
-					item.Balance.String(),
-					item.Stake.String(),
-				},
-			)
-		}
-	})
+	// gtkutil.IdleAddSync(func() {
+	// 	c.view.ClearRows()
+	// 	for _, item := range rows {
+	// 		c.view.AppendRow(
+	// 			[]int{0, 1, 2, 3, 4},
+	// 			[]any{
+	// 				strconv.Itoa(item.No),
+	// 				item.Address,
+	// 				gtkutil.ImportedLabel(item.Label, item.Imported),
+	// 				item.Balance.String(),
+	// 				item.Stake.String(),
+	// 			},
+	// 		)
+	// 	}
+	// })
 }
 
 func (c *WalletWidgetController) RefreshTransactions() {
-	trxs := c.model.Transactions(c.txCount, c.txSkip)
-	hasNext := len(trxs) == c.txCount
+	// trxs := c.model.Transactions(c.txCount, c.txSkip)
+	// hasNext := len(trxs) == c.txCount
 
-	gtkutil.IdleAddSync(func() {
-		c.view.ClearTxRows()
+	// gtkutil.IdleAddSync(func() {
+	// 	c.view.ClearTxRows()
 
-		for _, trx := range trxs {
-			c.view.AppendTxRow(
-				[]int{0, 1, 2, 3, 4, 5, 6, 7, 8},
-				[]any{
-					trx.No,
-					cmd.ShortHash(trx.TxId),
-					cmd.ShortAddress(trx.Sender),
-					cmd.ShortAddress(trx.Receiver),
-					payload.Type(trx.PayloadType).String(),
-					amount.Amount(trx.Amount).String(),
-					getDirectionTextWithIcon(types.TxDirection(trx.Direction)),
-					types.TransactionStatus(trx.Status).String(),
-					trx.Comment,
-				},
-			)
-		}
+	// 	for _, trx := range trxs {
+	// 		c.view.AppendTxRow(
+	// 			[]int{0, 1, 2, 3, 4, 5, 6, 7, 8},
+	// 			[]any{
+	// 				trx.No,
+	// 				cmd.ShortHash(trx.TxId),
+	// 				cmd.ShortAddress(trx.Sender),
+	// 				cmd.ShortAddress(trx.Receiver),
+	// 				payload.Type(trx.PayloadType).String(),
+	// 				amount.Amount(trx.Amount).String(),
+	// 				getDirectionTextWithIcon(types.TxDirection(trx.Direction)),
+	// 				types.TransactionStatus(trx.Status).String(),
+	// 				trx.Comment,
+	// 			},
+	// 		)
+	// 	}
 
-		c.view.SetTxPager(c.txSkip > 0, hasNext)
-	})
+	// 	c.view.SetTxPager(c.txSkip > 0, hasNext)
+	// })
 }
 
 func (c *WalletWidgetController) ShowUpdateLabel(address string) {

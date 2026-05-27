@@ -1,371 +1,97 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.40.0 -->
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 1.0.2 -->
 <interface>
-  <requires lib="gtk+" version="3.24"/>
+  <!-- interface-name main_window.ui -->
+  <requires lib="gio" version="2.0"/>
+  <requires lib="gtk" version="4.20"/>
+  <requires lib="gtk+" version="4.14"/>
   <object class="GtkApplicationWindow" id="id_main_window">
     <property name="can-focus">False</property>
-    <property name="title" translatable="yes">Pactus GUI</property>
-    <property name="default-width">880</property>
-    <property name="default-height">440</property>
+    <property name="default-height">640</property>
+    <property name="default-width">920</property>
+    <property name="title">Pactus GUI</property>
     <child>
       <object class="GtkBox">
-        <property name="visible">True</property>
         <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
-        <child>
-          <object class="GtkMenuBar" id="id_menu_bar">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <child>
-              <object class="GtkMenuItem">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="label" translatable="yes">_File</property>
-                <property name="use-underline">True</property>
-                <child type="submenu">
-                  <object class="GtkMenu">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <child>
-                      <object class="GtkMenuItem" id="id_menu_edit_config">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">Edit _Configuration</property>
-                        <property name="use-underline">True</property>
-                        <signal name="activate" handler="on_edit_config" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkSeparatorMenuItem">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label">_Quit</property>
-                        <property name="use-underline">True</property>
-                        <signal name="activate" handler="on_quit" swapped="no"/>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child>
-              <object class="GtkMenuItem">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="label" translatable="yes">_Wallet</property>
-                <property name="use-underline">True</property>
-                <child type="submenu">
-                  <object class="GtkMenu">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <child>
-                      <object class="GtkMenuItem" id="id_menu_new_address">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">_New Address</property>
-                        <property name="use-underline">True</property>
-                        <signal name="activate" handler="on_wallet_new_address" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkSeparatorMenuItem">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem" id="id_menu_change_password">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">Change _Password</property>
-                        <property name="use-underline">True</property>
-                        <signal name="activate" handler="on_wallet_change_password" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem" id="id_menu_show_seed">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">Show _Seed</property>
-                        <property name="use-underline">True</property>
-                        <signal name="activate" handler="on_wallet_show_seed" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkSeparatorMenuItem">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem" id="id_menu_set_default_fee">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">Set Default _Fee</property>
-                        <property name="use-underline">True</property>
-                        <signal name="activate" handler="on_wallet_set_default_fee" swapped="no"/>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child>
-              <object class="GtkMenuItem">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="label" translatable="yes">_Transaction</property>
-                <property name="use-underline">True</property>
-                <child type="submenu">
-                  <object class="GtkMenu">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <child>
-                      <object class="GtkMenuItem">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">_Transfer</property>
-                        <property name="use-underline">True</property>
-                        <signal name="activate" handler="on_transaction_transfer" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">_Bond</property>
-                        <property name="use-underline">True</property>
-                        <signal name="activate" handler="on_transaction_bond" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">_Unbond</property>
-                        <property name="use-underline">True</property>
-                        <signal name="activate" handler="on_transaction_unbond" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">_Withdraw</property>
-                        <property name="use-underline">True</property>
-                        <signal name="activate" handler="on_transaction_withdraw" swapped="no"/>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child>
-              <object class="GtkMenuItem">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="label" translatable="yes">_Help</property>
-                <property name="use-underline">True</property>
-                <child type="submenu">
-                  <object class="GtkMenu">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <child>
-                      <object class="GtkMenuItem">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">_Website</property>
-                        <property name="use-underline">True</property>
-                        <signal name="activate" handler="on_open_website" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">_Explorer</property>
-                        <property name="use-underline">True</property>
-                        <signal name="activate" handler="on_open_explorer" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">_Documentation</property>
-                        <property name="use-underline">True</property>
-                        <signal name="activate" handler="on_open_docs" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkSeparatorMenuItem">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">About _Pactus</property>
-                        <property name="use-underline">True</property>
-                        <signal name="activate" handler="on_about" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">About _GTK</property>
-                        <property name="use-underline">True</property>
-                        <signal name="activate" handler="on_about_gtk" swapped="no"/>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
+        <property name="visible">True</property>
         <child>
           <object class="GtkNotebook" id="id_notebook">
-            <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="vexpand">True</property>
+            <property name="visible">True</property>
             <child>
               <object class="GtkBox" id="id_box_node">
-                <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="homogeneous">True</property>
-                <child>
-                  <placeholder/>
-                </child>
+                <property name="visible">True</property>
               </object>
             </child>
             <child type="tab">
               <object class="GtkLabel">
-                <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="label" translatable="yes">Node </property>
                 <property name="justify">right</property>
+                <property name="label">Node </property>
+                <property name="visible">True</property>
               </object>
-              <packing>
-                <property name="tab-fill">False</property>
-              </packing>
             </child>
             <child>
               <object class="GtkBox" id="id_box_committee">
-                <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="homogeneous">True</property>
-                <child>
-                  <placeholder/>
-                </child>
+                <property name="visible">True</property>
               </object>
-              <packing>
-                <property name="position">1</property>
-              </packing>
             </child>
             <child type="tab">
               <object class="GtkLabel">
-                <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="label" translatable="yes">Committee</property>
+                <property name="label">Committee</property>
+                <property name="visible">True</property>
               </object>
-              <packing>
-                <property name="position">1</property>
-                <property name="tab-fill">False</property>
-              </packing>
             </child>
             <child>
               <object class="GtkBox" id="id_box_network">
-                <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="homogeneous">True</property>
-                <child>
-                  <placeholder/>
-                </child>
+                <property name="visible">True</property>
               </object>
-              <packing>
-                <property name="position">2</property>
-              </packing>
             </child>
             <child type="tab">
               <object class="GtkLabel">
-                <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="label" translatable="yes">Network</property>
+                <property name="label">Network</property>
+                <property name="visible">True</property>
               </object>
-              <packing>
-                <property name="position">2</property>
-                <property name="tab-fill">False</property>
-              </packing>
             </child>
             <child>
               <object class="GtkBox" id="id_box_validators">
-                <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="homogeneous">True</property>
-                <child>
-                  <placeholder/>
-                </child>
+                <property name="visible">True</property>
               </object>
-              <packing>
-                <property name="position">3</property>
-              </packing>
             </child>
             <child type="tab">
               <object class="GtkLabel">
-                <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="label" translatable="yes">My Validators</property>
+                <property name="label">My Validators</property>
+                <property name="visible">True</property>
               </object>
-              <packing>
-                <property name="position">3</property>
-                <property name="tab-fill">False</property>
-              </packing>
             </child>
             <child>
               <object class="GtkBox" id="id_box_default_wallet">
-                <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="homogeneous">True</property>
-                <child>
-                  <placeholder/>
-                </child>
+                <property name="visible">True</property>
               </object>
-              <packing>
-                <property name="position">4</property>
-              </packing>
             </child>
             <child type="tab">
               <object class="GtkLabel">
-                <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="label" translatable="yes">Default wallet</property>
+                <property name="label">Default wallet</property>
+                <property name="visible">True</property>
               </object>
-              <packing>
-                <property name="position">4</property>
-                <property name="tab-fill">False</property>
-              </packing>
             </child>
           </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
         </child>
       </object>
     </child>

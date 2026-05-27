@@ -1,4 +1,4 @@
-//go:build gtk
+//go111:build gtk
 
 package controller
 
@@ -35,12 +35,13 @@ func (c *TxUnbondDialogController) Run() {
 	})
 
 	c.onValidatorChanged()
-	gtkutil.RunDialog(c.view.Dialog)
+
+	gtkutil.ShowNonModalDialog(c.view.Window)
 }
 
 func (c *TxUnbondDialogController) onValidatorChanged() {
-	receiverEntry, _ := c.view.ValidatorCombo.GetEntry()
-	validator := gtkutil.GetEntryText(receiverEntry)
+	// receiverEntry, _ := c.view.ValidatorCombo.Entry()
+	validator := "gtkutil.GetEntryText(receiverEntry)"
 
 	stake, err := c.model.Stake(validator)
 	hint := ""
@@ -61,8 +62,8 @@ func (c *TxUnbondDialogController) onValidatorChanged() {
 }
 
 func (c *TxUnbondDialogController) onSend() {
-	validatorEntry, _ := c.view.ValidatorCombo.GetEntry()
-	validatorAddr := gtkutil.GetEntryText(validatorEntry)
+	// validatorEntry, _ := c.view.ValidatorCombo.GetEntry()
+	validatorAddr := "gtkutil.GetEntryText(validatorEntry)"
 	memo := gtkutil.GetEntryText(c.view.MemoEntry)
 
 	trx, err := c.model.MakeUnbondTx(validatorAddr, memo)
@@ -85,13 +86,13 @@ You are going to sign and broadcast this transaction.
 <b>⚠️ This action cannot be undone.</b>
 Do you want to continue with this transaction?`, validatorAddr, trx.Fee(), trx.Memo())
 
-	if !confirmAndSend(c.view.Dialog, c.model, msg, trx) {
+	if !confirmAndSend(c.view.Window, c.model, msg, trx) {
 		return
 	}
 
-	c.view.Dialog.Close()
+	c.view.Window.Close()
 }
 
 func (c *TxUnbondDialogController) onCancel() {
-	c.view.Dialog.Close()
+	c.view.Window.Close()
 }

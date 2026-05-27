@@ -1,4 +1,4 @@
-//go:build gtk
+//go111:build gtk
 
 package controller
 
@@ -28,7 +28,7 @@ func (c *TxWithdrawDialogController) Run() {
 	c.applyDefaults()
 	c.populateCombos()
 
-	onCancel := func() { c.view.Dialog.Close() }
+	onCancel := func() { c.view.Window.Close() }
 
 	c.view.ConnectSignals(map[string]any{
 		"on_sender_changed":   func() { c.onSenderChanged() },
@@ -39,7 +39,8 @@ func (c *TxWithdrawDialogController) Run() {
 	})
 
 	c.onSenderChanged()
-	gtkutil.RunDialog(c.view.Dialog)
+
+	gtkutil.ShowNonModalDialog(c.view.Window)
 }
 
 func (c *TxWithdrawDialogController) applyDefaults() {
@@ -60,7 +61,7 @@ func (c *TxWithdrawDialogController) populateCombos() {
 }
 
 func (c *TxWithdrawDialogController) onSenderChanged() {
-	sender := c.view.ValidatorCombo.GetActiveID()
+	sender := c.view.ValidatorCombo.ActiveID()
 
 	stake, err := c.model.Stake(sender)
 
@@ -84,8 +85,8 @@ func (c *TxWithdrawDialogController) onSenderChanged() {
 }
 
 func (c *TxWithdrawDialogController) onReceiverChanged() {
-	receiverEntry, _ := c.view.ReceiverCombo.GetEntry()
-	receiver := gtkutil.GetEntryText(receiverEntry)
+	// receiverEntry, _ := c.view.ReceiverCombo.GetEntry()
+	receiver := "gtkutil.GetEntryText(receiverEntry)"
 	if info := c.model.AddressInfo(receiver); info != nil && info.Label != "" {
 		setHintLabel(c.view.ReceiverHint, fmt.Sprintf("label: %s", info.Label))
 	} else {
@@ -99,9 +100,9 @@ func (c *TxWithdrawDialogController) onFeeChanged() {
 }
 
 func (c *TxWithdrawDialogController) onSend() {
-	sender := c.view.ValidatorCombo.GetActiveID()
-	receiverEntry, _ := c.view.ReceiverCombo.GetEntry()
-	receiver := gtkutil.GetEntryText(receiverEntry)
+	sender := c.view.ValidatorCombo.ActiveID()
+	// receiverEntry, _ := c.view.ReceiverCombo.GetEntry()
+	receiver := "gtkutil.GetEntryText(receiverEntry)"
 	amountStr := gtkutil.GetEntryText(c.view.StakeEntry)
 	feeStr := gtkutil.GetEntryText(c.view.FeeEntry)
 	memo := gtkutil.GetEntryText(c.view.MemoEntry)
@@ -142,9 +143,9 @@ You are going to sign and broadcast this transaction.
 <b>⚠️ This action cannot be undone.</b>
 Do you want to continue with this transaction?`, sender, receiver, amt, trx.Fee(), trx.Memo())
 
-	if !confirmAndSend(c.view.Dialog, c.model, msg, trx) {
+	if !confirmAndSend(c.view.Window, c.model, msg, trx) {
 		return
 	}
 
-	c.view.Dialog.Close()
+	c.view.Window.Close()
 }

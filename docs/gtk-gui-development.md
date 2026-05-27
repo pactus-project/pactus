@@ -20,12 +20,10 @@ apt install libgtk-3-dev libcairo2-dev libglib2.0-dev
 
 ### Mac OS
 
-1. `gtk+3`
-
-Install using brew:
+Install GTK using brew:
 
 ```bash
-brew install gtk+3
+brew install gtk+4
 ```
 
 ### Windows

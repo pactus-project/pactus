@@ -1,4 +1,4 @@
-//go:build gtk
+//go111:build gtk
 
 package model
 

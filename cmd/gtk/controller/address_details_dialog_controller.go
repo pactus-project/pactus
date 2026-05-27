@@ -1,4 +1,4 @@
-//go:build gtk
+//go111:build gtk
 
 package controller
 
@@ -32,12 +32,11 @@ func (c *AddressDetailsDialogController) Run(addr string) {
 	c.view.PubKeyEntry.SetText(info.PublicKey)
 	c.view.PathEntry.SetText(info.Path)
 
-	onClose := func() { c.view.Dialog.Close() }
+	onClose := func() { c.view.Window.Close() }
 
 	c.view.ConnectSignals(map[string]any{
 		"on_close": onClose,
 	})
 
-	c.view.Dialog.SetModal(true)
-	gtkutil.RunDialog(c.view.Dialog)
+	gtkutil.ShowModalDialog(c.view.Window)
 }

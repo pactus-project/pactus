@@ -1,12 +1,16 @@
-//go:build gtk
+//go111:build gtk
 
 package view
 
 import (
-	"github.com/gotk3/gotk3/glib"
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/diamondburned/gotk4/pkg/glib/v2"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 )
+
+func GetObj[T glib.Objector](b *gtk.Builder, name string) T {
+	return b.GetObject(name).Cast().(T)
+}
 
 // ViewBuilder is a small embedded helper for views created from a gtk.Builder.
 type ViewBuilder struct {
@@ -14,8 +18,7 @@ type ViewBuilder struct {
 }
 
 func NewViewBuilder(ui []byte) ViewBuilder {
-	builder, err := gtk.BuilderNewFromString(string(ui))
-	gtkutil.FatalErrorCheck(err)
+	builder := gtk.NewBuilderFromString(string(ui))
 
 	return ViewBuilder{builder: builder}
 }
@@ -24,71 +27,60 @@ func (vb *ViewBuilder) Builder() *gtk.Builder {
 	return vb.builder
 }
 
-func (vb *ViewBuilder) GetObj(name string) glib.IObject {
-	obj, err := vb.builder.GetObject(name)
-	gtkutil.FatalErrorCheck(err)
-
-	return obj
-}
-
 func (vb *ViewBuilder) GetApplicationWindowObj(name string) *gtk.ApplicationWindow {
-	return vb.GetObj(name).(*gtk.ApplicationWindow)
+	return GetObj[*gtk.ApplicationWindow](vb.builder, name)
 }
 
-func (vb *ViewBuilder) GetDialogObj(name string) *gtk.Dialog {
-	return vb.GetObj(name).(*gtk.Dialog)
+func (vb *ViewBuilder) GetWindowObj(name string) *gtk.Window {
+	return GetObj[*gtk.Window](vb.builder, name)
 }
 
 func (vb *ViewBuilder) GetAboutDialogObj(name string) *gtk.AboutDialog {
-	return vb.GetObj(name).(*gtk.AboutDialog)
+	return GetObj[*gtk.AboutDialog](vb.builder, name)
 }
 
 func (vb *ViewBuilder) GetComboBoxTextObj(name string) *gtk.ComboBoxText {
-	return vb.GetObj(name).(*gtk.ComboBoxText)
+	return GetObj[*gtk.ComboBoxText](vb.builder, name)
 }
 
 func (vb *ViewBuilder) GetEntryObj(name string) *gtk.Entry {
-	return vb.GetObj(name).(*gtk.Entry)
+	return GetObj[*gtk.Entry](vb.builder, name)
 }
 
 func (vb *ViewBuilder) GetOverlayObj(name string) *gtk.Overlay {
-	return vb.GetObj(name).(*gtk.Overlay)
+	return GetObj[*gtk.Overlay](vb.builder, name)
 }
 
-func (vb *ViewBuilder) GetTreeViewObj(name string) *gtk.TreeView {
-	return vb.GetObj(name).(*gtk.TreeView)
+func (vb *ViewBuilder) GetColumnViewObj(name string) *gtk.ColumnView {
+	return GetObj[*gtk.ColumnView](vb.builder, name)
 }
 
 func (vb *ViewBuilder) GetTextViewObj(name string) *gtk.TextView {
-	return vb.GetObj(name).(*gtk.TextView)
+	return GetObj[*gtk.TextView](vb.builder, name)
 }
 
 func (vb *ViewBuilder) GetBoxObj(name string) *gtk.Box {
-	return vb.GetObj(name).(*gtk.Box)
+	return GetObj[*gtk.Box](vb.builder, name)
 }
 
 func (vb *ViewBuilder) GetLabelObj(name string) *gtk.Label {
-	return vb.GetObj(name).(*gtk.Label)
-}
-
-func (vb *ViewBuilder) GetToolButtonObj(name string) *gtk.ToolButton {
-	return vb.GetObj(name).(*gtk.ToolButton)
+	return GetObj[*gtk.Label](vb.builder, name)
 }
 
 func (vb *ViewBuilder) GetButtonObj(name string) *gtk.Button {
-	return vb.GetObj(name).(*gtk.Button)
+	return GetObj[*gtk.Button](vb.builder, name)
 }
 
 func (vb *ViewBuilder) GetImageObj(name string) *gtk.Image {
-	return vb.GetObj(name).(*gtk.Image)
+	return GetObj[*gtk.Image](vb.builder, name)
 }
 
 func (vb *ViewBuilder) GetProgressBarObj(name string) *gtk.ProgressBar {
-	return vb.GetObj(name).(*gtk.ProgressBar)
+	return GetObj[*gtk.ProgressBar](vb.builder, name)
 }
 
-func (vb *ViewBuilder) GetMenuItem(name string) *gtk.MenuItem {
-	return vb.GetObj(name).(*gtk.MenuItem)
+func (vb *ViewBuilder) GetPopoverMenu(name string) *gtk.PopoverMenu {
+	return GetObj[*gtk.PopoverMenu](vb.builder, name)
 }
 
 func (vb *ViewBuilder) BuildExtendedEntry(name string) *gtk.Entry {
@@ -96,5 +88,7 @@ func (vb *ViewBuilder) BuildExtendedEntry(name string) *gtk.Entry {
 }
 
 func (vb *ViewBuilder) ConnectSignals(signals map[string]any) {
-	vb.builder.ConnectSignals(signals)
+	for key, val := range signals {
+		vb.builder.Connect(key, val)
+	}
 }

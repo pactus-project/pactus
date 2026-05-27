@@ -1,84 +1,79 @@
-//go:build gtk
+//go111:build gtk
 
 package assets
 
 import (
 	_ "embed"
 
-	"github.com/gotk3/gotk3/gdk"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 )
 
 var (
 	//go:embed icons/add.svg
-	iconAddData     []byte
-	IconAddPixbuf16 *gdk.Pixbuf
+	iconAddData []byte
+	IconAdd16   *gtk.Image
 
 	//go:embed icons/ok.svg
-	iconOKData     []byte
-	IconOkPixbuf16 *gdk.Pixbuf
+	iconOKData []byte
+	IconOk16   *gtk.Image
 
 	//go:embed icons/cancel.svg
-	iconCancelData     []byte
-	IconCancelPixbuf16 *gdk.Pixbuf
+	iconCancelData []byte
+	IconCancel16   *gtk.Image
 
 	//go:embed icons/password.svg
-	iconPasswordData     []byte
-	IconPasswordPixbuf16 *gdk.Pixbuf
+	iconPasswordData []byte
+	IconPassword16   *gtk.Image
 
 	//go:embed icons/seed.svg
-	iconSeedData     []byte
-	IconSeedPixbuf16 *gdk.Pixbuf
+	iconSeedData []byte
+	IconSeed16   *gtk.Image
 
 	//go:embed icons/close.svg
-	iconCloseData     []byte
-	IconClosePixbuf16 *gdk.Pixbuf
+	iconCloseData []byte
+	IconClose16   *gtk.Image
 
 	//go:embed icons/send.svg
-	iconSendData     []byte
-	IconSendPixbuf16 *gdk.Pixbuf
+	iconSendData []byte
+	IconSend16   *gtk.Image
 
 	//go:embed icons/fee.svg
-	iconFeeData     []byte
-	IconFeePixbuf16 *gdk.Pixbuf
+	iconFeeData []byte
+	IconFee16   *gtk.Image
 
 	//go:embed icons/refresh.svg
-	iconRefreshData     []byte
-	IconRefreshPixbuf16 *gdk.Pixbuf
+	iconRefreshData []byte
+	IconRefresh16   *gtk.Image
 
 	//go:embed icons/prev.svg
-	iconPrevData     []byte
-	IconPrevPixbuf16 *gdk.Pixbuf
+	iconPrevData []byte
+	IconPrev16   *gtk.Image
 
 	//go:embed icons/next.svg
-	iconNextData     []byte
-	IconNextPixbuf16 *gdk.Pixbuf
+	iconNextData []byte
+	IconNext16   *gtk.Image
 
 	//go:embed icons/save.svg
-	iconSaveData     []byte
-	IconSavePixbuf16 *gdk.Pixbuf
+	iconSaveData []byte
+	IconSave16   *gtk.Image
 )
 
 func initIcons() {
-	toPixbuf := func(data []byte) *gdk.Pixbuf {
-		pixbuf, err := gtkutil.PixbufFromBytes(data, gtkutil.WithSize(16, 16))
-		if err != nil {
-			return missingPixbuf(16)
-		}
-
-		return pixbuf
+	toImage := func(data []byte) *gtk.Image {
+		return gtkutil.ImageFromBytes(data, gtkutil.WithImageSize(16, 16))
 	}
 
-	IconAddPixbuf16 = toPixbuf(iconAddData)
-	IconOkPixbuf16 = toPixbuf(iconOKData)
-	IconCancelPixbuf16 = toPixbuf(iconCancelData)
-	IconPasswordPixbuf16 = toPixbuf(iconPasswordData)
-	IconSeedPixbuf16 = toPixbuf(iconSeedData)
-	IconClosePixbuf16 = toPixbuf(iconCloseData)
-	IconSendPixbuf16 = toPixbuf(iconSendData)
-	IconFeePixbuf16 = toPixbuf(iconFeeData)
-	IconRefreshPixbuf16 = toPixbuf(iconRefreshData)
-	IconPrevPixbuf16 = toPixbuf(iconPrevData)
-	IconNextPixbuf16 = toPixbuf(iconNextData)
-	IconSavePixbuf16 = toPixbuf(iconSaveData)
+	IconAdd16 = toImage(iconAddData)
+	IconOk16 = toImage(iconOKData)
+	IconCancel16 = toImage(iconCancelData)
+	IconPassword16 = toImage(iconPasswordData)
+	IconSeed16 = toImage(iconSeedData)
+	IconClose16 = toImage(iconCloseData)
+	IconSend16 = toImage(iconSendData)
+	IconFee16 = toImage(iconFeeData)
+	IconRefresh16 = toImage(iconRefreshData)
+	IconPrev16 = toImage(iconPrevData)
+	IconNext16 = toImage(iconNextData)
+	IconSave16 = toImage(iconSaveData)
 }

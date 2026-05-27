@@ -1,17 +1,17 @@
-//go:build gtk
+//go111:build gtk
 
 package controller
 
 import (
 	"fmt"
 
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/types/tx"
 )
 
-func confirmAndSend(parent gtk.IWindow, model *model.WalletModel, msg string, trx *tx.Tx) bool {
+func confirmAndSend(parent *gtk.Window, model *model.WalletModel, msg string, trx *tx.Tx) bool {
 	if !gtkutil.ShowQuestionDialog(parent, msg) {
 		return false
 	}

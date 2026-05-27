@@ -1,12 +1,10 @@
-//go:build gtk
+//go111:build gtk
 
 package view
 
 import (
-	"github.com/gotk3/gotk3/glib"
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd/gtk/assets"
-	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 )
 
 type CommitteeWidgetView struct {
@@ -19,14 +17,13 @@ type CommitteeWidgetView struct {
 	LabelTotalPower       *gtk.Label
 	LabelProtocolVersions *gtk.Label
 
-	TreeViewMembers *gtk.TreeView
-	listStore       *gtk.ListStore
+	ColViewMembers *gtk.ColumnView
 }
 
 func NewCommitteeWidgetView() *CommitteeWidgetView {
 	builder := NewViewBuilder(assets.CommitteeWidgetUI)
 
-	treeViewMembers := builder.GetTreeViewObj("id_treeview_committee_members")
+	colViewMembers := builder.GetColumnViewObj("id_columnview_committee_members")
 
 	view := &CommitteeWidgetView{
 		ViewBuilder: builder,
@@ -37,51 +34,51 @@ func NewCommitteeWidgetView() *CommitteeWidgetView {
 		LabelTotalPower:       builder.GetLabelObj("id_label_total_power"),
 		LabelProtocolVersions: builder.GetLabelObj("id_label_protocol_versions"),
 
-		TreeViewMembers: treeViewMembers,
+		ColViewMembers: colViewMembers,
 	}
 
-	// Build list store for committee members table.
-	listStore, err := gtk.ListStoreNew(
-		glib.TYPE_STRING, // No
-		glib.TYPE_STRING, // Address
-		glib.TYPE_STRING, // Number
-		glib.TYPE_STRING, // Stake
-		glib.TYPE_STRING, // Last Bonding Height
-		glib.TYPE_STRING, // Last Sortition Height
-		glib.TYPE_STRING, // Protocol Version
-		glib.TYPE_STRING, // Availability Score
-	)
-	gtkutil.FatalErrorCheck(err)
+	// columnView = gtk.NewColumnView(nil)
 
-	view.listStore = listStore
-	view.TreeViewMembers.SetModel(listStore.ToTreeModel())
+	// // Build list store for committee members table.
+	// listStore := gio.NewListStore(glib.Type{
+	// 	glib.TypeString, // No
+	// 	glib.TypeString, // Address
+	// 	glib.TypeString, // Number
+	// 	glib.TypeString, // Stake
+	// 	glib.TypeString, // Last Bonding Height
+	// 	glib.TypeString, // Last Sortition Height
+	// 	glib.TypeString, // Protocol Version
+	// 	glib.TypeString, // Availability Score
+	// })
 
-	colNo := createTextColumn("No", 0)
-	colAddress := createTextColumn("Address", 1)
-	colNumber := createTextColumn("Number", 2)
-	colStake := createTextColumn("Stake", 3)
-	colBondingHeight := createTextColumn("Bonding Height", 4)
-	colSortitionHeight := createTextColumn("Sortition Height", 5)
-	colProtocolVersion := createTextColumn("Protocol", 6)
-	colScore := createTextColumn("Availability", 7)
+	// view.listStore = listStore
+	// view.ListViewMembers.SetModel(&listStore.TreeModel)
 
-	view.TreeViewMembers.AppendColumn(colNo)
-	view.TreeViewMembers.AppendColumn(colAddress)
-	view.TreeViewMembers.AppendColumn(colNumber)
-	view.TreeViewMembers.AppendColumn(colStake)
-	view.TreeViewMembers.AppendColumn(colBondingHeight)
-	view.TreeViewMembers.AppendColumn(colSortitionHeight)
-	view.TreeViewMembers.AppendColumn(colProtocolVersion)
-	view.TreeViewMembers.AppendColumn(colScore)
+	// colNo := createTextColumn("No", 0)
+	// colAddress := createTextColumn("Address", 1)
+	// colNumber := createTextColumn("Number", 2)
+	// colStake := createTextColumn("Stake", 3)
+	// colBondingHeight := createTextColumn("Bonding Height", 4)
+	// colSortitionHeight := createTextColumn("Sortition Height", 5)
+	// colProtocolVersion := createTextColumn("Protocol", 6)
+	// colScore := createTextColumn("Availability", 7)
+
+	// view.ListViewMembers.AppendColumn(colNo)
+	// view.ListViewMembers.AppendColumn(colAddress)
+	// view.ListViewMembers.AppendColumn(colNumber)
+	// view.ListViewMembers.AppendColumn(colStake)
+	// view.ListViewMembers.AppendColumn(colBondingHeight)
+	// view.ListViewMembers.AppendColumn(colSortitionHeight)
+	// view.ListViewMembers.AppendColumn(colProtocolVersion)
+	// view.ListViewMembers.AppendColumn(colScore)
 
 	return view
 }
 
-func (view *CommitteeWidgetView) ClearRows() {
-	view.listStore.Clear()
-}
+// func (view *CommitteeWidgetView) ClearRows() {
+// 	view.listStore.Clear()
+// }
 
-func (view *CommitteeWidgetView) AppendRow(cols []int, values []any) {
-	iter := view.listStore.Append()
-	_ = view.listStore.Set(iter, cols, values)
-}
+// func (view *CommitteeWidgetView) AppendRow(cols []int, values []any) {
+// 	gtkutil.AppendRowToListStore(view.listStore, cols, values)
+// }

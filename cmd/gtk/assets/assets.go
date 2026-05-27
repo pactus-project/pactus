@@ -1,10 +1,10 @@
-//go:build gtk
+//go111:build gtk
 
 package assets
 
 import (
-	"github.com/gotk3/gotk3/gdk"
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/diamondburned/gotk4/pkg/gdk/v4"
+	"github.com/diamondburned/gotk4/pkg/glib/v2"
 )
 
 func InitAssets() {
@@ -12,25 +12,32 @@ func InitAssets() {
 	initImages()
 }
 
-// missingPixbuf tries to return an icon-theme "missing image" pixbuf and falls
-// back to a simple solid square if the theme isn't available.
-func missingPixbuf(size int) *gdk.Pixbuf {
-	theme, err := gtk.IconThemeGetDefault()
-	if err == nil && theme != nil {
-		pixbuf, err := theme.LoadIcon("image-missing", size, 0)
-		if err == nil || pixbuf != nil {
-			return pixbuf
-		}
+// missingTexture allocates raw bytes to create a solid color texture.
+func missingTexture(size int) *gdk.Texture {
+	// 4 bytes per pixel (RGBA)
+	stride := size * 4
+	byteCount := stride * size
+	pixels := make([]byte, byteCount)
+
+	// Fill the byte array with 0xFF666666 (R:0x66, G:0x66, B:0x66, A:0xFF)
+	for i := 0; i < byteCount; i += 4 {
+		pixels[i] = 0x66   // Red
+		pixels[i+1] = 0x66 // Green
+		pixels[i+2] = 0x66 // Blue
+		pixels[i+3] = 0xFF // Alpha
 	}
 
-	// Last resort: a tiny gray square (ARGB32).
-	pixbuf, err := gdk.PixbufNew(gdk.COLORSPACE_RGB, true, 8, size, size)
-	if err == nil && pixbuf != nil {
-		// 0xAARRGGBB
-		pixbuf.Fill(0xFF666666)
+	// Wrap bytes into a GLib Bytes object
+	gBytes := glib.NewBytes(pixels)
 
-		return pixbuf
-	}
+	// Create the GTK4 memory texture
+	texture := gdk.NewMemoryTexture(
+		size,
+		size,
+		gdk.MemoryR8G8B8A8,
+		gBytes,
+		uint(stride),
+	)
 
-	return nil
+	return &texture.Texture
 }

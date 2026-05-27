@@ -1,9 +1,9 @@
-//go:build gtk
+//go111:build gtk
 
 package view
 
 import (
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd/gtk/assets"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 )
@@ -11,7 +11,7 @@ import (
 type AddressPrivateKeyDialogView struct {
 	ViewBuilder
 
-	Dialog *gtk.Dialog
+	Window *gtk.Window
 
 	AddressEntry *gtk.Entry
 	PrvKeyEntry  *gtk.Entry
@@ -23,14 +23,14 @@ func NewAddressPrivateKeyDialogView() *AddressPrivateKeyDialogView {
 
 	view := &AddressPrivateKeyDialogView{
 		ViewBuilder: builder,
-		Dialog:      builder.GetDialogObj("id_dialog_address_private_key"),
+		Window:      builder.GetWindowObj("id_dialog_address_private_key"),
 
 		AddressEntry: builder.BuildExtendedEntry("id_entry_address"),
 		PrvKeyEntry:  builder.BuildExtendedEntry("id_entry_private_key"),
 		ButtonClose:  builder.GetButtonObj("id_button_close"),
 	}
 
-	view.ButtonClose.SetImage(gtkutil.ImageFromPixbuf(assets.IconClosePixbuf16))
+	gtkutil.AddImageToButton(view.ButtonClose, assets.IconClose16)
 
 	return view
 }

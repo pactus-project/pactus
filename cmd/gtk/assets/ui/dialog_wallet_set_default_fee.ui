@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.38.2 -->
 <interface>
-  <requires lib="gtk+" version="3.24"/>
+  <requires lib="gtk+" version="4.14"/>
   <object class="GtkDialog" id="id_dialog_wallet_set_default_fee">
     <property name="can-focus">False</property>
-    <property name="title" translatable="yes">Set Default Fee</property>
+    <property name="title" >Set Default Fee</property>
     <property name="default-width">320</property>
     <property name="type-hint">dialog</property>
     <child internal-child="vbox">
@@ -32,11 +31,7 @@
                 <signal name="activate" handler="on_cancel" swapped="no"/>
                 <signal name="clicked" handler="on_cancel" swapped="no"/>
               </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
+
             </child>
             <child>
               <object class="GtkButton" id="id_button_ok">
@@ -52,18 +47,10 @@
                 <signal name="activate" handler="on_ok" swapped="no"/>
                 <signal name="clicked" handler="on_ok" swapped="no"/>
               </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
+
             </child>
           </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
+
         </child>
         <child>
           <!-- n-columns=2 n-rows=2 -->
@@ -77,12 +64,9 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">Default Fee (PAC):</property>
+                <property name="label" >Default Fee (PAC):</property>
               </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">0</property>
-              </packing>
+
             </child>
             <child>
               <object class="GtkEntry" id="id_entry_default_fee">
@@ -92,22 +76,16 @@
                 <property name="width-chars">24</property>
                 <property name="input-purpose">number</property>
               </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">0</property>
-              </packing>
+
             </child>
             <child>
               <object class="GtkLabel" id="id_label_current_fee">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">Current:</property>
+                <property name="label" >Current:</property>
               </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">1</property>
-              </packing>
+
             </child>
             <child>
               <object class="GtkLabel" id="id_label_current_fee_value">
@@ -116,18 +94,10 @@
                 <property name="halign">start</property>
                 <property name="label">0.01 PAC</property>
               </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">1</property>
-              </packing>
+
             </child>
           </object>
-          <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
-            <property name="padding">8</property>
-            <property name="position">1</property>
-          </packing>
+
         </child>
       </object>
     </child>

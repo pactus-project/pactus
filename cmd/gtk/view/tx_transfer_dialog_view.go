@@ -1,9 +1,9 @@
-//go:build gtk
+//go111:build gtk
 
 package view
 
 import (
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd/gtk/assets"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 )
@@ -11,7 +11,7 @@ import (
 type TxTransferDialogView struct {
 	ViewBuilder
 
-	Dialog *gtk.Dialog
+	Window *gtk.Window
 
 	SenderCombo   *gtk.ComboBoxText
 	SenderHint    *gtk.Label
@@ -32,7 +32,7 @@ func NewTxTransferDialogView() *TxTransferDialogView {
 
 	view := &TxTransferDialogView{
 		ViewBuilder: builder,
-		Dialog:      builder.GetDialogObj("id_dialog_transaction_transfer"),
+		Window:      builder.GetWindowObj("id_dialog_transaction_transfer"),
 
 		SenderCombo:   builder.GetComboBoxTextObj("id_combo_sender"),
 		SenderHint:    builder.GetLabelObj("id_hint_sender"),
@@ -48,8 +48,8 @@ func NewTxTransferDialogView() *TxTransferDialogView {
 		ButtonSend:   builder.GetButtonObj("id_button_send"),
 	}
 
-	view.ButtonCancel.SetImage(gtkutil.ImageFromPixbuf(assets.IconCancelPixbuf16))
-	view.ButtonSend.SetImage(gtkutil.ImageFromPixbuf(assets.IconSendPixbuf16))
+	gtkutil.AddImageToButton(view.ButtonCancel, assets.IconCancel16)
+	gtkutil.AddImageToButton(view.ButtonSend, assets.IconSend16)
 
 	return view
 }

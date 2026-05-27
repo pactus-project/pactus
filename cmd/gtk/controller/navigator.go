@@ -1,9 +1,9 @@
-//go:build gtk
+//go111:build gtk
 
 package controller
 
 import (
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
@@ -21,6 +21,7 @@ type Navigator struct {
 func NewNavigator(gtkApp *gtk.Application,
 	walletModel *model.WalletModel, walletCtrl *WalletWidgetController, configModel *model.ConfigModel,
 ) *Navigator {
+
 	return &Navigator{
 		walletModel: walletModel,
 		walletCtrl:  walletCtrl,
@@ -33,15 +34,14 @@ func (*Navigator) ShowAbout() {
 	gtkutil.IdleAddSync(func() {
 		dlg := view.NewAboutDialog()
 		dlg.SetVersion(version.NodeVersion().StringWithAlias())
-		gtkutil.RunDialog(&dlg.Dialog)
+		gtkutil.ShowModalDialog(&dlg.Window)
 	})
 }
 
 func (*Navigator) ShowAboutGtk() {
 	gtkutil.IdleAddSync(func() {
 		dlg := view.NewAboutGTKDialog()
-		dlg.Dialog.SetModal(true)
-		gtkutil.RunDialog(&dlg.Dialog)
+		gtkutil.ShowModalDialog(&dlg.Window)
 	})
 }
 

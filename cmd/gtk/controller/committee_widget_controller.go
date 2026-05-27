@@ -1,4 +1,4 @@
-//go:build gtk
+//go111:build gtk
 
 package controller
 
@@ -69,22 +69,23 @@ func (c *CommitteeWidgetController) refresh(_ context.Context) {
 		c.view.LabelTotalPower.SetText(totalPowerStr)
 		c.view.LabelProtocolVersions.SetText(protocolStr)
 
-		c.view.ClearRows()
-		for i, val := range res.Validators {
-			stakeStr := amount.Amount(val.GetStake()).String()
-			c.view.AppendRow(
-				[]int{0, 1, 2, 3, 4, 5, 6, 7},
-				[]any{
-					strconv.Itoa(i + 1),
-					val.GetAddress(),
-					strconv.Itoa(int(val.GetNumber())),
-					stakeStr,
-					strconv.Itoa(int(val.GetLastBondingHeight())),
-					strconv.Itoa(int(val.GetLastSortitionHeight())),
-					strconv.Itoa(int(val.GetProtocolVersion())),
-					gtkutil.AvailabilityScorePercent(val.GetAvailabilityScore()),
-				},
-			)
-		}
+		// for i, val := range res.Validators {
+
+		// 	stakeStr := amount.Amount(val.GetStake()).String()
+
+		// 	c.view.AppendRow(
+		// 		[]int{0, 1, 2, 3, 4, 5, 6, 7},
+		// 		[]any{
+		// 			strconv.Itoa(i + 1),
+		// 			val.GetAddress(),
+		// 			strconv.Itoa(int(val.GetNumber())),
+		// 			stakeStr,
+		// 			strconv.Itoa(int(val.GetLastBondingHeight())),
+		// 			strconv.Itoa(int(val.GetLastSortitionHeight())),
+		// 			strconv.Itoa(int(val.GetProtocolVersion())),
+		// 			gtkutil.AvailabilityScorePercent(val.GetAvailabilityScore()),
+		// 		},
+		// 	)
+		// }
 	})
 }

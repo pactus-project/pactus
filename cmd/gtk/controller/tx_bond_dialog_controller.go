@@ -1,11 +1,11 @@
-//go:build gtk
+//go111:build gtk
 
 package controller
 
 import (
 	"fmt"
 
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
@@ -56,11 +56,12 @@ func (c *TxBondDialogController) Run() {
 	})
 
 	c.onSenderChanged()
-	gtkutil.RunDialog(c.view.Dialog)
+
+	gtkutil.ShowNonModalDialog(c.view.Window)
 }
 
 func (c *TxBondDialogController) onSenderChanged() {
-	sender := c.view.SenderCombo.GetActiveID()
+	sender := c.view.SenderCombo.ActiveID()
 	if info := c.model.AddressInfo(sender); info != nil && info.Label != "" {
 		setHint(c.view.SenderHint, fmt.Sprintf("label: %s", info.Label))
 	} else {
@@ -76,9 +77,7 @@ func (c *TxBondDialogController) onSenderChanged() {
 }
 
 func (c *TxBondDialogController) onReceiverChanged() {
-	receiverEntry, _ := c.view.ReceiverCombo.GetEntry()
-	receiver := gtkutil.GetEntryText(receiverEntry)
-
+	receiver := c.view.ReceiverCombo.ActiveText()
 	stake, err := c.model.Stake(receiver)
 	hint := ""
 	if err == nil {
@@ -99,9 +98,9 @@ func (c *TxBondDialogController) onFeeChanged() {
 }
 
 func (c *TxBondDialogController) onSend() {
-	sender := c.view.SenderCombo.GetActiveID()
-	receiverEntry, _ := c.view.ReceiverCombo.GetEntry()
-	receiver := gtkutil.GetEntryText(receiverEntry)
+	sender := c.view.SenderCombo.ActiveID()
+	// receiverEntry, _ := c.view.ReceiverCombo.GetEntry()
+	receiver := "gtkutil.GetEntryText(receiverEntry)"
 	publicKey := gtkutil.GetEntryText(c.view.PublicKeyEntry)
 	amountStr := gtkutil.GetEntryText(c.view.AmountEntry)
 	feeStr := gtkutil.GetEntryText(c.view.FeeEntry)
@@ -143,13 +142,13 @@ You are going to sign and broadcast this transaction.
 <b>⚠️ This action cannot be undone.</b>
 Do you want to continue with this transaction?`, sender, receiver, amt, trx.Fee(), trx.Memo())
 
-	if !confirmAndSend(c.view.Dialog, c.model, msg, trx) {
+	if !confirmAndSend(c.view.Window, c.model, msg, trx) {
 		return
 	}
 
-	c.view.Dialog.Close()
+	c.view.Window.Close()
 }
 
 func (c *TxBondDialogController) onCancel() {
-	c.view.Dialog.Close()
+	c.view.Window.Close()
 }

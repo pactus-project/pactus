@@ -1,4 +1,4 @@
-//go:build gtk
+//go111:build gtk
 
 package main
 
@@ -12,10 +12,10 @@ import (
 	"sync"
 	"time"
 
+	"github.com/diamondburned/gotk4/pkg/gio/v2"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/ezex-io/gopkg/signal"
 	"github.com/gofrs/flock"
-	"github.com/gotk3/gotk3/glib"
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd"
 	gtkapp "github.com/pactus-project/pactus/cmd/gtk/app"
 	"github.com/pactus-project/pactus/cmd/gtk/assets"
@@ -55,7 +55,7 @@ func init() {
 		_ = os.Setenv("PANGOCAIRO_BACKEND", "fontconfig")
 	}
 
-	gtk.Init(nil)
+	gtk.Init()
 }
 
 //nolint:gocognit // needs refactoring
@@ -69,14 +69,9 @@ func main() {
 	gtkutil.Logf("Locking main thread")
 
 	// Create a new app.
-	app, err := gtk.ApplicationNew(appID, glib.APPLICATION_NON_UNIQUE)
-	gtkutil.FatalErrorCheck(err)
-
-	settings, err := gtk.SettingsGetDefault()
-	gtkutil.FatalErrorCheck(err)
-
-	err = settings.Object.Set("gtk-application-prefer-dark-theme", true)
-	gtkutil.FatalErrorCheck(err)
+	app := gtk.NewApplication(appID, gio.ApplicationFlagsNone)
+	settings := gtk.SettingsGetDefault()
+	settings.Object.SetObjectProperty("gtk-application-prefer-dark-theme", true)
 
 	assets.InitAssets()
 
@@ -164,11 +159,11 @@ func main() {
 			gtk.WindowSetAutoStartupNotification(true)
 			app.AddWindow(splash.Window())
 
-			notify := func(msg string) {
-				gtkutil.Logf("Splash msg: %s", msg)
+			notify := func(msg string, fraction int) {
+				gtkutil.Logf("Splash msg: %s (%d)", msg, fraction)
 
 				gtkutil.IdleAddAsync(func() {
-					splash.SetStatus(msg)
+					splash.UpdateStatus(msg, fraction)
 				})
 			}
 
@@ -177,7 +172,7 @@ func main() {
 				var grpcInsecure bool
 
 				if *grpcAddrOpt == "" {
-					reportStatus(notify, "Starting local node...")
+					reportStatus(notify, "Starting local node...", -1)
 					time.Sleep(1 * time.Second)
 
 					guiNode, err = newNode(ctx, workingDir, notify)
@@ -186,7 +181,7 @@ func main() {
 					grpcAddr = guiNode.GRPC().Address()
 					grpcInsecure = true
 				} else {
-					reportStatus(notify, "Connecting to remote node...")
+					reportStatus(notify, "Connecting to remote node...", -1)
 					time.Sleep(1 * time.Second)
 
 					grpcAddr = *grpcAddrOpt
@@ -200,11 +195,11 @@ func main() {
 				var isLocal bool
 				if *grpcAddrOpt == "" {
 					isLocal = true
-					connectionLabel = "📁 Working directory"
+					connectionLabel = "📁 Working Directory"
 					connectionValue = workingDir
 				} else {
 					isLocal = false
-					connectionLabel = "📡 Remote address"
+					connectionLabel = "📡 Remote Address"
 					connectionValue = *grpcAddrOpt
 				}
 				gui, err = gtkapp.Run(ctx, grpcConn, app, notify,
@@ -229,11 +224,11 @@ func main() {
 	os.Exit(app.Run(nil))
 }
 
-type statusReporter func(string)
+type statusReporter func(string, int)
 
-func reportStatus(cb statusReporter, msg string) {
+func reportStatus(cb statusReporter, msg string, fraction int) {
 	if cb != nil {
-		cb(msg)
+		cb(msg, fraction)
 	}
 }
 
@@ -285,7 +280,7 @@ func newNode(ctx context.Context, workingDir string, statusCb statusReporter) (*
 		return nil, err
 	}
 
-	reportStatus(statusCb, "Opening wallet...")
+	reportStatus(statusCb, "Opening wallet...", -1)
 	passwordFetcher := func() (string, bool) {
 		gtkutil.Logf("Fetching wallet password")
 
@@ -306,7 +301,7 @@ func newNode(ctx context.Context, workingDir string, statusCb statusReporter) (*
 		return cfg
 	}
 
-	reportStatus(statusCb, "Starting node services...")
+	reportStatus(statusCb, "Starting node services...", -1)
 	n, err := cmd.StartNode(ctx, workingDir, passwordFetcher, configModifier)
 	if err != nil {
 		return nil, err

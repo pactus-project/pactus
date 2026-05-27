@@ -1,4 +1,4 @@
-//go:build gtk
+//go111:build gtk
 
 package controller
 
@@ -31,10 +31,10 @@ func (c *WalletCreateAddressDialogController) Run() {
 	combo.SetActive(2) // Edd25519 ia active.
 
 	onOk := func() {
-		defer c.view.Dialog.Close()
+		defer c.view.Window.Close()
 
 		label := gtkutil.GetEntryText(c.view.LabelEntry)
-		typ, err := crypto.AddressTypeFromString(combo.GetActiveID())
+		typ, err := crypto.AddressTypeFromString(combo.ActiveID())
 		if err != nil {
 			gtkutil.ShowError(err)
 
@@ -59,13 +59,12 @@ func (c *WalletCreateAddressDialogController) Run() {
 		}
 	}
 
-	onCancel := func() { c.view.Dialog.Close() }
+	onCancel := func() { c.view.Window.Close() }
 
 	c.view.ConnectSignals(map[string]any{
 		"on_ok":     onOk,
 		"on_cancel": onCancel,
 	})
 
-	c.view.Dialog.SetModal(true)
-	gtkutil.RunDialog(c.view.Dialog)
+	gtkutil.ShowModalDialog(c.view.Window)
 }
