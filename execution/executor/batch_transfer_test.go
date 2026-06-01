@@ -93,3 +93,19 @@ func TestBatchTransferToSelf(t *testing.T) {
 
 	td.checkTotalCoin(t, fee)
 }
+
+func TestBatchTransferSecp256k1(t *testing.T) {
+	td := setup(t)
+
+	senderAddr, senderAcc := td.sbx.TestStore.RandomTestAcc()
+	amt := td.RandAmountRange(0, senderAcc.Balance())
+	fee := td.RandFee()
+	lockTime := td.sbx.CurrentHeight()
+
+	recipients := []payload.BatchRecipient{
+		{To: td.RandAccAddressSecp256k1(), Amount: amt},
+	}
+	trx := tx.NewBatchTransferTx(lockTime, senderAddr, recipients, fee)
+	td.check(t, trx, true, ErrSecp256k1AccountNotSupported)
+	td.check(t, trx, false, ErrSecp256k1AccountNotSupported)
+}

@@ -288,6 +288,10 @@ func (ts *TestSuite) RandHash() hash.Hash {
 	return hash.CalcHash(util.Int64ToBytesLE(ts.RandInt64(testsuite.WithMax(util.MaxInt64))))
 }
 
+func (ts *TestSuite) RandAccAddressSecp256k1() crypto.Address {
+	return crypto.NewAddress(crypto.AddressTypeSecp256k1Account, ts.RandBytes(20))
+}
+
 // RandAccAddress generates a random account address for testing purposes.
 func (ts *TestSuite) RandAccAddress() crypto.Address {
 	useBLSAddress := ts.RandBool()
