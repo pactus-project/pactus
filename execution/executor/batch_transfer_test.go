@@ -79,7 +79,7 @@ func TestBatchTransferToSelf(t *testing.T) {
 	lockTime := td.sbx.CurrentHeight()
 
 	recipients := []payload.BatchRecipient{
-		{To: td.RandAccAddressSecp256k1(), Amount: amt1},
+		{To: td.RandAccAddress(), Amount: amt1},
 		{To: senderAddr, Amount: amt2},
 	}
 	trx := tx.NewBatchTransferTx(lockTime, senderAddr, recipients, fee)
