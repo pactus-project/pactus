@@ -64,6 +64,8 @@ var ErrWithdrawMustGoToStakeOwner = errors.New("delegated validator withdraw mus
 // ErrInvalidDelegateOwner is returned when the delegate owner is invalid.
 var ErrInvalidDelegateOwner = errors.New("invalid delegate owner")
 
+var ErrSecp256k1AccountNotSupported = errors.New("secp256k1 account is not supported yet")
+
 // SmallStakeError is returned when the stake amount is less than the minimum stake.
 type SmallStakeError struct {
 	Minimum amount.Amount

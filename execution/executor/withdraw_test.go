@@ -122,3 +122,30 @@ func TestExecuteDelegatedWithdrawTx(t *testing.T) {
 	assert.Equal(t, totalStake-amt-fee, updatedVal.Stake())
 	assert.Equal(t, amt, updatedOwner.Balance())
 }
+
+func TestWithdrawSecp256k1(t *testing.T) {
+	td := setup(t)
+
+	valPub, _ := td.RandBLSKeyPair()
+	val := td.sbx.MakeNewValidator(valPub)
+	totalStake := td.sbx.TestParams.MaximumStake
+	val.AddToStake(totalStake)
+	owner := td.RandAccAddressSecp256k1()
+	val.SetDelegation(owner, amount.Amount(0.3e9), td.sbx.CurrentHeight()+10)
+	val.UpdateUnbondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().UnbondInterval) + 1)
+	td.sbx.UpdateValidator(val)
+
+	fee := td.RandFee()
+	amt := td.RandAmountRange(0, totalStake-fee)
+	lockTime := td.sbx.CurrentHeight()
+
+	curHeight := td.sbx.CurrentHeight()
+	td.sbx.TestStore.AddTestBlock(curHeight + 1)
+
+	t.Run("Should fail, secp256k1 account is not supported yet", func(t *testing.T) {
+		trx := tx.NewWithdrawTx(lockTime, val.Address(), owner, amt, fee)
+
+		td.check(t, trx, true, ErrSecp256k1AccountNotSupported)
+		td.check(t, trx, false, ErrSecp256k1AccountNotSupported)
+	})
+}
