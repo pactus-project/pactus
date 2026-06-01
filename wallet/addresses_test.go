@@ -63,11 +63,14 @@ func TestListAddresses(t *testing.T) {
 	impAcc, impVal, _ := td.testVault.ImportBLSPrivateKey(td.password, prv1)
 	_, prv2 := td.RandEd25519KeyPair()
 	impEd, _ := td.testVault.ImportEd25519PrivateKey(td.password, prv2)
+	_, prv3 := td.RandSecp256k1KeyPair()
+	impSecp, _ := td.testVault.ImportSecp256k1PrivateKey(td.password, prv3)
 
 	existing := []types.AddressInfo{
 		*impAcc,
 		*impVal,
 		*impEd,
+		*impSecp,
 		*valInfo,
 		*accInfo,
 		*edInfo,
