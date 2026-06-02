@@ -5,9 +5,6 @@ import (
 	"slices"
 
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/crypto/ed25519"
-	"github.com/pactus-project/pactus/crypto/secp256k1"
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/storage"
 	"github.com/pactus-project/pactus/wallet/types"
@@ -132,64 +129,15 @@ func (a *addresses) AddressCount() int {
 	return a.storage.AddressCount()
 }
 
-func (a *addresses) ImportBLSPrivateKey(password string, prv *bls.PrivateKey) error {
-	pub := prv.PublicKeyNative()
+func (a *addresses) ImportPrivateKey(password string, prv crypto.PrivateKey) error {
+	pub := prv.PublicKey()
 	accAddr := pub.AccountAddress()
 	if a.HasAddress(accAddr.String()) {
 		return ErrAddressExists
 	}
 
 	vault := a.storage.Vault()
-	accInfo, valInfo, err := vault.ImportBLSPrivateKey(password, prv)
-	if err != nil {
-		return err
-	}
-
-	err = a.storage.InsertAddress(accInfo)
-	if err != nil {
-		return err
-	}
-
-	err = a.storage.InsertAddress(valInfo)
-	if err != nil {
-		return err
-	}
-
-	return a.storage.UpdateVault(vault)
-}
-
-func (a *addresses) ImportEd25519PrivateKey(password string, prv *ed25519.PrivateKey) error {
-	pub := prv.PublicKeyNative()
-
-	accAddr := pub.AccountAddress()
-	if a.HasAddress(accAddr.String()) {
-		return ErrAddressExists
-	}
-
-	vault := a.storage.Vault()
-	accInfo, err := vault.ImportEd25519PrivateKey(password, prv)
-	if err != nil {
-		return err
-	}
-
-	err = a.storage.InsertAddress(accInfo)
-	if err != nil {
-		return err
-	}
-
-	return a.storage.UpdateVault(vault)
-}
-
-func (a *addresses) ImportSecp256k1PrivateKey(password string, prv *secp256k1.PrivateKey) error {
-	pub := prv.PublicKeyNative()
-
-	accAddr := pub.AccountAddress()
-	if a.HasAddress(accAddr.String()) {
-		return ErrAddressExists
-	}
-
-	vault := a.storage.Vault()
-	accInfo, err := vault.ImportSecp256k1PrivateKey(password, prv)
+	accInfo, err := vault.ImportPrivateKey(password, prv)
 	if err != nil {
 		return err
 	}

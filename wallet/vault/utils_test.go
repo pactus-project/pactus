@@ -54,3 +54,38 @@ func TestValidateMnemonic(t *testing.T) {
 		}
 	}
 }
+
+func TestPrivateKeyFromString(t *testing.T) {
+	tests := []struct {
+		str string
+		err error
+	}{
+		{str: "SECRET1PQQQSYQCYQ5RQWZQFPG9SCRGWPUGPZYSNZS23V9CCRYDPK8QARC0SEZYD4L", err: nil},
+		{str: "SECRET1RQQQSYQCYQ5RQWZQFPG9SCRGWPUGPZYSNZS23V9CCRYDPK8QARC0SW5D8X2", err: nil},
+		{str: "SECRET1YQQQSYQCYQ5RQWZQFPG9SCRGWPUGPZYSNZS23V9CCRYDPK8QARC0SPVXU8Z", err: nil},
+		{str: "SECRET19QQQSYQCYQ5RQWZQFPG9SCRGWPUGPZYSNZS23V9CCRYDPK8QARC0S78KE6U", err: ErrInvalidPrivateKey},
+	}
+
+	for _, tt := range tests {
+		_, err := PrivateKeyFromString(tt.str)
+		require.ErrorIs(t, err, tt.err, "unexpected error for input: %s", tt.str)
+	}
+}
+
+func TestPublicKeyFromString(t *testing.T) {
+	tests := []struct {
+		str string
+		err error
+	}{
+		{str: "public1p5u5sljqq6tg57tw9uh95z6lt7vn8mlk3cmp608rwm38t68n90k2km2sx5t724l2ze99ktvedf4p7" +
+			"5ymglpssq6pfc36m0428vwjs9h7hzl5a28zucl02u2vpu4sfp2ppe8zmet7p9xu9nysr4wvsx86vuujrva2z", err: nil},
+		{str: "public1rqwss00lnecgtu8tsm5vwwj7qn9n7f43snwjs6hcamjrxgyj4xxuq5agu5g", err: nil},
+		{str: "public1yqdkke2kzfzheda405lusfa2sy5aq70hn7k4zle5r322my9nfz35wyfamrfs", err: nil},
+		{str: "public19qdkke2kzfzheda405lusfa2sy5aq70hn7k4zle5r322my9nfz35wygp96am", err: ErrInvalidPublicKey},
+	}
+
+	for _, tt := range tests {
+		_, err := PublicKeyFromString(tt.str)
+		require.ErrorIs(t, err, tt.err, "unexpected error for input: %s", tt.str)
+	}
+}

@@ -148,24 +148,24 @@ func TestSignMessage(t *testing.T) {
 	td := setup(t)
 
 	msg := "pactus"
-	expectedSig := "8c3ba687e8e4c016293a2c369493faa565065987544a59baba7aadae3f17ada07883552b6c7d1d7eb49f46fbdf0975c4"
-	prv, err := bls.PrivateKeyFromString("SECRET1P9QAUKRJAU7SQ7AT6ZZ6HXHYLMKPQSQYTGDL2VMH5Q5N0P5Q2QW0QL45AY3")
-	require.NoError(t, err)
+	pub, prv := td.RandBLSKeyPair()
+	addr := pub.AccountAddress().String()
+	expectedSig := prv.Sign([]byte(msg)).String()
 
-	_, accInfo, err := td.testVault.ImportBLSPrivateKey(td.password, prv)
+	info, err := td.testVault.ImportPrivateKey(td.password, prv)
 	require.NoError(t, err)
 
 	t.Run("Unexpected Error", func(t *testing.T) {
-		td.mockStorage.EXPECT().AddressInfo(accInfo.Address).Return(nil, errors.New("unexpected error"))
+		td.mockStorage.EXPECT().AddressInfo(info.Address).Return(nil, errors.New("unexpected error"))
 
-		_, err := td.wallet.SignMessage(td.password, "pc1z0m0vw8sjfgv7f2zgq2hfxutg8rwn7gpffhe8tf", msg)
+		_, err := td.wallet.SignMessage(td.password, addr, msg)
 		require.Error(t, err)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		td.mockStorage.EXPECT().AddressInfo(accInfo.Address).Return(accInfo, nil)
+		td.mockStorage.EXPECT().AddressInfo(info.Address).Return(info, nil)
 
-		sig, err := td.wallet.SignMessage(td.password, "pc1z0m0vw8sjfgv7f2zgq2hfxutg8rwn7gpffhe8tf", msg)
+		sig, err := td.wallet.SignMessage(td.password, addr, msg)
 		require.NoError(t, err)
 		assert.Equal(t, expectedSig, sig)
 	})

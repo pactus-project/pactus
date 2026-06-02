@@ -3,16 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/crypto/ed25519"
-	"github.com/pactus-project/pactus/crypto/secp256k1"
 	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/types"
+	"github.com/pactus-project/pactus/wallet/vault"
 	"github.com/spf13/cobra"
 )
 
@@ -218,52 +215,11 @@ func buildAddressImportCmd(parentCmd *cobra.Command) {
 		defer wlt.Close()
 
 		password := getPassword(wlt, *passOpt)
+		prv, err := vault.PrivateKeyFromString(prvStr)
+		terminal.FatalErrorCheck(err)
 
-		maybeBLSPrivateKey := func(str string) bool {
-			// BLS private keys start with "SECRET1P..." or "TSECRET1P...".
-			return strings.Contains(strings.ToLower(str), "secret1p")
-		}
-
-		maybeEd25519PrivateKey := func(str string) bool {
-			// Ed25519 private keys start with "SECRET1R..." or "TSECRET1R...".
-			return strings.Contains(strings.ToLower(str), "secret1r")
-		}
-
-		maybeSecp256k1PrivateKey := func(str string) bool {
-			// Secp256k1 private keys start with "SECRET1Y..." or "TSECRET1Y...".
-			return strings.Contains(strings.ToLower(str), "secret1y")
-		}
-
-		switch {
-		case maybeBLSPrivateKey(prvStr):
-			blsPrv, err := bls.PrivateKeyFromString(prvStr)
-			terminal.FatalErrorCheck(err)
-
-			err = wlt.ImportBLSPrivateKey(password, blsPrv)
-			terminal.FatalErrorCheck(err)
-
-		case maybeEd25519PrivateKey(prvStr):
-			ed25519Prv, err := ed25519.PrivateKeyFromString(prvStr)
-			terminal.FatalErrorCheck(err)
-
-			err = wlt.ImportEd25519PrivateKey(password, ed25519Prv)
-			terminal.FatalErrorCheck(err)
-
-		case maybeSecp256k1PrivateKey(prvStr):
-			secp256k1Prv, err := secp256k1.PrivateKeyFromString(prvStr)
-			terminal.FatalErrorCheck(err)
-
-			err = wlt.ImportSecp256k1PrivateKey(password, secp256k1Prv)
-			terminal.FatalErrorCheck(err)
-
-			return
-
-		default:
-			// The private key cannot be decoded as either BLS or Ed25519.
-			terminal.PrintErrorMsgf("Invalid private key.")
-
-			return
-		}
+		err = wlt.ImportPrivateKey(password, prv)
+		terminal.FatalErrorCheck(err)
 
 		terminal.PrintLine()
 		terminal.PrintSuccessMsgf("Private Key imported successfully.")
