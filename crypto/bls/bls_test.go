@@ -45,6 +45,7 @@ func TestEncoding(t *testing.T) {
 	assert.True(t, pub.EqualsTo(prv.PublicKey()))
 	assert.Equal(t, valAddr, pub.ValidatorAddress())
 	assert.Equal(t, accAddr, pub.AccountAddress())
+	assert.Equal(t, crypto.SignatureTypeBLS, pub.Type())
 }
 
 func TestSignatureAggregate(t *testing.T) {

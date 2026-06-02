@@ -37,4 +37,5 @@ func TestEncoding(t *testing.T) {
 	assert.Equal(t, sig.Bytes(), prv.Sign(msg).Bytes())
 	assert.True(t, pub.EqualsTo(prv.PublicKey()))
 	assert.Equal(t, addr, pub.AccountAddress())
+	assert.Equal(t, crypto.SignatureTypeSecp256k1, pub.Type())
 }

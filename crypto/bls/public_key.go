@@ -36,7 +36,7 @@ func PublicKeyFromString(text string) (*PublicKey, error) {
 		return nil, crypto.InvalidHRPError(hrp)
 	}
 
-	if typ != crypto.SignatureTypeBLS {
+	if typ != byte(crypto.SignatureTypeBLS) {
 		return nil, crypto.InvalidSignatureTypeError(typ)
 	}
 
@@ -52,6 +52,11 @@ func PublicKeyFromBytes(data []byte) (*PublicKey, error) {
 	return &PublicKey{data: data}, nil
 }
 
+// Type returns the signature type of the public key that is BLS.
+func (*PublicKey) Type() crypto.SignatureType {
+	return crypto.SignatureTypeBLS
+}
+
 // Bytes returns the raw byte representation of the public key.
 func (pub *PublicKey) Bytes() []byte {
 	return pub.data
@@ -61,7 +66,7 @@ func (pub *PublicKey) Bytes() []byte {
 func (pub *PublicKey) String() string {
 	str, _ := bech32m.EncodeFromBase256WithType(
 		crypto.PublicKeyHRP,
-		crypto.SignatureTypeBLS,
+		byte(crypto.SignatureTypeBLS),
 		pub.Bytes())
 
 	return str

@@ -34,7 +34,7 @@ func PublicKeyFromString(text string) (*PublicKey, error) {
 		return nil, crypto.InvalidHRPError(hrp)
 	}
 
-	if typ != crypto.SignatureTypeEd25519 {
+	if typ != byte(crypto.SignatureTypeEd25519) {
 		return nil, crypto.InvalidSignatureTypeError(typ)
 	}
 
@@ -50,6 +50,11 @@ func PublicKeyFromBytes(data []byte) (*PublicKey, error) {
 	return &PublicKey{data}, nil
 }
 
+// Type returns the signature type of the public key that is Ed25519.
+func (*PublicKey) Type() crypto.SignatureType {
+	return crypto.SignatureTypeEd25519
+}
+
 // Bytes returns the raw byte representation of the public key.
 func (pub *PublicKey) Bytes() []byte {
 	return pub.inner
@@ -59,7 +64,7 @@ func (pub *PublicKey) Bytes() []byte {
 func (pub *PublicKey) String() string {
 	str, _ := bech32m.EncodeFromBase256WithType(
 		crypto.PublicKeyHRP,
-		crypto.SignatureTypeEd25519,
+		byte(crypto.SignatureTypeEd25519),
 		pub.Bytes())
 
 	return str

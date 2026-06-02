@@ -1730,15 +1730,16 @@ pub struct GetPrivateKeyResponse {
 #[repr(i32)]
 pub enum AddressType {
     /// Treasury address type.
-    /// Should not be used to generate new addresses.
+    /// Should NOT be used to generate new addresses.
     Treasury = 0,
     /// Validator address type used for validator nodes.
     Validator = 1,
     /// Account address type with BLS signature scheme.
     BlsAccount = 2,
     /// Account address type with Ed25519 signature scheme.
-    /// Note: Generating a new Ed25519 address requires the wallet password.
     Ed25519Account = 3,
+    /// Account address type with SECP256K1 signature scheme.
+    SecpAccount = 4,
 }
 impl AddressType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -1751,6 +1752,7 @@ impl AddressType {
             Self::Validator => "ADDRESS_TYPE_VALIDATOR",
             Self::BlsAccount => "ADDRESS_TYPE_BLS_ACCOUNT",
             Self::Ed25519Account => "ADDRESS_TYPE_ED25519_ACCOUNT",
+            Self::SecpAccount => "ADDRESS_TYPE_SECP_ACCOUNT",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -1760,6 +1762,7 @@ impl AddressType {
             "ADDRESS_TYPE_VALIDATOR" => Some(Self::Validator),
             "ADDRESS_TYPE_BLS_ACCOUNT" => Some(Self::BlsAccount),
             "ADDRESS_TYPE_ED25519_ACCOUNT" => Some(Self::Ed25519Account),
+            "ADDRESS_TYPE_SECP_ACCOUNT" => Some(Self::SecpAccount),
             _ => None,
         }
     }

@@ -37,6 +37,7 @@ func TestEncoding(t *testing.T) {
 	assert.Equal(t, sig.Bytes(), prv.Sign(msg).Bytes())
 	assert.True(t, pub.EqualsTo(prv.PublicKey()))
 	assert.Equal(t, addr, pub.AccountAddress())
+	assert.Equal(t, crypto.SignatureTypeEd25519, pub.Type())
 }
 
 // TestEd25519S ensures that the implementation of the Ed25519 signature scheme

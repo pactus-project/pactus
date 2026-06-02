@@ -101,3 +101,21 @@ func PublicKeyFromString(str string) (crypto.PublicKey, error) {
 
 	return pub, err
 }
+
+func SignatureFromString(str string, typ crypto.SignatureType) (crypto.Signature, error) {
+	str = strings.TrimSpace(strings.ToLower(str))
+
+	switch typ {
+	case crypto.SignatureTypeBLS:
+		return bls.SignatureFromString(str)
+
+	case crypto.SignatureTypeEd25519:
+		return ed25519.SignatureFromString(str)
+
+	case crypto.SignatureTypeSecp256k1:
+		return secp256k1.SignatureFromString(str)
+
+	default:
+		return nil, ErrInvalidSignature
+	}
+}

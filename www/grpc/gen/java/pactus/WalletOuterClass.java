@@ -38,7 +38,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     /**
      * <pre>
      * Treasury address type.
-     * Should not be used to generate new addresses.
+     * Should NOT be used to generate new addresses.
      * </pre>
      *
      * <code>ADDRESS_TYPE_TREASURY = 0;</code>
@@ -63,12 +63,19 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     /**
      * <pre>
      * Account address type with Ed25519 signature scheme.
-     * Note: Generating a new Ed25519 address requires the wallet password.
      * </pre>
      *
      * <code>ADDRESS_TYPE_ED25519_ACCOUNT = 3;</code>
      */
     ADDRESS_TYPE_ED25519_ACCOUNT(3),
+    /**
+     * <pre>
+     * Account address type with SECP256K1 signature scheme.
+     * </pre>
+     *
+     * <code>ADDRESS_TYPE_SECP_ACCOUNT = 4;</code>
+     */
+    ADDRESS_TYPE_SECP_ACCOUNT(4),
     UNRECOGNIZED(-1),
     ;
 
@@ -84,7 +91,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     /**
      * <pre>
      * Treasury address type.
-     * Should not be used to generate new addresses.
+     * Should NOT be used to generate new addresses.
      * </pre>
      *
      * <code>ADDRESS_TYPE_TREASURY = 0;</code>
@@ -109,12 +116,19 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     /**
      * <pre>
      * Account address type with Ed25519 signature scheme.
-     * Note: Generating a new Ed25519 address requires the wallet password.
      * </pre>
      *
      * <code>ADDRESS_TYPE_ED25519_ACCOUNT = 3;</code>
      */
     public static final int ADDRESS_TYPE_ED25519_ACCOUNT_VALUE = 3;
+    /**
+     * <pre>
+     * Account address type with SECP256K1 signature scheme.
+     * </pre>
+     *
+     * <code>ADDRESS_TYPE_SECP_ACCOUNT = 4;</code>
+     */
+    public static final int ADDRESS_TYPE_SECP_ACCOUNT_VALUE = 4;
 
 
     public final int getNumber() {
@@ -145,6 +159,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
         case 1: return ADDRESS_TYPE_VALIDATOR;
         case 2: return ADDRESS_TYPE_BLS_ACCOUNT;
         case 3: return ADDRESS_TYPE_ED25519_ACCOUNT;
+        case 4: return ADDRESS_TYPE_SECP_ACCOUNT;
         default: return null;
       }
     }
@@ -34551,57 +34566,58 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       "R\nwalletName\022\032\n\010password\030\002 \001(\tR\010password" +
       "\022\030\n\007address\030\003 \001(\tR\007address\"8\n\025GetPrivate" +
       "KeyResponse\022\037\n\013private_key\030\001 \001(\tR\nprivat" +
-      "eKey*\204\001\n\013AddressType\022\031\n\025ADDRESS_TYPE_TRE" +
+      "eKey*\243\001\n\013AddressType\022\031\n\025ADDRESS_TYPE_TRE" +
       "ASURY\020\000\022\032\n\026ADDRESS_TYPE_VALIDATOR\020\001\022\034\n\030A" +
       "DDRESS_TYPE_BLS_ACCOUNT\020\002\022 \n\034ADDRESS_TYP" +
-      "E_ED25519_ACCOUNT\020\003*Y\n\013TxDirection\022\024\n\020TX" +
-      "_DIRECTION_ANY\020\000\022\031\n\025TX_DIRECTION_INCOMIN" +
-      "G\020\001\022\031\n\025TX_DIRECTION_OUTGOING\020\002*}\n\021Transa" +
-      "ctionStatus\022\036\n\032TRANSACTION_STATUS_PENDIN" +
-      "G\020\000\022 \n\034TRANSACTION_STATUS_CONFIRMED\020\001\022&\n" +
-      "\031TRANSACTION_STATUS_FAILED\020\377\377\377\377\377\377\377\377\377\0012\273\014" +
-      "\n\006Wallet\022I\n\014CreateWallet\022\033.pactus.Create" +
-      "WalletRequest\032\034.pactus.CreateWalletRespo" +
-      "nse\022L\n\rRestoreWallet\022\034.pactus.RestoreWal" +
-      "letRequest\032\035.pactus.RestoreWalletRespons" +
-      "e\022C\n\nLoadWallet\022\031.pactus.LoadWalletReque" +
-      "st\032\032.pactus.LoadWalletResponse\022I\n\014Unload" +
-      "Wallet\022\033.pactus.UnloadWalletRequest\032\034.pa" +
-      "ctus.UnloadWalletResponse\022F\n\013ListWallets" +
-      "\022\032.pactus.ListWalletsRequest\032\033.pactus.Li" +
-      "stWalletsResponse\022L\n\rGetWalletInfo\022\034.pac" +
-      "tus.GetWalletInfoRequest\032\035.pactus.GetWal" +
-      "letInfoResponse\022O\n\016UpdatePassword\022\035.pact" +
-      "us.UpdatePasswordRequest\032\036.pactus.Update" +
-      "PasswordResponse\022R\n\017GetTotalBalance\022\036.pa" +
-      "ctus.GetTotalBalanceRequest\032\037.pactus.Get" +
-      "TotalBalanceResponse\022L\n\rGetTotalStake\022\034." +
-      "pactus.GetTotalStakeRequest\032\035.pactus.Get" +
-      "TotalStakeResponse\022^\n\023GetValidatorAddres" +
-      "s\022\".pactus.GetValidatorAddressRequest\032#." +
-      "pactus.GetValidatorAddressResponse\022O\n\016Ge" +
-      "tAddressInfo\022\035.pactus.GetAddressInfoRequ" +
-      "est\032\036.pactus.GetAddressInfoResponse\022R\n\017S" +
-      "etAddressLabel\022\036.pactus.SetAddressLabelR" +
-      "equest\032\037.pactus.SetAddressLabelResponse\022" +
-      "L\n\rGetNewAddress\022\034.pactus.GetNewAddressR" +
-      "equest\032\035.pactus.GetNewAddressResponse\022L\n" +
-      "\rListAddresses\022\034.pactus.ListAddressesReq" +
-      "uest\032\035.pactus.ListAddressesResponse\022F\n\013S" +
-      "ignMessage\022\032.pactus.SignMessageRequest\032\033" +
-      ".pactus.SignMessageResponse\022[\n\022SignRawTr" +
-      "ansaction\022!.pactus.SignRawTransactionReq" +
-      "uest\032\".pactus.SignRawTransactionResponse" +
-      "\022U\n\020ListTransactions\022\037.pactus.ListTransa" +
-      "ctionsRequest\032 .pactus.ListTransactionsR" +
-      "esponse\022L\n\rSetDefaultFee\022\034.pactus.SetDef" +
-      "aultFeeRequest\032\035.pactus.SetDefaultFeeRes" +
-      "ponse\022F\n\013GetMnemonic\022\032.pactus.GetMnemoni" +
-      "cRequest\032\033.pactus.GetMnemonicResponse\022L\n" +
-      "\rGetPrivateKey\022\034.pactus.GetPrivateKeyReq" +
-      "uest\032\035.pactus.GetPrivateKeyResponseB:\n\006p" +
-      "actusZ0github.com/pactus-project/pactus/" +
-      "www/grpc/pactusb\006proto3"
+      "E_ED25519_ACCOUNT\020\003\022\035\n\031ADDRESS_TYPE_SECP" +
+      "_ACCOUNT\020\004*Y\n\013TxDirection\022\024\n\020TX_DIRECTIO" +
+      "N_ANY\020\000\022\031\n\025TX_DIRECTION_INCOMING\020\001\022\031\n\025TX" +
+      "_DIRECTION_OUTGOING\020\002*}\n\021TransactionStat" +
+      "us\022\036\n\032TRANSACTION_STATUS_PENDING\020\000\022 \n\034TR" +
+      "ANSACTION_STATUS_CONFIRMED\020\001\022&\n\031TRANSACT" +
+      "ION_STATUS_FAILED\020\377\377\377\377\377\377\377\377\377\0012\273\014\n\006Wallet\022" +
+      "I\n\014CreateWallet\022\033.pactus.CreateWalletReq" +
+      "uest\032\034.pactus.CreateWalletResponse\022L\n\rRe" +
+      "storeWallet\022\034.pactus.RestoreWalletReques" +
+      "t\032\035.pactus.RestoreWalletResponse\022C\n\nLoad" +
+      "Wallet\022\031.pactus.LoadWalletRequest\032\032.pact" +
+      "us.LoadWalletResponse\022I\n\014UnloadWallet\022\033." +
+      "pactus.UnloadWalletRequest\032\034.pactus.Unlo" +
+      "adWalletResponse\022F\n\013ListWallets\022\032.pactus" +
+      ".ListWalletsRequest\032\033.pactus.ListWallets" +
+      "Response\022L\n\rGetWalletInfo\022\034.pactus.GetWa" +
+      "lletInfoRequest\032\035.pactus.GetWalletInfoRe" +
+      "sponse\022O\n\016UpdatePassword\022\035.pactus.Update" +
+      "PasswordRequest\032\036.pactus.UpdatePasswordR" +
+      "esponse\022R\n\017GetTotalBalance\022\036.pactus.GetT" +
+      "otalBalanceRequest\032\037.pactus.GetTotalBala" +
+      "nceResponse\022L\n\rGetTotalStake\022\034.pactus.Ge" +
+      "tTotalStakeRequest\032\035.pactus.GetTotalStak" +
+      "eResponse\022^\n\023GetValidatorAddress\022\".pactu" +
+      "s.GetValidatorAddressRequest\032#.pactus.Ge" +
+      "tValidatorAddressResponse\022O\n\016GetAddressI" +
+      "nfo\022\035.pactus.GetAddressInfoRequest\032\036.pac" +
+      "tus.GetAddressInfoResponse\022R\n\017SetAddress" +
+      "Label\022\036.pactus.SetAddressLabelRequest\032\037." +
+      "pactus.SetAddressLabelResponse\022L\n\rGetNew" +
+      "Address\022\034.pactus.GetNewAddressRequest\032\035." +
+      "pactus.GetNewAddressResponse\022L\n\rListAddr" +
+      "esses\022\034.pactus.ListAddressesRequest\032\035.pa" +
+      "ctus.ListAddressesResponse\022F\n\013SignMessag" +
+      "e\022\032.pactus.SignMessageRequest\032\033.pactus.S" +
+      "ignMessageResponse\022[\n\022SignRawTransaction" +
+      "\022!.pactus.SignRawTransactionRequest\032\".pa" +
+      "ctus.SignRawTransactionResponse\022U\n\020ListT" +
+      "ransactions\022\037.pactus.ListTransactionsReq" +
+      "uest\032 .pactus.ListTransactionsResponse\022L" +
+      "\n\rSetDefaultFee\022\034.pactus.SetDefaultFeeRe" +
+      "quest\032\035.pactus.SetDefaultFeeResponse\022F\n\013" +
+      "GetMnemonic\022\032.pactus.GetMnemonicRequest\032" +
+      "\033.pactus.GetMnemonicResponse\022L\n\rGetPriva" +
+      "teKey\022\034.pactus.GetPrivateKeyRequest\032\035.pa" +
+      "ctus.GetPrivateKeyResponseB:\n\006pactusZ0gi" +
+      "thub.com/pactus-project/pactus/www/grpc/" +
+      "pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
