@@ -3,6 +3,7 @@ package vault
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -86,6 +87,34 @@ func TestPublicKeyFromString(t *testing.T) {
 
 	for _, tt := range tests {
 		_, err := PublicKeyFromString(tt.str)
+		require.ErrorIs(t, err, tt.err, "unexpected error for input: %s", tt.str)
+	}
+}
+
+func TestSignatureFromString(t *testing.T) {
+	tests := []struct {
+		str string
+		typ crypto.SignatureType
+		err error
+	}{
+		{
+			str: "8bdda74336efdf43b428a3811d3d6867a19e20889c91261b02a6b950b130f5bb22621394667c27660bfed2a8719d9c52",
+			typ: crypto.SignatureTypeBLS, err: nil,
+		},
+		{
+			str: "1fc2c800499342d08242db9c3eb654027cb7b821e6af9ede56dfdb67e824f15b" +
+				"ddb419d2db3fd5aaf3ef1a9ebb9a9deb749380f0d6a110cbe95319fe9f794305",
+			typ: crypto.SignatureTypeEd25519, err: nil,
+		},
+		{
+			str: "c86779676d217b04979434e5bd37eddd02b671e9a54b48d3a812c7862dcb5396" +
+				"31bb5e8459fec007608f50ea5661e0a5215aac976705404cb4f36ee623e63199",
+			typ: crypto.SignatureTypeSecp256k1, err: nil,
+		},
+	}
+
+	for _, tt := range tests {
+		_, err := SignatureFromString(tt.str, tt.typ)
 		require.ErrorIs(t, err, tt.err, "unexpected error for input: %s", tt.str)
 	}
 }

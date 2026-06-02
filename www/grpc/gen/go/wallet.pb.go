@@ -26,15 +26,16 @@ type AddressType int32
 
 const (
 	// Treasury address type.
-	// Should not be used to generate new addresses.
+	// Should NOT be used to generate new addresses.
 	AddressType_ADDRESS_TYPE_TREASURY AddressType = 0
 	// Validator address type used for validator nodes.
 	AddressType_ADDRESS_TYPE_VALIDATOR AddressType = 1
 	// Account address type with BLS signature scheme.
 	AddressType_ADDRESS_TYPE_BLS_ACCOUNT AddressType = 2
 	// Account address type with Ed25519 signature scheme.
-	// Note: Generating a new Ed25519 address requires the wallet password.
 	AddressType_ADDRESS_TYPE_ED25519_ACCOUNT AddressType = 3
+	// Account address type with SECP256K1 signature scheme.
+	AddressType_ADDRESS_TYPE_SECP_ACCOUNT AddressType = 4
 )
 
 // Enum value maps for AddressType.
@@ -44,12 +45,14 @@ var (
 		1: "ADDRESS_TYPE_VALIDATOR",
 		2: "ADDRESS_TYPE_BLS_ACCOUNT",
 		3: "ADDRESS_TYPE_ED25519_ACCOUNT",
+		4: "ADDRESS_TYPE_SECP_ACCOUNT",
 	}
 	AddressType_value = map[string]int32{
 		"ADDRESS_TYPE_TREASURY":        0,
 		"ADDRESS_TYPE_VALIDATOR":       1,
 		"ADDRESS_TYPE_BLS_ACCOUNT":     2,
 		"ADDRESS_TYPE_ED25519_ACCOUNT": 3,
+		"ADDRESS_TYPE_SECP_ACCOUNT":    4,
 	}
 )
 
@@ -2855,12 +2858,13 @@ const file_wallet_proto_rawDesc = "" +
 	"\aaddress\x18\x03 \x01(\tR\aaddress\"8\n" +
 	"\x15GetPrivateKeyResponse\x12\x1f\n" +
 	"\vprivate_key\x18\x01 \x01(\tR\n" +
-	"privateKey*\x84\x01\n" +
+	"privateKey*\xa3\x01\n" +
 	"\vAddressType\x12\x19\n" +
 	"\x15ADDRESS_TYPE_TREASURY\x10\x00\x12\x1a\n" +
 	"\x16ADDRESS_TYPE_VALIDATOR\x10\x01\x12\x1c\n" +
 	"\x18ADDRESS_TYPE_BLS_ACCOUNT\x10\x02\x12 \n" +
-	"\x1cADDRESS_TYPE_ED25519_ACCOUNT\x10\x03*Y\n" +
+	"\x1cADDRESS_TYPE_ED25519_ACCOUNT\x10\x03\x12\x1d\n" +
+	"\x19ADDRESS_TYPE_SECP_ACCOUNT\x10\x04*Y\n" +
 	"\vTxDirection\x12\x14\n" +
 	"\x10TX_DIRECTION_ANY\x10\x00\x12\x19\n" +
 	"\x15TX_DIRECTION_INCOMING\x10\x01\x12\x19\n" +

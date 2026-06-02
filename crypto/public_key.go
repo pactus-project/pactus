@@ -7,6 +7,7 @@ import (
 type PublicKey interface {
 	Bytes() []byte
 	String() string
+	Type() SignatureType
 	MarshalCBOR() ([]byte, error)
 	UnmarshalCBOR([]byte) error
 	Encode(io.Writer) error

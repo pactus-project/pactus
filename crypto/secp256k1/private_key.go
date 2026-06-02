@@ -32,7 +32,7 @@ func PrivateKeyFromString(text string) (*PrivateKey, error) {
 		return nil, crypto.InvalidHRPError(hrp)
 	}
 
-	if typ != crypto.SignatureTypeSecp256k1 {
+	if typ != byte(crypto.SignatureTypeSecp256k1) {
 		return nil, crypto.InvalidSignatureTypeError(typ)
 	}
 
@@ -60,7 +60,7 @@ func PrivateKeyFromBytes(data []byte) (*PrivateKey, error) {
 func (prv *PrivateKey) String() string {
 	str, _ := bech32m.EncodeFromBase256WithType(
 		crypto.PrivateKeyHRP,
-		crypto.SignatureTypeSecp256k1,
+		byte(crypto.SignatureTypeSecp256k1),
 		prv.Bytes())
 
 	return strings.ToUpper(str)

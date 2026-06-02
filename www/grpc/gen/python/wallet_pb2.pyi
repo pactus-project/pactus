@@ -14,6 +14,7 @@ class AddressType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     ADDRESS_TYPE_VALIDATOR: _ClassVar[AddressType]
     ADDRESS_TYPE_BLS_ACCOUNT: _ClassVar[AddressType]
     ADDRESS_TYPE_ED25519_ACCOUNT: _ClassVar[AddressType]
+    ADDRESS_TYPE_SECP_ACCOUNT: _ClassVar[AddressType]
 
 class TxDirection(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
@@ -30,6 +31,7 @@ ADDRESS_TYPE_TREASURY: AddressType
 ADDRESS_TYPE_VALIDATOR: AddressType
 ADDRESS_TYPE_BLS_ACCOUNT: AddressType
 ADDRESS_TYPE_ED25519_ACCOUNT: AddressType
+ADDRESS_TYPE_SECP_ACCOUNT: AddressType
 TX_DIRECTION_ANY: TxDirection
 TX_DIRECTION_INCOMING: TxDirection
 TX_DIRECTION_OUTGOING: TxDirection
