@@ -47,19 +47,7 @@ func setup(t *testing.T) *testData {
 	addr4, err := vault.NewSecp256k1AccountAddress("secp256k1-account-address", "")
 	require.NoError(t, err)
 
-	_, importedBLSPrv := ts.RandBLSKeyPair()
-	addr5, addr6, err := vault.ImportBLSPrivateKey("", importedBLSPrv)
-	require.NoError(t, err)
-
-	_, importedEd25519Prv := ts.RandEd25519KeyPair()
-	addr7, err := vault.ImportEd25519PrivateKey("", importedEd25519Prv)
-	require.NoError(t, err)
-
-	_, importedSecp256k1Prv := ts.RandSecp256k1KeyPair()
-	addr8, err := vault.ImportSecp256k1PrivateKey("", importedSecp256k1Prv)
-	require.NoError(t, err)
-
-	testAddrs := []*types.AddressInfo{addr1, addr2, addr3, addr4, addr5, addr6, addr7, addr8}
+	testAddrs := []*types.AddressInfo{addr1, addr2, addr3, addr4}
 
 	assert.False(t, vault.IsEncrypted())
 
@@ -168,19 +156,16 @@ func TestImportBLSPrivateKey(t *testing.T) {
 	_, prv := td.RandBLSKeyPair()
 
 	t.Run("Invalid password", func(t *testing.T) {
-		_, _, err := td.vault.ImportBLSPrivateKey("invalid-password", prv)
+		_, err := td.vault.ImportPrivateKey("invalid-password", prv)
 		require.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		accInfo, valInfo, err := td.vault.ImportBLSPrivateKey(td.password, prv)
+		info, err := td.vault.ImportPrivateKey(td.password, prv)
 		require.NoError(t, err)
 
-		assert.Equal(t, prv.PublicKeyNative().String(), accInfo.PublicKey)
-		assert.Equal(t, prv.PublicKeyNative().String(), valInfo.PublicKey)
-
-		assert.Equal(t, "m/65535'/21888'/1'/3'", accInfo.Path)
-		assert.Equal(t, "m/65535'/21888'/2'/3'", valInfo.Path)
+		assert.Equal(t, prv.PublicKey().String(), info.PublicKey)
+		assert.Equal(t, "m/65535'/21888'/2'/0'", info.Path)
 	})
 }
 
@@ -190,16 +175,16 @@ func TestImportEd25519PrivateKey(t *testing.T) {
 	_, prv := td.RandEd25519KeyPair()
 
 	t.Run("Invalid password", func(t *testing.T) {
-		_, err := td.vault.ImportEd25519PrivateKey("invalid-password", prv)
+		_, err := td.vault.ImportPrivateKey("invalid-password", prv)
 		require.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		info, err := td.vault.ImportEd25519PrivateKey(td.password, prv)
+		info, err := td.vault.ImportPrivateKey(td.password, prv)
 		require.NoError(t, err)
 
-		assert.Equal(t, prv.PublicKeyNative().String(), info.PublicKey)
-		assert.Equal(t, "m/65535'/21888'/3'/3'", info.Path)
+		assert.Equal(t, prv.PublicKey().String(), info.PublicKey)
+		assert.Equal(t, "m/65535'/21888'/3'/0'", info.Path)
 	})
 }
 
@@ -209,16 +194,16 @@ func TestImportSecp256k1PrivateKey(t *testing.T) {
 	_, prv := td.RandSecp256k1KeyPair()
 
 	t.Run("Invalid password", func(t *testing.T) {
-		_, err := td.vault.ImportSecp256k1PrivateKey("invalid-password", prv)
+		_, err := td.vault.ImportPrivateKey("invalid-password", prv)
 		require.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		info, err := td.vault.ImportSecp256k1PrivateKey(td.password, prv)
+		info, err := td.vault.ImportPrivateKey(td.password, prv)
 		require.NoError(t, err)
 
-		assert.Equal(t, prv.PublicKeyNative().String(), info.PublicKey)
-		assert.Equal(t, "m/65535'/21888'/4'/3'", info.Path)
+		assert.Equal(t, prv.PublicKey().String(), info.PublicKey)
+		assert.Equal(t, "m/65535'/21888'/4'/0'", info.Path)
 	})
 }
 
@@ -292,10 +277,7 @@ func TestNeuter(t *testing.T) {
 	_, err = td.vault.PrivateKeys(td.password, []addresspath.Path{})
 	require.ErrorIs(t, err, ErrNeutered)
 
-	_, _, err = td.vault.ImportBLSPrivateKey("any", nil)
-	require.ErrorIs(t, err, ErrNeutered)
-
-	_, err = td.vault.ImportEd25519PrivateKey("any", nil)
+	_, err = td.vault.ImportPrivateKey("any", nil)
 	require.ErrorIs(t, err, ErrNeutered)
 
 	err = td.vault.UpdatePassword("any", "any")

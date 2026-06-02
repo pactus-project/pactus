@@ -1,6 +1,8 @@
 package crypto
 
-import "io"
+import (
+	"io"
+)
 
 type PublicKey interface {
 	Bytes() []byte
@@ -11,6 +13,7 @@ type PublicKey interface {
 	Decode(io.Reader) error
 	SerializeSize() int
 	Verify(msg []byte, sig Signature) error
+	AccountAddress() Address
 	VerifyAddress(addr Address) error
 	EqualsTo(right PublicKey) bool
 }
