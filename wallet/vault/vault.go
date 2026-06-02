@@ -253,14 +253,14 @@ func (v *Vault) ImportBLSPrivateKey(password string, prv *bls.PrivateKey) (
 	accInfo = &types.AddressInfo{
 		Address:   pub.AccountAddress().String(),
 		PublicKey: pub.String(),
-		Label:     "Imported BLS Account Address",
+		Label:     fmt.Sprintf("Imported Address %d", addressIndex+1),
 		Path:      blsAccPathStr,
 	}
 
 	valInfo = &types.AddressInfo{
 		Address:   pub.ValidatorAddress().String(),
 		PublicKey: pub.String(),
-		Label:     "Imported Validator Address",
+		Label:     fmt.Sprintf("Imported Validator Address %d", addressIndex+1),
 		Path:      blsValidatorPathStr,
 	}
 
@@ -296,7 +296,43 @@ func (v *Vault) ImportEd25519PrivateKey(password string, prv *ed25519.PrivateKey
 	accInfo := &types.AddressInfo{
 		Address:   pub.AccountAddress().String(),
 		PublicKey: pub.String(),
-		Label:     "Imported Ed25519 Account Address",
+		Label:     fmt.Sprintf("Imported Address %d", addressIndex+1),
+		Path:      accPathStr,
+	}
+
+	keyStore.ImportedKeys = append(keyStore.ImportedKeys, prv.String())
+
+	err = v.encryptKeyStore(keyStore, password)
+	if err != nil {
+		return nil, err
+	}
+
+	return accInfo, nil
+}
+
+func (v *Vault) ImportSecp256k1PrivateKey(password string, prv *secp256k1.PrivateKey) (*types.AddressInfo, error) {
+	if v.IsNeutered() {
+		return nil, ErrNeutered
+	}
+
+	keyStore, err := v.decryptKeyStore(password)
+	if err != nil {
+		return nil, err
+	}
+
+	addressIndex := len(keyStore.ImportedKeys)
+	pub := prv.PublicKeyNative()
+
+	accPathStr := addresspath.NewPath(
+		addresspath.Harden(addresspath.PurposeImportPrivateKey),
+		addresspath.Harden(v.CoinType),
+		addresspath.Harden(crypto.AddressTypeSecp256k1Account),
+		addresspath.Harden(addressIndex)).String()
+
+	accInfo := &types.AddressInfo{
+		Address:   pub.AccountAddress().String(),
+		PublicKey: pub.String(),
+		Label:     fmt.Sprintf("Imported Address %d", addressIndex+1),
 		Path:      accPathStr,
 	}
 
@@ -311,6 +347,8 @@ func (v *Vault) ImportEd25519PrivateKey(password string, prv *ed25519.PrivateKey
 }
 
 // PrivateKeys retrieves the private keys for the given addresses using the provided password.
+//
+//nolint:all // complexity is acceptable in this function as it handles multiple key types and paths.
 func (v *Vault) PrivateKeys(password string, paths []addresspath.Path) ([]crypto.PrivateKey, error) {
 	if v.IsNeutered() {
 		return nil, ErrNeutered
@@ -368,6 +406,12 @@ func (v *Vault) PrivateKeys(password string, paths []addresspath.Path) ([]crypto
 
 			case uint32(crypto.AddressTypeEd25519Account):
 				prv, err = ed25519.PrivateKeyFromString(str)
+				if err != nil {
+					return nil, err
+				}
+
+			case uint32(crypto.AddressTypeSecp256k1Account):
+				prv, err = secp256k1.PrivateKeyFromString(str)
 				if err != nil {
 					return nil, err
 				}

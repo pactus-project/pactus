@@ -291,6 +291,44 @@ func TestSigningTxWithEd25519(t *testing.T) {
 	assert.Equal(t, memo, trx.Memo())
 }
 
+func TestSigningTxWithSecp256k1(t *testing.T) {
+	td := setup(t)
+
+	senderInfo, err := td.testVault.NewSecp256k1AccountAddress("testing addr", td.password)
+	require.NoError(t, err)
+	receiver := td.RandAccAddress()
+	amt := td.RandAmount()
+	fee := td.RandFee()
+	lockTime := td.RandHeight()
+	memo := td.RandMemo()
+
+	opts := []TxOption{
+		OptionFee(fee.String()),
+		OptionLockTime(lockTime),
+		OptionMemo(memo),
+	}
+
+	td.mockStorage.EXPECT().WalletInfo().Return(&wtypes.WalletInfo{DefaultFee: td.RandFee()})
+	td.mockStorage.EXPECT().AddressInfo(senderInfo.Address).Return(senderInfo, nil)
+	trx, err := td.wallet.MakeTransferTx(senderInfo.Address, receiver.String(), amt, opts...)
+	require.NoError(t, err)
+
+	err = td.wallet.SignTransaction(td.password, trx)
+	require.NoError(t, err)
+	assert.NotNil(t, trx.Signature())
+	require.NoError(t, trx.BasicCheck())
+
+	td.mockProvider.EXPECT().SendTx(trx).Return(trx.ID().String(), nil)
+	td.mockStorage.EXPECT().InsertTransaction(gomock.Any()).Return(nil)
+
+	id, err := td.wallet.BroadcastTransaction(trx)
+	require.NoError(t, err)
+	assert.Equal(t, trx.ID().String(), id)
+	assert.Equal(t, fee, trx.Fee())
+	assert.Equal(t, lockTime, trx.LockTime())
+	assert.Equal(t, memo, trx.Memo())
+}
+
 func TestMakeTransferTx(t *testing.T) {
 	td := setup(t)
 

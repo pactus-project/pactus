@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/ed25519"
+	"github.com/pactus-project/pactus/crypto/secp256k1"
 	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet"
@@ -228,6 +229,11 @@ func buildAddressImportCmd(parentCmd *cobra.Command) {
 			return strings.Contains(strings.ToLower(str), "secret1r")
 		}
 
+		maybeSecp256k1PrivateKey := func(str string) bool {
+			// Secp256k1 private keys start with "SECRET1Y..." or "TSECRET1Y...".
+			return strings.Contains(strings.ToLower(str), "secret1y")
+		}
+
 		switch {
 		case maybeBLSPrivateKey(prvStr):
 			blsPrv, err := bls.PrivateKeyFromString(prvStr)
@@ -242,6 +248,15 @@ func buildAddressImportCmd(parentCmd *cobra.Command) {
 
 			err = wlt.ImportEd25519PrivateKey(password, ed25519Prv)
 			terminal.FatalErrorCheck(err)
+
+		case maybeSecp256k1PrivateKey(prvStr):
+			secp256k1Prv, err := secp256k1.PrivateKeyFromString(prvStr)
+			terminal.FatalErrorCheck(err)
+
+			err = wlt.ImportSecp256k1PrivateKey(password, secp256k1Prv)
+			terminal.FatalErrorCheck(err)
+
+			return
 
 		default:
 			// The private key cannot be decoded as either BLS or Ed25519.

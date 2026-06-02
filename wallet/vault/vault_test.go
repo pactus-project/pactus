@@ -55,7 +55,11 @@ func setup(t *testing.T) *testData {
 	addr7, err := vault.ImportEd25519PrivateKey("", importedEd25519Prv)
 	require.NoError(t, err)
 
-	testAddrs := []*types.AddressInfo{addr1, addr2, addr3, addr4, addr5, addr6, addr7}
+	_, importedSecp256k1Prv := ts.RandSecp256k1KeyPair()
+	addr8, err := vault.ImportSecp256k1PrivateKey("", importedSecp256k1Prv)
+	require.NoError(t, err)
+
+	testAddrs := []*types.AddressInfo{addr1, addr2, addr3, addr4, addr5, addr6, addr7, addr8}
 
 	assert.False(t, vault.IsEncrypted())
 
@@ -175,8 +179,8 @@ func TestImportBLSPrivateKey(t *testing.T) {
 		assert.Equal(t, prv.PublicKeyNative().String(), accInfo.PublicKey)
 		assert.Equal(t, prv.PublicKeyNative().String(), valInfo.PublicKey)
 
-		assert.Equal(t, "m/65535'/21888'/1'/2'", accInfo.Path)
-		assert.Equal(t, "m/65535'/21888'/2'/2'", valInfo.Path)
+		assert.Equal(t, "m/65535'/21888'/1'/3'", accInfo.Path)
+		assert.Equal(t, "m/65535'/21888'/2'/3'", valInfo.Path)
 	})
 }
 
@@ -195,7 +199,26 @@ func TestImportEd25519PrivateKey(t *testing.T) {
 		require.NoError(t, err)
 
 		assert.Equal(t, prv.PublicKeyNative().String(), info.PublicKey)
-		assert.Equal(t, "m/65535'/21888'/3'/2'", info.Path)
+		assert.Equal(t, "m/65535'/21888'/3'/3'", info.Path)
+	})
+}
+
+func TestImportSecp256k1PrivateKey(t *testing.T) {
+	td := setup(t)
+
+	_, prv := td.RandSecp256k1KeyPair()
+
+	t.Run("Invalid password", func(t *testing.T) {
+		_, err := td.vault.ImportSecp256k1PrivateKey("invalid-password", prv)
+		require.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+	})
+
+	t.Run("Ok", func(t *testing.T) {
+		info, err := td.vault.ImportSecp256k1PrivateKey(td.password, prv)
+		require.NoError(t, err)
+
+		assert.Equal(t, prv.PublicKeyNative().String(), info.PublicKey)
+		assert.Equal(t, "m/65535'/21888'/4'/3'", info.Path)
 	})
 }
 
