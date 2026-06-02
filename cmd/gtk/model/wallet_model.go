@@ -206,7 +206,7 @@ func (model *WalletModel) PrivateKey(password, addr string) (crypto.PrivateKey, 
 		return nil, err
 	}
 
-	switch typ {
+	switch crypto.SignatureType(typ) {
 	case crypto.SignatureTypeBLS:
 		return bls.PrivateKeyFromString(res.PrivateKey)
 	case crypto.SignatureTypeEd25519:
