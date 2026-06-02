@@ -347,6 +347,8 @@ func (v *Vault) ImportSecp256k1PrivateKey(password string, prv *secp256k1.Privat
 }
 
 // PrivateKeys retrieves the private keys for the given addresses using the provided password.
+//
+//nolint:all // complexity is acceptable in this function as it handles multiple key types and paths.
 func (v *Vault) PrivateKeys(password string, paths []addresspath.Path) ([]crypto.PrivateKey, error) {
 	if v.IsNeutered() {
 		return nil, ErrNeutered
