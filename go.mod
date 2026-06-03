@@ -7,6 +7,7 @@ require (
 	github.com/beevik/ntp v1.5.0
 	github.com/c-bata/go-prompt v0.2.6
 	github.com/consensys/gnark-crypto v0.20.1
+	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.1
 	github.com/ezex-io/gopkg/pipeline v0.0.0-20260127151556-579a32f19aa7
 	github.com/ezex-io/gopkg/scheduler v0.0.0-20260127151556-579a32f19aa7
 	github.com/ezex-io/gopkg/signal v0.0.0-20260127151556-579a32f19aa7
@@ -65,7 +66,6 @@ require (
 	github.com/creachadair/mds v0.27.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/davidlazar/go-crypto v0.0.0-20200604182044-b73af7476f6c // indirect
-	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.1 // indirect
 	github.com/dunglas/httpsfv v1.1.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
@@ -149,7 +149,7 @@ require (
 	github.com/prometheus/common v0.67.5 // indirect
 	github.com/prometheus/procfs v0.20.1 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect
-	github.com/quic-go/quic-go v0.59.0 // indirect
+	github.com/quic-go/quic-go v0.59.1 // indirect
 	github.com/quic-go/webtransport-go v0.10.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
