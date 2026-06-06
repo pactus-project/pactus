@@ -72,6 +72,12 @@ func (p *BondPayload) BasicCheck() error {
 				Reason: "delegate share must be between 0 and 0.7 PAC",
 			}
 		}
+
+		if p.DelegateShare%32 != 0 {
+			return BasicCheckError{
+				Reason: "delegate share should be dividable by 32",
+			}
+		}
 	}
 
 	return nil
