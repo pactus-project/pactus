@@ -1258,6 +1258,9 @@ pub struct AddressInfo {
     /// The Hierarchical Deterministic (HD) path of the address within the wallet.
     #[prost(string, tag="4")]
     pub path: ::prost::alloc::string::String,
+    /// The type of the address.
+    #[prost(enumeration="AddressType", tag="5")]
+    pub address_type: i32,
 }
 /// Request message for generating a new wallet address.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]

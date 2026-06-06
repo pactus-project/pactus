@@ -26,11 +26,14 @@ func newWalletServer(server *Server, manager wltmgr.IManager) *walletServer {
 }
 
 func (*walletServer) addressInfoToProto(ai *types.AddressInfo) *pactus.AddressInfo {
+	addr, _ := crypto.AddressFromString(ai.Address)
+
 	return &pactus.AddressInfo{
-		Address:   ai.Address,
-		Label:     ai.Label,
-		PublicKey: ai.PublicKey,
-		Path:      ai.Path,
+		Address:     ai.Address,
+		Label:       ai.Label,
+		PublicKey:   ai.PublicKey,
+		Path:        ai.Path,
+		AddressType: pactus.AddressType(addr.Type()),
 	}
 }
 

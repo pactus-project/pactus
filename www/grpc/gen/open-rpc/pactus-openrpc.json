@@ -1061,8 +1061,8 @@
         "schema": {
           "type": "object","required": ["wallet_name","addr"],
           "properties": {"wallet_name": { "type": "string" },"addr": {
-  "type": "object","required": ["address","public_key","label","path"],
-  "properties": {"address": { "type": "string" },"public_key": { "type": "string" },"label": { "type": "string" },"path": { "type": "string" }}
+  "type": "object","required": ["address","public_key","label","path","address_type"],
+  "properties": {"address": { "type": "string" },"public_key": { "type": "string" },"label": { "type": "string" },"path": { "type": "string" },"address_type": { "type": "integer" }}
 }}
           }
         }
@@ -1122,8 +1122,8 @@
         "schema": {
           "type": "object","required": ["wallet_name","addr"],
           "properties": {"wallet_name": { "type": "string" },"addr": {
-  "type": "object","required": ["address","public_key","label","path"],
-  "properties": {"address": { "type": "string" },"public_key": { "type": "string" },"label": { "type": "string" },"path": { "type": "string" }}
+  "type": "object","required": ["address","public_key","label","path","address_type"],
+  "properties": {"address": { "type": "string" },"public_key": { "type": "string" },"label": { "type": "string" },"path": { "type": "string" },"address_type": { "type": "integer" }}
 }}
           }
         }
@@ -1151,8 +1151,8 @@
           "properties": {"wallet_name": { "type": "string" },"addrs": {
   "type": "array",
   "items": {
-  "type": "object","required": ["address","public_key","label","path"],
-  "properties": {"address": { "type": "string" },"public_key": { "type": "string" },"label": { "type": "string" },"path": { "type": "string" }}
+  "type": "object","required": ["address","public_key","label","path","address_type"],
+  "properties": {"address": { "type": "string" },"public_key": { "type": "string" },"label": { "type": "string" },"path": { "type": "string" },"address_type": { "type": "integer" }}
 }
 }}
           }

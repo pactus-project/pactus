@@ -979,7 +979,8 @@ proto.pactus.AddressInfo.toObject = function(includeInstance, msg) {
 address: jspb.Message.getFieldWithDefault(msg, 1, ""),
 publicKey: jspb.Message.getFieldWithDefault(msg, 2, ""),
 label: jspb.Message.getFieldWithDefault(msg, 3, ""),
-path: jspb.Message.getFieldWithDefault(msg, 4, "")
+path: jspb.Message.getFieldWithDefault(msg, 4, ""),
+addressType: jspb.Message.getFieldWithDefault(msg, 5, 0)
   };
 
   if (includeInstance) {
@@ -1031,6 +1032,10 @@ proto.pactus.AddressInfo.deserializeBinaryFromReader = function(msg, reader) {
     case 4:
       var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setPath(value);
+      break;
+    case 5:
+      var value = /** @type {!proto.pactus.AddressType} */ (reader.readEnum());
+      msg.setAddressType(value);
       break;
     default:
       reader.skipField();
@@ -1086,6 +1091,13 @@ proto.pactus.AddressInfo.serializeBinaryToWriter = function(message, writer) {
   if (f.length > 0) {
     writer.writeString(
       4,
+      f
+    );
+  }
+  f = message.getAddressType();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      5,
       f
     );
   }
@@ -1161,6 +1173,24 @@ proto.pactus.AddressInfo.prototype.getPath = function() {
  */
 proto.pactus.AddressInfo.prototype.setPath = function(value) {
   return jspb.Message.setProto3StringField(this, 4, value);
+};
+
+
+/**
+ * optional AddressType address_type = 5;
+ * @return {!proto.pactus.AddressType}
+ */
+proto.pactus.AddressInfo.prototype.getAddressType = function() {
+  return /** @type {!proto.pactus.AddressType} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+};
+
+
+/**
+ * @param {!proto.pactus.AddressType} value
+ * @return {!proto.pactus.AddressInfo} returns this
+ */
+proto.pactus.AddressInfo.prototype.setAddressType = function(value) {
+  return jspb.Message.setProto3EnumField(this, 5, value);
 };
 
 

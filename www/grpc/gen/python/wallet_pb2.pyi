@@ -45,11 +45,13 @@ class AddressInfo(_message.Message):
     PUBLIC_KEY_FIELD_NUMBER: _ClassVar[int]
     LABEL_FIELD_NUMBER: _ClassVar[int]
     PATH_FIELD_NUMBER: _ClassVar[int]
+    ADDRESS_TYPE_FIELD_NUMBER: _ClassVar[int]
     address: str
     public_key: str
     label: str
     path: str
-    def __init__(self, address: _Optional[str] = ..., public_key: _Optional[str] = ..., label: _Optional[str] = ..., path: _Optional[str] = ...) -> None: ...
+    address_type: AddressType
+    def __init__(self, address: _Optional[str] = ..., public_key: _Optional[str] = ..., label: _Optional[str] = ..., path: _Optional[str] = ..., address_type: _Optional[_Union[AddressType, str]] = ...) -> None: ...
 
 class GetNewAddressRequest(_message.Message):
     __slots__ = ()
