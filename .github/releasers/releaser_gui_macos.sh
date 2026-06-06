@@ -47,7 +47,7 @@ cp ${ROOT_DIR}/.github/releasers/macos/run-install-name-tool-change.sh bundler/r
 chmod +x bundler/run-install-name-tool-change.sh
 
 # make sure launcher is executable
-chmod +x ${ROOT_DIR}/.github/releasers/macos/gtk3-launcher.sh
+chmod +x ${ROOT_DIR}/.github/releasers/macos/gtk4-launcher.sh
 
 make install
 

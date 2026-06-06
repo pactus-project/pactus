@@ -34,7 +34,7 @@
          not needed. If the source path is left out, the default
          script will be used.
     -->
-    <launcher-script>${project}/gtk3-launcher.sh</launcher-script >
+    <launcher-script>${project}/gtk4-launcher.sh</launcher-script >
 
     <!-- Not implemented: Optional runtime, could be python or mono
          for example.
