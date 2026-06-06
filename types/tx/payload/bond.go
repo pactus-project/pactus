@@ -73,7 +73,7 @@ func (p *BondPayload) BasicCheck() error {
 			}
 		}
 
-		if p.DelegateShare % 32 != 0 {
+		if p.DelegateShare%32 != 0 {
 			return BasicCheckError{
 				Reason: "delegate share should be dividable by 32",
 			}
