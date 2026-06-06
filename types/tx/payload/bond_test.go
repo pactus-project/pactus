@@ -369,6 +369,16 @@ func TestBondBasicCheck(t *testing.T) {
 				To:            ts.RandValAddress(),
 				Stake:         ts.RandAmount(),
 				DelegateOwner: ts.RandAccAddress(),
+				DelegateShare: amount.Amount(0.311111111 * amount.NanoPACPerPAC),
+			},
+			err: "delegate share should be dividable by 32",
+		},
+		{
+			pld: payload.BondPayload{
+				From:          ts.RandAccAddress(),
+				To:            ts.RandValAddress(),
+				Stake:         ts.RandAmount(),
+				DelegateOwner: ts.RandAccAddress(),
 				DelegateShare: 0, // 0 PAC
 			},
 			err: "",
