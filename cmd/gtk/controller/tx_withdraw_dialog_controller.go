@@ -24,7 +24,7 @@ func NewTxWithdrawDialogController(
 	return &TxWithdrawDialogController{view: view, model: model}
 }
 
-func (c *TxWithdrawDialogController) Run() {
+func (c *TxWithdrawDialogController) Show() {
 	c.applyDefaults()
 	c.populateCombos()
 

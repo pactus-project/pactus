@@ -50,7 +50,7 @@ func (n *Navigator) ShowConfigEditor() {
 	gtkutil.IdleAddSync(func() {
 		dlgView := view.NewConfigEditorDialogView()
 		dlgCtrl := NewConfigEditorDialogController(dlgView, n.configModel)
-		dlgCtrl.Run()
+		dlgCtrl.Show()
 	})
 }
 
@@ -58,7 +58,7 @@ func (n *Navigator) ShowWalletShowSeed() {
 	gtkutil.IdleAddSync(func() {
 		dlgView := view.NewWalletSeedDialogView()
 		dlgCtrl := NewWalletSeedDialogController(dlgView, n.walletModel)
-		dlgCtrl.Run()
+		dlgCtrl.Show()
 	})
 }
 
@@ -86,7 +86,7 @@ func (n *Navigator) ShowWalletChangePassword() {
 	gtkutil.IdleAddSync(func() {
 		dlgView := view.NewWalletChangePasswordDialogView()
 		dlgCtrl := NewWalletChangePasswordDialogController(dlgView, n.walletModel)
-		dlgCtrl.Run()
+		dlgCtrl.Show()
 	})
 
 	go func() {
@@ -98,7 +98,7 @@ func (n *Navigator) ShowTransactionTransfer() {
 	gtkutil.IdleAddSync(func() {
 		dialogView := view.NewTxTransferDialogView()
 		ctrl := NewTxTransferDialogController(dialogView, n.walletModel)
-		ctrl.Run()
+		ctrl.Show()
 	})
 
 	go func() {
@@ -110,7 +110,7 @@ func (n *Navigator) ShowTransactionBond() {
 	gtkutil.IdleAddSync(func() {
 		dialogView := view.NewTxBondDialogView()
 		ctrl := NewTxBondDialogController(dialogView, n.walletModel)
-		ctrl.Run()
+		ctrl.Show()
 	})
 
 	go func() {
@@ -122,7 +122,7 @@ func (n *Navigator) ShowTransactionUnbond() {
 	gtkutil.IdleAddSync(func() {
 		dialogView := view.NewTxUnbondDialogView()
 		ctrl := NewTxUnbondDialogController(dialogView, n.walletModel)
-		ctrl.Run()
+		ctrl.Show()
 	})
 
 	go func() {
@@ -134,7 +134,7 @@ func (n *Navigator) ShowTransactionWithdraw() {
 	gtkutil.IdleAddSync(func() {
 		dialogView := view.NewTxWithdrawDialogView()
 		ctrl := NewTxWithdrawDialogController(dialogView, n.walletModel)
-		ctrl.Run()
+		ctrl.Show()
 	})
 
 	go func() {

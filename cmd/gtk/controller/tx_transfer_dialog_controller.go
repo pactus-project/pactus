@@ -33,7 +33,7 @@ func setHintLabel(lbl *gtk.Label, hint string) {
 	lbl.SetMarkup(gtkutil.SmallGray(hint))
 }
 
-func (c *TxTransferDialogController) Run() {
+func (c *TxTransferDialogController) Show() {
 	c.applyDefaults()
 	c.populateCombos()
 

@@ -20,7 +20,7 @@ func NewWalletSeedDialogController(
 	return &WalletSeedDialogController{view: view, model: model}
 }
 
-func (c *WalletSeedDialogController) Run() {
+func (c *WalletSeedDialogController) Show() {
 	PasswordProvider(c.model, func(password string, ok bool) {
 		if !ok {
 			return

@@ -48,8 +48,6 @@ func (c *NodeWidgetController) BuildView(ctx context.Context, connectionLabel, c
 		c.view.LabelAgent.SetText(nodeInfo.Agent)
 		c.view.LabelMoniker.SetText(nodeInfo.Moniker)
 		c.view.LabelIsPrune.SetText(strconv.FormatBool(chainInfo.IsPruned))
-
-		c.view.ConnectSignals(map[string]any{})
 	})
 
 	scheduler.Every(10*time.Second).Do(ctx, func(context.Context) { c.timeout1() })
