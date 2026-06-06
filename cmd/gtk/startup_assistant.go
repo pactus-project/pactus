@@ -1,4 +1,4 @@
-// go1:build gtk
+//go:build gtk
 
 //nolint:staticcheck // Using depreciated widgets
 package main
