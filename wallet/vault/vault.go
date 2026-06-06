@@ -223,58 +223,7 @@ func (v *Vault) IsEncrypted() bool {
 	return v.Encrypter.IsEncrypted()
 }
 
-func (v *Vault) ImportBLSPrivateKey(password string, prv *bls.PrivateKey) (
-	valInfo *types.AddressInfo, accInfo *types.AddressInfo, err error,
-) {
-	if v.IsNeutered() {
-		return nil, nil, ErrNeutered
-	}
-
-	keyStore, err := v.decryptKeyStore(password)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	pub := prv.PublicKeyNative()
-	addressIndex := len(keyStore.ImportedKeys)
-
-	blsAccPathStr := addresspath.NewPath(
-		addresspath.Harden(addresspath.PurposeImportPrivateKey),
-		addresspath.Harden(v.CoinType),
-		addresspath.Harden(crypto.AddressTypeBLSAccount),
-		addresspath.Harden(addressIndex)).String()
-
-	blsValidatorPathStr := addresspath.NewPath(
-		addresspath.Harden(addresspath.PurposeImportPrivateKey),
-		addresspath.Harden(v.CoinType),
-		addresspath.Harden(crypto.AddressTypeValidator),
-		addresspath.Harden(addressIndex)).String()
-
-	accInfo = &types.AddressInfo{
-		Address:   pub.AccountAddress().String(),
-		PublicKey: pub.String(),
-		Label:     "Imported BLS Account Address",
-		Path:      blsAccPathStr,
-	}
-
-	valInfo = &types.AddressInfo{
-		Address:   pub.ValidatorAddress().String(),
-		PublicKey: pub.String(),
-		Label:     "Imported Validator Address",
-		Path:      blsValidatorPathStr,
-	}
-
-	keyStore.ImportedKeys = append(keyStore.ImportedKeys, prv.String())
-
-	err = v.encryptKeyStore(keyStore, password)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return valInfo, accInfo, nil
-}
-
-func (v *Vault) ImportEd25519PrivateKey(password string, prv *ed25519.PrivateKey) (*types.AddressInfo, error) {
+func (v *Vault) ImportPrivateKey(password string, prv crypto.PrivateKey) (valInfo *types.AddressInfo, err error) {
 	if v.IsNeutered() {
 		return nil, ErrNeutered
 	}
@@ -284,20 +233,21 @@ func (v *Vault) ImportEd25519PrivateKey(password string, prv *ed25519.PrivateKey
 		return nil, err
 	}
 
+	pub := prv.PublicKey()
+	addr := pub.AccountAddress()
 	addressIndex := len(keyStore.ImportedKeys)
-	pub := prv.PublicKeyNative()
 
-	accPathStr := addresspath.NewPath(
+	pathStr := addresspath.NewPath(
 		addresspath.Harden(addresspath.PurposeImportPrivateKey),
 		addresspath.Harden(v.CoinType),
-		addresspath.Harden(crypto.AddressTypeEd25519Account),
+		addresspath.Harden(addr.Type()),
 		addresspath.Harden(addressIndex)).String()
 
-	accInfo := &types.AddressInfo{
+	info := &types.AddressInfo{
 		Address:   pub.AccountAddress().String(),
 		PublicKey: pub.String(),
-		Label:     "Imported Ed25519 Account Address",
-		Path:      accPathStr,
+		Label:     fmt.Sprintf("Imported Address %d", addressIndex+1),
+		Path:      pathStr,
 	}
 
 	keyStore.ImportedKeys = append(keyStore.ImportedKeys, prv.String())
@@ -307,7 +257,7 @@ func (v *Vault) ImportEd25519PrivateKey(password string, prv *ed25519.PrivateKey
 		return nil, err
 	}
 
-	return accInfo, nil
+	return info, nil
 }
 
 // PrivateKeys retrieves the private keys for the given addresses using the provided password.
@@ -357,23 +307,12 @@ func (v *Vault) PrivateKeys(password string, paths []addresspath.Path) ([]crypto
 			index := addresspath.UnHarden(path.AddressIndex())
 			str := keyStore.ImportedKeys[index]
 
-			var prv crypto.PrivateKey
-			switch uint32(path.AddressType()) {
-			case uint32(crypto.AddressTypeValidator),
-				uint32(crypto.AddressTypeBLSAccount):
-				prv, err = bls.PrivateKeyFromString(str)
-				if err != nil {
-					return nil, err
-				}
-
-			case uint32(crypto.AddressTypeEd25519Account):
-				prv, err = ed25519.PrivateKeyFromString(str)
-				if err != nil {
-					return nil, err
-				}
+			prvKey, err := PrivateKeyFromString(str)
+			if err != nil {
+				return nil, err
 			}
+			keys[i] = prvKey
 
-			keys[i] = prv
 		default:
 			return nil, ErrUnsupportedPurpose
 		}

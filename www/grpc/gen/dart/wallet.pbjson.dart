@@ -23,6 +23,7 @@ const AddressType$json = {
     {'1': 'ADDRESS_TYPE_VALIDATOR', '2': 1},
     {'1': 'ADDRESS_TYPE_BLS_ACCOUNT', '2': 2},
     {'1': 'ADDRESS_TYPE_ED25519_ACCOUNT', '2': 3},
+    {'1': 'ADDRESS_TYPE_SECP_ACCOUNT', '2': 4},
   ],
 };
 
@@ -30,7 +31,7 @@ const AddressType$json = {
 final $typed_data.Uint8List addressTypeDescriptor = $convert.base64Decode(
     'CgtBZGRyZXNzVHlwZRIZChVBRERSRVNTX1RZUEVfVFJFQVNVUlkQABIaChZBRERSRVNTX1RZUE'
     'VfVkFMSURBVE9SEAESHAoYQUREUkVTU19UWVBFX0JMU19BQ0NPVU5UEAISIAocQUREUkVTU19U'
-    'WVBFX0VEMjU1MTlfQUNDT1VOVBAD');
+    'WVBFX0VEMjU1MTlfQUNDT1VOVBADEh0KGUFERFJFU1NfVFlQRV9TRUNQX0FDQ09VTlQQBA==');
 
 @$core.Deprecated('Use txDirectionDescriptor instead')
 const TxDirection$json = {

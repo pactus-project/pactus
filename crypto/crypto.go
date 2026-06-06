@@ -1,5 +1,13 @@
 package crypto
 
+type SignatureType byte
+
+var (
+	SignatureTypeBLS       SignatureType = 1
+	SignatureTypeEd25519   SignatureType = 3
+	SignatureTypeSecp256k1 SignatureType = 4
+)
+
 var (
 	// AddressHRP is the Human Readable Part (HRP) for address.
 	AddressHRP = "pc"

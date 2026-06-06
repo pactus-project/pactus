@@ -69,3 +69,16 @@ func TestTransferToSelf(t *testing.T) {
 
 	td.checkTotalCoin(t, fee)
 }
+
+func TestTransferSecp256k1(t *testing.T) {
+	td := setup(t)
+
+	senderAddr, senderAcc := td.sbx.TestStore.RandomTestAcc()
+	amt := td.RandAmountRange(0, senderAcc.Balance())
+	fee := td.RandFee()
+	lockTime := td.sbx.CurrentHeight()
+
+	trx := tx.NewTransferTx(lockTime, senderAddr, td.RandAccAddressSecp256k1(), amt, fee)
+	td.check(t, trx, true, ErrSecp256k1AccountNotSupported)
+	td.check(t, trx, false, ErrSecp256k1AccountNotSupported)
+}

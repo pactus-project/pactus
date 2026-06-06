@@ -9,15 +9,6 @@ import (
 	"github.com/pactus-project/pactus/util/encoding"
 )
 
-// Address format:
-// hrp + `1` + type + data + checksum
-
-const (
-	SignatureTypeBLS       byte = 1
-	SignatureTypeEd25519   byte = 3
-	SignatureTypeSecp256k1 byte = 4
-)
-
 const (
 	AddressSize           = 21
 	treasuryAddressString = "000000000000000000000000000000000000000000"

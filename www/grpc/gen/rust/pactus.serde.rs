@@ -318,6 +318,7 @@ impl serde::Serialize for AddressType {
             Self::Validator => "ADDRESS_TYPE_VALIDATOR",
             Self::BlsAccount => "ADDRESS_TYPE_BLS_ACCOUNT",
             Self::Ed25519Account => "ADDRESS_TYPE_ED25519_ACCOUNT",
+            Self::SecpAccount => "ADDRESS_TYPE_SECP_ACCOUNT",
         };
         serializer.serialize_str(variant)
     }
@@ -333,6 +334,7 @@ impl<'de> serde::Deserialize<'de> for AddressType {
             "ADDRESS_TYPE_VALIDATOR",
             "ADDRESS_TYPE_BLS_ACCOUNT",
             "ADDRESS_TYPE_ED25519_ACCOUNT",
+            "ADDRESS_TYPE_SECP_ACCOUNT",
         ];
 
         struct GeneratedVisitor;
@@ -377,6 +379,7 @@ impl<'de> serde::Deserialize<'de> for AddressType {
                     "ADDRESS_TYPE_VALIDATOR" => Ok(AddressType::Validator),
                     "ADDRESS_TYPE_BLS_ACCOUNT" => Ok(AddressType::BlsAccount),
                     "ADDRESS_TYPE_ED25519_ACCOUNT" => Ok(AddressType::Ed25519Account),
+                    "ADDRESS_TYPE_SECP_ACCOUNT" => Ok(AddressType::SecpAccount),
                     _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),
                 }
             }

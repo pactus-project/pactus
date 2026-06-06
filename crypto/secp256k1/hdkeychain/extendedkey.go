@@ -264,7 +264,8 @@ func (k *ExtendedKey) String() string {
 		hrp = crypto.XPrivateKeyHRP
 	}
 
-	str, err := bech32m.EncodeFromBase256WithType(hrp, crypto.SignatureTypeSecp256k1, buf.Bytes())
+	str, err := bech32m.EncodeFromBase256WithType(hrp,
+		byte(crypto.SignatureTypeSecp256k1), buf.Bytes())
 	if err != nil {
 		return err.Error()
 	}
@@ -283,7 +284,7 @@ func NewKeyFromString(str string) (*ExtendedKey, error) {
 		return nil, err
 	}
 
-	if typ != crypto.SignatureTypeSecp256k1 {
+	if typ != byte(crypto.SignatureTypeSecp256k1) {
 		return nil, ErrInvalidKeyData
 	}
 

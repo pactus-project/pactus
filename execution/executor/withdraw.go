@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
@@ -19,6 +20,10 @@ type WithdrawExecutor struct {
 
 func newWithdrawExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*WithdrawExecutor, error) {
 	pld := trx.Payload().(*payload.WithdrawPayload)
+
+	if pld.To.Type() == crypto.AddressTypeSecp256k1Account {
+		return nil, ErrSecp256k1AccountNotSupported
+	}
 
 	sender := sbx.Validator(pld.From)
 	if sender == nil {

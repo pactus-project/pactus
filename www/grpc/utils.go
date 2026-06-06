@@ -2,12 +2,10 @@ package grpc
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/crypto/ed25519"
+	"github.com/pactus-project/pactus/wallet/vault"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -23,10 +21,10 @@ func newUtilsServer(server *Server) *utilServer {
 	}
 }
 
-func (u *utilServer) SignMessageWithPrivateKey(_ context.Context,
+func (*utilServer) SignMessageWithPrivateKey(_ context.Context,
 	req *pactus.SignMessageWithPrivateKeyRequest,
 ) (*pactus.SignMessageWithPrivateKeyResponse, error) {
-	prvKey, err := u.privateKeyFromString(req.PrivateKey)
+	prvKey, err := vault.PrivateKeyFromString(req.PrivateKey)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -37,13 +35,19 @@ func (u *utilServer) SignMessageWithPrivateKey(_ context.Context,
 	}, nil
 }
 
-func (u *utilServer) VerifyMessage(_ context.Context,
+func (*utilServer) VerifyMessage(_ context.Context,
 	req *pactus.VerifyMessageRequest,
 ) (*pactus.VerifyMessageResponse, error) {
-	pubKey, sig, err := u.publicKeyAndSigFromString(req.PublicKey, req.Signature)
+	pubKey, err := vault.PublicKeyFromString(req.PublicKey)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
+
+	sig, err := vault.SignatureFromString(req.Signature, pubKey.Type())
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
 	if err = pubKey.Verify([]byte(req.Message), sig); err == nil {
 		return &pactus.VerifyMessageResponse{
 			IsValid: true,
@@ -98,42 +102,4 @@ func (*utilServer) SignatureAggregation(_ context.Context,
 	return &pactus.SignatureAggregationResponse{
 		Signature: aggSig.String(),
 	}, nil
-}
-
-func (*utilServer) privateKeyFromString(prvStr string) (crypto.PrivateKey, error) {
-	blsPrv, err := bls.PrivateKeyFromString(prvStr)
-	if err == nil {
-		return blsPrv, nil
-	}
-
-	ed25519Prv, err := ed25519.PrivateKeyFromString(prvStr)
-	if err == nil {
-		return ed25519Prv, nil
-	}
-
-	return nil, errors.New("invalid Private Key")
-}
-
-func (*utilServer) publicKeyAndSigFromString(pubStr, sigStr string) (crypto.PublicKey, crypto.Signature, error) {
-	blsPub, err := bls.PublicKeyFromString(pubStr)
-	if err == nil {
-		blsSig, err := bls.SignatureFromString(sigStr)
-		if err != nil {
-			return nil, nil, errors.New("invalid BLS signature")
-		}
-
-		return blsPub, blsSig, nil
-	}
-
-	ed25519Pub, err := ed25519.PublicKeyFromString(pubStr)
-	if err == nil {
-		ed25519Sig, err := ed25519.SignatureFromString(sigStr)
-		if err != nil {
-			return nil, nil, errors.New("invalid Ed25519 signature")
-		}
-
-		return ed25519Pub, ed25519Sig, nil
-	}
-
-	return nil, nil, errors.New("invalid Public Key")
 }

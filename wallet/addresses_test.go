@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -59,15 +60,11 @@ func TestListAddresses(t *testing.T) {
 	accInfo, _ := td.testVault.NewBLSAccountAddress("addr-2")
 	edInfo, _ := td.testVault.NewEd25519AccountAddress("addr-3", td.password)
 
-	_, prv1 := td.RandBLSKeyPair()
-	impAcc, impVal, _ := td.testVault.ImportBLSPrivateKey(td.password, prv1)
-	_, prv2 := td.RandEd25519KeyPair()
-	impEd, _ := td.testVault.ImportEd25519PrivateKey(td.password, prv2)
+	_, impPrv := td.RandEd25519KeyPair()
+	impAddr, _ := td.testVault.ImportPrivateKey(td.password, impPrv)
 
 	existing := []types.AddressInfo{
-		*impAcc,
-		*impVal,
-		*impEd,
+		*impAddr,
 		*valInfo,
 		*accInfo,
 		*edInfo,
@@ -80,9 +77,6 @@ func TestListAddresses(t *testing.T) {
 		assert.Equal(t, "m/44'/21888'/3'/0'", listed[0].Path)
 		assert.Equal(t, "m/12381'/21888'/1'/0", listed[1].Path)
 		assert.Equal(t, "m/12381'/21888'/2'/0", listed[2].Path)
-		assert.Equal(t, "m/65535'/21888'/1'/0'", listed[3].Path)
-		assert.Equal(t, "m/65535'/21888'/2'/0'", listed[4].Path)
-		assert.Equal(t, "m/65535'/21888'/3'/1'", listed[5].Path)
 	})
 
 	t.Run("Only account addresses", func(t *testing.T) {
@@ -172,51 +166,31 @@ func TestNewSecp256k1AccountAddress(t *testing.T) {
 	assert.Equal(t, pub.AccountAddress().String(), addressInfo.Address)
 }
 
-func TestImportBLSPrivateKey(t *testing.T) {
-	td := setup(t)
-
-	pub, prv := td.RandBLSKeyPair()
-
-	t.Run("Invalid password", func(t *testing.T) {
-		td.mockStorage.EXPECT().HasAddress(pub.AccountAddress().String()).Return(false)
-
-		err := td.wallet.ImportBLSPrivateKey("invalid-password", prv)
-		require.ErrorIs(t, err, encrypter.ErrInvalidPassword)
-	})
-
-	t.Run("Ok", func(t *testing.T) {
-		td.mockStorage.EXPECT().HasAddress(pub.AccountAddress().String()).Return(false)
-		td.mockStorage.EXPECT().InsertAddress(gomock.Any()).Return(nil).Times(2)
-		td.mockStorage.EXPECT().UpdateVault(td.testVault).Return(nil)
-
-		err := td.wallet.ImportBLSPrivateKey(td.password, prv)
-		require.NoError(t, err)
-
-		td.mockStorage.EXPECT().HasAddress(pub.AccountAddress().String()).Return(true)
-		td.mockStorage.EXPECT().HasAddress(pub.ValidatorAddress().String()).Return(true)
-
-		assert.True(t, td.wallet.HasAddress(pub.AccountAddress().String()))
-		assert.True(t, td.wallet.HasAddress(pub.ValidatorAddress().String()))
-	})
-
-	t.Run("Reimporting private key", func(t *testing.T) {
-		td.mockStorage.EXPECT().HasAddress(pub.AccountAddress().String()).Return(true)
-
-		err := td.wallet.ImportBLSPrivateKey(td.password, prv)
-		require.ErrorIs(t, err, ErrAddressExists)
-	})
-}
-
-func TestImportEd25519PrivateKey(t *testing.T) {
+func TestImportPrivateKey(t *testing.T) {
 	td := setup(t)
 
 	pub, prv := td.RandEd25519KeyPair()
 
+	t.Run("Existing address", func(t *testing.T) {
+		td.mockStorage.EXPECT().HasAddress(pub.AccountAddress().String()).Return(true)
+
+		err := td.wallet.ImportPrivateKey(td.password, prv)
+		require.ErrorIs(t, err, ErrAddressExists)
+	})
+
 	t.Run("Invalid password", func(t *testing.T) {
 		td.mockStorage.EXPECT().HasAddress(pub.AccountAddress().String()).Return(false)
 
-		err := td.wallet.ImportEd25519PrivateKey("invalid-password", prv)
+		err := td.wallet.ImportPrivateKey("invalid-password", prv)
 		require.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+	})
+
+	t.Run("Storage error", func(t *testing.T) {
+		td.mockStorage.EXPECT().HasAddress(pub.AccountAddress().String()).Return(false)
+		td.mockStorage.EXPECT().InsertAddress(gomock.Any()).Return(errors.New("storage error"))
+
+		err := td.wallet.ImportPrivateKey(td.password, prv)
+		require.Error(t, err)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -224,18 +198,11 @@ func TestImportEd25519PrivateKey(t *testing.T) {
 		td.mockStorage.EXPECT().InsertAddress(gomock.Any()).Return(nil)
 		td.mockStorage.EXPECT().UpdateVault(td.testVault).Return(nil)
 
-		err := td.wallet.ImportEd25519PrivateKey(td.password, prv)
+		err := td.wallet.ImportPrivateKey(td.password, prv)
 		require.NoError(t, err)
 
 		td.mockStorage.EXPECT().HasAddress(pub.AccountAddress().String()).Return(true)
 		assert.True(t, td.wallet.HasAddress(pub.AccountAddress().String()))
-	})
-
-	t.Run("Reimporting private key", func(t *testing.T) {
-		td.mockStorage.EXPECT().HasAddress(pub.AccountAddress().String()).Return(true)
-
-		err := td.wallet.ImportEd25519PrivateKey(td.password, prv)
-		require.ErrorIs(t, err, ErrAddressExists)
 	})
 }
 

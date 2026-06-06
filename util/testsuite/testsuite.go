@@ -288,6 +288,10 @@ func (ts *TestSuite) RandHash() hash.Hash {
 	return hash.CalcHash(util.Int64ToBytesLE(ts.RandInt64(testsuite.WithMax(util.MaxInt64))))
 }
 
+func (ts *TestSuite) RandAccAddressSecp256k1() crypto.Address {
+	return crypto.NewAddress(crypto.AddressTypeSecp256k1Account, ts.RandBytes(20))
+}
+
 // RandAccAddress generates a random account address for testing purposes.
 func (ts *TestSuite) RandAccAddress() crypto.Address {
 	useBLSAddress := ts.RandBool()
@@ -618,20 +622,6 @@ type TransactionMaker struct {
 
 type TransactionMakerOption func(*TransactionMaker)
 
-func (tm *TransactionMaker) SignerAccountAddress() crypto.Address {
-	blsPub, ok := tm.Signer.PublicKey().(*bls.PublicKey)
-	if ok {
-		return blsPub.AccountAddress()
-	}
-	ed25519Pub, ok := tm.Signer.PublicKey().(*ed25519.PublicKey)
-	if ok {
-		return ed25519Pub.AccountAddress()
-	}
-	secp256k1Pub := tm.Signer.PublicKey().(*secp256k1.PublicKey)
-
-	return secp256k1Pub.AccountAddress()
-}
-
 func (tm *TransactionMaker) SignerValidatorAddress() crypto.Address {
 	blsPub := tm.Signer.PublicKey().(*bls.PublicKey)
 
@@ -720,7 +710,7 @@ func (ts *TestSuite) GenerateTestTransferTx(opts ...TransactionMakerOption) *tx.
 		opt(tmk)
 	}
 
-	sender := tmk.SignerAccountAddress()
+	sender := tmk.Signer.PublicKey().AccountAddress()
 	trx := tx.NewTransferTx(tmk.LockTime, sender, tmk.Receiver, tmk.Amount, tmk.Fee)
 	ts.HelperSignTransaction(tmk.Signer, trx)
 
@@ -745,7 +735,8 @@ func (ts *TestSuite) GenerateTestBatchTransferTx(opts ...TransactionMakerOption)
 		}
 	}
 
-	trx := tx.NewBatchTransferTx(tmk.LockTime, tmk.SignerAccountAddress(), tmk.Recipients, tmk.Fee)
+	sender := tmk.Signer.PublicKey().AccountAddress()
+	trx := tx.NewBatchTransferTx(tmk.LockTime, sender, tmk.Recipients, tmk.Fee)
 	ts.HelperSignTransaction(tmk.Signer, trx)
 
 	return trx
@@ -772,7 +763,7 @@ func (ts *TestSuite) GenerateTestBondTx(opts ...TransactionMakerOption) *tx.Tx {
 		opt(tmk)
 	}
 
-	sender := tmk.SignerAccountAddress()
+	sender := tmk.Signer.PublicKey().AccountAddress()
 	receiver := ts.RandValAddress()
 	if tmk.ValPubKey != nil {
 		receiver = tmk.ValPubKey.ValidatorAddress()
