@@ -3,8 +3,9 @@
 package assets
 
 import (
-	"github.com/gotk3/gotk3/gdk"
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/diamondburned/gotk4/pkg/gdk/v4"
+	"github.com/diamondburned/gotk4/pkg/gdkpixbuf/v2"
+	"github.com/diamondburned/gotk4/pkg/glib/v2"
 )
 
 func InitAssets() {
@@ -12,25 +13,25 @@ func InitAssets() {
 	initImages()
 }
 
-// missingPixbuf tries to return an icon-theme "missing image" pixbuf and falls
-// back to a simple solid square if the theme isn't available.
-func missingPixbuf(size int) *gdk.Pixbuf {
-	theme, err := gtk.IconThemeGetDefault()
-	if err == nil && theme != nil {
-		pixbuf, err := theme.LoadIcon("image-missing", size, 0)
-		if err == nil || pixbuf != nil {
-			return pixbuf
-		}
+// missingTexture creates a Picture widget that displays a solid gray square
+// as a placeholder for a missing image. It returns nil if the pixbuf cannot be created.
+func missingTexture(size int) *gdk.Texture {
+	// Create a gray square pixbuf
+	pixbuf := gdkpixbuf.NewPixbuf(gdkpixbuf.ColorspaceRGB, true, 8, size, size)
+	if pixbuf == nil {
+		return nil
+	}
+	pixbuf.Fill(0xFF666666) // 0xAARRGGBB: semi-light gray
+
+	return gdk.NewTextureForPixbuf(pixbuf)
+}
+
+func TextureFromBytes(data []byte) *gdk.Texture {
+	bytes := glib.NewBytes(data)
+	texture, err := gdk.NewTextureFromBytes(bytes)
+	if err != nil {
+		return missingTexture(128)
 	}
 
-	// Last resort: a tiny gray square (ARGB32).
-	pixbuf, err := gdk.PixbufNew(gdk.COLORSPACE_RGB, true, 8, size, size)
-	if err == nil && pixbuf != nil {
-		// 0xAARRGGBB
-		pixbuf.Fill(0xFF666666)
-
-		return pixbuf
-	}
-
-	return nil
+	return texture
 }

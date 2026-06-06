@@ -39,11 +39,11 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt update
-          sudo apt install -y libgtk-3-dev libcairo2-dev libglib2.0-dev
+          sudo apt install -y libgtk-4-dev libcairo2-dev libglib2.0-dev gobject-introspection
 
       - name: Install Dependencies (macOS)
         if: runner.os == 'macOS'
-        run: brew install gtk+3
+        run: brew install gtk+4 gobject-introspection
 
       - name: Setup MSYS2 and Dependencies (Windows)
         if: runner.os == 'Windows'
@@ -55,15 +55,11 @@ jobs:
             make
             glib2-devel
             mingw-w64-x86_64-go
-            mingw-w64-x86_64-gtk3
+            mingw-w64-x86_64-gtk4
             mingw-w64-x86_64-glib2
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-pkg-config
-
-      - name: Patch pkgconfig (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          sed -i -e 's/-Wl,-luuid/-luuid/g' /mingw64/lib/pkgconfig/gdk-3.0.pc
+            mingw-w64-x86_64-gobject-introspection
 
       #######################################################
       ## Caching Go modules and GTK dependencies
@@ -90,7 +86,10 @@ jobs:
       #######################################################
       - name: Install GTK
         if: steps.cache.outputs.cache-hit != 'true'
-        run: go install github.com/gotk3/gotk3/gtk
+        run: |
+          go install "github.com/diamondburned/gotk4/pkg/gtk/v4"
+          go install "github.com/diamondburned/gotk4/pkg/gdk/v4"
+          go install "github.com/diamondburned/gotk4/pkg/glib/v2"
 
       - name: Build the GUI binary
         run: make build_gui

@@ -8,31 +8,29 @@ The Pactus Core GUI utilizes gtk for desktop GUI. To develop, build and test it 
 
 ### Linux
 
-1. `libgtk-3-dev`
+1. `libgtk-4-dev`
 2. `libcairo2-dev`
 3. `libglib2.0-dev`
 
 Install using apt:
 
 ```bash
-apt install libgtk-3-dev libcairo2-dev libglib2.0-dev
+apt install libgtk-4-dev libcairo2-dev libglib2.0-dev
 ```
 
 ### Mac OS
 
-1. `gtk+3`
-
-Install using brew:
+Install GTK using brew:
 
 ```bash
-brew install gtk+3
+brew install gtk+4
 ```
 
 ### Windows
 
 1. `glib2-devel`
 2. `mingw-w64-x86_64-go`
-3. `mingw-w64-x86_64-gtk3`
+3. `mingw-w64-x86_64-gtk4`
 4. `mingw-w64-x86_64-glib2`
 5. `mingw-w64-x86_64-gcc`
 6. `mingw-w64-x86_64-pkg-config`

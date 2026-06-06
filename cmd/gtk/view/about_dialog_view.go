@@ -3,15 +3,17 @@
 package view
 
 import (
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd/gtk/assets"
+	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 )
 
 func NewAboutDialog() *gtk.AboutDialog {
 	builder := NewViewBuilder(assets.DialogAboutUI)
 	dlg := builder.GetAboutDialogObj("id_dialog_about")
 
-	dlg.SetLogo(assets.ImagePactusLogoPixbuf)
+	pic := gtkutil.NewScaledPictureFromTexture(assets.ImagePactusLogoTexture, 128, 128)
+	dlg.SetLogo(pic.Paintable())
 
 	return dlg
 }

@@ -1,131 +1,55 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.40.0 -->
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 1.0.2 -->
 <interface>
-  <requires lib="gtk+" version="3.24"/>
-  <object class="GtkDialog" id="id_dialog_config_editor">
-    <property name="can-focus">False</property>
-    <property name="title" translatable="yes">Configuration Editor</property>
-    <property name="default-width">720</property>
+  <!-- interface-name dialog_config_editor.ui -->
+  <requires lib="gtk" version="4.14"/>
+  <object class="GtkWindow" id="id_dialog_config_editor">
     <property name="default-height">480</property>
-    <property name="type-hint">dialog</property>
-    <child internal-child="vbox">
+    <property name="default-width">720</property>
+    <property name="title">Configuration Editor</property>
+    <child>
       <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="can-focus">False</property>
-        <property name="margin-start">8</property>
-        <property name="margin-end">8</property>
-        <property name="margin-top">4</property>
-        <property name="margin-bottom">4</property>
         <property name="orientation">vertical</property>
         <property name="spacing">4</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
-            <property name="can-focus">False</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
         <child>
           <object class="GtkScrolledWindow" id="id_scrolled_config">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
             <property name="hexpand">True</property>
             <property name="vexpand">True</property>
-            <property name="shadow-type">in</property>
             <child>
               <object class="GtkTextView" id="id_textview_config">
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
+                <property name="bottom-margin">4</property>
                 <property name="left-margin">4</property>
+                <property name="monospace">True</property>
                 <property name="right-margin">4</property>
                 <property name="top-margin">4</property>
-                <property name="bottom-margin">4</property>
-                <property name="monospace">True</property>
               </object>
             </child>
           </object>
-          <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
         </child>
         <child>
           <object class="GtkBox">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="margin-top">4</property>
+            <property name="css-classes">toolbar</property>
             <property name="hexpand">True</property>
             <property name="spacing">6</property>
             <child>
               <object class="GtkLinkButton">
                 <property name="label">Configuration Guide</property>
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
                 <property name="receives-default">False</property>
                 <property name="uri">https://docs.pactus.org/get-started/configuration/</property>
               </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-              </packing>
             </child>
             <child>
               <object class="GtkBox">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
                 <property name="hexpand">True</property>
               </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
             </child>
             <child>
-              <object class="GtkButton" id="id_button_restore_default">
-                <property name="label" translatable="yes">Restore Default</property>
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="receives-default">False</property>
-                <property name="always-show-image">True</property>
-                <signal name="activate" handler="on_restore_default" swapped="no"/>
-                <signal name="clicked" handler="on_restore_default" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
-              </packing>
+              <object class="GtkButton" id="id_button_restore_default"/>
             </child>
             <child>
-              <object class="GtkButton" id="id_button_save_config">
-                <property name="label" translatable="yes">Save Config</property>
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="can-default">True</property>
-                <property name="has-default">True</property>
-                <property name="receives-default">False</property>
-                <property name="always-show-image">True</property>
-                <signal name="activate" handler="on_save_config" swapped="no"/>
-                <signal name="clicked" handler="on_save_config" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">3</property>
-              </packing>
+              <object class="GtkButton" id="id_button_save_config"/>
             </child>
           </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
         </child>
       </object>
     </child>

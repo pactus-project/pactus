@@ -28,18 +28,17 @@ func (c *TxWithdrawDialogController) Run() {
 	c.applyDefaults()
 	c.populateCombos()
 
-	onCancel := func() { c.view.Dialog.Close() }
+	gtkutil.DropDownOnChanged(c.view.ValidatorDrop, c.onValidatorChanged)
+	gtkutil.ComboBoxOnChanged(c.view.ReceiverCombo, c.onReceiverChanged)
+	gtkutil.EntryOnChanged(c.view.FeeEntry, c.onFeeChanged)
 
-	c.view.ConnectSignals(map[string]any{
-		"on_sender_changed":   func() { c.onSenderChanged() },
-		"on_receiver_changed": func() { c.onReceiverChanged() },
-		"on_fee_changed":      func() { c.onFeeChanged() },
-		"on_send":             func() { c.onSend() },
-		"on_cancel":           onCancel,
-	})
+	gtkutil.ConnectButtonSignal(c.view.ButtonSend, c.onSend)
+	gtkutil.ConnectButtonSignal(c.view.ButtonCancel, c.onCancel)
 
-	c.onSenderChanged()
-	gtkutil.RunDialog(c.view.Dialog)
+	c.view.ValidatorDrop.SetSelected(0)
+	c.onValidatorChanged()
+
+	gtkutil.ShowNonModalWindow(c.view.Window)
 }
 
 func (c *TxWithdrawDialogController) applyDefaults() {
@@ -49,22 +48,14 @@ func (c *TxWithdrawDialogController) applyDefaults() {
 }
 
 func (c *TxWithdrawDialogController) populateCombos() {
-	for _, ai := range c.model.ListValidatorAddresses() {
-		c.view.ValidatorCombo.Append(ai.Address, ai.Address)
-	}
-	c.view.ValidatorCombo.SetActive(0)
-
-	for _, ai := range c.model.ListAccountAddresses() {
-		c.view.ReceiverCombo.Append(ai.Address, ai.Address)
-	}
+	gtkutil.DropDownFromAddressList(c.view.ValidatorDrop, c.model.ListValidatorAddresses())
+	gtkutil.ComboBoxFromAddressList(c.view.ReceiverCombo, c.model.ListAccountAddresses())
 }
 
-func (c *TxWithdrawDialogController) onSenderChanged() {
-	sender := c.view.ValidatorCombo.GetActiveID()
-
-	stake, err := c.model.Stake(sender)
-
+func (c *TxWithdrawDialogController) onValidatorChanged() {
 	hint := ""
+	sender := gtkutil.DropDownGetSelectedText(c.view.ValidatorDrop)
+	stake, err := c.model.Stake(sender)
 	if err == nil {
 		hint = fmt.Sprintf("stake: %s", stake)
 	}
@@ -84,8 +75,7 @@ func (c *TxWithdrawDialogController) onSenderChanged() {
 }
 
 func (c *TxWithdrawDialogController) onReceiverChanged() {
-	receiverEntry, _ := c.view.ReceiverCombo.GetEntry()
-	receiver := gtkutil.GetEntryText(receiverEntry)
+	receiver := gtkutil.ComboBoxGetSelectedText(c.view.ReceiverCombo)
 	if info := c.model.AddressInfo(receiver); info != nil && info.Label != "" {
 		setHintLabel(c.view.ReceiverHint, fmt.Sprintf("label: %s", info.Label))
 	} else {
@@ -99,30 +89,29 @@ func (c *TxWithdrawDialogController) onFeeChanged() {
 }
 
 func (c *TxWithdrawDialogController) onSend() {
-	sender := c.view.ValidatorCombo.GetActiveID()
-	receiverEntry, _ := c.view.ReceiverCombo.GetEntry()
-	receiver := gtkutil.GetEntryText(receiverEntry)
-	amountStr := gtkutil.GetEntryText(c.view.StakeEntry)
-	feeStr := gtkutil.GetEntryText(c.view.FeeEntry)
-	memo := gtkutil.GetEntryText(c.view.MemoEntry)
+	sender := gtkutil.DropDownGetSelectedText(c.view.ValidatorDrop)
+	receiver := gtkutil.ComboBoxGetSelectedText(c.view.ReceiverCombo)
+	amountStr := gtkutil.EntryGetText(c.view.StakeEntry)
+	feeStr := gtkutil.EntryGetText(c.view.FeeEntry)
+	memo := gtkutil.EntryGetText(c.view.MemoEntry)
 
 	amt, err := amount.FromString(amountStr)
 	if err != nil {
-		gtkutil.ShowError(err)
+		gtkutil.ShowErrorDialog(c.view.Window, err.Error(), nil)
 
 		return
 	}
 
 	fee, err := amount.FromString(feeStr)
 	if err != nil {
-		gtkutil.ShowError(err)
+		gtkutil.ShowErrorDialog(c.view.Window, err.Error(), nil)
 
 		return
 	}
 
 	trx, err := c.model.MakeWithdrawTx(sender, receiver, amt, fee, memo)
 	if err != nil {
-		gtkutil.ShowError(err)
+		gtkutil.ShowErrorDialog(c.view.Window, err.Error(), nil)
 
 		return
 	}
@@ -142,9 +131,9 @@ You are going to sign and broadcast this transaction.
 <b>⚠️ This action cannot be undone.</b>
 Do you want to continue with this transaction?`, sender, receiver, amt, trx.Fee(), trx.Memo())
 
-	if !confirmAndSend(c.view.Dialog, c.model, msg, trx) {
-		return
-	}
+	confirmAndSend(c.view.Window, c.model, msg, trx)
+}
 
-	c.view.Dialog.Close()
+func (c *TxWithdrawDialogController) onCancel() {
+	c.view.Window.Close()
 }

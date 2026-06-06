@@ -30,8 +30,8 @@ func (c *ConfigEditorDialogController) Run() {
 	c.setEditorContent(c.model.SavedContent())
 	c.updateSaveButton()
 
-	buf, err := c.view.TextView.GetBuffer()
-	if err == nil {
+	buf := c.view.TextView.Buffer()
+	if buf != nil {
 		buf.Connect("changed", func() {
 			c.updateSaveButton()
 		})
@@ -40,12 +40,12 @@ func (c *ConfigEditorDialogController) Run() {
 	onSave := func() {
 		content := gtkutil.GetTextViewContent(c.view.TextView)
 		if err := c.model.Save(content); err != nil {
-			gtkutil.ShowErrorDialog(c.view.Dialog, err.Error())
+			gtkutil.ShowErrorDialog(c.view.Window, err.Error(), nil)
 
 			return
 		}
 		c.updateSaveButton()
-		gtkutil.ShowInfoDialog(c.view.Dialog, configRestartMessage)
+		gtkutil.ShowInfoDialog(c.view.Window, configRestartMessage, nil)
 	}
 
 	onRestore := func() {
@@ -58,8 +58,7 @@ func (c *ConfigEditorDialogController) Run() {
 		"on_restore_default": onRestore,
 	})
 
-	c.view.Dialog.SetModal(true)
-	gtkutil.RunDialog(c.view.Dialog)
+	gtkutil.ShowModalWindow(c.view.Window)
 }
 
 func (c *ConfigEditorDialogController) setEditorContent(content string) {

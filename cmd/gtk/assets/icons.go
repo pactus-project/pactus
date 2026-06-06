@@ -5,80 +5,70 @@ package assets
 import (
 	_ "embed"
 
-	"github.com/gotk3/gotk3/gdk"
-	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
+	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 )
 
 var (
 	//go:embed icons/add.svg
-	iconAddData     []byte
-	IconAddPixbuf16 *gdk.Pixbuf
+	iconAddData    []byte
+	IconAddTexture *gdk.Texture
 
 	//go:embed icons/ok.svg
-	iconOKData     []byte
-	IconOkPixbuf16 *gdk.Pixbuf
+	iconOKData    []byte
+	IconOkTexture *gdk.Texture
 
 	//go:embed icons/cancel.svg
-	iconCancelData     []byte
-	IconCancelPixbuf16 *gdk.Pixbuf
+	iconCancelData    []byte
+	IconCancelTexture *gdk.Texture
 
 	//go:embed icons/password.svg
-	iconPasswordData     []byte
-	IconPasswordPixbuf16 *gdk.Pixbuf
+	iconPasswordData    []byte
+	IconPasswordTexture *gdk.Texture
 
 	//go:embed icons/seed.svg
-	iconSeedData     []byte
-	IconSeedPixbuf16 *gdk.Pixbuf
+	iconSeedData    []byte
+	IconSeedTexture *gdk.Texture
 
 	//go:embed icons/close.svg
-	iconCloseData     []byte
-	IconClosePixbuf16 *gdk.Pixbuf
+	iconCloseData    []byte
+	IconCloseTexture *gdk.Texture
 
 	//go:embed icons/send.svg
-	iconSendData     []byte
-	IconSendPixbuf16 *gdk.Pixbuf
+	iconSendData    []byte
+	IconSendTexture *gdk.Texture
 
 	//go:embed icons/fee.svg
-	iconFeeData     []byte
-	IconFeePixbuf16 *gdk.Pixbuf
+	iconFeeData    []byte
+	IconFeeTexture *gdk.Texture
 
 	//go:embed icons/refresh.svg
-	iconRefreshData     []byte
-	IconRefreshPixbuf16 *gdk.Pixbuf
+	iconRefreshData    []byte
+	IconRefreshTexture *gdk.Texture
 
 	//go:embed icons/prev.svg
-	iconPrevData     []byte
-	IconPrevPixbuf16 *gdk.Pixbuf
+	iconPrevData    []byte
+	IconPrevTexture *gdk.Texture
 
 	//go:embed icons/next.svg
-	iconNextData     []byte
-	IconNextPixbuf16 *gdk.Pixbuf
+	iconNextData    []byte
+	IconNextTexture *gdk.Texture
 
 	//go:embed icons/save.svg
-	iconSaveData     []byte
-	IconSavePixbuf16 *gdk.Pixbuf
+	iconSaveData    []byte
+	IconSaveTexture *gdk.Texture
 )
 
 func initIcons() {
-	toPixbuf := func(data []byte) *gdk.Pixbuf {
-		pixbuf, err := gtkutil.PixbufFromBytes(data, gtkutil.WithSize(16, 16))
-		if err != nil {
-			return missingPixbuf(16)
-		}
-
-		return pixbuf
-	}
-
-	IconAddPixbuf16 = toPixbuf(iconAddData)
-	IconOkPixbuf16 = toPixbuf(iconOKData)
-	IconCancelPixbuf16 = toPixbuf(iconCancelData)
-	IconPasswordPixbuf16 = toPixbuf(iconPasswordData)
-	IconSeedPixbuf16 = toPixbuf(iconSeedData)
-	IconClosePixbuf16 = toPixbuf(iconCloseData)
-	IconSendPixbuf16 = toPixbuf(iconSendData)
-	IconFeePixbuf16 = toPixbuf(iconFeeData)
-	IconRefreshPixbuf16 = toPixbuf(iconRefreshData)
-	IconPrevPixbuf16 = toPixbuf(iconPrevData)
-	IconNextPixbuf16 = toPixbuf(iconNextData)
-	IconSavePixbuf16 = toPixbuf(iconSaveData)
+	IconAddTexture = TextureFromBytes(iconAddData)
+	IconOkTexture = TextureFromBytes(iconOKData)
+	IconCancelTexture = TextureFromBytes(iconCancelData)
+	IconPasswordTexture = TextureFromBytes(iconPasswordData)
+	IconSeedTexture = TextureFromBytes(iconSeedData)
+	IconCloseTexture = TextureFromBytes(iconCloseData)
+	IconSendTexture = TextureFromBytes(iconSendData)
+	IconFeeTexture = TextureFromBytes(iconFeeData)
+	IconRefreshTexture = TextureFromBytes(iconRefreshData)
+	IconPrevTexture = TextureFromBytes(iconPrevData)
+	IconNextTexture = TextureFromBytes(iconNextData)
+	IconSaveTexture = TextureFromBytes(iconSaveData)
 }

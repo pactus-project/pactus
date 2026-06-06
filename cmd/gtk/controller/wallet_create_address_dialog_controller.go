@@ -12,6 +12,8 @@ import (
 type WalletCreateAddressDialogController struct {
 	view  *view.WalletCreateAddressDialogView
 	model *model.WalletModel
+
+	lsTypes []crypto.AddressType
 }
 
 func NewWalletCreateAddressDialogController(
@@ -21,51 +23,61 @@ func NewWalletCreateAddressDialogController(
 	return &WalletCreateAddressDialogController{view: view, model: model}
 }
 
-func (c *WalletCreateAddressDialogController) Run() {
-	combo := c.view.AddressTypeCombo
-	combo.Append(crypto.AddressTypeValidator.String(), "Validator")
-	combo.Append(crypto.AddressTypeBLSAccount.String(), "BLS Account")
-	combo.Append(crypto.AddressTypeEd25519Account.String(), "Ed25519 Account")
-	combo.Append(crypto.AddressTypeSecp256k1Account.String(), "Secp256k1 Account")
+func (c *WalletCreateAddressDialogController) Show(onUpdate func()) {
+	gtkutil.DropDownSetup(c.view.AddressTypeDrop, []string{
+		"Validator",
+		"BLS Account",
+		"Ed25519 Account",
+		"Secp256k1 Account",
+	})
 
-	combo.SetActive(2) // Edd25519 ia active.
+	c.lsTypes = []crypto.AddressType{
+		crypto.AddressTypeValidator,
+		crypto.AddressTypeBLSAccount,
+		crypto.AddressTypeEd25519Account,
+		crypto.AddressTypeSecp256k1Account,
+	}
 
-	onOk := func() {
-		defer c.view.Dialog.Close()
+	c.view.AddressTypeDrop.SetSelected(2) // Edd25519 ia active.
 
-		label := gtkutil.GetEntryText(c.view.LabelEntry)
-		typ, err := crypto.AddressTypeFromString(combo.GetActiveID())
-		if err != nil {
-			gtkutil.ShowError(err)
+	onOK := func() {
+		label := gtkutil.EntryGetText(c.view.LabelEntry)
+		typ := gtkutil.DropDownGetSelectedItem(c.view.AddressTypeDrop, c.lsTypes)
 
-			return
-		}
-
-		password := ""
 		if typ == crypto.AddressTypeEd25519Account ||
 			typ == crypto.AddressTypeSecp256k1Account {
-			pwd, ok := PasswordProvider(c.model)
-			if !ok {
+			PasswordProvider(c.model, func(password string, ok bool) {
+				if !ok {
+					return
+				}
+
+				_, err := c.model.NewAddress(typ, label, password)
+				if err != nil {
+					gtkutil.ShowErrorDialog(c.view.Window, err.Error(), nil)
+
+					return
+				}
+				c.view.Window.Close()
+				onUpdate()
+			})
+		} else {
+			_, err := c.model.NewAddress(typ, label, "")
+			if err != nil {
+				gtkutil.ShowErrorDialog(c.view.Window, err.Error(), nil)
+
 				return
 			}
-			password = pwd
-		}
-
-		_, err = c.model.NewAddress(typ, label, password)
-		if err != nil {
-			gtkutil.ShowError(err)
-
-			return
+			c.view.Window.Close()
+			onUpdate()
 		}
 	}
 
-	onCancel := func() { c.view.Dialog.Close() }
+	onCancel := func() {
+		c.view.Window.Close()
+	}
 
-	c.view.ConnectSignals(map[string]any{
-		"on_ok":     onOk,
-		"on_cancel": onCancel,
-	})
+	gtkutil.ConnectButtonSignal(c.view.ButtonOK, onOK)
+	gtkutil.ConnectButtonSignal(c.view.ButtonCancel, onCancel)
 
-	c.view.Dialog.SetModal(true)
-	gtkutil.RunDialog(c.view.Dialog)
+	gtkutil.ShowModalWindow(c.view.Window)
 }

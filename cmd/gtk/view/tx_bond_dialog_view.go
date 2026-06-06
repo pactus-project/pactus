@@ -1,9 +1,10 @@
 //go:build gtk
 
+//nolint:staticcheck // Using depreciated widgets
 package view
 
 import (
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd/gtk/assets"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 )
@@ -11,9 +12,9 @@ import (
 type TxBondDialogView struct {
 	ViewBuilder
 
-	Dialog *gtk.Dialog
+	Window *gtk.Window
 
-	SenderCombo    *gtk.ComboBoxText
+	SenderDrop     *gtk.DropDown
 	SenderHint     *gtk.Label
 	ReceiverCombo  *gtk.ComboBoxText
 	ReceiverHint   *gtk.Label
@@ -33,9 +34,9 @@ func NewTxBondDialogView() *TxBondDialogView {
 
 	view := &TxBondDialogView{
 		ViewBuilder: builder,
-		Dialog:      builder.GetDialogObj("id_dialog_transaction_bond"),
+		Window:      builder.GetWindowObj("id_dialog_transaction_bond"),
 
-		SenderCombo:    builder.GetComboBoxTextObj("id_combo_sender"),
+		SenderDrop:     builder.GetDropDownObj("id_drop_sender"),
 		SenderHint:     builder.GetLabelObj("id_hint_sender"),
 		ReceiverCombo:  builder.GetComboBoxTextObj("id_combo_receiver"),
 		ReceiverHint:   builder.GetLabelObj("id_hint_receiver"),
@@ -50,8 +51,10 @@ func NewTxBondDialogView() *TxBondDialogView {
 		ButtonSend:   builder.GetButtonObj("id_button_send"),
 	}
 
-	view.ButtonCancel.SetImage(gtkutil.ImageFromPixbuf(assets.IconCancelPixbuf16))
-	view.ButtonSend.SetImage(gtkutil.ImageFromPixbuf(assets.IconSendPixbuf16))
+	gtkutil.UpdateCancelButton(view.ButtonCancel)
+	gtkutil.UpdateSendButton(view.ButtonSend)
+
+	gtkutil.DialogSetup(view.Window)
 
 	return view
 }

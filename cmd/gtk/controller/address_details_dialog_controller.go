@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 type AddressDetailsDialogController struct {
@@ -20,24 +21,14 @@ func NewAddressDetailsDialogController(
 	return &AddressDetailsDialogController{view: view, model: model}
 }
 
-func (c *AddressDetailsDialogController) Run(addr string) {
-	info := c.model.AddressInfo(addr)
-	if info == nil {
-		gtkutil.ShowErrorDialog(nil, "address not found")
-
-		return
-	}
-
+func (c *AddressDetailsDialogController) Show(info *pactus.AddressInfo) {
 	c.view.AddressEntry.SetText(info.Address)
 	c.view.PubKeyEntry.SetText(info.PublicKey)
 	c.view.PathEntry.SetText(info.Path)
 
-	onClose := func() { c.view.Dialog.Close() }
+	onClose := func() { c.view.Window.Close() }
 
-	c.view.ConnectSignals(map[string]any{
-		"on_close": onClose,
-	})
+	gtkutil.ConnectButtonSignal(c.view.ButtonClose, onClose)
 
-	c.view.Dialog.SetModal(true)
-	gtkutil.RunDialog(c.view.Dialog)
+	gtkutil.ShowModalWindow(c.view.Window)
 }

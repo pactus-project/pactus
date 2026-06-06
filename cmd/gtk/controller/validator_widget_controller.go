@@ -7,56 +7,90 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/diamondburned/gotk4/pkg/core/gioutil"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/ezex-io/gopkg/scheduler"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/types/amount"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
+// validatorRow represents a validator in the validator list.
+type validatorRow struct {
+	no  int
+	val *pactus.ValidatorInfo
+}
+
 type ValidatorWidgetController struct {
-	view  *view.ValidatorWidgetView
-	model *model.ValidatorModel
+	view         *view.ValidatorWidgetView
+	model        *model.ValidatorModel
+	lsValidators *gioutil.ListModel[validatorRow]
 }
 
 func NewValidatorWidgetController(
 	view *view.ValidatorWidgetView, model *model.ValidatorModel,
 ) *ValidatorWidgetController {
-	return &ValidatorWidgetController{view: view, model: model}
+	lsValidators := gioutil.NewListModel[validatorRow]()
+	view.ColViewValidators.SetModel(gtk.NewSingleSelection(lsValidators))
+
+	return &ValidatorWidgetController{
+		view:         view,
+		model:        model,
+		lsValidators: lsValidators,
+	}
 }
 
 func (c *ValidatorWidgetController) BuildView(ctx context.Context) error {
-	scheduler.Every(10*time.Second).Do(ctx, func(context.Context) { c.refresh() })
+	gtkutil.IdleAddSync(func() {
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewValidators, "No", func(row validatorRow) string {
+			return strconv.Itoa(row.no)
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewValidators, "Address", func(row validatorRow) string {
+			return row.val.GetAddress()
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewValidators, "Stake", func(row validatorRow) string {
+			return amount.Amount(row.val.GetStake()).String()
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewValidators, "Bonding Height", func(row validatorRow) string {
+			return strconv.Itoa(int(row.val.GetLastBondingHeight()))
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewValidators, "Sortition Height", func(row validatorRow) string {
+			return strconv.Itoa(int(row.val.GetLastSortitionHeight()))
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewValidators, "Unbonding Height", func(row validatorRow) string {
+			return strconv.Itoa(int(row.val.GetUnbondingHeight()))
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewValidators, "Availability Score", func(row validatorRow) string {
+			return gtkutil.AvailabilityScorePercent(row.val.GetAvailabilityScore())
+		})
+	})
 
-	// Initial refresh.
-	c.refresh()
+	scheduler.Every(10*time.Second).Do(ctx, c.refresh)
+
+	c.refresh(ctx)
 
 	return nil
 }
 
-func (c *ValidatorWidgetController) refresh() {
+func (c *ValidatorWidgetController) refresh(_ context.Context) {
 	vals, err := c.model.Validators()
 	if err != nil {
 		return
 	}
 
 	gtkutil.IdleAddAsync(func() {
-		c.view.ClearRows()
+		gtkutil.ClearListModel(c.lsValidators)
+
+		// Add new validators to the list
 		for i, val := range vals {
-			stakeStr := amount.Amount(val.GetStake()).String()
-			c.view.AppendRow(
-				[]int{0, 1, 2, 3, 4, 5, 6, 7},
-				[]any{
-					strconv.Itoa(i + 1),
-					val.GetAddress(),
-					strconv.Itoa(int(val.GetNumber())),
-					stakeStr,
-					strconv.Itoa(int(val.GetLastBondingHeight())),
-					strconv.Itoa(int(val.GetLastSortitionHeight())),
-					strconv.Itoa(int(val.GetUnbondingHeight())),
-					gtkutil.AvailabilityScorePercent(val.GetAvailabilityScore()),
-				},
-			)
+			row := validatorRow{
+				no:  i + 1,
+				val: val,
+			}
+
+			c.lsValidators.Append(row)
 		}
 	})
 }

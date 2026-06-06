@@ -5,12 +5,11 @@ package controller
 import (
 	"fmt"
 
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/types/tx/payload"
 )
 
 type TxTransferDialogController struct {
@@ -35,31 +34,32 @@ func setHintLabel(lbl *gtk.Label, hint string) {
 }
 
 func (c *TxTransferDialogController) Run() {
-	// Defaults
-	if info, err := c.model.WalletInfo(); err == nil {
-		c.view.FeeEntry.SetText(fmt.Sprintf("%g", info.DefaultFee.ToPAC()))
-	}
+	c.applyDefaults()
+	c.populateCombos()
 
-	// Fill sender accounts
-	for _, ai := range c.model.ListAccountAddresses() {
-		c.view.SenderCombo.Append(ai.Address, ai.Address)
-	}
-	c.view.SenderCombo.SetActive(0)
+	gtkutil.DropDownOnChanged(c.view.SenderDrop, c.onSenderChanged)
+	gtkutil.EntryOnChanged(c.view.ReceiverEntry, c.onReceiverChanged)
+	gtkutil.EntryOnChanged(c.view.FeeEntry, c.onFeeChanged)
 
-	c.view.ConnectSignals(map[string]any{
-		"on_sender_changed":   c.onSenderChanged,
-		"on_receiver_changed": c.onReceiverChanged,
-		"on_fee_changed":      c.onFeeChanged,
-		"on_send":             c.onSend,
-		"on_cancel":           c.onCancel,
-	})
+	gtkutil.ConnectButtonSignal(c.view.ButtonSend, c.onSend)
+	gtkutil.ConnectButtonSignal(c.view.ButtonCancel, c.onCancel)
 
+	c.view.SenderDrop.SetSelected(0)
 	c.onSenderChanged()
-	gtkutil.RunDialog(c.view.Dialog)
+
+	gtkutil.ShowNonModalWindow(c.view.Window)
+}
+
+func (c *TxTransferDialogController) applyDefaults() {
+	setDefaultFee(c.model, c.view.FeeEntry)
+}
+
+func (c *TxTransferDialogController) populateCombos() {
+	gtkutil.DropDownFromAddressList(c.view.SenderDrop, c.model.ListAccountAddresses())
 }
 
 func (c *TxTransferDialogController) onSenderChanged() {
-	sender := c.view.SenderCombo.GetActiveID()
+	sender := gtkutil.DropDownGetSelectedText(c.view.SenderDrop)
 	if info := c.model.AddressInfo(sender); info != nil && info.Label != "" {
 		setHintLabel(c.view.SenderHint, fmt.Sprintf("label: %s", info.Label))
 	} else {
@@ -75,7 +75,7 @@ func (c *TxTransferDialogController) onSenderChanged() {
 }
 
 func (c *TxTransferDialogController) onReceiverChanged() {
-	receiver := gtkutil.GetEntryText(c.view.ReceiverEntry)
+	receiver := gtkutil.EntryGetText(c.view.ReceiverEntry)
 	if info := c.model.AddressInfo(receiver); info != nil && info.Label != "" {
 		setHintLabel(c.view.ReceiverHint, fmt.Sprintf("label: %s", info.Label))
 	} else {
@@ -84,35 +84,33 @@ func (c *TxTransferDialogController) onReceiverChanged() {
 }
 
 func (c *TxTransferDialogController) onFeeChanged() {
-	// Placeholder (confirmation time estimation)
-	_ = payload.TypeTransfer
 	setHintLabel(c.view.FeeHint, "")
 }
 
 func (c *TxTransferDialogController) onSend() {
-	sender := c.view.SenderCombo.GetActiveID()
-	receiver := gtkutil.GetEntryText(c.view.ReceiverEntry)
-	amountStr := gtkutil.GetEntryText(c.view.AmountEntry)
-	feeStr := gtkutil.GetEntryText(c.view.FeeEntry)
-	memo := gtkutil.GetEntryText(c.view.MemoEntry)
+	sender := gtkutil.DropDownGetSelectedText(c.view.SenderDrop)
+	receiver := gtkutil.EntryGetText(c.view.ReceiverEntry)
+	amountStr := gtkutil.EntryGetText(c.view.AmountEntry)
+	feeStr := gtkutil.EntryGetText(c.view.FeeEntry)
+	memo := gtkutil.EntryGetText(c.view.MemoEntry)
 
 	amt, err := amount.FromString(amountStr)
 	if err != nil {
-		gtkutil.ShowError(err)
+		gtkutil.ShowErrorDialog(c.view.Window, err.Error(), nil)
 
 		return
 	}
 
 	fee, err := amount.FromString(feeStr)
 	if err != nil {
-		gtkutil.ShowError(err)
+		gtkutil.ShowErrorDialog(c.view.Window, err.Error(), nil)
 
 		return
 	}
 
 	trx, err := c.model.MakeTransferTx(sender, receiver, amt, fee, memo)
 	if err != nil {
-		gtkutil.ShowError(err)
+		gtkutil.ShowErrorDialog(c.view.Window, err.Error(), nil)
 
 		return
 	}
@@ -132,13 +130,9 @@ You are going to sign and broadcast this transaction.
 <b>⚠️ This action cannot be undone.</b>
 Do you want to continue with this transaction?`, sender, receiver, amt, trx.Fee(), trx.Memo())
 
-	if !confirmAndSend(c.view.Dialog, c.model, msg, trx) {
-		return
-	}
-
-	c.view.Dialog.Close()
+	confirmAndSend(c.view.Window, c.model, msg, trx)
 }
 
 func (c *TxTransferDialogController) onCancel() {
-	c.view.Dialog.Close()
+	c.view.Window.Close()
 }

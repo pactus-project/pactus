@@ -1,11 +1,11 @@
 //go:build gtk
 
+//nolint:staticcheck // Using depreciated widgets
 package controller
 
 import (
 	"fmt"
 
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
@@ -25,42 +25,34 @@ func NewTxBondDialogController(
 	return &TxBondDialogController{view: view, model: model}
 }
 
-func setHint(lbl *gtk.Label, hint string) {
-	if hint == "" {
-		lbl.SetMarkup("")
+func (c *TxBondDialogController) Run() {
+	c.applyDefaults()
+	c.populateCombos()
 
-		return
-	}
-	lbl.SetMarkup(gtkutil.SmallGray(hint))
+	gtkutil.DropDownOnChanged(c.view.SenderDrop, c.onSenderChanged)
+	gtkutil.ComboBoxOnChanged(c.view.ReceiverCombo, c.onReceiverChanged)
+	gtkutil.EntryOnChanged(c.view.FeeEntry, c.onFeeChanged)
+
+	gtkutil.ConnectButtonSignal(c.view.ButtonSend, c.onSend)
+	gtkutil.ConnectButtonSignal(c.view.ButtonCancel, c.onCancel)
+
+	c.view.SenderDrop.SetSelected(0)
+	c.onSenderChanged()
+
+	gtkutil.ShowNonModalWindow(c.view.Window)
 }
 
-func (c *TxBondDialogController) Run() {
-	if info, err := c.model.WalletInfo(); err == nil {
-		c.view.FeeEntry.SetText(fmt.Sprintf("%g", info.DefaultFee.ToPAC()))
-	}
+func (c *TxBondDialogController) applyDefaults() {
+	setDefaultFee(c.model, c.view.FeeEntry)
+}
 
-	for _, ai := range c.model.ListAccountAddresses() {
-		c.view.SenderCombo.Append(ai.Address, ai.Address)
-	}
-	for _, vi := range c.model.ListValidatorAddresses() {
-		c.view.ReceiverCombo.Append(vi.Address, vi.Address)
-	}
-	c.view.SenderCombo.SetActive(0)
-
-	c.view.ConnectSignals(map[string]any{
-		"on_sender_changed":   c.onSenderChanged,
-		"on_receiver_changed": c.onReceiverChanged,
-		"on_fee_changed":      c.onFeeChanged,
-		"on_send":             c.onSend,
-		"on_cancel":           c.onCancel,
-	})
-
-	c.onSenderChanged()
-	gtkutil.RunDialog(c.view.Dialog)
+func (c *TxBondDialogController) populateCombos() {
+	gtkutil.DropDownFromAddressList(c.view.SenderDrop, c.model.ListAccountAddresses())
+	gtkutil.ComboBoxFromAddressList(c.view.ReceiverCombo, c.model.ListValidatorAddresses())
 }
 
 func (c *TxBondDialogController) onSenderChanged() {
-	sender := c.view.SenderCombo.GetActiveID()
+	sender := gtkutil.DropDownGetSelectedText(c.view.SenderDrop)
 	if info := c.model.AddressInfo(sender); info != nil && info.Label != "" {
 		setHint(c.view.SenderHint, fmt.Sprintf("label: %s", info.Label))
 	} else {
@@ -76,11 +68,10 @@ func (c *TxBondDialogController) onSenderChanged() {
 }
 
 func (c *TxBondDialogController) onReceiverChanged() {
-	receiverEntry, _ := c.view.ReceiverCombo.GetEntry()
-	receiver := gtkutil.GetEntryText(receiverEntry)
-
-	stake, err := c.model.Stake(receiver)
 	hint := ""
+
+	receiver := c.view.ReceiverCombo.ActiveText()
+	stake, err := c.model.Stake(receiver)
 	if err == nil {
 		hint = fmt.Sprintf("stake: %s", stake)
 	}
@@ -99,31 +90,30 @@ func (c *TxBondDialogController) onFeeChanged() {
 }
 
 func (c *TxBondDialogController) onSend() {
-	sender := c.view.SenderCombo.GetActiveID()
-	receiverEntry, _ := c.view.ReceiverCombo.GetEntry()
-	receiver := gtkutil.GetEntryText(receiverEntry)
-	publicKey := gtkutil.GetEntryText(c.view.PublicKeyEntry)
-	amountStr := gtkutil.GetEntryText(c.view.AmountEntry)
-	feeStr := gtkutil.GetEntryText(c.view.FeeEntry)
-	memo := gtkutil.GetEntryText(c.view.MemoEntry)
+	sender := gtkutil.DropDownGetSelectedText(c.view.SenderDrop)
+	receiver := gtkutil.ComboBoxGetSelectedText(c.view.ReceiverCombo)
+	publicKey := gtkutil.EntryGetText(c.view.PublicKeyEntry)
+	amountStr := gtkutil.EntryGetText(c.view.AmountEntry)
+	feeStr := gtkutil.EntryGetText(c.view.FeeEntry)
+	memo := gtkutil.EntryGetText(c.view.MemoEntry)
 
 	amt, err := amount.FromString(amountStr)
 	if err != nil {
-		gtkutil.ShowError(err)
+		gtkutil.ShowErrorDialog(c.view.Window, err.Error(), nil)
 
 		return
 	}
 
 	fee, err := amount.FromString(feeStr)
 	if err != nil {
-		gtkutil.ShowError(err)
+		gtkutil.ShowErrorDialog(c.view.Window, err.Error(), nil)
 
 		return
 	}
 
 	trx, err := c.model.MakeBondTx(sender, receiver, publicKey, amt, fee, memo)
 	if err != nil {
-		gtkutil.ShowError(err)
+		gtkutil.ShowErrorDialog(c.view.Window, err.Error(), nil)
 
 		return
 	}
@@ -143,13 +133,9 @@ You are going to sign and broadcast this transaction.
 <b>⚠️ This action cannot be undone.</b>
 Do you want to continue with this transaction?`, sender, receiver, amt, trx.Fee(), trx.Memo())
 
-	if !confirmAndSend(c.view.Dialog, c.model, msg, trx) {
-		return
-	}
-
-	c.view.Dialog.Close()
+	confirmAndSend(c.view.Window, c.model, msg, trx)
 }
 
 func (c *TxBondDialogController) onCancel() {
-	c.view.Dialog.Close()
+	c.view.Window.Close()
 }

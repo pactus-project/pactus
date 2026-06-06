@@ -6,8 +6,6 @@ import (
 	_ "embed"
 )
 
-// Main window / widgets UI and CSS.
-
 //go:embed ui/main_window.ui
 var MainWindowUI []byte
 

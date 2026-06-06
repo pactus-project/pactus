@@ -5,7 +5,7 @@ package app
 import (
 	"context"
 
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/cmd/gtk/controller"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
@@ -74,12 +74,6 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 		return nil, err
 	}
 
-	notify("Fetching Wallet info...")
-	err = walletCtrl.BuildView(ctx, nav)
-	if err != nil {
-		return nil, err
-	}
-
 	notify("Fetching Committee info...")
 	err = committeeCtrl.BuildView(ctx)
 	if err != nil {
@@ -92,20 +86,33 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 		return nil, err
 	}
 
+	notify("Fetching Wallet info...")
+	err = walletCtrl.BuildView(ctx, nav)
+	if err != nil {
+		return nil, err
+	}
+
 	mwView := gtkutil.IdleAddSyncT(func() *view.MainWindowView {
 		mwView := view.NewMainWindowView()
 
-		mwView.BoxNode.Add(nodeView.Box)
-		mwView.BoxDefaultWallet.Add(walletView.Box)
-		mwView.BoxValidators.Add(validatorView.Box)
-		mwView.BoxCommittee.Add(committeeView.Box)
-		mwView.BoxNetwork.Add(networkView.Box)
+		walletCtrl.SetupMenu(mwView.Window)
 
+		menu := nav.CreateMenu(isLocal)
+		gtkApp.SetMenubar(menu)
+		mwView.Window.SetShowMenubar(true)
+
+		mwView.BoxNode.Append(nodeView.Box)
+		mwView.BoxWallet.Append(walletView.Box)
+		mwView.BoxValidators.Append(validatorView.Box)
+		mwView.BoxCommittee.Append(committeeView.Box)
+		mwView.BoxNetwork.Append(networkView.Box)
+
+		// Build controller
 		mwCtrl := controller.NewMainWindowController(mwView)
-		mwCtrl.BuildView(nav, isLocal)
+		mwCtrl.BuildView()
 
-		mwView.Window.ShowAll()
-		gtkApp.AddWindow(mwView.Window)
+		gtkApp.AddWindow(&mwView.Window.Window)
+		mwView.Window.Present()
 
 		return mwView
 	})

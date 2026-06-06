@@ -17,26 +17,29 @@ func NewWalletPasswordDialogController(
 	return &WalletPasswordDialogController{view: view}
 }
 
-func (c *WalletPasswordDialogController) Run() (string, bool) {
+func (c *WalletPasswordDialogController) Show(onPassword func(string, bool)) {
 	password := ""
 	ok := false
 
 	onOk := func() {
-		password = gtkutil.GetEntryText(c.view.PasswordEntry)
+		password = gtkutil.EntryGetText(c.view.PasswordEntry)
 		ok = true
-		c.view.Dialog.Close()
+
+		c.view.Window.Close()
 	}
-	andClose := func() {
-		c.view.Dialog.Close()
+	onCancel := func() {
+		c.view.Window.Close()
 	}
 
-	c.view.ConnectSignals(map[string]any{
-		"on_ok":     onOk,
-		"on_cancel": andClose,
+	// Window close button (X)
+	c.view.Window.Connect("close-request", func() bool {
+		onPassword(password, ok)
+
+		return false
 	})
 
-	c.view.Dialog.SetModal(true)
-	gtkutil.RunDialog(c.view.Dialog)
+	gtkutil.ConnectButtonSignal(c.view.ButtonOK, onOk)
+	gtkutil.ConnectButtonSignal(c.view.ButtonCancel, onCancel)
 
-	return password, ok
+	gtkutil.ShowModalWindow(c.view.Window)
 }

@@ -34,7 +34,7 @@
          not needed. If the source path is left out, the default
          script will be used.
     -->
-    <launcher-script>${project}/gtk3-launcher.sh</launcher-script >
+    <launcher-script>${project}/gtk4-launcher.sh</launcher-script >
 
     <!-- Not implemented: Optional runtime, could be python or mono
          for example.
@@ -60,38 +60,10 @@
     ${prefix}/lib/${gtkdir}/${pkg:${gtk}:gtk_binary_version}/immodules/*.so
   </binary>
 
-<!-- And the print backends -->
-    <!-- <binary>
-      ${prefix}/lib/${gtkdir}/${pkg:${gtk}:gtk_binary_version}/printbackends/*.so
-    </binary> -->
-
-<!-- Starting with 2.24, gdk-pixbuf installs into its own directory. -->
-  <binary>
-    ${prefix}/lib/gdk-pixbuf-2.0/${pkg:gdk-pixbuf-2.0:gdk_pixbuf_binary_version}/loaders/*.so
-  </binary>
 
   <binary>
     ${prefix}/lib/gio/modules/libgiognutls.so
   </binary>
-
-  <!-- Translation filenames, one for each program or library that you
-       want to copy in to the bundle. The "dest" attribute is
-       optional, as usual. Bundler will find all translations of that
-       library/program under the indicated directory and copy them.-->
-  <!-- <translations name="gtk30">
-    ${prefix}/share/locale
-  </translations> -->
-
-
-  <!-- Data to copy in, usually Glade/UI files, images, sounds files
-       etc. The destination inside the bundle can be specified if the
-       files should end up at a different location, by using the
-       "dest" property. The destination must then start with the macro
-       "${bundle}", which refers to the bundle root directory.
-  -->
-  <!-- data>
-    ${prefix}/share/gtk3-demo
-  </data -->
 
   <!-- Copy in the themes data. You may want to trim this to save space
        in your bundle. -->

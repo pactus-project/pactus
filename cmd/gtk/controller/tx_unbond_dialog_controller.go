@@ -8,7 +8,6 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
-	"github.com/pactus-project/pactus/crypto"
 )
 
 type TxUnbondDialogController struct {
@@ -24,26 +23,30 @@ func NewTxUnbondDialogController(
 }
 
 func (c *TxUnbondDialogController) Run() {
-	for _, ai := range c.model.ListAddresses(crypto.AddressTypeValidator) {
-		c.view.ValidatorCombo.Append(ai.Address, ai.Address)
-	}
+	c.applyDefaults()
+	c.populateCombos()
 
-	c.view.ConnectSignals(map[string]any{
-		"on_validator_changed": c.onValidatorChanged,
-		"on_send":              c.onSend,
-		"on_cancel":            c.onCancel,
-	})
+	gtkutil.DropDownOnChanged(c.view.ValidatorDrop, c.onValidatorChanged)
+	gtkutil.ConnectButtonSignal(c.view.ButtonSend, c.onSend)
+	gtkutil.ConnectButtonSignal(c.view.ButtonCancel, c.onCancel)
 
+	c.view.ValidatorDrop.SetSelected(0)
 	c.onValidatorChanged()
-	gtkutil.RunDialog(c.view.Dialog)
+
+	gtkutil.ShowNonModalWindow(c.view.Window)
+}
+
+func (*TxUnbondDialogController) applyDefaults() {
+}
+
+func (c *TxUnbondDialogController) populateCombos() {
+	gtkutil.DropDownFromAddressList(c.view.ValidatorDrop, c.model.ListValidatorAddresses())
 }
 
 func (c *TxUnbondDialogController) onValidatorChanged() {
-	receiverEntry, _ := c.view.ValidatorCombo.GetEntry()
-	validator := gtkutil.GetEntryText(receiverEntry)
-
-	stake, err := c.model.Stake(validator)
 	hint := ""
+	validator := gtkutil.DropDownGetSelectedText(c.view.ValidatorDrop)
+	stake, err := c.model.Stake(validator)
 	if err == nil {
 		hint = fmt.Sprintf("stake: %s", stake)
 	}
@@ -61,13 +64,12 @@ func (c *TxUnbondDialogController) onValidatorChanged() {
 }
 
 func (c *TxUnbondDialogController) onSend() {
-	validatorEntry, _ := c.view.ValidatorCombo.GetEntry()
-	validatorAddr := gtkutil.GetEntryText(validatorEntry)
-	memo := gtkutil.GetEntryText(c.view.MemoEntry)
+	validator := gtkutil.DropDownGetSelectedText(c.view.ValidatorDrop)
+	memo := gtkutil.EntryGetText(c.view.MemoEntry)
 
-	trx, err := c.model.MakeUnbondTx(validatorAddr, memo)
+	trx, err := c.model.MakeUnbondTx(validator, memo)
 	if err != nil {
-		gtkutil.ShowError(err)
+		gtkutil.ShowErrorDialog(c.view.Window, err.Error(), nil)
 
 		return
 	}
@@ -83,15 +85,11 @@ Memo:      %s
 
 You are going to sign and broadcast this transaction.
 <b>⚠️ This action cannot be undone.</b>
-Do you want to continue with this transaction?`, validatorAddr, trx.Fee(), trx.Memo())
+Do you want to continue with this transaction?`, validator, trx.Fee(), trx.Memo())
 
-	if !confirmAndSend(c.view.Dialog, c.model, msg, trx) {
-		return
-	}
-
-	c.view.Dialog.Close()
+	confirmAndSend(c.view.Window, c.model, msg, trx)
 }
 
 func (c *TxUnbondDialogController) onCancel() {
-	c.view.Dialog.Close()
+	c.view.Window.Close()
 }

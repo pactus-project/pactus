@@ -3,7 +3,7 @@
 package view
 
 import (
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd/gtk/assets"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 )
@@ -11,10 +11,9 @@ import (
 type WalletSeedDialogView struct {
 	ViewBuilder
 
-	Dialog *gtk.Dialog
+	Window *gtk.Window
 
 	TextView    *gtk.TextView
-	Image       *gtk.Image
 	ButtonClose *gtk.Button
 }
 
@@ -23,15 +22,15 @@ func NewWalletSeedDialogView() *WalletSeedDialogView {
 
 	view := &WalletSeedDialogView{
 		ViewBuilder: builder,
-		Dialog:      builder.GetDialogObj("id_dialog_wallet_show_seed"),
+		Window:      builder.GetWindowObj("id_dialog_wallet_show_seed"),
 
 		TextView:    builder.GetTextViewObj("id_textview_seed"),
-		Image:       builder.GetImageObj("id_image_seed"),
 		ButtonClose: builder.GetButtonObj("id_button_close"),
 	}
 
-	view.Image.SetFromPixbuf(assets.ImageSeedPixbuf)
-	view.ButtonClose.SetImage(gtkutil.ImageFromPixbuf(assets.IconClosePixbuf16))
+	gtkutil.UpdateCloseButton(view.ButtonClose)
+
+	gtkutil.DialogSetup(view.Window)
 
 	return view
 }
