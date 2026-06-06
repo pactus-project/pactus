@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package controller
 
@@ -21,20 +21,25 @@ func NewWalletSeedDialogController(
 }
 
 func (c *WalletSeedDialogController) Run() {
-	password, ok := PasswordProvider(c.model)
-	if !ok {
-		return
-	}
-	seed, err := c.model.Mnemonic(password)
-	if err != nil {
-		gtkutil.ShowError(err)
+	PasswordProvider(c.model, func(password string, ok bool) {
+		if !ok {
+			return
+		}
 
-		return
-	}
-	gtkutil.SetTextViewContent(c.view.TextView, seed)
-	c.view.ConnectSignals(map[string]any{
-		"on_close": func() { c.view.Window.Close() },
+		seed, err := c.model.Mnemonic(password)
+		if err != nil {
+			gtkutil.ShowErrorDialog(c.view.Window, err.Error(), nil)
+
+			return
+		}
+		gtkutil.SetTextViewContent(c.view.TextView, seed)
+
+		onClose := func() {
+			c.view.Window.Close()
+		}
+
+		gtkutil.ConnectButtonSignal(c.view.ButtonClose, onClose)
+
+		gtkutil.ShowModalWindow(c.view.Window)
 	})
-
-	gtkutil.ShowModalDialog(c.view.Window)
 }

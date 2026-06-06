@@ -1,30 +1,24 @@
-//go111:build gtk
+//go:build gtk
 
 package assets
 
 import (
 	_ "embed"
 
-	"github.com/diamondburned/gotk4/pkg/gtk/v4"
-	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
+	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 )
 
 var (
 	//go:embed images/pactus.png
-	imagePactusLogoData []byte
-	ImagePactusLogo     *gtk.Image
+	imagePactusLogoData    []byte
+	ImagePactusLogoTexture *gdk.Texture
 
 	//go:embed images/gtk.png
-	imageGTKLogoData []byte
-	ImageGTKLogo     *gtk.Image
-
-	//go:embed images/seed.svg
-	imageSeedData    []byte
-	ImageSeedTexture *gtk.Image
+	imageGTKLogoData    []byte
+	ImageGTKLogoTexture *gdk.Texture
 )
 
 func initImages() {
-	ImagePactusLogo = gtkutil.ImageFromBytes(imagePactusLogoData)
-	ImageGTKLogo = gtkutil.ImageFromBytes(imageGTKLogoData)
-	ImageSeedTexture = gtkutil.ImageFromBytes(imageSeedData)
+	ImagePactusLogoTexture = TextureFromBytes(imagePactusLogoData)
+	ImageGTKLogoTexture = TextureFromBytes(imageGTKLogoData)
 }

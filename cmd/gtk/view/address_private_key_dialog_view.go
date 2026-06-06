@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package view
 
@@ -22,15 +22,16 @@ func NewAddressPrivateKeyDialogView() *AddressPrivateKeyDialogView {
 	builder := NewViewBuilder(assets.AddressPrivateKeyDialogUI)
 
 	view := &AddressPrivateKeyDialogView{
-		ViewBuilder: builder,
-		Window:      builder.GetWindowObj("id_dialog_address_private_key"),
-
-		AddressEntry: builder.BuildExtendedEntry("id_entry_address"),
-		PrvKeyEntry:  builder.BuildExtendedEntry("id_entry_private_key"),
+		ViewBuilder:  builder,
+		Window:       builder.GetWindowObj("id_dialog_address_private_key"),
+		AddressEntry: builder.BuildExtendedEntry("id_overlay_address"),
+		PrvKeyEntry:  builder.BuildExtendedEntry("id_overlay_private_key"),
 		ButtonClose:  builder.GetButtonObj("id_button_close"),
 	}
 
-	gtkutil.AddImageToButton(view.ButtonClose, assets.IconClose16)
+	gtkutil.UpdateCloseButton(view.ButtonClose)
+
+	gtkutil.DialogSetup(view.Window)
 
 	return view
 }

@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package controller
 
@@ -17,25 +17,29 @@ func NewWalletPasswordDialogController(
 	return &WalletPasswordDialogController{view: view}
 }
 
-func (c *WalletPasswordDialogController) Run() (string, bool) {
+func (c *WalletPasswordDialogController) Show(onPassword func(string, bool)) {
 	password := ""
 	ok := false
 
 	onOk := func() {
-		password = gtkutil.GetEntryText(c.view.PasswordEntry)
+		password = gtkutil.EntryGetText(c.view.PasswordEntry)
 		ok = true
+
 		c.view.Window.Close()
 	}
-	andClose := func() {
+	onCancel := func() {
 		c.view.Window.Close()
 	}
 
-	c.view.ConnectSignals(map[string]any{
-		"on_ok":     onOk,
-		"on_cancel": andClose,
+	// Window close button (X)
+	c.view.Window.Connect("close-request", func() bool {
+		onPassword(password, ok)
+
+		return false
 	})
 
-	gtkutil.ShowModalDialog(c.view.Window)
+	gtkutil.ConnectButtonSignal(c.view.ButtonOK, onOk)
+	gtkutil.ConnectButtonSignal(c.view.ButtonCancel, onCancel)
 
-	return password, ok
+	gtkutil.ShowModalWindow(c.view.Window)
 }

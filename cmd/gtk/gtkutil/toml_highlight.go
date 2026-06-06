@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package gtkutil
 

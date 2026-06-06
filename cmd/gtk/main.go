@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package main
 
@@ -6,12 +6,14 @@ import (
 	"context"
 	"crypto/tls"
 	"flag"
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
 	"sync"
 	"time"
 
+	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/ezex-io/gopkg/signal"
@@ -73,6 +75,13 @@ func main() {
 	settings := gtk.SettingsGetDefault()
 	settings.Object.SetObjectProperty("gtk-application-prefer-dark-theme", true)
 
+	// apply custom css
+	provider := gtk.NewCSSProvider()
+	provider.LoadFromString(assets.MainWindowCSS)
+	display := gdk.DisplayGetDefault()
+
+	gtk.StyleContextAddProviderForDisplay(display, provider, gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
 	assets.InitAssets()
 
 	workingDir, err := filepath.Abs(*workingDirOpt)
@@ -85,7 +94,6 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	var fileLock *flock.Flock
-	//nolint:nestif // complexity acceptable here
 	if *grpcAddrOpt == "" {
 		// If node is not initialized yet
 		if util.IsDirNotExistsOrEmpty(workingDir) {
@@ -96,19 +104,6 @@ func main() {
 			if !startupAssistant(ctx, workingDir, network) {
 				return
 			}
-		}
-
-		// Define the lock file path
-		lockFilePath := filepath.Join(workingDir, ".pactus.lock")
-		fileLock = flock.New(lockFilePath)
-
-		locked, err := fileLock.TryLock()
-		gtkutil.FatalErrorCheck(err)
-
-		if !locked {
-			gtkutil.Logf("Could not lock '%s', another instance is running?", lockFilePath)
-
-			return
 		}
 	}
 	var guiNode *node.Node
@@ -159,29 +154,61 @@ func main() {
 			gtk.WindowSetAutoStartupNotification(true)
 			app.AddWindow(splash.Window())
 
-			notify := func(msg string, fraction int) {
-				gtkutil.Logf("Splash msg: %s (%d)", msg, fraction)
+			notify := func(msg string) {
+				gtkutil.Logf("Splash msg: %s", msg)
 
 				gtkutil.IdleAddAsync(func() {
-					splash.UpdateStatus(msg, fraction)
+					splash.UpdateStatus(msg)
 				})
 			}
 
 			go func() {
+				// Define the lock file path
+				lockFilePath := filepath.Join(workingDir, ".pactus.lock")
+				fileLock = flock.New(lockFilePath)
+
+				locked, err := fileLock.TryLock()
+				if err != nil {
+					gtkutil.ShowErrorDialog(splash.Window(),
+						fmt.Sprintf("Aborted! Unable to acquire file lock. %v", err),
+						func(_ gtk.ResponseType) {
+							splash.Destroy()
+						})
+
+					return
+				}
+
+				if !locked {
+					gtkutil.ShowErrorDialog(splash.Window(),
+						fmt.Sprintf("Could not lock '%s', another instance is running?", lockFilePath),
+						func(_ gtk.ResponseType) {
+							splash.Destroy()
+						})
+
+					return
+				}
+
 				var grpcAddr string
 				var grpcInsecure bool
 
 				if *grpcAddrOpt == "" {
-					reportStatus(notify, "Starting local node...", -1)
+					reportStatus(notify, "Starting local node...")
 					time.Sleep(1 * time.Second)
 
 					guiNode, err = newNode(ctx, workingDir, notify)
-					gtkutil.FatalErrorCheck(err)
+					if err != nil {
+						gtkutil.ShowWarningDialog(splash.Window(), err.Error(),
+							func(_ gtk.ResponseType) {
+								splash.Destroy()
+							})
+
+						return
+					}
 
 					grpcAddr = guiNode.GRPC().Address()
 					grpcInsecure = true
 				} else {
-					reportStatus(notify, "Connecting to remote node...", -1)
+					reportStatus(notify, "Connecting to remote node...")
 					time.Sleep(1 * time.Second)
 
 					grpcAddr = *grpcAddrOpt
@@ -189,7 +216,14 @@ func main() {
 				}
 
 				grpcConn, err = newRemoteGRPCConn(grpcAddr, grpcInsecure)
-				gtkutil.FatalErrorCheck(err)
+				if err != nil {
+					gtkutil.ShowErrorDialog(splash.Window(), err.Error(),
+						func(_ gtk.ResponseType) {
+							splash.Destroy()
+						})
+
+					return
+				}
 
 				var connectionLabel, connectionValue string
 				var isLocal bool
@@ -204,7 +238,13 @@ func main() {
 				}
 				gui, err = gtkapp.Run(ctx, grpcConn, app, notify,
 					connectionLabel, connectionValue, workingDir, isLocal)
-				gtkutil.FatalErrorCheck(err)
+				if err != nil {
+					gtkutil.ShowErrorDialog(splash.Window(), err.Error(), func(_ gtk.ResponseType) {
+						splash.Destroy()
+					})
+
+					return
+				}
 
 				gtkutil.IdleAddSync(func() {
 					splash.Destroy()
@@ -224,11 +264,11 @@ func main() {
 	os.Exit(app.Run(nil))
 }
 
-type statusReporter func(string, int)
+type statusReporter func(string)
 
-func reportStatus(cb statusReporter, msg string, fraction int) {
+func reportStatus(cb statusReporter, msg string) {
 	if cb != nil {
-		cb(msg, fraction)
+		cb(msg)
 	}
 }
 
@@ -280,7 +320,7 @@ func newNode(ctx context.Context, workingDir string, statusCb statusReporter) (*
 		return nil, err
 	}
 
-	reportStatus(statusCb, "Opening wallet...", -1)
+	reportStatus(statusCb, "Opening wallet...")
 	passwordFetcher := func() (string, bool) {
 		gtkutil.Logf("Fetching wallet password")
 
@@ -288,7 +328,22 @@ func newNode(ctx context.Context, workingDir string, statusCb statusReporter) (*
 			return *passwordOpt, true
 		}
 
-		return gtkutil.IdleAddSyncTT(controller.PromptWalletPassword)
+		password := ""
+		ok := false
+		resultChan := make(chan bool)
+
+		gtkutil.IdleAddSync(func() {
+			controller.PromptWalletPassword(func(_password string, _ok bool) {
+				password = _password
+				ok = _ok
+
+				resultChan <- true
+			})
+		})
+
+		<-resultChan
+
+		return password, ok
 	}
 
 	configModifier := func(cfg *config.Config) *config.Config {
@@ -301,7 +356,7 @@ func newNode(ctx context.Context, workingDir string, statusCb statusReporter) (*
 		return cfg
 	}
 
-	reportStatus(statusCb, "Starting node services...", -1)
+	reportStatus(statusCb, "Starting node services...")
 	n, err := cmd.StartNode(ctx, workingDir, passwordFetcher, configModifier)
 	if err != nil {
 		return nil, err

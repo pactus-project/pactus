@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package controller
 
@@ -10,26 +10,68 @@ import (
 	"strings"
 	"time"
 
+	"github.com/diamondburned/gotk4/pkg/core/gioutil"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/ezex-io/gopkg/scheduler"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/protocol"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
+
+// committeeRow represents a validator in the committee list.
+type committeeRow struct {
+	no        int
+	validator *pactus.ValidatorInfo
+}
 
 type CommitteeWidgetController struct {
 	view  *view.CommitteeWidgetView
 	model *model.CommitteeModel
+
+	lsMembers *gioutil.ListModel[committeeRow]
 }
 
 func NewCommitteeWidgetController(
 	view *view.CommitteeWidgetView, model *model.CommitteeModel,
 ) *CommitteeWidgetController {
-	return &CommitteeWidgetController{view: view, model: model}
+	lsMembers := gioutil.NewListModel[committeeRow]()
+	view.ColViewMembers.SetModel(gtk.NewSingleSelection(lsMembers))
+
+	return &CommitteeWidgetController{
+		view:      view,
+		model:     model,
+		lsMembers: lsMembers,
+	}
 }
 
 func (c *CommitteeWidgetController) BuildView(ctx context.Context) error {
+	gtkutil.IdleAddSync(func() {
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewMembers, "No", func(row committeeRow) string {
+			return strconv.Itoa(row.no)
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewMembers, "Address", func(row committeeRow) string {
+			return row.validator.GetAddress()
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewMembers, "Stake", func(row committeeRow) string {
+			return amount.Amount(row.validator.GetStake()).String()
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewMembers, "Bonding Height", func(row committeeRow) string {
+			return strconv.Itoa(int(row.validator.GetLastBondingHeight()))
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewMembers, "Sortition Height", func(row committeeRow) string {
+			return strconv.Itoa(int(row.validator.GetLastSortitionHeight()))
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewMembers, "Protocol Version", func(row committeeRow) string {
+			return strconv.Itoa(int(row.validator.GetProtocolVersion()))
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewMembers, "Availability Score", func(row committeeRow) string {
+			return gtkutil.AvailabilityScorePercent(row.validator.GetAvailabilityScore())
+		})
+	})
+
 	scheduler.Every(10*time.Second).Do(ctx, c.refresh)
 
 	c.refresh(ctx)
@@ -69,23 +111,15 @@ func (c *CommitteeWidgetController) refresh(_ context.Context) {
 		c.view.LabelTotalPower.SetText(totalPowerStr)
 		c.view.LabelProtocolVersions.SetText(protocolStr)
 
-		// for i, val := range res.Validators {
+		gtkutil.ClearListModel(c.lsMembers)
 
-		// 	stakeStr := amount.Amount(val.GetStake()).String()
+		for i, val := range res.Validators {
+			row := committeeRow{
+				no:        i + 1,
+				validator: val,
+			}
 
-		// 	c.view.AppendRow(
-		// 		[]int{0, 1, 2, 3, 4, 5, 6, 7},
-		// 		[]any{
-		// 			strconv.Itoa(i + 1),
-		// 			val.GetAddress(),
-		// 			strconv.Itoa(int(val.GetNumber())),
-		// 			stakeStr,
-		// 			strconv.Itoa(int(val.GetLastBondingHeight())),
-		// 			strconv.Itoa(int(val.GetLastSortitionHeight())),
-		// 			strconv.Itoa(int(val.GetProtocolVersion())),
-		// 			gtkutil.AvailabilityScorePercent(val.GetAvailabilityScore()),
-		// 		},
-		// 	)
-		// }
+			c.lsMembers.Append(row)
+		}
 	})
 }

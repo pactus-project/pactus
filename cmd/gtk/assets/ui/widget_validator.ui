@@ -2,22 +2,15 @@
 <!-- Created with Cambalache 1.0.2 -->
 <interface>
   <!-- interface-name widget_validator.ui -->
-  <requires lib="gtk+" version="4.14"/>
-  <requires lib="gtk" version="4.18"/>
+  <requires lib="gtk" version="4.14" />
   <object class="GtkBox" id="id_box_validator">
-    <property name="can-focus">False</property>
-    <property name="orientation">vertical</property>
-    <property name="visible">True</property>
     <child>
       <object class="GtkScrolledWindow">
-        <property name="can-focus">True</property>
         <property name="hexpand">True</property>
         <property name="vexpand">True</property>
-        <property name="visible">True</property>
         <child>
           <object class="GtkColumnView" id="id_columnview_validators">
-            <property name="can-focus">True</property>
-            <property name="visible">True</property>
+            <property name="vexpand">True</property>
           </object>
         </child>
       </object>

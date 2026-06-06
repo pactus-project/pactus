@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package view
 
@@ -13,7 +13,7 @@ type TxTransferDialogView struct {
 
 	Window *gtk.Window
 
-	SenderCombo   *gtk.ComboBoxText
+	SenderDrop    *gtk.DropDown
 	SenderHint    *gtk.Label
 	ReceiverEntry *gtk.Entry
 	ReceiverHint  *gtk.Label
@@ -34,7 +34,7 @@ func NewTxTransferDialogView() *TxTransferDialogView {
 		ViewBuilder: builder,
 		Window:      builder.GetWindowObj("id_dialog_transaction_transfer"),
 
-		SenderCombo:   builder.GetComboBoxTextObj("id_combo_sender"),
+		SenderDrop:    builder.GetDropDownObj("id_drop_sender"),
 		SenderHint:    builder.GetLabelObj("id_hint_sender"),
 		ReceiverEntry: builder.GetEntryObj("id_entry_receiver"),
 		ReceiverHint:  builder.GetLabelObj("id_hint_receiver"),
@@ -48,8 +48,10 @@ func NewTxTransferDialogView() *TxTransferDialogView {
 		ButtonSend:   builder.GetButtonObj("id_button_send"),
 	}
 
-	gtkutil.AddImageToButton(view.ButtonCancel, assets.IconCancel16)
-	gtkutil.AddImageToButton(view.ButtonSend, assets.IconSend16)
+	gtkutil.UpdateCancelButton(view.ButtonCancel)
+	gtkutil.UpdateSendButton(view.ButtonSend)
+
+	gtkutil.DialogSetup(view.Window)
 
 	return view
 }

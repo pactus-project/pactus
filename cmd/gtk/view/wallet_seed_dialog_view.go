@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package view
 
@@ -14,7 +14,6 @@ type WalletSeedDialogView struct {
 	Window *gtk.Window
 
 	TextView    *gtk.TextView
-	Image       *gtk.Image
 	ButtonClose *gtk.Button
 }
 
@@ -26,12 +25,12 @@ func NewWalletSeedDialogView() *WalletSeedDialogView {
 		Window:      builder.GetWindowObj("id_dialog_wallet_show_seed"),
 
 		TextView:    builder.GetTextViewObj("id_textview_seed"),
-		Image:       builder.GetImageObj("id_image_seed"),
 		ButtonClose: builder.GetButtonObj("id_button_close"),
 	}
 
-	view.Image.SetFromPaintable(assets.ImageSeedTexture.Paintable())
-	gtkutil.AddImageToButton(view.ButtonClose, assets.IconClose16)
+	gtkutil.UpdateCloseButton(view.ButtonClose)
+
+	gtkutil.DialogSetup(view.Window)
 
 	return view
 }

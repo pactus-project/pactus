@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package model
 
@@ -24,18 +24,6 @@ type WalletModel struct {
 	transactionClient pactus.TransactionClient
 	blockchainClient  pactus.BlockchainClient
 	walletName        string
-}
-
-// AddressRow is a UI-friendly but UI-agnostic representation of an address entry.
-// Formatting (strings/markup) should be done by presenters/controllers, not here.
-type AddressRow struct {
-	No       int
-	Address  string
-	Label    string
-	Path     string
-	Imported bool
-	Balance  amount.Amount
-	Stake    amount.Amount
 }
 
 func NewWalletModel(
@@ -294,31 +282,16 @@ func (model *WalletModel) SetAddressLabel(addr, label string) error {
 	return err
 }
 
-// AddressRows returns typed address rows with domain data only.
-func (model *WalletModel) AddressRows() []AddressRow {
-	rows := make([]AddressRow, 0)
+// Addresses returns a list of addresses in the wallet.
+func (model *WalletModel) Addresses() ([]*pactus.AddressInfo, error) {
 	res, err := model.walletClient.ListAddresses(model.ctx, &pactus.ListAddressesRequest{
 		WalletName: model.walletName,
 	})
 	if err != nil {
-		return rows
-	}
-	for no, info := range res.Addrs {
-		balance, _ := model.Balance(info.Address)
-		stake, _ := model.Stake(info.Address)
-
-		rows = append(rows, AddressRow{
-			No:       no + 1,
-			Address:  info.Address,
-			Label:    info.Label,
-			Path:     info.Path,
-			Imported: info.Path == "",
-			Balance:  balance,
-			Stake:    stake,
-		})
+		return nil, err
 	}
 
-	return rows
+	return res.Addrs, nil
 }
 
 func (model *WalletModel) MakeTransferTx(
@@ -447,15 +420,15 @@ func (model *WalletModel) BroadcastTransaction(trx *tx.Tx) (string, error) {
 	return res.Id, nil
 }
 
-func (model *WalletModel) Transactions(count, skip int) []*pactus.WalletTransactionInfo {
+func (model *WalletModel) Transactions(count, skip int) ([]*pactus.WalletTransactionInfo, error) {
 	res, err := model.walletClient.ListTransactions(model.ctx, &pactus.ListTransactionsRequest{
 		WalletName: model.walletName,
 		Count:      int32(count),
 		Skip:       int32(skip),
 	})
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
-	return res.Txs
+	return res.Txs, nil
 }

@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package view
 
@@ -13,9 +13,9 @@ type TxUnbondDialogView struct {
 
 	Window *gtk.Window
 
-	ValidatorCombo *gtk.ComboBoxText
-	ValidatorHint  *gtk.Label
-	MemoEntry      *gtk.Entry
+	ValidatorDrop *gtk.DropDown
+	ValidatorHint *gtk.Label
+	MemoEntry     *gtk.Entry
 
 	ButtonCancel *gtk.Button
 	ButtonSend   *gtk.Button
@@ -28,16 +28,18 @@ func NewTxUnbondDialogView() *TxUnbondDialogView {
 		ViewBuilder: builder,
 		Window:      builder.GetWindowObj("id_dialog_transaction_unbond"),
 
-		ValidatorCombo: builder.GetComboBoxTextObj("id_combo_validator"),
-		ValidatorHint:  builder.GetLabelObj("id_hint_validator"),
-		MemoEntry:      builder.GetEntryObj("id_entry_memo"),
+		ValidatorDrop: builder.GetDropDownObj("id_drop_validator"),
+		ValidatorHint: builder.GetLabelObj("id_hint_validator"),
+		MemoEntry:     builder.GetEntryObj("id_entry_memo"),
 
 		ButtonCancel: builder.GetButtonObj("id_button_cancel"),
 		ButtonSend:   builder.GetButtonObj("id_button_send"),
 	}
 
-	gtkutil.AddImageToButton(view.ButtonCancel, assets.IconCancel16)
-	gtkutil.AddImageToButton(view.ButtonSend, assets.IconSend16)
+	gtkutil.UpdateCancelButton(view.ButtonCancel)
+	gtkutil.UpdateSendButton(view.ButtonSend)
+
+	gtkutil.DialogSetup(view.Window)
 
 	return view
 }

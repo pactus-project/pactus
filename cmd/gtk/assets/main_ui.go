@@ -1,12 +1,10 @@
-//go111:build gtk
+//go:build gtk
 
 package assets
 
 import (
 	_ "embed"
 )
-
-// Main window / widgets UI and CSS.
 
 //go:embed ui/main_window.ui
 var MainWindowUI []byte

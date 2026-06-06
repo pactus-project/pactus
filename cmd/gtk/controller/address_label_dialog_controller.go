@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package controller
 
@@ -20,27 +20,26 @@ func NewAddressLabelDialogController(
 	return &AddressLabelDialogController{view: view, model: model}
 }
 
-func (c *AddressLabelDialogController) Run(address string) {
+func (c *AddressLabelDialogController) Show(address string, onUpdate func()) {
 	oldLabel := c.model.AddressLabel(address)
 	c.view.LabelEntry.SetText(oldLabel)
 
 	onOk := func() {
-		newLabel := gtkutil.GetEntryText(c.view.LabelEntry)
+		newLabel := gtkutil.EntryGetText(c.view.LabelEntry)
 		if err := c.model.SetAddressLabel(address, newLabel); err != nil {
-			gtkutil.ShowError(err)
+			gtkutil.ShowErrorDialog(c.view.Window, err.Error(), nil)
 
 			return
 		}
 		c.view.Window.Close()
+		onUpdate()
 	}
 	onCancel := func() {
 		c.view.Window.Close()
 	}
 
-	c.view.ConnectSignals(map[string]any{
-		"on_ok":     onOk,
-		"on_cancel": onCancel,
-	})
+	gtkutil.ConnectButtonSignal(c.view.ButtonOK, onOk)
+	gtkutil.ConnectButtonSignal(c.view.ButtonCancel, onCancel)
 
-	gtkutil.ShowModalDialog(c.view.Window)
+	gtkutil.ShowModalWindow(c.view.Window)
 }

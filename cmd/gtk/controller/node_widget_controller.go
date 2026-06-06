@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package controller
 
@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/ezex-io/gopkg/scheduler"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
@@ -122,13 +121,12 @@ func (c *NodeWidgetController) timeout10() {
 	totalStake := amount.Amount(chainInfo.TotalPower)
 
 	gtkutil.IdleAddSync(func() {
-		styleContext := c.view.LabelClockOffset.StyleContext()
 		c.view.LabelClockOffset.SetTooltipText(
 			"Difference between time of your machine and network time (NTP) " +
 				"for synchronization.",
 		)
 
-		c.setClockOffset(styleContext, clockOffset, clockOffsetErr)
+		c.setClockOffset(clockOffset, clockOffsetErr)
 
 		c.view.LabelActiveValidator.SetText(fmt.Sprintf("%v", chainInfo.ActiveValidators))
 		c.view.LabelTotalPower.SetText(totalStake.String())
@@ -140,9 +138,9 @@ func (c *NodeWidgetController) timeout10() {
 	})
 }
 
-func (c *NodeWidgetController) setClockOffset(styleContext *gtk.StyleContext, offset time.Duration, offsetErr error) {
+func (c *NodeWidgetController) setClockOffset(offset time.Duration, offsetErr error) {
 	if offsetErr != nil {
-		styleContext.AddClass("warning")
+		c.view.LabelClockOffset.AddCSSClass("warning")
 		c.view.LabelClockOffset.SetText("N/A")
 
 		return
@@ -155,12 +153,12 @@ func (c *NodeWidgetController) setClockOffset(styleContext *gtk.StyleContext, of
 	c.view.LabelClockOffset.SetText(fmt.Sprintf("%v second(s)", o))
 
 	if offset > clockOutOfSyncThreshold || offset < -clockOutOfSyncThreshold {
-		styleContext.AddClass("warning")
+		c.view.LabelClockOffset.AddCSSClass("warning")
 
 		return
 	}
 
-	styleContext.RemoveClass("warning")
+	c.view.LabelClockOffset.RemoveCSSClass("warning")
 }
 
 func (c *NodeWidgetController) setInCommittee(inCommittee bool) {

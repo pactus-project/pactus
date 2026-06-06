@@ -88,12 +88,6 @@ class GTKBundler:
         for dep in dependencies:
             self.get_dependencies(dep, dependencies)
 
-        # Add dependencies for all pixbuf loader DLLs
-        pixbuf_dir = Path(f"{self.mingw_prefix}/lib/gdk-pixbuf-2.0/2.10.0/loaders")
-        for loader_file in pixbuf_dir.glob("*.dll"):
-            print(f"    Scanning pixbuf loader: {loader_file.name}")
-            self.get_dependencies(loader_file, dependencies)
-
         for dep in dependencies:
             self.copy_file(dep, target_exe_dir / dep.name)
 
@@ -102,13 +96,6 @@ class GTKBundler:
     def copy_gtk_resources(self) -> None:
         """Copy GTK resources (themes, icons, schemas, etc.)."""
         print("Copying GTK resources...")
-
-        # Copy GdkPixbuf loaders
-        print("  Copying GdkPixbuf loaders...")
-        self.copy_dir(
-            f"{self.mingw_prefix}/lib/gdk-pixbuf-2.0",
-            f"{self.target_dir}/lib/gdk-pixbuf-2.0"
-        )
 
         # Copy icon themes
         print("  Copying icon themes...")

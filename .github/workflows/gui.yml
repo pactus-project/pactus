@@ -39,11 +39,11 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt update
-          sudo apt install -y libgtk-4-dev libcairo2-dev libglib2.0-dev
+          sudo apt install -y libgtk-4-dev libcairo2-dev libglib2.0-dev gobject-introspection
 
       - name: Install Dependencies (macOS)
         if: runner.os == 'macOS'
-        run: brew install gtk+4
+        run: brew install gtk+4 gobject-introspection
 
       - name: Setup MSYS2 and Dependencies (Windows)
         if: runner.os == 'Windows'
@@ -59,11 +59,7 @@ jobs:
             mingw-w64-x86_64-glib2
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-pkg-config
-
-      - name: Patch pkgconfig (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          sed -i -e 's/-Wl,-luuid/-luuid/g' /mingw64/lib/pkgconfig/gdk-3.0.pc
+            mingw-w64-x86_64-gobject-introspection
 
       #######################################################
       ## Caching Go modules and GTK dependencies

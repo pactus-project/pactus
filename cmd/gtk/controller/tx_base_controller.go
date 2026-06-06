@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package controller
 
@@ -11,32 +11,53 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 )
 
-func confirmAndSend(parent *gtk.Window, model *model.WalletModel, msg string, trx *tx.Tx) bool {
-	if !gtkutil.ShowQuestionDialog(parent, msg) {
-		return false
+func confirmAndSend(parent *gtk.Window, model *model.WalletModel,
+	msg string, trx *tx.Tx,
+) {
+	gtkutil.ShowQuestionDialog(parent, msg, func(res gtk.ResponseType) {
+		if res != gtk.ResponseYes {
+			return
+		}
+
+		// Proceed with the transaction
+		PasswordProvider(model, func(password string, ok bool) {
+			if !ok {
+				return
+			}
+
+			if err := model.SignTransaction(password, trx); err != nil {
+				gtkutil.ShowErrorDialog(parent, err.Error(), nil)
+
+				return
+			}
+
+			txID, err := model.BroadcastTransaction(trx)
+			if err != nil {
+				gtkutil.ShowErrorDialog(parent, err.Error(), nil)
+
+				return
+			}
+
+			sentMsg := fmt.Sprintf("✅ Transaction sent successfully!\n\n"+
+				"Transaction ID: <a href=\"https://pactusscan.com/transaction/%s\">%s</a>", txID, txID)
+			gtkutil.ShowInfoDialog(parent, sentMsg, func(gtk.ResponseType) {
+				parent.Close()
+			})
+		})
+	})
+}
+
+func setDefaultFee(model *model.WalletModel, entry *gtk.Entry) {
+	if info, err := model.WalletInfo(); err == nil {
+		entry.SetText(fmt.Sprintf("%g", info.DefaultFee.ToPAC()))
 	}
+}
 
-	password, ok := PasswordProvider(model)
-	if !ok {
-		return false
+func setHint(lbl *gtk.Label, hint string) {
+	if hint == "" {
+		lbl.SetMarkup("")
+
+		return
 	}
-
-	if err := model.SignTransaction(password, trx); err != nil {
-		gtkutil.ShowError(err)
-
-		return false
-	}
-
-	txID, err := model.BroadcastTransaction(trx)
-	if err != nil {
-		gtkutil.ShowError(err)
-
-		return false
-	}
-
-	gtkutil.ShowInfoDialog(parent,
-		fmt.Sprintf("✅ Transaction sent successfully!\n\n"+
-			"Transaction ID: <a href=\"https://pactusscan.com/transaction/%s\">%s</a>", txID, txID))
-
-	return true
+	lbl.SetMarkup(gtkutil.SmallGray(hint))
 }

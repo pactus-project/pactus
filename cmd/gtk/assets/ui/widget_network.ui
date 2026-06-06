@@ -2,40 +2,26 @@
 <!-- Created with Cambalache 1.0.2 -->
 <interface>
   <!-- interface-name widget_network.ui -->
-  <requires lib="gtk" version="4.18"/>
-  <requires lib="gtk+" version="4.14"/>
+  <requires lib="gtk" version="4.14" />
   <object class="GtkBox" id="id_box_network">
-    <property name="can-focus">False</property>
     <property name="homogeneous">True</property>
     <property name="orientation">vertical</property>
-    <property name="visible">True</property>
     <child>
       <object class="GtkNotebook">
-        <property name="can-focus">True</property>
         <property name="tab-pos">left</property>
-        <property name="visible">True</property>
         <child>
           <object class="GtkScrolledWindow">
-            <property name="can-focus">False</property>
             <property name="hexpand">True</property>
             <property name="vexpand">True</property>
-            <property name="visible">True</property>
             <child>
               <object class="GtkGrid">
-                <property name="can-focus">False</property>
-                <property name="column-spacing">12</property>
-                <property name="margin-bottom">12</property>
-                <property name="margin-end">12</property>
-                <property name="margin-start">12</property>
-                <property name="margin-top">12</property>
-                <property name="row-spacing">6</property>
-                <property name="visible">True</property>
+                <property name="css-classes">widget-grid</property>
+                <property name="column-spacing">8</property>
+                <property name="row-spacing">8</property>
                 <child>
                   <object class="GtkLabel">
-                    <property name="can-focus">False</property>
                     <property name="halign">start</property>
                     <property name="label">Network Name:</property>
-                    <property name="visible">True</property>
                     <layout>
                       <property name="column">0</property>
                       <property name="row">0</property>
@@ -44,10 +30,8 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="id_label_network_name">
-                    <property name="can-focus">False</property>
                     <property name="halign">start</property>
                     <property name="selectable">True</property>
-                    <property name="visible">True</property>
                     <layout>
                       <property name="column">1</property>
                       <property name="row">0</property>
@@ -56,10 +40,8 @@
                 </child>
                 <child>
                   <object class="GtkLabel">
-                    <property name="can-focus">False</property>
                     <property name="halign">start</property>
                     <property name="label">Connected Peers:</property>
-                    <property name="visible">True</property>
                     <layout>
                       <property name="column">0</property>
                       <property name="row">1</property>
@@ -68,10 +50,8 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="id_label_connected_peers">
-                    <property name="can-focus">False</property>
                     <property name="halign">start</property>
                     <property name="selectable">True</property>
-                    <property name="visible">True</property>
                     <layout>
                       <property name="column">1</property>
                       <property name="row">1</property>
@@ -84,30 +64,25 @@
         </child>
         <child type="tab">
           <object class="GtkLabel">
-            <property name="can-focus">False</property>
-            <property name="label">Info</property>
-            <property name="visible">True</property>
+            <property name="label">_Info</property>
+            <property name="use-underline">True</property>
           </object>
         </child>
         <child>
           <object class="GtkScrolledWindow">
-            <property name="can-focus">True</property>
             <property name="hexpand">True</property>
             <property name="vexpand">True</property>
-            <property name="visible">True</property>
             <child>
               <object class="GtkColumnView" id="id_columnview_peers">
-                <property name="can-focus">True</property>
-                <property name="visible">True</property>
+                <property name="vexpand">True</property>
               </object>
             </child>
           </object>
         </child>
         <child type="tab">
           <object class="GtkLabel">
-            <property name="can-focus">False</property>
-            <property name="label">Peers</property>
-            <property name="visible">True</property>
+            <property name="label">_Peers</property>
+            <property name="use-underline">True</property>
           </object>
         </child>
       </object>

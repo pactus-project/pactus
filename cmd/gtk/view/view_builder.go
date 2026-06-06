@@ -1,5 +1,6 @@
-//go111:build gtk
+//go:build gtk
 
+//nolint:staticcheck // Using depreciated widgets
 package view
 
 import (
@@ -37,6 +38,10 @@ func (vb *ViewBuilder) GetWindowObj(name string) *gtk.Window {
 
 func (vb *ViewBuilder) GetAboutDialogObj(name string) *gtk.AboutDialog {
 	return GetObj[*gtk.AboutDialog](vb.builder, name)
+}
+
+func (vb *ViewBuilder) GetDropDownObj(name string) *gtk.DropDown {
+	return GetObj[*gtk.DropDown](vb.builder, name)
 }
 
 func (vb *ViewBuilder) GetComboBoxTextObj(name string) *gtk.ComboBoxText {

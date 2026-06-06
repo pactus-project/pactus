@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package view
 
@@ -26,20 +26,20 @@ func NewWalletChangePasswordDialogView() *WalletChangePasswordDialogView {
 	builder := NewViewBuilder(assets.WalletChangePasswordDialogUI)
 
 	view := &WalletChangePasswordDialogView{
-		ViewBuilder: builder,
-		Window:      builder.GetWindowObj("id_dialog_wallet_change_password"),
-
+		ViewBuilder:      builder,
+		Window:           builder.GetWindowObj("id_dialog_wallet_change_password"),
 		OldPasswordEntry: builder.GetEntryObj("id_entry_old_password"),
 		OldPasswordLabel: builder.GetLabelObj("id_label_old_password"),
 		NewPasswordEntry: builder.GetEntryObj("id_entry_new_password"),
 		RepeatEntry:      builder.GetEntryObj("id_entry_repeat_password"),
-
-		ButtonOK:     builder.GetButtonObj("id_button_ok"),
-		ButtonCancel: builder.GetButtonObj("id_button_cancel"),
+		ButtonOK:         builder.GetButtonObj("id_button_ok"),
+		ButtonCancel:     builder.GetButtonObj("id_button_cancel"),
 	}
 
-	gtkutil.AddImageToButton(view.ButtonOK, assets.IconOk16)
-	gtkutil.AddImageToButton(view.ButtonCancel, assets.IconCancel16)
+	gtkutil.UpdateOKButton(view.Window, view.ButtonOK)
+	gtkutil.UpdateCancelButton(view.ButtonCancel)
+
+	gtkutil.DialogSetup(view.Window)
 
 	return view
 }

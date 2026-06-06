@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package gtkutil
 
@@ -44,7 +44,7 @@ func ensureTOMLTags(buf *gtk.TextBuffer) {
 	declareTag(buf, TOMLTagTable, map[string]any{"foreground": "#DCDCAA", "weight": 700})
 }
 
-func declareTag(buf *gtk.TextBuffer, name string, props map[string]any) {
+func declareTag(buf *gtk.TextBuffer, name string, _ map[string]any) {
 	table := buf.TagTable()
 
 	if tag := table.Lookup(name); tag != nil {

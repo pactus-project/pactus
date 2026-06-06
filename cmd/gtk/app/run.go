@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package app
 
@@ -30,7 +30,7 @@ type GUI struct {
 // workingDir is the local node data directory; isLocal is true when running a local node.
 // It returns a cleanup function that closes the window and stops timers.
 func Run(ctx context.Context, conn grpc.ClientConnInterface,
-	gtkApp *gtk.Application, notify func(string, int),
+	gtkApp *gtk.Application, notify func(string),
 	connectionLabel, connectionValue, workingDir string, isLocal bool,
 ) (*GUI, error) {
 	blockchainClient := pactus.NewBlockchainClient(conn)
@@ -62,31 +62,31 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 
 	nav := controller.NewNavigator(gtkApp, walletModel, walletCtrl, configModel)
 
-	notify("Fetching Node info...", 0)
+	notify("Fetching Node info...")
 	err = nodeCtrl.BuildView(ctx, connectionLabel, connectionValue)
 	if err != nil {
 		return nil, err
 	}
 
-	notify("Fetching Validators info...", 20)
+	notify("Fetching Validators info...")
 	err = validatorCtrl.BuildView(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	notify("Fetching Committee info...", 40)
+	notify("Fetching Committee info...")
 	err = committeeCtrl.BuildView(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	notify("Fetching Network info...", 60)
+	notify("Fetching Network info...")
 	err = networkCtrl.BuildView(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	notify("Fetching Wallet info...", 80)
+	notify("Fetching Wallet info...")
 	err = walletCtrl.BuildView(ctx, nav)
 	if err != nil {
 		return nil, err
@@ -95,17 +95,24 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 	mwView := gtkutil.IdleAddSyncT(func() *view.MainWindowView {
 		mwView := view.NewMainWindowView()
 
+		walletCtrl.SetupMenu(mwView.Window)
+
+		menu := nav.CreateMenu(isLocal)
+		gtkApp.SetMenubar(menu)
+		mwView.Window.SetShowMenubar(true)
+
 		mwView.BoxNode.Append(nodeView.Box)
-		mwView.BoxDefaultWallet.Append(walletView.Box)
+		mwView.BoxWallet.Append(walletView.Box)
 		mwView.BoxValidators.Append(validatorView.Box)
 		mwView.BoxCommittee.Append(committeeView.Box)
 		mwView.BoxNetwork.Append(networkView.Box)
 
+		// Build controller
 		mwCtrl := controller.NewMainWindowController(mwView)
-		mwCtrl.BuildView(nav, isLocal)
+		mwCtrl.BuildView()
 
-		mwView.Window.Show()
 		gtkApp.AddWindow(&mwView.Window.Window)
+		mwView.Window.Present()
 
 		return mwView
 	})

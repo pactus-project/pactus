@@ -1,39 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 1.0.2 -->
 <interface>
-  <requires lib="gtk+" version="4.14"/>
+  <!-- interface-name dialog_about_gtk.ui -->
+  <requires lib="gtk" version="4.14"/>
   <object class="GtkAboutDialog" id="id_dialog_about_gtk">
-    <property name="can-focus">False</property>
-    <property name="title" >About GTK</property>
-    <property name="type-hint">dialog</property>
-    <property name="program-name">GTK</property>
-    <property name="version">Gtk – 3.0</property>
-    <property name="comments" >
+    <property name="comments">
 GTK is a free and open-source cross-platform widget toolkit for creating graphical user interfaces.
 It is licensed under the terms of the GNU Lesser General Public License, allowing both free and proprietary software to use it.
 </property>
-    <property name="website">https://www.gtk.org/</property>
     <property name="license-type">lgpl-2-1</property>
-    <child internal-child="vbox">
-      <object class="GtkBox">
-        <property name="can-focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
-            <property name="can-focus">False</property>
-            <property name="layout-style">end</property>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-      </object>
-    </child>
+    <property name="program-name">GTK</property>
+    <property name="title">About GTK</property>
+    <property name="version">Gtk - 4.0</property>
+    <property name="website">https://www.gtk.org/</property>
   </object>
 </interface>

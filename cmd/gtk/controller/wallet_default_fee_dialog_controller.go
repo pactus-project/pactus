@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package controller
 
@@ -24,10 +24,10 @@ func NewWalletDefaultFeeDialogController(
 	return &WalletDefaultFeeDialogController{view: view, model: model}
 }
 
-func (c *WalletDefaultFeeDialogController) Run() {
+func (c *WalletDefaultFeeDialogController) Run(onUpdate func()) {
 	info, err := c.model.WalletInfo()
 	if err != nil {
-		gtkutil.ShowErrorDialog(c.view.Window, fmt.Sprintf("Failed to get wallet info: %v", err))
+		gtkutil.ShowErrorDialog(c.view.Window, fmt.Sprintf("Failed to get wallet info: %v", err), nil)
 
 		return
 	}
@@ -37,27 +37,26 @@ func (c *WalletDefaultFeeDialogController) Run() {
 	c.view.FeeEntry.SetText(strings.ReplaceAll(currentFee.String(), " PAC", ""))
 
 	onOk := func() {
-		feeStr := gtkutil.GetEntryText(c.view.FeeEntry)
+		feeStr := gtkutil.EntryGetText(c.view.FeeEntry)
 		feeAmount, err := amount.FromString(feeStr)
 		if err != nil {
-			gtkutil.ShowErrorDialog(c.view.Window, fmt.Sprintf("Invalid fee amount: %v", err))
+			gtkutil.ShowErrorDialog(c.view.Window, fmt.Sprintf("Invalid fee amount: %v", err), nil)
 
 			return
 		}
 		if err := c.model.SetDefaultFee(feeAmount); err != nil {
-			gtkutil.ShowErrorDialog(c.view.Window, fmt.Sprintf("Failed to set default fee: %v", err))
+			gtkutil.ShowErrorDialog(c.view.Window, fmt.Sprintf("Failed to set default fee: %v", err), nil)
 
 			return
 		}
 		c.view.Window.Close()
+		onUpdate()
 	}
 
 	onCancel := func() { c.view.Window.Close() }
 
-	c.view.ConnectSignals(map[string]any{
-		"on_ok":     onOk,
-		"on_cancel": onCancel,
-	})
+	gtkutil.ConnectButtonSignal(c.view.ButtonOK, onOk)
+	gtkutil.ConnectButtonSignal(c.view.ButtonCancel, onCancel)
 
-	gtkutil.ShowModalDialog(c.view.Window)
+	gtkutil.ShowModalWindow(c.view.Window)
 }

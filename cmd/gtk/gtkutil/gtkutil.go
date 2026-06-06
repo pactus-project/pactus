@@ -1,5 +1,6 @@
-//go111:build gtk
+//go:build gtk
 
+//nolint:staticcheck // Using depreciated widgets
 package gtkutil
 
 import (
@@ -10,138 +11,69 @@ import (
 	"net/url"
 	"os/exec"
 	"runtime"
+	"strings"
 	"time"
 
+	"github.com/diamondburned/gotk4/pkg/core/gioutil"
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"
+	"github.com/diamondburned/gotk4/pkg/gdkpixbuf/v2"
+	"github.com/diamondburned/gotk4/pkg/gio/v2"
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
+	"github.com/pactus-project/pactus/cmd/gtk/assets"
 )
 
-// updateMessageDialog makes MessageDialog labels selectable and markup-enabled.
-// https://stackoverflow.com/questions/3249053/copying-the-text-from-a-gtk-messagedialog
-func updateMessageDialog(dlg *gtk.MessageDialog) {
-	// area, err := dlg.GetMessageArea()
-	// if err == nil {
-	// 	children := area.GetChildren()
-	// 	children.Foreach(func(item any) {
-	// 		label, err := gtk.WidgetToLabel(item.(*gtk.Widget))
-	// 		if err == nil {
-	// 			label.SetSelectable(true)
-	// 			label.SetUseMarkup(true)
-	// 		}
-	// 	})
-	// }
-}
-
-func ShowQuestionDialog(parent *gtk.Window, msg string) bool {
-	return IdleAddSyncT(func() bool {
+func ShowQuestionDialog(parent *gtk.Window, msg string,
+	onClone func(res gtk.ResponseType),
+) {
+	IdleAddSync(func() {
 		dlg := gtk.NewMessageDialog(parent,
 			gtk.DialogModal, gtk.MessageQuestion, gtk.ButtonsYesNo)
-		dlg.SetMarkup(msg)
-		updateMessageDialog(dlg)
 
-		responseChan := make(chan gtk.ResponseType, 1)
-		dlg.Connect("response", func(responseID int) {
-			responseChan <- gtk.ResponseType(responseID)
-			dlg.Destroy()
-		})
-		dlg.SetVisible(true)
-		response := <-responseChan
-
-		return response == gtk.ResponseYes
+		showMessageDialog(dlg, "Question", msg, onClone)
 	})
 }
 
-func ShowInfoDialog(parent *gtk.Window, msg string) {
+func ShowInfoDialog(parent *gtk.Window, msg string, onClone func(res gtk.ResponseType)) {
 	IdleAddSync(func() {
 		dlg := gtk.NewMessageDialog(parent,
 			gtk.DialogModal, gtk.MessageInfo, gtk.ButtonsOK)
-		dlg.SetMarkup(msg)
-		updateMessageDialog(dlg)
-		ShowModalDialog(&dlg.Window)
+		showMessageDialog(dlg, "Info", msg, onClone)
 	})
 }
 
-func ShowWarningDialog(parent *gtk.Window, msg string) {
+func ShowWarningDialog(parent *gtk.Window, msg string, onClone func(res gtk.ResponseType)) {
 	IdleAddSync(func() {
 		dlg := gtk.NewMessageDialog(parent,
 			gtk.DialogModal, gtk.MessageWarning, gtk.ButtonsOK)
-		dlg.SetMarkup(msg)
-		updateMessageDialog(dlg)
-		ShowModalDialog(&dlg.Window)
+		showMessageDialog(dlg, "Warning", msg, onClone)
 	})
 }
 
-func ShowErrorDialog(parent *gtk.Window, msg string) {
+func ShowErrorDialog(parent *gtk.Window, msg string, onClone func(res gtk.ResponseType)) {
+	Logf("an error occurred: %s", msg)
+
 	IdleAddSync(func() {
 		dlg := gtk.NewMessageDialog(parent,
 			gtk.DialogModal, gtk.MessageError, gtk.ButtonsOK)
-		dlg.SetMarkup(msg)
-		updateMessageDialog(dlg)
-		ShowModalDialog(&dlg.Window)
+		showMessageDialog(dlg, "Error", msg, onClone)
 	})
 }
 
-// ShowError displays an error dialog and logs the error message.
-func ShowError(err error) {
-	ShowErrorDialog(nil, err.Error())
-	log.Print(err.Error())
-}
+func showMessageDialog(dlg *gtk.MessageDialog, title, msg string, onClose func(res gtk.ResponseType)) {
+	dlg.SetMarkup(fmt.Sprintf("<b>%s</b>", title))
+	dlg.SetObjectProperty("secondary-use-markup", true)
+	dlg.SetObjectProperty("secondary-text", msg)
 
-// FatalErrorCheck checks for an error, shows an error dialog and terminates the program.
-// Use with caution.
-func FatalErrorCheck(err error) {
-	if err != nil {
-		ShowErrorDialog(nil, err.Error())
-		log.Fatal(err.Error())
-	}
-}
+	dlg.ConnectResponse(func(responseID int) {
+		dlg.Destroy()
 
-// ImageOption represents an option for ImageFromBytes.
-type ImageOption func(*ImageOptions)
-
-type ImageOptions struct {
-	width  int
-	height int
-}
-
-// WithImageSize sets the desired width and height for the image.
-func WithImageSize(width, height int) ImageOption {
-	return func(opts *ImageOptions) {
-		opts.width = width
-		opts.height = height
-	}
-}
-
-// ImageFromBytes creates a gtk.Image from a byte slice and applies a marginEnd.
-// It returns an empty gtk.Image if an error occurs.
-func ImageFromBytes(data []byte, opts ...ImageOption) *gtk.Image {
-	texture, err := gdk.NewTextureFromBytes(glib.NewBytes(data))
-	if err != nil {
-		Logf("Error creating texture from bytes: %v\n", err)
-
-		return gtk.NewImage()
-	}
-
-	img := gtk.NewImageFromPaintable(&texture.Paintable)
-
-	if len(opts) > 0 {
-		options := &ImageOptions{}
-		for _, opt := range opts {
-			opt(options)
+		if onClose != nil {
+			onClose(gtk.ResponseType(responseID))
 		}
+	})
 
-		img = ResizeImage(img, options.width, options.height)
-	}
-
-	return img
-}
-
-func ResizeImage(img *gtk.Image, width, height int) *gtk.Image {
-	img2 := gtk.NewImageFromPaintable(img.Paintable())
-	img2.SetSizeRequest(int(width), int(height))
-
-	return img2
+	ShowModalWindow(&dlg.Window)
 }
 
 func GetTextViewContent(tv *gtk.TextView) string {
@@ -188,16 +120,14 @@ func OpenURLInBrowser(address string) error {
 }
 
 func BuildExtendedEntry(builder *gtk.Builder, overlayID string) *gtk.Entry {
-	obj := builder.GetObject(overlayID)
-	overlay := obj.Cast().(*gtk.Overlay)
+	overlay := builder.GetObject(overlayID).Cast().(*gtk.Overlay)
 
 	// Create a new Entry
 	entry := gtk.NewEntry()
 	entry.SetCanFocus(true)
 	entry.SetHExpand(true)
 	entry.SetEditable(false)
-
-	SetCSSClass(&entry.Widget, "copyable_entry")
+	entry.AddCSSClass("copyable_entry")
 
 	// Create a new Button
 	button := gtk.NewButtonFromIconName("edit-copy-symbolic")
@@ -207,12 +137,11 @@ func BuildExtendedEntry(builder *gtk.Builder, overlayID string) *gtk.Entry {
 	button.SetVAlign(gtk.AlignCenter)
 	button.SetHExpand(false)
 	button.SetVExpand(false)
-
-	SetCSSClass(&button.Widget, "inline_button")
+	button.AddCSSClass("inline_button")
 
 	// Set the click event for the Button
 	button.Connect("clicked", func() {
-		buffer := GetEntryText(entry)
+		buffer := EntryGetText(entry)
 		clipboard := button.Clipboard()
 		clipboard.SetText(buffer)
 	})
@@ -225,41 +154,18 @@ func BuildExtendedEntry(builder *gtk.Builder, overlayID string) *gtk.Entry {
 	return entry
 }
 
-func SetCSSClass(widget *gtk.Widget, name string) {
-	styleContext := widget.StyleContext()
-
-	styleContext.AddClass(name)
-}
-
-func ShowNonModalDialog(dlg *gtk.Window) {
+func ShowNonModalWindow(win *gtk.Window) {
 	IdleAddSync(func() {
-		dlg.SetModal(false)
-		dlg.SetVisible(true)
+		win.SetModal(false)
+		win.Present()
 	})
 }
 
-func ShowModalDialog(dlg *gtk.Window) {
-	IdleAddSync(func() {
-		dlg.SetModal(true)
-		dlg.SetVisible(true)
+func ShowModalWindow(win *gtk.Window) {
+	IdleAddAsync(func() {
+		win.SetModal(true)
+		win.Present()
 	})
-}
-
-func ComboBoxActiveValue(combo *gtk.ComboBox) int {
-	iter, _ := combo.ActiveIter()
-	model := combo.Model()
-	val := model.Cast().(*gtk.TreeModel).Value(iter, 0)
-	valueInterface := val.GoValue()
-
-	return valueInterface.(int)
-}
-
-func GetEntryText(entry *gtk.Entry) string {
-	return entry.Text()
-}
-
-func GetDropDown(drop *gtk.DropDown) string {
-	return drop.SelectedItem().Type().String()
 }
 
 // Color represents different text colors for UI elements.
@@ -369,16 +275,100 @@ func GoroutineID() int64 {
 	return id
 }
 
-func AddImageToButton(button *gtk.Button, image *gtk.Image) {
-
-	button.SetChild(image)
+func UpdateSendButton(button *gtk.Button) {
+	ExtendImageButton(button, "_Send", "Send this transaction", assets.IconSendTexture)
 }
 
-func AppendRowToListStore(listStore *gtk.ListStore, cols []int, values []any) {
-	iter := listStore.Append()
-	glibValues := make([]glib.Value, len(values))
-	for i, v := range values {
-		glibValues[i] = *glib.NewValue(v)
+func UpdateOKButton(window *gtk.Window, button *gtk.Button) {
+	ExtendImageButton(button, "_OK", "Perform this operation", assets.IconOkTexture)
+	window.SetDefaultWidget(button)
+}
+
+func UpdateCancelButton(button *gtk.Button) {
+	ExtendImageButton(button, "_Cancel", "Cancel this operation", assets.IconCancelTexture)
+}
+
+func UpdateCloseButton(button *gtk.Button) {
+	ExtendImageButton(button, "_Close", "Close this window", assets.IconCloseTexture)
+}
+
+func ExtendImageButton(btn *gtk.Button, text, tooltip string, texture *gdk.Texture) {
+	box := gtk.NewBox(gtk.OrientationHorizontal, 4)
+	pic := NewScaledPictureFromTexture(texture, 16, 16)
+	label := gtk.NewLabel(text)
+	label.SetUseUnderline(true)
+
+	box.Append(pic)
+	box.Append(label)
+	btn.SetChild(box)
+	btn.SetTooltipText(tooltip)
+}
+
+func ConnectButtonSignal(button *gtk.Button, handler func()) {
+	button.ConnectClicked(handler)
+}
+
+type ContextMenuItem struct {
+	Label      string
+	Action     func()
+	IconPixbuf *gdkpixbuf.Pixbuf
+}
+
+func (c *ContextMenuItem) detailedAction() string {
+	return strings.ReplaceAll(strings.ReplaceAll(strings.ToLower(strings.TrimSpace(c.Label)),
+		"_", ""),
+		" ", "-")
+}
+
+func CreateContextMenu(appWindow *gtk.ApplicationWindow, widget *gtk.Widget, menuItems []ContextMenuItem) {
+	actionGroup := gio.NewSimpleActionGroup()
+
+	for _, item := range menuItems {
+		action := gio.NewSimpleAction(item.detailedAction(), nil)
+		action.ConnectActivate(func(*glib.Variant) {
+			item.Action()
+		})
+		action.SetEnabled(true)
+		actionGroup.AddAction(action)
 	}
-	listStore.Set(iter, cols, glibValues)
+
+	menuModel := gio.NewMenu()
+	for _, item := range menuItems {
+		menuModel.Append(item.Label, "win."+item.detailedAction())
+	}
+	appWindow.InsertActionGroup("win", actionGroup)
+
+	popover := gtk.NewPopoverMenuFromModel(menuModel)
+	popover.SetParent(widget)
+
+	gesture := gtk.NewGestureClick()
+	gesture.SetButton(3) // Right button
+
+	gesture.ConnectPressed(func(_ int, x, y float64) {
+		rect := gdk.NewRectangle(int(x), int(y), 1, 1)
+		popover.SetPointingTo(&rect)
+		popover.Popup()
+	})
+
+	widget.AddController(gesture)
+}
+
+func CaptureDoubleClick(widget *gtk.Widget, action func()) {
+	gesture := gtk.NewGestureClick()
+	gesture.SetButton(gdk.BUTTON_PRIMARY)
+	gesture.ConnectPressed(func(nPress int, x, y float64) {
+		if nPress == 2 { // Double-click
+			Logf("Double-click detected at (%.2f, %.2f)", x, y)
+			action()
+		}
+	})
+
+	widget.AddController(gesture)
+}
+
+// ClearListModel removes all items from a gioutil ListModel.
+func ClearListModel[T any](listModel *gioutil.ListModel[T]) {
+	for i := int(listModel.NItems()); i > 0; i-- {
+		listModel.Remove(i - 1)
+	}
 }

@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package view
 
@@ -24,17 +24,17 @@ func NewAddressDetailsDialogView() *AddressDetailsDialogView {
 	builder := NewViewBuilder(assets.AddressDetailsDialogUI)
 
 	view := &AddressDetailsDialogView{
-		ViewBuilder: builder,
-		Window:      builder.GetWindowObj("id_dialog_address_details"),
-
+		ViewBuilder:  builder,
+		Window:       builder.GetWindowObj("id_dialog_address_details"),
 		AddressEntry: builder.BuildExtendedEntry("id_overlay_address"),
 		PubKeyEntry:  builder.BuildExtendedEntry("id_overlay_public_key"),
 		PathEntry:    builder.GetEntryObj("id_entry_path"),
-
-		ButtonClose: builder.GetButtonObj("id_button_close"),
+		ButtonClose:  builder.GetButtonObj("id_button_close"),
 	}
 
-	gtkutil.AddImageToButton(view.ButtonClose, assets.IconClose16)
+	gtkutil.UpdateCloseButton(view.ButtonClose)
+
+	gtkutil.DialogSetup(view.Window)
 
 	return view
 }

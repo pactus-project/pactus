@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package controller
 
@@ -40,12 +40,12 @@ func (c *ConfigEditorDialogController) Run() {
 	onSave := func() {
 		content := gtkutil.GetTextViewContent(c.view.TextView)
 		if err := c.model.Save(content); err != nil {
-			gtkutil.ShowErrorDialog(c.view.Window, err.Error())
+			gtkutil.ShowErrorDialog(c.view.Window, err.Error(), nil)
 
 			return
 		}
 		c.updateSaveButton()
-		gtkutil.ShowInfoDialog(c.view.Window, configRestartMessage)
+		gtkutil.ShowInfoDialog(c.view.Window, configRestartMessage, nil)
 	}
 
 	onRestore := func() {
@@ -58,7 +58,7 @@ func (c *ConfigEditorDialogController) Run() {
 		"on_restore_default": onRestore,
 	})
 
-	gtkutil.ShowModalDialog(c.view.Window)
+	gtkutil.ShowModalWindow(c.view.Window)
 }
 
 func (c *ConfigEditorDialogController) setEditorContent(content string) {

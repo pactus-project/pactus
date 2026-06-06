@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package view
 
@@ -32,8 +32,10 @@ func NewWalletDefaultFeeDialogView() *WalletDefaultFeeDialogView {
 		ButtonCancel:    builder.GetButtonObj("id_button_cancel"),
 	}
 
-	gtkutil.AddImageToButton(view.ButtonOK, assets.IconOk16)
-	gtkutil.AddImageToButton(view.ButtonCancel, assets.IconCancel16)
+	gtkutil.UpdateOKButton(view.Window, view.ButtonOK)
+	gtkutil.UpdateCancelButton(view.ButtonCancel)
+
+	gtkutil.DialogSetup(view.Window)
 
 	return view
 }

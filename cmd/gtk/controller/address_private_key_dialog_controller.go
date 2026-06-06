@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package controller
 
@@ -20,25 +20,28 @@ func NewAddressPrivateKeyDialogController(
 	return &AddressPrivateKeyDialogController{view: view, model: model}
 }
 
-func (c *AddressPrivateKeyDialogController) Run(addr string) {
-	password, ok := PasswordProvider(c.model)
-	if !ok {
-		return
-	}
+func (c *AddressPrivateKeyDialogController) Show(addr string) {
+	PasswordProvider(c.model, func(password string, ok bool) {
+		if !ok {
+			return
+		}
 
-	prv, err := c.model.PrivateKey(password, addr)
-	if err != nil {
-		gtkutil.ShowError(err)
+		prv, err := c.model.PrivateKey(password, addr)
+		if err != nil {
+			gtkutil.ShowErrorDialog(c.view.Window, err.Error(), nil)
 
-		return
-	}
+			return
+		}
 
-	c.view.AddressEntry.SetText(addr)
-	c.view.PrvKeyEntry.SetText(prv.String())
+		c.view.AddressEntry.SetText(addr)
+		c.view.PrvKeyEntry.SetText(prv.String())
 
-	c.view.ConnectSignals(map[string]any{
-		"on_close": func() { c.view.Window.Close() },
+		onClose := func() {
+			c.view.Window.Close()
+		}
+
+		gtkutil.ConnectButtonSignal(c.view.ButtonClose, onClose)
+
+		gtkutil.ShowModalWindow(c.view.Window)
 	})
-
-	gtkutil.ShowModalDialog(c.view.Window)
 }

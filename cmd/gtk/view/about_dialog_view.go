@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package view
 
@@ -12,8 +12,8 @@ func NewAboutDialog() *gtk.AboutDialog {
 	builder := NewViewBuilder(assets.DialogAboutUI)
 	dlg := builder.GetAboutDialogObj("id_dialog_about")
 
-	logo := gtkutil.ResizeImage(assets.ImagePactusLogo, 96, 96)
-	dlg.SetLogo(logo.Paintable())
+	pic := gtkutil.NewScaledPictureFromTexture(assets.ImagePactusLogoTexture, 128, 128)
+	dlg.SetLogo(pic.Paintable())
 
 	return dlg
 }

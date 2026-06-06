@@ -1,4 +1,4 @@
-//go111:build gtk
+//go:build gtk
 
 package view
 
@@ -22,16 +22,17 @@ func NewAddressLabelDialogView() *AddressLabelDialogView {
 	builder := NewViewBuilder(assets.AddressLabelDialogUI)
 
 	view := &AddressLabelDialogView{
-		ViewBuilder: builder,
-		Window:      builder.GetWindowObj("id_dialog_address_label"),
-
+		ViewBuilder:  builder,
+		Window:       builder.GetWindowObj("id_dialog_address_label"),
 		LabelEntry:   builder.GetEntryObj("id_entry_label"),
 		ButtonOK:     builder.GetButtonObj("id_button_ok"),
 		ButtonCancel: builder.GetButtonObj("id_button_cancel"),
 	}
 
-	gtkutil.AddImageToButton(view.ButtonOK, assets.IconOk16)
-	gtkutil.AddImageToButton(view.ButtonCancel, assets.IconCancel16)
+	gtkutil.UpdateOKButton(view.Window, view.ButtonOK)
+	gtkutil.UpdateCancelButton(view.ButtonCancel)
+
+	gtkutil.DialogSetup(view.Window)
 
 	return view
 }

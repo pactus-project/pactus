@@ -1,79 +1,74 @@
-//go111:build gtk
+//go:build gtk
 
 package assets
 
 import (
 	_ "embed"
 
-	"github.com/diamondburned/gotk4/pkg/gtk/v4"
-	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
+	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 )
 
 var (
 	//go:embed icons/add.svg
-	iconAddData []byte
-	IconAdd16   *gtk.Image
+	iconAddData    []byte
+	IconAddTexture *gdk.Texture
 
 	//go:embed icons/ok.svg
-	iconOKData []byte
-	IconOk16   *gtk.Image
+	iconOKData    []byte
+	IconOkTexture *gdk.Texture
 
 	//go:embed icons/cancel.svg
-	iconCancelData []byte
-	IconCancel16   *gtk.Image
+	iconCancelData    []byte
+	IconCancelTexture *gdk.Texture
 
 	//go:embed icons/password.svg
-	iconPasswordData []byte
-	IconPassword16   *gtk.Image
+	iconPasswordData    []byte
+	IconPasswordTexture *gdk.Texture
 
 	//go:embed icons/seed.svg
-	iconSeedData []byte
-	IconSeed16   *gtk.Image
+	iconSeedData    []byte
+	IconSeedTexture *gdk.Texture
 
 	//go:embed icons/close.svg
-	iconCloseData []byte
-	IconClose16   *gtk.Image
+	iconCloseData    []byte
+	IconCloseTexture *gdk.Texture
 
 	//go:embed icons/send.svg
-	iconSendData []byte
-	IconSend16   *gtk.Image
+	iconSendData    []byte
+	IconSendTexture *gdk.Texture
 
 	//go:embed icons/fee.svg
-	iconFeeData []byte
-	IconFee16   *gtk.Image
+	iconFeeData    []byte
+	IconFeeTexture *gdk.Texture
 
 	//go:embed icons/refresh.svg
-	iconRefreshData []byte
-	IconRefresh16   *gtk.Image
+	iconRefreshData    []byte
+	IconRefreshTexture *gdk.Texture
 
 	//go:embed icons/prev.svg
-	iconPrevData []byte
-	IconPrev16   *gtk.Image
+	iconPrevData    []byte
+	IconPrevTexture *gdk.Texture
 
 	//go:embed icons/next.svg
-	iconNextData []byte
-	IconNext16   *gtk.Image
+	iconNextData    []byte
+	IconNextTexture *gdk.Texture
 
 	//go:embed icons/save.svg
-	iconSaveData []byte
-	IconSave16   *gtk.Image
+	iconSaveData    []byte
+	IconSaveTexture *gdk.Texture
 )
 
 func initIcons() {
-	toImage := func(data []byte) *gtk.Image {
-		return gtkutil.ImageFromBytes(data, gtkutil.WithImageSize(16, 16))
-	}
-
-	IconAdd16 = toImage(iconAddData)
-	IconOk16 = toImage(iconOKData)
-	IconCancel16 = toImage(iconCancelData)
-	IconPassword16 = toImage(iconPasswordData)
-	IconSeed16 = toImage(iconSeedData)
-	IconClose16 = toImage(iconCloseData)
-	IconSend16 = toImage(iconSendData)
-	IconFee16 = toImage(iconFeeData)
-	IconRefresh16 = toImage(iconRefreshData)
-	IconPrev16 = toImage(iconPrevData)
-	IconNext16 = toImage(iconNextData)
-	IconSave16 = toImage(iconSaveData)
+	IconAddTexture = TextureFromBytes(iconAddData)
+	IconOkTexture = TextureFromBytes(iconOKData)
+	IconCancelTexture = TextureFromBytes(iconCancelData)
+	IconPasswordTexture = TextureFromBytes(iconPasswordData)
+	IconSeedTexture = TextureFromBytes(iconSeedData)
+	IconCloseTexture = TextureFromBytes(iconCloseData)
+	IconSendTexture = TextureFromBytes(iconSendData)
+	IconFeeTexture = TextureFromBytes(iconFeeData)
+	IconRefreshTexture = TextureFromBytes(iconRefreshData)
+	IconPrevTexture = TextureFromBytes(iconPrevData)
+	IconNextTexture = TextureFromBytes(iconNextData)
+	IconSaveTexture = TextureFromBytes(iconSaveData)
 }

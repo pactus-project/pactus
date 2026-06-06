@@ -1,35 +1,112 @@
-//go111:build gtk
+//go:build gtk
 
 package controller
 
 import (
 	"context"
+	"strconv"
 	"time"
 
+	"github.com/diamondburned/gotk4/pkg/core/gioutil"
+	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/ezex-io/gopkg/scheduler"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
+	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/wallet/types"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
-type WalletWidgetController struct {
-	view  *view.WalletWidgetView
-	model *model.WalletModel
+// addressRow wraps the model addressRow for display purposes.
+type addressRow struct {
+	no      int
+	balance amount.Amount
+	stake   amount.Amount
+	addr    *pactus.AddressInfo
+}
 
-	txSkip  int
-	txCount int
+type transactionRow struct {
+	trx *pactus.WalletTransactionInfo
+}
+
+type WalletWidgetController struct {
+	view           *view.WalletWidgetView
+	model          *model.WalletModel
+	lsAddresses    *gioutil.ListModel[addressRow]
+	lsTransactions *gioutil.ListModel[transactionRow]
+	txSkip         int
+	txCount        int
 }
 
 func NewWalletWidgetController(view *view.WalletWidgetView, model *model.WalletModel) *WalletWidgetController {
+	lsAddresses := gioutil.NewListModel[addressRow]()
+	lsTransactions := gioutil.NewListModel[transactionRow]()
+
+	view.ColViewAddresses.SetModel(gtk.NewSingleSelection(lsAddresses))
+	view.ColViewTransactions.SetModel(gtk.NewSingleSelection(lsTransactions))
+
 	return &WalletWidgetController{
-		view:    view,
-		model:   model,
-		txCount: 20,
+		view:           view,
+		model:          model,
+		lsAddresses:    lsAddresses,
+		lsTransactions: lsTransactions,
+		txCount:        20,
 	}
 }
 
 func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) error {
+	gtkutil.IdleAddSync(func() {
+		gtkutil.ColumnViewSetup(c.view.ColViewAddresses, c.lsAddresses)
+		gtkutil.ColumnViewSetup(c.view.ColViewTransactions, c.lsTransactions)
+
+		// Setup address columns
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewAddresses, "No", func(row addressRow) string {
+			return strconv.Itoa(row.no)
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewAddresses, "Address", func(row addressRow) string {
+			return row.addr.Address
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewAddresses, "Label", func(row addressRow) string {
+			return row.addr.Label
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewAddresses, "Balance", func(row addressRow) string {
+			return row.balance.String()
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewAddresses, "Stake", func(row addressRow) string {
+			return row.stake.String()
+		})
+		// Setup transaction columns
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewTransactions, "No", func(row transactionRow) string {
+			return strconv.Itoa(int(row.trx.No))
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewTransactions, "ID", func(row transactionRow) string {
+			return row.trx.TxId
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewTransactions, "Sender", func(row transactionRow) string {
+			return row.trx.Sender
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewTransactions, "Receiver", func(row transactionRow) string {
+			return row.trx.Receiver
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewTransactions, "Type", func(row transactionRow) string {
+			return payload.Type(row.trx.PayloadType).String()
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewTransactions, "Amount", func(row transactionRow) string {
+			return amount.Amount(row.trx.Amount).String()
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewTransactions, "Direction", func(row transactionRow) string {
+			return getDirectionTextWithIcon(types.TxDirection(row.trx.Direction))
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewTransactions, "Status", func(row transactionRow) string {
+			return types.TransactionStatus(row.trx.Status).String()
+		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewTransactions, "Comment", func(row transactionRow) string {
+			return row.trx.Comment
+		})
+	})
+
 	info, err := c.model.WalletInfo()
 
 	gtkutil.IdleAddSync(func() {
@@ -40,55 +117,16 @@ func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) 
 			c.view.LabelLocation.SetText(info.Path)
 		}
 
-		c.view.ConnectSignals(map[string]any{
-			// "on_new_address":     nav.ShowWalletNewAddress,
-			// "on_set_default_fee": nav.ShowWalletSetDefaultFee,
-			// "on_change_password": nav.ShowWalletChangePassword,
-			// "on_show_seed":       nav.ShowWalletShowSeed,
+		gtkutil.ConnectButtonSignal(c.view.BtnNewAddress, nav.ShowWalletNewAddress)
+		gtkutil.ConnectButtonSignal(c.view.BtnShowSeed, nav.ShowWalletShowSeed)
+		gtkutil.ConnectButtonSignal(c.view.BtnChangePassword, nav.ShowWalletChangePassword)
+		gtkutil.ConnectButtonSignal(c.view.BtnSetDefaultFee, nav.ShowWalletSetDefaultFee)
+		gtkutil.ConnectButtonSignal(c.view.BtnRefreshAddresses, c.RefreshAddresses)
 
-			// "on_address_refresh": c.RefreshAddresses,
-			// "on_tx_refresh":      c.RefreshTransactions,
-			// "on_tx_prev":         c.prevTransactionsPage,
-			// "on_tx_next":         c.nextTransactionsPage,
-		})
+		gtkutil.ConnectButtonSignal(c.view.BtnTxNext, c.nextTransactionsPage)
+		gtkutil.ConnectButtonSignal(c.view.BtnTxPrev, c.prevTransactionsPage)
 
-		// Context menu actions.
-		// c.view.MenuItemUpdateLabel.Connect("activate", func(_ *gtk.MenuItem) {
-		// 	addr := c.selectedAddress()
-		// 	if addr != "" {
-		// 		c.ShowUpdateLabel(addr)
-		// 	}
-		// })
-		// c.view.MenuItemDetails.Connect("activate", func(_ *gtk.MenuItem) {
-		// 	addr := c.selectedAddress()
-		// 	if addr != "" {
-		// 		c.ShowAddressDetails(addr)
-		// 	}
-		// })
-		// c.view.MenuItemPrivateKey.Connect("activate", func(_ *gtk.MenuItem) {
-		// 	addr := c.selectedAddress()
-		// 	if addr != "" {
-		// 		c.ShowPrivateKey(addr)
-		// 	}
-		// })
-
-		// // Right-click popup.
-		// c.view.ListViewAddresses.Connect("button-press-event", func(_ *gtk.TreeView, event *gdk.Event) bool {
-		// 	eventButton := gdk.EventButtonNewFromEvent(event)
-		// 	if eventButton.Type() == gdk.EVENT_BUTTON_PRESS && eventButton.Button() == gdk.BUTTON_SECONDARY {
-		// 		c.view.ContextMenu.PopupAtPointer(event)
-		// 	}
-
-		// 	return false
-		// })
-
-		// Double-click opens details.
-		// c.view.ColViewAddresses.Connect("row-activated", func(_ *gtk.TreeView, _ *gtk.TreePath, _ *gtk.TreeViewColumn) {
-		// 	addr := c.selectedAddress()
-		// 	if addr != "" {
-		// 		c.ShowAddressDetails(addr)
-		// 	}
-		// })
+		gtkutil.CaptureDoubleClick(&c.view.ColViewAddresses.Widget, c.ShowAddressDetails)
 
 		totalBalance1, _ := c.model.TotalBalance()
 		scheduler.Every(15*time.Second).Do(ctx, func(context.Context) {
@@ -107,13 +145,21 @@ func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) 
 	return nil
 }
 
-func (c *WalletWidgetController) selectedAddress() string {
-	// addr, ok, err := c.view.SelectionAddress(1)
-	// if err != nil || !ok {
-	// 	return ""
-	// }
-
-	return "addr"
+func (c *WalletWidgetController) SetupMenu(appWindow *gtk.ApplicationWindow) {
+	gtkutil.CreateContextMenu(appWindow, &c.view.ColViewAddresses.Widget, []gtkutil.ContextMenuItem{
+		{
+			Label:  "Update _Label",
+			Action: c.ShowUpdateLabel,
+		},
+		{
+			Label:  "_Details",
+			Action: c.ShowAddressDetails,
+		},
+		{
+			Label:  "_Private Key",
+			Action: c.ShowPrivateKey,
+		},
+	})
 }
 
 // getDirectionTextWithIcon returns formatted text with icon for the transaction direction.
@@ -137,7 +183,6 @@ func (c *WalletWidgetController) Refresh() {
 }
 
 func (c *WalletWidgetController) RefreshInfo() {
-	// Update info lines.
 	balance, _ := c.model.TotalBalance()
 	stake, _ := c.model.TotalStake()
 	balanceStr := balance.String()
@@ -156,72 +201,75 @@ func (c *WalletWidgetController) RefreshInfo() {
 	})
 }
 
+// RefreshAddresses updates the address list from the model.
 func (c *WalletWidgetController) RefreshAddresses() {
-	// rows := c.model.AddressRows()
+	infos, err := c.model.Addresses()
+	if err != nil {
+		return
+	}
 
-	// gtkutil.IdleAddSync(func() {
-	// 	c.view.ClearRows()
-	// 	for _, item := range rows {
-	// 		c.view.AppendRow(
-	// 			[]int{0, 1, 2, 3, 4},
-	// 			[]any{
-	// 				strconv.Itoa(item.No),
-	// 				item.Address,
-	// 				gtkutil.ImportedLabel(item.Label, item.Imported),
-	// 				item.Balance.String(),
-	// 				item.Stake.String(),
-	// 			},
-	// 		)
-	// 	}
-	// })
+	rows := make([]addressRow, 0, len(infos))
+	for i, info := range infos {
+		balance, _ := c.model.Balance(info.Address)
+		stake, _ := c.model.Stake(info.Address)
+		row := addressRow{
+			no:      i + 1,
+			addr:    info,
+			balance: balance,
+			stake:   stake,
+		}
+
+		rows = append(rows, row)
+	}
+
+	gtkutil.IdleAddSync(func() {
+		gtkutil.ClearListModel(c.lsAddresses)
+
+		for _, row := range rows {
+			c.lsAddresses.Append(row)
+		}
+	})
 }
 
+// RefreshTransactions updates the transaction list.
 func (c *WalletWidgetController) RefreshTransactions() {
-	// trxs := c.model.Transactions(c.txCount, c.txSkip)
-	// hasNext := len(trxs) == c.txCount
+	infos, err := c.model.Transactions(c.txCount, c.txSkip)
+	if err != nil {
+		return
+	}
 
-	// gtkutil.IdleAddSync(func() {
-	// 	c.view.ClearTxRows()
+	gtkutil.IdleAddAsync(func() {
+		gtkutil.ClearListModel(c.lsTransactions)
+		for _, info := range infos {
+			row := transactionRow{
+				trx: info,
+			}
+			c.lsTransactions.Append(row)
+		}
 
-	// 	for _, trx := range trxs {
-	// 		c.view.AppendTxRow(
-	// 			[]int{0, 1, 2, 3, 4, 5, 6, 7, 8},
-	// 			[]any{
-	// 				trx.No,
-	// 				cmd.ShortHash(trx.TxId),
-	// 				cmd.ShortAddress(trx.Sender),
-	// 				cmd.ShortAddress(trx.Receiver),
-	// 				payload.Type(trx.PayloadType).String(),
-	// 				amount.Amount(trx.Amount).String(),
-	// 				getDirectionTextWithIcon(types.TxDirection(trx.Direction)),
-	// 				types.TransactionStatus(trx.Status).String(),
-	// 				trx.Comment,
-	// 			},
-	// 		)
-	// 	}
-
-	// 	c.view.SetTxPager(c.txSkip > 0, hasNext)
-	// })
+		hasNext := len(infos) == c.txCount
+		c.view.SetTxPager(c.txSkip > 0, hasNext)
+	})
 }
 
-func (c *WalletWidgetController) ShowUpdateLabel(address string) {
+func (c *WalletWidgetController) ShowUpdateLabel() {
 	dlgView := view.NewAddressLabelDialogView()
 	dlgCtrl := NewAddressLabelDialogController(dlgView, c.model)
-	dlgCtrl.Run(address)
-
-	c.RefreshAddresses()
+	dlgCtrl.Show(c.getSelectedAddress().Address, func() {
+		go c.RefreshAddresses()
+	})
 }
 
-func (c *WalletWidgetController) ShowAddressDetails(address string) {
+func (c *WalletWidgetController) ShowAddressDetails() {
 	dlgView := view.NewAddressDetailsDialogView()
 	dlgCtrl := NewAddressDetailsDialogController(dlgView, c.model)
-	dlgCtrl.Run(address)
+	dlgCtrl.Show(c.getSelectedAddress())
 }
 
-func (c *WalletWidgetController) ShowPrivateKey(address string) {
+func (c *WalletWidgetController) ShowPrivateKey() {
 	dlgView := view.NewAddressPrivateKeyDialogView()
 	dlgCtrl := NewAddressPrivateKeyDialogController(dlgView, c.model)
-	dlgCtrl.Run(address)
+	dlgCtrl.Show(c.getSelectedAddress().Address)
 }
 
 func (c *WalletWidgetController) prevTransactionsPage() {
@@ -236,4 +284,10 @@ func (c *WalletWidgetController) prevTransactionsPage() {
 func (c *WalletWidgetController) nextTransactionsPage() {
 	c.txSkip += c.txCount
 	c.RefreshTransactions()
+}
+
+func (c *WalletWidgetController) getSelectedAddress() *pactus.AddressInfo {
+	row := gtkutil.ColumnViewGetSelectedItem(c.view.ColViewAddresses, c.lsAddresses)
+
+	return row.addr
 }

@@ -1,5 +1,6 @@
-//go111:build gtk
+//go:build gtk
 
+//nolint:staticcheck // Using depreciated widgets
 package view
 
 import (
@@ -13,7 +14,7 @@ type TxBondDialogView struct {
 
 	Window *gtk.Window
 
-	SenderCombo    *gtk.ComboBoxText
+	SenderDrop     *gtk.DropDown
 	SenderHint     *gtk.Label
 	ReceiverCombo  *gtk.ComboBoxText
 	ReceiverHint   *gtk.Label
@@ -35,7 +36,7 @@ func NewTxBondDialogView() *TxBondDialogView {
 		ViewBuilder: builder,
 		Window:      builder.GetWindowObj("id_dialog_transaction_bond"),
 
-		SenderCombo:    builder.GetComboBoxTextObj("id_combo_sender"),
+		SenderDrop:     builder.GetDropDownObj("id_drop_sender"),
 		SenderHint:     builder.GetLabelObj("id_hint_sender"),
 		ReceiverCombo:  builder.GetComboBoxTextObj("id_combo_receiver"),
 		ReceiverHint:   builder.GetLabelObj("id_hint_receiver"),
@@ -50,8 +51,10 @@ func NewTxBondDialogView() *TxBondDialogView {
 		ButtonSend:   builder.GetButtonObj("id_button_send"),
 	}
 
-	gtkutil.AddImageToButton(view.ButtonCancel, assets.IconCancel16)
-	gtkutil.AddImageToButton(view.ButtonSend, assets.IconSend16)
+	gtkutil.UpdateCancelButton(view.ButtonCancel)
+	gtkutil.UpdateSendButton(view.ButtonSend)
+
+	gtkutil.DialogSetup(view.Window)
 
 	return view
 }

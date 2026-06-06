@@ -1,103 +1,80 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 1.0.2 -->
 <interface>
-  <requires lib="gtk+" version="4.14"/>
-  <object class="GtkDialog" id="id_dialog_wallet_set_default_fee">
-    <property name="can-focus">False</property>
-    <property name="title" >Set Default Fee</property>
+  <!-- interface-name dialog_wallet_set_default_fee.ui -->
+  <requires lib="gtk" version="4.14"/>
+  <object class="GtkWindow" id="id_dialog_wallet_set_default_fee">
     <property name="default-width">320</property>
-    <property name="type-hint">dialog</property>
-    <child internal-child="vbox">
+    <property name="title">Set Default Fee</property>
+    <child>
       <object class="GtkBox">
-        <property name="can-focus">False</property>
-        <property name="margin-start">8</property>
-        <property name="margin-end">8</property>
-        <property name="margin-top">4</property>
-        <property name="margin-bottom">4</property>
+        <property name="css-classes">dialog-box</property>
         <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
-            <property name="can-focus">False</property>
-            <property name="layout-style">end</property>
-            <child>
-              <object class="GtkButton" id="id_button_cancel">
-                <property name="label">_Cancel</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="focus-on-click">False</property>
-                <property name="receives-default">False</property>
-                <property name="use-underline">True</property>
-                <property name="always-show-image">True</property>
-                <signal name="activate" handler="on_cancel" swapped="no"/>
-                <signal name="clicked" handler="on_cancel" swapped="no"/>
-              </object>
-
-            </child>
-            <child>
-              <object class="GtkButton" id="id_button_ok">
-                <property name="label">_Ok</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="focus-on-click">False</property>
-                <property name="can-default">True</property>
-                <property name="has-default">True</property>
-                <property name="receives-default">True</property>
-                <property name="use-underline">True</property>
-                <property name="always-show-image">True</property>
-                <signal name="activate" handler="on_ok" swapped="no"/>
-                <signal name="clicked" handler="on_ok" swapped="no"/>
-              </object>
-
-            </child>
-          </object>
-
-        </child>
         <child>
-          <!-- n-columns=2 n-rows=2 -->
           <object class="GtkGrid">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="row-spacing">8</property>
+            <property name="css-classes">dialog-grid</property>
             <property name="column-spacing">8</property>
+            <property name="row-spacing">8</property>
             <child>
               <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" >Default Fee (PAC):</property>
+                <property name="label">Default Fee (PAC):</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="row">0</property>
+                </layout>
               </object>
-
             </child>
             <child>
               <object class="GtkEntry" id="id_entry_default_fee">
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
                 <property name="activates-default">True</property>
-                <property name="width-chars">24</property>
                 <property name="input-purpose">number</property>
+                <property name="width-chars">24</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="row">0</property>
+                </layout>
               </object>
-
             </child>
             <child>
               <object class="GtkLabel" id="id_label_current_fee">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" >Current:</property>
+                <property name="label">Current:</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="row">1</property>
+                </layout>
               </object>
-
             </child>
             <child>
               <object class="GtkLabel" id="id_label_current_fee_value">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="label">0.01 PAC</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="row">1</property>
+                </layout>
               </object>
-
             </child>
           </object>
-
+        </child>
+        <child>
+          <object class="GtkSeparator"/>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="css-classes">dialog-action-bar</property>
+            <property name="halign">end</property>
+            <property name="spacing">4</property>
+            <child>
+              <object class="GtkButton" id="id_button_cancel">
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="id_button_ok">
+              </object>
+            </child>
+          </object>
         </child>
       </object>
     </child>
