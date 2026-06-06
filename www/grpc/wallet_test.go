@@ -571,13 +571,13 @@ func TestListAddress(t *testing.T) {
 			ListAddresses("test", gomock.Any()).
 			Return([]types.AddressInfo{
 				{
-					Address:   "addr1",
+					Address:   "pc1rj65g93q7lpdq0366vst22l7va9d26j3l2vr0em",
 					Label:     "label1",
 					PublicKey: "pub1",
 					Path:      "path1",
 				},
 				{
-					Address:   "addr2",
+					Address:   "pc1pcs9ezsmn6n7fc8jxzxks4n2lyw4ltzsdc9v8qn",
 					Label:     "label2",
 					PublicKey: "pub2",
 					Path:      "path2",
@@ -590,9 +590,17 @@ func TestListAddress(t *testing.T) {
 		require.NotNil(t, res)
 		assert.Equal(t, "test", res.WalletName)
 		require.Len(t, res.Addrs, 2)
-		assert.Equal(t, "addr1", res.Addrs[0].Address)
+
+		assert.Equal(t, "pc1rj65g93q7lpdq0366vst22l7va9d26j3l2vr0em", res.Addrs[0].Address)
 		assert.Equal(t, "label1", res.Addrs[0].Label)
 		assert.Equal(t, "pub1", res.Addrs[0].PublicKey)
 		assert.Equal(t, "path1", res.Addrs[0].Path)
+		assert.Equal(t, pactus.AddressType(crypto.AddressTypeEd25519Account), res.Addrs[0].AddressType)
+
+		assert.Equal(t, "pc1pcs9ezsmn6n7fc8jxzxks4n2lyw4ltzsdc9v8qn", res.Addrs[1].Address)
+		assert.Equal(t, "label2", res.Addrs[1].Label)
+		assert.Equal(t, "pub2", res.Addrs[1].PublicKey)
+		assert.Equal(t, "path2", res.Addrs[1].Path)
+		assert.Equal(t, pactus.AddressType(crypto.AddressTypeValidator), res.Addrs[1].AddressType)
 	})
 }
