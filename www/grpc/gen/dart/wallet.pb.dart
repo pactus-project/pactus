@@ -31,6 +31,8 @@ class AddressInfo extends $pb.GeneratedMessage {
     $core.String? label,
     $core.String? path,
     AddressType? addressType,
+    $fixnum.Int64? balance,
+    $fixnum.Int64? stake,
   }) {
     final result = create();
     if (address != null) result.address = address;
@@ -38,6 +40,8 @@ class AddressInfo extends $pb.GeneratedMessage {
     if (label != null) result.label = label;
     if (path != null) result.path = path;
     if (addressType != null) result.addressType = addressType;
+    if (balance != null) result.balance = balance;
+    if (stake != null) result.stake = stake;
     return result;
   }
 
@@ -60,6 +64,8 @@ class AddressInfo extends $pb.GeneratedMessage {
     ..aOS(4, _omitFieldNames ? '' : 'path')
     ..aE<AddressType>(5, _omitFieldNames ? '' : 'addressType',
         enumValues: AddressType.values)
+    ..aInt64(6, _omitFieldNames ? '' : 'balance')
+    ..aInt64(7, _omitFieldNames ? '' : 'stake')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -130,6 +136,26 @@ class AddressInfo extends $pb.GeneratedMessage {
   $core.bool hasAddressType() => $_has(4);
   @$pb.TagNumber(5)
   void clearAddressType() => $_clearField(5);
+
+  /// The account balance in NanoPAC. For validator addresses, this field is zero.
+  @$pb.TagNumber(6)
+  $fixnum.Int64 get balance => $_getI64(5);
+  @$pb.TagNumber(6)
+  set balance($fixnum.Int64 value) => $_setInt64(5, value);
+  @$pb.TagNumber(6)
+  $core.bool hasBalance() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearBalance() => $_clearField(6);
+
+  /// The validator stake in NanoPAC. For non-validator addresses, this field is zero.
+  @$pb.TagNumber(7)
+  $fixnum.Int64 get stake => $_getI64(6);
+  @$pb.TagNumber(7)
+  set stake($fixnum.Int64 value) => $_setInt64(6, value);
+  @$pb.TagNumber(7)
+  $core.bool hasStake() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearStake() => $_clearField(7);
 }
 
 /// Request message for generating a new wallet address.
@@ -2115,10 +2141,14 @@ class ListAddressesRequest extends $pb.GeneratedMessage {
   factory ListAddressesRequest({
     $core.String? walletName,
     $core.Iterable<AddressType>? addressTypes,
+    $core.bool? includeBalance,
+    $core.bool? includeStake,
   }) {
     final result = create();
     if (walletName != null) result.walletName = walletName;
     if (addressTypes != null) result.addressTypes.addAll(addressTypes);
+    if (includeBalance != null) result.includeBalance = includeBalance;
+    if (includeStake != null) result.includeStake = includeStake;
     return result;
   }
 
@@ -2141,6 +2171,8 @@ class ListAddressesRequest extends $pb.GeneratedMessage {
         valueOf: AddressType.valueOf,
         enumValues: AddressType.values,
         defaultEnumValue: AddressType.ADDRESS_TYPE_TREASURY)
+    ..aOB(3, _omitFieldNames ? '' : 'includeBalance')
+    ..aOB(4, _omitFieldNames ? '' : 'includeStake')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -2175,6 +2207,26 @@ class ListAddressesRequest extends $pb.GeneratedMessage {
   /// Filter addresses by their types. If empty, all address types are included.
   @$pb.TagNumber(2)
   $pb.PbList<AddressType> get addressTypes => $_getList(1);
+
+  /// Includes the balance of each address.
+  @$pb.TagNumber(3)
+  $core.bool get includeBalance => $_getBF(2);
+  @$pb.TagNumber(3)
+  set includeBalance($core.bool value) => $_setBool(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasIncludeBalance() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearIncludeBalance() => $_clearField(3);
+
+  /// Includes the stake of each address.
+  @$pb.TagNumber(4)
+  $core.bool get includeStake => $_getBF(3);
+  @$pb.TagNumber(4)
+  set includeStake($core.bool value) => $_setBool(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasIncludeStake() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearIncludeStake() => $_clearField(4);
 }
 
 /// Response message contains wallet addresses.

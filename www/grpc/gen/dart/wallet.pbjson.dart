@@ -80,6 +80,8 @@ const AddressInfo$json = {
       '6': '.pactus.AddressType',
       '10': 'addressType'
     },
+    {'1': 'balance', '3': 6, '4': 1, '5': 3, '10': 'balance'},
+    {'1': 'stake', '3': 7, '4': 1, '5': 3, '10': 'stake'},
   ],
 };
 
@@ -88,7 +90,7 @@ final $typed_data.Uint8List addressInfoDescriptor = $convert.base64Decode(
     'CgtBZGRyZXNzSW5mbxIYCgdhZGRyZXNzGAEgASgJUgdhZGRyZXNzEh0KCnB1YmxpY19rZXkYAi'
     'ABKAlSCXB1YmxpY0tleRIUCgVsYWJlbBgDIAEoCVIFbGFiZWwSEgoEcGF0aBgEIAEoCVIEcGF0'
     'aBI2CgxhZGRyZXNzX3R5cGUYBSABKA4yEy5wYWN0dXMuQWRkcmVzc1R5cGVSC2FkZHJlc3NUeX'
-    'Bl');
+    'BlEhgKB2JhbGFuY2UYBiABKANSB2JhbGFuY2USFAoFc3Rha2UYByABKANSBXN0YWtl');
 
 @$core.Deprecated('Use getNewAddressRequestDescriptor instead')
 const GetNewAddressRequest$json = {
@@ -532,6 +534,8 @@ const ListAddressesRequest$json = {
       '6': '.pactus.AddressType',
       '10': 'addressTypes'
     },
+    {'1': 'include_balance', '3': 3, '4': 1, '5': 8, '10': 'includeBalance'},
+    {'1': 'include_stake', '3': 4, '4': 1, '5': 8, '10': 'includeStake'},
   ],
 };
 
@@ -539,7 +543,8 @@ const ListAddressesRequest$json = {
 final $typed_data.Uint8List listAddressesRequestDescriptor = $convert.base64Decode(
     'ChRMaXN0QWRkcmVzc2VzUmVxdWVzdBIfCgt3YWxsZXRfbmFtZRgBIAEoCVIKd2FsbGV0TmFtZR'
     'I4Cg1hZGRyZXNzX3R5cGVzGAIgAygOMhMucGFjdHVzLkFkZHJlc3NUeXBlUgxhZGRyZXNzVHlw'
-    'ZXM=');
+    'ZXMSJwoPaW5jbHVkZV9iYWxhbmNlGAMgASgIUg5pbmNsdWRlQmFsYW5jZRIjCg1pbmNsdWRlX3'
+    'N0YWtlGAQgASgIUgxpbmNsdWRlU3Rha2U=');
 
 @$core.Deprecated('Use listAddressesResponseDescriptor instead')
 const ListAddressesResponse$json = {

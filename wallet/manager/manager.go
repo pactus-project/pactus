@@ -347,7 +347,7 @@ func (wm *Manager) ListWallets() ([]string, error) {
 	return wallets, nil
 }
 
-func (wm *Manager) ListAddresses(walletName string, opts ...wallet.ListAddressOption) ([]types.AddressInfo, error) {
+func (wm *Manager) ListAddresses(walletName string, opts ...wallet.ListAddressOption) ([]*types.AddressInfo, error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
 		return nil, ErrWalletNotLoaded

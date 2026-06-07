@@ -1261,6 +1261,12 @@ pub struct AddressInfo {
     /// The type of the address.
     #[prost(enumeration="AddressType", tag="5")]
     pub address_type: i32,
+    /// The account balance in NanoPAC. For validator addresses, this field is zero.
+    #[prost(int64, tag="6")]
+    pub balance: i64,
+    /// The validator stake in NanoPAC. For non-validator addresses, this field is zero.
+    #[prost(int64, tag="7")]
+    pub stake: i64,
 }
 /// Request message for generating a new wallet address.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -1561,6 +1567,12 @@ pub struct ListAddressesRequest {
     /// Filter addresses by their types. If empty, all address types are included.
     #[prost(enumeration="AddressType", repeated, tag="2")]
     pub address_types: ::prost::alloc::vec::Vec<i32>,
+    /// Includes the balance of each address.
+    #[prost(bool, tag="3")]
+    pub include_balance: bool,
+    /// Includes the stake of each address.
+    #[prost(bool, tag="4")]
+    pub include_stake: bool,
 }
 /// Response message contains wallet addresses.
 #[derive(Clone, PartialEq, ::prost::Message)]

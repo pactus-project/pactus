@@ -606,7 +606,7 @@ func (*Vault) deriveSecp256k1PrivateKey(mnemonicSeed []byte, path []uint32) (*se
 // Reference: https://pips.pactus.org/PIPs/pip-41
 func (v *Vault) RecoverAddresses(ctx context.Context, password string,
 	hasActivity func(addr string) (bool, error),
-) ([]types.AddressInfo, error) {
+) ([]*types.AddressInfo, error) {
 	recovered1, err := v.recoverBLSAccountAddresses(ctx, hasActivity)
 	if err != nil {
 		return nil, err
@@ -674,7 +674,7 @@ func (*Vault) scanRecoveredCount(
 // recoverBLSAccountAddresses recovers BLS account addresses following the PIP-41 specification.
 func (v *Vault) recoverBLSAccountAddresses(ctx context.Context,
 	hasActivity func(addrs string) (bool, error),
-) ([]types.AddressInfo, error) {
+) ([]*types.AddressInfo, error) {
 	ext, err := blshdkeychain.NewKeyFromString(v.Purposes.PurposeBLS.XPubAccount)
 	if err != nil {
 		return nil, err
@@ -692,10 +692,10 @@ func (v *Vault) recoverBLSAccountAddresses(ctx context.Context,
 		return nil, err
 	}
 
-	recovered := make([]types.AddressInfo, 0, recoveredCount)
+	recovered := make([]*types.AddressInfo, 0, recoveredCount)
 	for i := 0; i < recoveredCount; i++ {
 		info, _ := v.NewBLSAccountAddress(fmt.Sprintf("BLS Account Address %d", i))
-		recovered = append(recovered, *info)
+		recovered = append(recovered, info)
 	}
 
 	return recovered, nil
@@ -704,7 +704,7 @@ func (v *Vault) recoverBLSAccountAddresses(ctx context.Context,
 // recoverEd25519AccountAddresses recovers Ed25519 account addresses following the PIP-41 specification.
 func (v *Vault) recoverEd25519AccountAddresses(ctx context.Context, password string,
 	hasActivity func(addrs string) (bool, error),
-) ([]types.AddressInfo, error) {
+) ([]*types.AddressInfo, error) {
 	seed, err := v.MnemonicSeed(password)
 	if err != nil {
 		return nil, err
@@ -727,10 +727,10 @@ func (v *Vault) recoverEd25519AccountAddresses(ctx context.Context, password str
 		return nil, err
 	}
 
-	recovered := make([]types.AddressInfo, 0, recoveredCount)
+	recovered := make([]*types.AddressInfo, 0, recoveredCount)
 	for i := 0; i < recoveredCount; i++ {
 		info, _ := v.NewEd25519AccountAddress(fmt.Sprintf("Ed25519 Account Address %d", i), password)
-		recovered = append(recovered, *info)
+		recovered = append(recovered, info)
 	}
 
 	return recovered, nil

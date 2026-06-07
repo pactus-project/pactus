@@ -26,14 +26,14 @@ func newWalletServer(server *Server, manager wltmgr.IManager) *walletServer {
 }
 
 func (*walletServer) addressInfoToProto(info *types.AddressInfo) *pactus.AddressInfo {
-	addr, _ := crypto.AddressFromString(info.Address)
-
 	return &pactus.AddressInfo{
 		Address:     info.Address,
 		Label:       info.Label,
 		PublicKey:   info.PublicKey,
 		Path:        info.Path,
-		AddressType: pactus.AddressType(addr.Type()),
+		AddressType: pactus.AddressType(info.Type),
+		Balance:     info.Balance.ToNanoPAC(),
+		Stake:       info.Stake.ToNanoPAC(),
 	}
 }
 
@@ -259,14 +259,18 @@ func (s *walletServer) ListAddresses(_ context.Context,
 		addressTypes = append(addressTypes, crypto.AddressType(addrType))
 	}
 
-	addrs, err := s.walletManager.ListAddresses(req.WalletName, wallet.WithAddressTypes(addressTypes))
+	addrs, err := s.walletManager.ListAddresses(req.WalletName,
+		wallet.WithAddressTypes(addressTypes),
+		wallet.WithAddressBalance(req.IncludeBalance),
+		wallet.WithAddressStake(req.IncludeStake),
+	)
 	if err != nil {
 		return nil, err
 	}
 
 	addrsPB := make([]*pactus.AddressInfo, 0, len(addrs))
 	for _, info := range addrs {
-		addrsPB = append(addrsPB, s.addressInfoToProto(&info))
+		addrsPB = append(addrsPB, s.addressInfoToProto(info))
 	}
 
 	return &pactus.ListAddressesResponse{

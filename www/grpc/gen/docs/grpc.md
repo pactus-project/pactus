@@ -4280,6 +4280,20 @@ Should NOT be used to generate new addresses.)</li>
       </ul>
     </td>
   </tr>
+   <tr>
+    <td class="fw-bold">addr.balance</td>
+    <td> int64</td>
+    <td>
+  The account balance in NanoPAC. For validator addresses, this field is zero.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">addr.stake</td>
+    <td> int64</td>
+    <td>
+  The validator stake in NanoPAC. For non-validator addresses, this field is zero.
+    </td>
+  </tr>
    </tbody>
 </table>
 
@@ -4466,6 +4480,20 @@ Should NOT be used to generate new addresses.)</li>
       </ul>
     </td>
   </tr>
+   <tr>
+    <td class="fw-bold">addr.balance</td>
+    <td> int64</td>
+    <td>
+  The account balance in NanoPAC. For validator addresses, this field is zero.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">addr.stake</td>
+    <td> int64</td>
+    <td>
+  The validator stake in NanoPAC. For non-validator addresses, this field is zero.
+    </td>
+  </tr>
    </tbody>
 </table>
 
@@ -4499,6 +4527,20 @@ Should NOT be used to generate new addresses.)</li>
       <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.)</li>
       <li>ADDRESS_TYPE_SECP_ACCOUNT = 4 (Account address type with SECP256K1 signature scheme.)</li>
       </ul>
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">include_balance</td>
+    <td> bool</td>
+    <td>
+  Includes the balance of each address.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">include_stake</td>
+    <td> bool</td>
+    <td>
+  Includes the stake of each address.
     </td>
   </tr>
   </tbody>
@@ -4565,6 +4607,20 @@ Should NOT be used to generate new addresses.)</li>
       <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.)</li>
       <li>ADDRESS_TYPE_SECP_ACCOUNT = 4 (Account address type with SECP256K1 signature scheme.)</li>
       </ul>
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">addrs[].balance</td>
+    <td> int64</td>
+    <td>
+  The account balance in NanoPAC. For validator addresses, this field is zero.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">addrs[].stake</td>
+    <td> int64</td>
+    <td>
+  The validator stake in NanoPAC. For non-validator addresses, this field is zero.
     </td>
   </tr>
    </tbody>

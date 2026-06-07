@@ -300,7 +300,7 @@ func RecoverConfig(confPath string, defConf *config.Config, chainType genesis.Ch
 // MakeRewardAddresses generates a list of reward addresses based on wallet and configuration.
 // If no reward addresses are provided in the config,
 // the function attempts to use Ed25519 or BLS addresses from the wallet.
-func MakeRewardAddresses(wlt *wallet.Wallet, valList []types.AddressInfo,
+func MakeRewardAddresses(wlt *wallet.Wallet, valList []*types.AddressInfo,
 	confRewardAddrs []string,
 ) ([]crypto.Address, error) {
 	rewardAddrs := make([]crypto.Address, 0, len(valList))
@@ -318,9 +318,9 @@ func MakeRewardAddresses(wlt *wallet.Wallet, valList []types.AddressInfo,
 				return nil, errors.New("unable to find a reward address in the wallet")
 			}
 
-			addrInfo = &blsAddrs[0]
+			addrInfo = blsAddrs[0]
 		} else {
-			addrInfo = &ed25519Addrs[0]
+			addrInfo = ed25519Addrs[0]
 		}
 
 		addr, _ := crypto.AddressFromString(addrInfo.Address)
@@ -351,7 +351,7 @@ func MakeRewardAddresses(wlt *wallet.Wallet, valList []types.AddressInfo,
 	return rewardAddrs, nil
 }
 
-func MakeValidatorKey(walletInstance *wallet.Wallet, valAddrsInfo []types.AddressInfo,
+func MakeValidatorKey(walletInstance *wallet.Wallet, valAddrsInfo []*types.AddressInfo,
 	passwordFetcher func() (string, bool),
 ) ([]*bls.ValidatorKey, error) {
 	valAddrs := make([]string, len(valAddrsInfo))

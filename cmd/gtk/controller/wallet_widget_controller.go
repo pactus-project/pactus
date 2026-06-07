@@ -13,6 +13,7 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/wallet/types"
@@ -21,10 +22,8 @@ import (
 
 // addressRow wraps the model addressRow for display purposes.
 type addressRow struct {
-	no      int
-	balance amount.Amount
-	stake   amount.Amount
-	addr    *pactus.AddressInfo
+	no   int
+	addr *pactus.AddressInfo
 }
 
 type transactionRow struct {
@@ -68,14 +67,22 @@ func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) 
 		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewAddresses, "Address", func(row addressRow) string {
 			return row.addr.Address
 		})
+		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewAddresses, "Type", func(row addressRow) string {
+			typ := crypto.AddressType(row.addr.AddressType)
+			if typ == crypto.AddressTypeTreasury {
+				return ""
+			}
+
+			return typ.String()
+		})
 		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewAddresses, "Label", func(row addressRow) string {
 			return row.addr.Label
 		})
 		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewAddresses, "Balance", func(row addressRow) string {
-			return row.balance.String()
+			return amount.Amount(row.addr.Balance).String()
 		})
 		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewAddresses, "Stake", func(row addressRow) string {
-			return row.stake.String()
+			return amount.Amount(row.addr.Stake).String()
 		})
 		// Setup transaction columns
 		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewTransactions, "No", func(row transactionRow) string {
@@ -203,29 +210,18 @@ func (c *WalletWidgetController) RefreshInfo() {
 
 // RefreshAddresses updates the address list from the model.
 func (c *WalletWidgetController) RefreshAddresses() {
-	infos, err := c.model.Addresses()
+	infos, err := c.model.ListAddresses()
 	if err != nil {
 		return
-	}
-
-	rows := make([]addressRow, 0, len(infos))
-	for i, info := range infos {
-		balance, _ := c.model.Balance(info.Address)
-		stake, _ := c.model.Stake(info.Address)
-		row := addressRow{
-			no:      i + 1,
-			addr:    info,
-			balance: balance,
-			stake:   stake,
-		}
-
-		rows = append(rows, row)
 	}
 
 	gtkutil.IdleAddSync(func() {
 		gtkutil.ClearListModel(c.lsAddresses)
 
-		for _, row := range rows {
+		for _, info := range infos {
+			row := addressRow{
+				addr: info,
+			}
 			c.lsAddresses.Append(row)
 		}
 	})

@@ -17,10 +17,10 @@ import (
 )
 
 type legacyVault struct {
-	Encrypter  encrypter.Encrypter          `json:"encrypter"`
-	Purposes   vault.Purposes               `json:"purposes"` // Contains Purposes of the vault
-	DefaultFee amount.Amount                `json:"default_fee"`
-	Addresses  map[string]types.AddressInfo `json:"addresses"`
+	Encrypter  encrypter.Encrypter           `json:"encrypter"`
+	Purposes   vault.Purposes                `json:"purposes"` // Contains Purposes of the vault
+	DefaultFee amount.Amount                 `json:"default_fee"`
+	Addresses  map[string]*types.AddressInfo `json:"addresses"`
 }
 
 type legacyStore struct {
@@ -77,11 +77,11 @@ func upgrade(path string) error {
 
 	case Version4:
 		store.DefaultFee = legacyStore.Vault.DefaultFee
-		store.Addresses = make(map[string]types.AddressInfo)
+		store.Addresses = make(map[string]*types.AddressInfo)
 		store.VaultCRC = store.calcVaultCRC()
 
 		for addr, ai := range legacyStore.Vault.Addresses {
-			store.Addresses[addr] = types.AddressInfo{
+			store.Addresses[addr] = &types.AddressInfo{
 				Address:   ai.Address,
 				PublicKey: ai.PublicKey,
 				Label:     ai.Label,

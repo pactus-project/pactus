@@ -6,17 +6,22 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/wallet/addresspath"
+	"github.com/pactus-project/pactus/wallet/provider"
 	"github.com/pactus-project/pactus/wallet/storage"
 	"github.com/pactus-project/pactus/wallet/types"
 )
 
 type addresses struct {
-	storage storage.IStorage
+	storage  storage.IStorage
+	provider provider.IBlockchainProvider
 }
 
-func newAddresses(storage storage.IStorage) addresses {
+func newAddresses(storage storage.IStorage,
+	provider provider.IBlockchainProvider,
+) addresses {
 	return addresses{
-		storage: storage,
+		storage:  storage,
+		provider: provider,
 	}
 }
 
@@ -27,6 +32,8 @@ func (a *addresses) AddressInfo(addr string) (*types.AddressInfo, error) {
 // listAddressConfig contains options for filtering addresses.
 type listAddressConfig struct {
 	addressTypes []crypto.AddressType
+	withBalance  bool
+	withStake    bool
 }
 
 var defaultListAddressConfig = listAddressConfig{
@@ -48,6 +55,20 @@ func WithAddressType(addressType crypto.AddressType) ListAddressOption {
 	return WithAddressTypes([]crypto.AddressType{addressType})
 }
 
+// WithAddressBalance configures whether address balances are included.
+func WithAddressBalance(withBalance bool) ListAddressOption {
+	return func(cfg *listAddressConfig) {
+		cfg.withBalance = withBalance
+	}
+}
+
+// WithAddressStake configures whether validator stakes are included.
+func WithAddressStake(withStake bool) ListAddressOption {
+	return func(cfg *listAddressConfig) {
+		cfg.withStake = withStake
+	}
+}
+
 // OnlyValidatorAddresses filters to show only validator addresses.
 func OnlyValidatorAddresses() ListAddressOption {
 	return WithAddressType(crypto.AddressTypeValidator)
@@ -62,27 +83,43 @@ func OnlyAccountAddresses() ListAddressOption {
 	})
 }
 
-func (a *addresses) ListAddresses(opts ...ListAddressOption) []types.AddressInfo {
+func (a *addresses) ListAddresses(opts ...ListAddressOption) []*types.AddressInfo {
 	cfg := defaultListAddressConfig
 	for _, opt := range opts {
 		opt(&cfg)
 	}
 
-	infos := make([]types.AddressInfo, 0)
+	infos := make([]*types.AddressInfo, 0)
 	for _, info := range a.storage.AllAddresses() {
+		addr, err := crypto.AddressFromString(info.Address)
+		if err != nil {
+			return nil
+		}
+
+		info.Type = addr.Type()
+
+		if cfg.withBalance {
+			acc, err := a.provider.GetAccount(info.Address)
+			if err == nil {
+				info.Balance = acc.Balance()
+			}
+		}
+
+		if cfg.withStake {
+			acc, err := a.provider.GetValidator(info.Address)
+			if err == nil {
+				info.Stake = acc.Stake()
+			}
+		}
+
 		if len(cfg.addressTypes) == 0 {
 			infos = append(infos, info)
 
 			continue
 		}
 
-		addr, err := crypto.AddressFromString(info.Address)
-		if err != nil {
-			return nil
-		}
-
 		for _, addrType := range cfg.addressTypes {
-			if addr.Type() == addrType {
+			if info.Type == addrType {
 				infos = append(infos, info)
 
 				break
@@ -90,15 +127,15 @@ func (a *addresses) ListAddresses(opts ...ListAddressOption) []types.AddressInfo
 		}
 	}
 
-	a.sortAddressesByAddressIndex(infos...)
-	a.sortAddressesByAddressType(infos...)
-	a.sortAddressesByPurpose(infos...)
+	a.sortAddressesByAddressIndex(infos)
+	a.sortAddressesByAddressType(infos)
+	a.sortAddressesByPurpose(infos)
 
 	return infos
 }
 
-func (*addresses) sortAddressesByPurpose(addrs ...types.AddressInfo) {
-	slices.SortStableFunc(addrs, func(a, b types.AddressInfo) int {
+func (*addresses) sortAddressesByPurpose(addrs []*types.AddressInfo) {
+	slices.SortStableFunc(addrs, func(a, b *types.AddressInfo) int {
 		pathA, _ := addresspath.FromString(a.Path)
 		pathB, _ := addresspath.FromString(b.Path)
 
@@ -106,8 +143,8 @@ func (*addresses) sortAddressesByPurpose(addrs ...types.AddressInfo) {
 	})
 }
 
-func (*addresses) sortAddressesByAddressType(addrs ...types.AddressInfo) {
-	slices.SortStableFunc(addrs, func(a, b types.AddressInfo) int {
+func (*addresses) sortAddressesByAddressType(addrs []*types.AddressInfo) {
+	slices.SortStableFunc(addrs, func(a, b *types.AddressInfo) int {
 		pathA, _ := addresspath.FromString(a.Path)
 		pathB, _ := addresspath.FromString(b.Path)
 
@@ -115,8 +152,8 @@ func (*addresses) sortAddressesByAddressType(addrs ...types.AddressInfo) {
 	})
 }
 
-func (*addresses) sortAddressesByAddressIndex(addrs ...types.AddressInfo) {
-	slices.SortStableFunc(addrs, func(a, b types.AddressInfo) int {
+func (*addresses) sortAddressesByAddressIndex(addrs []*types.AddressInfo) {
+	slices.SortStableFunc(addrs, func(a, b *types.AddressInfo) int {
 		pathA, _ := addresspath.FromString(a.Path)
 		pathB, _ := addresspath.FromString(b.Path)
 

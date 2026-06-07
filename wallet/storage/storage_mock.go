@@ -73,10 +73,10 @@ func (mr *MockIStorageMockRecorder) AddressInfo(address any) *gomock.Call {
 }
 
 // AllAddresses mocks base method.
-func (m *MockIStorage) AllAddresses() []types0.AddressInfo {
+func (m *MockIStorage) AllAddresses() []*types0.AddressInfo {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AllAddresses")
-	ret0, _ := ret[0].([]types0.AddressInfo)
+	ret0, _ := ret[0].([]*types0.AddressInfo)
 	return ret0
 }
 

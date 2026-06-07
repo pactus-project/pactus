@@ -1061,8 +1061,8 @@
         "schema": {
           "type": "object","required": ["wallet_name","addr"],
           "properties": {"wallet_name": { "type": "string" },"addr": {
-  "type": "object","required": ["address","public_key","label","path","address_type"],
-  "properties": {"address": { "type": "string" },"public_key": { "type": "string" },"label": { "type": "string" },"path": { "type": "string" },"address_type": { "type": "integer" }}
+  "type": "object","required": ["address","public_key","label","path","address_type","balance","stake"],
+  "properties": {"address": { "type": "string" },"public_key": { "type": "string" },"label": { "type": "string" },"path": { "type": "string" },"address_type": { "type": "integer" },"balance": { "type": "integer" },"stake": { "type": "integer" }}
 }}
           }
         }
@@ -1122,8 +1122,8 @@
         "schema": {
           "type": "object","required": ["wallet_name","addr"],
           "properties": {"wallet_name": { "type": "string" },"addr": {
-  "type": "object","required": ["address","public_key","label","path","address_type"],
-  "properties": {"address": { "type": "string" },"public_key": { "type": "string" },"label": { "type": "string" },"path": { "type": "string" },"address_type": { "type": "integer" }}
+  "type": "object","required": ["address","public_key","label","path","address_type","balance","stake"],
+  "properties": {"address": { "type": "string" },"public_key": { "type": "string" },"label": { "type": "string" },"path": { "type": "string" },"address_type": { "type": "integer" },"balance": { "type": "integer" },"stake": { "type": "integer" }}
 }}
           }
         }
@@ -1143,6 +1143,14 @@
   "type": "array",
   "items": { "type": "integer" }
 }
+        },{
+          "name": "include_balance",
+          "description": "Includes the balance of each address.",
+          "schema": { "type": "boolean" }
+        },{
+          "name": "include_stake",
+          "description": "Includes the stake of each address.",
+          "schema": { "type": "boolean" }
         }],
       "result": {
         "name": "fields",
@@ -1151,8 +1159,8 @@
           "properties": {"wallet_name": { "type": "string" },"addrs": {
   "type": "array",
   "items": {
-  "type": "object","required": ["address","public_key","label","path","address_type"],
-  "properties": {"address": { "type": "string" },"public_key": { "type": "string" },"label": { "type": "string" },"path": { "type": "string" },"address_type": { "type": "integer" }}
+  "type": "object","required": ["address","public_key","label","path","address_type","balance","stake"],
+  "properties": {"address": { "type": "string" },"public_key": { "type": "string" },"label": { "type": "string" },"path": { "type": "string" },"address_type": { "type": "integer" },"balance": { "type": "integer" },"stake": { "type": "integer" }}
 }
 }}
           }
