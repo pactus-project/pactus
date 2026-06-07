@@ -104,7 +104,8 @@ func (prv *PrivateKey) String() string {
 	str, _ := bech32m.EncodeFromBase256WithType(
 		crypto.PrivateKeyHRP,
 		byte(crypto.SignatureTypeBLS),
-		prv.Bytes())
+		prv.Bytes(),
+	)
 
 	return strings.ToUpper(str)
 }

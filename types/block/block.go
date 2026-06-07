@@ -162,7 +162,8 @@ func (b *Block) Height() types.Height {
 
 // LogString returns a concise string representation intended for use in logs.
 func (b *Block) LogString() string {
-	return fmt.Sprintf("{⌘ %v 👤 %v 💻 %v 📨 %d}",
+	return fmt.Sprintf(
+		"{⌘ %v 👤 %v 💻 %v 📨 %d}",
 		b.Hash().LogString(),
 		b.data.Header.ProposerAddress().LogString(),
 		b.data.Header.StateRoot().LogString(),

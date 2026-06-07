@@ -42,12 +42,14 @@ var ErrValidatorInCommittee = errors.New("validator is in the committee")
 // ErrCommitteeJoinLimitExceeded indicates that at each height,
 // the maximum stake joining the committee can't be more than 1/3 of the committee's total stake.
 var ErrCommitteeJoinLimitExceeded = errors.New(
-	"the maximum stake joining the committee can't be more than 1/3 of the committee's total stake")
+	"the maximum stake joining the committee can't be more than 1/3 of the committee's total stake",
+)
 
 // ErrCommitteeLeaveLimitExceeded indicates that at each height,
 // the maximum stake leaving the committee can't be more than 1/3 of the committee's total stake.
 var ErrCommitteeLeaveLimitExceeded = errors.New(
-	"the maximum stake leaving the committee can't be more than 1/3 of the committee's total stake")
+	"the maximum stake leaving the committee can't be more than 1/3 of the committee's total stake",
+)
 
 // ErrOldestValidatorNotProposed indicates that the oldest validator has not proposed any block yet.
 var ErrOldestValidatorNotProposed = errors.New("oldest validator has not proposed any block yet")

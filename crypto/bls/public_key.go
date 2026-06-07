@@ -67,7 +67,8 @@ func (pub *PublicKey) String() string {
 	str, _ := bech32m.EncodeFromBase256WithType(
 		crypto.PublicKeyHRP,
 		byte(crypto.SignatureTypeBLS),
-		pub.Bytes())
+		pub.Bytes(),
+	)
 
 	return str
 }
@@ -132,7 +133,8 @@ func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 
 	check, _ := bls12381.PairingCheck(
 		[]bls12381.G1Affine{qAffine, *pointG1},
-		[]bls12381.G2Affine{*pointG2, negP})
+		[]bls12381.G2Affine{*pointG2, negP},
+	)
 
 	if !check {
 		return crypto.ErrInvalidSignature

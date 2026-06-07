@@ -15,9 +15,11 @@ func TestEvaluation(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	prv, _ := bls.PrivateKeyFromString(
-		"SECRET1P838V87AW42JS8YWLYYK0AYFJQ9445VR72H23D6LR7GEJ8KW9UQ0QVE8WHE")
+		"SECRET1P838V87AW42JS8YWLYYK0AYFJQ9445VR72H23D6LR7GEJ8KW9UQ0QVE8WHE",
+	)
 	seed, _ := sortition.VerifiableSeedFromString(
-		"b63179137423ab2da8279d7aa3726d7ad05ae7d3ab3f744db0a9a719d12a720e72dc1d1e9222360243007f2f4adf7009")
+		"b63179137423ab2da8279d7aa3726d7ad05ae7d3ab3f744db0a9a719d12a720e72dc1d1e9222360243007f2f4adf7009",
+	)
 	valKey := bls.NewValidatorKey(prv)
 
 	t.Run("Total stake is zero", func(t *testing.T) {
@@ -37,7 +39,8 @@ func TestEvaluation(t *testing.T) {
 
 	t.Run("OK!", func(t *testing.T) {
 		proof1, _ := sortition.ProofFromString(
-			"8cb689ec126465ddadd32493b71dc7ee3bfa2ef5a0a0f4b9b8aa777fb915a5f88def3305a3579e97b96ac862a6d67316")
+			"8cb689ec126465ddadd32493b71dc7ee3bfa2ef5a0a0f4b9b8aa777fb915a5f88def3305a3579e97b96ac862a6d67316",
+		)
 		total := int64(1 * 1e14)
 
 		ok, proof2 := sortition.EvaluateSortition(seed, valKey.PrivateKey(), total, total/100)
@@ -60,7 +63,8 @@ func TestInvalidProof(t *testing.T) {
 		seed := ts.RandSeed()
 		pub, _ := ts.RandBLSKeyPair()
 		proof, _ := sortition.ProofFromString(
-			"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+			"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+		)
 
 		require.False(t, sortition.VerifyProof(seed, proof, pub, total, total))
 	})
@@ -70,7 +74,8 @@ func TestInvalidProof(t *testing.T) {
 		seed := ts.RandSeed()
 		pub, _ := ts.RandBLSKeyPair()
 		proof, _ := sortition.ProofFromString(
-			"C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+			"C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+		)
 
 		require.False(t, sortition.VerifyProof(seed, proof, pub, total, total))
 	})

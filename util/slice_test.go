@@ -103,7 +103,8 @@ func TestDecompress(t *testing.T) {
 		"1f8b08000000000000ff5accb8929191492afefe9620e60805060280254221ac2238cb57f8d6da3ecfc47b617bd47bf80fbe503b11b7aef3" +
 			"85a6c0ba159a2142ac110a1d8f2e447cd46a3f3d71d6fc5c9eac45377ec4efffa0b76c33bb1377fead15f5cdf7d9085bc44e58094784c216" +
 			"9fcd92c947ee35a43a49ff5d57b563eeaad9415b8ed6d685bd72aaf9afd3b5898b334455a26edf71fd634957941ead7f15ad5fe0e96517ce" +
-			"f48d79216323616702020000ffffa63359ef1b010000")
+			"f48d79216323616702020000ffffa63359ef1b010000",
+	)
 	_, err := DecompressBuffer(data[1:])
 	require.Error(t, err)
 	_, err = DecompressBuffer(data)

@@ -61,7 +61,8 @@ func TestProposerMove(t *testing.T) {
 	val7 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(7))
 
 	cmt, err := committee.NewCommittee(
-		[]*validator.Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address())
+		[]*validator.Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address(),
+	)
 	require.NoError(t, err)
 
 	//
@@ -206,7 +207,8 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	valC := validator.NewValidator(pubC, 12)
 
 	cmt, err := committee.NewCommittee(
-		[]*validator.Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address())
+		[]*validator.Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address(),
+	)
 	require.NoError(t, err)
 	fmt.Println(cmt.String())
 

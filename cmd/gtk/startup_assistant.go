@@ -283,13 +283,15 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 										log.Print("start downloading...\n")
 										time.Sleep(1 * time.Second)
 
-										err := importer.Download(ctx, &metadata[snapshotIndex],
+										err := importer.Download(
+											ctx, &metadata[snapshotIndex],
 											func(fileName string) func(stats downloader.Stats) {
 												return func(stats downloader.Stats) {
 													if !stats.Completed {
 														percent := int(stats.Percent)
 														glib.IdleAdd(func() {
-															dlMessage := fmt.Sprintf("🌐 Downloading %s | %d%% (%s / %s)",
+															dlMessage := fmt.Sprintf(
+																"🌐 Downloading %s | %d%% (%s / %s)",
 																fileName, percent,
 																util.FormatBytesToHumanReadable(uint64(stats.Downloaded)),
 																util.FormatBytesToHumanReadable(uint64(stats.TotalSize)),
@@ -793,7 +795,8 @@ func getMetadata(ctx context.Context, importer *cmd.Importer, listBox *gtk.ListB
 		}
 
 		for _, md := range metadata {
-			label := gtk.NewLabel(fmt.Sprintf("snapshot %s (%s)",
+			label := gtk.NewLabel(fmt.Sprintf(
+				"snapshot %s (%s)",
 				md.CreatedAtTime().Format("2006-01-02"),
 				util.FormatBytesToHumanReadable(md.Data.Size),
 			))

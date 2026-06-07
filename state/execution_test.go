@@ -26,11 +26,13 @@ func TestProposeBlock(t *testing.T) {
 
 	validTrx1 := td.GenerateTestTransferTx(
 		testsuite.TransactionWithLockTime(lockTime),
-		testsuite.TransactionWithSigner(td.genAccKey))
+		testsuite.TransactionWithSigner(td.genAccKey),
+	)
 
 	validTrx2 := td.GenerateTestTransferTx(
 		testsuite.TransactionWithLockTime(lockTime),
-		testsuite.TransactionWithSigner(td.genAccKey))
+		testsuite.TransactionWithSigner(td.genAccKey),
+	)
 
 	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{
 		invTransferTx,
@@ -62,7 +64,8 @@ func TestExecuteBlock(t *testing.T) {
 	invTransferTx := td.GenerateTestTransferTx()
 	validTx1 := td.GenerateTestTransferTx(
 		testsuite.TransactionWithLockTime(1),
-		testsuite.TransactionWithSigner(td.genAccKey))
+		testsuite.TransactionWithSigner(td.genAccKey),
+	)
 
 	blockHeight := td.state.LastBlockHeight() + 1
 	proposerAddr := td.proposerKey(t, 0).Address()
@@ -252,7 +255,8 @@ func TestSubsidyTransaction(t *testing.T) {
 		}
 		trx := td.GenerateTestSubsidyTx(
 			testsuite.TransactionWithLockTime(lockTime),
-			testsuite.TransactionWithRecipients(recipients))
+			testsuite.TransactionWithRecipients(recipients),
+		)
 
 		err := td.state.checkSubsidy(trx, proposerAddr, true)
 		require.NoError(t, err)
@@ -281,7 +285,8 @@ func TestSubsidyTransaction(t *testing.T) {
 		}
 		trx := td.GenerateTestSubsidyTx(
 			testsuite.TransactionWithLockTime(lockTime),
-			testsuite.TransactionWithRecipients(recipients))
+			testsuite.TransactionWithRecipients(recipients),
+		)
 
 		err = td.state.checkSubsidy(trx, proposerAddr, true)
 		require.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
@@ -313,7 +318,8 @@ func TestSubsidyTransaction(t *testing.T) {
 		}
 		trx := td.GenerateTestSubsidyTx(
 			testsuite.TransactionWithLockTime(lockTime),
-			testsuite.TransactionWithRecipients(recipients))
+			testsuite.TransactionWithRecipients(recipients),
+		)
 
 		err = td.state.checkSubsidy(trx, proposerAddr, true)
 		require.NoError(t, err)
@@ -345,7 +351,8 @@ func TestSubsidyTransaction(t *testing.T) {
 		}
 		trx := td.GenerateTestSubsidyTx(
 			testsuite.TransactionWithLockTime(lockTime),
-			testsuite.TransactionWithRecipients(badRecipients))
+			testsuite.TransactionWithRecipients(badRecipients),
+		)
 
 		err = td.state.checkSubsidy(trx, proposerAddr, true)
 		require.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
@@ -372,7 +379,8 @@ func TestSubsidyTransaction(t *testing.T) {
 		}
 		trx := td.GenerateTestSubsidyTx(
 			testsuite.TransactionWithLockTime(lockTime),
-			testsuite.TransactionWithRecipients(recipients))
+			testsuite.TransactionWithRecipients(recipients),
+		)
 
 		err = td.state.checkSubsidy(trx, proposerAddr, true)
 		require.NoError(t, err)

@@ -48,7 +48,7 @@ func TestMessageCompress(t *testing.T) {
 	require.NoError(t, err)
 	assert.True(t, util.IsFlagSet(bdl.Flags, BundleFlagCompressed))
 
-	fmt.Printf("Compressed :%v%%\n", 100-len(bs1)*100/(len(bs0)))
+	fmt.Printf("Compressed :%v%%\n", 100-len(bs1)*100/len(bs0))
 	fmt.Printf("Uncompressed len :%v\n", len(bs0))
 	fmt.Printf("Compressed len :%v\n", len(bs1))
 
@@ -76,7 +76,7 @@ func TestDecodeVoteMessage(t *testing.T) {
 	bdl.CompressIt()
 	bs1, err := bdl.Encode()
 	require.NoError(t, err)
-	fmt.Printf("Compressed :%v%%\n", 100-len(bs1)*100/(len(bs0)))
+	fmt.Printf("Compressed :%v%%\n", 100-len(bs1)*100/len(bs0))
 	fmt.Printf("Uncompressed len :%v\n", len(bs0))
 	fmt.Printf("Compressed len :%v\n", len(bs1))
 }
@@ -91,7 +91,8 @@ func TestDecodeVoteCBOR(t *testing.T) {
 			"" + "f40551e4ff89f3d235e32b4b92055501c0067d277f2dff99943016d6a0f379cf" +
 			"" + "09846c6f06f60758308ab7aecbe03c4ed5b688bcb7e848baffa62bcbf1a40215" +
 			"" + "22c56693f0a7bbcc1fe865277556ee59c1f63ba592acfe1b43" +
-			"041a00001234") // Consensus Height (0x00001234)
+			"041a00001234",
+	) // Consensus Height (0x00001234)
 	data2, _ := hex.DecodeString(
 		"a4" + // Map(4)
 			"01190100" + // Flags = 0x0100 (compressed)
@@ -102,7 +103,8 @@ func TestDecodeVoteCBOR(t *testing.T) {
 			"" + "067d277f2dff99943016d6a0f379cf09846c6f06f60758308ab7aecbe03c4ed5" +
 			"" + "b688bcb7e848baffa62bcbf1a4021522c56693f0a7bbcc1fe865277556ee59c1" +
 			"" + "f63ba592acfe1b43010000ffff798ce7ec79000000" +
-			"041a00001234") // Consensus Height (0x00001234)
+			"041a00001234",
+	) // Consensus Height (0x00001234)
 
 	bdl1 := new(Bundle)
 	bdl2 := new(Bundle)

@@ -141,7 +141,8 @@ func makeNetwork(ctx context.Context, conf *Config,
 	}
 	log.Info("connection manager created", "lowWM", lowWM, "highWM", highWM)
 
-	opts = append(opts,
+	opts = append(
+		opts,
 		lp2p.Identity(networkKey),
 		lp2p.ListenAddrs(conf.ListenAddrs()...),
 		lp2p.UserAgent(version.NodeAgent.String()),
@@ -159,19 +160,22 @@ func makeNetwork(ctx context.Context, conf *Config,
 
 	if conf.EnableNATService {
 		log.Info("Nat service enabled")
-		opts = append(opts,
+		opts = append(
+			opts,
 			lp2p.EnableNATService(),
 		)
 	} else {
 		log.Info("AutoNATv2 enabled")
-		opts = append(opts,
+		opts = append(
+			opts,
 			lp2p.EnableAutoNATv2(),
 		)
 	}
 
 	if conf.EnableUPnP {
 		log.Info("UPnP enabled")
-		opts = append(opts,
+		opts = append(
+			opts,
 			lp2p.NATPortMap(),
 		)
 	}
@@ -196,14 +200,16 @@ func makeNetwork(ctx context.Context, conf *Config,
 			lp2pautorelay.WithMinInterval(1 * time.Minute),
 		}
 
-		opts = append(opts,
+		opts = append(
+			opts,
 			lp2p.EnableRelay(),
 			lp2p.EnableAutoRelayWithPeerSource(findRelayPeers(networkGetter), autoRelayOpt...),
 			lp2p.EnableHolePunching(),
 		)
 	} else {
 		log.Info("relay disabled")
-		opts = append(opts,
+		opts = append(
+			opts,
 			lp2p.DisableRelay(),
 		)
 	}

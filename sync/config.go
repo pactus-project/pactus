@@ -54,7 +54,8 @@ func (conf *Config) BasicCheck() error {
 
 func (conf *Config) CacheSize() int {
 	return util.LogScale(
-		int(conf.BlockPerMessage * conf.BlockPerSession))
+		int(conf.BlockPerMessage * conf.BlockPerSession),
+	)
 }
 
 func (conf *Config) SessionTimeout() time.Duration {

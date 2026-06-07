@@ -24,7 +24,8 @@ func setup(t *testing.T) *testData {
 
 	sbx := sandbox.MockingSandbox(ts)
 	randHeight := ts.RandHeight(
-		testsuite.HeightWithMin(sbx.TestParams.UnbondInterval))
+		testsuite.HeightWithMin(sbx.TestParams.UnbondInterval),
+	)
 	_ = sbx.TestStore.AddTestBlock(randHeight)
 
 	return &testData{

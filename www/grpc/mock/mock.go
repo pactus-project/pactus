@@ -47,7 +47,8 @@ func SetupServer(t *testing.T, ts *testsuite.TestSuite, conf *grpc.Config) *Mock
 		zmq.MockingPublisher("zmq_address", "zmq_topic", 100),
 	}
 
-	server := grpc.NewServer(t.Context(), conf,
+	server := grpc.NewServer(
+		t.Context(), conf,
 		mockState, mockSync, mockNet, mockConsMgr,
 		mockWalletMgr, zmqPublishers,
 	)

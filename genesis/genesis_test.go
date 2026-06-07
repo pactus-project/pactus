@@ -22,7 +22,8 @@ func TestMarshaling(t *testing.T) {
 
 	acc, addr := ts.GenerateTestAccount(
 		testsuite.AccountWithNumber(0),
-		testsuite.AccountWithBalance(100000))
+		testsuite.AccountWithBalance(100000),
+	)
 	val := ts.GenerateTestValidator(
 		testsuite.ValidatorWithNumber(0),
 	)

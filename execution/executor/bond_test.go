@@ -20,7 +20,8 @@ func TestExecuteBondTx(t *testing.T) {
 
 	amt := td.RandAmountRange(
 		td.sbx.TestParams.MinimumStake,
-		td.sbx.TestParams.MaximumStake)
+		td.sbx.TestParams.MaximumStake,
+	)
 	fee := td.RandFee()
 	lockTime := td.sbx.CurrentHeight()
 
@@ -126,7 +127,8 @@ func TestPowerDeltaBond(t *testing.T) {
 	receiverAddr := pub.ValidatorAddress()
 	amt := td.RandAmountRange(
 		td.sbx.TestParams.MinimumStake,
-		td.sbx.TestParams.MaximumStake)
+		td.sbx.TestParams.MaximumStake,
+	)
 	fee := td.RandFee()
 	lockTime := td.sbx.CurrentHeight()
 	trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, pub, amt, fee)

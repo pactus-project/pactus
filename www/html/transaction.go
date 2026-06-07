@@ -14,7 +14,8 @@ func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
-	res, err := s.transaction.GetTransaction(ctx,
+	res, err := s.transaction.GetTransaction(
+		ctx,
 		&pactus.GetTransactionRequest{
 			Id:        vars["id"],
 			Verbosity: pactus.TransactionVerbosity_TRANSACTION_VERBOSITY_INFO,

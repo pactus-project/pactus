@@ -406,7 +406,8 @@ func (p *txPool) getPendingConsumption(signer crypto.Address) int {
 
 // LogString returns a concise string representation intended for use in logs.
 func (p *txPool) LogString() string {
-	return fmt.Sprintf("{💸 %v💸 %v 🔐 %v 🔓 %v 🎯 %v 🧾 %v}",
+	return fmt.Sprintf(
+		"{💸 %v💸 %v 🔐 %v 🔓 %v 🎯 %v 🧾 %v}",
 		p.pools[payload.TypeTransfer].list.Size(),
 		p.pools[payload.TypeBatchTransfer].list.Size(),
 		p.pools[payload.TypeBond].list.Size(),

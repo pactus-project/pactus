@@ -157,7 +157,8 @@ func TestMain(m *testing.M) {
 				tValKeys[i][0].PublicKey().AccountAddress(),
 				tValKeys[i][1].PublicKey().AccountAddress(),
 				tValKeys[i][2].PublicKey().AccountAddress(),
-			})
+			},
+		)
 
 		if err := tNodes[i].Start(); err != nil {
 			panic(fmt.Sprintf("Error on starting the node: %v", err))

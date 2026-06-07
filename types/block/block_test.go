@@ -336,7 +336,8 @@ func TestBlockHash(t *testing.T) {
 			"01" + // Tx[0]: PayloadType
 			"00" + // Tx[0]: Sender (treasury)
 			"012222222222222222222222222222222222222222" + // Tx[0]: Receiver
-			"01") // Tx[0]: Amount
+			"01",
+	) // Tx[0]: Amount
 
 	blk, err := block.FromBytes(data)
 	require.NoError(t, err)

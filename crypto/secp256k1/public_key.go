@@ -75,7 +75,8 @@ func (pub *PublicKey) String() string {
 	str, _ := bech32m.EncodeFromBase256WithType(
 		crypto.PublicKeyHRP,
 		byte(crypto.SignatureTypeSecp256k1),
-		pub.Bytes())
+		pub.Bytes(),
+	)
 
 	return str
 }

@@ -91,7 +91,8 @@ func (p *UnbondPayload) IsDelegated() bool {
 
 // LogString returns a concise string representation intended for use in logs.
 func (p *UnbondPayload) LogString() string {
-	return fmt.Sprintf("{Unbond 🔓 %s",
+	return fmt.Sprintf(
+		"{Unbond 🔓 %s",
 		p.Validator.LogString(),
 	)
 }

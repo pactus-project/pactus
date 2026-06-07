@@ -80,7 +80,8 @@ func (addr Address) String() string {
 	str, _ := bech32m.EncodeFromBase256WithType(
 		AddressHRP,
 		addr[0],
-		addr[1:])
+		addr[1:],
+	)
 
 	return str
 }

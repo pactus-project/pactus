@@ -17,7 +17,8 @@ func NewSubsidyTx(lockTime types.Height,
 		crypto.TreasuryAddress,
 		recipients,
 		0,
-		opts...)
+		opts...,
+	)
 }
 
 func NewTransferTx(lockTime types.Height,

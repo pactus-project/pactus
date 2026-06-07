@@ -137,7 +137,8 @@ Examples:
 		}
 
 		for i, trx := range transactions {
-			terminal.PrintInfoMsgf(rowFmt,
+			terminal.PrintInfoMsgf(
+				rowFmt,
 				i+1,
 				trx.CreatedAt.Format("2/1/2006 15:04"),
 				fit(trx.TxID, idWidth),
