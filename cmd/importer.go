@@ -135,9 +135,7 @@ func (i *Importer) Download(ctx context.Context, metadata *Metadata,
 	download := downloader.New(dlLink, filePath, metadata.Data.Sha,
 		downloader.WithStatsCallback(stateFunc(fileName)))
 
-	download.Start(ctx)
-
-	return nil
+	return download.Download(ctx)
 }
 
 func (i *Importer) Cleanup() error {
