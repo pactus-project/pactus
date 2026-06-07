@@ -40,9 +40,7 @@
          for example.
     -->
     <!-- runtime copy="yes">/usr/bin/python</runtime -->
-    <!-- Indicate the active gtk version to use. This is needed only
-         for gtk+-3.0 projects. -->
-    <gtk>gtk+-3.0</gtk>
+    <gtk>gtk+-4.0</gtk>
   </meta>
 
   <!-- The special macro "${project}" refers to the directory where
@@ -52,6 +50,10 @@
   <plist>${project}/Info.plist</plist>
 
   <main-binary>${prefix:bundle}/pactus-gui</main-binary>
+
+  <binary>
+    ${prefix}/lib/gdk-pixbuf-2.0/${pkg:gdk-pixbuf-2.0:gdk_pixbuf_binary_version}/loaders/*.so
+  </binary>
 
   <binary>
     ${prefix}/lib/gio/modules/libgiognutls.so
