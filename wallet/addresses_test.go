@@ -63,11 +63,11 @@ func TestListAddresses(t *testing.T) {
 	_, impPrv := td.RandEd25519KeyPair()
 	impAddr, _ := td.testVault.ImportPrivateKey(td.password, impPrv)
 
-	existing := []types.AddressInfo{
-		*impAddr,
-		*valInfo,
-		*accInfo,
-		*edInfo,
+	existing := []*types.AddressInfo{
+		impAddr,
+		valInfo,
+		accInfo,
+		edInfo,
 	}
 	td.mockStorage.EXPECT().AllAddresses().Return(existing).AnyTimes()
 

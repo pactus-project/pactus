@@ -642,7 +642,7 @@ func TestTotalBalance(t *testing.T) {
 	acc1, _ := td.GenerateTestAccount(testsuite.AccountWithAddress(addr1))
 	acc2, _ := td.GenerateTestAccount(testsuite.AccountWithAddress(addr2))
 
-	td.mockStorage.EXPECT().AllAddresses().Return([]wtypes.AddressInfo{*accInfo1, *accInfo2, *accInfo3})
+	td.mockStorage.EXPECT().AllAddresses().Return([]*wtypes.AddressInfo{accInfo1, accInfo2, accInfo3})
 	td.mockProvider.EXPECT().GetAccount(accInfo1.Address).Return(acc1, nil)
 	td.mockProvider.EXPECT().GetAccount(accInfo2.Address).Return(acc2, nil)
 	td.mockProvider.EXPECT().GetAccount(accInfo3.Address).Return(nil, errors.New("not found"))
@@ -667,7 +667,7 @@ func TestTotalStake(t *testing.T) {
 	val1 := td.GenerateTestValidator(testsuite.ValidatorWithPublicKey(pub1))
 	val2 := td.GenerateTestValidator(testsuite.ValidatorWithPublicKey(pub2))
 
-	td.mockStorage.EXPECT().AllAddresses().Return([]wtypes.AddressInfo{*valInfo1, *valInfo2, *valInfo3})
+	td.mockStorage.EXPECT().AllAddresses().Return([]*wtypes.AddressInfo{valInfo1, valInfo2, valInfo3})
 	td.mockProvider.EXPECT().GetValidator(valInfo1.Address).Return(val1, nil)
 	td.mockProvider.EXPECT().GetValidator(valInfo2.Address).Return(val2, nil)
 	td.mockProvider.EXPECT().GetValidator(valInfo3.Address).Return(nil, errors.New("not found"))
