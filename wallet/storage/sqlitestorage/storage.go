@@ -378,7 +378,8 @@ func (s *Storage) HasAddress(address string) bool {
 
 // InsertTransaction inserts a new transaction.
 func (s *Storage) InsertTransaction(info *wtypes.TransactionInfo) error {
-	result, err := s.db.ExecContext(s.ctx, insertTransactionSQL,
+	result, err := s.db.ExecContext(
+		s.ctx, insertTransactionSQL,
 		info.TxID,
 		info.Sender,
 		info.Receiver,

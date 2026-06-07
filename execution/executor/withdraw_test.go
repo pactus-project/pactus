@@ -15,7 +15,8 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	bonderBalance := bonderAcc.Balance()
 	stake := td.RandAmountRange(
 		td.sbx.TestParams.MinimumStake,
-		bonderBalance)
+		bonderBalance,
+	)
 	bonderAcc.SubtractFromBalance(stake)
 	td.sbx.UpdateAccount(bonderAddr, bonderAcc)
 

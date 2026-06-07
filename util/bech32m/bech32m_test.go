@@ -396,7 +396,8 @@ func TestBech32Base256(t *testing.T) {
 func BenchmarkEncodeDecodeCycle(b *testing.B) {
 	// Use a fixed, 49-byte raw data for testing.
 	inputData, err := hex.DecodeString(
-		"cbe6365ddbcda9a9915422c3f091c13f8c7b2f263b8d34067bd12c274408473fa764871c9dd51b1bb34873b3473b633ed1")
+		"cbe6365ddbcda9a9915422c3f091c13f8c7b2f263b8d34067bd12c274408473fa764871c9dd51b1bb34873b3473b633ed1",
+	)
 	if err != nil {
 		b.Fatalf("failed to initialize input data: %v", err)
 	}
@@ -554,7 +555,8 @@ func TestConvertBitsFailures(t *testing.T) {
 func BenchmarkConvertBitsDown(b *testing.B) {
 	// Use a fixed, 49-byte raw data for testing.
 	inputData, err := hex.DecodeString(
-		"cbe6365ddbcda9a9915422c3f091c13f8c7b2f263b8d34067bd12c274408473fa764871c9dd51b1bb34873b3473b633ed1")
+		"cbe6365ddbcda9a9915422c3f091c13f8c7b2f263b8d34067bd12c274408473fa764871c9dd51b1bb34873b3473b633ed1",
+	)
 	if err != nil {
 		b.Fatalf("failed to initialize input data: %v", err)
 	}
@@ -578,7 +580,8 @@ func BenchmarkConvertBitsUp(b *testing.B) {
 	// Use a fixed, 79-byte raw data for testing.
 	inputData, err := hex.DecodeString(
 		"190f13030c170e1b1916141a13040a14040b011f01040e01071e0607160b1906070e06130801131" +
-			"b1a0416020e110008081c1f1a0e19040703120e1d0a06181b160d0407070c1a07070d11131d1408")
+			"b1a0416020e110008081c1f1a0e19040703120e1d0a06181b160d0407070c1a07070d11131d1408",
+	)
 	if err != nil {
 		b.Fatalf("failed to initialize input data: %v", err)
 	}

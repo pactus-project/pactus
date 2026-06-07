@@ -135,7 +135,7 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid amount", func(t *testing.T) {
-		trx := tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), ts.RandAccAddress(), (42e15)+1, 1)
+		trx := tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), ts.RandAccAddress(), 42e15+1, 1)
 
 		err := trx.BasicCheck()
 		require.ErrorIs(t, err, tx.BasicCheckError{
@@ -330,7 +330,8 @@ func TestSignBytesBLS(t *testing.T) {
 			"a09c01" + // Amount
 			"97793eda4277d44baa090af28fe649beb9666546b1cb56302befdff61ee4afa2d7d4635019fefc7d5a68a50430213beb" + // Signature
 			"94a8a0d79f2db62b84123eac8fd057c2d212c8a314468420730cf99bf19fa718807ee6e94a7e17681b085d970d6fb89c" + // PublicKey
-			"190e5209ee2b3138176c3964fd1b0187f5446ba8d692d691e508aa790cf6fbcee02b61ead97bae7b65067b3b485bb740")
+			"190e5209ee2b3138176c3964fd1b0187f5446ba8d692d691e508aa790cf6fbcee02b61ead97bae7b65067b3b485bb740",
+	)
 
 	txID, _ := hash.FromString("a57ae2db8d361504b6b97803cdf2bc27561fde536f49683cdbcbb23ceaded0ae")
 	trx, err := tx.FromBytes(data)
@@ -362,7 +363,8 @@ func TestSignBytesEd25519(t *testing.T) {
 			"a09c01" + // Amount (20000)
 			"109a480d296f61e793b64a9ffcf1ce4a5a535c882edfa9c52aa0af8003e39cee" + // Signature
 			"da02d5c5ce69c135514bbd1f4c6c42798fe2b9615e56ebef93ad2923b33f170e" + // PublicKey
-			"ade295295be1368479ecf0345c13ea0db1248d4dffe39eac627319954d39b264")
+			"ade295295be1368479ecf0345c13ea0db1248d4dffe39eac627319954d39b264",
+	)
 
 	txID, _ := hash.FromString("5f8ea503759a69a6850a2cbdafb60ce769cdf85b38f14848d4120c5c984a33fd")
 	trx, err := tx.FromBytes(data)
@@ -394,7 +396,8 @@ func TestSignBytesSecp256k1(t *testing.T) {
 			"a09c01" + // Amount (20000)
 			"aa25da26f0ba3bc95b32f4fc5565440c41485437e61a095652a2d828ad94a254" +
 			"20c355314a7d020bbbadc443d51b1f6a8397bee5827ecace1785aa4d0c8684f7" + // Signature
-			"0336bd9ebe4b518fec7f424ee2e6dc600f4cb22f10f7c4e4e466af374bfe39b870") // PublicKey
+			"0336bd9ebe4b518fec7f424ee2e6dc600f4cb22f10f7c4e4e466af374bfe39b870",
+	) // PublicKey
 
 	txID, _ := hash.FromString("ac3bb060ed6fd4c12eb9f272e55b59231956c3276ee1a9287c1b05fe7928e2b5")
 	trx, err := tx.FromBytes(data)
@@ -513,13 +516,15 @@ func TestCheckFee(t *testing.T) {
 		{
 			name: "Negative fee",
 			trx: ts.GenerateTestTransferTx(
-				testsuite.TransactionWithFee(-1)),
+				testsuite.TransactionWithFee(-1),
+			),
 			expectedErr: tx.BasicCheckError{Reason: "invalid fee: -0.000000001 PAC"},
 		},
 		{
 			name: "Big fee",
 			trx: ts.GenerateTestTransferTx(
-				testsuite.TransactionWithFee(42e15 + 1)),
+				testsuite.TransactionWithFee(42e15 + 1),
+			),
 			expectedErr: tx.BasicCheckError{Reason: "invalid fee: 42,000,000 PAC"},
 		},
 		{
@@ -535,19 +540,22 @@ func TestCheckFee(t *testing.T) {
 		{
 			name: "Transfer transaction with zero fee",
 			trx: ts.GenerateTestTransferTx(
-				testsuite.TransactionWithFee(0)),
+				testsuite.TransactionWithFee(0),
+			),
 			expectedErr: nil,
 		},
 		{
 			name: "Transfer transaction with non-zero fee",
 			trx: ts.GenerateTestTransferTx(
-				testsuite.TransactionWithFee(1)),
+				testsuite.TransactionWithFee(1),
+			),
 			expectedErr: nil,
 		},
 		{
 			name: "Unbond transaction with zero fee",
 			trx: ts.GenerateTestUnbondTx(
-				testsuite.TransactionWithFee(0)),
+				testsuite.TransactionWithFee(0),
+			),
 			expectedErr: nil,
 		},
 	}

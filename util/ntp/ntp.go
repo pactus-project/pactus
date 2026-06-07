@@ -104,7 +104,8 @@ func (c *Checker) Start() {
 		if c.offset != maxClockOffset && c.IsOutOfSync() {
 			logger.Error(
 				"the system time is out of sync with the network time by more than one second",
-				"threshold", c.threshold, "offset", offset)
+				"threshold", c.threshold, "offset", offset,
+			)
 		}
 	})
 }

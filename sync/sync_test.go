@@ -312,7 +312,8 @@ func TestTestNetFlags(t *testing.T) {
 
 	td.state.TestGenesis = genesis.TestnetGenesis()
 	bdl := td.sync.prepareBundle(message.NewQueryProposalMessage(
-		td.RandHeight(), td.RandRound(), td.RandValAddress()))
+		td.RandHeight(), td.RandRound(), td.RandValAddress(),
+	))
 
 	require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkMainnet), "invalid flag: %v", bdl)
 	require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkTestnet), "invalid flag: %v", bdl)

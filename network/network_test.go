@@ -31,7 +31,8 @@ func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 	require.NoError(t, err)
 
 	log.SetObj(testsuite.NewOverrideLogStringer(
-		fmt.Sprintf("%s - %s: ", net.SelfID().ShortString(), t.Name()), net))
+		fmt.Sprintf("%s - %s: ", net.SelfID().ShortString(), t.Name()), net,
+	))
 
 	require.NoError(t, net.Start())
 
@@ -160,7 +161,8 @@ func TestNetwork(t *testing.T) {
 		lp2p.ForceReachabilityPublic(),
 	})
 	publicAddrInfo, _ := lp2ppeer.AddrInfoFromString(
-		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v/p2p/%s", confP.DefaultPort, networkP.SelfID()))
+		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v/p2p/%s", confP.DefaultPort, networkP.SelfID()),
+	)
 
 	// Private node M
 	confM := testConfig()

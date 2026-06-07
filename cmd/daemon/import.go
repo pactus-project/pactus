@@ -64,7 +64,8 @@ func buildImportCmd(parentCmd *cobra.Command) {
 		snapshots := make([]string, 0, len(metadata))
 
 		for _, md := range metadata {
-			item := fmt.Sprintf("snapshot %s (%s)",
+			item := fmt.Sprintf(
+				"snapshot %s (%s)",
 				md.CreatedAtTime().Format("2006-01-02"),
 				util.FormatBytesToHumanReadable(md.Data.Size),
 			)
@@ -117,7 +118,8 @@ func downloadProgressBar(fileName string) func(stats downloader.Stats) {
 	return func(stats downloader.Stats) {
 		if !stats.Completed {
 			bar := terminal.ProgressBar(stats.TotalSize, 30)
-			bar.Describe(fmt.Sprintf("%s (%s/%s)",
+			bar.Describe(fmt.Sprintf(
+				"%s (%s/%s)",
 				fileName,
 				util.FormatBytesToHumanReadable(uint64(stats.Downloaded)),
 				util.FormatBytesToHumanReadable(uint64(stats.TotalSize)),

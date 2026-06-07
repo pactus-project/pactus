@@ -31,7 +31,8 @@ func TestEncoding(t *testing.T) {
 	msg := []byte("pactus")
 	sig, _ := ed25519.SignatureFromString(
 		"1fc2c800499342d08242db9c3eb654027cb7b821e6af9ede56dfdb67e824f15b" +
-			"ddb419d2db3fd5aaf3ef1a9ebb9a9deb749380f0d6a110cbe95319fe9f794305")
+			"ddb419d2db3fd5aaf3ef1a9ebb9a9deb749380f0d6a110cbe95319fe9f794305",
+	)
 
 	require.NoError(t, pub.Verify(msg, sig))
 	assert.Equal(t, sig.Bytes(), prv.Sign(msg).Bytes())

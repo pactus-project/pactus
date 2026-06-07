@@ -82,7 +82,8 @@ func (s *streamService) SendTo(msg []byte, pid lp2peer.ID) (lp2pnetwork.Stream, 
 
 	// Attempt to open a new stream to the peer, assuming there's already a direct connection.
 	stream, err := s.host.NewStream(
-		lp2pnetwork.WithNoDial(ctxWithTimeout, "should already have connection"), pid, s.protocolID)
+		lp2pnetwork.WithNoDial(ctxWithTimeout, "should already have connection"), pid, s.protocolID,
+	)
 	if err != nil {
 		return nil, LibP2PError{Err: err}
 	}

@@ -31,7 +31,8 @@ func (t *txInfoPub) onNewBlock(blk *block.Block) {
 			continue
 		}
 
-		t.logger.Debug("ZMQ published the message successfully",
+		t.logger.Debug(
+			"ZMQ published the message successfully",
 			"publisher", t.TopicName(),
 			"block_height", blk.Height(),
 			"tx_hash", txn.ID().String(),

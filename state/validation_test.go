@@ -30,7 +30,8 @@ func TestBlockValidation(t *testing.T) {
 			blk0.Header().StateRoot(),
 			blk0.PrevCertificate(),
 			blk0.Header().SortitionSeed(),
-			blk0.Header().ProposerAddress())
+			blk0.Header().ProposerAddress(),
+		)
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
 		err := td.state.ValidateBlock(blk, round)
 		require.ErrorIs(t, err, InvalidBlockVersionError{
@@ -56,7 +57,8 @@ func TestBlockValidation(t *testing.T) {
 			blk0.Header().StateRoot(),
 			blk0.PrevCertificate(),
 			blk0.Header().SortitionSeed(),
-			blk0.Header().ProposerAddress())
+			blk0.Header().ProposerAddress(),
+		)
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
 		err := td.state.ValidateBlock(blk, round)
 		require.ErrorIs(t, err, InvalidBlockVersionError{
@@ -82,7 +84,8 @@ func TestBlockValidation(t *testing.T) {
 			blk0.Header().StateRoot(),
 			blk0.PrevCertificate(),
 			blk0.Header().SortitionSeed(),
-			blk0.Header().ProposerAddress())
+			blk0.Header().ProposerAddress(),
+		)
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
 		err := td.state.ValidateBlock(blk, round)
 		require.ErrorIs(t, err, InvalidBlockTimeError{
@@ -105,7 +108,8 @@ func TestBlockValidation(t *testing.T) {
 			invStateRoot,
 			blk0.PrevCertificate(),
 			blk0.Header().SortitionSeed(),
-			blk0.Header().ProposerAddress())
+			blk0.Header().ProposerAddress(),
+		)
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
 		err := td.state.ValidateBlock(blk, round)
 		require.ErrorIs(t, err, InvalidStateRootHashError{
@@ -129,7 +133,8 @@ func TestBlockValidation(t *testing.T) {
 		invPrevCert.SetSignature(
 			blk0.PrevCertificate().Committers(),
 			blk0.PrevCertificate().Absentees(),
-			td.RandBLSSignature())
+			td.RandBLSSignature(),
+		)
 
 		blk := block.MakeBlock(
 			blk0.Header().Version(),
@@ -139,7 +144,8 @@ func TestBlockValidation(t *testing.T) {
 			blk0.Header().StateRoot(),
 			invPrevCert,
 			blk0.Header().SortitionSeed(),
-			blk0.Header().ProposerAddress())
+			blk0.Header().ProposerAddress(),
+		)
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
 		err := td.state.ValidateBlock(blk, round)
 		require.ErrorIs(t, err, crypto.ErrInvalidSignature)
@@ -159,7 +165,8 @@ func TestBlockValidation(t *testing.T) {
 			blk0.Header().StateRoot(),
 			blk0.PrevCertificate(),
 			blk0.Header().SortitionSeed(),
-			invProposerAddress)
+			invProposerAddress,
+		)
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
 		err := td.state.ValidateBlock(blk, round)
 		require.ErrorIs(t, err, InvalidProposerError{
@@ -185,7 +192,8 @@ func TestBlockValidation(t *testing.T) {
 			blk0.Header().StateRoot(),
 			blk0.PrevCertificate(),
 			invSortitionSeed,
-			blk0.Header().ProposerAddress())
+			blk0.Header().ProposerAddress(),
+		)
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
 		err := td.state.ValidateBlock(blk, round)
 		require.ErrorIs(t, err, ErrInvalidSortitionSeed)

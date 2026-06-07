@@ -22,7 +22,8 @@ func TestGetTransaction(t *testing.T) {
 	blockHeight := td.RandHeight()
 	valPubKey, _ := td.RandBLSKeyPair()
 	textTrx := td.GenerateTestBondTx(
-		testsuite.TransactionWithValidatorPublicKey(valPubKey))
+		testsuite.TransactionWithValidatorPublicKey(valPubKey),
+	)
 	testBlock, testCert := td.GenerateTestBlock(blockHeight,
 		testsuite.BlockWithTransactions([]*tx.Tx{textTrx}))
 	td.server.MockState.TestStore.SaveBlock(testBlock, testCert)
@@ -155,7 +156,8 @@ func TestGetRawTransaction(t *testing.T) {
 		amt2 := td.RandAmount()
 		totalAmt := amt1 + amt2
 
-		res, err := client.GetRawBatchTransferTransaction(t.Context(),
+		res, err := client.GetRawBatchTransferTransaction(
+			t.Context(),
 			&pactus.GetRawBatchTransferTransactionRequest{
 				Sender: td.RandAccAddress().String(),
 				Recipients: []*pactus.Recipient{

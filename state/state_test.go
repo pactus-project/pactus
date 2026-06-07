@@ -57,7 +57,8 @@ func setup(t *testing.T) *testData {
 
 	numBlocks := ts.RandHeight(
 		testsuite.HeightWithMin(1),
-		testsuite.HeightWithMax(10))
+		testsuite.HeightWithMax(10),
+	)
 	mockTxPool := txpool.NewMockTxPool(ts.Ctrl)
 	mockTxPool.EXPECT().SetNewSandboxAndRecheck(gomock.Any()).Return().AnyTimes()
 	mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(int(numBlocks))
@@ -496,7 +497,8 @@ func TestForkDetection(t *testing.T) {
 				blk0.Header().StateRoot(),
 				blk0.PrevCertificate(),
 				blk0.Header().SortitionSeed(),
-				blk0.Header().ProposerAddress())
+				blk0.Header().ProposerAddress(),
+			)
 			certFork := td.makeCertificateAndSign(t, blkFork.Hash(), 0)
 
 			_ = td.state.CommitBlock(blkFork, certFork)
@@ -614,7 +616,8 @@ func TestValidateBlockTime(t *testing.T) {
 		require.Error(t, td.state.validateBlockTime(lastBlockTime.Add(30*time.Second)))
 
 		expectedProposeTime := roundedNow.Add(1 * time.Minute).Add(
-			time.Duration(td.state.params.BlockIntervalInSecond) * time.Second)
+			time.Duration(td.state.params.BlockIntervalInSecond) * time.Second,
+		)
 		assert.Equal(t, expectedProposeTime, td.state.proposeNextBlockTime())
 	})
 }

@@ -251,7 +251,8 @@ func (v *Vote) BasicCheck() error {
 func (v *Vote) LogString() string {
 	switch v.Type() {
 	case VoteTypePrepare, VoteTypePrecommit:
-		return fmt.Sprintf("{%d/%d/%s ⌘ %v 👤 %s}",
+		return fmt.Sprintf(
+			"{%d/%d/%s ⌘ %v 👤 %s}",
 			v.Height(),
 			v.Round(),
 			v.Type(),
@@ -259,7 +260,8 @@ func (v *Vote) LogString() string {
 			v.Signer().LogString(),
 		)
 	case VoteTypeCPPreVote, VoteTypeCPMainVote, VoteTypeCPDecided:
-		return fmt.Sprintf("{%d/%d/%s/%d/%s ⌘ %v 👤 %s}",
+		return fmt.Sprintf(
+			"{%d/%d/%s/%d/%s ⌘ %v 👤 %s}",
 			v.Height(),
 			v.Round(),
 			v.Type(),

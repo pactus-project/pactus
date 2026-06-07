@@ -43,7 +43,8 @@ func TestDownloader(t *testing.T) {
 		require.NoError(t, os.RemoveAll("./testdata"))
 	}()
 
-	downloader := New(server.URL+fileURL, filePath, expectedSHA256Hex,
+	downloader := New(
+		server.URL+fileURL, filePath, expectedSHA256Hex,
 		WithCustomClient(server.Client()),
 		WithStatsCallback(printDownloaderStats),
 	)

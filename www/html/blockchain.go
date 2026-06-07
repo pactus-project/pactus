@@ -109,7 +109,8 @@ func (s *Server) GetBlockByHashHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) blockByHeight(ctx context.Context, w http.ResponseWriter, blockHeight uint32) {
-	res, err := s.blockchain.GetBlock(ctx,
+	res, err := s.blockchain.GetBlock(
+		ctx,
 		&pactus.GetBlockRequest{
 			Height:    blockHeight,
 			Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_TRANSACTIONS,

@@ -175,7 +175,8 @@ func TestNew_WithOptions(t *testing.T) {
 	root := &cobra.Command{}
 
 	// Test with some dummy options
-	interactiveCmd := New(root, nil,
+	interactiveCmd := New(
+		root, nil,
 		prompt.OptionPrefix("test> "),
 		prompt.OptionShowCompletionAtStart(),
 	)
@@ -204,7 +205,8 @@ func TestNew_WithAllOptions(t *testing.T) {
 	root := &cobra.Command{}
 	refresh := func() *cobra.Command { return root }
 
-	interactiveCmd := New(root, refresh,
+	interactiveCmd := New(
+		root, refresh,
 		prompt.OptionPrefix("test> "),
 		prompt.OptionShowCompletionAtStart(),
 		prompt.OptionSuggestionBGColor(prompt.Black),

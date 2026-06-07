@@ -141,7 +141,8 @@ func TestIndexingPublicKeys(t *testing.T) {
 		trxs := []*tx.Tx{trx1, trx2, trx3}
 		blk, cert := td.GenerateTestBlock(
 			td.RandHeight(),
-			testsuite.BlockWithTransactions(trxs))
+			testsuite.BlockWithTransactions(trxs),
+		)
 		td.store.SaveBlock(blk, cert)
 		err := td.store.WriteBatch()
 		require.NoError(t, err)

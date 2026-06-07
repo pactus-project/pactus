@@ -373,7 +373,8 @@ func TestVerifyProof(t *testing.T) {
 		for index, valKey := range td.valKeys {
 			ok, proof := sortition.EvaluateSortition(
 				block.Header().SortitionSeed(), valKey.PrivateKey(),
-				td.sbx.totalPower, vals[index].Power())
+				td.sbx.totalPower, vals[index].Power(),
+			)
 
 			if ok {
 				validProof = proof
