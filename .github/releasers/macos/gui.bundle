@@ -53,14 +53,6 @@
 
   <main-binary>${prefix:bundle}/pactus-gui</main-binary>
 
-  <!-- Copy in the input methods. Dunno if they actually work with
-       OSX. Note the ${gtkdir} macro, which expands to the correct
-       library subdirectory for the specified gtk version. -->
-  <binary>
-    ${prefix}/lib/${gtkdir}/${pkg:${gtk}:gtk_binary_version}/immodules/*.so
-  </binary>
-
-
   <binary>
     ${prefix}/lib/gio/modules/libgiognutls.so
   </binary>
@@ -69,6 +61,10 @@
        in your bundle. -->
   <data>
     ${prefix}/share/themes
+  </data>
+
+  <data>
+    ${prefix}/share/glib-2.0/schemas
   </data>
 
   <data>
