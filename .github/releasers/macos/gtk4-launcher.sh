@@ -35,10 +35,6 @@ if [ "$(uname)" = "Darwin" ]; then
     export PANGOCAIRO_BACKEND="fontconfig"
 fi
 
-if [ `uname -r | cut -d . -f 1` -ge 10 ]; then
-    export GTK_IM_MODULE_FILE="$bundle_lib/gtk-3.0/3.0.0/immodules.cache"
-fi
-
 APP=$name
 
 # Strip out the argument added by the OS.

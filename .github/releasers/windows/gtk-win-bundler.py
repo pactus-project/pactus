@@ -111,8 +111,8 @@ class GTKBundler:
         # Copy GTK themes
         print("  Copying GTK themes...")
         self.copy_dir(
-            f"{self.mingw_prefix}/share/gtk-3.0",
-            f"{self.target_dir}/share/themes/Windows10/gtk-3.0"
+            f"{self.mingw_prefix}/share/gtk-4.0",
+            f"{self.target_dir}/share/themes/Windows10/gtk-4.0"
         )
 
         # Copy GSettings schemas
@@ -123,7 +123,7 @@ class GTKBundler:
         )
 
         # Create settings.ini
-        settings_file = f"{self.target_dir}/share/gtk-3.0/settings.ini"
+        settings_file = f"{self.target_dir}/share/gtk-4.0/settings.ini"
         Path(settings_file).parent.mkdir(parents=True, exist_ok=True)
         with open(settings_file, 'w') as f:
             f.write("[Settings]\n")
