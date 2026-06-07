@@ -21,7 +21,7 @@ func missingTexture(size int) *gdk.Texture {
 	if pixbuf == nil {
 		return nil
 	}
-	pixbuf.Fill(0xFF666666) // 0xAARRGGBB: semi-light gray
+	pixbuf.Fill(0xeeeeee)
 
 	return gdk.NewTextureForPixbuf(pixbuf)
 }
@@ -30,7 +30,7 @@ func TextureFromBytes(data []byte) *gdk.Texture {
 	bytes := glib.NewBytes(data)
 	texture, err := gdk.NewTextureFromBytes(bytes)
 	if err != nil {
-		return missingTexture(128)
+		return missingTexture(16)
 	}
 
 	return texture
