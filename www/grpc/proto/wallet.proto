@@ -98,6 +98,8 @@ message AddressInfo {
   string label = 3;
   // The Hierarchical Deterministic (HD) path of the address within the wallet.
   string path = 4;
+  // The type of the address.
+  AddressType address_type = 5;
 }
 
 // Request message for generating a new wallet address.

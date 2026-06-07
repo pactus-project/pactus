@@ -72,6 +72,14 @@ const AddressInfo$json = {
     {'1': 'public_key', '3': 2, '4': 1, '5': 9, '10': 'publicKey'},
     {'1': 'label', '3': 3, '4': 1, '5': 9, '10': 'label'},
     {'1': 'path', '3': 4, '4': 1, '5': 9, '10': 'path'},
+    {
+      '1': 'address_type',
+      '3': 5,
+      '4': 1,
+      '5': 14,
+      '6': '.pactus.AddressType',
+      '10': 'addressType'
+    },
   ],
 };
 
@@ -79,7 +87,8 @@ const AddressInfo$json = {
 final $typed_data.Uint8List addressInfoDescriptor = $convert.base64Decode(
     'CgtBZGRyZXNzSW5mbxIYCgdhZGRyZXNzGAEgASgJUgdhZGRyZXNzEh0KCnB1YmxpY19rZXkYAi'
     'ABKAlSCXB1YmxpY0tleRIUCgVsYWJlbBgDIAEoCVIFbGFiZWwSEgoEcGF0aBgEIAEoCVIEcGF0'
-    'aA==');
+    'aBI2CgxhZGRyZXNzX3R5cGUYBSABKA4yEy5wYWN0dXMuQWRkcmVzc1R5cGVSC2FkZHJlc3NUeX'
+    'Bl');
 
 @$core.Deprecated('Use getNewAddressRequestDescriptor instead')
 const GetNewAddressRequest$json = {

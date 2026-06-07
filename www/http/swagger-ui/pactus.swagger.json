@@ -1650,6 +1650,10 @@
         "path": {
           "type": "string",
           "description": "The Hierarchical Deterministic (HD) path of the address within the wallet."
+        },
+        "addressType": {
+          "$ref": "#/definitions/pactusAddressType",
+          "description": "The type of the address."
         }
       },
       "description": "AddressInfo contains detailed information about a wallet address."

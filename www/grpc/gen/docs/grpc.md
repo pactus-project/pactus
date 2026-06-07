@@ -4265,6 +4265,21 @@ Deprecated: Will move into utils.</p>
   The Hierarchical Deterministic (HD) path of the address within the wallet.
     </td>
   </tr>
+   <tr>
+    <td class="fw-bold">addr.address_type</td>
+    <td> AddressType</td>
+    <td>
+  (Enum)The type of the address.
+      <br>Available values:<ul>
+      <li>ADDRESS_TYPE_TREASURY = 0 (Treasury address type.
+Should NOT be used to generate new addresses.)</li>
+      <li>ADDRESS_TYPE_VALIDATOR = 1 (Validator address type used for validator nodes.)</li>
+      <li>ADDRESS_TYPE_BLS_ACCOUNT = 2 (Account address type with BLS signature scheme.)</li>
+      <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.)</li>
+      <li>ADDRESS_TYPE_SECP_ACCOUNT = 4 (Account address type with SECP256K1 signature scheme.)</li>
+      </ul>
+    </td>
+  </tr>
    </tbody>
 </table>
 
@@ -4436,6 +4451,21 @@ Should NOT be used to generate new addresses.)</li>
   The Hierarchical Deterministic (HD) path of the address within the wallet.
     </td>
   </tr>
+   <tr>
+    <td class="fw-bold">addr.address_type</td>
+    <td> AddressType</td>
+    <td>
+  (Enum)The type of the address.
+      <br>Available values:<ul>
+      <li>ADDRESS_TYPE_TREASURY = 0 (Treasury address type.
+Should NOT be used to generate new addresses.)</li>
+      <li>ADDRESS_TYPE_VALIDATOR = 1 (Validator address type used for validator nodes.)</li>
+      <li>ADDRESS_TYPE_BLS_ACCOUNT = 2 (Account address type with BLS signature scheme.)</li>
+      <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.)</li>
+      <li>ADDRESS_TYPE_SECP_ACCOUNT = 4 (Account address type with SECP256K1 signature scheme.)</li>
+      </ul>
+    </td>
+  </tr>
    </tbody>
 </table>
 
@@ -4520,6 +4550,21 @@ Should NOT be used to generate new addresses.)</li>
     <td> string</td>
     <td>
   The Hierarchical Deterministic (HD) path of the address within the wallet.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">addrs[].address_type</td>
+    <td> AddressType</td>
+    <td>
+  (Enum)The type of the address.
+      <br>Available values:<ul>
+      <li>ADDRESS_TYPE_TREASURY = 0 (Treasury address type.
+Should NOT be used to generate new addresses.)</li>
+      <li>ADDRESS_TYPE_VALIDATOR = 1 (Validator address type used for validator nodes.)</li>
+      <li>ADDRESS_TYPE_BLS_ACCOUNT = 2 (Account address type with BLS signature scheme.)</li>
+      <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.)</li>
+      <li>ADDRESS_TYPE_SECP_ACCOUNT = 4 (Account address type with SECP256K1 signature scheme.)</li>
+      </ul>
     </td>
   </tr>
    </tbody>

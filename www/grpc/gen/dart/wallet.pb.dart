@@ -30,12 +30,14 @@ class AddressInfo extends $pb.GeneratedMessage {
     $core.String? publicKey,
     $core.String? label,
     $core.String? path,
+    AddressType? addressType,
   }) {
     final result = create();
     if (address != null) result.address = address;
     if (publicKey != null) result.publicKey = publicKey;
     if (label != null) result.label = label;
     if (path != null) result.path = path;
+    if (addressType != null) result.addressType = addressType;
     return result;
   }
 
@@ -56,6 +58,8 @@ class AddressInfo extends $pb.GeneratedMessage {
     ..aOS(2, _omitFieldNames ? '' : 'publicKey')
     ..aOS(3, _omitFieldNames ? '' : 'label')
     ..aOS(4, _omitFieldNames ? '' : 'path')
+    ..aE<AddressType>(5, _omitFieldNames ? '' : 'addressType',
+        enumValues: AddressType.values)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -116,6 +120,16 @@ class AddressInfo extends $pb.GeneratedMessage {
   $core.bool hasPath() => $_has(3);
   @$pb.TagNumber(4)
   void clearPath() => $_clearField(4);
+
+  /// The type of the address.
+  @$pb.TagNumber(5)
+  AddressType get addressType => $_getN(4);
+  @$pb.TagNumber(5)
+  set addressType(AddressType value) => $_setField(5, value);
+  @$pb.TagNumber(5)
+  $core.bool hasAddressType() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearAddressType() => $_clearField(5);
 }
 
 /// Request message for generating a new wallet address.
