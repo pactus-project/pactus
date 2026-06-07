@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
@@ -26,12 +27,15 @@ type WalletInfo struct {
 
 // AddressInfo represents the information about a wallet address.
 type AddressInfo struct {
-	Address   string    `json:"address"`
-	PublicKey string    `json:"public_key"`
-	Label     string    `json:"label"`
-	Path      string    `json:"path"`
-	CreatedAt time.Time `json:"-"`
-	UpdatedAt time.Time `json:"-"`
+	Address   string             `json:"address"`
+	PublicKey string             `json:"public_key"`
+	Label     string             `json:"label"`
+	Path      string             `json:"path"`
+	Type      crypto.AddressType `json:"-"`
+	Balance   amount.Amount      `json:"-"`
+	Stake     amount.Amount      `json:"-"`
+	CreatedAt time.Time          `json:"-"`
+	UpdatedAt time.Time          `json:"-"`
 }
 
 type TransactionStatus int

@@ -26,7 +26,7 @@ func Create(path string, network genesis.ChainType, vault *vault.Vault) (*Storag
 		Network:    network,
 		DefaultFee: amount.Amount(10_000_000),
 		Vault:      *vault,
-		Addresses:  make(map[string]wtypes.AddressInfo),
+		Addresses:  make(map[string]*wtypes.AddressInfo),
 	}
 
 	if err := store.Save(path); err != nil {
@@ -99,8 +99,8 @@ func (s *Storage) SetDefaultFee(fee amount.Amount) error {
 	return s.save()
 }
 
-func (s *Storage) AllAddresses() []wtypes.AddressInfo {
-	addrs := make([]wtypes.AddressInfo, 0, len(s.store.Addresses))
+func (s *Storage) AllAddresses() []*wtypes.AddressInfo {
+	addrs := make([]*wtypes.AddressInfo, 0, len(s.store.Addresses))
 	for _, info := range s.store.Addresses {
 		addrs = append(addrs, info)
 	}
@@ -114,11 +114,11 @@ func (s *Storage) AddressInfo(address string) (*wtypes.AddressInfo, error) {
 		return nil, storage.ErrNotFound
 	}
 
-	return &info, nil
+	return info, nil
 }
 
 func (s *Storage) InsertAddress(info *wtypes.AddressInfo) error {
-	s.store.Addresses[info.Address] = *info
+	s.store.Addresses[info.Address] = info
 
 	return s.save()
 }
@@ -134,7 +134,7 @@ func (s *Storage) AddressCount() int {
 }
 
 func (s *Storage) UpdateAddress(info *wtypes.AddressInfo) error {
-	s.store.Addresses[info.Address] = *info
+	s.store.Addresses[info.Address] = info
 
 	return s.save()
 }

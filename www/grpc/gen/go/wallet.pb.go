@@ -201,7 +201,11 @@ type AddressInfo struct {
 	// The Hierarchical Deterministic (HD) path of the address within the wallet.
 	Path string `protobuf:"bytes,4,opt,name=path,proto3" json:"path,omitempty"`
 	// The type of the address.
-	AddressType   AddressType `protobuf:"varint,5,opt,name=address_type,json=addressType,proto3,enum=pactus.AddressType" json:"address_type,omitempty"`
+	AddressType AddressType `protobuf:"varint,5,opt,name=address_type,json=addressType,proto3,enum=pactus.AddressType" json:"address_type,omitempty"`
+	// The account balance in NanoPAC. For validator addresses, this field is zero.
+	Balance int64 `protobuf:"varint,6,opt,name=balance,proto3" json:"balance,omitempty"`
+	// The validator stake in NanoPAC. For non-validator addresses, this field is zero.
+	Stake         int64 `protobuf:"varint,7,opt,name=stake,proto3" json:"stake,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -269,6 +273,20 @@ func (x *AddressInfo) GetAddressType() AddressType {
 		return x.AddressType
 	}
 	return AddressType_ADDRESS_TYPE_TREASURY
+}
+
+func (x *AddressInfo) GetBalance() int64 {
+	if x != nil {
+		return x.Balance
+	}
+	return 0
+}
+
+func (x *AddressInfo) GetStake() int64 {
+	if x != nil {
+		return x.Stake
+	}
+	return 0
 }
 
 // Request message for generating a new wallet address.
@@ -1839,7 +1857,11 @@ type ListAddressesRequest struct {
 	// The name of the queried wallet.
 	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
 	// Filter addresses by their types. If empty, all address types are included.
-	AddressTypes  []AddressType `protobuf:"varint,2,rep,packed,name=address_types,json=addressTypes,proto3,enum=pactus.AddressType" json:"address_types,omitempty"`
+	AddressTypes []AddressType `protobuf:"varint,2,rep,packed,name=address_types,json=addressTypes,proto3,enum=pactus.AddressType" json:"address_types,omitempty"`
+	// Includes the balance of each address.
+	IncludeBalance bool `protobuf:"varint,3,opt,name=include_balance,json=includeBalance,proto3" json:"include_balance,omitempty"`
+	// Includes the stake of each address.
+	IncludeStake  bool `protobuf:"varint,4,opt,name=include_stake,json=includeStake,proto3" json:"include_stake,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1886,6 +1908,20 @@ func (x *ListAddressesRequest) GetAddressTypes() []AddressType {
 		return x.AddressTypes
 	}
 	return nil
+}
+
+func (x *ListAddressesRequest) GetIncludeBalance() bool {
+	if x != nil {
+		return x.IncludeBalance
+	}
+	return false
+}
+
+func (x *ListAddressesRequest) GetIncludeStake() bool {
+	if x != nil {
+		return x.IncludeStake
+	}
+	return false
 }
 
 // Response message contains wallet addresses.
@@ -2682,14 +2718,16 @@ var File_wallet_proto protoreflect.FileDescriptor
 
 const file_wallet_proto_rawDesc = "" +
 	"\n" +
-	"\fwallet.proto\x12\x06pactus\x1a\x11transaction.proto\"\xa8\x01\n" +
+	"\fwallet.proto\x12\x06pactus\x1a\x11transaction.proto\"\xd8\x01\n" +
 	"\vAddressInfo\x12\x18\n" +
 	"\aaddress\x18\x01 \x01(\tR\aaddress\x12\x1d\n" +
 	"\n" +
 	"public_key\x18\x02 \x01(\tR\tpublicKey\x12\x14\n" +
 	"\x05label\x18\x03 \x01(\tR\x05label\x12\x12\n" +
 	"\x04path\x18\x04 \x01(\tR\x04path\x126\n" +
-	"\faddress_type\x18\x05 \x01(\x0e2\x13.pactus.AddressTypeR\vaddressType\"\xa1\x01\n" +
+	"\faddress_type\x18\x05 \x01(\x0e2\x13.pactus.AddressTypeR\vaddressType\x12\x18\n" +
+	"\abalance\x18\x06 \x01(\x03R\abalance\x12\x14\n" +
+	"\x05stake\x18\a \x01(\x03R\x05stake\"\xa1\x01\n" +
 	"\x14GetNewAddressRequest\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
 	"walletName\x126\n" +
@@ -2801,11 +2839,13 @@ const file_wallet_proto_rawDesc = "" +
 	"\vdefault_fee\x18\a \x01(\x03R\n" +
 	"defaultFee\x12\x16\n" +
 	"\x06driver\x18\b \x01(\tR\x06driver\x12\x12\n" +
-	"\x04path\x18\t \x01(\tR\x04path\"q\n" +
+	"\x04path\x18\t \x01(\tR\x04path\"\xbf\x01\n" +
 	"\x14ListAddressesRequest\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
 	"walletName\x128\n" +
-	"\raddress_types\x18\x02 \x03(\x0e2\x13.pactus.AddressTypeR\faddressTypes\"c\n" +
+	"\raddress_types\x18\x02 \x03(\x0e2\x13.pactus.AddressTypeR\faddressTypes\x12'\n" +
+	"\x0finclude_balance\x18\x03 \x01(\bR\x0eincludeBalance\x12#\n" +
+	"\rinclude_stake\x18\x04 \x01(\bR\fincludeStake\"c\n" +
 	"\x15ListAddressesResponse\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
 	"walletName\x12)\n" +

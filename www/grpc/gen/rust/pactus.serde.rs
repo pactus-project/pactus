@@ -187,6 +187,12 @@ impl serde::Serialize for AddressInfo {
         if self.address_type != 0 {
             len += 1;
         }
+        if self.balance != 0 {
+            len += 1;
+        }
+        if self.stake != 0 {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.AddressInfo", len)?;
         if !self.address.is_empty() {
             struct_ser.serialize_field("address", &self.address)?;
@@ -205,6 +211,16 @@ impl serde::Serialize for AddressInfo {
                 .map_err(|_| serde::ser::Error::custom(format!("Invalid variant {}", self.address_type)))?;
             struct_ser.serialize_field("addressType", &v)?;
         }
+        if self.balance != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("balance", ToString::to_string(&self.balance).as_str())?;
+        }
+        if self.stake != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("stake", ToString::to_string(&self.stake).as_str())?;
+        }
         struct_ser.end()
     }
 }
@@ -222,6 +238,8 @@ impl<'de> serde::Deserialize<'de> for AddressInfo {
             "path",
             "address_type",
             "addressType",
+            "balance",
+            "stake",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -231,6 +249,8 @@ impl<'de> serde::Deserialize<'de> for AddressInfo {
             Label,
             Path,
             AddressType,
+            Balance,
+            Stake,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -257,6 +277,8 @@ impl<'de> serde::Deserialize<'de> for AddressInfo {
                             "label" => Ok(GeneratedField::Label),
                             "path" => Ok(GeneratedField::Path),
                             "addressType" | "address_type" => Ok(GeneratedField::AddressType),
+                            "balance" => Ok(GeneratedField::Balance),
+                            "stake" => Ok(GeneratedField::Stake),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -281,6 +303,8 @@ impl<'de> serde::Deserialize<'de> for AddressInfo {
                 let mut label__ = None;
                 let mut path__ = None;
                 let mut address_type__ = None;
+                let mut balance__ = None;
+                let mut stake__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Address => {
@@ -313,6 +337,22 @@ impl<'de> serde::Deserialize<'de> for AddressInfo {
                             }
                             address_type__ = Some(map_.next_value::<AddressType>()? as i32);
                         }
+                        GeneratedField::Balance => {
+                            if balance__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("balance"));
+                            }
+                            balance__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::Stake => {
+                            if stake__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("stake"));
+                            }
+                            stake__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
                     }
                 }
                 Ok(AddressInfo {
@@ -321,6 +361,8 @@ impl<'de> serde::Deserialize<'de> for AddressInfo {
                     label: label__.unwrap_or_default(),
                     path: path__.unwrap_or_default(),
                     address_type: address_type__.unwrap_or_default(),
+                    balance: balance__.unwrap_or_default(),
+                    stake: stake__.unwrap_or_default(),
                 })
             }
         }
@@ -8578,6 +8620,12 @@ impl serde::Serialize for ListAddressesRequest {
         if !self.address_types.is_empty() {
             len += 1;
         }
+        if self.include_balance {
+            len += 1;
+        }
+        if self.include_stake {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.ListAddressesRequest", len)?;
         if !self.wallet_name.is_empty() {
             struct_ser.serialize_field("walletName", &self.wallet_name)?;
@@ -8588,6 +8636,12 @@ impl serde::Serialize for ListAddressesRequest {
                     .map_err(|_| serde::ser::Error::custom(format!("Invalid variant {}", v)))
                 }).collect::<std::result::Result<Vec<_>, _>>()?;
             struct_ser.serialize_field("addressTypes", &v)?;
+        }
+        if self.include_balance {
+            struct_ser.serialize_field("includeBalance", &self.include_balance)?;
+        }
+        if self.include_stake {
+            struct_ser.serialize_field("includeStake", &self.include_stake)?;
         }
         struct_ser.end()
     }
@@ -8603,12 +8657,18 @@ impl<'de> serde::Deserialize<'de> for ListAddressesRequest {
             "walletName",
             "address_types",
             "addressTypes",
+            "include_balance",
+            "includeBalance",
+            "include_stake",
+            "includeStake",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             WalletName,
             AddressTypes,
+            IncludeBalance,
+            IncludeStake,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -8632,6 +8692,8 @@ impl<'de> serde::Deserialize<'de> for ListAddressesRequest {
                         match value {
                             "walletName" | "wallet_name" => Ok(GeneratedField::WalletName),
                             "addressTypes" | "address_types" => Ok(GeneratedField::AddressTypes),
+                            "includeBalance" | "include_balance" => Ok(GeneratedField::IncludeBalance),
+                            "includeStake" | "include_stake" => Ok(GeneratedField::IncludeStake),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -8653,6 +8715,8 @@ impl<'de> serde::Deserialize<'de> for ListAddressesRequest {
             {
                 let mut wallet_name__ = None;
                 let mut address_types__ = None;
+                let mut include_balance__ = None;
+                let mut include_stake__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
@@ -8667,11 +8731,25 @@ impl<'de> serde::Deserialize<'de> for ListAddressesRequest {
                             }
                             address_types__ = Some(map_.next_value::<Vec<AddressType>>()?.into_iter().map(|x| x as i32).collect());
                         }
+                        GeneratedField::IncludeBalance => {
+                            if include_balance__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("includeBalance"));
+                            }
+                            include_balance__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::IncludeStake => {
+                            if include_stake__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("includeStake"));
+                            }
+                            include_stake__ = Some(map_.next_value()?);
+                        }
                     }
                 }
                 Ok(ListAddressesRequest {
                     wallet_name: wallet_name__.unwrap_or_default(),
                     address_types: address_types__.unwrap_or_default(),
+                    include_balance: include_balance__.unwrap_or_default(),
+                    include_stake: include_stake__.unwrap_or_default(),
                 })
             }
         }

@@ -173,7 +173,7 @@ func New(ctx context.Context, storage storage.IStorage, opts ...OpenWalletOption
 	}
 
 	wlt := &Wallet{
-		addresses:    newAddresses(storage),
+		addresses:    newAddresses(storage, cfg.provider),
 		transactions: newTransactions(storage, cfg.provider),
 		provider:     cfg.provider,
 		storage:      storage,
@@ -252,7 +252,7 @@ func (w *Wallet) RecoveryAddresses(ctx context.Context, password string,
 	}
 
 	for _, info := range recovered {
-		err := w.storage.InsertAddress(&info)
+		err := w.storage.InsertAddress(info)
 		if err != nil {
 			return err
 		}

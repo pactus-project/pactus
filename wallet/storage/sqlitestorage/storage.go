@@ -40,7 +40,7 @@ type Storage struct {
 	info *wtypes.WalletInfo
 	vlt  *vault.Vault
 
-	addressMap map[string]wtypes.AddressInfo
+	addressMap map[string]*wtypes.AddressInfo
 }
 
 func dbPath(path string) string {
@@ -282,14 +282,14 @@ func (s *Storage) loadAddresses() error {
 	}
 	defer func() { _ = rows.Close() }()
 
-	s.addressMap = make(map[string]wtypes.AddressInfo)
+	s.addressMap = make(map[string]*wtypes.AddressInfo)
 	for rows.Next() {
 		addr, err := scanAddress(rows)
 		if err != nil {
 			return fmt.Errorf("failed to scan address: %w", err)
 		}
 
-		s.addressMap[addr.Address] = *addr
+		s.addressMap[addr.Address] = addr
 	}
 
 	return rows.Err()
@@ -323,8 +323,8 @@ func (s *Storage) SetDefaultFee(fee amount.Amount) error {
 }
 
 // AllAddresses returns all addresses in the wallet.
-func (s *Storage) AllAddresses() []wtypes.AddressInfo {
-	addresses := make([]wtypes.AddressInfo, 0, len(s.addressMap))
+func (s *Storage) AllAddresses() []*wtypes.AddressInfo {
+	addresses := make([]*wtypes.AddressInfo, 0, len(s.addressMap))
 	for _, addr := range s.addressMap {
 		addresses = append(addresses, addr)
 	}
@@ -344,7 +344,7 @@ func (s *Storage) AddressInfo(address string) (*wtypes.AddressInfo, error) {
 		return nil, storage.ErrNotFound
 	}
 
-	return &info, nil
+	return info, nil
 }
 
 // InsertAddress inserts a new address.

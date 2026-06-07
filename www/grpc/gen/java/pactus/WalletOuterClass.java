@@ -626,6 +626,26 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
      * @return The addressType.
      */
     pactus.WalletOuterClass.AddressType getAddressType();
+
+    /**
+     * <pre>
+     * The account balance in NanoPAC. For validator addresses, this field is zero.
+     * </pre>
+     *
+     * <code>int64 balance = 6 [json_name = "balance"];</code>
+     * @return The balance.
+     */
+    long getBalance();
+
+    /**
+     * <pre>
+     * The validator stake in NanoPAC. For non-validator addresses, this field is zero.
+     * </pre>
+     *
+     * <code>int64 stake = 7 [json_name = "stake"];</code>
+     * @return The stake.
+     */
+    long getStake();
   }
   /**
    * <pre>
@@ -887,6 +907,36 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       return result == null ? pactus.WalletOuterClass.AddressType.UNRECOGNIZED : result;
     }
 
+    public static final int BALANCE_FIELD_NUMBER = 6;
+    private long balance_ = 0L;
+    /**
+     * <pre>
+     * The account balance in NanoPAC. For validator addresses, this field is zero.
+     * </pre>
+     *
+     * <code>int64 balance = 6 [json_name = "balance"];</code>
+     * @return The balance.
+     */
+    @java.lang.Override
+    public long getBalance() {
+      return balance_;
+    }
+
+    public static final int STAKE_FIELD_NUMBER = 7;
+    private long stake_ = 0L;
+    /**
+     * <pre>
+     * The validator stake in NanoPAC. For non-validator addresses, this field is zero.
+     * </pre>
+     *
+     * <code>int64 stake = 7 [json_name = "stake"];</code>
+     * @return The stake.
+     */
+    @java.lang.Override
+    public long getStake() {
+      return stake_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -916,6 +966,12 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       if (addressType_ != pactus.WalletOuterClass.AddressType.ADDRESS_TYPE_TREASURY.getNumber()) {
         output.writeEnum(5, addressType_);
       }
+      if (balance_ != 0L) {
+        output.writeInt64(6, balance_);
+      }
+      if (stake_ != 0L) {
+        output.writeInt64(7, stake_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -941,6 +997,14 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(5, addressType_);
       }
+      if (balance_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(6, balance_);
+      }
+      if (stake_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(7, stake_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -965,6 +1029,10 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       if (!getPath()
           .equals(other.getPath())) return false;
       if (addressType_ != other.addressType_) return false;
+      if (getBalance()
+          != other.getBalance()) return false;
+      if (getStake()
+          != other.getStake()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -986,6 +1054,12 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       hash = (53 * hash) + getPath().hashCode();
       hash = (37 * hash) + ADDRESS_TYPE_FIELD_NUMBER;
       hash = (53 * hash) + addressType_;
+      hash = (37 * hash) + BALANCE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getBalance());
+      hash = (37 * hash) + STAKE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getStake());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -1126,6 +1200,8 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
         label_ = "";
         path_ = "";
         addressType_ = 0;
+        balance_ = 0L;
+        stake_ = 0L;
         return this;
       }
 
@@ -1174,6 +1250,12 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
         if (((from_bitField0_ & 0x00000010) != 0)) {
           result.addressType_ = addressType_;
         }
+        if (((from_bitField0_ & 0x00000020) != 0)) {
+          result.balance_ = balance_;
+        }
+        if (((from_bitField0_ & 0x00000040) != 0)) {
+          result.stake_ = stake_;
+        }
       }
 
       @java.lang.Override
@@ -1210,6 +1292,12 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
         }
         if (other.addressType_ != 0) {
           setAddressTypeValue(other.getAddressTypeValue());
+        }
+        if (other.getBalance() != 0L) {
+          setBalance(other.getBalance());
+        }
+        if (other.getStake() != 0L) {
+          setStake(other.getStake());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -1262,6 +1350,16 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
                 bitField0_ |= 0x00000010;
                 break;
               } // case 40
+              case 48: {
+                balance_ = input.readInt64();
+                bitField0_ |= 0x00000020;
+                break;
+              } // case 48
+              case 56: {
+                stake_ = input.readInt64();
+                bitField0_ |= 0x00000040;
+                break;
+              } // case 56
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -1714,6 +1812,94 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       public Builder clearAddressType() {
         bitField0_ = (bitField0_ & ~0x00000010);
         addressType_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private long balance_ ;
+      /**
+       * <pre>
+       * The account balance in NanoPAC. For validator addresses, this field is zero.
+       * </pre>
+       *
+       * <code>int64 balance = 6 [json_name = "balance"];</code>
+       * @return The balance.
+       */
+      @java.lang.Override
+      public long getBalance() {
+        return balance_;
+      }
+      /**
+       * <pre>
+       * The account balance in NanoPAC. For validator addresses, this field is zero.
+       * </pre>
+       *
+       * <code>int64 balance = 6 [json_name = "balance"];</code>
+       * @param value The balance to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBalance(long value) {
+
+        balance_ = value;
+        bitField0_ |= 0x00000020;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The account balance in NanoPAC. For validator addresses, this field is zero.
+       * </pre>
+       *
+       * <code>int64 balance = 6 [json_name = "balance"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearBalance() {
+        bitField0_ = (bitField0_ & ~0x00000020);
+        balance_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long stake_ ;
+      /**
+       * <pre>
+       * The validator stake in NanoPAC. For non-validator addresses, this field is zero.
+       * </pre>
+       *
+       * <code>int64 stake = 7 [json_name = "stake"];</code>
+       * @return The stake.
+       */
+      @java.lang.Override
+      public long getStake() {
+        return stake_;
+      }
+      /**
+       * <pre>
+       * The validator stake in NanoPAC. For non-validator addresses, this field is zero.
+       * </pre>
+       *
+       * <code>int64 stake = 7 [json_name = "stake"];</code>
+       * @param value The stake to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStake(long value) {
+
+        stake_ = value;
+        bitField0_ |= 0x00000040;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The validator stake in NanoPAC. For non-validator addresses, this field is zero.
+       * </pre>
+       *
+       * <code>int64 stake = 7 [json_name = "stake"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearStake() {
+        bitField0_ = (bitField0_ & ~0x00000040);
+        stake_ = 0L;
         onChanged();
         return this;
       }
@@ -22548,6 +22734,26 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
      * @return The enum numeric value on the wire of addressTypes at the given index.
      */
     int getAddressTypesValue(int index);
+
+    /**
+     * <pre>
+     * Includes the balance of each address.
+     * </pre>
+     *
+     * <code>bool include_balance = 3 [json_name = "includeBalance"];</code>
+     * @return The includeBalance.
+     */
+    boolean getIncludeBalance();
+
+    /**
+     * <pre>
+     * Includes the stake of each address.
+     * </pre>
+     *
+     * <code>bool include_stake = 4 [json_name = "includeStake"];</code>
+     * @return The includeStake.
+     */
+    boolean getIncludeStake();
   }
   /**
    * <pre>
@@ -22718,6 +22924,36 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     }
     private int addressTypesMemoizedSerializedSize;
 
+    public static final int INCLUDE_BALANCE_FIELD_NUMBER = 3;
+    private boolean includeBalance_ = false;
+    /**
+     * <pre>
+     * Includes the balance of each address.
+     * </pre>
+     *
+     * <code>bool include_balance = 3 [json_name = "includeBalance"];</code>
+     * @return The includeBalance.
+     */
+    @java.lang.Override
+    public boolean getIncludeBalance() {
+      return includeBalance_;
+    }
+
+    public static final int INCLUDE_STAKE_FIELD_NUMBER = 4;
+    private boolean includeStake_ = false;
+    /**
+     * <pre>
+     * Includes the stake of each address.
+     * </pre>
+     *
+     * <code>bool include_stake = 4 [json_name = "includeStake"];</code>
+     * @return The includeStake.
+     */
+    @java.lang.Override
+    public boolean getIncludeStake() {
+      return includeStake_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -22743,6 +22979,12 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       for (int i = 0; i < addressTypes_.size(); i++) {
         output.writeEnumNoTag(addressTypes_.getInt(i));
       }
+      if (includeBalance_ != false) {
+        output.writeBool(3, includeBalance_);
+      }
+      if (includeStake_ != false) {
+        output.writeBool(4, includeStake_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -22767,6 +23009,14 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
             .computeUInt32SizeNoTag(dataSize);
         }addressTypesMemoizedSerializedSize = dataSize;
       }
+      if (includeBalance_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(3, includeBalance_);
+      }
+      if (includeStake_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(4, includeStake_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -22785,6 +23035,10 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       if (!getWalletName()
           .equals(other.getWalletName())) return false;
       if (!addressTypes_.equals(other.addressTypes_)) return false;
+      if (getIncludeBalance()
+          != other.getIncludeBalance()) return false;
+      if (getIncludeStake()
+          != other.getIncludeStake()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -22802,6 +23056,12 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
         hash = (37 * hash) + ADDRESS_TYPES_FIELD_NUMBER;
         hash = (53 * hash) + addressTypes_.hashCode();
       }
+      hash = (37 * hash) + INCLUDE_BALANCE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getIncludeBalance());
+      hash = (37 * hash) + INCLUDE_STAKE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getIncludeStake());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -22939,6 +23199,8 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
         bitField0_ = 0;
         walletName_ = "";
         addressTypes_ = emptyIntList();
+        includeBalance_ = false;
+        includeStake_ = false;
         return this;
       }
 
@@ -22979,6 +23241,12 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
           addressTypes_.makeImmutable();
           result.addressTypes_ = addressTypes_;
         }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.includeBalance_ = includeBalance_;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.includeStake_ = includeStake_;
+        }
       }
 
       @java.lang.Override
@@ -23008,6 +23276,12 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
             addressTypes_.addAll(other.addressTypes_);
           }
           onChanged();
+        }
+        if (other.getIncludeBalance() != false) {
+          setIncludeBalance(other.getIncludeBalance());
+        }
+        if (other.getIncludeStake() != false) {
+          setIncludeStake(other.getIncludeStake());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -23056,6 +23330,16 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
                 input.popLimit(limit);
                 break;
               } // case 18
+              case 24: {
+                includeBalance_ = input.readBool();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 24
+              case 32: {
+                includeStake_ = input.readBool();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 32
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -23345,6 +23629,94 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
         for (int value : values) {
           addressTypes_.addInt(value);
         }
+        onChanged();
+        return this;
+      }
+
+      private boolean includeBalance_ ;
+      /**
+       * <pre>
+       * Includes the balance of each address.
+       * </pre>
+       *
+       * <code>bool include_balance = 3 [json_name = "includeBalance"];</code>
+       * @return The includeBalance.
+       */
+      @java.lang.Override
+      public boolean getIncludeBalance() {
+        return includeBalance_;
+      }
+      /**
+       * <pre>
+       * Includes the balance of each address.
+       * </pre>
+       *
+       * <code>bool include_balance = 3 [json_name = "includeBalance"];</code>
+       * @param value The includeBalance to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIncludeBalance(boolean value) {
+
+        includeBalance_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Includes the balance of each address.
+       * </pre>
+       *
+       * <code>bool include_balance = 3 [json_name = "includeBalance"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearIncludeBalance() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        includeBalance_ = false;
+        onChanged();
+        return this;
+      }
+
+      private boolean includeStake_ ;
+      /**
+       * <pre>
+       * Includes the stake of each address.
+       * </pre>
+       *
+       * <code>bool include_stake = 4 [json_name = "includeStake"];</code>
+       * @return The includeStake.
+       */
+      @java.lang.Override
+      public boolean getIncludeStake() {
+        return includeStake_;
+      }
+      /**
+       * <pre>
+       * Includes the stake of each address.
+       * </pre>
+       *
+       * <code>bool include_stake = 4 [json_name = "includeStake"];</code>
+       * @param value The includeStake to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIncludeStake(boolean value) {
+
+        includeStake_ = value;
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Includes the stake of each address.
+       * </pre>
+       *
+       * <code>bool include_stake = 4 [json_name = "includeStake"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearIncludeStake() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        includeStake_ = false;
         onChanged();
         return this;
       }
@@ -34599,165 +34971,168 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
   static {
     java.lang.String[] descriptorData = {
       "\n\014wallet.proto\022\006pactus\032\021transaction.prot" +
-      "o\"\250\001\n\013AddressInfo\022\030\n\007address\030\001 \001(\tR\007addr" +
+      "o\"\330\001\n\013AddressInfo\022\030\n\007address\030\001 \001(\tR\007addr" +
       "ess\022\035\n\npublic_key\030\002 \001(\tR\tpublicKey\022\024\n\005la" +
       "bel\030\003 \001(\tR\005label\022\022\n\004path\030\004 \001(\tR\004path\0226\n\014" +
       "address_type\030\005 \001(\0162\023.pactus.AddressTypeR" +
-      "\013addressType\"\241\001\n\024GetNewAddressRequest\022\037\n" +
-      "\013wallet_name\030\001 \001(\tR\nwalletName\0226\n\014addres" +
-      "s_type\030\002 \001(\0162\023.pactus.AddressTypeR\013addre" +
-      "ssType\022\024\n\005label\030\003 \001(\tR\005label\022\032\n\010password" +
-      "\030\004 \001(\tR\010password\"a\n\025GetNewAddressRespons" +
-      "e\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\022\'\n\004ad" +
-      "dr\030\002 \001(\0132\023.pactus.AddressInfoR\004addr\"o\n\024R" +
-      "estoreWalletRequest\022\037\n\013wallet_name\030\001 \001(\t" +
-      "R\nwalletName\022\032\n\010mnemonic\030\002 \001(\tR\010mnemonic" +
-      "\022\032\n\010password\030\003 \001(\tR\010password\"8\n\025RestoreW" +
-      "alletResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwall" +
-      "etName\"R\n\023CreateWalletRequest\022\037\n\013wallet_" +
-      "name\030\001 \001(\tR\nwalletName\022\032\n\010password\030\002 \001(\t" +
-      "R\010password\"S\n\024CreateWalletResponse\022\037\n\013wa" +
-      "llet_name\030\001 \001(\tR\nwalletName\022\032\n\010mnemonic\030" +
-      "\002 \001(\tR\010mnemonic\"4\n\021LoadWalletRequest\022\037\n\013" +
-      "wallet_name\030\001 \001(\tR\nwalletName\"5\n\022LoadWal" +
-      "letResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwallet" +
-      "Name\"6\n\023UnloadWalletRequest\022\037\n\013wallet_na" +
-      "me\030\001 \001(\tR\nwalletName\"7\n\024UnloadWalletResp" +
-      "onse\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\";\n" +
-      "\032GetValidatorAddressRequest\022\035\n\npublic_ke" +
-      "y\030\001 \001(\tR\tpublicKey\"7\n\033GetValidatorAddres" +
-      "sResponse\022\030\n\007address\030\001 \001(\tR\007address\"\201\001\n\031" +
-      "SignRawTransactionRequest\022\037\n\013wallet_name" +
-      "\030\001 \001(\tR\nwalletName\022\'\n\017raw_transaction\030\002 " +
-      "\001(\tR\016rawTransaction\022\032\n\010password\030\003 \001(\tR\010p" +
-      "assword\"y\n\032SignRawTransactionResponse\022%\n" +
-      "\016transaction_id\030\001 \001(\tR\rtransactionId\0224\n\026" +
-      "signed_raw_transaction\030\002 \001(\tR\024signedRawT" +
-      "ransaction\"9\n\026GetTotalBalanceRequest\022\037\n\013" +
-      "wallet_name\030\001 \001(\tR\nwalletName\"_\n\027GetTota" +
-      "lBalanceResponse\022\037\n\013wallet_name\030\001 \001(\tR\nw" +
-      "alletName\022#\n\rtotal_balance\030\002 \001(\003R\014totalB" +
-      "alance\"\205\001\n\022SignMessageRequest\022\037\n\013wallet_" +
-      "name\030\001 \001(\tR\nwalletName\022\032\n\010password\030\002 \001(\t" +
-      "R\010password\022\030\n\007address\030\003 \001(\tR\007address\022\030\n\007" +
-      "message\030\004 \001(\tR\007message\"3\n\023SignMessageRes" +
-      "ponse\022\034\n\tsignature\030\001 \001(\tR\tsignature\"7\n\024G" +
-      "etTotalStakeRequest\022\037\n\013wallet_name\030\001 \001(\t" +
-      "R\nwalletName\"Y\n\025GetTotalStakeResponse\022\037\n" +
-      "\013wallet_name\030\001 \001(\tR\nwalletName\022\037\n\013total_" +
-      "stake\030\002 \001(\003R\ntotalStake\"R\n\025GetAddressInf" +
-      "oRequest\022\037\n\013wallet_name\030\001 \001(\tR\nwalletNam" +
-      "e\022\030\n\007address\030\002 \001(\tR\007address\"b\n\026GetAddres" +
-      "sInfoResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwall" +
-      "etName\022\'\n\004addr\030\002 \001(\0132\023.pactus.AddressInf" +
-      "oR\004addr\"\205\001\n\026SetAddressLabelRequest\022\037\n\013wa" +
-      "llet_name\030\001 \001(\tR\nwalletName\022\032\n\010password\030" +
-      "\002 \001(\tR\010password\022\030\n\007address\030\003 \001(\tR\007addres" +
-      "s\022\024\n\005label\030\004 \001(\tR\005label\"j\n\027SetAddressLab" +
-      "elResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwalletN" +
-      "ame\022\030\n\007address\030\002 \001(\tR\007address\022\024\n\005label\030\003" +
-      " \001(\tR\005label\"\024\n\022ListWalletsRequest\"/\n\023Lis" +
-      "tWalletsResponse\022\030\n\007wallets\030\001 \003(\tR\007walle" +
-      "ts\"7\n\024GetWalletInfoRequest\022\037\n\013wallet_nam" +
-      "e\030\001 \001(\tR\nwalletName\"\212\002\n\025GetWalletInfoRes" +
-      "ponse\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\022\030" +
-      "\n\007version\030\002 \001(\005R\007version\022\030\n\007network\030\003 \001(" +
-      "\tR\007network\022\034\n\tencrypted\030\004 \001(\010R\tencrypted" +
-      "\022\022\n\004uuid\030\005 \001(\tR\004uuid\022\035\n\ncreated_at\030\006 \001(\003" +
-      "R\tcreatedAt\022\037\n\013default_fee\030\007 \001(\003R\ndefaul" +
-      "tFee\022\026\n\006driver\030\010 \001(\tR\006driver\022\022\n\004path\030\t \001" +
-      "(\tR\004path\"q\n\024ListAddressesRequest\022\037\n\013wall" +
-      "et_name\030\001 \001(\tR\nwalletName\0228\n\raddress_typ" +
-      "es\030\002 \003(\0162\023.pactus.AddressTypeR\014addressTy" +
-      "pes\"c\n\025ListAddressesResponse\022\037\n\013wallet_n" +
-      "ame\030\001 \001(\tR\nwalletName\022)\n\005addrs\030\002 \003(\0132\023.p" +
-      "actus.AddressInfoR\005addrs\"~\n\025UpdatePasswo" +
-      "rdRequest\022\037\n\013wallet_name\030\001 \001(\tR\nwalletNa" +
-      "me\022!\n\014old_password\030\002 \001(\tR\013oldPassword\022!\n" +
-      "\014new_password\030\003 \001(\tR\013newPassword\"9\n\026Upda" +
-      "tePasswordResponse\022\037\n\013wallet_name\030\001 \001(\tR" +
-      "\nwalletName\"\333\003\n\025WalletTransactionInfo\022\016\n" +
-      "\002no\030\001 \001(\003R\002no\022\023\n\005tx_id\030\002 \001(\tR\004txId\022\026\n\006se" +
-      "nder\030\003 \001(\tR\006sender\022\032\n\010receiver\030\004 \001(\tR\010re" +
-      "ceiver\0221\n\tdirection\030\005 \001(\0162\023.pactus.TxDir" +
-      "ectionR\tdirection\022\026\n\006amount\030\006 \001(\003R\006amoun" +
-      "t\022\020\n\003fee\030\007 \001(\003R\003fee\022\022\n\004memo\030\010 \001(\tR\004memo\022" +
-      "1\n\006status\030\t \001(\0162\031.pactus.TransactionStat" +
-      "usR\006status\022!\n\014block_height\030\n \001(\rR\013blockH" +
-      "eight\0226\n\014payload_type\030\013 \001(\0162\023.pactus.Pay" +
-      "loadTypeR\013payloadType\022\022\n\004data\030\014 \001(\014R\004dat" +
-      "a\022\030\n\007comment\030\r \001(\tR\007comment\022\035\n\ncreated_a" +
-      "t\030\016 \001(\003R\tcreatedAt\022\035\n\nupdated_at\030\017 \001(\003R\t" +
-      "updatedAt\"\261\001\n\027ListTransactionsRequest\022\037\n" +
-      "\013wallet_name\030\001 \001(\tR\nwalletName\022\030\n\007addres" +
-      "s\030\002 \001(\tR\007address\0221\n\tdirection\030\003 \001(\0162\023.pa" +
-      "ctus.TxDirectionR\tdirection\022\024\n\005count\030\004 \001" +
-      "(\005R\005count\022\022\n\004skip\030\005 \001(\005R\004skip\"l\n\030ListTra" +
-      "nsactionsResponse\022\037\n\013wallet_name\030\001 \001(\tR\n" +
-      "walletName\022/\n\003txs\030\002 \003(\0132\035.pactus.WalletT" +
-      "ransactionInfoR\003txs\"O\n\024SetDefaultFeeRequ" +
-      "est\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\022\026\n\006" +
-      "amount\030\002 \001(\003R\006amount\"8\n\025SetDefaultFeeRes" +
-      "ponse\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\"Q" +
-      "\n\022GetMnemonicRequest\022\037\n\013wallet_name\030\001 \001(" +
-      "\tR\nwalletName\022\032\n\010password\030\002 \001(\tR\010passwor" +
-      "d\"1\n\023GetMnemonicResponse\022\032\n\010mnemonic\030\001 \001" +
-      "(\tR\010mnemonic\"m\n\024GetPrivateKeyRequest\022\037\n\013" +
-      "wallet_name\030\001 \001(\tR\nwalletName\022\032\n\010passwor" +
-      "d\030\002 \001(\tR\010password\022\030\n\007address\030\003 \001(\tR\007addr" +
-      "ess\"8\n\025GetPrivateKeyResponse\022\037\n\013private_" +
-      "key\030\001 \001(\tR\nprivateKey*\243\001\n\013AddressType\022\031\n" +
-      "\025ADDRESS_TYPE_TREASURY\020\000\022\032\n\026ADDRESS_TYPE" +
-      "_VALIDATOR\020\001\022\034\n\030ADDRESS_TYPE_BLS_ACCOUNT" +
-      "\020\002\022 \n\034ADDRESS_TYPE_ED25519_ACCOUNT\020\003\022\035\n\031" +
-      "ADDRESS_TYPE_SECP_ACCOUNT\020\004*Y\n\013TxDirecti" +
-      "on\022\024\n\020TX_DIRECTION_ANY\020\000\022\031\n\025TX_DIRECTION" +
-      "_INCOMING\020\001\022\031\n\025TX_DIRECTION_OUTGOING\020\002*}" +
-      "\n\021TransactionStatus\022\036\n\032TRANSACTION_STATU" +
-      "S_PENDING\020\000\022 \n\034TRANSACTION_STATUS_CONFIR" +
-      "MED\020\001\022&\n\031TRANSACTION_STATUS_FAILED\020\377\377\377\377\377" +
-      "\377\377\377\377\0012\273\014\n\006Wallet\022I\n\014CreateWallet\022\033.pactu" +
-      "s.CreateWalletRequest\032\034.pactus.CreateWal" +
-      "letResponse\022L\n\rRestoreWallet\022\034.pactus.Re" +
-      "storeWalletRequest\032\035.pactus.RestoreWalle" +
-      "tResponse\022C\n\nLoadWallet\022\031.pactus.LoadWal" +
-      "letRequest\032\032.pactus.LoadWalletResponse\022I" +
-      "\n\014UnloadWallet\022\033.pactus.UnloadWalletRequ" +
-      "est\032\034.pactus.UnloadWalletResponse\022F\n\013Lis" +
-      "tWallets\022\032.pactus.ListWalletsRequest\032\033.p" +
-      "actus.ListWalletsResponse\022L\n\rGetWalletIn" +
-      "fo\022\034.pactus.GetWalletInfoRequest\032\035.pactu" +
-      "s.GetWalletInfoResponse\022O\n\016UpdatePasswor" +
-      "d\022\035.pactus.UpdatePasswordRequest\032\036.pactu" +
-      "s.UpdatePasswordResponse\022R\n\017GetTotalBala" +
-      "nce\022\036.pactus.GetTotalBalanceRequest\032\037.pa" +
-      "ctus.GetTotalBalanceResponse\022L\n\rGetTotal" +
-      "Stake\022\034.pactus.GetTotalStakeRequest\032\035.pa" +
-      "ctus.GetTotalStakeResponse\022^\n\023GetValidat" +
-      "orAddress\022\".pactus.GetValidatorAddressRe" +
-      "quest\032#.pactus.GetValidatorAddressRespon" +
-      "se\022O\n\016GetAddressInfo\022\035.pactus.GetAddress" +
-      "InfoRequest\032\036.pactus.GetAddressInfoRespo" +
-      "nse\022R\n\017SetAddressLabel\022\036.pactus.SetAddre" +
-      "ssLabelRequest\032\037.pactus.SetAddressLabelR" +
-      "esponse\022L\n\rGetNewAddress\022\034.pactus.GetNew" +
-      "AddressRequest\032\035.pactus.GetNewAddressRes" +
-      "ponse\022L\n\rListAddresses\022\034.pactus.ListAddr" +
-      "essesRequest\032\035.pactus.ListAddressesRespo" +
-      "nse\022F\n\013SignMessage\022\032.pactus.SignMessageR" +
-      "equest\032\033.pactus.SignMessageResponse\022[\n\022S" +
-      "ignRawTransaction\022!.pactus.SignRawTransa" +
-      "ctionRequest\032\".pactus.SignRawTransaction" +
-      "Response\022U\n\020ListTransactions\022\037.pactus.Li" +
-      "stTransactionsRequest\032 .pactus.ListTrans" +
-      "actionsResponse\022L\n\rSetDefaultFee\022\034.pactu" +
-      "s.SetDefaultFeeRequest\032\035.pactus.SetDefau" +
-      "ltFeeResponse\022F\n\013GetMnemonic\022\032.pactus.Ge" +
-      "tMnemonicRequest\032\033.pactus.GetMnemonicRes" +
-      "ponse\022L\n\rGetPrivateKey\022\034.pactus.GetPriva" +
-      "teKeyRequest\032\035.pactus.GetPrivateKeyRespo" +
-      "nseB:\n\006pactusZ0github.com/pactus-project" +
-      "/pactus/www/grpc/pactusb\006proto3"
+      "\013addressType\022\030\n\007balance\030\006 \001(\003R\007balance\022\024" +
+      "\n\005stake\030\007 \001(\003R\005stake\"\241\001\n\024GetNewAddressRe" +
+      "quest\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\0226" +
+      "\n\014address_type\030\002 \001(\0162\023.pactus.AddressTyp" +
+      "eR\013addressType\022\024\n\005label\030\003 \001(\tR\005label\022\032\n\010" +
+      "password\030\004 \001(\tR\010password\"a\n\025GetNewAddres" +
+      "sResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwalletNa" +
+      "me\022\'\n\004addr\030\002 \001(\0132\023.pactus.AddressInfoR\004a" +
+      "ddr\"o\n\024RestoreWalletRequest\022\037\n\013wallet_na" +
+      "me\030\001 \001(\tR\nwalletName\022\032\n\010mnemonic\030\002 \001(\tR\010" +
+      "mnemonic\022\032\n\010password\030\003 \001(\tR\010password\"8\n\025" +
+      "RestoreWalletResponse\022\037\n\013wallet_name\030\001 \001" +
+      "(\tR\nwalletName\"R\n\023CreateWalletRequest\022\037\n" +
+      "\013wallet_name\030\001 \001(\tR\nwalletName\022\032\n\010passwo" +
+      "rd\030\002 \001(\tR\010password\"S\n\024CreateWalletRespon" +
+      "se\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\022\032\n\010m" +
+      "nemonic\030\002 \001(\tR\010mnemonic\"4\n\021LoadWalletReq" +
+      "uest\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\"5\n" +
+      "\022LoadWalletResponse\022\037\n\013wallet_name\030\001 \001(\t" +
+      "R\nwalletName\"6\n\023UnloadWalletRequest\022\037\n\013w" +
+      "allet_name\030\001 \001(\tR\nwalletName\"7\n\024UnloadWa" +
+      "lletResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwalle" +
+      "tName\";\n\032GetValidatorAddressRequest\022\035\n\np" +
+      "ublic_key\030\001 \001(\tR\tpublicKey\"7\n\033GetValidat" +
+      "orAddressResponse\022\030\n\007address\030\001 \001(\tR\007addr" +
+      "ess\"\201\001\n\031SignRawTransactionRequest\022\037\n\013wal" +
+      "let_name\030\001 \001(\tR\nwalletName\022\'\n\017raw_transa" +
+      "ction\030\002 \001(\tR\016rawTransaction\022\032\n\010password\030" +
+      "\003 \001(\tR\010password\"y\n\032SignRawTransactionRes" +
+      "ponse\022%\n\016transaction_id\030\001 \001(\tR\rtransacti" +
+      "onId\0224\n\026signed_raw_transaction\030\002 \001(\tR\024si" +
+      "gnedRawTransaction\"9\n\026GetTotalBalanceReq" +
+      "uest\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\"_\n" +
+      "\027GetTotalBalanceResponse\022\037\n\013wallet_name\030" +
+      "\001 \001(\tR\nwalletName\022#\n\rtotal_balance\030\002 \001(\003" +
+      "R\014totalBalance\"\205\001\n\022SignMessageRequest\022\037\n" +
+      "\013wallet_name\030\001 \001(\tR\nwalletName\022\032\n\010passwo" +
+      "rd\030\002 \001(\tR\010password\022\030\n\007address\030\003 \001(\tR\007add" +
+      "ress\022\030\n\007message\030\004 \001(\tR\007message\"3\n\023SignMe" +
+      "ssageResponse\022\034\n\tsignature\030\001 \001(\tR\tsignat" +
+      "ure\"7\n\024GetTotalStakeRequest\022\037\n\013wallet_na" +
+      "me\030\001 \001(\tR\nwalletName\"Y\n\025GetTotalStakeRes" +
+      "ponse\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\022\037" +
+      "\n\013total_stake\030\002 \001(\003R\ntotalStake\"R\n\025GetAd" +
+      "dressInfoRequest\022\037\n\013wallet_name\030\001 \001(\tR\nw" +
+      "alletName\022\030\n\007address\030\002 \001(\tR\007address\"b\n\026G" +
+      "etAddressInfoResponse\022\037\n\013wallet_name\030\001 \001" +
+      "(\tR\nwalletName\022\'\n\004addr\030\002 \001(\0132\023.pactus.Ad" +
+      "dressInfoR\004addr\"\205\001\n\026SetAddressLabelReque" +
+      "st\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\022\032\n\010p" +
+      "assword\030\002 \001(\tR\010password\022\030\n\007address\030\003 \001(\t" +
+      "R\007address\022\024\n\005label\030\004 \001(\tR\005label\"j\n\027SetAd" +
+      "dressLabelResponse\022\037\n\013wallet_name\030\001 \001(\tR" +
+      "\nwalletName\022\030\n\007address\030\002 \001(\tR\007address\022\024\n" +
+      "\005label\030\003 \001(\tR\005label\"\024\n\022ListWalletsReques" +
+      "t\"/\n\023ListWalletsResponse\022\030\n\007wallets\030\001 \003(" +
+      "\tR\007wallets\"7\n\024GetWalletInfoRequest\022\037\n\013wa" +
+      "llet_name\030\001 \001(\tR\nwalletName\"\212\002\n\025GetWalle" +
+      "tInfoResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwall" +
+      "etName\022\030\n\007version\030\002 \001(\005R\007version\022\030\n\007netw" +
+      "ork\030\003 \001(\tR\007network\022\034\n\tencrypted\030\004 \001(\010R\te" +
+      "ncrypted\022\022\n\004uuid\030\005 \001(\tR\004uuid\022\035\n\ncreated_" +
+      "at\030\006 \001(\003R\tcreatedAt\022\037\n\013default_fee\030\007 \001(\003" +
+      "R\ndefaultFee\022\026\n\006driver\030\010 \001(\tR\006driver\022\022\n\004" +
+      "path\030\t \001(\tR\004path\"\277\001\n\024ListAddressesReques" +
+      "t\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\0228\n\rad" +
+      "dress_types\030\002 \003(\0162\023.pactus.AddressTypeR\014" +
+      "addressTypes\022\'\n\017include_balance\030\003 \001(\010R\016i" +
+      "ncludeBalance\022#\n\rinclude_stake\030\004 \001(\010R\014in" +
+      "cludeStake\"c\n\025ListAddressesResponse\022\037\n\013w" +
+      "allet_name\030\001 \001(\tR\nwalletName\022)\n\005addrs\030\002 " +
+      "\003(\0132\023.pactus.AddressInfoR\005addrs\"~\n\025Updat" +
+      "ePasswordRequest\022\037\n\013wallet_name\030\001 \001(\tR\nw" +
+      "alletName\022!\n\014old_password\030\002 \001(\tR\013oldPass" +
+      "word\022!\n\014new_password\030\003 \001(\tR\013newPassword\"" +
+      "9\n\026UpdatePasswordResponse\022\037\n\013wallet_name" +
+      "\030\001 \001(\tR\nwalletName\"\333\003\n\025WalletTransaction" +
+      "Info\022\016\n\002no\030\001 \001(\003R\002no\022\023\n\005tx_id\030\002 \001(\tR\004txI" +
+      "d\022\026\n\006sender\030\003 \001(\tR\006sender\022\032\n\010receiver\030\004 " +
+      "\001(\tR\010receiver\0221\n\tdirection\030\005 \001(\0162\023.pactu" +
+      "s.TxDirectionR\tdirection\022\026\n\006amount\030\006 \001(\003" +
+      "R\006amount\022\020\n\003fee\030\007 \001(\003R\003fee\022\022\n\004memo\030\010 \001(\t" +
+      "R\004memo\0221\n\006status\030\t \001(\0162\031.pactus.Transact" +
+      "ionStatusR\006status\022!\n\014block_height\030\n \001(\rR" +
+      "\013blockHeight\0226\n\014payload_type\030\013 \001(\0162\023.pac" +
+      "tus.PayloadTypeR\013payloadType\022\022\n\004data\030\014 \001" +
+      "(\014R\004data\022\030\n\007comment\030\r \001(\tR\007comment\022\035\n\ncr" +
+      "eated_at\030\016 \001(\003R\tcreatedAt\022\035\n\nupdated_at\030" +
+      "\017 \001(\003R\tupdatedAt\"\261\001\n\027ListTransactionsReq" +
+      "uest\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\022\030\n" +
+      "\007address\030\002 \001(\tR\007address\0221\n\tdirection\030\003 \001" +
+      "(\0162\023.pactus.TxDirectionR\tdirection\022\024\n\005co" +
+      "unt\030\004 \001(\005R\005count\022\022\n\004skip\030\005 \001(\005R\004skip\"l\n\030" +
+      "ListTransactionsResponse\022\037\n\013wallet_name\030" +
+      "\001 \001(\tR\nwalletName\022/\n\003txs\030\002 \003(\0132\035.pactus." +
+      "WalletTransactionInfoR\003txs\"O\n\024SetDefault" +
+      "FeeRequest\022\037\n\013wallet_name\030\001 \001(\tR\nwalletN" +
+      "ame\022\026\n\006amount\030\002 \001(\003R\006amount\"8\n\025SetDefaul" +
+      "tFeeResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwalle" +
+      "tName\"Q\n\022GetMnemonicRequest\022\037\n\013wallet_na" +
+      "me\030\001 \001(\tR\nwalletName\022\032\n\010password\030\002 \001(\tR\010" +
+      "password\"1\n\023GetMnemonicResponse\022\032\n\010mnemo" +
+      "nic\030\001 \001(\tR\010mnemonic\"m\n\024GetPrivateKeyRequ" +
+      "est\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\022\032\n\010" +
+      "password\030\002 \001(\tR\010password\022\030\n\007address\030\003 \001(" +
+      "\tR\007address\"8\n\025GetPrivateKeyResponse\022\037\n\013p" +
+      "rivate_key\030\001 \001(\tR\nprivateKey*\243\001\n\013Address" +
+      "Type\022\031\n\025ADDRESS_TYPE_TREASURY\020\000\022\032\n\026ADDRE" +
+      "SS_TYPE_VALIDATOR\020\001\022\034\n\030ADDRESS_TYPE_BLS_" +
+      "ACCOUNT\020\002\022 \n\034ADDRESS_TYPE_ED25519_ACCOUN" +
+      "T\020\003\022\035\n\031ADDRESS_TYPE_SECP_ACCOUNT\020\004*Y\n\013Tx" +
+      "Direction\022\024\n\020TX_DIRECTION_ANY\020\000\022\031\n\025TX_DI" +
+      "RECTION_INCOMING\020\001\022\031\n\025TX_DIRECTION_OUTGO" +
+      "ING\020\002*}\n\021TransactionStatus\022\036\n\032TRANSACTIO" +
+      "N_STATUS_PENDING\020\000\022 \n\034TRANSACTION_STATUS" +
+      "_CONFIRMED\020\001\022&\n\031TRANSACTION_STATUS_FAILE" +
+      "D\020\377\377\377\377\377\377\377\377\377\0012\273\014\n\006Wallet\022I\n\014CreateWallet\022" +
+      "\033.pactus.CreateWalletRequest\032\034.pactus.Cr" +
+      "eateWalletResponse\022L\n\rRestoreWallet\022\034.pa" +
+      "ctus.RestoreWalletRequest\032\035.pactus.Resto" +
+      "reWalletResponse\022C\n\nLoadWallet\022\031.pactus." +
+      "LoadWalletRequest\032\032.pactus.LoadWalletRes" +
+      "ponse\022I\n\014UnloadWallet\022\033.pactus.UnloadWal" +
+      "letRequest\032\034.pactus.UnloadWalletResponse" +
+      "\022F\n\013ListWallets\022\032.pactus.ListWalletsRequ" +
+      "est\032\033.pactus.ListWalletsResponse\022L\n\rGetW" +
+      "alletInfo\022\034.pactus.GetWalletInfoRequest\032" +
+      "\035.pactus.GetWalletInfoResponse\022O\n\016Update" +
+      "Password\022\035.pactus.UpdatePasswordRequest\032" +
+      "\036.pactus.UpdatePasswordResponse\022R\n\017GetTo" +
+      "talBalance\022\036.pactus.GetTotalBalanceReque" +
+      "st\032\037.pactus.GetTotalBalanceResponse\022L\n\rG" +
+      "etTotalStake\022\034.pactus.GetTotalStakeReque" +
+      "st\032\035.pactus.GetTotalStakeResponse\022^\n\023Get" +
+      "ValidatorAddress\022\".pactus.GetValidatorAd" +
+      "dressRequest\032#.pactus.GetValidatorAddres" +
+      "sResponse\022O\n\016GetAddressInfo\022\035.pactus.Get" +
+      "AddressInfoRequest\032\036.pactus.GetAddressIn" +
+      "foResponse\022R\n\017SetAddressLabel\022\036.pactus.S" +
+      "etAddressLabelRequest\032\037.pactus.SetAddres" +
+      "sLabelResponse\022L\n\rGetNewAddress\022\034.pactus" +
+      ".GetNewAddressRequest\032\035.pactus.GetNewAdd" +
+      "ressResponse\022L\n\rListAddresses\022\034.pactus.L" +
+      "istAddressesRequest\032\035.pactus.ListAddress" +
+      "esResponse\022F\n\013SignMessage\022\032.pactus.SignM" +
+      "essageRequest\032\033.pactus.SignMessageRespon" +
+      "se\022[\n\022SignRawTransaction\022!.pactus.SignRa" +
+      "wTransactionRequest\032\".pactus.SignRawTran" +
+      "sactionResponse\022U\n\020ListTransactions\022\037.pa" +
+      "ctus.ListTransactionsRequest\032 .pactus.Li" +
+      "stTransactionsResponse\022L\n\rSetDefaultFee\022" +
+      "\034.pactus.SetDefaultFeeRequest\032\035.pactus.S" +
+      "etDefaultFeeResponse\022F\n\013GetMnemonic\022\032.pa" +
+      "ctus.GetMnemonicRequest\032\033.pactus.GetMnem" +
+      "onicResponse\022L\n\rGetPrivateKey\022\034.pactus.G" +
+      "etPrivateKeyRequest\032\035.pactus.GetPrivateK" +
+      "eyResponseB:\n\006pactusZ0github.com/pactus-" +
+      "project/pactus/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -34769,7 +35144,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     internal_static_pactus_AddressInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_AddressInfo_descriptor,
-        new java.lang.String[] { "Address", "PublicKey", "Label", "Path", "AddressType", });
+        new java.lang.String[] { "Address", "PublicKey", "Label", "Path", "AddressType", "Balance", "Stake", });
     internal_static_pactus_GetNewAddressRequest_descriptor =
       getDescriptor().getMessageType(1);
     internal_static_pactus_GetNewAddressRequest_fieldAccessorTable = new
@@ -34943,7 +35318,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
     internal_static_pactus_ListAddressesRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_ListAddressesRequest_descriptor,
-        new java.lang.String[] { "WalletName", "AddressTypes", });
+        new java.lang.String[] { "WalletName", "AddressTypes", "IncludeBalance", "IncludeStake", });
     internal_static_pactus_ListAddressesResponse_descriptor =
       getDescriptor().getMessageType(30);
     internal_static_pactus_ListAddressesResponse_fieldAccessorTable = new

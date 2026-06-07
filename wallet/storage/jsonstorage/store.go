@@ -14,14 +14,14 @@ import (
 )
 
 type store struct {
-	Version    int                          `json:"version"`
-	UUID       uuid.UUID                    `json:"uuid"`
-	CreatedAt  time.Time                    `json:"created_at"`
-	Network    genesis.ChainType            `json:"network"`
-	VaultCRC   uint32                       `json:"crc"`
-	DefaultFee amount.Amount                `json:"default_fee"`
-	Vault      vault.Vault                  `json:"vault"`
-	Addresses  map[string]types.AddressInfo `json:"addresses"`
+	Version    int                           `json:"version"`
+	UUID       uuid.UUID                     `json:"uuid"`
+	CreatedAt  time.Time                     `json:"created_at"`
+	Network    genesis.ChainType             `json:"network"`
+	VaultCRC   uint32                        `json:"crc"`
+	DefaultFee amount.Amount                 `json:"default_fee"`
+	Vault      vault.Vault                   `json:"vault"`
+	Addresses  map[string]*types.AddressInfo `json:"addresses"`
 }
 
 func (s *store) Save(path string) error {

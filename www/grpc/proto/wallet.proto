@@ -100,6 +100,10 @@ message AddressInfo {
   string path = 4;
   // The type of the address.
   AddressType address_type = 5;
+  // The account balance in NanoPAC. For validator addresses, this field is zero.
+  int64 balance = 6;
+  // The validator stake in NanoPAC. For non-validator addresses, this field is zero.
+  int64 stake = 7;
 }
 
 // Request message for generating a new wallet address.
@@ -349,6 +353,12 @@ message ListAddressesRequest {
 
   // Filter addresses by their types. If empty, all address types are included.
   repeated AddressType address_types = 2;
+
+  // Includes the balance of each address.
+  bool include_balance = 3;
+
+  // Includes the stake of each address.
+  bool include_stake = 4;
 }
 
 // Response message contains wallet addresses.

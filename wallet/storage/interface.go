@@ -21,7 +21,7 @@ type IStorage interface {
 	UpdateVault(vault *vault.Vault) error
 	SetDefaultFee(fee amount.Amount) error
 
-	AllAddresses() []wtypes.AddressInfo
+	AllAddresses() []*wtypes.AddressInfo
 	AddressInfo(address string) (*wtypes.AddressInfo, error)
 	HasAddress(address string) bool
 	AddressCount() int

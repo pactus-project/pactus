@@ -1247,6 +1247,20 @@
               ]
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "includeBalance",
+            "description": "Includes the balance of each address.",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "includeStake",
+            "description": "Includes the stake of each address.",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "tags": [
@@ -1654,6 +1668,16 @@
         "addressType": {
           "$ref": "#/definitions/pactusAddressType",
           "description": "The type of the address."
+        },
+        "balance": {
+          "type": "string",
+          "format": "int64",
+          "description": "The account balance in NanoPAC. For validator addresses, this field is zero."
+        },
+        "stake": {
+          "type": "string",
+          "format": "int64",
+          "description": "The validator stake in NanoPAC. For non-validator addresses, this field is zero."
         }
       },
       "description": "AddressInfo contains detailed information about a wallet address."

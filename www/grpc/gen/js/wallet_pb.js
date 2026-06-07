@@ -980,7 +980,9 @@ address: jspb.Message.getFieldWithDefault(msg, 1, ""),
 publicKey: jspb.Message.getFieldWithDefault(msg, 2, ""),
 label: jspb.Message.getFieldWithDefault(msg, 3, ""),
 path: jspb.Message.getFieldWithDefault(msg, 4, ""),
-addressType: jspb.Message.getFieldWithDefault(msg, 5, 0)
+addressType: jspb.Message.getFieldWithDefault(msg, 5, 0),
+balance: jspb.Message.getFieldWithDefault(msg, 6, 0),
+stake: jspb.Message.getFieldWithDefault(msg, 7, 0)
   };
 
   if (includeInstance) {
@@ -1036,6 +1038,14 @@ proto.pactus.AddressInfo.deserializeBinaryFromReader = function(msg, reader) {
     case 5:
       var value = /** @type {!proto.pactus.AddressType} */ (reader.readEnum());
       msg.setAddressType(value);
+      break;
+    case 6:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setBalance(value);
+      break;
+    case 7:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setStake(value);
       break;
     default:
       reader.skipField();
@@ -1098,6 +1108,20 @@ proto.pactus.AddressInfo.serializeBinaryToWriter = function(message, writer) {
   if (f !== 0.0) {
     writer.writeEnum(
       5,
+      f
+    );
+  }
+  f = message.getBalance();
+  if (f !== 0) {
+    writer.writeInt64(
+      6,
+      f
+    );
+  }
+  f = message.getStake();
+  if (f !== 0) {
+    writer.writeInt64(
+      7,
       f
     );
   }
@@ -1191,6 +1215,42 @@ proto.pactus.AddressInfo.prototype.getAddressType = function() {
  */
 proto.pactus.AddressInfo.prototype.setAddressType = function(value) {
   return jspb.Message.setProto3EnumField(this, 5, value);
+};
+
+
+/**
+ * optional int64 balance = 6;
+ * @return {number}
+ */
+proto.pactus.AddressInfo.prototype.getBalance = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.AddressInfo} returns this
+ */
+proto.pactus.AddressInfo.prototype.setBalance = function(value) {
+  return jspb.Message.setProto3IntField(this, 6, value);
+};
+
+
+/**
+ * optional int64 stake = 7;
+ * @return {number}
+ */
+proto.pactus.AddressInfo.prototype.getStake = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.AddressInfo} returns this
+ */
+proto.pactus.AddressInfo.prototype.setStake = function(value) {
+  return jspb.Message.setProto3IntField(this, 7, value);
 };
 
 
@@ -5843,7 +5903,9 @@ proto.pactus.ListAddressesRequest.prototype.toObject = function(opt_includeInsta
 proto.pactus.ListAddressesRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
 walletName: jspb.Message.getFieldWithDefault(msg, 1, ""),
-addressTypesList: (f = jspb.Message.getRepeatedField(msg, 2)) == null ? undefined : f
+addressTypesList: (f = jspb.Message.getRepeatedField(msg, 2)) == null ? undefined : f,
+includeBalance: jspb.Message.getBooleanFieldWithDefault(msg, 3, false),
+includeStake: jspb.Message.getBooleanFieldWithDefault(msg, 4, false)
   };
 
   if (includeInstance) {
@@ -5887,6 +5949,14 @@ proto.pactus.ListAddressesRequest.deserializeBinaryFromReader = function(msg, re
     case 2:
       reader.readPackableEnumInto(msg.getAddressTypesList());
       break;
+    case 3:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setIncludeBalance(value);
+      break;
+    case 4:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setIncludeStake(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -5927,6 +5997,20 @@ proto.pactus.ListAddressesRequest.serializeBinaryToWriter = function(message, wr
   if (f.length > 0) {
     writer.writePackedEnum(
       2,
+      f
+    );
+  }
+  f = message.getIncludeBalance();
+  if (f) {
+    writer.writeBool(
+      3,
+      f
+    );
+  }
+  f = message.getIncludeStake();
+  if (f) {
+    writer.writeBool(
+      4,
       f
     );
   }
@@ -5985,6 +6069,42 @@ proto.pactus.ListAddressesRequest.prototype.addAddressTypes = function(value, op
  */
 proto.pactus.ListAddressesRequest.prototype.clearAddressTypesList = function() {
   return this.setAddressTypesList([]);
+};
+
+
+/**
+ * optional bool include_balance = 3;
+ * @return {boolean}
+ */
+proto.pactus.ListAddressesRequest.prototype.getIncludeBalance = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 3, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.pactus.ListAddressesRequest} returns this
+ */
+proto.pactus.ListAddressesRequest.prototype.setIncludeBalance = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 3, value);
+};
+
+
+/**
+ * optional bool include_stake = 4;
+ * @return {boolean}
+ */
+proto.pactus.ListAddressesRequest.prototype.getIncludeStake = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 4, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.pactus.ListAddressesRequest} returns this
+ */
+proto.pactus.ListAddressesRequest.prototype.setIncludeStake = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 4, value);
 };
 
 

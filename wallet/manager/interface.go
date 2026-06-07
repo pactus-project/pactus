@@ -31,7 +31,7 @@ type IManager interface {
 
 	NewAddress(walletName string, addressType crypto.AddressType, label string,
 		opts ...wallet.NewAddressOption) (*types.AddressInfo, error)
-	ListAddresses(walletName string, opts ...wallet.ListAddressOption) ([]types.AddressInfo, error)
+	ListAddresses(walletName string, opts ...wallet.ListAddressOption) ([]*types.AddressInfo, error)
 	AddressInfo(walletName, address string) (*types.AddressInfo, error)
 	AddressLabel(walletName, addr string) (string, error)
 	SetAddressLabel(walletName, addr, label string) error

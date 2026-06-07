@@ -135,14 +135,14 @@ func (mr *MockIManagerMockRecorder) GetValidatorAddress(publicKey any) *gomock.C
 }
 
 // ListAddresses mocks base method.
-func (m *MockIManager) ListAddresses(walletName string, opts ...wallet.ListAddressOption) ([]types.AddressInfo, error) {
+func (m *MockIManager) ListAddresses(walletName string, opts ...wallet.ListAddressOption) ([]*types.AddressInfo, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{walletName}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "ListAddresses", varargs...)
-	ret0, _ := ret[0].([]types.AddressInfo)
+	ret0, _ := ret[0].([]*types.AddressInfo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

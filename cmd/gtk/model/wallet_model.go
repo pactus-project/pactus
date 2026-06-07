@@ -118,32 +118,38 @@ func (model *WalletModel) AddressInfo(addr string) *pactus.AddressInfo {
 }
 
 func (model *WalletModel) ListAccountAddresses() []*pactus.AddressInfo {
-	return model.ListAddresses(
+	lst, _ := model.ListAddresses(
 		crypto.AddressTypeBLSAccount,
 		crypto.AddressTypeEd25519Account,
 		crypto.AddressTypeSecp256k1Account,
 	)
+
+	return lst
 }
 
 func (model *WalletModel) ListValidatorAddresses() []*pactus.AddressInfo {
-	return model.ListAddresses(crypto.AddressTypeValidator)
+	lst, _ := model.ListAddresses(crypto.AddressTypeValidator)
+
+	return lst
 }
 
-func (model *WalletModel) ListAddresses(addressTypes ...crypto.AddressType) []*pactus.AddressInfo {
+func (model *WalletModel) ListAddresses(addressTypes ...crypto.AddressType) ([]*pactus.AddressInfo, error) {
 	addressTypesPB := make([]pactus.AddressType, 0, len(addressTypes))
 	for _, at := range addressTypes {
 		addressTypesPB = append(addressTypesPB, pactus.AddressType(at))
 	}
 
 	res, err := model.walletClient.ListAddresses(model.ctx, &pactus.ListAddressesRequest{
-		WalletName:   model.walletName,
-		AddressTypes: addressTypesPB,
+		WalletName:     model.walletName,
+		AddressTypes:   addressTypesPB,
+		IncludeBalance: true,
+		IncludeStake:   true,
 	})
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
-	return res.Addrs
+	return res.Addrs, nil
 }
 
 func (model *WalletModel) Balance(addr string) (amount.Amount, error) {
@@ -280,18 +286,6 @@ func (model *WalletModel) SetAddressLabel(addr, label string) error {
 	})
 
 	return err
-}
-
-// Addresses returns a list of addresses in the wallet.
-func (model *WalletModel) Addresses() ([]*pactus.AddressInfo, error) {
-	res, err := model.walletClient.ListAddresses(model.ctx, &pactus.ListAddressesRequest{
-		WalletName: model.walletName,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return res.Addrs, nil
 }
 
 func (model *WalletModel) MakeTransferTx(
