@@ -61,7 +61,8 @@ func FromBytes(data []byte) (*Validator, error) {
 		return nil, err
 	}
 
-	err := encoding.ReadElements(reader,
+	err := encoding.ReadElements(
+		reader,
 		&val.data.Number,
 		&val.data.Stake,
 		&val.data.LastBondingHeight,

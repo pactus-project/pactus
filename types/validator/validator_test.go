@@ -97,7 +97,8 @@ func TestDecoding(t *testing.T) {
 			"0200000000000000" + // Stake
 			"03000000" + // LastBondingHeight
 			"04000000" + // UnbondingHeight
-			"05000000") // LastSortitionHeight
+			"05000000",
+	) // LastSortitionHeight
 
 	val, err := validator.FromBytes(data)
 	require.NoError(t, err)

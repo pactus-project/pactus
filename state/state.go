@@ -404,7 +404,8 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 		st.stateRoot(),
 		st.lastInfo.Certificate(),
 		prevSeed.GenerateNext(valKey.PrivateKey()),
-		valAddr)
+		valAddr,
+	)
 
 	return blk, nil
 }

@@ -24,7 +24,8 @@ func TestValidate(t *testing.T) {
 	seed2 := seed1.GenerateNext(valKey.PrivateKey())
 	seed3 := sortition.VerifiableSeed{}
 	seed4, _ := sortition.VerifiableSeedFromString(
-		"C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+		"C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+	)
 
 	assert.True(t, seed2.Verify(valKey.PublicKey(), seed1))
 	assert.False(t, seed1.Verify(valKey.PublicKey(), seed2))

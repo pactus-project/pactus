@@ -109,7 +109,8 @@ func (ts *TestSuite) RandHeight(opts ...HeightRangeOption) types.Height {
 
 	return types.Height(ts.RandUint32(
 		testsuite.WithMin(uint32(h.Min)),
-		testsuite.WithMax(uint32(h.Max))))
+		testsuite.WithMax(uint32(h.Max)),
+	))
 }
 
 // RandRound returns a random number between [0, 10) for block round.
@@ -826,7 +827,8 @@ func (ts *TestSuite) GenerateTestPrecommitVote(height types.Height, round types.
 	vote := vote.NewPrecommitVote(
 		ts.RandHash(),
 		height, round,
-		valKey.Address())
+		valKey.Address(),
+	)
 	ts.HelperSignVote(valKey, vote)
 
 	return vote, valKey
@@ -838,7 +840,8 @@ func (ts *TestSuite) GenerateTestPrepareVote(height types.Height, round types.Ro
 	vote := vote.NewPrepareVote(
 		ts.RandHash(),
 		height, round,
-		valKey.Address())
+		valKey.Address(),
+	)
 	ts.HelperSignVote(valKey, vote)
 
 	return vote, valKey
@@ -853,7 +856,8 @@ func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []*bls
 		valKey := ts.RandValKey()
 		val := ts.GenerateTestValidator(
 			ValidatorWithNumber(index),
-			ValidatorWithPublicKey(valKey.PublicKey()))
+			ValidatorWithPublicKey(valKey.PublicKey()),
+		)
 		valKeys[index] = valKey
 		vals[index] = val
 

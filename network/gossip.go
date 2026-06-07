@@ -173,7 +173,8 @@ func (g *gossipService) joinTopic(topicID TopicID, evaluator PropagationEvaluato
 	}
 
 	err = g.pubsub.RegisterTopicValidator(
-		topicName, g.createValidator(topicID, evaluator))
+		topicName, g.createValidator(topicID, evaluator),
+	)
 	if err != nil {
 		return nil, LibP2PError{Err: err}
 	}

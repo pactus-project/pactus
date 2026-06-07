@@ -259,7 +259,8 @@ func (s *walletServer) ListAddresses(_ context.Context,
 		addressTypes = append(addressTypes, crypto.AddressType(addrType))
 	}
 
-	addrs, err := s.walletManager.ListAddresses(req.WalletName,
+	addrs, err := s.walletManager.ListAddresses(
+		req.WalletName,
 		wallet.WithAddressTypes(addressTypes),
 		wallet.WithAddressBalance(req.IncludeBalance),
 		wallet.WithAddressStake(req.IncludeStake),

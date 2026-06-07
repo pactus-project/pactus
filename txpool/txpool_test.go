@@ -67,7 +67,8 @@ func setup(t *testing.T, cfg *Config) *testData {
 	sbx.TestAcceptSortition = true
 
 	randHeight := ts.RandHeight(
-		testsuite.HeightWithMin(sbx.TestParams.UnbondInterval))
+		testsuite.HeightWithMin(sbx.TestParams.UnbondInterval),
+	)
 	_ = sbx.TestStore.AddTestBlock(randHeight)
 
 	return &testData{
@@ -319,7 +320,8 @@ func TestEstimatedConsumptionalFee(t *testing.T) {
 		for _, tt := range tests {
 			testTrx := td.makeValidTransferTx(
 				testsuite.TransactionWithSigner(accPrv),
-				testsuite.TransactionWithFee(tt.fee))
+				testsuite.TransactionWithFee(tt.fee),
+			)
 
 			err := td.pool.AppendTx(testTrx)
 			if tt.withErr {

@@ -25,7 +25,8 @@ func TestDecoding(t *testing.T) {
 		data, _ := hex.DecodeString(
 			"04030201" + // Height
 				"0100" + // Round
-				"34") // Committers: Len (52)
+				"34",
+		) // Committers: Len (52)
 
 		r := bytes.NewReader(data)
 		cert := new(certificate.Certificate)
@@ -38,7 +39,8 @@ func TestDecoding(t *testing.T) {
 			"04030201" + // Height
 				"0100" + // Round
 				"0102" + // Committers
-				"34") // Absentees: Len (52)
+				"34",
+		) // Absentees: Len (52)
 
 		r := bytes.NewReader(data)
 		cert := new(certificate.Certificate)
@@ -52,7 +54,8 @@ func TestDecoding(t *testing.T) {
 				"0100" + // Round
 				"06010203040506" + // Committers
 				"0102" + // Absentees
-				"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6") // Signature
+				"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6",
+		) // Signature
 
 		certHash, _ := hash.FromString("ac755295a6850b141286bde42bb8ba06ae1671f0562cbef90043924091177815")
 		r := bytes.NewReader(data)
@@ -70,18 +73,21 @@ func TestDecoding(t *testing.T) {
 			"000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f" + // Block hash
 				"04030201" + // Height
 				"0100" + // Round
-				"50524550415245") // PREPARE
+				"50524550415245",
+		) // PREPARE
 		expectedPrecommitSignByte, _ := hex.DecodeString(
 			"000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f" + // Block hash
 				"04030201" + // Height
-				"0100") // Round
+				"0100",
+		) // Round
 		expectedCPPreVoteSignByte, _ := hex.DecodeString(
 			"000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f" + // Block hash
 				"04030201" + // Height
 				"0100" + // Round
 				"5052452d564f5445" + // PRE-VOTE
 				"0100" + // CP Round
-				"02") // CP Value
+				"02",
+		) // CP Value
 
 		expectedCPMainVoteSignByte, _ := hex.DecodeString(
 			"000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f" + // Block hash
@@ -89,7 +95,8 @@ func TestDecoding(t *testing.T) {
 				"0100" + // Round
 				"4d41494e2d564f5445" + // MAIN-VOTE
 				"0100" + // CP Round
-				"02") // CP Value
+				"02",
+		) // CP Value
 
 		expectedCPDecidedSignByte, _ := hex.DecodeString(
 			"000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f" + // Block hash
@@ -97,7 +104,8 @@ func TestDecoding(t *testing.T) {
 				"0100" + // Round
 				"44454349444544" + // DECIDED
 				"0100" + // CP Round
-				"02") // CP Value
+				"02",
+		) // CP Value
 
 		assert.Equal(t, expectedPrepareSignByte, cert.SignBytesPrepare(blockHash))
 		assert.Equal(t, expectedPrecommitSignByte, cert.SignBytesPrecommit(blockHash))

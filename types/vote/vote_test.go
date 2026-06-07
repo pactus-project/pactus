@@ -311,7 +311,8 @@ func TestCPMainVote(t *testing.T) {
 	t.Run("No CP data", func(t *testing.T) {
 		data, _ := hex.DecodeString(
 			"A701040218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
-				"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6")
+				"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6",
+		)
 		decVote := new(vote.Vote)
 		_ = decVote.UnmarshalCBOR(data)
 		decVote.SetSignature(ts.RandBLSSignature())
@@ -521,7 +522,8 @@ func TestCPInvalidJustType(t *testing.T) {
 			"0308" + // Just type: 8 <<<(Unknown Just Type)>>>
 			"0441" + // Just: JustTypeInitYes
 			"A0" + // Empty Array
-			"07f6") // Signature -> Null
+			"07f6",
+	) // Signature -> Null
 
 	v := new(vote.Vote)
 	err := v.UnmarshalCBOR(voteData)

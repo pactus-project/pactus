@@ -30,7 +30,8 @@ func TestFromBytes(t *testing.T) {
 func TestDecoding(t *testing.T) {
 	data, _ := hex.DecodeString(
 		"01000000" + // number
-			"0200000000000000") // balance
+			"0200000000000000",
+	) // balance
 
 	acc, err := account.FromBytes(data)
 	require.NoError(t, err)

@@ -39,7 +39,8 @@ func createRootCommand() *cobra.Command {
 		Long:         "pactus-shell is a command line tool for interacting with the Pactus blockchain using gRPC",
 	}
 
-	interactive := shell.New(rootCmd, nil,
+	interactive := shell.New(
+		rootCmd, nil,
 		prompt.OptionSuggestionBGColor(prompt.Black),
 		prompt.OptionSuggestionTextColor(prompt.Green),
 		prompt.OptionDescriptionBGColor(prompt.Black),

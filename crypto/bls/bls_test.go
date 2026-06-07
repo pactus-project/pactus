@@ -16,7 +16,8 @@ func TestEncoding(t *testing.T) {
 	prvData, _ := hex.DecodeString("000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f")
 	pubData, _ := hex.DecodeString(
 		"a7290fc800d2d14f2dc5e5cb416bebf3267dfed1c6c3a79c6edc4ebd1e657d956daa06a2fcaafd42c94b65b32d4d43ea" +
-			"1368f861006829c475b7d54763a502dfd717e9d51c5cc7deae2981e56090a821c9c5bcafc129b8599203ab99031f4ce7")
+			"1368f861006829c475b7d54763a502dfd717e9d51c5cc7deae2981e56090a821c9c5bcafc129b8599203ab99031f4ce7",
+	)
 	valAddrData, _ := hex.DecodeString("01c40b914373d4fc9c1e4611ad0acd5f23abf58a0d")
 	accAddrData, _ := hex.DecodeString("02c40b914373d4fc9c1e4611ad0acd5f23abf58a0d")
 
@@ -38,7 +39,8 @@ func TestEncoding(t *testing.T) {
 
 	msg := []byte("pactus")
 	sig, _ := bls.SignatureFromString(
-		"8bdda74336efdf43b428a3811d3d6867a19e20889c91261b02a6b950b130f5bb22621394667c27660bfed2a8719d9c52")
+		"8bdda74336efdf43b428a3811d3d6867a19e20889c91261b02a6b950b130f5bb22621394667c27660bfed2a8719d9c52",
+	)
 
 	require.NoError(t, pub.Verify(msg, sig))
 	assert.Equal(t, sig.Bytes(), prv.Sign(msg).Bytes())
@@ -51,15 +53,18 @@ func TestEncoding(t *testing.T) {
 func TestSignatureAggregate(t *testing.T) {
 	msg := []byte("pactus")
 	prv1, _ := bls.PrivateKeyFromString(
-		"SECRET1P9QAUKRJAU7SQ7AT6ZZ6HXHYLMKPQSQYTGDL2VMH5Q5N0P5Q2QW0QL45AY3")
+		"SECRET1P9QAUKRJAU7SQ7AT6ZZ6HXHYLMKPQSQYTGDL2VMH5Q5N0P5Q2QW0QL45AY3",
+	)
 	prv2, _ := bls.PrivateKeyFromString(
-		"SECRET1PVJHEKQ3F4NX5CA9L69CSLLNWMYWPAXDQ64ZLEQHFSV4JLFGXMXWQPDPHR0")
+		"SECRET1PVJHEKQ3F4NX5CA9L69CSLLNWMYWPAXDQ64ZLEQHFSV4JLFGXMXWQPDPHR0",
+	)
 
 	sig1 := prv1.SignNative(msg)
 	sig2 := prv2.SignNative(msg)
 	agg, _ := bls.SignatureAggregate(sig1, sig2)
 	aggExpected, _ := bls.SignatureFromString(
-		"a74f05102c6217d06527cfcd1854ba6c38f4047f75a74958ad01fe66a5120c77c5416bfd875669588566670dc61f1168")
+		"a74f05102c6217d06527cfcd1854ba6c38f4047f75a74958ad01fe66a5120c77c5416bfd875669588566670dc61f1168",
+	)
 
 	assert.True(t, agg.EqualsTo(aggExpected))
 }
@@ -232,7 +237,8 @@ func TestSignatureAggregateErrorHandling(t *testing.T) {
 	t.Run("InvalidSignature", func(t *testing.T) {
 		// Point at infinity
 		invalidSig, err := bls.SignatureFromString(
-			"C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+			"C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+		)
 		require.NoError(t, err)
 
 		aggSig, err := bls.SignatureAggregate(invalidSig)
@@ -244,7 +250,8 @@ func TestSignatureAggregateErrorHandling(t *testing.T) {
 		validSig := ts.RandBLSSignature()
 
 		invalidSig, err := bls.SignatureFromString(
-			"C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+			"C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+		)
 		require.NoError(t, err)
 
 		aggSig, err := bls.SignatureAggregate(validSig, invalidSig)
@@ -268,7 +275,8 @@ func TestPublicKeyAggregateErrorHandling(t *testing.T) {
 		// Point at infinity
 		invalidPub, err := bls.PublicKeyFromString(
 			"public1pcqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" +
-				"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqglnhh9")
+				"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqglnhh9",
+		)
 		require.NoError(t, err)
 
 		aggPub, err := bls.PublicKeyAggregate(invalidPub)
@@ -281,7 +289,8 @@ func TestPublicKeyAggregateErrorHandling(t *testing.T) {
 
 		invalidPub, err := bls.PublicKeyFromString(
 			"public1pcqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" +
-				"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqglnhh9")
+				"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqglnhh9",
+		)
 		require.NoError(t, err)
 
 		aggPub, err := bls.PublicKeyAggregate(validPub, invalidPub)

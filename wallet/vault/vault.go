@@ -241,7 +241,8 @@ func (v *Vault) ImportPrivateKey(password string, prv crypto.PrivateKey) (valInf
 		addresspath.Harden(addresspath.PurposeImportPrivateKey),
 		addresspath.Harden(v.CoinType),
 		addresspath.Harden(addr.Type()),
-		addresspath.Harden(addressIndex)).String()
+		addresspath.Harden(addressIndex),
+	).String()
 
 	info := &types.AddressInfo{
 		Address:   pub.AccountAddress().String(),

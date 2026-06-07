@@ -58,7 +58,8 @@ func TestTransferLockTime(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			trx := ts.GenerateTestTransferTx(
-				testsuite.TransactionWithLockTime(tt.lockTime))
+				testsuite.TransactionWithLockTime(tt.lockTime),
+			)
 
 			strictErr := CheckLockTime(trx, sbx, true)
 			require.ErrorIs(t, strictErr, tt.strictErr)
@@ -117,7 +118,8 @@ func TestSortitionLockTime(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			trx := ts.GenerateTestSortitionTx(
-				testsuite.TransactionWithLockTime(tt.lockTime))
+				testsuite.TransactionWithLockTime(tt.lockTime),
+			)
 
 			strictErr := CheckLockTime(trx, sbx, true)
 			require.ErrorIs(t, strictErr, tt.strictErr)
@@ -163,7 +165,8 @@ func TestSubsidyLockTime(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			trx := ts.GenerateTestSubsidyTx(
-				testsuite.TransactionWithLockTime(tt.lockTime))
+				testsuite.TransactionWithLockTime(tt.lockTime),
+			)
 
 			strictErr := CheckLockTime(trx, sbx, true)
 			require.ErrorIs(t, strictErr, tt.strictErr)
@@ -187,7 +190,8 @@ func TestExecute(t *testing.T) {
 		_, unknownSigner := ts.RandKeyPair()
 		trx := ts.GenerateTestTransferTx(
 			testsuite.TransactionWithLockTime(lockTime),
-			testsuite.TransactionWithSigner(unknownSigner))
+			testsuite.TransactionWithSigner(unknownSigner),
+		)
 
 		err := Execute(trx, sbx)
 		require.ErrorIs(t, err, executor.AccountNotFoundError{Address: trx.Payload().Signer()})
@@ -196,7 +200,8 @@ func TestExecute(t *testing.T) {
 	t.Run("Valid Transaction", func(t *testing.T) {
 		trx := ts.GenerateTestTransferTx(
 			testsuite.TransactionWithLockTime(lockTime),
-			testsuite.TransactionWithSigner(knownSigner))
+			testsuite.TransactionWithSigner(knownSigner),
+		)
 
 		err := Execute(trx, sbx)
 		require.NoError(t, err)
@@ -218,7 +223,8 @@ func TestCheck(t *testing.T) {
 		_, unknownSigner := ts.RandKeyPair()
 		trx := ts.GenerateTestTransferTx(
 			testsuite.TransactionWithLockTime(lockTime),
-			testsuite.TransactionWithSigner(unknownSigner))
+			testsuite.TransactionWithSigner(unknownSigner),
+		)
 
 		err := CheckAndExecute(trx, sbx, true)
 		require.ErrorIs(t, err, executor.AccountNotFoundError{Address: trx.Payload().Signer()})
@@ -228,7 +234,8 @@ func TestCheck(t *testing.T) {
 		invalidLockTime := lockTime + 1
 		trx := ts.GenerateTestTransferTx(
 			testsuite.TransactionWithLockTime(invalidLockTime),
-			testsuite.TransactionWithSigner(knownSigner))
+			testsuite.TransactionWithSigner(knownSigner),
+		)
 
 		err := CheckAndExecute(trx, sbx, true)
 		require.ErrorIs(t, err, LockTimeInFutureError{LockTime: invalidLockTime})
@@ -238,7 +245,8 @@ func TestCheck(t *testing.T) {
 		trx := ts.GenerateTestTransferTx(
 			testsuite.TransactionWithLockTime(lockTime),
 			testsuite.TransactionWithSigner(knownSigner),
-			testsuite.TransactionWithAmount(testAcc.Balance()+1))
+			testsuite.TransactionWithAmount(testAcc.Balance()+1),
+		)
 
 		err := CheckAndExecute(trx, sbx, true)
 		require.ErrorIs(t, err, executor.ErrInsufficientFunds)
@@ -247,7 +255,8 @@ func TestCheck(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
 		trx := ts.GenerateTestTransferTx(
 			testsuite.TransactionWithLockTime(lockTime),
-			testsuite.TransactionWithSigner(knownSigner))
+			testsuite.TransactionWithSigner(knownSigner),
+		)
 
 		err := CheckAndExecute(trx, sbx, true)
 		require.NoError(t, err)
@@ -262,10 +271,12 @@ func TestReplay(t *testing.T) {
 	sbx.TestStore.AddTestBlock(8642)
 	knownPub, knownSigner := ts.RandEd25519KeyPair()
 	sbx.TestStore.AddTestAccount(
-		testsuite.AccountWithAddress(knownPub.AccountAddress()))
+		testsuite.AccountWithAddress(knownPub.AccountAddress()),
+	)
 
 	trx := ts.GenerateTestTransferTx(
-		testsuite.TransactionWithSigner(knownSigner))
+		testsuite.TransactionWithSigner(knownSigner),
+	)
 
 	err := Execute(trx, sbx)
 	require.NoError(t, err)

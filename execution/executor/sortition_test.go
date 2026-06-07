@@ -29,7 +29,8 @@ func TestExecuteSortitionTx(t *testing.T) {
 	bonderBalance := bonderAcc.Balance()
 	stake := td.RandAmountRange(
 		td.sbx.TestParams.MinimumStake,
-		bonderBalance)
+		bonderBalance,
+	)
 	bonderAcc.SubtractFromBalance(stake)
 	td.sbx.UpdateAccount(bonderAddr, bonderAcc)
 
@@ -234,7 +235,8 @@ func TestOldestDidNotPropose(t *testing.T) {
 		val := td.sbx.MakeNewValidator(pub)
 		val.AddToStake(10 * 1e9)
 		val.UpdateLastBondingHeight(
-			td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
+			td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval),
+		)
 		td.sbx.UpdateValidator(val)
 		vals[index] = val
 	}

@@ -35,7 +35,8 @@ func lastBlock() *pactus.GetBlockResponse {
 
 func getBlockAt(height types.Height) *pactus.GetBlockResponse {
 	for i := 0; i < 120; i++ {
-		res, err := tBlockchainClient.GetBlock(tCtx,
+		res, err := tBlockchainClient.GetBlock(
+			tCtx,
 			&pactus.GetBlockRequest{
 				Height:    uint32(height),
 				Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_INFO,

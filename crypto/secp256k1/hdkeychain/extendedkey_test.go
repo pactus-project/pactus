@@ -150,7 +150,8 @@ func TestNeuter(t *testing.T) {
 	require.NoError(t, err)
 
 	neuterKey := extKey.Neuter()
-	assert.Equal(t,
+	assert.Equal(
+		t,
 		"xpublic1yq5qqqqyqqyqqqqqzqqqgqqsqqqqqpj568vsv0qlx0wfp62lt3a4n38xxgmtjvw6pg4cpmtwjzc25329s0rn9a8"+
 			"sqyypz53c5ynd9uet5n8gl75wtg0z8fqdq8v080723lejvaj045j8hqygefdyx2",
 		neuterKey.String(),
