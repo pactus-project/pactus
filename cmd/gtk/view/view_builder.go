@@ -7,6 +7,7 @@ import (
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
+	"libdb.so/gotk4-sourceview/pkg/gtksource/v5"
 )
 
 func GetObj[T glib.Objector](b *gtk.Builder, name string) T {
@@ -64,6 +65,10 @@ func (vb *ViewBuilder) GetTextViewObj(name string) *gtk.TextView {
 	return GetObj[*gtk.TextView](vb.builder, name)
 }
 
+func (vb *ViewBuilder) GetSourceViewObj(name string) *gtksource.View {
+	return GetObj[*gtksource.View](vb.builder, name)
+}
+
 func (vb *ViewBuilder) GetBoxObj(name string) *gtk.Box {
 	return GetObj[*gtk.Box](vb.builder, name)
 }
@@ -90,10 +95,4 @@ func (vb *ViewBuilder) GetPopoverMenu(name string) *gtk.PopoverMenu {
 
 func (vb *ViewBuilder) BuildExtendedEntry(name string) *gtk.Entry {
 	return gtkutil.BuildExtendedEntry(vb.builder, name)
-}
-
-func (vb *ViewBuilder) ConnectSignals(signals map[string]any) {
-	for key, val := range signals {
-		vb.builder.Connect(key, val)
-	}
 }

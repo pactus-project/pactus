@@ -20,7 +20,7 @@ func NewWalletChangePasswordDialogController(
 	return &WalletChangePasswordDialogController{view: view, model: model}
 }
 
-func (c *WalletChangePasswordDialogController) Run() {
+func (c *WalletChangePasswordDialogController) Show() {
 	if !c.model.IsEncrypted() {
 		c.view.OldPasswordEntry.SetVisible(false)
 		c.view.OldPasswordLabel.SetVisible(false)

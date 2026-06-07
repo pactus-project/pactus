@@ -18,7 +18,7 @@ type ConfigModel struct {
 	isLocal      bool
 	configPath   string
 	savedContent string
-	defConfig    *config.Config
+	chainType    genesis.ChainType
 }
 
 // NewConfigModel loads genesis and config.toml from the node working directory.
@@ -43,13 +43,12 @@ func NewConfigModel(workingDir string, isLocal bool) (*ConfigModel, error) {
 	}
 
 	savedContent := normalizeConfigContent(string(data))
-	defConfig := config.DefaultConfigForChain(chainType)
 
 	return &ConfigModel{
 		isLocal:      isLocal,
 		configPath:   configPath,
 		savedContent: savedContent,
-		defConfig:    defConfig,
+		chainType:    chainType,
 	}, nil
 }
 
@@ -60,7 +59,8 @@ func (m *ConfigModel) SavedContent() string {
 
 // DefaultTOML returns the default configuration document for this node's network.
 func (m *ConfigModel) DefaultTOML() string {
-	defToml, _ := m.defConfig.ToTOML()
+	defConfig := config.DefaultConfigForChain(m.chainType)
+	defToml, _ := defConfig.ToTOML()
 
 	return defToml
 }
@@ -72,7 +72,8 @@ func (m *ConfigModel) IsDirty(editorContent string) bool {
 
 // Validate checks TOML syntax and configuration semantics for this node's network.
 func (m *ConfigModel) Validate(editorContent string) error {
-	conf, err := config.LoadFromToml(editorContent, true, m.defConfig)
+	defConfig := config.DefaultConfigForChain(m.chainType)
+	conf, err := config.LoadFromToml(editorContent, true, defConfig)
 	if err != nil {
 		return fmt.Errorf("invalid configuration: %w", err)
 	}

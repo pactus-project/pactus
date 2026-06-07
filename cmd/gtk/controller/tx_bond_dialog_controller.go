@@ -25,7 +25,7 @@ func NewTxBondDialogController(
 	return &TxBondDialogController{view: view, model: model}
 }
 
-func (c *TxBondDialogController) Run() {
+func (c *TxBondDialogController) Show() {
 	c.applyDefaults()
 	c.populateCombos()
 

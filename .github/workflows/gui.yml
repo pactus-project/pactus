@@ -39,11 +39,11 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt update
-          sudo apt install -y libgtk-4-dev libcairo2-dev libglib2.0-dev gobject-introspection
+          sudo apt install -y libgtk-4-dev libcairo2-dev libglib2.0-dev gobject-introspection libgtksourceview-5-dev
 
       - name: Install Dependencies (macOS)
         if: runner.os == 'macOS'
-        run: brew install gtk+4 gobject-introspection
+        run: brew install gtk+4 gobject-introspection gtksourceview5
 
       - name: Setup MSYS2 and Dependencies (Windows)
         if: runner.os == 'Windows'
@@ -59,6 +59,7 @@ jobs:
             mingw-w64-x86_64-glib2
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-pkg-config
+            mingw-w64-x86_64-gtksourceview5
             mingw-w64-x86_64-gobject-introspection
 
       #######################################################
@@ -68,7 +69,6 @@ jobs:
         id: go-env
         run: |
           echo "cache=$(go env GOCACHE)" >> $GITHUB_ENV
-          echo "modcache=$(go env GOMODCACHE)" >> $GITHUB_ENV
           echo "lintcache=$HOME/.cache/golangci-lint" >> $GITHUB_ENV
 
       # Example for caching Go dependencies:
@@ -78,7 +78,6 @@ jobs:
         with:
           path: |
             ${{ env.cache }}
-            ${{ env.modcache }}
             ${{ env.lintcache }}
           key: ${{ matrix.name }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |

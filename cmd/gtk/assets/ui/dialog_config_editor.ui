@@ -2,7 +2,7 @@
 <!-- Created with Cambalache 1.0.2 -->
 <interface>
   <!-- interface-name dialog_config_editor.ui -->
-  <requires lib="gtk" version="4.14"/>
+  <requires lib="gtk" version="4.14" />
   <object class="GtkWindow" id="id_dialog_config_editor">
     <property name="default-height">480</property>
     <property name="default-width">720</property>
@@ -13,10 +13,10 @@
         <property name="spacing">4</property>
         <child>
           <object class="GtkScrolledWindow" id="id_scrolled_config">
-            <property name="hexpand">True</property>
-            <property name="vexpand">True</property>
             <child>
-              <object class="GtkTextView" id="id_textview_config">
+              <object class="GtkSourceView" id="id_sourceview_config">
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
                 <property name="bottom-margin">4</property>
                 <property name="left-margin">4</property>
                 <property name="monospace">True</property>
@@ -29,6 +29,8 @@
         <child>
           <object class="GtkBox">
             <property name="css-classes">toolbar</property>
+            <property name="vexpand">False</property>
+            <property name="valign">start</property>
             <property name="hexpand">True</property>
             <property name="spacing">6</property>
             <child>
@@ -44,10 +46,10 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton" id="id_button_restore_default"/>
+              <object class="GtkButton" id="id_button_restore_default" />
             </child>
             <child>
-              <object class="GtkButton" id="id_button_save_config"/>
+              <object class="GtkButton" id="id_button_save_config" />
             </child>
           </object>
         </child>

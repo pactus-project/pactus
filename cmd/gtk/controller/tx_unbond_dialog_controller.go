@@ -22,7 +22,7 @@ func NewTxUnbondDialogController(
 	return &TxUnbondDialogController{view: view, model: model}
 }
 
-func (c *TxUnbondDialogController) Run() {
+func (c *TxUnbondDialogController) Show() {
 	c.applyDefaults()
 	c.populateCombos()
 

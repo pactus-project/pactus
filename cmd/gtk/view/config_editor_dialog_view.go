@@ -6,6 +6,7 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd/gtk/assets"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
+	"libdb.so/gotk4-sourceview/pkg/gtksource/v5"
 )
 
 type ConfigEditorDialogView struct {
@@ -13,7 +14,7 @@ type ConfigEditorDialogView struct {
 
 	Window *gtk.Window
 
-	TextView      *gtk.TextView
+	SourceView    *gtksource.View
 	ButtonSave    *gtk.Button
 	ButtonRestore *gtk.Button
 }
@@ -24,10 +25,15 @@ func NewConfigEditorDialogView() *ConfigEditorDialogView {
 	view := &ConfigEditorDialogView{
 		ViewBuilder:   builder,
 		Window:        builder.GetWindowObj("id_dialog_config_editor"),
-		TextView:      builder.GetTextViewObj("id_textview_config"),
+		SourceView:    builder.GetSourceViewObj("id_sourceview_config"),
 		ButtonSave:    builder.GetButtonObj("id_button_save_config"),
 		ButtonRestore: builder.GetButtonObj("id_button_restore_default"),
 	}
+
+	view.SourceView.SetShowLineNumbers(true)
+	view.SourceView.SetHighlightCurrentLine(true)
+	view.SourceView.SetAutoIndent(true)
+	view.SourceView.SetInsertSpacesInsteadOfTabs(true)
 
 	gtkutil.ExtendImageButton(view.ButtonSave, "_Save",
 		"Save the configuration", assets.IconSaveTexture)
