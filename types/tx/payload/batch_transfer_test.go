@@ -202,6 +202,16 @@ func TestBatchTransferBasicCheck(t *testing.T) {
 			pld: payload.BatchTransferPayload{
 				From: ts.RandAccAddress(),
 				Recipients: []payload.BatchRecipient{
+					{To: ts.RandAccAddress(), Amount: ts.RandAmount()},
+					{To: ts.RandAccAddress(), Amount: amount.Amount(util.MaxInt64)},
+				},
+			},
+			err: "amount must be must not exceed maximum allowed value: 9223372036854775807",
+		},
+		{
+			pld: payload.BatchTransferPayload{
+				From: ts.RandAccAddress(),
+				Recipients: []payload.BatchRecipient{
 					{To: ts.RandValAddress(), Amount: ts.RandAmount()},
 					{To: ts.RandAccAddress(), Amount: ts.RandAmount()},
 				},
