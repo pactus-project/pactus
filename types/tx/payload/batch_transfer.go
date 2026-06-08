@@ -103,10 +103,17 @@ func (p *BatchTransferPayload) BasicCheck() error {
 		}
 	}
 
+	seen := make(map[crypto.Address]bool, len(p.Recipients))
 	for _, r := range p.Recipients {
 		if err := r.BasicCheck(); err != nil {
 			return err
 		}
+
+		// Reject duplicate recipient addresses (executor last-write-wins burn).
+		if _, dup := seen[r.To]; dup {
+			return BasicCheckError{Reason: "duplicate recipient address: " + r.To.String()}
+		}
+		seen[r.To] = true
 	}
 
 	return nil
