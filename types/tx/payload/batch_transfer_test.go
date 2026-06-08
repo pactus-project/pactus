@@ -167,6 +167,7 @@ func TestBatchTransferDecoding(t *testing.T) {
 
 func TestBatchTransferBasicCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
+	sameAddr := ts.RandAccAddress()
 
 	tests := []struct {
 		pld payload.BatchTransferPayload
@@ -218,7 +219,6 @@ func TestBatchTransferBasicCheck(t *testing.T) {
 			},
 			err: "receiver is not an account address",
 		},
-
 		{
 			pld: payload.BatchTransferPayload{
 				From: ts.RandValAddress(),
@@ -228,6 +228,16 @@ func TestBatchTransferBasicCheck(t *testing.T) {
 				},
 			},
 			err: "sender is not an account address",
+		},
+		{
+			pld: payload.BatchTransferPayload{
+				From: ts.RandAccAddress(),
+				Recipients: []payload.BatchRecipient{
+					{To: sameAddr, Amount: ts.RandAmount()},
+					{To: sameAddr, Amount: ts.RandAmount()},
+				},
+			},
+			err: "duplicate recipient address",
 		},
 	}
 
