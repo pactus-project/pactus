@@ -40,7 +40,7 @@
          for example.
     -->
     <!-- runtime copy="yes">/usr/bin/python</runtime -->
-    <gtk>gtk+-4.0</gtk>
+    <gtk>gtk4</gtk>
   </meta>
 
   <!-- The special macro "${project}" refers to the directory where

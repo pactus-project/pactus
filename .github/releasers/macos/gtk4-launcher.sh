@@ -35,6 +35,8 @@ if [ "$(uname)" = "Darwin" ]; then
     export PANGOCAIRO_BACKEND="fontconfig"
 fi
 
+export GDK_PIXBUF_MODULE_FILE="$bundle_lib/gdk-pixbuf-2.0/2.10.0/loaders.cache"
+
 APP=$name
 
 # Strip out the argument added by the OS.
