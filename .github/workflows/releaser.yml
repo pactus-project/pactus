@@ -65,7 +65,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt update
-          sudo apt install libgtk-4-dev libcairo2-dev libglib2.0-dev librsvg libfuse2 pkg-config gobject-introspection libgtksourceview-5-dev
+          sudo apt install libgtk-4-dev libcairo2-dev libglib2.0-dev libfuse2 pkg-config gobject-introspection libgtksourceview-5-dev
 
       - name: Install Go
         uses: actions/setup-go@v6
