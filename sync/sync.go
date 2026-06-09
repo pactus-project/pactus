@@ -9,6 +9,7 @@ import (
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	consmgr "github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
@@ -523,6 +524,15 @@ func (sync *synchronizer) tryCommitBlocks() {
 					return
 				}
 				trx.SetPublicKey(pub)
+			}
+		}
+
+		if height == 7406821 {
+			badHash, _ := hash.FromString("781d918bef07e26716e214b4de6fb4d6275328188d0bde2d798fd2092356bbe0")
+			if blk.Hash() == badHash {
+				onError(height, fmt.Errorf("evil block"))
+
+				return
 			}
 		}
 
