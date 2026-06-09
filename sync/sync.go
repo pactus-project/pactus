@@ -526,17 +526,6 @@ func (sync *synchronizer) tryCommitBlocks() {
 			}
 		}
 
-		if err := blk.BasicCheck(); err != nil {
-			onError(height, err)
-
-			return
-		}
-		if err := cert.BasicCheck(); err != nil {
-			onError(height, err)
-
-			return
-		}
-
 		sync.logger.Trace("committing block", "height", height, "block", blk)
 		if err := sync.state.CommitBlock(blk, cert); err != nil {
 			onError(height, err)
