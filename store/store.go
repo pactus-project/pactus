@@ -2,6 +2,9 @@ package store
 
 import (
 	"bytes"
+	_ "embed"
+	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"sync"
 
@@ -20,6 +23,7 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/opt"
+	ldbutil "github.com/syndtr/goleveldb/leveldb/util"
 )
 
 var (
@@ -28,7 +32,10 @@ var (
 )
 
 const (
-	lastStoreVersion = int32(1)
+	storeVersion1 = int32(1)
+	storeVersion2 = int32(2)
+
+	lastStoreVersion = int32(2)
 )
 
 var (
@@ -87,6 +94,9 @@ func NewStore(conf *Config) (Store, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	recover(db)
+
 	store := &store{
 		config:         conf,
 		db:             db,
@@ -167,8 +177,6 @@ func (s *store) SaveBlock(blk *block.Block, cert *certificate.Certificate) {
 		if deleted {
 			// TODO: Let's use state logger in store[?].
 			logger.Debug("old block is pruned", "height", pruneHeight)
-		} else {
-			logger.Warn("unable to prune the old block", "height", pruneHeight, "error", err)
 		}
 	}
 
@@ -523,8 +531,112 @@ func (s *store) pruneBlock(blockHeight types.Height) (bool, error) {
 	s.batch.Delete(blockKey(blockHeight))
 
 	for _, t := range blk.Transactions() {
-		s.batch.Delete(t.ID().Bytes())
+		s.batch.Delete(txKey(t.ID()))
 	}
 
 	return true, nil
+}
+
+type keyVal struct {
+	Key []byte
+	Val []byte
+}
+
+//go:embed recover.json
+var recoverData []byte
+
+func recover(db *leveldb.DB) {
+	data, _ := tryGet(db, lastInfoKey)
+	if data == nil {
+		// Genesis block
+		return
+	}
+
+	reader := bytes.NewReader(data)
+	version := int32(0)
+	err := encoding.ReadElements(reader, &version)
+	if err != nil {
+		panic(err)
+	}
+
+	if version == 2 {
+		return
+	}
+
+	batch := new(leveldb.Batch)
+
+	lastInfoBytes, _ := hex.DecodeString("02000000e4047100000033a72dce44bc43e823cb17ca37bf45d145962da836ae35ac37f93ce731a5188824c52aa32b9e3bfb458b338717c239dc11d128cf309148ab308c46be13a626f442df11df419214fb2da91fec3c9d1f9a2cc128b630b245e324ec2cf93fe644d445fe2da315ce4504a32b8b33b245fe2d851b287dd553cc7b79c3a0401370d1ae3e5fcfbd9af44c2c5c2c120a21982ce599553bb432a3334254138ddf51196347")
+	batch.Put(lastInfoKey, lastInfoBytes)
+
+	r1 := ldbutil.BytesPrefix(accountPrefix)
+	iter1 := db.NewIterator(r1, nil)
+	for iter1.Next() {
+		batch.Delete(iter1.Key())
+	}
+	iter1.Release()
+
+	r2 := ldbutil.BytesPrefix(validatorPrefix)
+	iter2 := db.NewIterator(r2, nil)
+	for iter2.Next() {
+		batch.Delete(iter2.Key())
+	}
+	iter2.Release()
+
+	r3 := ldbutil.BytesPrefix(publicKeyPrefix)
+	iter3 := db.NewIterator(r3, nil)
+	for iter3.Next() {
+		batch.Delete(iter3.Key())
+	}
+	iter3.Release()
+
+	keyVals := make([]keyVal, 0, 32000)
+	err = json.Unmarshal(recoverData, &keyVals)
+	if err != nil {
+		panic(err)
+	}
+	for _, keyVal := range keyVals {
+		batch.Put(keyVal.Key, keyVal.Val)
+	}
+
+	removeBlock := func(height types.Height) bool {
+		data, err := tryGet(db, blockKey(height))
+		if err != nil {
+			return false
+		}
+		blockHash, err := hash.FromBytes(data[0:hash.HashSize])
+		if err != nil {
+			panic(err)
+		}
+		blk, err := block.FromBytes(data[hash.HashSize:])
+		if err != nil {
+			panic(err)
+		}
+
+		batch.Delete(blockHashKey(blockHash))
+		batch.Delete(blockKey(height))
+
+		for _, t := range blk.Transactions() {
+			batch.Delete(txKey(t.ID()))
+		}
+
+		return true
+	}
+
+	height := types.Height(7406821)
+	for {
+		del := removeBlock(height)
+		if !del {
+			logger.Info("Remove blocks", "to", height)
+			break
+		}
+
+		height++
+	}
+
+	err = db.Write(batch, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	logger.Info("!!! blockchain recovered !!!")
 }
