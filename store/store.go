@@ -559,6 +559,15 @@ func recover(db *leveldb.DB) {
 		panic(err)
 	}
 
+	cert := new(certificate.Certificate)
+	err = cert.Decode(reader)
+	if err != nil {
+		panic(err)
+	}
+	if cert.Height() < 7406820 {
+		return
+	}
+
 	if version == 2 {
 		return
 	}
