@@ -1,5 +1,45 @@
 # Changelog
 
+## [1.15.0](https://github.com/pactus-project/pactus/compare/v1.14.0...v1.15.0) (2026-06-09)
+
+### Feat
+
+- **wallet,grpc**: include Balance and Stake in AddressList API ([#2246](https://github.com/pactus-project/pactus/pull/2246))
+- **grpc**: include address type in AddressInfo ([#2243](https://github.com/pactus-project/pactus/pull/2243))
+- **wallet**: upgrade SQLite storage ([#2232](https://github.com/pactus-project/pactus/pull/2232))
+- **gtk**: config editor ([#2229](https://github.com/pactus-project/pactus/pull/2229))
+- **wallet**: derive Secp256k1 address from HD path ([#2225](https://github.com/pactus-project/pactus/pull/2225))
+- **crypto**: support HD-wallet for secp256k1 curve ([#2220](https://github.com/pactus-project/pactus/pull/2220))
+- **crypto**: support Secp256k1 curve ([#2211](https://github.com/pactus-project/pactus/pull/2211))
+
+### Fix
+
+- **sync**: remove extra checks from signed block ([#2256](https://github.com/pactus-project/pactus/pull/2256))
+- **types**: reject transactions with duplicated receivers ([#2255](https://github.com/pactus-project/pactus/pull/2255))
+- **types**: reject transactions exceeding max allowed amount ([#2254](https://github.com/pactus-project/pactus/pull/2254))
+- **types**: ensure delegate share is divisible by 32 ([#2241](https://github.com/pactus-project/pactus/pull/2241))
+- **grpc**: sign and verify message with Secp256k1 ([#2238](https://github.com/pactus-project/pactus/pull/2238))
+- **wallet**: import Secp256k1 private keys ([#2236](https://github.com/pactus-project/pactus/pull/2236))
+- **execution**: reject Secp256k1 recipients ([#2235](https://github.com/pactus-project/pactus/pull/2235))
+- **gtk**: replace PacViewer with PactusScan ([#2230](https://github.com/pactus-project/pactus/pull/2230))
+- **wallet**: use hardened path for Secp256k1 ([#2227](https://github.com/pactus-project/pactus/pull/2227))
+- **crypto**: remove parent fingerprint from extended key ([#2223](https://github.com/pactus-project/pactus/pull/2223))
+- **cmd**: support Secp256k1 address type in CMD ([#2216](https://github.com/pactus-project/pactus/pull/2216))
+- **gtk**: support Secp256k1 address type in GUI ([#2215](https://github.com/pactus-project/pactus/pull/2215))
+- **gtk**: enable wallet service on starting GUI ([#2213](https://github.com/pactus-project/pactus/pull/2213))
+- **http**: add list-peers API ([#2209](https://github.com/pactus-project/pactus/pull/2209))
+- **state**: report version on Block Version Error ([#2196](https://github.com/pactus-project/pactus/pull/2196))
+- **sync**: check vote message for empty vote ([#2189](https://github.com/pactus-project/pactus/pull/2189))
+- **sync**: check proposal message for empty proposal ([#2188](https://github.com/pactus-project/pactus/pull/2188))
+
+### Refactor
+
+- **gtk**: use GtkSourceView for config editor ([#2244](https://github.com/pactus-project/pactus/pull/2244))
+- **gtk**: migrate to GTK4 ([#2234](https://github.com/pactus-project/pactus/pull/2234))
+- **wallet**: import private and public key ([#2237](https://github.com/pactus-project/pactus/pull/2237))
+- **gtk**: use confirmAndSend method for transaction dilaogs ([#2233](https://github.com/pactus-project/pactus/pull/2233))
+- **config**: get default config per chain type ([#2228](https://github.com/pactus-project/pactus/pull/2228))
+
 ## [1.14.0](https://github.com/pactus-project/pactus/compare/v1.13.0...v1.14.0) (2026-05-03)
 
 ### Feat
