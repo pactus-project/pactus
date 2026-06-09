@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.1](https://github.com/pactus-project/pactus/compare/v1.15.0...v1.15.1) (2026-06-09)
+
+### Fix
+
+- **sync**: reject evil block
+- **store**: rollback blockchain ([#2259](https://github.com/pactus-project/pactus/pull/2259))
+
 ## [1.15.0](https://github.com/pactus-project/pactus/compare/v1.14.0...v1.15.0) (2026-06-09)
 
 ### Feat
