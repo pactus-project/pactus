@@ -71,7 +71,7 @@ func main() {
 	gtkutil.Logf("Locking main thread")
 
 	// Create a new app.
-	app := gtk.NewApplication(appID, gio.ApplicationFlagsNone)
+	app := gtk.NewApplication(appID, gio.ApplicationNonUnique)
 	settings := gtk.SettingsGetDefault()
 	settings.Object.SetObjectProperty("gtk-application-prefer-dark-theme", true)
 
