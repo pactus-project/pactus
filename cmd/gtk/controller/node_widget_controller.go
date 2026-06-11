@@ -50,12 +50,12 @@ func (c *NodeWidgetController) BuildView(ctx context.Context, connectionLabel, c
 		c.view.LabelIsPrune.SetText(strconv.FormatBool(chainInfo.IsPruned))
 	})
 
-	scheduler.Every(10*time.Second).Do(ctx, func(context.Context) { c.timeout1() })
-	scheduler.Every(10*time.Second).Do(ctx, func(context.Context) { c.timeout10() })
+	scheduler.Every(refreshNodeProgressInterval).Do(ctx, func(context.Context) { c.timeoutProgress() })
+	scheduler.Every(refreshNodeInfoInterval).Do(ctx, func(context.Context) { c.timeoutInfo() })
 
 	// Initial refresh.
-	c.timeout1()
-	c.timeout10()
+	c.timeoutProgress()
+	c.timeoutInfo()
 
 	return nil
 }
@@ -63,7 +63,7 @@ func (c *NodeWidgetController) BuildView(ctx context.Context, connectionLabel, c
 // syncProgressWindowBlocks is the number of blocks behind that maps to 0% sync progress (~10 min at 10s/block).
 const syncProgressWindowBlocks = 60
 
-func (c *NodeWidgetController) timeout1() {
+func (c *NodeWidgetController) timeoutProgress() {
 	chainInfo, err := c.model.GetBlockchainInfo()
 	if err != nil {
 		return
@@ -93,7 +93,7 @@ func (c *NodeWidgetController) timeout1() {
 	})
 }
 
-func (c *NodeWidgetController) timeout10() {
+func (c *NodeWidgetController) timeoutInfo() {
 	chainInfo, err := c.model.GetBlockchainInfo()
 	if err != nil {
 		return

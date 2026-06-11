@@ -5,7 +5,6 @@ package controller
 import (
 	"context"
 	"strconv"
-	"time"
 
 	"github.com/diamondburned/gotk4/pkg/core/gioutil"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
@@ -80,20 +79,26 @@ func (c *NetworkWidgetController) BuildView(ctx context.Context) error {
 		})
 	})
 
-	scheduler.Every(10*time.Second).Do(ctx, c.refresh)
+	scheduler.Every(refreshNetworkInterval).Do(ctx, func(ctx context.Context) {
+		if gtkutil.IsWidgetShowing(&c.view.LabelConnectedPeers.Widget) {
+			gtkutil.Logf("refreshing network info")
+			c.refreshInfo(ctx)
+		}
 
-	c.refresh(ctx)
+		if gtkutil.IsWidgetShowing(&c.view.ColViewPeers.Widget) {
+			gtkutil.Logf("refreshing peer list")
+			c.refreshList(ctx)
+		}
+	})
+
+	c.refreshInfo(ctx)
+	c.refreshList(ctx)
 
 	return nil
 }
 
-func (c *NetworkWidgetController) refresh(_ context.Context) {
+func (c *NetworkWidgetController) refreshInfo(_ context.Context) {
 	netInfo, err := c.model.GetNetworkInfo()
-	if err != nil {
-		return
-	}
-
-	peersRes, err := c.model.ListPeers(false) // active peers only
 	if err != nil {
 		return
 	}
@@ -101,7 +106,16 @@ func (c *NetworkWidgetController) refresh(_ context.Context) {
 	gtkutil.IdleAddAsync(func() {
 		c.view.LabelNetworkName.SetText(netInfo.GetNetworkName())
 		c.view.LabelConnectedPeers.SetText(strconv.Itoa(int(netInfo.GetConnectedPeersCount())))
+	})
+}
 
+func (c *NetworkWidgetController) refreshList(_ context.Context) {
+	peersRes, err := c.model.ListPeers(false) // active peers only
+	if err != nil {
+		return
+	}
+
+	gtkutil.IdleAddAsync(func() {
 		gtkutil.ClearListModel(c.lsPeers)
 
 		// Add new peers to the list

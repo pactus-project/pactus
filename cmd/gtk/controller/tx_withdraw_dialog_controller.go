@@ -42,9 +42,7 @@ func (c *TxWithdrawDialogController) Show() {
 }
 
 func (c *TxWithdrawDialogController) applyDefaults() {
-	if info, err := c.model.WalletInfo(); err == nil {
-		c.view.FeeEntry.SetText(fmt.Sprintf("%g", info.DefaultFee.ToPAC()))
-	}
+	setDefaultFee(c.model, c.view.FeeEntry)
 }
 
 func (c *TxWithdrawDialogController) populateCombos() {
