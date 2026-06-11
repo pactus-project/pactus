@@ -8,6 +8,7 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 )
 
@@ -49,7 +50,7 @@ func confirmAndSend(parent *gtk.Window, model *model.WalletModel,
 
 func setDefaultFee(model *model.WalletModel, entry *gtk.Entry) {
 	if info, err := model.WalletInfo(); err == nil {
-		entry.SetText(fmt.Sprintf("%g", info.DefaultFee.ToPAC()))
+		entry.SetText(fmt.Sprintf("%g", amount.Amount(info.DefaultFee).ToPAC()))
 	}
 }
 

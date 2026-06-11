@@ -120,7 +120,7 @@ func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) 
 		if err == nil {
 			c.view.LabelName.SetText(c.model.WalletName())
 			c.view.LabelDriver.SetText(info.Driver)
-			c.view.LabelCreatedAt.SetText(info.CreatedAt.Format(time.RFC1123))
+			c.view.LabelCreatedAt.SetText(time.Unix(info.CreatedAt, 0).Format(time.RFC1123))
 			c.view.LabelLocation.SetText(info.Path)
 		}
 
@@ -130,24 +130,37 @@ func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) 
 		gtkutil.ConnectButtonSignal(c.view.BtnSetDefaultFee, nav.ShowWalletSetDefaultFee)
 		gtkutil.ConnectButtonSignal(c.view.BtnRefreshAddresses, c.RefreshAddresses)
 
+		gtkutil.ConnectButtonSignal(c.view.BtnTxRefresh, c.RefreshTransactions)
 		gtkutil.ConnectButtonSignal(c.view.BtnTxNext, c.nextTransactionsPage)
 		gtkutil.ConnectButtonSignal(c.view.BtnTxPrev, c.prevTransactionsPage)
 
 		gtkutil.CaptureDoubleClick(&c.view.ColViewAddresses.Widget, c.ShowAddressDetails)
-
-		totalBalance1, _ := c.model.TotalBalance()
-		scheduler.Every(15*time.Second).Do(ctx, func(context.Context) {
-			totalBalance2, _ := c.model.TotalBalance()
-
-			if totalBalance1 != totalBalance2 {
-				c.Refresh()
-
-				totalBalance1 = totalBalance2
-			}
-		})
 	})
 
-	c.Refresh()
+	totalBalance1, _ := c.model.TotalBalance()
+	scheduler.Every(refreshWalletInterval).Do(ctx, func(context.Context) {
+		totalBalance2, _ := c.model.TotalBalance()
+
+		if totalBalance1 != totalBalance2 {
+			c.RefreshInfo()
+
+			if gtkutil.IsWidgetShowing(&c.view.ColViewAddresses.Widget) {
+				gtkutil.Logf("refreshing addresses")
+				c.RefreshAddresses()
+			}
+
+			if gtkutil.IsWidgetShowing(&c.view.ColViewTransactions.Widget) {
+				gtkutil.Logf("refreshing transactions")
+				c.RefreshTransactions()
+			}
+
+			totalBalance1 = totalBalance2
+		}
+	})
+
+	c.RefreshInfo()
+	c.RefreshAddresses()
+	c.RefreshTransactions()
 
 	return nil
 }
@@ -183,12 +196,6 @@ func getDirectionTextWithIcon(dir types.TxDirection) string {
 	}
 }
 
-func (c *WalletWidgetController) Refresh() {
-	c.RefreshInfo()
-	c.RefreshAddresses()
-	c.RefreshTransactions()
-}
-
 func (c *WalletWidgetController) RefreshInfo() {
 	balance, _ := c.model.TotalBalance()
 	stake, _ := c.model.TotalStake()
@@ -202,9 +209,10 @@ func (c *WalletWidgetController) RefreshInfo() {
 
 	gtkutil.IdleAddSync(func() {
 		c.view.LabelEncrypted.SetText(gtkutil.YesNo(info.Encrypted))
+		c.view.LabelEncrypted.SetText(gtkutil.YesNo(info.Encrypted))
 		c.view.LabelTotalBalance.SetText(balanceStr)
 		c.view.LabelTotalStake.SetText(stakeStr)
-		c.view.LabelDefaultFee.SetText(info.DefaultFee.String())
+		c.view.LabelDefaultFee.SetText(amount.Amount(info.DefaultFee).String())
 	})
 }
 
