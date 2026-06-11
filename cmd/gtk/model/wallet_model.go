@@ -10,7 +10,6 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/crypto/secp256k1"
-	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/bech32m"
@@ -58,29 +57,10 @@ func (model *WalletModel) IsEncrypted() bool {
 	return info.Encrypted
 }
 
-func (model *WalletModel) WalletInfo() (*types.WalletInfo, error) {
-	info, err := model.walletClient.GetWalletInfo(model.ctx, &pactus.GetWalletInfoRequest{
+func (model *WalletModel) WalletInfo() (*pactus.GetWalletInfoResponse, error) {
+	return model.walletClient.GetWalletInfo(model.ctx, &pactus.GetWalletInfoRequest{
 		WalletName: model.walletName,
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	chainType := genesis.Localnet
-	switch info.Network {
-	case "Mainnet":
-		chainType = genesis.Mainnet
-	case "Testnet":
-		chainType = genesis.Testnet
-	}
-
-	return &types.WalletInfo{
-		Path:       info.Path,
-		Encrypted:  info.Encrypted,
-		UUID:       info.Uuid,
-		Network:    chainType,
-		DefaultFee: amount.Amount(info.DefaultFee),
-	}, nil
 }
 
 func (model *WalletModel) TotalBalance() (amount.Amount, error) {
