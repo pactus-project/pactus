@@ -28,7 +28,7 @@ var (
 )
 
 const (
-	lastStoreVersion = int32(1)
+	lastStoreVersion = int32(2)
 )
 
 var (
