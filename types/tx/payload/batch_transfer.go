@@ -29,7 +29,7 @@ func (tr *BatchRecipient) BasicCheck() error {
 		}
 	}
 
-	if tr.Amount > amount.MaxNanoPAC {
+	if tr.Amount > 1e6*amount.NanoPACPerPAC {
 		return BasicCheckError{
 			Reason: fmt.Sprintf("amount must be must not exceed maximum allowed value: %d", tr.Amount),
 		}
