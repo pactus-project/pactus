@@ -5,7 +5,6 @@ package controller
 import (
 	"context"
 	"strconv"
-	"time"
 
 	"github.com/diamondburned/gotk4/pkg/core/gioutil"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
@@ -67,7 +66,12 @@ func (c *ValidatorWidgetController) BuildView(ctx context.Context) error {
 		})
 	})
 
-	scheduler.Every(10*time.Second).Do(ctx, c.refresh)
+	scheduler.Every(refreshValidatorsInterval).Do(ctx, func(ctx context.Context) {
+		if gtkutil.IsWidgetShowing(&c.view.ColViewValidators.Widget) {
+			gtkutil.Logf("refreshing validators")
+			c.refresh(ctx)
+		}
+	})
 
 	c.refresh(ctx)
 

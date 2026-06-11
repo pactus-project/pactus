@@ -372,3 +372,7 @@ func ClearListModel[T any](listModel *gioutil.ListModel[T]) {
 		listModel.Remove(i - 1)
 	}
 }
+
+func IsWidgetShowing(widget *gtk.Widget) bool {
+	return widget.Mapped()
+}

@@ -32,7 +32,7 @@ func (c *WalletDefaultFeeDialogController) Run(onUpdate func()) {
 		return
 	}
 
-	currentFee := info.DefaultFee
+	currentFee := amount.Amount(info.DefaultFee)
 	c.view.CurrentFeeLabel.SetText(currentFee.String())
 	c.view.FeeEntry.SetText(strings.ReplaceAll(currentFee.String(), " PAC", ""))
 
