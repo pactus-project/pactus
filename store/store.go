@@ -28,7 +28,7 @@ var (
 )
 
 const (
-	lastStoreVersion = int32(1)
+	lastStoreVersion = int32(2)
 )
 
 var (
@@ -167,8 +167,6 @@ func (s *store) SaveBlock(blk *block.Block, cert *certificate.Certificate) {
 		if deleted {
 			// TODO: Let's use state logger in store[?].
 			logger.Debug("old block is pruned", "height", pruneHeight)
-		} else {
-			logger.Warn("unable to prune the old block", "height", pruneHeight, "error", err)
 		}
 	}
 
@@ -523,7 +521,7 @@ func (s *store) pruneBlock(blockHeight types.Height) (bool, error) {
 	s.batch.Delete(blockKey(blockHeight))
 
 	for _, t := range blk.Transactions() {
-		s.batch.Delete(t.ID().Bytes())
+		s.batch.Delete(txKey(t.ID()))
 	}
 
 	return true, nil
