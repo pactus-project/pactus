@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.15.5](https://github.com/pactus-project/pactus/compare/v1.15.4...v1.15.5) (2026-06-12)
+
+### Fix
+
+- **state**: revert to genesis committee for block 7406821 ([#2274](https://github.com/pactus-project/pactus/pull/2274))
+
 ## [1.15.4](https://github.com/pactus-project/pactus/compare/v1.15.3...v1.15.4) (2026-06-12)
 
 ### Fix
