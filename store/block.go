@@ -96,11 +96,9 @@ func (bs *blockStore) saveBlock(batch *leveldb.Batch, height types.Height, blk *
 		}
 		regs[i].length = uint32(buf.Len() - offset)
 	}
-	blockKey := blockKey(height)
-	blockHashKey := blockHashKey(blockHash)
 
-	batch.Put(blockKey, buf.Bytes())
-	batch.Put(blockHashKey, height.BytesLE())
+	batch.Put(blockKey(height), buf.Bytes())
+	batch.Put(blockHashKey(blockHash), height.BytesLE())
 
 	sortitionSeed := blk.Header().SortitionSeed()
 	bs.addToCache(height, sortitionSeed)
