@@ -546,29 +546,18 @@ type keyVal struct {
 var recoverData []byte
 
 func recover(db *leveldb.DB) {
-	data, _ := tryGet(db, lastInfoKey)
-	if data == nil {
-		// Genesis block
+	badBlockHeight := types.Height(7406821)
+	data, err := tryGet(db, blockKey(badBlockHeight))
+	if err != nil {
 		return
 	}
 
-	reader := bytes.NewReader(data)
-	version := int32(0)
-	err := encoding.ReadElements(reader, &version)
+	blockHash, err := hash.FromBytes(data[0:hash.HashSize])
 	if err != nil {
 		panic(err)
 	}
 
-	cert := new(certificate.Certificate)
-	err = cert.Decode(reader)
-	if err != nil {
-		panic(err)
-	}
-	if cert.Height() < 7406820 {
-		return
-	}
-
-	if version == 2 {
+	if blockHash.String() != "781d918bef07e26716e214b4de6fb4d6275328188d0bde2d798fd2092356bbe0" {
 		return
 	}
 
@@ -631,7 +620,7 @@ func recover(db *leveldb.DB) {
 		return true
 	}
 
-	height := types.Height(7406821)
+	height := types.Height(badBlockHeight)
 	for {
 		del := removeBlock(height)
 		if !del {
