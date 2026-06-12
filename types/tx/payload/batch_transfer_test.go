@@ -197,17 +197,33 @@ func TestBatchTransferBasicCheck(t *testing.T) {
 					{To: ts.RandAccAddress(), Amount: -1},
 				},
 			},
-			err: "amount must be greater than zero: -1",
+			err: "recipient amount out of range",
 		},
 		{
 			pld: payload.BatchTransferPayload{
 				From: ts.RandAccAddress(),
 				Recipients: []payload.BatchRecipient{
 					{To: ts.RandAccAddress(), Amount: ts.RandAmount()},
-					{To: ts.RandAccAddress(), Amount: amount.Amount(1e6*amount.NanoPACPerPAC) + 1},
+					{To: ts.RandAccAddress(), Amount: amount.MaxNanoPAC + 1},
 				},
 			},
-			err: "amount must be must not exceed maximum allowed value: 1000000000000001",
+			err: "recipient amount out of range",
+		},
+		{
+			pld: payload.BatchTransferPayload{
+				From: ts.RandAccAddress(),
+				Recipients: []payload.BatchRecipient{
+					{To: ts.RandAccAddress(), Amount: amount.Amount(5250000000000000)},
+					{To: ts.RandAccAddress(), Amount: amount.Amount(5250000000000000)},
+					{To: ts.RandAccAddress(), Amount: amount.Amount(5250000000000000)},
+					{To: ts.RandAccAddress(), Amount: amount.Amount(5250000000000000)},
+					{To: ts.RandAccAddress(), Amount: amount.Amount(5250000000000000)},
+					{To: ts.RandAccAddress(), Amount: amount.Amount(5250000000000000)},
+					{To: ts.RandAccAddress(), Amount: amount.Amount(5250000000000000)},
+					{To: ts.RandAccAddress(), Amount: amount.Amount(5250000000000000) + 1},
+				},
+			},
+			err: "batch transfer total amount overflow",
 		},
 		{
 			pld: payload.BatchTransferPayload{

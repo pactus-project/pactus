@@ -439,6 +439,15 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 		return nil
 	}
 
+	// Rollback chain to block 7406820.
+	// Check PIP-54 for more details.
+	if height == 7406821 {
+		st.committee, _ = committee.NewCommittee(
+			st.genDoc.Validators(),
+			st.genDoc.Params().CommitteeSize,
+			st.genDoc.Validators()[0].Address())
+	}
+
 	err := st.validateCurCertificate(cert, blk.Hash())
 	if err != nil {
 		return err

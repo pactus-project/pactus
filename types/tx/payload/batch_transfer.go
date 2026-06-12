@@ -23,16 +23,8 @@ func (tr *BatchRecipient) BasicCheck() error {
 		}
 	}
 
-	if tr.Amount <= 0 {
-		return BasicCheckError{
-			Reason: fmt.Sprintf("amount must be greater than zero: %d", tr.Amount),
-		}
-	}
-
-	if tr.Amount > 1e6*amount.NanoPACPerPAC {
-		return BasicCheckError{
-			Reason: fmt.Sprintf("amount must be must not exceed maximum allowed value: %d", tr.Amount),
-		}
+	if tr.Amount <= 0 || tr.Amount > amount.MaxNanoPAC {
+		return BasicCheckError{Reason: "recipient amount out of range"}
 	}
 
 	return nil
@@ -103,11 +95,17 @@ func (p *BatchTransferPayload) BasicCheck() error {
 		}
 	}
 
+	var total amount.Amount
 	seen := make(map[crypto.Address]bool, len(p.Recipients))
 	for _, r := range p.Recipients {
 		if err := r.BasicCheck(); err != nil {
 			return err
 		}
+
+		if total > amount.MaxNanoPAC-r.Amount {
+			return BasicCheckError{Reason: "batch transfer total amount overflow"}
+		}
+		total += r.Amount
 
 		// Reject duplicate recipient addresses (executor last-write-wins burn).
 		if _, dup := seen[r.To]; dup {
