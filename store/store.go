@@ -20,6 +20,7 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/opt"
+	ldbutil "github.com/syndtr/goleveldb/leveldb/util"
 )
 
 var (
@@ -495,7 +496,12 @@ func (s *store) Prune(callback func(pruned bool, pruningHeight types.Height) boo
 		}
 	}
 
-	return nil
+	err := s.db.CompactRange(ldbutil.Range{
+		Start: nil,
+		Limit: nil,
+	})
+
+	return err
 }
 
 // pruneBlock removes a block and all transactions inside the block from the store.
