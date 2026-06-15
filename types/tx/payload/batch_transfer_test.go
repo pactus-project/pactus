@@ -229,6 +229,16 @@ func TestBatchTransferBasicCheck(t *testing.T) {
 			pld: payload.BatchTransferPayload{
 				From: ts.RandAccAddress(),
 				Recipients: []payload.BatchRecipient{
+					{To: ts.RandAccAddress(), Amount: amount.Amount(amount.MaxNanoPAC)},
+					{To: ts.RandAccAddress(), Amount: amount.Amount(amount.MaxNanoPAC)},
+				},
+			},
+			err: "batch transfer total amount overflow",
+		},
+		{
+			pld: payload.BatchTransferPayload{
+				From: ts.RandAccAddress(),
+				Recipients: []payload.BatchRecipient{
 					{To: ts.RandValAddress(), Amount: ts.RandAmount()},
 					{To: ts.RandAccAddress(), Amount: ts.RandAmount()},
 				},
