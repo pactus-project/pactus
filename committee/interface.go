@@ -16,7 +16,7 @@ type Reader interface {
 	ProtocolVersions() map[protocol.Version]float64
 	SupportProtocolVersion(version protocol.Version) bool
 	Size() int
-	TotalPower() int64
+	Power() int64
 	String() string
 }
 
