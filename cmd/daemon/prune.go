@@ -14,6 +14,7 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/util/terminal"
+	"github.com/schollz/progressbar/v3"
 	"github.com/spf13/cobra"
 )
 
@@ -71,7 +72,6 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 
 		prunedCount := uint32(0)
 		skippedCount := uint32(0)
-		totalCount := uint32(0)
 		canceled := false
 		closed := make(chan bool, 1)
 
@@ -80,6 +80,7 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 			<-closed
 		})
 
+		var bar *progressbar.ProgressBar
 		err = store.Prune(func(pruned bool, pruningHeight types.Height) bool {
 			if pruned {
 				prunedCount++
@@ -87,11 +88,11 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 				skippedCount++
 			}
 
-			if totalCount == 0 {
-				totalCount = uint32(pruningHeight)
+			if bar == nil {
+				bar = terminal.ProgressBar(int64(pruningHeight), 30)
 			}
 
-			pruningProgressBar(prunedCount, skippedCount, totalCount)
+			pruningProgressBar(bar, prunedCount, skippedCount)
 
 			return canceled
 		})
@@ -123,13 +124,12 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 	}
 }
 
-func pruningProgressBar(prunedCount, skippedCount, totalCount uint32) {
+func pruningProgressBar(bar *progressbar.ProgressBar, prunedCount, skippedCount uint32) {
 	if (prunedCount+skippedCount)%1000 != 0 {
 		return
 	}
 
-	bar := terminal.ProgressBar(int64(totalCount), 30)
 	bar.Describe(fmt.Sprintf("Pruned: %d | Skipped: %d", prunedCount, skippedCount))
-	err := bar.Add(int(prunedCount + skippedCount))
+	err := bar.Set(int(prunedCount + skippedCount))
 	terminal.FatalErrorCheck(err)
 }
