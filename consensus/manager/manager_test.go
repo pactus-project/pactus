@@ -110,19 +110,15 @@ func TestManager(t *testing.T) {
 		mgr.AddVote(vote2)
 		mgr.AddVote(vote3)
 
-		assert.Len(t, mgr.upcomingVotes, 3)
+		assert.Len(t, mgr.upcomingVotes, 1)
 
 		blk1, cert1 := ts.GenerateTestBlock(consHeight)
 		err := state.CommitBlock(blk1, cert1)
 		require.NoError(t, err)
 
-		blk2, cert2 := ts.GenerateTestBlock(consHeight + 1)
-		err = state.CommitBlock(blk2, cert2)
-		require.NoError(t, err)
-
 		mgr.MoveToNewHeight()
 
-		assert.Len(t, mgr.upcomingVotes, 1)
+		assert.Empty(t, mgr.upcomingVotes)
 	})
 
 	t.Run("Processing upcoming proposal", func(t *testing.T) {
@@ -135,19 +131,15 @@ func TestManager(t *testing.T) {
 		mgr.SetProposal(prop2)
 		mgr.SetProposal(prop3)
 
-		assert.Len(t, mgr.upcomingProposals, 3)
+		assert.Len(t, mgr.upcomingProposals, 1)
 
 		blk1, cert1 := ts.GenerateTestBlock(consHeight)
 		err := state.CommitBlock(blk1, cert1)
 		require.NoError(t, err)
 
-		blk2, cert2 := ts.GenerateTestBlock(consHeight + 1)
-		err = state.CommitBlock(blk2, cert2)
-		require.NoError(t, err)
-
 		mgr.MoveToNewHeight()
 
-		assert.Len(t, mgr.upcomingProposals, 1)
+		assert.Empty(t, mgr.upcomingProposals)
 	})
 }
 
