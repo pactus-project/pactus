@@ -1,7 +1,7 @@
 package downloader
 
 import (
-	"crypto/sha3"
+	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
 	"net/http"
@@ -32,7 +32,7 @@ func TestDownloader(t *testing.T) {
 		fileContent := ts.RandBytes(tt.size)
 
 		fileURL := "/testfile.zip"
-		expectedSHA256 := sha3.Sum256(fileContent)
+		expectedSHA256 := sha256.Sum256(fileContent)
 		expectedSHA256Hex := hex.EncodeToString(expectedSHA256[:])
 
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
