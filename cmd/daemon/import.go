@@ -12,6 +12,7 @@ import (
 	"github.com/pactus-project/pactus/util/downloader"
 	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/util/terminal"
+	"github.com/schollz/progressbar/v3"
 	"github.com/spf13/cobra"
 )
 
@@ -86,7 +87,12 @@ func buildImportCmd(parentCmd *cobra.Command) {
 
 		terminal.PrintLine()
 
-		err = importer.Download(cobra.Context(), &selected, downloadProgressBar)
+		bar := terminal.ProgressBar(int64(selected.Data.Size), 30)
+		err = importer.Download(cobra.Context(), &selected,
+			func(stats downloader.Stats) {
+				updateProgressBar(bar, selected.Data.Name, stats)
+			})
+		terminal.PrintLine()
 		terminal.FatalErrorCheck(err)
 
 		terminal.PrintLine()
@@ -114,18 +120,17 @@ func buildImportCmd(parentCmd *cobra.Command) {
 	}
 }
 
-func downloadProgressBar(fileName string) func(stats downloader.Stats) {
-	return func(stats downloader.Stats) {
-		if !stats.Completed {
-			bar := terminal.ProgressBar(stats.TotalSize, 30)
-			bar.Describe(fmt.Sprintf(
-				"%s (%s/%s)",
-				fileName,
-				util.FormatBytesToHumanReadable(uint64(stats.Downloaded)),
-				util.FormatBytesToHumanReadable(uint64(stats.TotalSize)),
-			))
-			// Ignore progress bar errors
-			_ = bar.Add64(stats.Downloaded)
-		}
+func updateProgressBar(bar *progressbar.ProgressBar, fileName string, stats downloader.Stats) {
+	bar.Describe(fmt.Sprintf(
+		"%s (%s/%s)",
+		fileName,
+		util.FormatBytesToHumanReadable(uint64(stats.Downloaded)),
+		util.FormatBytesToHumanReadable(uint64(stats.TotalSize)),
+	))
+	// Ignore progress bar errors
+	_ = bar.Set64(stats.Downloaded)
+
+	if stats.Completed {
+		_ = bar.Finish()
 	}
 }

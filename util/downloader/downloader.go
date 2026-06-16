@@ -29,8 +29,7 @@ type Downloader struct {
 	fileType      string
 	fileSize      int64
 	maxRetries    int
-	cancel        context.CancelFunc
-	statsCallback func(Stats)
+	statsCallback StateFunc
 
 	mu         sync.Mutex
 	downloaded int64
@@ -53,7 +52,7 @@ func New(url, filePath, sha3Sum string, opts ...Option) *Downloader {
 
 	return &Downloader{
 		client:        opt.client,
-		statsCallback: opt.statsCallBack,
+		statsCallback: opt.statsFunc,
 		url:           url,
 		filePath:      filePath,
 		sha3Sum:       sha3Sum,
@@ -63,22 +62,19 @@ func New(url, filePath, sha3Sum string, opts ...Option) *Downloader {
 }
 
 func (d *Downloader) Download(ctx context.Context) error {
-	if d.statsCallback != nil {
-		scheduler.Every(1*time.Second).Do(ctx, d.reportStats)
-
-		// Report for the first time.
-		d.reportStats(ctx)
-	}
-
 	return d.download(ctx)
 }
 
 func (d *Downloader) reportStats(context.Context) {
 	d.mu.Lock()
+	percent := float64(0)
+	if d.fileSize > 0 {
+		percent = (float64(d.downloaded) / float64(d.fileSize)) * 100
+	}
 	stats := Stats{
 		Downloaded: d.downloaded,
 		TotalSize:  d.fileSize,
-		Percent:    (float64(d.downloaded) / float64(d.fileSize)) * 100,
+		Percent:    percent,
 		Completed:  d.completed,
 	}
 	d.mu.Unlock()
@@ -90,22 +86,29 @@ func (d *Downloader) FileType() string {
 	return d.fileType
 }
 
-func (d *Downloader) download(ctx context.Context) error {
-	ctx, cancel := context.WithCancel(ctx)
-	d.cancel = cancel
+func (d *Downloader) download(parentCtx context.Context) error {
+	ctx, cancel := context.WithCancel(parentCtx)
 
 	err := d.parseHeaders(ctx)
 	if err != nil {
+		cancel()
+
 		return err
 	}
 
 	out, err := os.OpenFile(d.filePath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0o600)
 	if err != nil {
+		cancel()
+
 		return err
 	}
 	defer func() {
 		_ = out.Close()
 	}()
+
+	if d.statsCallback != nil {
+		scheduler.Every(1*time.Second).Do(ctx, d.reportStats)
+	}
 
 	var wg sync.WaitGroup
 	chunks := d.createChunks()
@@ -119,11 +122,12 @@ func (d *Downloader) download(ctx context.Context) error {
 
 	wg.Wait()
 
-	if err := d.finalizeDownload(); err != nil {
-		return err
-	}
+	d.completed = true
+	d.reportStats(ctx)
 
-	return nil
+	cancel()
+
+	return d.finalizeDownload()
 }
 
 func (d *Downloader) parseHeaders(ctx context.Context) error {
@@ -178,10 +182,10 @@ func (d *Downloader) downloadChunk(ctx context.Context, out *os.File, chk *chunk
 		_ = resp.Body.Close()
 	}()
 
-	if resp.StatusCode != http.StatusPartialContent && resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != http.StatusPartialContent {
 		return &Error{
 			Message: "response has invalid status code",
-			Reason:  fmt.Errorf("got http response %s from %s: %w", resp.Status, d.url, err),
+			Reason:  fmt.Errorf("got http response %s from %s (expected 206 Partial Content)", resp.Status, d.url),
 		}
 	}
 
@@ -189,7 +193,7 @@ func (d *Downloader) downloadChunk(ctx context.Context, out *os.File, chk *chunk
 	buf := make([]byte, bufSize)
 	offset := chk.start
 	for {
-		remained := int64(chk.end+1) - offset
+		remained := (chk.end - offset) + 1
 		if remained <= 0 {
 			break
 		}
@@ -233,8 +237,6 @@ func (d *Downloader) finalizeDownload() error {
 	if sum != d.sha3Sum {
 		return &Error{Message: "sha256 mismatch", Reason: fmt.Errorf("expected %s, got %s", d.sha3Sum, sum)}
 	}
-
-	d.completed = true
 
 	return nil
 }

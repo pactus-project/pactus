@@ -2,7 +2,7 @@ package util
 
 import (
 	crand "crypto/rand"
-	"crypto/sha3"
+	"crypto/sha256"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -209,7 +209,7 @@ func CalculateChecksum(filePath string) (string, error) {
 		_ = out.Close()
 	}()
 
-	hasher := sha3.New256()
+	hasher := sha256.New()
 	if _, err := io.Copy(hasher, out); err != nil {
 		return "", err
 	}

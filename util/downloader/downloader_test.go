@@ -1,15 +1,12 @@
 package downloader
 
 import (
-	"context"
 	"crypto/sha3"
 	"encoding/hex"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
-	"time"
 
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -20,68 +17,78 @@ import (
 func TestDownloader(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	fileSize := ts.RandIntMax(10 * 1024 * 1024)
-	fileContent := ts.RandBytes(fileSize)
+	tests := []struct {
+		name string
+		size int
+	}{
+		{size: _defaultNumberOfChunks * 1024},
+		{size: (_defaultNumberOfChunks * 1024) - 1},
+		{size: (_defaultNumberOfChunks * 1024) + 1},
+		{size: ts.RandIntMax(64 * 1000 * 1000)},
+		{size: 67850301},
+	}
 
-	fileURL := "/testfile.zip"
-	expectedSHA256 := sha3.Sum256(fileContent)
-	expectedSHA256Hex := hex.EncodeToString(expectedSHA256[:])
+	for _, tt := range tests {
+		fileContent := ts.RandBytes(tt.size)
 
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != fileURL {
-			http.NotFound(w, r)
-			return
-		}
+		fileURL := "/testfile.zip"
+		expectedSHA256 := sha3.Sum256(fileContent)
+		expectedSHA256Hex := hex.EncodeToString(expectedSHA256[:])
 
-		// Parse Range header
-		rangeHeader := r.Header.Get("Range")
-		if rangeHeader == "" {
-			// Full file request (used only for HEAD or first chunk)
-			w.Header().Set("Content-Length", fmt.Sprintf("%d", fileSize))
-			w.Write(fileContent)
-			return
-		}
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.URL.Path != fileURL {
+				http.NotFound(w, r)
 
-		// Expecting "bytes=start-end"
-		var start, end int64
-		_, err := fmt.Sscanf(rangeHeader, "bytes=%d-%d", &start, &end)
-		if err != nil {
-			w.WriteHeader(http.StatusRequestedRangeNotSatisfiable)
-			return
-		}
-		if end >= int64(fileSize) {
-			end = int64(fileSize - 1)
-		}
-		if start > end || start >= int64(fileSize) {
-			w.WriteHeader(http.StatusRequestedRangeNotSatisfiable)
-			return
-		}
+				return
+			}
 
-		w.Header().Set("Content-Range", fmt.Sprintf("bytes %d-%d/%d", start, end, fileSize))
-		w.Header().Set("Content-Length", fmt.Sprintf("%d", end-start+1))
-		w.WriteHeader(http.StatusPartialContent)
-		w.Write(fileContent[start : end+1])
-	}))
+			// Parse Range header
+			rangeHeader := r.Header.Get("Range")
+			if rangeHeader == "" {
+				// Full file request (used only for HEAD or first chunk)
+				w.Header().Set("Content-Length", fmt.Sprintf("%d", tt.size))
+				_, _ = w.Write(fileContent)
 
-	filePath := util.TempFilePath()
+				return
+			}
 
-	defer func() {
-		require.NoError(t, os.RemoveAll("./testdata"))
-	}()
+			// Expecting "bytes=start-end"
+			var start, end int64
+			_, err := fmt.Sscanf(rangeHeader, "bytes=%d-%d", &start, &end)
+			if err != nil {
+				w.WriteHeader(http.StatusRequestedRangeNotSatisfiable)
 
-	downloader := New(
-		server.URL+fileURL, filePath, expectedSHA256Hex,
-		WithCustomClient(server.Client()),
-		WithStatsCallback(printDownloaderStats),
-	)
+				return
+			}
+			if end >= int64(tt.size) {
+				end = int64(tt.size - 1)
+			}
+			if start > end || start >= int64(tt.size) {
+				w.WriteHeader(http.StatusRequestedRangeNotSatisfiable)
 
-	ctx, cancel := context.WithTimeout(t.Context(), 2*time.Minute)
-	defer cancel()
+				return
+			}
 
-	err := downloader.Download(ctx)
-	require.NoError(t, err)
+			w.Header().Set("Content-Range", fmt.Sprintf("bytes %d-%d/%d", start, end, tt.size))
+			w.Header().Set("Content-Length", fmt.Sprintf("%d", end-start+1))
+			w.WriteHeader(http.StatusPartialContent)
+			_, _ = w.Write(fileContent[start : end+1])
+		}))
 
-	assert.Equal(t, "application/octet-stream", downloader.FileType())
+		filePath := util.TempFilePath()
+
+		downloader := New(
+			server.URL+fileURL, filePath, expectedSHA256Hex,
+			WithCustomClient(server.Client()),
+			WithStatsCallback(printDownloaderStats),
+			WithMaxRetries(1),
+		)
+
+		err := downloader.Download(t.Context())
+		require.NoError(t, err)
+
+		assert.Equal(t, "application/octet-stream", downloader.FileType())
+	}
 }
 
 func printDownloaderStats(sts Stats) {

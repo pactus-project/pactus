@@ -218,7 +218,7 @@ func TestCalculateChecksum(t *testing.T) {
 		require.NoError(t, WriteFile(path, nil))
 		hash, err := CalculateChecksum(path)
 		require.NoError(t, err)
-		assert.Equal(t, "a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a", hash)
+		assert.Equal(t, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", hash)
 	})
 
 	t.Run("Calculate hash", func(t *testing.T) {
@@ -226,6 +226,6 @@ func TestCalculateChecksum(t *testing.T) {
 		require.NoError(t, WriteFile(path, []byte("pactus")))
 		hash, err := CalculateChecksum(path)
 		require.NoError(t, err)
-		assert.Equal(t, "a85d429d76fceb3d0103ef10842958906028ce9a0f657176f4579fa938a0f51c", hash)
+		assert.Equal(t, "ad5aaa2ccddfad964ab54afb08495ed90b53a99e48f96e6a0afad32ec24c37a5", hash)
 	})
 }

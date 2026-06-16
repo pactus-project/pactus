@@ -23,8 +23,6 @@ const DefaultSnapshotURL = "https://snapshot.pactus.org"
 
 const maxDecompressedSize = 10 << 20 // 10 MB
 
-type ImporterStateFunc func(fileName string) func(stats downloader.Stats)
-
 type Metadata struct {
 	Name      string       `json:"name"`
 	CreatedAt string       `json:"created_at"`
@@ -121,7 +119,7 @@ func (i *Importer) GetMetadata(ctx context.Context) ([]Metadata, error) {
 }
 
 func (i *Importer) Download(ctx context.Context, metadata *Metadata,
-	stateFunc ImporterStateFunc,
+	stateFunc downloader.StateFunc,
 ) error {
 	dlLink, err := url.JoinPath(i.snapshotURL, metadata.Data.Path)
 	if err != nil {
@@ -133,7 +131,7 @@ func (i *Importer) Download(ctx context.Context, metadata *Metadata,
 	filePath := fmt.Sprintf("%s/%s", i.tempDir, fileName)
 
 	download := downloader.New(dlLink, filePath, metadata.Data.Sha,
-		downloader.WithStatsCallback(stateFunc(fileName)))
+		downloader.WithStatsCallback(stateFunc))
 
 	return download.Download(ctx)
 }
