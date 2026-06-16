@@ -130,7 +130,7 @@ func TestChangePower1(t *testing.T) {
 
 	// Let's create validators first
 	pub1, _ := td.RandBLSKeyPair()
-	amt1 := td.sbx.Committee().TotalPower() / 3
+	amt1 := td.sbx.Committee().Power() / 3
 	val1 := td.sbx.MakeNewValidator(pub1)
 	val1.AddToStake(amount.Amount(amt1 - 1))
 	val1.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))

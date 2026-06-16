@@ -236,7 +236,7 @@ func (m *MockState) CommitteeInfo() *CommitteeInfo {
 	return &CommitteeInfo{
 		Validators:       m.TestCommittee.Validators(),
 		ProtocolVersions: m.TestCommittee.ProtocolVersions(),
-		CommitteePower:   m.TestCommittee.TotalPower(),
+		CommitteePower:   m.TestCommittee.Power(),
 	}
 }
 
@@ -245,8 +245,8 @@ func (m *MockState) ChainInfo() *ChainInfo {
 		LastBlockHeight:  m.LastBlockHeight(),
 		LastBlockHash:    m.LastBlockHash(),
 		LastBlockTime:    m.LastBlockTime(),
-		TotalPower:       m.TestCommittee.TotalPower(),
-		CommitteePower:   m.TestCommittee.TotalPower(),
+		TotalPower:       m.TestCommittee.Power(),
+		CommitteePower:   m.TestCommittee.Power(),
 		CommitteeSize:    m.TestCommittee.Size(),
 		TotalAccounts:    m.TestStore.TotalAccounts(),
 		TotalValidators:  m.TestStore.TotalValidators(),
