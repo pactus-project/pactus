@@ -52,3 +52,30 @@ func (m *Metric) UpdateInvalidMetric(bytes int64) {
 	m.TotalInvalid.Bundles++
 	m.TotalInvalid.Bytes += bytes
 }
+
+// Clone returns a deep copy of Metric, including its maps and counters.
+//
+// Maps are reference types, so returning Metric by value still shares the
+// underlying map storage. Use Clone when reading a Metric outside the writer
+// lock to avoid concurrent map access races.
+func (m *Metric) Clone() Metric {
+	clone := Metric{
+		TotalInvalid: m.TotalInvalid,
+		TotalSent:       m.TotalSent,
+		TotalReceived:   m.TotalReceived,
+		MessageSent:     make(map[message.Type]*Counter, len(m.MessageSent)),
+		MessageReceived: make(map[message.Type]*Counter, len(m.MessageReceived)),
+	}
+
+	for msgType, counter := range m.MessageSent {
+		counterCopy := *counter
+		clone.MessageSent[msgType] = &counterCopy
+	}
+
+	for msgType, counter := range m.MessageReceived {
+		counterCopy := *counter
+		clone.MessageReceived[msgType] = &counterCopy
+	}
+
+	return clone
+}

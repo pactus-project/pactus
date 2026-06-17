@@ -446,3 +446,17 @@ func TestUpdateStatus(t *testing.T) {
 		assert.True(t, peerSet.HasOpenSession(pid2))
 	})
 }
+
+func TestMetricCopy(t *testing.T) {
+	ps := NewPeerSet(time.Minute)
+
+	pid := peer.ID("peer_1")
+	msgType := message.Type(1)
+
+	ps.UpdateReceivedMetric(pid, msgType, 100)
+	ps.UpdateSentMetric(&pid, msgType, 50)
+
+	snapshot := ps.Metric()
+
+	assert.EqualValues(t, snapshot, ps.metric)
+}
