@@ -2,11 +2,15 @@ package util
 
 import (
 	crand "crypto/rand"
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"fmt"
+	"io"
 	"math/big"
 	"math/bits"
 	"net/url"
+	"os"
 	"strings"
 
 	"golang.org/x/exp/constraints"
@@ -194,4 +198,21 @@ func ParseGRPCAddr(addr string, insecureCredentials bool) (target, prefix string
 	}
 
 	return target, prefix, nil
+}
+
+func CalculateChecksum(filePath string) (string, error) {
+	out, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer func() {
+		_ = out.Close()
+	}()
+
+	hasher := sha256.New()
+	if _, err := io.Copy(hasher, out); err != nil {
+		return "", err
+	}
+
+	return hex.EncodeToString(hasher.Sum(nil)), nil
 }

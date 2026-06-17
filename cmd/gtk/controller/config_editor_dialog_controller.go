@@ -3,8 +3,6 @@
 package controller
 
 import (
-	"log"
-
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
@@ -32,7 +30,7 @@ func NewConfigEditorDialogController(
 
 	tomlLang := langManager.Language("toml")
 	if tomlLang == nil {
-		log.Println("Warning: TOML syntax highlighting not found.")
+		gtkutil.Logf("Warning: TOML syntax highlighting not found.")
 	} else {
 		buffer.SetLanguage(tomlLang)
 		buffer.SetHighlightSyntax(true)

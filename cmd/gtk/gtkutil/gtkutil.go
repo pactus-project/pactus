@@ -376,3 +376,7 @@ func ClearListModel[T any](listModel *gioutil.ListModel[T]) {
 func IsWidgetShowing(widget *gtk.Widget) bool {
 	return widget.Mapped()
 }
+
+func ClearLable(label *gtk.Label) {
+	label.SetText("")
+}

@@ -7,7 +7,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -106,7 +105,7 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 			isForward = false
 		}
 
-		log.Printf("%v (restore: %v, prev: %v, cur: %v)\n",
+		gtkutil.Logf("%v (restore: %v, prev: %v, cur: %v)\n",
 			curPageName, isRestoreMode, prevPageIndex, curPageIndex)
 
 		switch curPageName {
@@ -117,12 +116,12 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 			if isRestoreMode {
 				if isForward {
 					// forward
-					log.Print("jumping forward from seedGenerate page")
+					gtkutil.Logf("jumping forward from seedGenerate page")
 					assistant.NextPage()
 					prevPageAdjust = 1
 				} else {
 					// backward
-					log.Print("jumping backward from seedGenerate page")
+					gtkutil.Logf("jumping backward from seedGenerate page")
 					assistant.PreviousPage()
 					prevPageAdjust = -1
 				}
@@ -137,12 +136,12 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 			if isRestoreMode {
 				if isForward {
 					// forward
-					log.Print("jumping forward from seedConfirm page")
+					gtkutil.Logf("jumping forward from seedConfirm page")
 					assistant.NextPage()
 					prevPageAdjust = 1
 				} else {
 					// backward
-					log.Print("jumping backward from seedConfirm page")
+					gtkutil.Logf("jumping backward from seedConfirm page")
 					assistant.PreviousPage()
 					prevPageAdjust = -1
 				}
@@ -155,12 +154,12 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 			if !isRestoreMode {
 				if isForward {
 					// forward
-					log.Print("jumping forward from seedRestore page")
+					gtkutil.Logf("jumping forward from seedRestore page")
 					assistant.NextPage()
 					prevPageAdjust = 1
 				} else {
 					// backward
-					log.Print("jumping backward from seedRestore page")
+					gtkutil.Logf("jumping backward from seedRestore page")
 					assistant.PreviousPage()
 					prevPageAdjust = -1
 				}
@@ -203,6 +202,7 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 
 			ssPBLabel := gtk.NewLabel("")
 			ssPBLabel.SetHAlign(gtk.AlignStart)
+			ssPBLabel.SetWrap(true)
 			setDefaultMargin(&ssPBLabel.Widget)
 
 			gridImport.Attach(ssLabel, 0, 1, 1, 1)
@@ -235,10 +235,15 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 
 			// Toggle handler for "Pruned node" radio button
 			radioImport.Connect("toggled", func() {
+				ssLabel.SetVisible(true)
+				radioImport.SetSensitive(true)
+				listBox.SetSensitive(true)
+				ssDLBtn.SetSensitive(true)
+				listBox.SetSelectionMode(gtk.SelectionSingle)
+
 				if radioImport.Active() {
 					assistantPageComplete(assistant, wgtNodeType, false)
 
-					ssLabel.SetVisible(true)
 					ssLabel.SetText("♻️ Please wait, loading snapshot list...")
 
 					go func() {
@@ -279,29 +284,32 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 									ssPBLabel.SetVisible(true)
 									listBox.SetSelectionMode(gtk.SelectionNone)
 
+									gtkutil.ClearLable(ssPBLabel)
+
 									go func() {
-										log.Print("start downloading...\n")
+										gtkutil.Logf("start downloading...\n")
 										time.Sleep(1 * time.Second)
 
+										snapshot := metadata[snapshotIndex]
 										err := importer.Download(
-											ctx, &metadata[snapshotIndex],
-											func(fileName string) func(stats downloader.Stats) {
-												return func(stats downloader.Stats) {
-													if !stats.Completed {
-														percent := int(stats.Percent)
-														glib.IdleAdd(func() {
-															dlMessage := fmt.Sprintf(
-																"🌐 Downloading %s | %d%% (%s / %s)",
-																fileName, percent,
-																util.FormatBytesToHumanReadable(uint64(stats.Downloaded)),
-																util.FormatBytesToHumanReadable(uint64(stats.TotalSize)),
-															)
-															ssPBLabel.SetText(dlMessage)
-														})
-													}
+											ctx, &snapshot,
+											func(stats downloader.Stats) {
+												if !stats.Completed {
+													percent := int(stats.Percent)
+													glib.IdleAdd(func() {
+														dlMessage := fmt.Sprintf(
+															"🌐 Downloading %s | %d%% (%s / %s)",
+															snapshot.Data.Name, percent,
+															util.FormatBytesToHumanReadable(uint64(stats.Downloaded)),
+															util.FormatBytesToHumanReadable(uint64(stats.TotalSize)),
+														)
+														ssPBLabel.SetText(dlMessage)
+													})
 												}
 											},
 										)
+
+										gtkutil.Logf("downloaded, error: %v", err)
 
 										glib.IdleAdd(func() {
 											if err != nil {
@@ -310,7 +318,7 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 												return
 											}
 
-											log.Print("extracting data...\n")
+											gtkutil.Logf("extracting data...\n")
 											ssPBLabel.SetText("📂 Extracting downloaded files...")
 											err = importer.ExtractAndStoreFiles()
 											if err != nil {
@@ -319,7 +327,7 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 												return
 											}
 
-											log.Print("moving data...\n")
+											gtkutil.Logf("moving data...\n")
 											ssPBLabel.SetText("📑 Moving data...")
 											err = importer.MoveStore()
 											if err != nil {
@@ -328,7 +336,7 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 												return
 											}
 
-											log.Print("cleanup...\n")
+											gtkutil.Logf("cleanup...\n")
 											err = importer.Cleanup()
 											if err != nil {
 												gtkutil.SetColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), gtkutil.ColorRed)
@@ -358,11 +366,11 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 			if !isRestoreMode {
 				// Skip address recovery for new wallets
 				if isForward {
-					log.Print("jumping forward from addressRecovery page")
+					gtkutil.Logf("jumping forward from addressRecovery page")
 					assistant.NextPage()
 					prevPageAdjust = 1
 				} else {
-					log.Print("jumping backward from addressRecovery page")
+					gtkutil.Logf("jumping backward from addressRecovery page")
 					assistant.PreviousPage()
 					prevPageAdjust = -1
 				}
@@ -796,7 +804,7 @@ func getMetadata(ctx context.Context, importer *cmd.Importer, listBox *gtk.ListB
 
 		for _, md := range metadata {
 			label := gtk.NewLabel(fmt.Sprintf(
-				"snapshot %s (%s)",
+				"Snapshot %s (%s)",
 				md.CreatedAtTime().Format("2006-01-02"),
 				util.FormatBytesToHumanReadable(md.Data.Size),
 			))

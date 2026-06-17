@@ -10,6 +10,7 @@ require (
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.1
 	github.com/diamondburned/gotk4/pkg v0.3.1
 	github.com/ezex-io/gopkg/pipeline v0.0.0-20260127151556-579a32f19aa7
+	github.com/ezex-io/gopkg/retry v0.0.0-20260127151556-579a32f19aa7
 	github.com/ezex-io/gopkg/scheduler v0.0.0-20260127151556-579a32f19aa7
 	github.com/ezex-io/gopkg/signal v0.0.0-20260127151556-579a32f19aa7
 	github.com/ezex-io/gopkg/testsuite v0.0.0-20260127151556-579a32f19aa7
@@ -51,6 +52,7 @@ require (
 	google.golang.org/grpc v1.80.0
 	google.golang.org/protobuf v1.36.11
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
+	libdb.so/gotk4-sourceview/pkg v0.0.0-20240818070527-98263515a466
 )
 
 require (
@@ -181,7 +183,6 @@ require (
 	google.golang.org/genproto/googleapis/api v0.0.0-20260406210006-6f92a3bedf2d // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260406210006-6f92a3bedf2d // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	libdb.so/gotk4-sourceview/pkg v0.0.0-20240818070527-98263515a466 // indirect
 	lukechampine.com/blake3 v1.4.1 // indirect
 	modernc.org/libc v1.72.0 // indirect
 	modernc.org/mathutil v1.7.1 // indirect

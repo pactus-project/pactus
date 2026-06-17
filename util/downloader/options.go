@@ -1,11 +1,15 @@
 package downloader
 
-import "net/http"
+import (
+	"net/http"
+)
+
+type StateFunc func(stats Stats)
 
 type options struct {
-	client        *http.Client
-	statsCallBack func(Stats)
-	maxRetries    int
+	client     *http.Client
+	statsFunc  StateFunc
+	maxRetries int
 }
 
 type Option func(*options)
@@ -31,8 +35,8 @@ func WithMaxRetries(n int) Option {
 	}
 }
 
-func WithStatsCallback(cb func(Stats)) Option {
+func WithStatsCallback(cb StateFunc) Option {
 	return func(opt *options) {
-		opt.statsCallBack = cb
+		opt.statsFunc = cb
 	}
 }
