@@ -18,3 +18,10 @@ packages/
 
 # git patches
 .patches
+
+# AI agents
+.ai
+.entire
+.claude
+.agent
+.cursor
