@@ -15,3 +15,6 @@ todo
 .swp
 .*.sw*
 packages/
+
+# git patches
+.patches
