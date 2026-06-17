@@ -448,15 +448,15 @@ func TestUpdateStatus(t *testing.T) {
 }
 
 func TestMetricCopy(t *testing.T) {
-	ps := NewPeerSet(time.Minute)
+	peerSet := NewPeerSet(time.Minute)
 
 	pid := peer.ID("peer_1")
 	msgType := message.Type(1)
 
-	ps.UpdateReceivedMetric(pid, msgType, 100)
-	ps.UpdateSentMetric(&pid, msgType, 50)
+	peerSet.UpdateReceivedMetric(pid, msgType, 100)
+	peerSet.UpdateSentMetric(&pid, msgType, 50)
 
-	snapshot := ps.Metric()
+	cloned := peerSet.Metric()
 
-	assert.EqualValues(t, snapshot, ps.metric)
+	assert.Equal(t, cloned, peerSet.metric)
 }

@@ -60,7 +60,7 @@ func (m *Metric) UpdateInvalidMetric(bytes int64) {
 // lock to avoid concurrent map access races.
 func (m *Metric) Clone() Metric {
 	clone := Metric{
-		TotalInvalid: m.TotalInvalid,
+		TotalInvalid:    m.TotalInvalid,
 		TotalSent:       m.TotalSent,
 		TotalReceived:   m.TotalReceived,
 		MessageSent:     make(map[message.Type]*Counter, len(m.MessageSent)),
