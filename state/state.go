@@ -93,8 +93,6 @@ func LoadOrNewState(
 		}
 	}
 
-	state.totalPower = state.retrieveTotalPower()
-
 	state.loadMerkels()
 
 	txPool.SetNewSandboxAndRecheck(state.concreteSandbox())
@@ -203,22 +201,14 @@ func (st *state) loadMerkels() {
 		return false
 	})
 
-	st.store.IterateValidators(func(val *validator.Validator) bool {
-		st.validatorMerkle.SetHash(val.Number(), val.Hash())
-
-		return false
-	})
-}
-
-func (st *state) retrieveTotalPower() int64 {
 	totalPower := int64(0)
 	st.store.IterateValidators(func(val *validator.Validator) bool {
+		st.validatorMerkle.SetHash(val.Number(), val.Hash())
 		totalPower += val.Power()
 
 		return false
 	})
-
-	return totalPower
+	st.totalPower = totalPower
 }
 
 func (st *state) stateRoot() hash.Hash {
@@ -763,7 +753,7 @@ func (st *state) CommitteeInfo() *CommitteeInfo {
 	return &CommitteeInfo{
 		Validators:       st.committee.Validators(),
 		ProtocolVersions: st.committee.ProtocolVersions(),
-		CommitteePower:   st.committee.TotalPower(),
+		CommitteePower:   st.committee.Power(),
 	}
 }
 
@@ -776,7 +766,7 @@ func (st *state) ChainInfo() *ChainInfo {
 		LastBlockHash:    st.lastInfo.BlockHash(),
 		LastBlockTime:    st.lastInfo.BlockTime(),
 		TotalPower:       st.totalPower,
-		CommitteePower:   st.committee.TotalPower(),
+		CommitteePower:   st.committee.Power(),
 		CommitteeSize:    st.committee.Size(),
 		TotalAccounts:    st.store.TotalAccounts(),
 		TotalValidators:  st.store.TotalValidators(),

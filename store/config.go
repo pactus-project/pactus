@@ -25,7 +25,7 @@ type Config struct {
 func DefaultConfig() *Config {
 	return &Config{
 		Path:               "data",
-		RetentionDays:      10,
+		RetentionDays:      30,
 		TxCacheWindow:      1024,
 		SeedCacheWindow:    1024,
 		AccountCacheSize:   1024,

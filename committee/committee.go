@@ -46,7 +46,7 @@ func NewCommittee(validators []*validator.Validator, committeeSize int,
 	}, nil
 }
 
-func (c *committee) TotalPower() int64 {
+func (c *committee) Power() int64 {
 	power := int64(0)
 	c.iterate(func(v *validator.Validator) bool {
 		power += v.Power()

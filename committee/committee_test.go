@@ -383,8 +383,8 @@ func TestTotalPower(t *testing.T) {
 
 	totalPower := val0.Power() + val1.Power() + val2.Power() + val3.Power() + val4.Power()
 	totalStake := val0.Stake() + val1.Stake() + val2.Stake() + val3.Stake() + val4.Stake()
-	assert.Equal(t, totalPower, cmt.TotalPower())
-	assert.Equal(t, int64(totalStake+1), cmt.TotalPower())
+	assert.Equal(t, totalPower, cmt.Power())
+	assert.Equal(t, int64(totalStake+1), cmt.Power())
 }
 
 func TestProtocolVersionPercentages(t *testing.T) {
