@@ -51,6 +51,7 @@ jobs:
             macos
             main
             makefile
+            message
             network
             node
             other
