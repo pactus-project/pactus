@@ -343,7 +343,8 @@ func (ps *PeerSet) Metric() metric.Metric {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	return ps.metric
+	// Return a deep copy so callers never iterate the live maps.
+	return ps.metric.Clone()
 }
 
 // GetRandomPeer selects a random peer from the peer set based on their download score.
