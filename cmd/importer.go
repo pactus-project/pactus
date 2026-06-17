@@ -168,7 +168,7 @@ func (i *Importer) extractAndWriteFile(file *zip.File) error {
 		_ = reader.Close()
 	}()
 
-	fPath, err := util.SanitizeArchivePath(i.tempDir, file.Name)
+	fPath, err := util.SecureJoinPath(i.tempDir, file.Name)
 	if err != nil {
 		return fmt.Errorf("failed to make archive path: %w", err)
 	}
