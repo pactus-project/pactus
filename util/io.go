@@ -283,16 +283,16 @@ func copyFile(src, dst string, info os.FileInfo) error {
 	return os.Chmod(dst, info.Mode())
 }
 
-// SanitizeArchivePath mitigates the "Zip Slip" vulnerability by sanitizing archive file paths.
+// SecureJoinPath mitigates the "Zip Slip" vulnerability by sanitizing archive file paths.
 // It ensures that the file path is contained within the specified base directory to prevent directory
 // traversal attacks. For more details on the vulnerability, see https://snyk.io/research/zip-slip-vulnerability.
-func SanitizeArchivePath(baseDir, archivePath string) (fullPath string, err error) {
-	fullPath = filepath.Join(baseDir, archivePath)
-	if strings.HasPrefix(fullPath, filepath.Clean(baseDir)) {
+func SecureJoinPath(baseDir, filePath string) (fullPath string, err error) {
+	fullPath = filepath.Join(baseDir, filePath)
+	if strings.HasPrefix(fullPath, filepath.Clean(baseDir)+string(os.PathSeparator)) {
 		return fullPath, nil
 	}
 
-	return "", fmt.Errorf("%s: %s", "content filepath is tainted", archivePath)
+	return "", fmt.Errorf("illegal file path: %s", filePath)
 }
 
 type listFilesConfig struct {

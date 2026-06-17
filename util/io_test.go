@@ -184,12 +184,10 @@ func TestMoveDirectory(t *testing.T) {
 	})
 }
 
-func TestSanitizeArchivePath(t *testing.T) {
+func TestSecureJoinPath(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		return
 	}
-
-	baseDir := "/safe/directory"
 
 	tests := []struct {
 		name      string
@@ -203,9 +201,10 @@ func TestSanitizeArchivePath(t *testing.T) {
 		{"Absolute path outside base directory", "/etc/passwd", "/safe/directory/etc/passwd", false},
 	}
 
+	baseDir := "/safe/directory"
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := SanitizeArchivePath(baseDir, tt.inputPath)
+			result, err := SecureJoinPath(baseDir, tt.inputPath)
 			if tt.expectErr {
 				require.Error(t, err, "Expected error but got none")
 				assert.Empty(t, result, "Expected empty result due to error")

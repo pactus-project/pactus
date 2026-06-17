@@ -73,14 +73,18 @@ func (wm *Manager) Stop() {
 	}
 }
 
-func (wm *Manager) getWalletPath(walletName string) string {
-	return util.MakeAbs(filepath.Join(wm.walletDirectory, walletName))
+func (wm *Manager) getWalletPath(walletName string) (string, error) {
+	return util.SecureJoinPath(wm.walletDirectory, walletName)
 }
 
 func (wm *Manager) createWalletWithMnemonic(
 	walletName, mnemonic, password string,
 ) error {
-	walletPath := wm.getWalletPath(walletName)
+	walletPath, err := wm.getWalletPath(walletName)
+	if err != nil {
+		return err
+	}
+
 	if isExists := util.PathExists(walletPath); isExists {
 		return ErrWalletAlreadyExists
 	}
