@@ -29,10 +29,7 @@ func TestPublisherOnSameSockets(t *testing.T) {
 
 	sub := zmq4.NewSub(t.Context(), zmq4.WithAutomaticReconnect(false))
 
-	err := sub.Dial(addr)
-	require.NoError(t, err)
-
-	err = sub.SetOption(zmq4.OptionSubscribe, string(TopicTransactionInfo.Bytes()))
+	err := sub.SetOption(zmq4.OptionSubscribe, string(TopicTransactionInfo.Bytes()))
 	require.NoError(t, err)
 
 	err = sub.SetOption(zmq4.OptionSubscribe, string(TopicRawTransaction.Bytes()))
@@ -42,6 +39,9 @@ func TestPublisherOnSameSockets(t *testing.T) {
 	require.NoError(t, err)
 
 	err = sub.SetOption(zmq4.OptionSubscribe, string(TopicRawBlock.Bytes()))
+	require.NoError(t, err)
+
+	err = sub.Dial(addr)
 	require.NoError(t, err)
 
 	time.Sleep(100 * time.Millisecond)
