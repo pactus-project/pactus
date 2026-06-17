@@ -136,23 +136,10 @@ func (mgr *manager) MoveToNewHeight() {
 		cons.MoveToNewHeight()
 	}
 
-	cons := mgr.getBestInstance()
-	curHeight, _ := cons.HeightRound()
 	for index := len(mgr.upcomingProposals) - 1; index >= 0; index-- {
 		prop := mgr.upcomingProposals[index]
-		switch {
-		case prop.Height() < curHeight:
-			// Ignore old proposals
-
-		case prop.Height() > curHeight:
-			// Keep this future proposal
-			continue
-
-		case prop.Height() == curHeight:
-			// Process this current proposal
-			for _, cons := range mgr.instances {
-				cons.SetProposal(prop)
-			}
+		for _, cons := range mgr.instances {
+			cons.SetProposal(prop)
 		}
 
 		mgr.upcomingProposals = slices.Delete(mgr.upcomingProposals, index, index+1)
@@ -160,19 +147,8 @@ func (mgr *manager) MoveToNewHeight() {
 
 	for index := len(mgr.upcomingVotes) - 1; index >= 0; index-- {
 		vote := mgr.upcomingVotes[index]
-		switch {
-		case vote.Height() < curHeight:
-			// Ignore old votes
-
-		case vote.Height() > curHeight:
-			// Keep future vote
-			continue
-
-		case vote.Height() == curHeight:
-			// Process current vote
-			for _, cons := range mgr.instances {
-				cons.AddVote(vote)
-			}
+		for _, cons := range mgr.instances {
+			cons.AddVote(vote)
 		}
 
 		mgr.upcomingVotes = slices.Delete(mgr.upcomingVotes, index, index+1)
@@ -184,10 +160,10 @@ func (mgr *manager) AddVote(vote *vote.Vote) {
 	cons := mgr.getBestInstance()
 	curHeight, _ := cons.HeightRound()
 	switch {
-	case vote.Height() < curHeight:
+	case vote.Height() == curHeight-1:
 		_ = mgr.state.UpdateLastCertificate(vote)
 
-	case vote.Height() > curHeight:
+	case vote.Height() == curHeight+1:
 		mgr.upcomingVotes = append(mgr.upcomingVotes, vote)
 
 	case vote.Height() == curHeight:
@@ -202,10 +178,7 @@ func (mgr *manager) SetProposal(prop *proposal.Proposal) {
 	cons := mgr.getBestInstance()
 	curHeight, _ := cons.HeightRound()
 	switch {
-	case prop.Height() < curHeight:
-		// discard old proposal
-
-	case prop.Height() > curHeight:
+	case prop.Height() == curHeight+1:
 		mgr.upcomingProposals = append(mgr.upcomingProposals, prop)
 
 	case prop.Height() == curHeight:
