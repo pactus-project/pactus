@@ -72,6 +72,7 @@ func main() {
 
 	// Create a new app.
 	app := gtk.NewApplication(appID, gio.ApplicationNonUnique)
+	gtk.WidgetSetDefaultDirection(gtk.TextDirLTR)
 	settings := gtk.SettingsGetDefault()
 	settings.Object.SetObjectProperty("gtk-application-prefer-dark-theme", true)
 
