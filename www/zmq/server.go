@@ -96,6 +96,8 @@ func (s *Server) Close() {
 func (s *Server) publishEvent(event any) {
 	switch evt := event.(type) {
 	case *block.Block:
+		s.logger.Debug("processing block event", "block", evt)
+
 		for _, pub := range s.publishers {
 			pub.onNewBlock(evt)
 		}
