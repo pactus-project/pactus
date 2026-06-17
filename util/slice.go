@@ -5,9 +5,24 @@ import (
 	"compress/gzip"
 	"crypto/subtle"
 	"encoding/binary"
+	"errors"
+	"io"
 	"math/rand"
 	"slices"
 )
+
+// MaxDecompressedSize bounds how many bytes DecompressBuffer will produce.
+//
+// This guards against decompression-bomb DoS attacks (CWE-409): a tiny,
+// highly compressible gzip stream can expand by ~1000x, so without a cap an
+// attacker-controlled compressed payload received over the P2P layer can be
+// inflated into a multi-gigabyte single allocation and crash the node with a
+// fatal out-of-memory error.
+const MaxDecompressedSize = 8 << 20 // 8 MB
+
+// ErrDecompressedSizeExceedsLimit is returned by DecompressBuffer when the
+// decompressed output would exceed MaxDecompressedSize.
+var ErrDecompressedSizeExceedsLimit = errors.New("decompressed size exceeds limit")
 
 func Uint16ToBytesLE(n uint16) []byte {
 	bs := make([]byte, 2)
@@ -93,9 +108,20 @@ func DecompressBuffer(s []byte) ([]byte, error) {
 		return nil, err
 	}
 
+	// Bound the decompressed output to prevent decompression-bomb DoS attacks
+	// (CWE-409). Read up to MaxDecompressedSize+1 bytes: if the limited reader
+	// yields more than MaxDecompressedSize, the stream is over the cap and we
+	// reject it instead of silently truncating. The LimitReader stops reading
+	// at the cap, so no unbounded allocation occurs.
+	limited := io.LimitReader(reader, MaxDecompressedSize+1)
+
 	var res bytes.Buffer
-	if _, err = res.ReadFrom(reader); err != nil {
+	if _, err = res.ReadFrom(limited); err != nil {
 		return nil, err
+	}
+
+	if res.Len() > MaxDecompressedSize {
+		return nil, ErrDecompressedSizeExceedsLimit
 	}
 
 	return res.Bytes(), nil

@@ -111,6 +111,23 @@ func TestDecompress(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestDecompressionBomb(t *testing.T) {
+	// Build a small synthetic gzip stream whose decompressed length is just
+	// one byte over the cap. The slice of zeros compresses to a few KB, so
+	// the test never allocates anywhere near MaxDecompressedSize of output:
+	// DecompressBuffer must stop at the cap and return an error rather than
+	// inflating the full bomb.
+	oversized := make([]byte, MaxDecompressedSize+1)
+	c, err := CompressBuffer(oversized)
+	require.NoError(t, err)
+	require.Less(t, len(c), MaxDecompressedSize,
+		"compressed bomb must stay small so the test itself uses little memory")
+
+	out, err := DecompressBuffer(c)
+	require.ErrorIs(t, err, ErrDecompressedSizeExceedsLimit)
+	assert.Nil(t, out)
+}
+
 func TestSubtractAndSubset(t *testing.T) {
 	t.Run("Case 1", func(t *testing.T) {
 		s1 := []int32{1, 2, 3, 4}
