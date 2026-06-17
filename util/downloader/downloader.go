@@ -10,8 +10,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ezex-io/gopkg/retry"
 	"github.com/ezex-io/gopkg/scheduler"
-	"github.com/ezex-io/gopkg/util/retry"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 )
@@ -25,7 +25,7 @@ type Downloader struct {
 	client        *http.Client
 	url           string
 	filePath      string
-	sha3Sum       string
+	sha256Sum     string
 	fileType      string
 	fileSize      int64
 	maxRetries    int
@@ -43,7 +43,7 @@ type Stats struct {
 	Completed  bool
 }
 
-func New(url, filePath, sha3Sum string, opts ...Option) *Downloader {
+func New(url, filePath, sha256Sum string, opts ...Option) *Downloader {
 	opt := defaultOptions()
 
 	for _, o := range opts {
@@ -55,7 +55,7 @@ func New(url, filePath, sha3Sum string, opts ...Option) *Downloader {
 		statsCallback: opt.statsFunc,
 		url:           url,
 		filePath:      filePath,
-		sha3Sum:       sha3Sum,
+		sha256Sum:     sha256Sum,
 		maxRetries:    opt.maxRetries,
 		downloaded:    0,
 	}
@@ -234,8 +234,8 @@ func (d *Downloader) finalizeDownload() error {
 	if err != nil {
 		return &Error{Message: "unable to calculate downloaded checksum", Reason: err}
 	}
-	if sum != d.sha3Sum {
-		return &Error{Message: "sha256 mismatch", Reason: fmt.Errorf("expected %s, got %s", d.sha3Sum, sum)}
+	if sum != d.sha256Sum {
+		return &Error{Message: "sha256 mismatch", Reason: fmt.Errorf("expected %s, got %s", d.sha256Sum, sum)}
 	}
 
 	return nil
