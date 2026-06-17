@@ -121,6 +121,8 @@ github.com/envoyproxy/go-control-plane v0.9.9-0.20210217033140-668b12f5399d/go.m
 github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
 github.com/ezex-io/gopkg/pipeline v0.0.0-20260127151556-579a32f19aa7 h1:zUmRjqSmASCO4F/4oS5sUFbEh1yjhgmgRHUZLKUtbnQ=
 github.com/ezex-io/gopkg/pipeline v0.0.0-20260127151556-579a32f19aa7/go.mod h1:eDWtiQtQ6pAdxKSttVQbk98KXxdeFWzxaZcWKWODbX0=
+github.com/ezex-io/gopkg/retry v0.0.0-20260127151556-579a32f19aa7 h1:1XvYUxxKiOaCI5/Uq/NH2AbJpSW4BGnH4lTe3veRdk4=
+github.com/ezex-io/gopkg/retry v0.0.0-20260127151556-579a32f19aa7/go.mod h1:jZtKYspxSqPc1PZ/VFxC4mN8e5kwuxghDQQTQJnuDqo=
 github.com/ezex-io/gopkg/scheduler v0.0.0-20260127151556-579a32f19aa7 h1:hujO8ZKXb+VwDgnSSa4ngoT6WNwkd9yLF9idzVLKA4Y=
 github.com/ezex-io/gopkg/scheduler v0.0.0-20260127151556-579a32f19aa7/go.mod h1:I5PLJTun10b6UvzR2s2oA2++QDsQQbUVVbKQDABLkSI=
 github.com/ezex-io/gopkg/signal v0.0.0-20260127151556-579a32f19aa7 h1:tFeQmqXM0SqiWSGz0kvbS3FfIdZusxZoa2Ggeucumww=

@@ -206,3 +206,26 @@ func TestParseGRPCAddr(t *testing.T) {
 		})
 	}
 }
+
+func TestCalculateChecksum(t *testing.T) {
+	t.Run("Non existing file", func(t *testing.T) {
+		_, err := CalculateChecksum(TempFilePath())
+		require.Error(t, err)
+	})
+
+	t.Run("Empty file", func(t *testing.T) {
+		path := TempFilePath()
+		require.NoError(t, WriteFile(path, nil))
+		hash, err := CalculateChecksum(path)
+		require.NoError(t, err)
+		assert.Equal(t, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", hash)
+	})
+
+	t.Run("Calculate hash", func(t *testing.T) {
+		path := TempFilePath()
+		require.NoError(t, WriteFile(path, []byte("pactus")))
+		hash, err := CalculateChecksum(path)
+		require.NoError(t, err)
+		assert.Equal(t, "ad5aaa2ccddfad964ab54afb08495ed90b53a99e48f96e6a0afad32ec24c37a5", hash)
+	})
+}

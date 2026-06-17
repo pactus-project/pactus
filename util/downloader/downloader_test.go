@@ -1,65 +1,94 @@
 package downloader
 
 import (
-	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
-	"time"
 
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestDownloader(t *testing.T) {
-	fileContent := make([]byte, 1*1024*1024) // 1 MB
-	for i := range fileContent {
-		fileContent[i] = byte(i % 256)
+	ts := testsuite.NewTestSuite(t)
+
+	tests := []struct {
+		name string
+		size int
+	}{
+		{size: _defaultNumberOfChunks * 1024},
+		{size: (_defaultNumberOfChunks * 1024) - 1},
+		{size: (_defaultNumberOfChunks * 1024) + 1},
+		{size: ts.RandIntMax(64 * 1000 * 1000)},
+		{size: 67850301},
 	}
 
-	fileURL := "/testfile"
-	expectedSHA256 := sha256.Sum256(fileContent)
-	expectedSHA256Hex := hex.EncodeToString(expectedSHA256[:])
+	for _, tt := range tests {
+		fileContent := ts.RandBytes(tt.size)
 
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == fileURL {
-			w.Header().Set("Content-Length", fmt.Sprintf("%d", len(fileContent)))
-			_, err := w.Write(fileContent)
-			assert.NoError(t, err)
-		} else {
-			http.NotFound(w, r)
-		}
-	}))
-	defer server.Close()
+		fileURL := "/testfile.zip"
+		expectedSHA256 := sha256.Sum256(fileContent)
+		expectedSHA256Hex := hex.EncodeToString(expectedSHA256[:])
 
-	filePath := util.TempFilePath()
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.URL.Path != fileURL {
+				http.NotFound(w, r)
 
-	defer func() {
-		require.NoError(t, os.RemoveAll("./testdata"))
-	}()
+				return
+			}
 
-	downloader := New(
-		server.URL+fileURL, filePath, expectedSHA256Hex,
-		WithCustomClient(server.Client()),
-		WithStatsCallback(printDownloaderStats),
-	)
+			// Parse Range header
+			rangeHeader := r.Header.Get("Range")
+			if rangeHeader == "" {
+				// Full file request (used only for HEAD or first chunk)
+				w.Header().Set("Content-Length", fmt.Sprintf("%d", tt.size))
+				_, _ = w.Write(fileContent)
 
-	ctx, cancel := context.WithTimeout(t.Context(), 2*time.Minute)
-	defer cancel()
+				return
+			}
 
-	downloader.Start(ctx)
+			// Expecting "bytes=start-end"
+			var start, end int64
+			_, err := fmt.Sscanf(rangeHeader, "bytes=%d-%d", &start, &end)
+			if err != nil {
+				w.WriteHeader(http.StatusRequestedRangeNotSatisfiable)
 
-	t.Log(downloader.FileName())
-	t.Log(downloader.FileType())
+				return
+			}
+			if end >= int64(tt.size) {
+				end = int64(tt.size - 1)
+			}
+			if start > end || start >= int64(tt.size) {
+				w.WriteHeader(http.StatusRequestedRangeNotSatisfiable)
 
-	downloadedContent, err := os.ReadFile(filePath)
-	require.NoError(t, err, "Failed to read the downloaded file")
-	assert.Equal(t, fileContent, downloadedContent, "Downloaded file content does not match expected content")
+				return
+			}
+
+			w.Header().Set("Content-Range", fmt.Sprintf("bytes %d-%d/%d", start, end, tt.size))
+			w.Header().Set("Content-Length", fmt.Sprintf("%d", end-start+1))
+			w.WriteHeader(http.StatusPartialContent)
+			_, _ = w.Write(fileContent[start : end+1])
+		}))
+
+		filePath := util.TempFilePath()
+
+		downloader := New(
+			server.URL+fileURL, filePath, expectedSHA256Hex,
+			WithCustomClient(server.Client()),
+			WithStatsCallback(printDownloaderStats),
+			WithMaxRetries(1),
+		)
+
+		err := downloader.Download(t.Context())
+		require.NoError(t, err)
+
+		assert.Equal(t, "application/octet-stream", downloader.FileType())
+	}
 }
 
 func printDownloaderStats(sts Stats) {

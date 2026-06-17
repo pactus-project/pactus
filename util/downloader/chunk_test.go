@@ -36,18 +36,26 @@ func TestCreateChunks(t *testing.T) {
 		},
 		{
 			contentLength: 10,
+			totalChunks:   1,
+			expected: []*chunk{
+				{start: 0, end: 9},
+			},
+		},
+		{
+			contentLength: 10,
+			totalChunks:   2,
+			expected: []*chunk{
+				{start: 0, end: 4},
+				{start: 5, end: 9},
+			},
+		},
+		{
+			contentLength: 10,
 			totalChunks:   3,
 			expected: []*chunk{
 				{start: 0, end: 2},
 				{start: 3, end: 5},
 				{start: 6, end: 9},
-			},
-		},
-		{
-			contentLength: 10,
-			totalChunks:   1,
-			expected: []*chunk{
-				{start: 0, end: 9},
 			},
 		},
 		{

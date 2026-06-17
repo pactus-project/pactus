@@ -21,54 +21,55 @@ jobs:
         with:
           # Configure which scopes are allowed (newline-delimited).
           scopes: |
-            github
-            linter
-            deps
-            makefile
-            release
-            releaser
-            packager
-            other
-            daemon
             cbor
             cmd
-            firewall
-            gtk
-            shell
-            wallet-cmd
             committee
             config
             consensus
             crypto
-            docs
+            daemon
+            deps
             docker
+            docs
             encoding
             execution
+            firewall
             genesis
+            github
+            grpc
+            gtk
+            html
+            http
+            jsonrpc
+            linter
+            linux
+            macos
+            main
+            makefile
             network
             node
+            other
+            packager
+            proto
+            release
+            releaser
+            repo
             sandbox
             scripts
+            shell
             sortition
             state
             store
             sync
-            main
             txpool
             types
             util
             version
             wallet
-            www
-            grpc
-            proto
-            jsonrpc
-            http
-            html
-            zeromq
+            wallet-cmd
             windows
-            linux
-            macos
+            www
+            zeromq
           # Configure that a scope must always be provided.
           requireScope: true
           # The subject should not start with an uppercase character and should not end with a period.

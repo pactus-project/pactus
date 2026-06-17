@@ -86,7 +86,7 @@ func (e *SortitionExecutor) canJoinCommittee() error {
 		joiningPower += e.validator.Power()
 		joiningNum++
 	}
-	if joiningPower >= (committee.TotalPower() / 3) {
+	if joiningPower >= (committee.Power() / 3) {
 		return ErrCommitteeJoinLimitExceeded
 	}
 
@@ -98,7 +98,7 @@ func (e *SortitionExecutor) canJoinCommittee() error {
 	for i := 0; i < joiningNum; i++ {
 		leavingPower += vals[i].Power()
 	}
-	if leavingPower >= (committee.TotalPower() / 3) {
+	if leavingPower >= (committee.Power() / 3) {
 		return ErrCommitteeLeaveLimitExceeded
 	}
 

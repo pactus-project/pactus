@@ -120,5 +120,5 @@ func TestTotalPower(t *testing.T) {
 
 	cmt, _ := ts.GenerateTestCommittee(4)
 	log.MoveToNewHeight(cmt.Validators())
-	assert.Equal(t, cmt.TotalPower(), log.TotalPower())
+	assert.Equal(t, cmt.Power(), log.TotalPower())
 }

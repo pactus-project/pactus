@@ -55,11 +55,8 @@ def get_current_time_iso():
 class Metadata:
     @staticmethod
     def sha256(file_path):
-        hash_sha = hashlib.sha256()
         with open(file_path, "rb") as f:
-            for chunk in iter(lambda: f.read(4096), b""):
-                hash_sha.update(chunk)
-        return hash_sha.hexdigest()
+            return hashlib.sha3_256(f.read()).hexdigest()
 
     @staticmethod
     def update_metadata_file(snapshot_path, snapshot_metadata):
