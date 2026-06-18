@@ -46,6 +46,11 @@ func (v *cpVote) BasicCheck() error {
 			Reason: "invalid CP value",
 		}
 	}
+	if v.Just == nil {
+		return BasicCheckError{
+			Reason: "no justification",
+		}
+	}
 
 	return v.Just.BasicCheck()
 }

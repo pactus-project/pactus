@@ -22,6 +22,15 @@ func TestTransactionsMessage(t *testing.T) {
 
 		err := msg.BasicCheck()
 		require.ErrorIs(t, err, BasicCheckError{Reason: "no transaction"})
+		assert.Contains(t, msg.LogString(), "[]")
+	})
+
+	t.Run("Nil transaction ", func(t *testing.T) {
+		msg := NewTransactionsMessage([]*tx.Tx{nil})
+		err := msg.BasicCheck()
+
+		require.ErrorIs(t, err, BasicCheckError{Reason: "nil transaction"})
+		assert.Contains(t, msg.LogString(), "nil-tx")
 	})
 
 	t.Run("Invalid transactions", func(t *testing.T) {

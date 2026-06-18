@@ -24,6 +24,10 @@ func (m *ProposalMessage) BasicCheck() error {
 		return BasicCheckError{Reason: "no proposal"}
 	}
 
+	if m.Proposal.Block() == nil {
+		return BasicCheckError{Reason: "no block"}
+	}
+
 	// Basic checks for the proposal are deferred to the consensus phase
 	// to avoid unnecessary validation for validators outside the committee.
 	return nil
@@ -46,10 +50,18 @@ func (m *ProposalMessage) ConsensusHeight() types.Height {
 }
 
 func (m *ProposalMessage) Height() types.Height {
+	if m.Proposal == nil {
+		return 0
+	}
+
 	return m.Proposal.Height()
 }
 
 // LogString returns a concise string representation intended for use in logs.
 func (m *ProposalMessage) LogString() string {
+	if m.Proposal == nil {
+		return "{nil-proposal}"
+	}
+
 	return m.Proposal.LogString()
 }

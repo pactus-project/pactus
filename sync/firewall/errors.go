@@ -28,3 +28,12 @@ type PeerBannedError struct {
 func (e PeerBannedError) Error() string {
 	return fmt.Sprintf("peer is banned, peer-id: %s, remote-address: %s", e.PeerID, e.Address)
 }
+
+// ConfigError is returned when the config is not valid with a descriptive Reason message.
+type ConfigError struct {
+	Reason string
+}
+
+func (e ConfigError) Error() string {
+	return e.Reason
+}

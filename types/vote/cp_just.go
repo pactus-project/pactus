@@ -126,6 +126,9 @@ func (*JustDecided) Type() JustType {
 }
 
 func (j *JustInitNo) BasicCheck() error {
+	if j.QCert == nil {
+		return BasicCheckError{Reason: "quorum certificate is not set"}
+	}
 	err := j.QCert.BasicCheck()
 	if err != nil {
 		return err
@@ -139,14 +142,25 @@ func (*JustInitYes) BasicCheck() error {
 }
 
 func (j *JustPreVoteSoft) BasicCheck() error {
+	if j.QCert == nil {
+		return BasicCheckError{Reason: "quorum certificate is not set"}
+	}
+
 	return j.QCert.BasicCheck()
 }
 
 func (j *JustPreVoteHard) BasicCheck() error {
+	if j.QCert == nil {
+		return BasicCheckError{Reason: "quorum certificate is not set"}
+	}
+
 	return j.QCert.BasicCheck()
 }
 
 func (j *JustMainVoteConflict) BasicCheck() error {
+	if j.JustNo == nil || j.JustYes == nil {
+		return BasicCheckError{Reason: "quorum certificate is not set"}
+	}
 	if err := j.JustNo.BasicCheck(); err != nil {
 		return err
 	}
@@ -155,9 +169,17 @@ func (j *JustMainVoteConflict) BasicCheck() error {
 }
 
 func (j *JustMainVoteNoConflict) BasicCheck() error {
+	if j.QCert == nil {
+		return BasicCheckError{Reason: "quorum certificate is not set"}
+	}
+
 	return j.QCert.BasicCheck()
 }
 
 func (j *JustDecided) BasicCheck() error {
+	if j.QCert == nil {
+		return BasicCheckError{Reason: "quorum certificate is not set"}
+	}
+
 	return j.QCert.BasicCheck()
 }
