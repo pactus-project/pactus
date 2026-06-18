@@ -48,6 +48,13 @@ func (m *HelloMessage) BasicCheck() error {
 	if len(m.PublicKeys) == 0 {
 		return BasicCheckError{"no public key"}
 	}
+
+	for _, pub := range m.PublicKeys {
+		if pub == nil {
+			return BasicCheckError{"nil public key"}
+		}
+	}
+
 	aggPub, err := bls.PublicKeyAggregate(m.PublicKeys...)
 	if err != nil {
 		return BasicCheckError{err.Error()}

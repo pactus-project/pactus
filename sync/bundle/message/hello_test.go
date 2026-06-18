@@ -64,6 +64,16 @@ func TestHelloMessage(t *testing.T) {
 		require.ErrorIs(t, err, BasicCheckError{"short buffer"})
 	})
 
+	t.Run("Nil PublicKey", func(t *testing.T) {
+		msg := NewHelloMessage(ts.RandPeerID(), "Oscar", service.New(service.FullNode),
+			ts.RandHeight(), ts.RandHash(), ts.RandHash())
+		msg.Signature = ts.RandBLSSignature()
+		msg.PublicKeys = []*bls.PublicKey{nil}
+
+		err := msg.BasicCheck()
+		require.ErrorIs(t, err, BasicCheckError{"nil public key"})
+	})
+
 	t.Run("Check hello message time", func(t *testing.T) {
 		time1 := time.Now()
 		msg := NewHelloMessage(ts.RandPeerID(), "Alice", service.New(service.FullNode),

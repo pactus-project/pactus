@@ -68,18 +68,19 @@ func TestBasicCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("No block", func(t *testing.T) {
-		p := &proposal.Proposal{}
-		err := p.BasicCheck()
+		prop := &proposal.Proposal{}
+		err := prop.BasicCheck()
 		require.ErrorIs(t, err, proposal.BasicCheckError{
 			Reason: "no block",
 		})
+		assert.Contains(t, prop.LogString(), "nil")
 	})
 
 	t.Run("Invalid height", func(t *testing.T) {
 		blk, _ := ts.GenerateTestBlock(ts.RandHeight())
-		p := proposal.NewProposal(0, 0, blk)
-		p.SetSignature(ts.RandBLSSignature())
-		err := p.BasicCheck()
+		prop := proposal.NewProposal(0, 0, blk)
+		prop.SetSignature(ts.RandBLSSignature())
+		err := prop.BasicCheck()
 		require.ErrorIs(t, err, proposal.BasicCheckError{
 			Reason: "invalid height",
 		})
@@ -87,9 +88,9 @@ func TestBasicCheck(t *testing.T) {
 
 	t.Run("Invalid round", func(t *testing.T) {
 		blk, _ := ts.GenerateTestBlock(ts.RandHeight())
-		p := proposal.NewProposal(ts.RandHeight(), -1, blk)
-		p.SetSignature(ts.RandBLSSignature())
-		err := p.BasicCheck()
+		prop := proposal.NewProposal(ts.RandHeight(), -1, blk)
+		prop.SetSignature(ts.RandBLSSignature())
+		err := prop.BasicCheck()
 		require.ErrorIs(t, err, proposal.BasicCheckError{
 			Reason: "invalid round",
 		})
