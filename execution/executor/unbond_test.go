@@ -105,12 +105,12 @@ func TestExecuteDelegatedUnbondTx(t *testing.T) {
 	val := td.sbx.MakeNewValidator(valPub)
 	val.AddToStake(td.sbx.TestParams.MaximumStake)
 	owner := td.RandAccAddress()
-	val.SetDelegation(owner, amount.Amount(0.2e9), td.sbx.CurrentHeight()+10)
+	expiry := td.sbx.CurrentHeight() + td.RandHeight()
+	val.SetDelegation(owner, amount.Amount(0.2e9), expiry)
 	td.sbx.UpdateValidator(val)
-	lockTime := td.sbx.CurrentHeight()
 
 	t.Run("Should fail, invalid delegate owner", func(t *testing.T) {
-		trx := tx.NewUnbondTx(lockTime, valAddr)
+		trx := tx.NewUnbondTx(td.RandHeight(), valAddr)
 		pld := trx.Payload().(*payload.UnbondPayload)
 		pld.DelegateOwner = td.RandAccAddress()
 
@@ -118,8 +118,19 @@ func TestExecuteDelegatedUnbondTx(t *testing.T) {
 		td.check(t, trx, false, ErrInvalidDelegateOwner)
 	})
 
+	t.Run("Should fail, delegation is not expired", func(t *testing.T) {
+		td.sbx.TestStore.AddTestBlock(expiry - 2)
+		trx := tx.NewUnbondTx(td.RandHeight(), valAddr)
+		pld := trx.Payload().(*payload.UnbondPayload)
+		pld.DelegateOwner = owner
+
+		td.check(t, trx, true, ErrDelegationNotExpired)
+		td.check(t, trx, false, ErrDelegationNotExpired)
+	})
+
 	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewUnbondTx(lockTime, valAddr)
+		td.sbx.TestStore.AddTestBlock(expiry - 1)
+		trx := tx.NewUnbondTx(td.RandHeight(), valAddr)
 		pld := trx.Payload().(*payload.UnbondPayload)
 		pld.DelegateOwner = owner
 
@@ -129,7 +140,7 @@ func TestExecuteDelegatedUnbondTx(t *testing.T) {
 	})
 
 	updatedVal := td.sbx.Validator(valAddr)
-	assert.Equal(t, lockTime, updatedVal.UnbondingHeight())
+	assert.Equal(t, td.sbx.CurrentHeight(), updatedVal.UnbondingHeight())
 }
 
 // TestUnbondNonDelegatedWithDelegateOwner is a regression test for an
