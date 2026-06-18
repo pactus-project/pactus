@@ -24,6 +24,10 @@ func (m *ProposalMessage) BasicCheck() error {
 		return BasicCheckError{Reason: "no proposal"}
 	}
 
+	if m.Proposal.Block() == nil {
+		return BasicCheckError{Reason: "no block"}
+	}
+
 	// Basic checks for the proposal are deferred to the consensus phase
 	// to avoid unnecessary validation for validators outside the committee.
 	return nil
