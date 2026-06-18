@@ -26,6 +26,13 @@ func NewBlockAnnounceMessage(blk *block.Block,
 }
 
 func (m *BlockAnnounceMessage) BasicCheck() error {
+	if m.Block == nil {
+		return BasicCheckError{Reason: "block is not set"}
+	}
+	if m.Certificate == nil {
+		return BasicCheckError{Reason: "certificate is not set"}
+	}
+
 	if err := m.Block.BasicCheck(); err != nil {
 		return err
 	}
@@ -40,6 +47,10 @@ func (m *BlockAnnounceMessage) BasicCheck() error {
 }
 
 func (m *BlockAnnounceMessage) Height() types.Height {
+	if m.Certificate == nil {
+		return 0
+	}
+
 	return m.Certificate.Height()
 }
 
@@ -56,12 +67,14 @@ func (*BlockAnnounceMessage) ShouldBroadcast() bool {
 }
 
 func (m *BlockAnnounceMessage) ConsensusHeight() types.Height {
-	return m.Certificate.Height()
+	return m.Height()
 }
 
 // LogString returns a concise string representation intended for use in logs.
 func (m *BlockAnnounceMessage) LogString() string {
-	return fmt.Sprintf("{⌘ %d %v}",
-		m.Certificate.Height(),
-		m.Block.Hash().LogString())
+	if m.Block == nil {
+		return fmt.Sprintf("{⌘ %d nil}", m.Height())
+	}
+
+	return fmt.Sprintf("{⌘ %d %v}", m.Height(), m.Block.Hash().LogString())
 }

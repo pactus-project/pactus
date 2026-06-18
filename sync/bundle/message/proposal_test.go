@@ -3,7 +3,7 @@ package message
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/types"
+	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -22,14 +22,25 @@ func TestProposalMessage(t *testing.T) {
 
 		err := msg.BasicCheck()
 		require.ErrorIs(t, err, BasicCheckError{Reason: "no proposal"})
+		assert.Zero(t, msg.ConsensusHeight())
+		assert.Contains(t, msg.LogString(), "{nil-proposal}")
+	})
+
+	t.Run("No block", func(t *testing.T) {
+		prop := proposal.NewProposal(ts.RandHeight(), ts.RandRound(), nil)
+		msg := NewProposalMessage(prop)
+
+		err := msg.BasicCheck()
+		require.ErrorIs(t, err, BasicCheckError{Reason: "no block"})
+		assert.Contains(t, msg.LogString(), "nil}")
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		prop := ts.GenerateTestProposal(100, 0)
+		prop := ts.GenerateTestProposal(ts.RandHeight(), ts.RandRound())
 		msg := NewProposalMessage(prop)
 
 		require.NoError(t, msg.BasicCheck())
-		assert.Equal(t, types.Height(100), msg.ConsensusHeight())
-		assert.Contains(t, msg.LogString(), "100")
+		assert.Equal(t, prop.Height(), msg.ConsensusHeight())
+		assert.Contains(t, msg.LogString(), prop.Block().LogString())
 	})
 }

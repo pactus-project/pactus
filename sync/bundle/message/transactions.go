@@ -24,6 +24,9 @@ func (m *TransactionsMessage) BasicCheck() error {
 		return BasicCheckError{Reason: "no transaction"}
 	}
 	for _, trx := range m.Transactions {
+		if trx == nil {
+			return BasicCheckError{Reason: "nil transaction"}
+		}
 		if err := trx.BasicCheck(); err != nil {
 			return err
 		}
@@ -53,6 +56,12 @@ func (m *TransactionsMessage) LogString() string {
 	var builder strings.Builder
 
 	for _, trx := range m.Transactions {
+		if trx == nil {
+			fmt.Fprint(&builder, "nil-tx ")
+
+			continue
+		}
+
 		fmt.Fprintf(&builder, "%v ", trx.ID().LogString())
 	}
 	fmt.Fprintf(&builder, "{%v: ⌘ [%v]}", len(m.Transactions), builder.String())

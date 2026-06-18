@@ -299,7 +299,7 @@ func (cs *consensus) AddVote(vte *vote.Vote) {
 		vte.Type() == vote.VoteTypeCPDecided {
 		err := cs.changeProposer.checkJust(vte)
 		if err != nil {
-			cs.logger.Error("error on adding a cp vote", "vote", vte, "error", err)
+			cs.logger.Warn("error on adding a cp vote", "vote", vte, "error", err)
 
 			return
 		}
@@ -307,7 +307,7 @@ func (cs *consensus) AddVote(vte *vote.Vote) {
 
 	added, err := cs.log.AddVote(vte)
 	if err != nil {
-		cs.logger.Error("error on adding a vote", "vote", vte, "error", err)
+		cs.logger.Warn("error on adding a vote", "vote", vte, "error", err)
 	}
 	if added {
 		cs.logger.Info("new vote added", "vote", vte)
