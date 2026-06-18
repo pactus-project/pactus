@@ -38,6 +38,10 @@ func (e *UnbondExecutor) Check(strict bool) error {
 		if e.pld.DelegateOwner != e.validator.DelegateOwner() {
 			return ErrInvalidDelegateOwner
 		}
+
+		if !e.validator.DelegateExpired(e.sbx.CurrentHeight()) {
+			return ErrDelegationNotExpired
+		}
 	} else {
 		// A non-delegated validator can only be unbonded by its own key.
 		// The payload must not be delegated, forcing Signer() == Validator.
