@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/go-zeromq/zmq4"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -17,17 +18,15 @@ func TestBlockInfoPublisher(t *testing.T) {
 	conf.ZmqPubBlockInfo = addr
 
 	td := setup(t, conf)
-	defer td.closeServer()
-
-	td.server.Publishers()
 
 	sub := zmq4.NewSub(t.Context(), zmq4.WithAutomaticReconnect(false))
-
-	err := sub.Dial(addr)
+	err := sub.SetOption(zmq4.OptionSubscribe, string(TopicBlockInfo.Bytes()))
 	require.NoError(t, err)
 
-	err = sub.SetOption(zmq4.OptionSubscribe, string(TopicBlockInfo.Bytes()))
+	err = sub.Dial(addr)
 	require.NoError(t, err)
+
+	time.Sleep(100 * time.Millisecond)
 
 	blk, _ := td.TestSuite.GenerateTestBlock(td.RandHeight())
 	td.pipe.Send(blk)
