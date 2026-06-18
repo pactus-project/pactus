@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.15.6](https://github.com/pactus-project/pactus/compare/v1.15.5...v1.15.6) (2026-06-18)
+
+### Fix
+
+- **execution**: check validator expiry for unbond ([#2294](https://github.com/pactus-project/pactus/pull/2294))
+- **types, message**: nil-pointer check ([#2292](https://github.com/pactus-project/pactus/pull/2292))
+- **execution**: unbond authorization bypass
+- **gtk**: enforce left-to-right widget direction ([#2285](https://github.com/pactus-project/pactus/pull/2285))
+
 ## [1.15.5](https://github.com/pactus-project/pactus/compare/v1.15.4...v1.15.5) (2026-06-12)
 
 ### Fix
