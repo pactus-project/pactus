@@ -36,33 +36,34 @@ func TestMessageCompress(t *testing.T) {
 		data, _ := blk.Bytes()
 		blocksData = append(blocksData, data)
 	}
-	msg1 := message.NewBlocksResponseMessage(message.ResponseCodeOK, message.ResponseCodeOK.String(),
-		1234, 888, blocksData, nil)
-	bdl := NewBundle(msg1)
-	bs0, err := bdl.Encode()
+	msg := message.NewBlocksResponseMessage(message.ResponseCodeOK, message.ResponseCodeOK.String(),
+		ts.RandInt(), ts.RandHeight(), blocksData, nil)
+	bdl1 := NewBundle(msg)
+	require.NoError(t, bdl1.BasicCheck())
+	bs0, err := bdl1.Encode()
 	require.NoError(t, err)
-	assert.False(t, util.IsFlagSet(bdl.Flags, BundleFlagCompressed))
+	assert.False(t, util.IsFlagSet(bdl1.Flags, BundleFlagCompressed))
 
-	bdl.CompressIt()
-	bs1, err := bdl.Encode()
+	bdl1.CompressIt()
+	bs1, err := bdl1.Encode()
 	require.NoError(t, err)
-	assert.True(t, util.IsFlagSet(bdl.Flags, BundleFlagCompressed))
+	assert.True(t, util.IsFlagSet(bdl1.Flags, BundleFlagCompressed))
 
-	fmt.Printf("Compressed :%v%%\n", 100-len(bs1)*100/len(bs0))
-	fmt.Printf("Uncompressed len :%v\n", len(bs0))
-	fmt.Printf("Compressed len :%v\n", len(bs1))
+	t.Logf("Compressed :%v%%\n", 100-len(bs1)*100/len(bs0))
+	t.Logf("Uncompressed len :%v\n", len(bs0))
+	t.Logf("Compressed len :%v\n", len(bs1))
 
-	msg2 := new(Bundle)
-	bytesRead1, err := msg2.Decode(bytes.NewReader(bs0))
+	bdl2 := new(Bundle)
+	bytesRead1, err := bdl2.Decode(bytes.NewReader(bs0))
 	require.NoError(t, err)
 	assert.Equal(t, len(bs0), bytesRead1)
-	require.NoError(t, msg2.BasicCheck())
+	require.NoError(t, bdl2.BasicCheck())
 
-	msg3 := new(Bundle)
-	bytesRead2, err := msg3.Decode(bytes.NewReader(bs1))
+	bdl3 := new(Bundle)
+	bytesRead2, err := bdl3.Decode(bytes.NewReader(bs1))
 	require.NoError(t, err)
 	assert.Equal(t, len(bs1), bytesRead2)
-	require.NoError(t, msg3.BasicCheck())
+	require.NoError(t, bdl3.BasicCheck())
 }
 
 func TestDecodeVoteMessage(t *testing.T) {

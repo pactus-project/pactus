@@ -46,10 +46,18 @@ func (m *ProposalMessage) ConsensusHeight() types.Height {
 }
 
 func (m *ProposalMessage) Height() types.Height {
+	if m.Proposal == nil {
+		return 0
+	}
+
 	return m.Proposal.Height()
 }
 
 // LogString returns a concise string representation intended for use in logs.
 func (m *ProposalMessage) LogString() string {
+	if m.Proposal == nil {
+		return "{nil-proposal}"
+	}
+
 	return m.Proposal.LogString()
 }

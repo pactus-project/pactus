@@ -352,30 +352,31 @@ func TestCPDecided(t *testing.T) {
 
 	t.Run("Invalid round", func(t *testing.T) {
 		invalidCPRound := int16(-1)
-		v := vote.NewCPDecidedVote(hash.UndefHash, height, round,
+		vte := vote.NewCPDecidedVote(hash.UndefHash, height, round,
 			invalidCPRound, vote.CPValueNo, just, ts.RandAccAddress())
 
-		err := v.BasicCheck()
+		err := vte.BasicCheck()
 		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP round"})
 	})
 
 	t.Run("No CP data", func(t *testing.T) {
 		data, _ := hex.DecodeString("A701050218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
 			"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6")
-		v := new(vote.Vote)
-		_ = v.UnmarshalCBOR(data)
-		v.SetSignature(ts.RandBLSSignature())
+		vte := new(vote.Vote)
+		err := vte.UnmarshalCBOR(data)
+		require.NoError(t, err)
+		vte.SetSignature(ts.RandBLSSignature())
 
-		err := v.BasicCheck()
+		err = vte.BasicCheck()
 		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "should have CP data"})
 	})
 
 	t.Run("Invalid CP value", func(t *testing.T) {
 		invalidCPValue := vote.CPValue(3)
-		v := vote.NewCPDecidedVote(hash.UndefHash, height, round,
+		vte := vote.NewCPDecidedVote(hash.UndefHash, height, round,
 			1, invalidCPValue, just, ts.RandAccAddress())
 
-		err := v.BasicCheck()
+		err := vte.BasicCheck()
 		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP value"})
 	})
 
@@ -398,51 +399,53 @@ func TestBasicCheck(t *testing.T) {
 	t.Run("Should have CP data", func(t *testing.T) {
 		data, _ := hex.DecodeString("A701050218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
 			"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6")
-		v := new(vote.Vote)
-		err := v.UnmarshalCBOR(data)
+		vte := new(vote.Vote)
+		err := vte.UnmarshalCBOR(data)
 		require.NoError(t, err)
 
-		err = v.BasicCheck()
+		err = vte.BasicCheck()
 		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "should have CP data"})
+		assert.Contains(t, vte.LogString(), "nil")
 	})
 
 	t.Run("Invalid height", func(t *testing.T) {
-		v := vote.NewPrepareVote(ts.RandHash(), 0, 0, ts.RandAccAddress())
+		vte := vote.NewPrepareVote(ts.RandHash(), 0, 0, ts.RandAccAddress())
 
-		err := v.BasicCheck()
+		err := vte.BasicCheck()
 		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid height"})
 	})
 
 	t.Run("Invalid round", func(t *testing.T) {
-		v := vote.NewPrepareVote(ts.RandHash(), 100, -1, ts.RandAccAddress())
+		vte := vote.NewPrepareVote(ts.RandHash(), 100, -1, ts.RandAccAddress())
 
-		err := v.BasicCheck()
+		err := vte.BasicCheck()
 		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid round"})
 	})
 
 	t.Run("No signature", func(t *testing.T) {
-		v := vote.NewPrepareVote(ts.RandHash(), 100, 0, ts.RandAccAddress())
+		vte := vote.NewPrepareVote(ts.RandHash(), 100, 0, ts.RandAccAddress())
 
-		err := v.BasicCheck()
+		err := vte.BasicCheck()
 		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "no signature"})
 	})
 
 	t.Run("Should not have CP data", func(t *testing.T) {
 		data, _ := hex.DecodeString("A701020218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
 			"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06A40100020103020441A007f6")
-		v := new(vote.Vote)
-		_ = v.UnmarshalCBOR(data)
-		v.SetSignature(ts.RandBLSSignature())
+		vte := new(vote.Vote)
+		err := vte.UnmarshalCBOR(data)
+		require.NoError(t, err)
+		vte.SetSignature(ts.RandBLSSignature())
 
-		err := v.BasicCheck()
+		err = vte.BasicCheck()
 		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "should not have CP data"})
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		v := vote.NewPrepareVote(ts.RandHash(), 100, 0, ts.RandAccAddress())
-		v.SetSignature(ts.RandBLSSignature())
+		vte := vote.NewPrepareVote(ts.RandHash(), 100, 0, ts.RandAccAddress())
+		vte.SetSignature(ts.RandBLSSignature())
 
-		require.NoError(t, v.BasicCheck())
+		require.NoError(t, vte.BasicCheck())
 	})
 }
 
@@ -519,13 +522,13 @@ func TestCPInvalidJustType(t *testing.T) {
 			"A4" + // map(4)
 			"0100" + // CP_Round: 0
 			"0201" + // CP_Value: 1
-			"0308" + // Just type: 8 <<<(Unknown Just Type)>>>
+			"0300" + // Just type: 0 <<<(Unknown Just Type)>>>
 			"0441" + // Just: JustTypeInitYes
 			"A0" + // Empty Array
-			"07f6",
-	) // Signature -> Null
+			"07f6", // Signature -> Null
+	)
 
-	v := new(vote.Vote)
-	err := v.UnmarshalCBOR(voteData)
+	vte := new(vote.Vote)
+	err := vte.UnmarshalCBOR(voteData)
 	require.Error(t, err)
 }

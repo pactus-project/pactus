@@ -37,10 +37,18 @@ func (*VoteMessage) ShouldBroadcast() bool {
 }
 
 func (m *VoteMessage) ConsensusHeight() types.Height {
+	if m.Vote == nil {
+		return 0
+	}
+
 	return m.Vote.Height()
 }
 
 // LogString returns a concise string representation intended for use in logs.
 func (m *VoteMessage) LogString() string {
+	if m.Vote == nil {
+		return "{nil-vote}"
+	}
+
 	return m.Vote.LogString()
 }

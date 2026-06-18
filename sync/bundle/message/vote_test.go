@@ -22,6 +22,8 @@ func TestVoteMessage(t *testing.T) {
 		msg := NewVoteMessage(nil)
 
 		require.ErrorIs(t, msg.BasicCheck(), BasicCheckError{Reason: "no vote"})
+		assert.Zero(t, msg.ConsensusHeight())
+		assert.Contains(t, msg.LogString(), "{nil-vote}")
 	})
 
 	t.Run("Invalid vote", func(t *testing.T) {

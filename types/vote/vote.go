@@ -260,6 +260,17 @@ func (v *Vote) LogString() string {
 			v.Signer().LogString(),
 		)
 	case VoteTypeCPPreVote, VoteTypeCPMainVote, VoteTypeCPDecided:
+		if v.data.CPVote == nil {
+			return fmt.Sprintf(
+				"{%d/%d/%s/nil ⌘ %v 👤 %s}",
+				v.Height(),
+				v.Round(),
+				v.Type(),
+				v.BlockHash().LogString(),
+				v.Signer().LogString(),
+			)
+		}
+
 		return fmt.Sprintf(
 			"{%d/%d/%s/%d/%s ⌘ %v 👤 %s}",
 			v.Height(),
