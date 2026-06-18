@@ -72,7 +72,7 @@ func (m *BlockAnnounceMessage) ConsensusHeight() types.Height {
 
 // LogString returns a concise string representation intended for use in logs.
 func (m *BlockAnnounceMessage) LogString() string {
-	if m.Block != nil {
+	if m.Block == nil {
 		return fmt.Sprintf("{⌘ %d nil}", m.Height())
 	}
 
