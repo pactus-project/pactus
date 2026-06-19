@@ -477,6 +477,13 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 	st.lastInfo.UpdateCertificate(cert)
 	st.lastInfo.UpdateValidators(st.committee.Validators())
 
+	if blk.Header().Version() > st.params.BlockVersion {
+		st.logger.Info("block version updated",
+			"from", st.params.BlockVersion,
+			"to", blk.Header().Version())
+		st.params.BlockVersion = blk.Header().Version()
+	}
+
 	// Commit and update the committee
 	st.commitSandbox(sbx, cert.Round())
 
