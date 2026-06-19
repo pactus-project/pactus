@@ -3,6 +3,7 @@ package consensusv2
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
@@ -17,6 +18,21 @@ func TestProposePublishProposal(t *testing.T) {
 	td.enterNewHeight(td.consX)
 	p := td.shouldPublishProposal(t, td.consX, 1, 0)
 	assert.Equal(t, td.consX.valKey.Address(), p.Block().Header().ProposerAddress())
+}
+
+func TestProposeDoubleEntry(t *testing.T) {
+	td := setup(t)
+
+	td.consX.MoveToNewHeight()
+	td.newHeightTimeout(td.consX)
+	td.shouldPublishProposal(t, td.consX, 1, 0)
+
+	// Clear accumulated messages to test the double entry independently
+	td.network = nil
+
+	// Double entry to propose state should not publish another proposal
+	td.consX.enterNewState(td.consX.proposeState)
+	td.shouldNotPublish(t, td.consX, message.TypeProposal)
 }
 
 func TestProposeInvalidProposer(t *testing.T) {
