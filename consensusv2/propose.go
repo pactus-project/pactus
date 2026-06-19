@@ -35,7 +35,9 @@ func (s *proposeState) decide() {
 
 	if proposer.Address() == s.valKey.Address() {
 		s.logger.Info("our turn to propose", "proposer", proposer.Address())
-		s.createProposal(s.height, s.round)
+		if !s.log.HasRoundProposal(s.round) {
+			s.createProposal(s.height, s.round)
+		}
 	} else {
 		s.logger.Debug("not our turn to propose", "proposer", proposer.Address())
 	}
