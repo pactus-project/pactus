@@ -3,7 +3,6 @@ package bundle
 import (
 	"bytes"
 	"encoding/hex"
-	"fmt"
 	"testing"
 
 	"github.com/pactus-project/pactus/sync/bundle/message"
@@ -27,7 +26,7 @@ func TestInvalidCBOR(t *testing.T) {
 	require.Error(t, err)
 }
 
-func TestMessageCompress(t *testing.T) {
+func TestEncodeDecodeBlocksResponse(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	blocksData := [][]byte{}
@@ -38,32 +37,17 @@ func TestMessageCompress(t *testing.T) {
 	}
 	msg := message.NewBlocksResponseMessage(message.ResponseCodeOK, message.ResponseCodeOK.String(),
 		ts.RandInt(), ts.RandHeight(), blocksData, nil)
-	bdl1 := NewBundle(msg)
-	require.NoError(t, bdl1.BasicCheck())
-	bs0, err := bdl1.Encode()
+	bdl := NewBundle(msg)
+	require.NoError(t, bdl.BasicCheck())
+	encData, err := bdl.Encode()
 	require.NoError(t, err)
-	assert.False(t, util.IsFlagSet(bdl1.Flags, BundleFlagCompressed))
-
-	bdl1.CompressIt()
-	bs1, err := bdl1.Encode()
-	require.NoError(t, err)
-	assert.True(t, util.IsFlagSet(bdl1.Flags, BundleFlagCompressed))
-
-	t.Logf("Compressed :%v%%\n", 100-len(bs1)*100/len(bs0))
-	t.Logf("Uncompressed len :%v\n", len(bs0))
-	t.Logf("Compressed len :%v\n", len(bs1))
+	assert.False(t, util.IsFlagSet(bdl.Flags, BundleFlagCompressed))
 
 	bdl2 := new(Bundle)
-	bytesRead1, err := bdl2.Decode(bytes.NewReader(bs0))
+	bytesRead, err := bdl2.Decode(bytes.NewReader(encData))
 	require.NoError(t, err)
-	assert.Equal(t, len(bs0), bytesRead1)
+	assert.Equal(t, len(encData), bytesRead)
 	require.NoError(t, bdl2.BasicCheck())
-
-	bdl3 := new(Bundle)
-	bytesRead2, err := bdl3.Decode(bytes.NewReader(bs1))
-	require.NoError(t, err)
-	assert.Equal(t, len(bs1), bytesRead2)
-	require.NoError(t, bdl3.BasicCheck())
 }
 
 func TestDecodeVoteMessage(t *testing.T) {
@@ -72,14 +56,9 @@ func TestDecodeVoteMessage(t *testing.T) {
 	v, _ := ts.GenerateTestPrecommitVote(88, 0)
 	msg := message.NewVoteMessage(v)
 	bdl := NewBundle(msg)
-	bs0, err := bdl.Encode()
+	bs, err := bdl.Encode()
 	require.NoError(t, err)
-	bdl.CompressIt()
-	bs1, err := bdl.Encode()
-	require.NoError(t, err)
-	fmt.Printf("Compressed :%v%%\n", 100-len(bs1)*100/len(bs0))
-	fmt.Printf("Uncompressed len :%v\n", len(bs0))
-	fmt.Printf("Compressed len :%v\n", len(bs1))
+	t.Logf("Encoded vote message len: %v", len(bs))
 }
 
 func TestDecodeVoteCBOR(t *testing.T) {

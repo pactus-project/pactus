@@ -59,10 +59,6 @@ func (b *Bundle) LogString() string {
 	return fmt.Sprintf("%s%s", b.Message.Type(), b.Message.LogString())
 }
 
-func (b *Bundle) CompressIt() {
-	b.Flags = util.SetFlag(b.Flags, BundleFlagCompressed)
-}
-
 type _Bundle struct {
 	Flags           int          `cbor:"1,keyasint"`
 	MessageType     message.Type `cbor:"2,keyasint"`
@@ -74,14 +70,6 @@ func (b *Bundle) Encode() ([]byte, error) {
 	data, err := cbor.Marshal(b.Message)
 	if err != nil {
 		return nil, err
-	}
-
-	if util.IsFlagSet(b.Flags, BundleFlagCompressed) {
-		c, err := util.CompressBuffer(data)
-		if err != nil {
-			return nil, err
-		}
-		data = c
 	}
 
 	msg := &_Bundle{
