@@ -164,35 +164,35 @@ func main() {
 			}
 
 			go func() {
-				// Define the lock file path
-				lockFilePath := filepath.Join(workingDir, ".pactus.lock")
-				fileLock = flock.New(lockFilePath)
-
-				locked, err := fileLock.TryLock()
-				if err != nil {
-					gtkutil.ShowErrorDialog(splash.Window(),
-						fmt.Sprintf("Aborted! Unable to acquire file lock. %v", err),
-						func(_ gtk.ResponseType) {
-							splash.Destroy()
-						})
-
-					return
-				}
-
-				if !locked {
-					gtkutil.ShowErrorDialog(splash.Window(),
-						fmt.Sprintf("Could not lock '%s', another instance is running?", lockFilePath),
-						func(_ gtk.ResponseType) {
-							splash.Destroy()
-						})
-
-					return
-				}
-
 				var grpcAddr string
 				var grpcInsecure bool
 
 				if *grpcAddrOpt == "" {
+					// Define the lock file path
+					lockFilePath := filepath.Join(workingDir, ".pactus.lock")
+					fileLock = flock.New(lockFilePath)
+
+					locked, err := fileLock.TryLock()
+					if err != nil {
+						gtkutil.ShowErrorDialog(splash.Window(),
+							fmt.Sprintf("Aborted! Unable to acquire file lock. %v", err),
+							func(_ gtk.ResponseType) {
+								splash.Destroy()
+							})
+
+						return
+					}
+
+					if !locked {
+						gtkutil.ShowErrorDialog(splash.Window(),
+							fmt.Sprintf("Could not lock '%s', another instance is running?", lockFilePath),
+							func(_ gtk.ResponseType) {
+								splash.Destroy()
+							})
+
+						return
+					}
+
 					reportStatus(notify, "Starting local node...")
 					time.Sleep(1 * time.Second)
 
