@@ -3,7 +3,6 @@ package execution
 import (
 	"github.com/pactus-project/pactus/execution/executor"
 	"github.com/pactus-project/pactus/sandbox"
-	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/tx"
 )
 
@@ -60,11 +59,9 @@ func CheckLockTime(trx *tx.Tx, sbx sandbox.Sandbox, strict bool) error {
 		interval = sbx.Params().SortitionInterval
 	}
 
-	if sbx.CurrentHeight() > types.Height(interval) {
-		if trx.LockTime() < sbx.CurrentHeight().SafeDecrease(interval) {
-			return LockTimeExpiredError{
-				LockTime: trx.LockTime(),
-			}
+	if trx.LockTime() < sbx.CurrentHeight().SafeDecrease(interval) {
+		return LockTimeExpiredError{
+			LockTime: trx.LockTime(),
 		}
 	}
 
