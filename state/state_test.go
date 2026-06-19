@@ -42,6 +42,12 @@ type testData struct {
 func setup(t *testing.T) *testData {
 	t.Helper()
 
+	return setupWithVersion(t, protocol.ProtocolVersionLatest)
+}
+
+func setupWithVersion(t *testing.T, blockVersion protocol.Version) *testData {
+	t.Helper()
+
 	ts := testsuite.NewTestSuite(t)
 
 	genValNum := 4
@@ -55,23 +61,19 @@ func setup(t *testing.T) *testData {
 		genVals = append(genVals, val)
 	}
 
-	numBlocks := ts.RandHeight(
-		testsuite.HeightWithMin(1),
-		testsuite.HeightWithMax(10),
-	)
+	numBlocks := types.Height(7)
 	mockTxPool := txpool.NewMockTxPool(ts.Ctrl)
 	mockTxPool.EXPECT().SetNewSandboxAndRecheck(gomock.Any()).Return().AnyTimes()
 	mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(int(numBlocks))
 	mockTxPool.EXPECT().HandleCommittedBlock(gomock.Any()).Return().AnyTimes()
 
 	mockStore := store.MockingStore(ts)
-
 	genTime := util.RoundNow(10).Add(-8640 * time.Second)
 
 	genParams := genesis.DefaultGenesisParams()
 	genParams.CommitteeSize = 7
 	genParams.BondInterval = 10
-	genParams.BlockVersion = protocol.ProtocolVersion3
+	genParams.BlockVersion = blockVersion
 
 	genAcc1 := account.NewAccount(0)
 	genAcc1.AddToBalance(21 * 1e15) // 21,000,000.000,000,000
@@ -336,6 +338,7 @@ func TestTryCommitValidBlocks(t *testing.T) {
 	require.NoError(t, td.state.CommitBlock(blk, cert))
 
 	assert.Equal(t, blk.Hash(), td.state.LastBlockHash())
+	assert.Equal(t, blk.Header().Version(), td.state.Params().BlockVersion)
 	assert.Equal(t, blk.Header().Time(), td.state.LastBlockTime())
 	assert.Equal(t, cert.Hash(), td.state.LastCertificate().Hash())
 	assert.Equal(t, cert.Height(), td.state.LastBlockHeight())
@@ -761,4 +764,20 @@ func TestUpdateProptocolVersion(t *testing.T) {
 	val, err := td.state.ValidatorByAddress(td.state.valKeys[0].Address())
 	require.NoError(t, err)
 	assert.Equal(t, protocol.ProtocolVersionLatest, val.ProtocolVersion())
+}
+
+func TestBlockVersionUpgrade(t *testing.T) {
+	td1 := setupWithVersion(t, protocol.ProtocolVersionLatest-1)
+	td2 := setupWithVersion(t, protocol.ProtocolVersionLatest)
+
+	td1.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).AnyTimes()
+	td2.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).AnyTimes()
+
+	blk1, cert1 := td1.makeBlockAndCertificate(t, 0)
+	require.NoError(t, td1.state.CommitBlock(blk1, cert1))
+	assert.Equal(t, protocol.ProtocolVersionLatest-1, td1.state.Params().BlockVersion)
+
+	blk2, cert2 := td2.makeBlockAndCertificate(t, 0)
+	require.NoError(t, td2.state.CommitBlock(blk2, cert2))
+	assert.Equal(t, protocol.ProtocolVersionLatest, td2.state.Params().BlockVersion)
 }
