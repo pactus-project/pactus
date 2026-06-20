@@ -11,18 +11,33 @@ import (
 	"slices"
 )
 
-// MaxDecompressedSize bounds how many bytes DecompressBuffer will produce.
+// DefaultMaxDecompressedSize bounds how many bytes DecompressBuffer will
+// produce by default.
 //
 // This guards against decompression-bomb DoS attacks (CWE-409): a tiny,
 // highly compressible gzip stream can expand by ~1000x, so without a cap an
 // attacker-controlled compressed payload received over the P2P layer can be
 // inflated into a multi-gigabyte single allocation and crash the node with a
 // fatal out-of-memory error.
-const MaxDecompressedSize = 8 << 20 // 8 MB
+const DefaultMaxDecompressedSize = 8 << 20 // 8 MB
 
 // ErrDecompressedSizeExceedsLimit is returned by DecompressBuffer when the
-// decompressed output would exceed MaxDecompressedSize.
+// decompressed output exceeds the configured (or default) size limit.
 var ErrDecompressedSizeExceedsLimit = errors.New("decompressed size exceeds limit")
+
+// DecompressOption configures DecompressBuffer behavior.
+type DecompressOption func(*decompressConfig)
+
+type decompressConfig struct {
+	maxSize int
+}
+
+// WithMaxDecompressedSize sets the decompressed output size limit (bytes).
+func WithMaxDecompressedSize(size int) DecompressOption {
+	return func(c *decompressConfig) {
+		c.maxSize = size
+	}
+}
 
 func Uint16ToBytesLE(n uint16) []byte {
 	bs := make([]byte, 2)
@@ -101,26 +116,33 @@ func CompressBuffer(data []byte) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func DecompressBuffer(s []byte) ([]byte, error) {
-	buf := bytes.NewBuffer(s)
+func DecompressBuffer(compressed []byte, opts ...DecompressOption) ([]byte, error) {
+	cfg := &decompressConfig{
+		maxSize: DefaultMaxDecompressedSize,
+	}
+	for _, opt := range opts {
+		opt(cfg)
+	}
+
+	buf := bytes.NewBuffer(compressed)
 	reader, err := gzip.NewReader(buf)
 	if err != nil {
 		return nil, err
 	}
 
 	// Bound the decompressed output to prevent decompression-bomb DoS attacks
-	// (CWE-409). Read up to MaxDecompressedSize+1 bytes: if the limited reader
-	// yields more than MaxDecompressedSize, the stream is over the cap and we
-	// reject it instead of silently truncating. The LimitReader stops reading
-	// at the cap, so no unbounded allocation occurs.
-	limited := io.LimitReader(reader, MaxDecompressedSize+1)
+	// (CWE-409). Read up to maxSize+1 bytes: if the limited reader yields
+	// more than maxSize, the stream is over the cap and we reject it instead
+	// of silently truncating. The LimitReader stops reading at the cap, so no
+	// unbounded allocation occurs.
+	limited := io.LimitReader(reader, int64(cfg.maxSize+1))
 
 	var res bytes.Buffer
 	if _, err = res.ReadFrom(limited); err != nil {
 		return nil, err
 	}
 
-	if res.Len() > MaxDecompressedSize {
+	if res.Len() > cfg.maxSize {
 		return nil, ErrDecompressedSizeExceedsLimit
 	}
 
