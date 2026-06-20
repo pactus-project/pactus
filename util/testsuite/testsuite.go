@@ -161,6 +161,11 @@ func (ts *TestSuite) RandAmount(max ...amount.Amount) amount.Amount {
 
 // RandAmountRange returns a random amount between [min, max).
 func (ts *TestSuite) RandAmountRange(min, max amount.Amount) amount.Amount {
+	if max <= min {
+		// If max <= min, it returns min to avoid invalid range.
+		return min
+	}
+
 	return amount.Amount(ts.RandInt64(testsuite.WithMin(min.ToNanoPAC()), testsuite.WithMax(max.ToNanoPAC())))
 }
 
