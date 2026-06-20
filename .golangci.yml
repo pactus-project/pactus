@@ -23,7 +23,7 @@ linters:
     - godot
     - goheader
     - gomoddirectives
-    - gomodguard
+    - gomodguard_v2
     - goprintffuncname
     - gosec
     - gosmopolitan
@@ -86,6 +86,7 @@ linters:
     govet:
       disable:
         - fieldalignment
+        - inline
       enable-all: true
       settings:
         shadow:

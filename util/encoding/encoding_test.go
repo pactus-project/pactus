@@ -76,14 +76,14 @@ func TestElementEncoding(t *testing.T) {
 
 		rbuf := bytes.NewReader(tt.buf)
 		val := tt.in
-		if reflect.ValueOf(tt.in).Kind() != reflect.Ptr {
+		if reflect.ValueOf(tt.in).Kind() != reflect.Pointer {
 			val = reflect.New(reflect.TypeOf(tt.in)).Interface()
 		}
 		err = ReadElement(rbuf, val)
 		require.NoError(t, err, "readElement #%d", no)
 
 		ival := val
-		if reflect.ValueOf(tt.in).Kind() != reflect.Ptr {
+		if reflect.ValueOf(tt.in).Kind() != reflect.Pointer {
 			ival = reflect.Indirect(reflect.ValueOf(val)).Interface()
 		}
 		assert.Equal(t, ival, tt.in, "readElement #%d", no)
@@ -128,7 +128,7 @@ func TestElementEncodingErrors(t *testing.T) {
 
 		r := util.NewFixedReader(tt.max, nil)
 		val := tt.in
-		if reflect.ValueOf(tt.in).Kind() != reflect.Ptr {
+		if reflect.ValueOf(tt.in).Kind() != reflect.Pointer {
 			val = reflect.New(reflect.TypeOf(tt.in)).Interface()
 		}
 		err = ReadElement(r, val)

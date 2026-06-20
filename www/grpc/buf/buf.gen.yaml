@@ -29,11 +29,11 @@ plugins:
     out: ./gen/go
     opt: paths=source_relative
     # https://buf.build/grpc/go
-  - remote: buf.build/grpc/go:v1.6.0
+  - remote: buf.build/grpc/go:v1.6.2
     out: ./gen/go
     opt: paths=source_relative,require_unimplemented_servers=false
     # https://buf.build/protocolbuffers/js
-  - remote: buf.build/protocolbuffers/js:v4.0.1
+  - remote: buf.build/protocolbuffers/js:v4.0.2
     out: ./gen/js
     opt:
       - import_style=commonjs
@@ -60,10 +60,10 @@ plugins:
   - remote: buf.build/grpc/java:v1.77.0
     out: ./gen/java
     # https://buf.build/protocolbuffers/python
-  - remote: buf.build/protocolbuffers/python:v33.2
+  - remote: buf.build/protocolbuffers/python:v35.1
     out: ./gen/python
     # https://buf.build/grpc/python
-  - remote: buf.build/grpc/python:v1.76.0
+  - remote: buf.build/grpc/python:v1.81.1
     out: ./gen/python
     # https://buf.build/protocolbuffers/pyi
   - remote: buf.build/protocolbuffers/pyi:v33.2
