@@ -22,7 +22,7 @@ jobs:
       dry_run: ${{ steps.release-type.outputs.dry_run }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -59,37 +59,37 @@ jobs:
           VERSION: ${{ env.LATEST_TAG }}
 
       - name: Upload `package-js-grpc` package
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: package-js-grpc
           path: packages/js/pactus-grpc
 
       - name: Upload `package-js-jsonrpc` package
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: package-js-jsonrpc
           path: packages/js/pactus-jsonrpc
 
       - name: Upload `package-python-grpc` package
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: package-python-grpc
           path: packages/python/pactus-grpc
 
       - name: Upload `package-python-jsonrpc` package
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: package-python-jsonrpc
           path: packages/python/pactus-jsonrpc
 
       - name: Upload `package-rust-grpc` package
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: package-rust-grpc
           path: packages/rust/pactus-grpc
 
       - name: Upload `package-rust-jsonrpc` package
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: package-rust-jsonrpc
           path: packages/rust/pactus-jsonrpc
@@ -105,7 +105,7 @@ jobs:
 
     steps:
       - name: Download JavaScript Package
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           name: package-js-grpc
 
@@ -136,7 +136,7 @@ jobs:
 
     steps:
       - name: Download JavaScript Package
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           name: package-js-jsonrpc
 
@@ -167,7 +167,7 @@ jobs:
 
     steps:
       - name: Download Python Package
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           name: package-python-grpc
 
@@ -196,7 +196,7 @@ jobs:
 
     steps:
       - name: Download Python Package
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           name: package-python-jsonrpc
 
@@ -225,7 +225,7 @@ jobs:
 
     steps:
       - name: Download Rust Package
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           name: package-rust-grpc
 
@@ -254,7 +254,7 @@ jobs:
 
     steps:
       - name: Download Rust Package
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           name: package-rust-jsonrpc
 

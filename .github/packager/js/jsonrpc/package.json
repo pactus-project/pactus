@@ -19,9 +19,9 @@
     "json-rpc"
   ],
   "dependencies": {
-    "@open-rpc/client-js": "1.8.1",
+    "@open-rpc/client-js": "2.0.0",
     "@open-rpc/meta-schema": "1.14.9",
-    "@open-rpc/schema-utils-js": "2.1.2",
+    "@open-rpc/schema-utils-js": "2.2.1",
     "lodash": "^4.17.15"
   }
 }

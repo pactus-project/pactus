@@ -16,17 +16,17 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v6
         with:
-          go-version: "1.26.2"
+          go-version: "1.26.4"
 
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Check linting and formatting
         uses: golangci/golangci-lint-action@v9
         with:
-          version: v2.11.4
+          version: v2.12.2
 
       - name: Check proto files
         run: |
-          go install github.com/bufbuild/buf/cmd/buf@v1.67.0
+          go install github.com/bufbuild/buf/cmd/buf@v1.71.0
           make proto-check
