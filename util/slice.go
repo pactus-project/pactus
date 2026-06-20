@@ -11,34 +11,6 @@ import (
 	"slices"
 )
 
-// DefaultMaxDecompressedSize bounds how many bytes DecompressBuffer will
-// produce by default.
-//
-// This guards against decompression-bomb DoS attacks (CWE-409): a tiny,
-// highly compressible gzip stream can expand by ~1000x, so without a cap an
-// attacker-controlled compressed payload received over the P2P layer can be
-// inflated into a multi-gigabyte single allocation and crash the node with a
-// fatal out-of-memory error.
-const DefaultMaxDecompressedSize = 8 << 20 // 8 MB
-
-// ErrDecompressedSizeExceedsLimit is returned by DecompressBuffer when the
-// decompressed output exceeds the configured (or default) size limit.
-var ErrDecompressedSizeExceedsLimit = errors.New("decompressed size exceeds limit")
-
-// DecompressOption configures DecompressBuffer behavior.
-type DecompressOption func(*decompressConfig)
-
-type decompressConfig struct {
-	maxSize int
-}
-
-// WithMaxDecompressedSize sets the decompressed output size limit (bytes).
-func WithMaxDecompressedSize(size int) DecompressOption {
-	return func(c *decompressConfig) {
-		c.maxSize = size
-	}
-}
-
 func Uint16ToBytesLE(n uint16) []byte {
 	bs := make([]byte, 2)
 	binary.LittleEndian.PutUint16(bs, n)
@@ -114,6 +86,34 @@ func CompressBuffer(data []byte) ([]byte, error) {
 	}
 
 	return buf.Bytes(), nil
+}
+
+// DefaultMaxDecompressedSize bounds how many bytes DecompressBuffer will
+// produce by default.
+//
+// This guards against decompression-bomb DoS attacks (CWE-409): a tiny,
+// highly compressible gzip stream can expand by ~1000x, so without a cap an
+// attacker-controlled compressed payload received over the P2P layer can be
+// inflated into a multi-gigabyte single allocation and crash the node with a
+// fatal out-of-memory error.
+const DefaultMaxDecompressedSize = 8 << 20 // 8 MB
+
+// ErrDecompressedSizeExceedsLimit is returned by DecompressBuffer when the
+// decompressed output exceeds the configured (or default) size limit.
+var ErrDecompressedSizeExceedsLimit = errors.New("decompressed size exceeds limit")
+
+// DecompressOption configures DecompressBuffer behavior.
+type DecompressOption func(*decompressConfig)
+
+type decompressConfig struct {
+	maxSize int
+}
+
+// WithMaxDecompressedSize sets the decompressed output size limit (bytes).
+func WithMaxDecompressedSize(size int) DecompressOption {
+	return func(c *decompressConfig) {
+		c.maxSize = size
+	}
 }
 
 func DecompressBuffer(compressed []byte, opts ...DecompressOption) ([]byte, error) {

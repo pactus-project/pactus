@@ -114,7 +114,7 @@ func TestDecompress(t *testing.T) {
 func TestDecompressionBomb(t *testing.T) {
 	// DecompressBuffer must stop at the configured cap and return an error
 	// rather than inflating the full output.
-	oversized := make([]byte, 200)
+	oversized := make([]byte, 101)
 	c, err := CompressBuffer(oversized)
 	require.NoError(t, err)
 
