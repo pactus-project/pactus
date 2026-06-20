@@ -49,10 +49,7 @@ func (handler *blocksResponseHandler) ParseMessage(m message.Message, pid peer.I
 }
 
 func (*blocksResponseHandler) PrepareBundle(m message.Message) *bundle.Bundle {
-	bdl := bundle.NewBundle(m)
-	bdl.CompressIt()
-
-	return bdl
+	return bundle.NewBundle(m)
 }
 
 func (handler *blocksResponseHandler) updateSession(sid int, code message.ResponseCode) {
