@@ -5,7 +5,7 @@ import grpc
 import wallet_pb2 as wallet__pb2
 
 
-class WalletStub(object):
+class WalletStub:
     """Wallet service provides RPC methods for wallet management operations.
     """
 
@@ -117,7 +117,7 @@ class WalletStub(object):
                 _registered_method=True)
 
 
-class WalletServicer(object):
+class WalletServicer:
     """Wallet service provides RPC methods for wallet management operations.
     """
 
@@ -376,7 +376,7 @@ def add_WalletServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class Wallet(object):
+class Wallet:
     """Wallet service provides RPC methods for wallet management operations.
     """
 

@@ -5,7 +5,7 @@ import grpc
 import network_pb2 as network__pb2
 
 
-class NetworkStub(object):
+class NetworkStub:
     """Network service provides RPCs for retrieving information about the network.
     """
 
@@ -37,7 +37,7 @@ class NetworkStub(object):
                 _registered_method=True)
 
 
-class NetworkServicer(object):
+class NetworkServicer:
     """Network service provides RPCs for retrieving information about the network.
     """
 
@@ -100,7 +100,7 @@ def add_NetworkServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class Network(object):
+class Network:
     """Network service provides RPCs for retrieving information about the network.
     """
 

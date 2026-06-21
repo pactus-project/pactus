@@ -301,8 +301,7 @@ message SetAddressLabelResponse {
 }
 
 // Request message for listing wallets.
-message ListWalletsRequest {
-}
+message ListWalletsRequest {}
 
 // Response message contains wallet names.
 message ListWalletsResponse {

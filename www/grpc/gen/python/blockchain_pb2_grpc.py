@@ -5,7 +5,7 @@ import grpc
 import blockchain_pb2 as blockchain__pb2
 
 
-class BlockchainStub(object):
+class BlockchainStub:
     """Blockchain service defines RPC methods for interacting with the blockchain.
     """
 
@@ -77,7 +77,7 @@ class BlockchainStub(object):
                 _registered_method=True)
 
 
-class BlockchainServicer(object):
+class BlockchainServicer:
     """Blockchain service defines RPC methods for interacting with the blockchain.
     """
 
@@ -236,7 +236,7 @@ def add_BlockchainServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class Blockchain(object):
+class Blockchain:
     """Blockchain service defines RPC methods for interacting with the blockchain.
     """
 
