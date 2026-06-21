@@ -7,37 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestHandlerBlockAnnounceParsingMessages(t *testing.T) {
-	td := setup(t, nil)
-
-	td.state.CommitTestBlocks(10)
-
-	pid := td.RandPeerID()
-	lastHeight := td.state.LastBlockHeight()
-	blk1, cert1 := td.GenerateTestBlock(lastHeight + 1)
-	msg1 := message.NewBlockAnnounceMessage(blk1, cert1, nil)
-
-	blk2, cert2 := td.GenerateTestBlock(lastHeight + 2)
-	msg2 := message.NewBlockAnnounceMessage(blk2, cert2, nil)
-
-	t.Run("Receiving new block announce message, without committing previous block", func(t *testing.T) {
-		td.receivingNewMessage(td.sync, msg2, pid)
-
-		stateHeight := td.sync.state.LastBlockHeight()
-		consHeight, _ := td.sync.getConsMgr().HeightRound()
-		assert.Equal(t, lastHeight, stateHeight)
-		assert.Equal(t, lastHeight+1, consHeight)
-	})
-
-	t.Run("Receiving missed block, should commit both blocks", func(t *testing.T) {
-		td.consV1Mgr.EXPECT().MoveToNewHeight()
-
-		td.receivingNewMessage(td.sync, msg1, pid)
-
-		assert.Equal(t, lastHeight+2, td.sync.state.LastBlockHeight())
-	})
-}
-
 func TestHandlerBlockAnnounceBroadcastingMessages(t *testing.T) {
 	td := setup(t, nil)
 

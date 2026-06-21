@@ -263,7 +263,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("all nodes have at least one connection to the bootstrap node B", func(t *testing.T) {
-		fmt.Printf("Running %s\n", t.Name())
+		t.Logf("Running %s\n", t.Name())
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			require.GreaterOrEqual(c, networkP.NumConnectedPeers(), 1) // Connected to B, M, N, X

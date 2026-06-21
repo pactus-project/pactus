@@ -39,7 +39,7 @@ type consensusV2 struct {
 	round       types.Round
 	valKey      *bls.ValidatorKey
 	rewardAddr  crypto.Address
-	bcState     state.Facade // Blockchain state
+	bcState     state.State // Blockchain state
 	broadcaster broadcaster
 	mediator    mediator
 	active      bool
@@ -62,7 +62,7 @@ type consensusV2 struct {
 func NewConsensus(
 	ctx context.Context,
 	conf *Config,
-	bcState state.Facade,
+	bcState state.State,
 	valKey *bls.ValidatorKey,
 	rewardAddr crypto.Address,
 	broadcastPipe pipeline.Pipeline[message.Message],
@@ -79,7 +79,7 @@ func NewConsensus(
 func makeConsensus(
 	ctx context.Context,
 	conf *Config,
-	bcState state.Facade,
+	bcState state.State,
 	valKey *bls.ValidatorKey,
 	rewardAddr crypto.Address,
 	broadcaster broadcaster,
@@ -226,6 +226,12 @@ func (cs *consensusV2) SetProposal(prop *proposal.Proposal) {
 		return
 	}
 
+	if err := prop.BasicCheck(); err != nil {
+		cs.logger.Warn("invalid proposal", "proposal", prop, "error", err)
+
+		return
+	}
+
 	roundProposal := cs.log.RoundProposal(prop.Round())
 	if roundProposal != nil {
 		cs.logger.Trace("this round has proposal", "proposal", prop)
@@ -233,23 +239,30 @@ func (cs *consensusV2) SetProposal(prop *proposal.Proposal) {
 		return
 	}
 
-	if err := prop.BasicCheck(); err != nil {
-		cs.logger.Warn("invalid proposal", "proposal", prop, "error", err)
+	if prop.Height() == cs.bcState.LastBlockHeight() {
+		// A slow node might receive a proposal after committing the proposed block.
+		// In this case, we accept the proposal and allow nodes to continue.
+		// By doing so, we enable the validator to broadcast its votes and
+		// prevent it from being marked as absent in the block certificate.
+		cs.logger.Warn("block committed before receiving proposal", "proposal", prop)
+		if prop.Block().Hash() != cs.bcState.LastBlockHash() {
+			cs.logger.Warn("proposal is not for the committed block", "proposal", prop)
 
-		return
-	}
+			return
+		}
+	} else {
+		proposer := cs.proposer(prop.Round())
+		if err := prop.Verify(proposer.PublicKey()); err != nil {
+			cs.logger.Warn("invalid proposer", "proposal", prop, "error", err)
 
-	proposer := cs.proposer(prop.Round())
-	if err := prop.Verify(proposer.PublicKey()); err != nil {
-		cs.logger.Warn("invalid proposer", "proposal", prop, "error", err)
+			return
+		}
 
-		return
-	}
+		if err := cs.bcState.ValidateBlock(prop.Block(), prop.Round()); err != nil {
+			cs.logger.Warn("invalid proposed block", "proposal", prop, "error", err)
 
-	if err := cs.bcState.ValidateBlock(prop.Block(), prop.Round()); err != nil {
-		cs.logger.Warn("invalid proposed block", "proposal", prop, "error", err)
-
-		return
+			return
+		}
 	}
 
 	cs.logger.Info("proposal set", "proposal", prop)

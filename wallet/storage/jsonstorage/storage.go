@@ -163,7 +163,7 @@ func (*Storage) QueryTransactions(_ storage.QueryParams) ([]*wtypes.TransactionI
 	return nil, ErrUnsupported
 }
 
-func (s *Storage) Clone(path string) (storage.IStorage, error) {
+func (s *Storage) Clone(path string) (storage.WalletStorage, error) {
 	cloned := store{
 		Version:    s.store.Version,
 		UUID:       uuid.New(),

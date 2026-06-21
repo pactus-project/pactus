@@ -8,7 +8,7 @@ import (
 	"github.com/pactus-project/pactus/types/vote"
 )
 
-type Reader interface {
+type ConsensusReader interface {
 	ConsensusKey() *bls.PublicKey
 	AllVotes() []*vote.Vote
 	HandleQueryVote(height types.Height, round types.Round) *vote.Vote
@@ -21,7 +21,7 @@ type Reader interface {
 }
 
 type Consensus interface {
-	Reader
+	ConsensusReader
 
 	MoveToNewHeight()
 	AddVote(vote *vote.Vote)

@@ -12,68 +12,39 @@ package manager
 import (
 	reflect "reflect"
 
-	bls "github.com/pactus-project/pactus/crypto/bls"
-	hash "github.com/pactus-project/pactus/crypto/hash"
+	consensus "github.com/pactus-project/pactus/consensus"
 	types "github.com/pactus-project/pactus/types"
 	proposal "github.com/pactus-project/pactus/types/proposal"
 	vote "github.com/pactus-project/pactus/types/vote"
-	gomock "go.uber.org/mock/gomock"
+	"go.uber.org/mock/gomock"
 )
 
-// MockReader is a mock of Reader interface.
-type MockReader struct {
+// MockConsensusManagerReader is a mock of ConsensusManagerReader interface.
+type MockConsensusManagerReader struct {
 	ctrl     *gomock.Controller
-	recorder *MockReaderMockRecorder
+	recorder *MockConsensusManagerReaderMockRecorder
 	isgomock struct{}
 }
 
-// MockReaderMockRecorder is the mock recorder for MockReader.
-type MockReaderMockRecorder struct {
-	mock *MockReader
+// MockConsensusManagerReaderMockRecorder is the mock recorder for MockConsensusManagerReader.
+type MockConsensusManagerReaderMockRecorder struct {
+	mock *MockConsensusManagerReader
 }
 
-// NewMockReader creates a new mock instance.
-func NewMockReader(ctrl *gomock.Controller) *MockReader {
-	mock := &MockReader{ctrl: ctrl}
-	mock.recorder = &MockReaderMockRecorder{mock}
+// NewMockConsensusManagerReader creates a new mock instance.
+func NewMockConsensusManagerReader(ctrl *gomock.Controller) *MockConsensusManagerReader {
+	mock := &MockConsensusManagerReader{ctrl: ctrl}
+	mock.recorder = &MockConsensusManagerReaderMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockReader) EXPECT() *MockReaderMockRecorder {
+func (m *MockConsensusManagerReader) EXPECT() *MockConsensusManagerReaderMockRecorder {
 	return m.recorder
 }
 
-// AllVotes mocks base method.
-func (m *MockReader) AllVotes() []*vote.Vote {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AllVotes")
-	ret0, _ := ret[0].([]*vote.Vote)
-	return ret0
-}
-
-// AllVotes indicates an expected call of AllVotes.
-func (mr *MockReaderMockRecorder) AllVotes() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AllVotes", reflect.TypeOf((*MockReader)(nil).AllVotes))
-}
-
-// ConsensusKey mocks base method.
-func (m *MockReader) ConsensusKey() *bls.PublicKey {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ConsensusKey")
-	ret0, _ := ret[0].(*bls.PublicKey)
-	return ret0
-}
-
-// ConsensusKey indicates an expected call of ConsensusKey.
-func (mr *MockReaderMockRecorder) ConsensusKey() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsensusKey", reflect.TypeOf((*MockReader)(nil).ConsensusKey))
-}
-
 // HandleQueryProposal mocks base method.
-func (m *MockReader) HandleQueryProposal(height types.Height, round types.Round) *proposal.Proposal {
+func (m *MockConsensusManagerReader) HandleQueryProposal(height types.Height, round types.Round) *proposal.Proposal {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HandleQueryProposal", height, round)
 	ret0, _ := ret[0].(*proposal.Proposal)
@@ -81,13 +52,13 @@ func (m *MockReader) HandleQueryProposal(height types.Height, round types.Round)
 }
 
 // HandleQueryProposal indicates an expected call of HandleQueryProposal.
-func (mr *MockReaderMockRecorder) HandleQueryProposal(height, round any) *gomock.Call {
+func (mr *MockConsensusManagerReaderMockRecorder) HandleQueryProposal(height, round any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleQueryProposal", reflect.TypeOf((*MockReader)(nil).HandleQueryProposal), height, round)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleQueryProposal", reflect.TypeOf((*MockConsensusManagerReader)(nil).HandleQueryProposal), height, round)
 }
 
 // HandleQueryVote mocks base method.
-func (m *MockReader) HandleQueryVote(height types.Height, round types.Round) *vote.Vote {
+func (m *MockConsensusManagerReader) HandleQueryVote(height types.Height, round types.Round) *vote.Vote {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HandleQueryVote", height, round)
 	ret0, _ := ret[0].(*vote.Vote)
@@ -95,337 +66,13 @@ func (m *MockReader) HandleQueryVote(height types.Height, round types.Round) *vo
 }
 
 // HandleQueryVote indicates an expected call of HandleQueryVote.
-func (mr *MockReaderMockRecorder) HandleQueryVote(height, round any) *gomock.Call {
+func (mr *MockConsensusManagerReaderMockRecorder) HandleQueryVote(height, round any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleQueryVote", reflect.TypeOf((*MockReader)(nil).HandleQueryVote), height, round)
-}
-
-// HasVote mocks base method.
-func (m *MockReader) HasVote(h hash.Hash) bool {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HasVote", h)
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// HasVote indicates an expected call of HasVote.
-func (mr *MockReaderMockRecorder) HasVote(h any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasVote", reflect.TypeOf((*MockReader)(nil).HasVote), h)
-}
-
-// HeightRound mocks base method.
-func (m *MockReader) HeightRound() (types.Height, types.Round) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HeightRound")
-	ret0, _ := ret[0].(types.Height)
-	ret1, _ := ret[1].(types.Round)
-	return ret0, ret1
-}
-
-// HeightRound indicates an expected call of HeightRound.
-func (mr *MockReaderMockRecorder) HeightRound() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HeightRound", reflect.TypeOf((*MockReader)(nil).HeightRound))
-}
-
-// IsActive mocks base method.
-func (m *MockReader) IsActive() bool {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IsActive")
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// IsActive indicates an expected call of IsActive.
-func (mr *MockReaderMockRecorder) IsActive() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsActive", reflect.TypeOf((*MockReader)(nil).IsActive))
-}
-
-// IsProposer mocks base method.
-func (m *MockReader) IsProposer() bool {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IsProposer")
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// IsProposer indicates an expected call of IsProposer.
-func (mr *MockReaderMockRecorder) IsProposer() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsProposer", reflect.TypeOf((*MockReader)(nil).IsProposer))
-}
-
-// Proposal mocks base method.
-func (m *MockReader) Proposal() *proposal.Proposal {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Proposal")
-	ret0, _ := ret[0].(*proposal.Proposal)
-	return ret0
-}
-
-// Proposal indicates an expected call of Proposal.
-func (mr *MockReaderMockRecorder) Proposal() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Proposal", reflect.TypeOf((*MockReader)(nil).Proposal))
-}
-
-// MockConsensus is a mock of Consensus interface.
-type MockConsensus struct {
-	ctrl     *gomock.Controller
-	recorder *MockConsensusMockRecorder
-	isgomock struct{}
-}
-
-// MockConsensusMockRecorder is the mock recorder for MockConsensus.
-type MockConsensusMockRecorder struct {
-	mock *MockConsensus
-}
-
-// NewMockConsensus creates a new mock instance.
-func NewMockConsensus(ctrl *gomock.Controller) *MockConsensus {
-	mock := &MockConsensus{ctrl: ctrl}
-	mock.recorder = &MockConsensusMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockConsensus) EXPECT() *MockConsensusMockRecorder {
-	return m.recorder
-}
-
-// AddVote mocks base method.
-func (m *MockConsensus) AddVote(arg0 *vote.Vote) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "AddVote", arg0)
-}
-
-// AddVote indicates an expected call of AddVote.
-func (mr *MockConsensusMockRecorder) AddVote(arg0 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddVote", reflect.TypeOf((*MockConsensus)(nil).AddVote), arg0)
-}
-
-// AllVotes mocks base method.
-func (m *MockConsensus) AllVotes() []*vote.Vote {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AllVotes")
-	ret0, _ := ret[0].([]*vote.Vote)
-	return ret0
-}
-
-// AllVotes indicates an expected call of AllVotes.
-func (mr *MockConsensusMockRecorder) AllVotes() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AllVotes", reflect.TypeOf((*MockConsensus)(nil).AllVotes))
-}
-
-// ConsensusKey mocks base method.
-func (m *MockConsensus) ConsensusKey() *bls.PublicKey {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ConsensusKey")
-	ret0, _ := ret[0].(*bls.PublicKey)
-	return ret0
-}
-
-// ConsensusKey indicates an expected call of ConsensusKey.
-func (mr *MockConsensusMockRecorder) ConsensusKey() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsensusKey", reflect.TypeOf((*MockConsensus)(nil).ConsensusKey))
-}
-
-// HandleQueryProposal mocks base method.
-func (m *MockConsensus) HandleQueryProposal(height types.Height, round types.Round) *proposal.Proposal {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HandleQueryProposal", height, round)
-	ret0, _ := ret[0].(*proposal.Proposal)
-	return ret0
-}
-
-// HandleQueryProposal indicates an expected call of HandleQueryProposal.
-func (mr *MockConsensusMockRecorder) HandleQueryProposal(height, round any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleQueryProposal", reflect.TypeOf((*MockConsensus)(nil).HandleQueryProposal), height, round)
-}
-
-// HandleQueryVote mocks base method.
-func (m *MockConsensus) HandleQueryVote(height types.Height, round types.Round) *vote.Vote {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HandleQueryVote", height, round)
-	ret0, _ := ret[0].(*vote.Vote)
-	return ret0
-}
-
-// HandleQueryVote indicates an expected call of HandleQueryVote.
-func (mr *MockConsensusMockRecorder) HandleQueryVote(height, round any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleQueryVote", reflect.TypeOf((*MockConsensus)(nil).HandleQueryVote), height, round)
-}
-
-// HasVote mocks base method.
-func (m *MockConsensus) HasVote(h hash.Hash) bool {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HasVote", h)
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// HasVote indicates an expected call of HasVote.
-func (mr *MockConsensusMockRecorder) HasVote(h any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasVote", reflect.TypeOf((*MockConsensus)(nil).HasVote), h)
-}
-
-// HeightRound mocks base method.
-func (m *MockConsensus) HeightRound() (types.Height, types.Round) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HeightRound")
-	ret0, _ := ret[0].(types.Height)
-	ret1, _ := ret[1].(types.Round)
-	return ret0, ret1
-}
-
-// HeightRound indicates an expected call of HeightRound.
-func (mr *MockConsensusMockRecorder) HeightRound() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HeightRound", reflect.TypeOf((*MockConsensus)(nil).HeightRound))
-}
-
-// IsActive mocks base method.
-func (m *MockConsensus) IsActive() bool {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IsActive")
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// IsActive indicates an expected call of IsActive.
-func (mr *MockConsensusMockRecorder) IsActive() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsActive", reflect.TypeOf((*MockConsensus)(nil).IsActive))
-}
-
-// IsDeprecated mocks base method.
-func (m *MockConsensus) IsDeprecated() bool {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IsDeprecated")
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// IsDeprecated indicates an expected call of IsDeprecated.
-func (mr *MockConsensusMockRecorder) IsDeprecated() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsDeprecated", reflect.TypeOf((*MockConsensus)(nil).IsDeprecated))
-}
-
-// IsProposer mocks base method.
-func (m *MockConsensus) IsProposer() bool {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IsProposer")
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// IsProposer indicates an expected call of IsProposer.
-func (mr *MockConsensusMockRecorder) IsProposer() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsProposer", reflect.TypeOf((*MockConsensus)(nil).IsProposer))
-}
-
-// MoveToNewHeight mocks base method.
-func (m *MockConsensus) MoveToNewHeight() {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "MoveToNewHeight")
-}
-
-// MoveToNewHeight indicates an expected call of MoveToNewHeight.
-func (mr *MockConsensusMockRecorder) MoveToNewHeight() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MoveToNewHeight", reflect.TypeOf((*MockConsensus)(nil).MoveToNewHeight))
-}
-
-// Proposal mocks base method.
-func (m *MockConsensus) Proposal() *proposal.Proposal {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Proposal")
-	ret0, _ := ret[0].(*proposal.Proposal)
-	return ret0
-}
-
-// Proposal indicates an expected call of Proposal.
-func (mr *MockConsensusMockRecorder) Proposal() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Proposal", reflect.TypeOf((*MockConsensus)(nil).Proposal))
-}
-
-// SetProposal mocks base method.
-func (m *MockConsensus) SetProposal(prop *proposal.Proposal) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SetProposal", prop)
-}
-
-// SetProposal indicates an expected call of SetProposal.
-func (mr *MockConsensusMockRecorder) SetProposal(prop any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetProposal", reflect.TypeOf((*MockConsensus)(nil).SetProposal), prop)
-}
-
-// MockManagerReader is a mock of ManagerReader interface.
-type MockManagerReader struct {
-	ctrl     *gomock.Controller
-	recorder *MockManagerReaderMockRecorder
-	isgomock struct{}
-}
-
-// MockManagerReaderMockRecorder is the mock recorder for MockManagerReader.
-type MockManagerReaderMockRecorder struct {
-	mock *MockManagerReader
-}
-
-// NewMockManagerReader creates a new mock instance.
-func NewMockManagerReader(ctrl *gomock.Controller) *MockManagerReader {
-	mock := &MockManagerReader{ctrl: ctrl}
-	mock.recorder = &MockManagerReaderMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockManagerReader) EXPECT() *MockManagerReaderMockRecorder {
-	return m.recorder
-}
-
-// HandleQueryProposal mocks base method.
-func (m *MockManagerReader) HandleQueryProposal(height types.Height, round types.Round) *proposal.Proposal {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HandleQueryProposal", height, round)
-	ret0, _ := ret[0].(*proposal.Proposal)
-	return ret0
-}
-
-// HandleQueryProposal indicates an expected call of HandleQueryProposal.
-func (mr *MockManagerReaderMockRecorder) HandleQueryProposal(height, round any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleQueryProposal", reflect.TypeOf((*MockManagerReader)(nil).HandleQueryProposal), height, round)
-}
-
-// HandleQueryVote mocks base method.
-func (m *MockManagerReader) HandleQueryVote(height types.Height, round types.Round) *vote.Vote {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HandleQueryVote", height, round)
-	ret0, _ := ret[0].(*vote.Vote)
-	return ret0
-}
-
-// HandleQueryVote indicates an expected call of HandleQueryVote.
-func (mr *MockManagerReaderMockRecorder) HandleQueryVote(height, round any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleQueryVote", reflect.TypeOf((*MockManagerReader)(nil).HandleQueryVote), height, round)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleQueryVote", reflect.TypeOf((*MockConsensusManagerReader)(nil).HandleQueryVote), height, round)
 }
 
 // HasActiveInstance mocks base method.
-func (m *MockManagerReader) HasActiveInstance() bool {
+func (m *MockConsensusManagerReader) HasActiveInstance() bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HasActiveInstance")
 	ret0, _ := ret[0].(bool)
@@ -433,13 +80,13 @@ func (m *MockManagerReader) HasActiveInstance() bool {
 }
 
 // HasActiveInstance indicates an expected call of HasActiveInstance.
-func (mr *MockManagerReaderMockRecorder) HasActiveInstance() *gomock.Call {
+func (mr *MockConsensusManagerReaderMockRecorder) HasActiveInstance() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasActiveInstance", reflect.TypeOf((*MockManagerReader)(nil).HasActiveInstance))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasActiveInstance", reflect.TypeOf((*MockConsensusManagerReader)(nil).HasActiveInstance))
 }
 
 // HeightRound mocks base method.
-func (m *MockManagerReader) HeightRound() (types.Height, types.Round) {
+func (m *MockConsensusManagerReader) HeightRound() (types.Height, types.Round) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HeightRound")
 	ret0, _ := ret[0].(types.Height)
@@ -448,27 +95,27 @@ func (m *MockManagerReader) HeightRound() (types.Height, types.Round) {
 }
 
 // HeightRound indicates an expected call of HeightRound.
-func (mr *MockManagerReaderMockRecorder) HeightRound() *gomock.Call {
+func (mr *MockConsensusManagerReaderMockRecorder) HeightRound() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HeightRound", reflect.TypeOf((*MockManagerReader)(nil).HeightRound))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HeightRound", reflect.TypeOf((*MockConsensusManagerReader)(nil).HeightRound))
 }
 
 // Instances mocks base method.
-func (m *MockManagerReader) Instances() []Reader {
+func (m *MockConsensusManagerReader) Instances() []consensus.ConsensusReader {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Instances")
-	ret0, _ := ret[0].([]Reader)
+	ret0, _ := ret[0].([]consensus.ConsensusReader)
 	return ret0
 }
 
 // Instances indicates an expected call of Instances.
-func (mr *MockManagerReaderMockRecorder) Instances() *gomock.Call {
+func (mr *MockConsensusManagerReaderMockRecorder) Instances() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Instances", reflect.TypeOf((*MockManagerReader)(nil).Instances))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Instances", reflect.TypeOf((*MockConsensusManagerReader)(nil).Instances))
 }
 
 // Proposal mocks base method.
-func (m *MockManagerReader) Proposal() *proposal.Proposal {
+func (m *MockConsensusManagerReader) Proposal() *proposal.Proposal {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Proposal")
 	ret0, _ := ret[0].(*proposal.Proposal)
@@ -476,49 +123,49 @@ func (m *MockManagerReader) Proposal() *proposal.Proposal {
 }
 
 // Proposal indicates an expected call of Proposal.
-func (mr *MockManagerReaderMockRecorder) Proposal() *gomock.Call {
+func (mr *MockConsensusManagerReaderMockRecorder) Proposal() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Proposal", reflect.TypeOf((*MockManagerReader)(nil).Proposal))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Proposal", reflect.TypeOf((*MockConsensusManagerReader)(nil).Proposal))
 }
 
-// MockManager is a mock of Manager interface.
-type MockManager struct {
+// MockConsensusManager is a mock of ConsensusManager interface.
+type MockConsensusManager struct {
 	ctrl     *gomock.Controller
-	recorder *MockManagerMockRecorder
+	recorder *MockConsensusManagerMockRecorder
 	isgomock struct{}
 }
 
-// MockManagerMockRecorder is the mock recorder for MockManager.
-type MockManagerMockRecorder struct {
-	mock *MockManager
+// MockConsensusManagerMockRecorder is the mock recorder for MockConsensusManager.
+type MockConsensusManagerMockRecorder struct {
+	mock *MockConsensusManager
 }
 
-// NewMockManager creates a new mock instance.
-func NewMockManager(ctrl *gomock.Controller) *MockManager {
-	mock := &MockManager{ctrl: ctrl}
-	mock.recorder = &MockManagerMockRecorder{mock}
+// NewMockConsensusManager creates a new mock instance.
+func NewMockConsensusManager(ctrl *gomock.Controller) *MockConsensusManager {
+	mock := &MockConsensusManager{ctrl: ctrl}
+	mock.recorder = &MockConsensusManagerMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockManager) EXPECT() *MockManagerMockRecorder {
+func (m *MockConsensusManager) EXPECT() *MockConsensusManagerMockRecorder {
 	return m.recorder
 }
 
 // AddVote mocks base method.
-func (m *MockManager) AddVote(arg0 *vote.Vote) {
+func (m *MockConsensusManager) AddVote(arg0 *vote.Vote) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "AddVote", arg0)
 }
 
 // AddVote indicates an expected call of AddVote.
-func (mr *MockManagerMockRecorder) AddVote(arg0 any) *gomock.Call {
+func (mr *MockConsensusManagerMockRecorder) AddVote(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddVote", reflect.TypeOf((*MockManager)(nil).AddVote), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddVote", reflect.TypeOf((*MockConsensusManager)(nil).AddVote), arg0)
 }
 
 // HandleQueryProposal mocks base method.
-func (m *MockManager) HandleQueryProposal(height types.Height, round types.Round) *proposal.Proposal {
+func (m *MockConsensusManager) HandleQueryProposal(height types.Height, round types.Round) *proposal.Proposal {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HandleQueryProposal", height, round)
 	ret0, _ := ret[0].(*proposal.Proposal)
@@ -526,13 +173,13 @@ func (m *MockManager) HandleQueryProposal(height types.Height, round types.Round
 }
 
 // HandleQueryProposal indicates an expected call of HandleQueryProposal.
-func (mr *MockManagerMockRecorder) HandleQueryProposal(height, round any) *gomock.Call {
+func (mr *MockConsensusManagerMockRecorder) HandleQueryProposal(height, round any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleQueryProposal", reflect.TypeOf((*MockManager)(nil).HandleQueryProposal), height, round)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleQueryProposal", reflect.TypeOf((*MockConsensusManager)(nil).HandleQueryProposal), height, round)
 }
 
 // HandleQueryVote mocks base method.
-func (m *MockManager) HandleQueryVote(height types.Height, round types.Round) *vote.Vote {
+func (m *MockConsensusManager) HandleQueryVote(height types.Height, round types.Round) *vote.Vote {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HandleQueryVote", height, round)
 	ret0, _ := ret[0].(*vote.Vote)
@@ -540,13 +187,13 @@ func (m *MockManager) HandleQueryVote(height types.Height, round types.Round) *v
 }
 
 // HandleQueryVote indicates an expected call of HandleQueryVote.
-func (mr *MockManagerMockRecorder) HandleQueryVote(height, round any) *gomock.Call {
+func (mr *MockConsensusManagerMockRecorder) HandleQueryVote(height, round any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleQueryVote", reflect.TypeOf((*MockManager)(nil).HandleQueryVote), height, round)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleQueryVote", reflect.TypeOf((*MockConsensusManager)(nil).HandleQueryVote), height, round)
 }
 
 // HasActiveInstance mocks base method.
-func (m *MockManager) HasActiveInstance() bool {
+func (m *MockConsensusManager) HasActiveInstance() bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HasActiveInstance")
 	ret0, _ := ret[0].(bool)
@@ -554,13 +201,13 @@ func (m *MockManager) HasActiveInstance() bool {
 }
 
 // HasActiveInstance indicates an expected call of HasActiveInstance.
-func (mr *MockManagerMockRecorder) HasActiveInstance() *gomock.Call {
+func (mr *MockConsensusManagerMockRecorder) HasActiveInstance() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasActiveInstance", reflect.TypeOf((*MockManager)(nil).HasActiveInstance))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasActiveInstance", reflect.TypeOf((*MockConsensusManager)(nil).HasActiveInstance))
 }
 
 // HeightRound mocks base method.
-func (m *MockManager) HeightRound() (types.Height, types.Round) {
+func (m *MockConsensusManager) HeightRound() (types.Height, types.Round) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HeightRound")
 	ret0, _ := ret[0].(types.Height)
@@ -569,27 +216,27 @@ func (m *MockManager) HeightRound() (types.Height, types.Round) {
 }
 
 // HeightRound indicates an expected call of HeightRound.
-func (mr *MockManagerMockRecorder) HeightRound() *gomock.Call {
+func (mr *MockConsensusManagerMockRecorder) HeightRound() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HeightRound", reflect.TypeOf((*MockManager)(nil).HeightRound))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HeightRound", reflect.TypeOf((*MockConsensusManager)(nil).HeightRound))
 }
 
 // Instances mocks base method.
-func (m *MockManager) Instances() []Reader {
+func (m *MockConsensusManager) Instances() []consensus.ConsensusReader {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Instances")
-	ret0, _ := ret[0].([]Reader)
+	ret0, _ := ret[0].([]consensus.ConsensusReader)
 	return ret0
 }
 
 // Instances indicates an expected call of Instances.
-func (mr *MockManagerMockRecorder) Instances() *gomock.Call {
+func (mr *MockConsensusManagerMockRecorder) Instances() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Instances", reflect.TypeOf((*MockManager)(nil).Instances))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Instances", reflect.TypeOf((*MockConsensusManager)(nil).Instances))
 }
 
 // IsDeprecated mocks base method.
-func (m *MockManager) IsDeprecated() bool {
+func (m *MockConsensusManager) IsDeprecated() bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsDeprecated")
 	ret0, _ := ret[0].(bool)
@@ -597,25 +244,25 @@ func (m *MockManager) IsDeprecated() bool {
 }
 
 // IsDeprecated indicates an expected call of IsDeprecated.
-func (mr *MockManagerMockRecorder) IsDeprecated() *gomock.Call {
+func (mr *MockConsensusManagerMockRecorder) IsDeprecated() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsDeprecated", reflect.TypeOf((*MockManager)(nil).IsDeprecated))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsDeprecated", reflect.TypeOf((*MockConsensusManager)(nil).IsDeprecated))
 }
 
 // MoveToNewHeight mocks base method.
-func (m *MockManager) MoveToNewHeight() {
+func (m *MockConsensusManager) MoveToNewHeight() {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "MoveToNewHeight")
 }
 
 // MoveToNewHeight indicates an expected call of MoveToNewHeight.
-func (mr *MockManagerMockRecorder) MoveToNewHeight() *gomock.Call {
+func (mr *MockConsensusManagerMockRecorder) MoveToNewHeight() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MoveToNewHeight", reflect.TypeOf((*MockManager)(nil).MoveToNewHeight))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MoveToNewHeight", reflect.TypeOf((*MockConsensusManager)(nil).MoveToNewHeight))
 }
 
 // Proposal mocks base method.
-func (m *MockManager) Proposal() *proposal.Proposal {
+func (m *MockConsensusManager) Proposal() *proposal.Proposal {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Proposal")
 	ret0, _ := ret[0].(*proposal.Proposal)
@@ -623,19 +270,19 @@ func (m *MockManager) Proposal() *proposal.Proposal {
 }
 
 // Proposal indicates an expected call of Proposal.
-func (mr *MockManagerMockRecorder) Proposal() *gomock.Call {
+func (mr *MockConsensusManagerMockRecorder) Proposal() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Proposal", reflect.TypeOf((*MockManager)(nil).Proposal))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Proposal", reflect.TypeOf((*MockConsensusManager)(nil).Proposal))
 }
 
 // SetProposal mocks base method.
-func (m *MockManager) SetProposal(prop *proposal.Proposal) {
+func (m *MockConsensusManager) SetProposal(prop *proposal.Proposal) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SetProposal", prop)
 }
 
 // SetProposal indicates an expected call of SetProposal.
-func (mr *MockManagerMockRecorder) SetProposal(prop any) *gomock.Call {
+func (mr *MockConsensusManagerMockRecorder) SetProposal(prop any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetProposal", reflect.TypeOf((*MockManager)(nil).SetProposal), prop)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetProposal", reflect.TypeOf((*MockConsensusManager)(nil).SetProposal), prop)
 }

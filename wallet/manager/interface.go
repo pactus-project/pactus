@@ -8,8 +8,8 @@ import (
 	"github.com/pactus-project/pactus/wallet/types"
 )
 
-// IManager defines the public API of the wallet manager.
-type IManager interface {
+// WalletManager defines the public API of the wallet manager.
+type WalletManager interface {
 	Start() error
 	Stop()
 

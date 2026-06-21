@@ -22,18 +22,18 @@ type Server struct {
 	listener      net.Listener
 	server        *grpc.Server
 	address       string
-	state         state.Facade
+	state         state.State
 	net           network.Network
 	sync          sync.Synchronizer
-	consMgr       consmgr.ManagerReader
-	walletMgr     wltmgr.IManager
+	consMgr       consmgr.ConsensusManagerReader
+	walletMgr     wltmgr.WalletManager
 	zmqPublishers []zmq.Publisher
 	logger        *logger.SubLogger
 }
 
-func NewServer(ctx context.Context, conf *Config, state state.Facade, sync sync.Synchronizer,
-	network network.Network, consMgr consmgr.ManagerReader,
-	walletMgr wltmgr.IManager,
+func NewServer(ctx context.Context, conf *Config, state state.State, sync sync.Synchronizer,
+	network network.Network, consMgr consmgr.ConsensusManagerReader,
+	walletMgr wltmgr.WalletManager,
 	zmqPublishers []zmq.Publisher,
 ) *Server {
 	return &Server{

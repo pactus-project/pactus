@@ -34,12 +34,13 @@ func TestNewHeightDoubleEntry(t *testing.T) {
 	td.consX.MoveToNewHeight()
 	td.newHeightTimeout(td.consX)
 
-	// double entry and timeout
-	td.consX.MoveToNewHeight()
+	// Double entry to new height state
+	td.consX.enterNewState(td.consX.newHeightState)
 
 	td.checkHeightRound(t, td.consX, 2, 0)
 	assert.True(t, td.consX.active)
-	assert.NotEqual(t, "new-height", td.consX.currentState.name())
+	assert.Equal(t, types.Round(0), td.consX.round)
+	assert.Equal(t, types.Height(2), td.consX.height)
 }
 
 func TestNewHeightTimeBehindNetwork(t *testing.T) {

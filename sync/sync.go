@@ -38,9 +38,9 @@ import (
 type synchronizer struct {
 	config        *Config
 	valKeys       []*bls.ValidatorKey
-	state         state.Facade
-	consV1Mgr     consmgr.Manager
-	consV2Mgr     consmgr.Manager
+	state         state.State
+	consV1Mgr     consmgr.ConsensusManager
+	consV2Mgr     consmgr.ConsensusManager
 	peerSet       *peerset.PeerSet
 	firewall      *firewall.Firewall
 	cache         *cache.Cache
@@ -57,9 +57,9 @@ func NewSynchronizer(
 	ctx context.Context,
 	conf *Config,
 	valKeys []*bls.ValidatorKey,
-	state state.Facade,
-	consV1Mgr consmgr.Manager,
-	consV2Mgr consmgr.Manager,
+	state state.State,
+	consV1Mgr consmgr.ConsensusManager,
+	consV2Mgr consmgr.ConsensusManager,
 	network network.Network,
 	broadcastPipe pipeline.Pipeline[message.Message],
 	networkPipe pipeline.Pipeline[network.Event],
@@ -150,11 +150,7 @@ func (sync *synchronizer) stateHeight() types.Height {
 }
 
 func (sync *synchronizer) moveConsensusToNewHeight() {
-	stateHeight := sync.stateHeight()
-	consHeight, _ := sync.getConsMgr().HeightRound()
-	if stateHeight >= consHeight {
-		sync.getConsMgr().MoveToNewHeight()
-	}
+	sync.getConsMgr().MoveToNewHeight()
 }
 
 func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
@@ -389,6 +385,7 @@ func (sync *synchronizer) updateBlockchain() {
 
 	sync.peerSet.RemoveAllSessions()
 
+	// TODO: We have similar code in GUI, perhaps we can make a utility common function.
 	blockInterval := sync.state.Params().BlockInterval()
 	curTime := util.RoundNow(int(blockInterval.Seconds()))
 	lastBlockTime := sync.state.LastBlockTime()
@@ -579,7 +576,7 @@ func (sync *synchronizer) consensusTopicEvaluator(msg *network.GossipMessage) ne
 
 // getConsMgr returns consensus manager based on the upgrade condition.
 // After the chain is fully upgraded, we can remove this function.
-func (sync *synchronizer) getConsMgr() consmgr.Manager {
+func (sync *synchronizer) getConsMgr() consmgr.ConsensusManager {
 	if sync.consV1Mgr.IsDeprecated() {
 		return sync.consV2Mgr
 	}

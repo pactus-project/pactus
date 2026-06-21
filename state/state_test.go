@@ -62,7 +62,7 @@ func setupWithVersion(t *testing.T, blockVersion protocol.Version) *testData {
 	}
 
 	numBlocks := types.Height(7)
-	mockTxPool := txpool.NewMockTxPool(ts.Ctrl)
+	mockTxPool := txpool.NewMockTxPool(ts.MockController())
 	mockTxPool.EXPECT().SetNewSandboxAndRecheck(gomock.Any()).Return().AnyTimes()
 	mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(int(numBlocks))
 	mockTxPool.EXPECT().HandleCommittedBlock(gomock.Any()).Return().AnyTimes()

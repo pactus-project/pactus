@@ -30,7 +30,7 @@ func TestBlock(t *testing.T) {
 	td := setup(t)
 
 	height := td.RandHeight()
-	blk := td.gRPCServer.MockState.TestStore.AddTestBlock(height)
+	blk := td.gRPCServer.MockState.AddTestBlock(height)
 
 	t.Run("Shall return a block", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -60,7 +60,7 @@ func TestBlock(t *testing.T) {
 		assert.Equal(t, 400, w.Code)
 	})
 
-	t.Run("Shall return an error, non exists", func(t *testing.T) {
+	t.Run("Shall return an error, non-existent", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"hash": td.RandHash().String()})
@@ -102,7 +102,7 @@ func TestBlock(t *testing.T) {
 func TestAccount(t *testing.T) {
 	td := setup(t)
 
-	addr, acc := td.gRPCServer.MockState.TestStore.AddTestAccount()
+	addr, acc := td.gRPCServer.MockState.AddTestAccount()
 
 	t.Run("Shall return an account", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -115,7 +115,7 @@ func TestAccount(t *testing.T) {
 		fmt.Println(w.Body)
 	})
 
-	t.Run("Shall return nil, non exist", func(t *testing.T) {
+	t.Run("Shall return nil, non-existent", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"address": td.RandAccAddress().String()})
@@ -157,9 +157,9 @@ func TestAccount(t *testing.T) {
 func TestValidator(t *testing.T) {
 	td := setup(t)
 
-	val := td.gRPCServer.MockState.TestStore.AddTestValidator()
+	val := td.gRPCServer.MockState.AddTestValidator()
 
-	t.Run("Shall return an error, non exist", func(t *testing.T) {
+	t.Run("Shall return an error, non-existent", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"address": td.RandAccAddress().String()})
@@ -213,7 +213,7 @@ func TestValidator(t *testing.T) {
 func TestValidatorByNumber(t *testing.T) {
 	td := setup(t)
 
-	val := td.gRPCServer.MockState.TestStore.AddTestValidator()
+	val := td.gRPCServer.MockState.AddTestValidator()
 
 	t.Run("Shall return a validator", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -227,7 +227,7 @@ func TestValidatorByNumber(t *testing.T) {
 		fmt.Println(w.Body)
 	})
 
-	t.Run("Shall return a error, non exist", func(t *testing.T) {
+	t.Run("Shall return an error, non-existent", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		fmt.Println(val.Number())

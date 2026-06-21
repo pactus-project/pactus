@@ -24,9 +24,8 @@ func TestGetTransaction(t *testing.T) {
 	textTrx := td.GenerateTestBondTx(
 		testsuite.TransactionWithValidatorPublicKey(valPubKey),
 	)
-	testBlock, testCert := td.GenerateTestBlock(blockHeight,
+	testBlock := td.server.MockState.AddTestBlock(blockHeight,
 		testsuite.BlockWithTransactions([]*tx.Tx{textTrx}))
-	td.server.MockState.TestStore.SaveBlock(testBlock, testCert)
 
 	t.Run("Should return transaction (verbosity: 0)", func(t *testing.T) {
 		res, err := client.GetTransaction(t.Context(),
@@ -105,7 +104,7 @@ func TestSendRawTransaction(t *testing.T) {
 	trx := td.GenerateTestTransferTx()
 	data, _ := trx.Bytes()
 	t.Run("Should pass", func(t *testing.T) {
-		td.server.MockState.MockTxPool.EXPECT().AppendTxAndBroadcast(gomock.Any()).Return(nil).Times(1)
+		td.server.MockState.EXPECT().AddPendingTxAndBroadcast(gomock.Any()).Return(nil).Times(1)
 
 		res, err := client.BroadcastTransaction(t.Context(),
 			&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
@@ -114,7 +113,7 @@ func TestSendRawTransaction(t *testing.T) {
 	})
 
 	t.Run("Should fail and not broadcast", func(t *testing.T) {
-		td.server.MockState.MockTxPool.EXPECT().AppendTxAndBroadcast(gomock.Any()).Return(errors.New("some error")).Times(1)
+		td.server.MockState.EXPECT().AddPendingTxAndBroadcast(gomock.Any()).Return(errors.New("some error")).Times(1)
 
 		res, err := client.BroadcastTransaction(t.Context(),
 			&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
@@ -127,7 +126,7 @@ func TestGetRawTransaction(t *testing.T) {
 	td := setup(t, nil)
 	client := td.transactionClient(t)
 
-	td.server.MockState.MockTxPool.EXPECT().EstimatedFee(gomock.Any(), gomock.Any()).Return(td.RandFee()).AnyTimes()
+	td.server.MockState.EXPECT().CalculateFee(gomock.Any(), gomock.Any()).Return(td.RandFee()).AnyTimes()
 
 	t.Run("Transfer", func(t *testing.T) {
 		amt := td.RandAmount()
@@ -281,7 +280,7 @@ func TestCalculateFee(t *testing.T) {
 	client := td.transactionClient(t)
 
 	expectedFee := td.RandFee()
-	td.server.MockState.MockTxPool.EXPECT().EstimatedFee(gomock.Any(), gomock.Any()).Return(expectedFee).AnyTimes()
+	td.server.MockState.EXPECT().CalculateFee(gomock.Any(), gomock.Any()).Return(expectedFee).AnyTimes()
 
 	t.Run("Not fixed amount", func(t *testing.T) {
 		amt := td.RandAmount()

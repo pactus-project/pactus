@@ -218,7 +218,7 @@ func TestSignRawTransaction(t *testing.T) {
 	td := setup(t, conf)
 	client := td.walletClient(t)
 
-	t.Run("Bad traansaction data", func(t *testing.T) {
+	t.Run("Bad transaction data", func(t *testing.T) {
 		res, err := client.SignRawTransaction(t.Context(),
 			&pactus.SignRawTransactionRequest{
 				WalletName:     "test",

@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/ezex-io/gopkg/pipeline"
-	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/require"
 )
@@ -13,16 +12,14 @@ import (
 type testData struct {
 	*testsuite.TestSuite
 
-	mockState *state.MockState
-	server    *Server
-	pipe      pipeline.Pipeline[any]
+	server *Server
+	pipe   pipeline.Pipeline[any]
 }
 
 func setup(t *testing.T, conf *Config) *testData {
 	t.Helper()
 
 	ts := testsuite.NewTestSuite(t)
-	mockState := state.MockingState(ts)
 	pipe := pipeline.New[any](t.Context())
 	server, err := New(t.Context(), conf, pipe)
 	require.NoError(t, err)
@@ -33,7 +30,6 @@ func setup(t *testing.T, conf *Config) *testData {
 
 	return &testData{
 		TestSuite: ts,
-		mockState: mockState,
 		server:    server,
 		pipe:      pipe,
 	}

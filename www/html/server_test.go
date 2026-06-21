@@ -8,7 +8,7 @@ import (
 
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/www/grpc"
-	"github.com/pactus-project/pactus/www/grpc/mock"
+	"github.com/pactus-project/pactus/www/grpc/fake"
 	"github.com/pactus-project/pactus/www/html"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -17,7 +17,7 @@ import (
 type testData struct {
 	*testsuite.TestSuite
 
-	gRPCServer *mock.MockGRPCServer
+	gRPCServer *fake.FakeGRPCServer
 	httpServer *html.Server
 }
 
@@ -39,7 +39,7 @@ func setup(t *testing.T) *testData {
 		Enable: true,
 		Listen: "[::]:0",
 	}
-	gRPCServer := mock.SetupServer(t, ts, grpcConf)
+	gRPCServer := fake.NewFakeGRPCServer(t, ts, grpcConf)
 	require.NoError(t, gRPCServer.Server.StartServer())
 
 	httpServer := html.NewServer(t.Context(), httpConf, false)

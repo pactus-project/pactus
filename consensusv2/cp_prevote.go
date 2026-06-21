@@ -73,7 +73,7 @@ func (s *cpPreVoteState) decideNextRounds() {
 		s.logger.Panic("unreachable state: decide on 'no (biased)' should be handled in main-vote state")
 
 	case cpMainVotes.HasAnyVoteFor(s.cpRound-1, vote.CPValueYes):
-		s.logger.Debug("cp: one main-vote for one", "b", "1")
+		s.logger.Debug("cp: one main-vote for one", "b", "1", "cpRound", s.cpRound)
 
 		vote1 := cpMainVotes.GetRandomVote(s.cpRound-1, vote.CPValueYes)
 		just1 := &vote.JustPreVoteHard{
@@ -82,7 +82,7 @@ func (s *cpPreVoteState) decideNextRounds() {
 		s.signAddCPPreVote(hash.UndefHash, s.cpRound, vote.CPValueYes, just1)
 
 	case cpMainVotes.HasAllVotesFor(s.cpRound-1, vote.CPValueAbstain):
-		s.logger.Debug("cp: all main-votes are abstain", "b", "0 (biased)")
+		s.logger.Debug("cp: all main-votes are abstain", "b", "0 (biased)", "cpRound", s.cpRound)
 
 		votes := cpMainVotes.BinaryVotes(s.cpRound-1, vote.CPValueAbstain)
 		cert := s.makeCertificate(votes)

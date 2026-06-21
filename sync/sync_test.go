@@ -8,11 +8,12 @@ import (
 
 	"github.com/ezex-io/gopkg/pipeline"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
-	consmgr "github.com/pactus-project/pactus/consensus/manager"
+	"github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/state/param"
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/firewall"
@@ -32,9 +33,9 @@ type testData struct {
 	*testsuite.TestSuite
 
 	config    *Config
-	state     *state.MockState
-	consV1Mgr *consmgr.MockManager
-	consV2Mgr *consmgr.MockManager
+	state     *state.FakeState
+	consV1Mgr *manager.FakeConsensusManager
+	consV2Mgr *manager.FakeConsensusManager
 	network   *network.MockNetwork
 	sync      *synchronizer
 }
@@ -43,8 +44,8 @@ func testConfig() *Config {
 	return &Config{
 		Moniker:             "test",
 		SessionTimeoutStr:   "1s",
-		BlockPerMessage:     11,
 		MaxSessions:         4,
+		BlockPerMessage:     11,
 		BlockPerSession:     27,
 		PruneWindow:         13,
 		Firewall:            firewall.DefaultConfig(),
@@ -63,29 +64,31 @@ func setup(t *testing.T, config *Config) *testData {
 		config.Moniker = "Alice"
 	}
 	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
-	mockState := state.MockingState(ts)
 
-	curHeight := types.Height(11) // TODO: make me random
-	curRound := types.Round(0)    // TODO: make me random
+	consV1Mgr := manager.NewFakeConsensusManager(ts)
+	consV2Mgr := manager.NewFakeConsensusManager(ts)
 
-	consV1Mgr := consmgr.NewMockManager(ts.Ctrl)
-	consV2Mgr := consmgr.NewMockManager(ts.Ctrl)
+	state := state.NewFakeState(ts, nil)
+	state.CommitTestBlocks(100)
 
 	consV1Mgr.EXPECT().IsDeprecated().Return(false).AnyTimes()
-	consV1Mgr.EXPECT().HeightRound().Return(curHeight, curRound).AnyTimes()
+	consV1Mgr.EXPECT().MoveToNewHeight().Return().AnyTimes()
+	consV1Mgr.EXPECT().HeightRound().DoAndReturn(func() (types.Height, types.Round) {
+		return state.LastHeight + 1, ts.RandRound()
+	}).AnyTimes()
 
 	mockNetwork := network.MockingNetwork(ts, ts.RandPeerID())
 	broadcastPipe := pipeline.New[message.Message](t.Context())
 
 	syncInst, err := NewSynchronizer(t.Context(), config, valKeys,
-		mockState, consV1Mgr, consV2Mgr, mockNetwork, broadcastPipe, mockNetwork.EventPipe)
+		state, consV1Mgr, consV2Mgr, mockNetwork, broadcastPipe, mockNetwork.EventPipe)
 	require.NoError(t, err)
 	sync := syncInst.(*synchronizer)
 
 	td := &testData{
 		TestSuite: ts,
 		config:    config,
-		state:     mockState,
+		state:     state,
 		consV1Mgr: consV1Mgr,
 		consV2Mgr: consV2Mgr,
 		network:   mockNetwork,
@@ -310,7 +313,8 @@ func TestSendHello(t *testing.T) {
 func TestTestNetFlags(t *testing.T) {
 	td := setup(t, nil)
 
-	td.state.TestGenesis = genesis.TestnetGenesis()
+	td.state.GenDoc = genesis.TestnetGenesis()
+
 	bdl := td.sync.prepareBundle(message.NewQueryProposalMessage(
 		td.RandHeight(), td.RandRound(), td.RandValAddress(),
 	))
@@ -324,9 +328,13 @@ func TestDownload(t *testing.T) {
 	// Let's not allow `GetRandomPeer` to disappoint us!
 	conf.MaxSessions = 32
 
-	t.Run("try to download blocks, but the peer is not known", func(t *testing.T) {
-		td := setup(t, conf)
+	td := setup(t, conf)
 
+	td.consV1Mgr.EXPECT().MoveToNewHeight().Return().AnyTimes()
+	td.state.EXPECT().Genesis().Return(genesis.MainnetGenesis()).AnyTimes()
+	td.state.EXPECT().Params().Return(param.FromGenesis(genesis.MainnetGenesis())).AnyTimes()
+
+	t.Run("try to download blocks, but the peer is not known", func(t *testing.T) {
 		pid := td.addPeer(t, status.StatusConnected, service.New(service.None))
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
 		baMsg := message.NewBlockAnnounceMessage(blk, cert, nil)
@@ -337,8 +345,6 @@ func TestDownload(t *testing.T) {
 	})
 
 	t.Run("try to download blocks, but the peer is not a network node", func(t *testing.T) {
-		td := setup(t, conf)
-
 		pid := td.addPeer(t, status.StatusKnown, service.New(service.None))
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
 		baMsg := message.NewBlockAnnounceMessage(blk, cert, nil)
@@ -349,8 +355,6 @@ func TestDownload(t *testing.T) {
 	})
 
 	t.Run("try to download blocks and the peer is a network node", func(t *testing.T) {
-		td := setup(t, conf)
-
 		pid := td.addPeer(t, status.StatusKnown, service.New(service.FullNode))
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
 		baMsg := message.NewBlockAnnounceMessage(blk, cert, nil)
@@ -360,8 +364,6 @@ func TestDownload(t *testing.T) {
 	})
 
 	t.Run("download request is rejected", func(t *testing.T) {
-		td := setup(t, conf)
-
 		pid := td.addPeer(t, status.StatusKnown, service.New(service.None))
 		from := td.sync.stateHeight() + 1
 		count := uint32(123)
@@ -410,4 +412,31 @@ func TestAllBlocksInCache(t *testing.T) {
 
 	res := td.sync.sendBlockRequestToRandomPeer(100, 3, true)
 	assert.True(t, res)
+}
+
+func TestCommitMissedBlock(t *testing.T) {
+	td := setup(t, nil)
+
+	pid := td.RandPeerID()
+	lastHeight := td.state.LastBlockHeight()
+
+	blk1, cert1 := td.GenerateTestBlock(lastHeight + 1)
+	msg1 := message.NewBlockAnnounceMessage(blk1, cert1, nil)
+
+	blk2, cert2 := td.GenerateTestBlock(lastHeight + 2)
+	msg2 := message.NewBlockAnnounceMessage(blk2, cert2, nil)
+
+	t.Run("Receiving block announce message, without committing previous block", func(t *testing.T) {
+		td.receivingNewMessage(td.sync, msg2, pid)
+
+		consHeight, _ := td.sync.getConsMgr().HeightRound()
+		assert.Equal(t, lastHeight+1, consHeight)
+	})
+
+	t.Run("Receiving missed block, should commit both blocks", func(t *testing.T) {
+		td.receivingNewMessage(td.sync, msg1, pid)
+
+		newHeight := td.state.LastBlockHeight()
+		assert.Equal(t, lastHeight+2, newHeight)
+	})
 }

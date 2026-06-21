@@ -62,7 +62,7 @@ func LoadOrNewState(
 	store store.Store,
 	txPool txpool.TxPool,
 	eventPipe pipeline.Pipeline[any],
-) (Facade, error) {
+) (State, error) {
 	state := &state{
 		valKeys:         valKeys,
 		genDoc:          genDoc,

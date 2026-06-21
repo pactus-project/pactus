@@ -580,7 +580,7 @@ func (s *Storage) GetPendingTransactions() (map[string]*wtypes.TransactionInfo, 
 }
 
 // Clone creates a copy of the storage at a new path.
-func (s *Storage) Clone(path string) (storage.IStorage, error) {
+func (s *Storage) Clone(path string) (storage.WalletStorage, error) {
 	if err := util.Mkdir(path); err != nil {
 		return nil, err
 	}

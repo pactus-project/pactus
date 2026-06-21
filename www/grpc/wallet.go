@@ -15,10 +15,10 @@ import (
 
 type walletServer struct {
 	*Server
-	walletManager wltmgr.IManager
+	walletManager wltmgr.WalletManager
 }
 
-func newWalletServer(server *Server, manager wltmgr.IManager) *walletServer {
+func newWalletServer(server *Server, manager wltmgr.WalletManager) *walletServer {
 	return &walletServer{
 		Server:        server,
 		walletManager: manager,

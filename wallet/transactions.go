@@ -11,12 +11,12 @@ import (
 )
 
 type transactions struct {
-	storage  storage.IStorage
-	provider provider.IBlockchainProvider
+	storage  storage.WalletStorage
+	provider provider.WalletProvider
 }
 
-func newTransactions(storage storage.IStorage,
-	provider provider.IBlockchainProvider,
+func newTransactions(storage storage.WalletStorage,
+	provider provider.WalletProvider,
 ) transactions {
 	return transactions{
 		storage:  storage,

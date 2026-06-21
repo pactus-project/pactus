@@ -12,12 +12,12 @@ import (
 )
 
 type addresses struct {
-	storage  storage.IStorage
-	provider provider.IBlockchainProvider
+	storage  storage.WalletStorage
+	provider provider.WalletProvider
 }
 
-func newAddresses(storage storage.IStorage,
-	provider provider.IBlockchainProvider,
+func newAddresses(storage storage.WalletStorage,
+	provider provider.WalletProvider,
 ) addresses {
 	return addresses{
 		storage:  storage,

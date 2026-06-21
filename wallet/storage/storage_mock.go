@@ -16,35 +16,35 @@ import (
 	amount "github.com/pactus-project/pactus/types/amount"
 	types0 "github.com/pactus-project/pactus/wallet/types"
 	vault "github.com/pactus-project/pactus/wallet/vault"
-	gomock "go.uber.org/mock/gomock"
+	"go.uber.org/mock/gomock"
 )
 
-// MockIStorage is a mock of IStorage interface.
-type MockIStorage struct {
+// MockWalletStorage is a mock of WalletStorage interface.
+type MockWalletStorage struct {
 	ctrl     *gomock.Controller
-	recorder *MockIStorageMockRecorder
+	recorder *MockWalletStorageMockRecorder
 	isgomock struct{}
 }
 
-// MockIStorageMockRecorder is the mock recorder for MockIStorage.
-type MockIStorageMockRecorder struct {
-	mock *MockIStorage
+// MockWalletStorageMockRecorder is the mock recorder for MockWalletStorage.
+type MockWalletStorageMockRecorder struct {
+	mock *MockWalletStorage
 }
 
-// NewMockIStorage creates a new mock instance.
-func NewMockIStorage(ctrl *gomock.Controller) *MockIStorage {
-	mock := &MockIStorage{ctrl: ctrl}
-	mock.recorder = &MockIStorageMockRecorder{mock}
+// NewMockWalletStorage creates a new mock instance.
+func NewMockWalletStorage(ctrl *gomock.Controller) *MockWalletStorage {
+	mock := &MockWalletStorage{ctrl: ctrl}
+	mock.recorder = &MockWalletStorageMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockIStorage) EXPECT() *MockIStorageMockRecorder {
+func (m *MockWalletStorage) EXPECT() *MockWalletStorageMockRecorder {
 	return m.recorder
 }
 
 // AddressCount mocks base method.
-func (m *MockIStorage) AddressCount() int {
+func (m *MockWalletStorage) AddressCount() int {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddressCount")
 	ret0, _ := ret[0].(int)
@@ -52,13 +52,13 @@ func (m *MockIStorage) AddressCount() int {
 }
 
 // AddressCount indicates an expected call of AddressCount.
-func (mr *MockIStorageMockRecorder) AddressCount() *gomock.Call {
+func (mr *MockWalletStorageMockRecorder) AddressCount() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddressCount", reflect.TypeOf((*MockIStorage)(nil).AddressCount))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddressCount", reflect.TypeOf((*MockWalletStorage)(nil).AddressCount))
 }
 
 // AddressInfo mocks base method.
-func (m *MockIStorage) AddressInfo(address string) (*types0.AddressInfo, error) {
+func (m *MockWalletStorage) AddressInfo(address string) (*types0.AddressInfo, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddressInfo", address)
 	ret0, _ := ret[0].(*types0.AddressInfo)
@@ -67,13 +67,13 @@ func (m *MockIStorage) AddressInfo(address string) (*types0.AddressInfo, error) 
 }
 
 // AddressInfo indicates an expected call of AddressInfo.
-func (mr *MockIStorageMockRecorder) AddressInfo(address any) *gomock.Call {
+func (mr *MockWalletStorageMockRecorder) AddressInfo(address any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddressInfo", reflect.TypeOf((*MockIStorage)(nil).AddressInfo), address)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddressInfo", reflect.TypeOf((*MockWalletStorage)(nil).AddressInfo), address)
 }
 
 // AllAddresses mocks base method.
-func (m *MockIStorage) AllAddresses() []*types0.AddressInfo {
+func (m *MockWalletStorage) AllAddresses() []*types0.AddressInfo {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AllAddresses")
 	ret0, _ := ret[0].([]*types0.AddressInfo)
@@ -81,28 +81,28 @@ func (m *MockIStorage) AllAddresses() []*types0.AddressInfo {
 }
 
 // AllAddresses indicates an expected call of AllAddresses.
-func (mr *MockIStorageMockRecorder) AllAddresses() *gomock.Call {
+func (mr *MockWalletStorageMockRecorder) AllAddresses() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AllAddresses", reflect.TypeOf((*MockIStorage)(nil).AllAddresses))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AllAddresses", reflect.TypeOf((*MockWalletStorage)(nil).AllAddresses))
 }
 
 // Clone mocks base method.
-func (m *MockIStorage) Clone(path string) (IStorage, error) {
+func (m *MockWalletStorage) Clone(path string) (WalletStorage, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Clone", path)
-	ret0, _ := ret[0].(IStorage)
+	ret0, _ := ret[0].(WalletStorage)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Clone indicates an expected call of Clone.
-func (mr *MockIStorageMockRecorder) Clone(path any) *gomock.Call {
+func (mr *MockWalletStorageMockRecorder) Clone(path any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Clone", reflect.TypeOf((*MockIStorage)(nil).Clone), path)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Clone", reflect.TypeOf((*MockWalletStorage)(nil).Clone), path)
 }
 
 // Close mocks base method.
-func (m *MockIStorage) Close() error {
+func (m *MockWalletStorage) Close() error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Close")
 	ret0, _ := ret[0].(error)
@@ -110,13 +110,13 @@ func (m *MockIStorage) Close() error {
 }
 
 // Close indicates an expected call of Close.
-func (mr *MockIStorageMockRecorder) Close() *gomock.Call {
+func (mr *MockWalletStorageMockRecorder) Close() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockIStorage)(nil).Close))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockWalletStorage)(nil).Close))
 }
 
 // GetPendingTransactions mocks base method.
-func (m *MockIStorage) GetPendingTransactions() (map[string]*types0.TransactionInfo, error) {
+func (m *MockWalletStorage) GetPendingTransactions() (map[string]*types0.TransactionInfo, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPendingTransactions")
 	ret0, _ := ret[0].(map[string]*types0.TransactionInfo)
@@ -125,13 +125,13 @@ func (m *MockIStorage) GetPendingTransactions() (map[string]*types0.TransactionI
 }
 
 // GetPendingTransactions indicates an expected call of GetPendingTransactions.
-func (mr *MockIStorageMockRecorder) GetPendingTransactions() *gomock.Call {
+func (mr *MockWalletStorageMockRecorder) GetPendingTransactions() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPendingTransactions", reflect.TypeOf((*MockIStorage)(nil).GetPendingTransactions))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPendingTransactions", reflect.TypeOf((*MockWalletStorage)(nil).GetPendingTransactions))
 }
 
 // GetTransaction mocks base method.
-func (m *MockIStorage) GetTransaction(no int64) (*types0.TransactionInfo, error) {
+func (m *MockWalletStorage) GetTransaction(no int64) (*types0.TransactionInfo, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTransaction", no)
 	ret0, _ := ret[0].(*types0.TransactionInfo)
@@ -140,13 +140,13 @@ func (m *MockIStorage) GetTransaction(no int64) (*types0.TransactionInfo, error)
 }
 
 // GetTransaction indicates an expected call of GetTransaction.
-func (mr *MockIStorageMockRecorder) GetTransaction(no any) *gomock.Call {
+func (mr *MockWalletStorageMockRecorder) GetTransaction(no any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransaction", reflect.TypeOf((*MockIStorage)(nil).GetTransaction), no)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransaction", reflect.TypeOf((*MockWalletStorage)(nil).GetTransaction), no)
 }
 
 // HasAddress mocks base method.
-func (m *MockIStorage) HasAddress(address string) bool {
+func (m *MockWalletStorage) HasAddress(address string) bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HasAddress", address)
 	ret0, _ := ret[0].(bool)
@@ -154,13 +154,13 @@ func (m *MockIStorage) HasAddress(address string) bool {
 }
 
 // HasAddress indicates an expected call of HasAddress.
-func (mr *MockIStorageMockRecorder) HasAddress(address any) *gomock.Call {
+func (mr *MockWalletStorageMockRecorder) HasAddress(address any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasAddress", reflect.TypeOf((*MockIStorage)(nil).HasAddress), address)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasAddress", reflect.TypeOf((*MockWalletStorage)(nil).HasAddress), address)
 }
 
 // HasTransaction mocks base method.
-func (m *MockIStorage) HasTransaction(txID string) bool {
+func (m *MockWalletStorage) HasTransaction(txID string) bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HasTransaction", txID)
 	ret0, _ := ret[0].(bool)
@@ -168,13 +168,13 @@ func (m *MockIStorage) HasTransaction(txID string) bool {
 }
 
 // HasTransaction indicates an expected call of HasTransaction.
-func (mr *MockIStorageMockRecorder) HasTransaction(txID any) *gomock.Call {
+func (mr *MockWalletStorageMockRecorder) HasTransaction(txID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasTransaction", reflect.TypeOf((*MockIStorage)(nil).HasTransaction), txID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasTransaction", reflect.TypeOf((*MockWalletStorage)(nil).HasTransaction), txID)
 }
 
 // InsertAddress mocks base method.
-func (m *MockIStorage) InsertAddress(info *types0.AddressInfo) error {
+func (m *MockWalletStorage) InsertAddress(info *types0.AddressInfo) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InsertAddress", info)
 	ret0, _ := ret[0].(error)
@@ -182,13 +182,13 @@ func (m *MockIStorage) InsertAddress(info *types0.AddressInfo) error {
 }
 
 // InsertAddress indicates an expected call of InsertAddress.
-func (mr *MockIStorageMockRecorder) InsertAddress(info any) *gomock.Call {
+func (mr *MockWalletStorageMockRecorder) InsertAddress(info any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertAddress", reflect.TypeOf((*MockIStorage)(nil).InsertAddress), info)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertAddress", reflect.TypeOf((*MockWalletStorage)(nil).InsertAddress), info)
 }
 
 // InsertTransaction mocks base method.
-func (m *MockIStorage) InsertTransaction(info *types0.TransactionInfo) error {
+func (m *MockWalletStorage) InsertTransaction(info *types0.TransactionInfo) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InsertTransaction", info)
 	ret0, _ := ret[0].(error)
@@ -196,13 +196,13 @@ func (m *MockIStorage) InsertTransaction(info *types0.TransactionInfo) error {
 }
 
 // InsertTransaction indicates an expected call of InsertTransaction.
-func (mr *MockIStorageMockRecorder) InsertTransaction(info any) *gomock.Call {
+func (mr *MockWalletStorageMockRecorder) InsertTransaction(info any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertTransaction", reflect.TypeOf((*MockIStorage)(nil).InsertTransaction), info)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertTransaction", reflect.TypeOf((*MockWalletStorage)(nil).InsertTransaction), info)
 }
 
 // IsLegacy mocks base method.
-func (m *MockIStorage) IsLegacy() bool {
+func (m *MockWalletStorage) IsLegacy() bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsLegacy")
 	ret0, _ := ret[0].(bool)
@@ -210,13 +210,13 @@ func (m *MockIStorage) IsLegacy() bool {
 }
 
 // IsLegacy indicates an expected call of IsLegacy.
-func (mr *MockIStorageMockRecorder) IsLegacy() *gomock.Call {
+func (mr *MockWalletStorageMockRecorder) IsLegacy() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsLegacy", reflect.TypeOf((*MockIStorage)(nil).IsLegacy))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsLegacy", reflect.TypeOf((*MockWalletStorage)(nil).IsLegacy))
 }
 
 // QueryTransactions mocks base method.
-func (m *MockIStorage) QueryTransactions(params QueryParams) ([]*types0.TransactionInfo, error) {
+func (m *MockWalletStorage) QueryTransactions(params QueryParams) ([]*types0.TransactionInfo, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "QueryTransactions", params)
 	ret0, _ := ret[0].([]*types0.TransactionInfo)
@@ -225,13 +225,13 @@ func (m *MockIStorage) QueryTransactions(params QueryParams) ([]*types0.Transact
 }
 
 // QueryTransactions indicates an expected call of QueryTransactions.
-func (mr *MockIStorageMockRecorder) QueryTransactions(params any) *gomock.Call {
+func (mr *MockWalletStorageMockRecorder) QueryTransactions(params any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueryTransactions", reflect.TypeOf((*MockIStorage)(nil).QueryTransactions), params)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueryTransactions", reflect.TypeOf((*MockWalletStorage)(nil).QueryTransactions), params)
 }
 
 // SetDefaultFee mocks base method.
-func (m *MockIStorage) SetDefaultFee(fee amount.Amount) error {
+func (m *MockWalletStorage) SetDefaultFee(fee amount.Amount) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SetDefaultFee", fee)
 	ret0, _ := ret[0].(error)
@@ -239,13 +239,13 @@ func (m *MockIStorage) SetDefaultFee(fee amount.Amount) error {
 }
 
 // SetDefaultFee indicates an expected call of SetDefaultFee.
-func (mr *MockIStorageMockRecorder) SetDefaultFee(fee any) *gomock.Call {
+func (mr *MockWalletStorageMockRecorder) SetDefaultFee(fee any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetDefaultFee", reflect.TypeOf((*MockIStorage)(nil).SetDefaultFee), fee)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetDefaultFee", reflect.TypeOf((*MockWalletStorage)(nil).SetDefaultFee), fee)
 }
 
 // UpdateAddress mocks base method.
-func (m *MockIStorage) UpdateAddress(info *types0.AddressInfo) error {
+func (m *MockWalletStorage) UpdateAddress(info *types0.AddressInfo) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateAddress", info)
 	ret0, _ := ret[0].(error)
@@ -253,13 +253,13 @@ func (m *MockIStorage) UpdateAddress(info *types0.AddressInfo) error {
 }
 
 // UpdateAddress indicates an expected call of UpdateAddress.
-func (mr *MockIStorageMockRecorder) UpdateAddress(info any) *gomock.Call {
+func (mr *MockWalletStorageMockRecorder) UpdateAddress(info any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateAddress", reflect.TypeOf((*MockIStorage)(nil).UpdateAddress), info)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateAddress", reflect.TypeOf((*MockWalletStorage)(nil).UpdateAddress), info)
 }
 
 // UpdateTransactionStatus mocks base method.
-func (m *MockIStorage) UpdateTransactionStatus(no int64, status types0.TransactionStatus, blockHeight types.Height) error {
+func (m *MockWalletStorage) UpdateTransactionStatus(no int64, status types0.TransactionStatus, blockHeight types.Height) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateTransactionStatus", no, status, blockHeight)
 	ret0, _ := ret[0].(error)
@@ -267,13 +267,13 @@ func (m *MockIStorage) UpdateTransactionStatus(no int64, status types0.Transacti
 }
 
 // UpdateTransactionStatus indicates an expected call of UpdateTransactionStatus.
-func (mr *MockIStorageMockRecorder) UpdateTransactionStatus(no, status, blockHeight any) *gomock.Call {
+func (mr *MockWalletStorageMockRecorder) UpdateTransactionStatus(no, status, blockHeight any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTransactionStatus", reflect.TypeOf((*MockIStorage)(nil).UpdateTransactionStatus), no, status, blockHeight)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTransactionStatus", reflect.TypeOf((*MockWalletStorage)(nil).UpdateTransactionStatus), no, status, blockHeight)
 }
 
 // UpdateVault mocks base method.
-func (m *MockIStorage) UpdateVault(arg0 *vault.Vault) error {
+func (m *MockWalletStorage) UpdateVault(arg0 *vault.Vault) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateVault", arg0)
 	ret0, _ := ret[0].(error)
@@ -281,13 +281,13 @@ func (m *MockIStorage) UpdateVault(arg0 *vault.Vault) error {
 }
 
 // UpdateVault indicates an expected call of UpdateVault.
-func (mr *MockIStorageMockRecorder) UpdateVault(arg0 any) *gomock.Call {
+func (mr *MockWalletStorageMockRecorder) UpdateVault(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateVault", reflect.TypeOf((*MockIStorage)(nil).UpdateVault), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateVault", reflect.TypeOf((*MockWalletStorage)(nil).UpdateVault), arg0)
 }
 
 // Vault mocks base method.
-func (m *MockIStorage) Vault() *vault.Vault {
+func (m *MockWalletStorage) Vault() *vault.Vault {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Vault")
 	ret0, _ := ret[0].(*vault.Vault)
@@ -295,13 +295,13 @@ func (m *MockIStorage) Vault() *vault.Vault {
 }
 
 // Vault indicates an expected call of Vault.
-func (mr *MockIStorageMockRecorder) Vault() *gomock.Call {
+func (mr *MockWalletStorageMockRecorder) Vault() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Vault", reflect.TypeOf((*MockIStorage)(nil).Vault))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Vault", reflect.TypeOf((*MockWalletStorage)(nil).Vault))
 }
 
 // WalletInfo mocks base method.
-func (m *MockIStorage) WalletInfo() *types0.WalletInfo {
+func (m *MockWalletStorage) WalletInfo() *types0.WalletInfo {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WalletInfo")
 	ret0, _ := ret[0].(*types0.WalletInfo)
@@ -309,7 +309,7 @@ func (m *MockIStorage) WalletInfo() *types0.WalletInfo {
 }
 
 // WalletInfo indicates an expected call of WalletInfo.
-func (mr *MockIStorageMockRecorder) WalletInfo() *gomock.Call {
+func (mr *MockWalletStorageMockRecorder) WalletInfo() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WalletInfo", reflect.TypeOf((*MockIStorage)(nil).WalletInfo))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WalletInfo", reflect.TypeOf((*MockWalletStorage)(nil).WalletInfo))
 }

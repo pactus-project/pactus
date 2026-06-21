@@ -21,7 +21,7 @@ func (s *cpDecideState) decide() {
 			s.logger.Panic("unreachable state: decide on 'no (biased)' should be handled in pre-vote state")
 
 		case cpMainVotes.Has2FP1VotesFor(s.cpRound, vote.CPValueYes):
-			s.logger.Info("binary agreement decided", "value", "yes", "round", s.cpRound)
+			s.logger.Info("binary agreement decided", "value", "yes", "cpRound", s.cpRound)
 
 			// decided for yes, and proceeds to the next round
 			votes := cpMainVotes.BinaryVotes(s.cpRound, vote.CPValueYes)
@@ -33,7 +33,7 @@ func (s *cpDecideState) decide() {
 
 		default:
 			// conflicting votes
-			s.logger.Debug("conflicting main votes", "round", s.cpRound)
+			s.logger.Debug("conflicting main votes", "cpRound", s.cpRound)
 			s.cpRound++
 			s.enterNewState(s.cpPreVoteState)
 		}

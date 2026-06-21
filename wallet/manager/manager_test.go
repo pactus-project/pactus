@@ -20,7 +20,7 @@ func TestWalletManager(t *testing.T) {
 		WalletsDir: util.TempDirPath(),
 		ChainType:  genesis.Mainnet,
 	}
-	provider := provider.NewMockIBlockchainProvider(ts.Ctrl)
+	provider := provider.NewMockWalletProvider(ts.MockController())
 	eventPipe := pipeline.New[any](t.Context())
 	mgr, err := manager.NewManager(t.Context(), conf, provider, eventPipe)
 	require.NoError(t, err)

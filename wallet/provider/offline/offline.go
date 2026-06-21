@@ -10,7 +10,7 @@ import (
 	"github.com/pactus-project/pactus/wallet/provider"
 )
 
-var _ provider.IBlockchainProvider = (*OfflineBlockchainProvider)(nil)
+var _ provider.WalletProvider = (*OfflineBlockchainProvider)(nil)
 
 // ErrOffline describes an error in which the wallet is offline.
 var ErrOffline = errors.New("wallet is in offline mode")

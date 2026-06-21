@@ -2,6 +2,7 @@ package consensus
 
 import (
 	"fmt"
+	"slices"
 	"testing"
 	"time"
 
@@ -9,25 +10,18 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/state"
-	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/types"
-	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/proposal"
-	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"go.uber.org/mock/gomock"
-	"golang.org/x/exp/slices"
 )
 
 const (
@@ -41,12 +35,15 @@ type consMessage struct {
 	sender  crypto.Address
 	message message.Message
 }
+
 type testData struct {
 	*testsuite.TestSuite
 
 	valKeys      []*bls.ValidatorKey
-	mockTxPool   *txpool.MockTxPool
-	genDoc       *genesis.Genesis
+	stateX       *state.FakeState
+	stateY       *state.FakeState
+	stateB       *state.FakeState
+	stateP       *state.FakeState
 	consX        *consensus // Good peer
 	consY        *consensus // Good peer
 	consB        *consensus // Byzantine or offline peer
@@ -75,51 +72,23 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 
 	ts := testsuite.NewTestSuiteFromSeed(t, seed)
 
-	_, valKeys := ts.GenerateTestCommittee(4)
-	mockTxPool := txpool.NewMockTxPool(ts.Ctrl)
-	mockTxPool.EXPECT().SetNewSandboxAndRecheck(gomock.Any()).Return().AnyTimes()
-	mockTxPool.EXPECT().PrepareBlockTransactions().Return(nil).AnyTimes()
-	mockTxPool.EXPECT().HandleCommittedBlock(gomock.Any()).Return().AnyTimes()
+	cmt, valKeys := ts.GenerateTestCommittee(4)
 
-	vals := make([]*validator.Validator, 4)
-	for i, key := range valKeys {
-		val := validator.NewValidator(key.PublicKey(), int32(i))
-		vals[i] = val
-	}
+	stateX := state.NewFakeState(ts, cmt)
+	stateY := state.NewFakeState(ts, cmt)
+	stateB := state.NewFakeState(ts, cmt)
+	stateP := state.NewFakeState(ts, cmt)
 
-	acc := account.NewAccount(0)
-	acc.AddToBalance(21 * 1e14)
-	accs := map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc}
-	params := genesis.DefaultGenesisParams()
-	params.CommitteeSize = 4
-
-	// To prevent triggering timers before starting the tests and
-	// avoid double entries for new heights in some tests.
-	getTime := util.RoundNow(params.BlockIntervalInSecond).
-		Add(time.Duration(params.BlockIntervalInSecond) * time.Second)
-	genDoc := genesis.MakeGenesis(getTime, accs, vals, params)
-	eventPipe := pipeline.New[any](t.Context())
-	stateX, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexX]},
-		store.MockingStore(ts), mockTxPool, eventPipe)
-	require.NoError(t, err)
-	stateY, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexY]},
-		store.MockingStore(ts), mockTxPool, eventPipe)
-	require.NoError(t, err)
-	stateB, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexB]},
-		store.MockingStore(ts), mockTxPool, eventPipe)
-	require.NoError(t, err)
-	stateP, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexP]},
-		store.MockingStore(ts), mockTxPool, eventPipe)
-	require.NoError(t, err)
-
-	consMessages := make([]consMessage, 0)
 	td := &testData{
-		TestSuite:    ts,
-		valKeys:      valKeys,
-		mockTxPool:   mockTxPool,
-		genDoc:       genDoc,
-		consMessages: consMessages,
+		TestSuite: ts,
+		valKeys:   valKeys,
+		stateX:    stateX,
+		stateY:    stateY,
+		stateB:    stateB,
+		stateP:    stateP,
 	}
+
+	td.consMessages = make([]consMessage, 0)
 	broadcasterFunc := func(sender crypto.Address, msg message.Message) {
 		td.consMessages = append(td.consMessages, consMessage{
 			sender:  sender,
@@ -127,13 +96,13 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 		})
 	}
 	td.consX = makeConsensus(t.Context(), testConfig(), stateX, valKeys[tIndexX],
-		valKeys[tIndexX].PublicKey().AccountAddress(), broadcasterFunc, NewConcreteMediator())
+		ts.RandAccAddress(), broadcasterFunc, NewConcreteMediator())
 	td.consY = makeConsensus(t.Context(), testConfig(), stateY, valKeys[tIndexY],
-		valKeys[tIndexY].PublicKey().AccountAddress(), broadcasterFunc, NewConcreteMediator())
+		ts.RandAccAddress(), broadcasterFunc, NewConcreteMediator())
 	td.consB = makeConsensus(t.Context(), testConfig(), stateB, valKeys[tIndexB],
-		valKeys[tIndexB].PublicKey().AccountAddress(), broadcasterFunc, NewConcreteMediator())
+		ts.RandAccAddress(), broadcasterFunc, NewConcreteMediator())
 	td.consP = makeConsensus(t.Context(), testConfig(), stateP, valKeys[tIndexP],
-		valKeys[tIndexP].PublicKey().AccountAddress(), broadcasterFunc, NewConcreteMediator())
+		ts.RandAccAddress(), broadcasterFunc, NewConcreteMediator())
 
 	// -------------------------------
 	// Better logging during testing
@@ -346,66 +315,38 @@ func (*testData) enterNextRound(cons *consensus) {
 	cons.lk.Unlock()
 }
 
+func (*testData) commitBlock(t *testing.T, state *state.FakeState,
+	blk *block.Block, cert *certificate.Certificate,
+) {
+	t.Helper()
+
+	_ = state.CommitBlock(blk, cert)
+}
+
 func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certificate.Certificate) {
 	t.Helper()
 
-	height := td.consX.bcState.LastBlockHeight()
-	var err error
-	prop := td.makeProposal(t, height+1, 0)
+	blk, cert := td.GenerateTestBlock(td.stateX.LastHeight + 1)
 
-	cert := certificate.NewCertificate(height+1, 0)
-	signBytes := cert.SignBytesPrecommit(prop.Block().Hash())
-	sig1 := td.consX.valKey.Sign(signBytes)
-	sig2 := td.consY.valKey.Sign(signBytes)
-	sig3 := td.consB.valKey.Sign(signBytes)
-	sig4 := td.consP.valKey.Sign(signBytes)
-
-	sig, _ := bls.SignatureAggregate(sig1, sig2, sig3, sig4)
-	cert.SetSignature([]int32{tIndexX, tIndexY, tIndexB, tIndexP}, []int32{}, sig)
-	blk := prop.Block()
-
-	err = td.consX.bcState.CommitBlock(blk, cert)
-	require.NoError(t, err)
-	err = td.consY.bcState.CommitBlock(blk, cert)
-	require.NoError(t, err)
-	err = td.consB.bcState.CommitBlock(blk, cert)
-	require.NoError(t, err)
-	err = td.consP.bcState.CommitBlock(blk, cert)
-	require.NoError(t, err)
+	_ = td.stateX.CommitBlock(blk, cert)
+	_ = td.stateY.CommitBlock(blk, cert)
+	_ = td.stateB.CommitBlock(blk, cert)
+	_ = td.stateP.CommitBlock(blk, cert)
 
 	return blk, cert
 }
 
 // makeProposal generates a signed and valid proposal for the given height and round.
 // If rewardAddr is provided, it will be used instead of the consensus instance's default reward address.
-func (td *testData) makeProposal(t *testing.T, height types.Height, round types.Round, rewardAddr ...crypto.Address,
+func (td *testData) makeProposal(t *testing.T, height types.Height, round types.Round,
+	opts ...func(*testsuite.ProposalMaker),
 ) *proposal.Proposal {
 	t.Helper()
 
-	var cons *consensus
-	switch uint32(height%4) + uint32(round%4) {
-	case 1:
-		cons = td.consX
-	case 2:
-		cons = td.consY
-	case 3:
-		cons = td.consB
-	case 4, 0:
-		cons = td.consP
-	}
+	opts = util.Prepend(opts,
+		testsuite.ProposalWithKey(td.valKeys[td.stateX.ProposerIndex(round)]))
 
-	// Use provided reward address or fall back to consensus instance's default
-	addr := cons.rewardAddr
-	if len(rewardAddr) > 0 {
-		addr = rewardAddr[0]
-	}
-
-	blk, err := cons.bcState.ProposeBlock(cons.valKey, addr)
-	require.NoError(t, err)
-	p := proposal.NewProposal(height, round, blk)
-	td.HelperSignProposal(cons.valKey, p)
-
-	return p
+	return td.GenerateTestProposal(height, round, opts...)
 }
 
 func (td *testData) makeMainCertificate(t *testing.T,
@@ -455,20 +396,16 @@ func TestStart(t *testing.T) {
 	td.checkHeightRound(t, td.consX, 1, 0)
 }
 
-func TestNotInCommittee(t *testing.T) {
+func TestScheduler(t *testing.T) {
 	td := setup(t)
 
-	valKey := td.RandValKey()
+	blockInterval := td.stateB.Params().BlockInterval()
+	td.stateX.LastTime = time.Now().Add(-blockInterval)
+	td.consX.MoveToNewHeight()
 
-	state := state.MockingState(td.TestSuite)
-	pipe := pipeline.New[message.Message](t.Context())
-	consInt := NewConsensus(t.Context(), testConfig(), state, valKey,
-		valKey.Address(), pipe, NewConcreteMediator())
-	cons := consInt.(*consensus)
-
-	td.enterNewHeight(cons)
-	td.newHeightTimeout(cons)
-	assert.Equal(t, "new-height", cons.currentState.name())
+	assert.Eventually(t, func() bool {
+		return td.consX.Proposal() != nil
+	}, 10*time.Second, 100*time.Millisecond)
 }
 
 func TestIsProposer(t *testing.T) {
@@ -558,10 +495,11 @@ func TestConsensusLateProposal(t *testing.T) {
 
 	height := types.Height(2)
 	round := types.Round(0)
-	prop := td.makeProposal(t, height, round)
-	require.NotNil(t, prop)
 
-	td.commitBlockForAllStates(t) // height 2
+	blk, _ := td.commitBlockForAllStates(t) // height 2
+
+	prop := td.makeProposal(t, height, round, testsuite.ProposalWithBlock(blk))
+	require.NotNil(t, prop)
 
 	// Partitioned node receives proposal now
 	td.consP.SetProposal(prop)
@@ -624,7 +562,6 @@ func TestSetProposalOnPrecommit(t *testing.T) {
 	td.shouldPublishBlockAnnounce(t, td.consP, prop.Block().Hash())
 }
 
-// update me from TestHandleQueryVote: consensus:v1.
 func TestHandleQueryVote(t *testing.T) {
 	td := setup(t)
 
@@ -748,8 +685,8 @@ func TestDuplicateProposal(t *testing.T) {
 	height := types.Height(4)
 	round := types.Round(0)
 	prop1 := td.makeProposal(t, height, round)
+	prop2 := td.makeProposal(t, height, round)
 
-	prop2 := td.makeProposal(t, height, round, td.RandAccAddress())
 	assert.NotEqual(t, prop1.Hash(), prop2.Hash())
 
 	td.consX.SetProposal(prop1)
@@ -761,13 +698,16 @@ func TestDuplicateProposal(t *testing.T) {
 func TestNonActiveValidator(t *testing.T) {
 	td := setup(t)
 
+	committee, _ := td.GenerateTestCommittee(4)
+
 	valKey := td.RandValKey()
 	pipe := pipeline.New[message.Message](t.Context())
-	consInt := NewConsensus(t.Context(), testConfig(), state.MockingState(td.TestSuite),
+	state := state.NewFakeState(td.TestSuite, committee)
+	consInt := NewConsensus(t.Context(), testConfig(), state,
 		valKey, valKey.Address(), pipe, NewConcreteMediator())
 	nonActiveCons := consInt.(*consensus)
 
-	t.Run("non-active instances should be in new-height state", func(t *testing.T) {
+	t.Run("non-active instances should stay in new-height state", func(t *testing.T) {
 		nonActiveCons.MoveToNewHeight()
 		td.newHeightTimeout(nonActiveCons)
 		td.checkHeightRound(t, nonActiveCons, 1, 0)
@@ -795,12 +735,8 @@ func TestNonActiveValidator(t *testing.T) {
 	})
 
 	t.Run("non-active instances should move to new height", func(t *testing.T) {
-		b1, cert1 := td.commitBlockForAllStates(t)
-
-		nonActiveCons.MoveToNewHeight()
-		td.checkHeightRound(t, nonActiveCons, 1, 0)
-
-		require.NoError(t, nonActiveCons.bcState.CommitBlock(b1, cert1))
+		blk, cert := td.commitBlockForAllStates(t)
+		td.commitBlock(t, state, blk, cert)
 
 		nonActiveCons.MoveToNewHeight()
 		td.newHeightTimeout(nonActiveCons)
@@ -844,11 +780,11 @@ func TestCases(t *testing.T) {
 		round       types.Round
 		description string
 	}{
-		{1697898884837384019, 2, "1/3+ cp:PRE-VOTE in Prepare step"},
-		{1734526933123806220, 1, "1/3+ cp:PRE-VOTE in Precommit step"},
-		{1734526832618973590, 1, "Conflicting cp:PRE-VOTE in cp_round=0"},
-		{1734527064850322674, 2, "Conflicting cp:PRE-VOTE in cp_round=1"},
-		{1734526579569939721, 1, "consP & consB: Change Proposer, consX & consY: Commit (2 block announces)"},
+		{1781867587065310823, 1, "1/3+ cp:PRE-VOTE in Prepare step"},
+		{1781867626234739290, 2, "1/3+ cp:PRE-VOTE in Precommit step"},
+		{1781868171673143067, 1, "conflicting main votes. cp_round=0"},
+		{1781868234356493471, 1, "conflicting main votes. cp_round=1"},
+		{1781869035138256604, 2, "consP & consB: Change Proposer, consX & consY: Commit (2 block announces)"},
 	}
 
 	for no, tt := range tests {
@@ -904,12 +840,17 @@ func TestByzantine(t *testing.T) {
 
 	height := types.Height(7)
 	round := types.Round(0)
-	prop1 := td.makeProposal(t, height, round)
+
+	td.enterNewHeight(td.consX)
+	td.enterNewHeight(td.consY)
+	td.enterNewHeight(td.consB)
+	td.enterNewHeight(td.consP)
+
+	// Byzantine node is the proposal for this round.
+	prop1 := td.consB.Proposal()
 
 	// =================================
 	// X, Y votes
-	td.enterNewHeight(td.consX)
-	td.enterNewHeight(td.consY)
 
 	td.consX.SetProposal(prop1)
 	td.consY.SetProposal(prop1)
@@ -930,7 +871,6 @@ func TestByzantine(t *testing.T) {
 
 	// =================================
 	// B votes
-	td.enterNewHeight(td.consB)
 
 	td.consB.SetProposal(prop1)
 
@@ -947,13 +887,11 @@ func TestByzantine(t *testing.T) {
 	// =================================
 	// P votes
 	// Byzantine node create the second proposal and send it to the partitioned node P
-	prop2 := td.makeProposal(t, height, round, td.RandAccAddress())
+	prop2 := td.makeProposal(t, height, round)
 
 	require.NotEqual(t, prop1.Block().Hash(), prop2.Block().Hash())
 	require.Equal(t, td.consB.valKey.Address(), prop1.Block().Header().ProposerAddress())
 	require.Equal(t, td.consB.valKey.Address(), prop2.Block().Header().ProposerAddress())
-
-	td.enterNewHeight(td.consP)
 
 	// P receives the Seconds proposal
 	td.consP.SetProposal(prop2)

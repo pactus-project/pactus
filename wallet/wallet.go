@@ -29,8 +29,8 @@ type Wallet struct {
 	addresses
 	transactions
 
-	provider provider.IBlockchainProvider
-	storage  storage.IStorage
+	provider provider.WalletProvider
+	storage  storage.WalletStorage
 }
 
 // GenerateMnemonic is a wrapper for `vault.GenerateMnemonic`.
@@ -117,7 +117,7 @@ func Open(ctx context.Context, walletPath string, opts ...OpenWalletOption) (*Wa
 
 type openWalletConfig struct {
 	eventPipe pipeline.Pipeline[any]
-	provider  provider.IBlockchainProvider
+	provider  provider.WalletProvider
 	lockMode  bool
 }
 
@@ -135,7 +135,7 @@ func WithEventPipe(eventPipe pipeline.Pipeline[any]) OpenWalletOption {
 	}
 }
 
-func WithBlockchainProvider(provider provider.IBlockchainProvider) OpenWalletOption {
+func WithBlockchainProvider(provider provider.WalletProvider) OpenWalletOption {
 	return func(cfg *openWalletConfig) {
 		cfg.provider = provider
 	}
@@ -154,7 +154,7 @@ func WithLockMode(lockMode bool) OpenWalletOption {
 	}
 }
 
-func New(ctx context.Context, storage storage.IStorage, opts ...OpenWalletOption) (*Wallet, error) {
+func New(ctx context.Context, storage storage.WalletStorage, opts ...OpenWalletOption) (*Wallet, error) {
 	if storage.Vault().CoinType != addresspath.CoinTypePactusMainnet {
 		crypto.ToTestnetHRP()
 	}
@@ -481,7 +481,7 @@ func (w *Wallet) SetDefaultFee(fee amount.Amount) error {
 }
 
 // SetProvider sets the blockchain provider for the wallet.
-func (w *Wallet) SetProvider(provider provider.IBlockchainProvider) {
+func (w *Wallet) SetProvider(provider provider.WalletProvider) {
 	w.provider = provider
 	w.transactions.provider = provider
 }

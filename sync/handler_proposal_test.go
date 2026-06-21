@@ -4,10 +4,12 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"go.uber.org/mock/gomock"
 )
 
 func TestHandlerProposalParsingMessages(t *testing.T) {
 	td := setup(t, nil)
+	td.state.EXPECT().UpdateValidatorProtocolVersion(gomock.Any(), gomock.Any()).AnyTimes()
 
 	t.Run("Parsing proposal message", func(*testing.T) {
 		consensusHeight := td.state.LastBlockHeight() + 1
