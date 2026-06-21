@@ -1,180 +1,160 @@
-package manager
+package manager_test
 
 import (
 	"testing"
 
-	"github.com/ezex-io/gopkg/pipeline"
-	"github.com/pactus-project/pactus/consensusv2"
-	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/state"
-	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/types/proposal"
-	"github.com/pactus-project/pactus/types/vote"
-	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestManager(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	state := state.MockingState(ts)
-	state.TestCommittee.Validators()
+	state := state.NewMockState(ts.MockController())
+	consA := consensus.NewMockConsensus(ts.MockController())
+	consB := consensus.NewMockConsensus(ts.MockController())
+	instances := []consensus.Consensus{consA, consB}
 
-	rewardAddrs := []crypto.Address{ts.RandAccAddress(), ts.RandAccAddress()}
-	valKeys := []*bls.ValidatorKey{state.TestValKeys[0], ts.RandValKey()}
-	pipe := pipeline.New[message.Message](t.Context())
+	consA.EXPECT().MoveToNewHeight().Return().AnyTimes()
+	consB.EXPECT().MoveToNewHeight().Return().AnyTimes()
 
-	randomHeight := ts.RandHeight()
-	rndBlk, rndCert := ts.GenerateTestBlock(randomHeight)
-	state.TestStore.SaveBlock(rndBlk, rndCert)
-	conf := consensusv2.DefaultConfig()
+	mgr := manager.NewManager(state, instances)
+	height := ts.RandHeight()
+	round := ts.RandRound()
 
-	mgrInt := NewManagerV2(t.Context(), conf, state, valKeys, rewardAddrs, pipe)
-	mgr := mgrInt.(*manager)
-
-	consA := mgr.instances[0] // active
-	consB := mgr.instances[1] // inactive
-
-	t.Run("Check if keys are assigned properly", func(t *testing.T) {
-		assert.Equal(t, consA.ConsensusKey(), valKeys[0].PublicKey())
-		assert.Equal(t, consB.ConsensusKey(), valKeys[1].PublicKey())
+	t.Run("Test Instances", func(t *testing.T) {
+		instances := mgr.Instances()
+		assert.Equal(t, []consensus.ConsensusReader{consA, consB}, instances)
 	})
 
-	t.Run("Check if all instances move to new height", func(t *testing.T) {
-		mgr.MoveToNewHeight()
+	t.Run("Has no active instances", func(t *testing.T) {
+		consA.EXPECT().IsActive().Return(false).Times(2)
+		consB.EXPECT().IsActive().Return(false).Times(2)
 
-		stateHeight := mgr.state.LastBlockHeight()
-		consHeight, consRound := mgr.HeightRound()
+		assert.False(t, mgr.HasActiveInstance())
+
+		t.Run("Test Get Proposal", func(t *testing.T) {
+			prop := ts.GenerateTestProposal(height-1, round)
+			consA.EXPECT().Proposal().Return(prop).Times(1)
+
+			assert.Equal(t, prop, mgr.Proposal())
+		})
+	})
+
+	t.Run("Has an active instances", func(t *testing.T) {
+		consA.EXPECT().IsActive().Return(false).AnyTimes()
+		consB.EXPECT().IsActive().Return(true).AnyTimes()
 
 		assert.True(t, mgr.HasActiveInstance())
-		assert.Equal(t, stateHeight+1, consHeight)
-		assert.Zero(t, consRound)
+
+		t.Run("Test Get Proposal", func(t *testing.T) {
+			prop := ts.GenerateTestProposal(height, round)
+			consB.EXPECT().Proposal().Return(prop).Times(1)
+
+			assert.Equal(t, prop, mgr.Proposal())
+		})
+
+		t.Run("Testing HeightRound", func(t *testing.T) {
+			consB.EXPECT().HeightRound().Return(height, round).Times(1)
+
+			h, r := mgr.HeightRound()
+			assert.Equal(t, height, h)
+			assert.Equal(t, round, r)
+		})
+
+		t.Run("Testing HandleQueryProposal", func(*testing.T) {
+			consB.EXPECT().HandleQueryProposal(height, round).Times(1)
+			mgr.HandleQueryProposal(height, round)
+		})
+
+		t.Run("Testing HandleQueryVote", func(*testing.T) {
+			consB.EXPECT().HandleQueryVote(height, round).Times(1)
+			mgr.HandleQueryVote(height, round)
+		})
+
+		t.Run("Testing AddVote", func(t *testing.T) {
+			t.Run("Discard old votes", func(*testing.T) {
+				consB.EXPECT().HeightRound().Return(height, types.Round(0)).Times(1)
+				vote, _ := ts.GenerateTestPrecommitVote(height-2, round)
+
+				mgr.AddVote(vote)
+			})
+
+			t.Run("Add votes for previous height", func(*testing.T) {
+				consB.EXPECT().HeightRound().Return(height, types.Round(0)).Times(1)
+				vote, _ := ts.GenerateTestPrecommitVote(height-1, round)
+
+				state.EXPECT().UpdateLastCertificate(vote)
+				mgr.AddVote(vote)
+			})
+
+			t.Run("Add votes for current height", func(*testing.T) {
+				consB.EXPECT().HeightRound().Return(height, types.Round(0)).Times(1)
+				vote, _ := ts.GenerateTestPrecommitVote(height, round)
+
+				consA.EXPECT().AddVote(vote).Return().Times(1)
+				consB.EXPECT().AddVote(vote).Return().Times(1)
+				mgr.AddVote(vote)
+			})
+
+			t.Run("Add votes for next height", func(*testing.T) {
+				consB.EXPECT().HeightRound().Return(height, types.Round(0)).Times(1)
+				vote, _ := ts.GenerateTestPrecommitVote(height+1, round)
+
+				mgr.AddVote(vote)
+
+				// Moving too the next height, votes should be added.
+				state.EXPECT().LastBlockHeight().Return(height + 1).Times(1)
+				consB.EXPECT().HeightRound().Return(height+1, types.Round(0)).Times(1)
+				consA.EXPECT().AddVote(vote).Return().Times(1)
+				consB.EXPECT().AddVote(vote).Return().Times(1)
+				mgr.MoveToNewHeight()
+			})
+
+			t.Run("Discard future votes", func(*testing.T) {
+				consB.EXPECT().HeightRound().Return(height, types.Round(0)).Times(1)
+				vote, _ := ts.GenerateTestPrecommitVote(height+2, round)
+
+				mgr.AddVote(vote)
+			})
+		})
+
+		t.Run("Testing SetProposal", func(t *testing.T) {
+			t.Run("Discard old proposals", func(*testing.T) {
+				consB.EXPECT().HeightRound().Return(height, types.Round(0)).Times(1)
+				prop := ts.GenerateTestProposal(height-1, round)
+
+				mgr.SetProposal(prop)
+			})
+
+			t.Run("Set proposal for current height", func(*testing.T) {
+				consB.EXPECT().HeightRound().Return(height, types.Round(0)).Times(1)
+				prop := ts.GenerateTestProposal(height, round)
+
+				consA.EXPECT().SetProposal(prop).Return().Times(1)
+				consB.EXPECT().SetProposal(prop).Return().Times(1)
+
+				mgr.SetProposal(prop)
+			})
+
+			t.Run("Set proposal for next height", func(*testing.T) {
+				consB.EXPECT().HeightRound().Return(height, types.Round(0)).Times(1)
+				prop := ts.GenerateTestProposal(height+1, round)
+
+				mgr.SetProposal(prop)
+
+				// Moving too the next height, votes should be added.
+				state.EXPECT().LastBlockHeight().Return(height + 1).Times(1)
+				consB.EXPECT().HeightRound().Return(height+1, types.Round(0)).Times(1)
+				consA.EXPECT().SetProposal(prop).Return().Times(1)
+				consB.EXPECT().SetProposal(prop).Return().Times(1)
+
+				mgr.MoveToNewHeight()
+			})
+		})
 	})
-
-	t.Run("Testing add vote", func(t *testing.T) {
-		consHeight, _ := mgr.HeightRound()
-		vote := vote.NewPrecommitVote(ts.RandHash(), consHeight, 0, valKeys[0].Address())
-		ts.HelperSignVote(valKeys[0], vote)
-
-		mgr.AddVote(vote)
-
-		assert.True(t, consA.HasVote(vote.Hash()))
-		assert.False(t, consB.HasVote(vote.Hash()))
-	})
-
-	t.Run("Testing set proposal", func(t *testing.T) {
-		consHeight, _ := mgr.HeightRound()
-		blk, _ := state.ProposeBlock(valKeys[0], valKeys[0].Address())
-		prop := proposal.NewProposal(consHeight, 0, blk)
-		ts.HelperSignProposal(valKeys[0], prop)
-
-		mgr.SetProposal(prop)
-
-		assert.Equal(t, prop, consA.Proposal())
-		assert.Nil(t, consB.Proposal())
-	})
-
-	t.Run("Check discarding old votes", func(t *testing.T) {
-		consHeight, _ := mgr.HeightRound()
-		v := vote.NewPrepareVote(ts.RandHash(), consHeight-1, 0, state.TestValKeys[2].Address())
-		ts.HelperSignVote(state.TestValKeys[2], v)
-
-		mgr.AddVote(v)
-		assert.Empty(t, mgr.upcomingVotes)
-	})
-
-	t.Run("Check discarding old proposals", func(t *testing.T) {
-		consHeight, _ := mgr.HeightRound()
-		blk, _ := state.ProposeBlock(valKeys[0], valKeys[0].Address())
-		prop := proposal.NewProposal(consHeight-1, 1, blk)
-		ts.HelperSignProposal(valKeys[0], prop)
-
-		mgr.SetProposal(prop)
-		assert.Empty(t, mgr.upcomingProposals)
-	})
-
-	t.Run("Processing upcoming votes", func(t *testing.T) {
-		consHeight, _ := mgr.HeightRound()
-		vote1 := vote.NewPrepareVote(ts.RandHash(), consHeight+1, 0, valKeys[0].Address())
-		vote2 := vote.NewPrepareVote(ts.RandHash(), consHeight+2, 0, valKeys[0].Address())
-		vote3 := vote.NewPrepareVote(ts.RandHash(), consHeight+3, 0, valKeys[0].Address())
-
-		ts.HelperSignVote(valKeys[0], vote1)
-		ts.HelperSignVote(valKeys[0], vote2)
-		ts.HelperSignVote(valKeys[0], vote3)
-
-		mgr.AddVote(vote1)
-		mgr.AddVote(vote2)
-		mgr.AddVote(vote3)
-
-		assert.Len(t, mgr.upcomingVotes, 1)
-
-		blk1, cert1 := ts.GenerateTestBlock(consHeight)
-		err := state.CommitBlock(blk1, cert1)
-		require.NoError(t, err)
-
-		mgr.MoveToNewHeight()
-
-		assert.Empty(t, mgr.upcomingVotes)
-	})
-
-	t.Run("Processing upcoming proposal", func(t *testing.T) {
-		consHeight, _ := mgr.HeightRound()
-		prop1 := ts.GenerateTestProposal(consHeight+1, 0)
-		prop2 := ts.GenerateTestProposal(consHeight+2, 0)
-		prop3 := ts.GenerateTestProposal(consHeight+3, 0)
-
-		mgr.SetProposal(prop1)
-		mgr.SetProposal(prop2)
-		mgr.SetProposal(prop3)
-
-		assert.Len(t, mgr.upcomingProposals, 1)
-
-		blk1, cert1 := ts.GenerateTestBlock(consHeight)
-		err := state.CommitBlock(blk1, cert1)
-		require.NoError(t, err)
-
-		mgr.MoveToNewHeight()
-
-		assert.Empty(t, mgr.upcomingProposals)
-	})
-}
-
-func TestMediator(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	state := state.MockingState(ts)
-	cmt, valKeys := ts.GenerateTestCommittee(4)
-	state.TestCommittee = cmt
-	state.TestParams.BlockIntervalInSecond = 1
-
-	rewardAddrs := []crypto.Address{
-		ts.RandAccAddress(), ts.RandAccAddress(),
-		ts.RandAccAddress(), ts.RandAccAddress(),
-	}
-	stateHeight := ts.RandHeight()
-	blk, cert := ts.GenerateTestBlock(stateHeight)
-	state.TestStore.SaveBlock(blk, cert)
-	pipe := pipeline.New[message.Message](t.Context())
-	conf := consensusv2.DefaultConfig()
-
-	mgrInt := NewManagerV2(t.Context(), conf, state, valKeys, rewardAddrs, pipe)
-	mgr := mgrInt.(*manager)
-
-	mgr.MoveToNewHeight()
-
-	for {
-		msg := <-pipe.UnsafeGetChannel()
-		logger.Info("Published Vote", "msg", msg, "type", msg.Type())
-
-		m, ok := msg.(*message.BlockAnnounceMessage)
-		if ok {
-			require.Equal(t, stateHeight+1, m.Height())
-
-			return
-		}
-	}
 }

@@ -22,7 +22,7 @@ import (
 
 const DefaultWalletTimeoutSecond = 10
 
-var _ provider.IBlockchainProvider = (*RemoteBlockchainProvider)(nil)
+var _ provider.WalletProvider = (*RemoteBlockchainProvider)(nil)
 
 type remoteProviderConfig struct {
 	timeout time.Duration

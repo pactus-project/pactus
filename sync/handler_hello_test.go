@@ -13,6 +13,7 @@ import (
 	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/version"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 )
 
 func (td *testData) validHelloMessage() *message.HelloMessage {
@@ -27,6 +28,13 @@ func (td *testData) validHelloMessage() *message.HelloMessage {
 	return msg
 }
 
+func (td *testData) shouldPublishHelloAck(t *testing.T, code message.ResponseCode) {
+	t.Helper()
+
+	bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
+	assert.Equal(t, code, bdl.Message.(*message.HelloAckMessage).ResponseCode)
+}
+
 func (td *testData) connectPeer(pid peer.ID, direction lp2pnetwork.Direction, outboundHelloSent bool) {
 	td.sync.peerSet.UpdateAddress(pid, "some-address", direction)
 	td.sync.peerSet.UpdateStatus(pid, status.StatusConnected)
@@ -36,44 +44,57 @@ func (td *testData) connectPeer(pid peer.ID, direction lp2pnetwork.Direction, ou
 func TestHandlerHelloParsingMessages(t *testing.T) {
 	td := setup(t, nil)
 
-	td.state.CommitTestBlocks(21)
+	td.state.EXPECT().UpdateValidatorProtocolVersion(gomock.Any(), gomock.Any()).AnyTimes()
 
 	t.Run("Receiving Hello message from a peer. Genesis hash is wrong.",
 		func(t *testing.T) {
 			msg := td.validHelloMessage()
+
+			td.sync.peerSet.UpdateAddress(msg.PeerID, "some-address", lp2pnetwork.DirInbound)
+			td.sync.peerSet.UpdateStatus(msg.PeerID, status.StatusConnected)
+
 			msg.GenesisHash = td.RandHash()
 
 			td.receivingNewMessage(td.sync, msg, msg.PeerID)
 			td.checkPeerStatus(t, msg.PeerID, status.StatusBanned)
-			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
-			assert.Equal(t, message.ResponseCodeRejected, bdl.Message.(*message.HelloAckMessage).ResponseCode)
+			td.shouldPublishHelloAck(t, message.ResponseCodeRejected)
 		})
 
 	t.Run("Receiving a Hello message from a peer. The time difference is greater than or equal to -10",
 		func(t *testing.T) {
 			msg := td.validHelloMessage()
+
+			td.sync.peerSet.UpdateAddress(msg.PeerID, "some-address", lp2pnetwork.DirInbound)
+			td.sync.peerSet.UpdateStatus(msg.PeerID, status.StatusConnected)
+
 			msg.MyTimeUnixMilli = msg.MyTime().Add(-10 * time.Second).UnixMilli()
 
 			td.receivingNewMessage(td.sync, msg, msg.PeerID)
 			td.checkPeerStatus(t, msg.PeerID, status.StatusBanned)
-			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
-			assert.Equal(t, message.ResponseCodeRejected, bdl.Message.(*message.HelloAckMessage).ResponseCode)
+			td.shouldPublishHelloAck(t, message.ResponseCodeRejected)
 		})
 
 	t.Run("Receiving Hello message from a peer. Difference is less or equal than 20 seconds.",
 		func(t *testing.T) {
 			msg := td.validHelloMessage()
+
+			td.sync.peerSet.UpdateAddress(msg.PeerID, "some-address", lp2pnetwork.DirInbound)
+			td.sync.peerSet.UpdateStatus(msg.PeerID, status.StatusConnected)
+
 			msg.MyTimeUnixMilli = msg.MyTime().Add(20 * time.Second).UnixMilli()
 
 			td.receivingNewMessage(td.sync, msg, msg.PeerID)
 			td.checkPeerStatus(t, msg.PeerID, status.StatusBanned)
-			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
-			assert.Equal(t, message.ResponseCodeRejected, bdl.Message.(*message.HelloAckMessage).ResponseCode)
+			td.shouldPublishHelloAck(t, message.ResponseCodeRejected)
 		})
 
 	t.Run("Non supporting version",
 		func(t *testing.T) {
 			msg := td.validHelloMessage()
+
+			td.sync.peerSet.UpdateAddress(msg.PeerID, "some-address", lp2pnetwork.DirInbound)
+			td.sync.peerSet.UpdateStatus(msg.PeerID, status.StatusConnected)
+
 			nodeAgent := version.NodeAgent
 			nodeAgent.Version = version.Version{
 				Major: 1,
@@ -84,32 +105,56 @@ func TestHandlerHelloParsingMessages(t *testing.T) {
 
 			td.receivingNewMessage(td.sync, msg, msg.PeerID)
 			td.checkPeerStatus(t, msg.PeerID, status.StatusBanned)
-			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
-			assert.Equal(t, message.ResponseCodeRejected, bdl.Message.(*message.HelloAckMessage).ResponseCode)
+			td.shouldPublishHelloAck(t, message.ResponseCodeRejected)
 		})
 
 	t.Run("Invalid agent",
 		func(t *testing.T) {
 			msg := td.validHelloMessage()
+
+			td.sync.peerSet.UpdateAddress(msg.PeerID, "some-address", lp2pnetwork.DirInbound)
+			td.sync.peerSet.UpdateStatus(msg.PeerID, status.StatusConnected)
+
 			msg.Agent = "invalid-agent"
 
 			td.receivingNewMessage(td.sync, msg, msg.PeerID)
 			td.checkPeerStatus(t, msg.PeerID, status.StatusBanned)
-			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
-			assert.Equal(t, message.ResponseCodeRejected, bdl.Message.(*message.HelloAckMessage).ResponseCode)
+			td.shouldPublishHelloAck(t, message.ResponseCodeRejected)
 		})
 
-	t.Run("Outdated protocol version",
+	t.Run("Outdated protocol version, network not upgraded",
 		func(t *testing.T) {
 			msg := td.validHelloMessage()
+
+			td.sync.peerSet.UpdateAddress(msg.PeerID, "some-address", lp2pnetwork.DirInbound)
+			td.sync.peerSet.UpdateStatus(msg.PeerID, status.StatusConnected)
+
 			nodeAgent := version.NodeAgent
 			nodeAgent.ProtocolVersion = protocol.ProtocolVersionLatest - 1
 			msg.Agent = nodeAgent.String()
+			td.state.StateParams.BlockVersion = protocol.ProtocolVersionLatest - 1
 
-			td.sync.peerSet.UpdateStatus(msg.PeerID, status.StatusConnected)
 			td.receivingNewMessage(td.sync, msg, msg.PeerID)
 			td.checkPeerStatus(t, msg.PeerID, status.StatusConnected)
-			td.shouldNotPublishAnyMessage(t)
+			td.shouldPublishMessageWithThisType(t, message.TypeHello)
+			td.shouldPublishHelloAck(t, message.ResponseCodeOK)
+		})
+
+	t.Run("Outdated protocol version, network upgraded",
+		func(t *testing.T) {
+			msg := td.validHelloMessage()
+
+			td.sync.peerSet.UpdateAddress(msg.PeerID, "some-address", lp2pnetwork.DirInbound)
+			td.sync.peerSet.UpdateStatus(msg.PeerID, status.StatusConnected)
+
+			nodeAgent := version.NodeAgent
+			nodeAgent.ProtocolVersion = protocol.ProtocolVersionLatest - 1
+			msg.Agent = nodeAgent.String()
+			td.state.StateParams.BlockVersion = protocol.ProtocolVersionLatest
+
+			td.receivingNewMessage(td.sync, msg, msg.PeerID)
+			td.checkPeerStatus(t, msg.PeerID, status.StatusBanned)
+			td.shouldPublishHelloAck(t, message.ResponseCodeRejected)
 		})
 
 	t.Run("Receiving Hello message from a peer. It should be acknowledged and updates the peer info",
@@ -118,11 +163,10 @@ func TestHandlerHelloParsingMessages(t *testing.T) {
 
 			td.sync.peerSet.UpdateAddress(msg.PeerID, "some-address", lp2pnetwork.DirInbound)
 			td.sync.peerSet.UpdateStatus(msg.PeerID, status.StatusConnected)
-			td.receivingNewMessage(td.sync, msg, msg.PeerID)
 
+			td.receivingNewMessage(td.sync, msg, msg.PeerID)
 			td.shouldPublishMessageWithThisType(t, message.TypeHello)
-			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
-			assert.Equal(t, message.ResponseCodeOK, bdl.Message.(*message.HelloAckMessage).ResponseCode)
+			td.shouldPublishHelloAck(t, message.ResponseCodeOK)
 
 			// Check if the peer info is updated
 			peer := td.sync.peerSet.GetPeer(msg.PeerID)
@@ -139,6 +183,8 @@ func TestHandlerHelloParsingMessages(t *testing.T) {
 
 func TestHandlerHelloHandshaking(t *testing.T) {
 	td := setup(t, nil)
+
+	td.state.EXPECT().UpdateValidatorProtocolVersion(gomock.Any(), protocol.ProtocolVersionLatest).AnyTimes()
 
 	t.Run("Unknown Direction", func(t *testing.T) {
 		msg := td.validHelloMessage()

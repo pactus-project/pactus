@@ -8,8 +8,8 @@ import (
 	"github.com/pactus-project/pactus/types/tx/payload"
 )
 
-// Reader exposes read-only operations on the transaction pool.
-type Reader interface {
+// TxPoolReader exposes read-only operations on the transaction pool.
+type TxPoolReader interface {
 	PrepareBlockTransactions() block.Txs
 	PendingTx(txID tx.ID) *tx.Tx
 	HasTx(txID tx.ID) bool
@@ -21,7 +21,7 @@ type Reader interface {
 // TxPool defines the full transaction pool interface with read and write
 // operations.
 type TxPool interface {
-	Reader
+	TxPoolReader
 
 	SetNewSandboxAndRecheck(sbx sandbox.Sandbox)
 	AppendTxAndBroadcast(trx *tx.Tx) error

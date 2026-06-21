@@ -7,7 +7,7 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 )
 
-type IBlockchainProvider interface {
+type WalletProvider interface {
 	LastBlockHeight() (types.Height, error)
 	GetAccount(addrStr string) (*account.Account, error)
 	GetValidator(addrStr string) (*validator.Validator, error)

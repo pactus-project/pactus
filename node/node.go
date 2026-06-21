@@ -33,14 +33,14 @@ type Node struct {
 	ctx           context.Context
 	genesisDoc    *genesis.Genesis
 	config        *config.Config
-	state         state.Facade
+	state         state.State
 	store         store.Store
 	txPool        txpool.TxPool
-	consV1Mgr     consmgr.Manager // Deprecated:: replaced by new consensus algorithm
-	consV2Mgr     consmgr.Manager
+	consV1Mgr     consmgr.ConsensusManager // Deprecated:: replaced by new consensus algorithm
+	consV2Mgr     consmgr.ConsensusManager
 	network       network.Network
 	sync          sync.Synchronizer
-	walletMgr     wltmgr.IManager
+	walletMgr     wltmgr.WalletManager
 	grpc          *grpc.Server
 	html          *html.Server
 	http          *http.Server
@@ -227,7 +227,7 @@ func (n *Node) Stop() {
 
 // these methods are using by GUI.
 
-func (n *Node) ConsManager() consmgr.ManagerReader {
+func (n *Node) ConsManager() consmgr.ConsensusManagerReader {
 	return n.consV1Mgr
 }
 
@@ -235,7 +235,7 @@ func (n *Node) Sync() sync.Synchronizer {
 	return n.sync
 }
 
-func (n *Node) State() state.Facade {
+func (n *Node) State() state.State {
 	return n.state
 }
 
@@ -247,6 +247,6 @@ func (n *Node) Network() network.Network {
 	return n.network
 }
 
-func (n *Node) WalletManager() wltmgr.IManager {
+func (n *Node) WalletManager() wltmgr.WalletManager {
 	return n.walletMgr
 }

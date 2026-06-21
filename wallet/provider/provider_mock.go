@@ -16,35 +16,35 @@ import (
 	account "github.com/pactus-project/pactus/types/account"
 	tx "github.com/pactus-project/pactus/types/tx"
 	validator "github.com/pactus-project/pactus/types/validator"
-	gomock "go.uber.org/mock/gomock"
+	"go.uber.org/mock/gomock"
 )
 
-// MockIBlockchainProvider is a mock of IBlockchainProvider interface.
-type MockIBlockchainProvider struct {
+// MockWalletProvider is a mock of WalletProvider interface.
+type MockWalletProvider struct {
 	ctrl     *gomock.Controller
-	recorder *MockIBlockchainProviderMockRecorder
+	recorder *MockWalletProviderMockRecorder
 	isgomock struct{}
 }
 
-// MockIBlockchainProviderMockRecorder is the mock recorder for MockIBlockchainProvider.
-type MockIBlockchainProviderMockRecorder struct {
-	mock *MockIBlockchainProvider
+// MockWalletProviderMockRecorder is the mock recorder for MockWalletProvider.
+type MockWalletProviderMockRecorder struct {
+	mock *MockWalletProvider
 }
 
-// NewMockIBlockchainProvider creates a new mock instance.
-func NewMockIBlockchainProvider(ctrl *gomock.Controller) *MockIBlockchainProvider {
-	mock := &MockIBlockchainProvider{ctrl: ctrl}
-	mock.recorder = &MockIBlockchainProviderMockRecorder{mock}
+// NewMockWalletProvider creates a new mock instance.
+func NewMockWalletProvider(ctrl *gomock.Controller) *MockWalletProvider {
+	mock := &MockWalletProvider{ctrl: ctrl}
+	mock.recorder = &MockWalletProviderMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockIBlockchainProvider) EXPECT() *MockIBlockchainProviderMockRecorder {
+func (m *MockWalletProvider) EXPECT() *MockWalletProviderMockRecorder {
 	return m.recorder
 }
 
 // CheckTransaction mocks base method.
-func (m *MockIBlockchainProvider) CheckTransaction(data []byte) error {
+func (m *MockWalletProvider) CheckTransaction(data []byte) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CheckTransaction", data)
 	ret0, _ := ret[0].(error)
@@ -52,13 +52,13 @@ func (m *MockIBlockchainProvider) CheckTransaction(data []byte) error {
 }
 
 // CheckTransaction indicates an expected call of CheckTransaction.
-func (mr *MockIBlockchainProviderMockRecorder) CheckTransaction(data any) *gomock.Call {
+func (mr *MockWalletProviderMockRecorder) CheckTransaction(data any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckTransaction", reflect.TypeOf((*MockIBlockchainProvider)(nil).CheckTransaction), data)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckTransaction", reflect.TypeOf((*MockWalletProvider)(nil).CheckTransaction), data)
 }
 
 // Close mocks base method.
-func (m *MockIBlockchainProvider) Close() error {
+func (m *MockWalletProvider) Close() error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Close")
 	ret0, _ := ret[0].(error)
@@ -66,13 +66,13 @@ func (m *MockIBlockchainProvider) Close() error {
 }
 
 // Close indicates an expected call of Close.
-func (mr *MockIBlockchainProviderMockRecorder) Close() *gomock.Call {
+func (mr *MockWalletProviderMockRecorder) Close() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockIBlockchainProvider)(nil).Close))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockWalletProvider)(nil).Close))
 }
 
 // GetAccount mocks base method.
-func (m *MockIBlockchainProvider) GetAccount(addrStr string) (*account.Account, error) {
+func (m *MockWalletProvider) GetAccount(addrStr string) (*account.Account, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAccount", addrStr)
 	ret0, _ := ret[0].(*account.Account)
@@ -81,13 +81,13 @@ func (m *MockIBlockchainProvider) GetAccount(addrStr string) (*account.Account, 
 }
 
 // GetAccount indicates an expected call of GetAccount.
-func (mr *MockIBlockchainProviderMockRecorder) GetAccount(addrStr any) *gomock.Call {
+func (mr *MockWalletProviderMockRecorder) GetAccount(addrStr any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccount", reflect.TypeOf((*MockIBlockchainProvider)(nil).GetAccount), addrStr)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccount", reflect.TypeOf((*MockWalletProvider)(nil).GetAccount), addrStr)
 }
 
 // GetTransaction mocks base method.
-func (m *MockIBlockchainProvider) GetTransaction(txID string) (*tx.Tx, types.Height, error) {
+func (m *MockWalletProvider) GetTransaction(txID string) (*tx.Tx, types.Height, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTransaction", txID)
 	ret0, _ := ret[0].(*tx.Tx)
@@ -97,13 +97,13 @@ func (m *MockIBlockchainProvider) GetTransaction(txID string) (*tx.Tx, types.Hei
 }
 
 // GetTransaction indicates an expected call of GetTransaction.
-func (mr *MockIBlockchainProviderMockRecorder) GetTransaction(txID any) *gomock.Call {
+func (mr *MockWalletProviderMockRecorder) GetTransaction(txID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransaction", reflect.TypeOf((*MockIBlockchainProvider)(nil).GetTransaction), txID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransaction", reflect.TypeOf((*MockWalletProvider)(nil).GetTransaction), txID)
 }
 
 // GetValidator mocks base method.
-func (m *MockIBlockchainProvider) GetValidator(addrStr string) (*validator.Validator, error) {
+func (m *MockWalletProvider) GetValidator(addrStr string) (*validator.Validator, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetValidator", addrStr)
 	ret0, _ := ret[0].(*validator.Validator)
@@ -112,13 +112,13 @@ func (m *MockIBlockchainProvider) GetValidator(addrStr string) (*validator.Valid
 }
 
 // GetValidator indicates an expected call of GetValidator.
-func (mr *MockIBlockchainProviderMockRecorder) GetValidator(addrStr any) *gomock.Call {
+func (mr *MockWalletProviderMockRecorder) GetValidator(addrStr any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetValidator", reflect.TypeOf((*MockIBlockchainProvider)(nil).GetValidator), addrStr)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetValidator", reflect.TypeOf((*MockWalletProvider)(nil).GetValidator), addrStr)
 }
 
 // LastBlockHeight mocks base method.
-func (m *MockIBlockchainProvider) LastBlockHeight() (types.Height, error) {
+func (m *MockWalletProvider) LastBlockHeight() (types.Height, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "LastBlockHeight")
 	ret0, _ := ret[0].(types.Height)
@@ -127,13 +127,13 @@ func (m *MockIBlockchainProvider) LastBlockHeight() (types.Height, error) {
 }
 
 // LastBlockHeight indicates an expected call of LastBlockHeight.
-func (mr *MockIBlockchainProviderMockRecorder) LastBlockHeight() *gomock.Call {
+func (mr *MockWalletProviderMockRecorder) LastBlockHeight() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LastBlockHeight", reflect.TypeOf((*MockIBlockchainProvider)(nil).LastBlockHeight))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LastBlockHeight", reflect.TypeOf((*MockWalletProvider)(nil).LastBlockHeight))
 }
 
 // SendTx mocks base method.
-func (m *MockIBlockchainProvider) SendTx(trx *tx.Tx) (string, error) {
+func (m *MockWalletProvider) SendTx(trx *tx.Tx) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SendTx", trx)
 	ret0, _ := ret[0].(string)
@@ -142,7 +142,7 @@ func (m *MockIBlockchainProvider) SendTx(trx *tx.Tx) (string, error) {
 }
 
 // SendTx indicates an expected call of SendTx.
-func (mr *MockIBlockchainProviderMockRecorder) SendTx(trx any) *gomock.Call {
+func (mr *MockWalletProviderMockRecorder) SendTx(trx any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendTx", reflect.TypeOf((*MockIBlockchainProvider)(nil).SendTx), trx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendTx", reflect.TypeOf((*MockWalletProvider)(nil).SendTx), trx)
 }

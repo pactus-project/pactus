@@ -1,6 +1,7 @@
 package sync
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/pactus-project/pactus/sync/bundle/message"
@@ -18,7 +19,6 @@ func TestHandlerBlocksRequestParsingMessages(t *testing.T) {
 		td := setup(t, config)
 		sid := td.RandIntMax(100)
 
-		td.state.CommitTestBlocks(31)
 		curHeight := td.state.LastBlockHeight()
 
 		t.Run("Reject request from unknown peers", func(t *testing.T) {
@@ -47,6 +47,16 @@ func TestHandlerBlocksRequestParsingMessages(t *testing.T) {
 
 		pid := td.addPeer(t, status.StatusKnown, service.New(service.None))
 
+		t.Run("Peer requested block zero", func(t *testing.T) {
+			msg := message.NewBlocksRequestMessage(sid, 0, 1)
+			td.receivingNewMessage(td.sync, msg, pid)
+
+			bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
+			res := bdl.Message.(*message.BlocksResponseMessage)
+			assert.Equal(t, message.ResponseCodeNoMoreBlocks, res.ResponseCode)
+			assert.Contains(t, res.Reason, "no-more-blocks")
+		})
+
 		t.Run("Peer requested blocks that we don't have", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, curHeight+1, 1)
 			td.receivingNewMessage(td.sync, msg, pid)
@@ -54,7 +64,8 @@ func TestHandlerBlocksRequestParsingMessages(t *testing.T) {
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 			res := bdl.Message.(*message.BlocksResponseMessage)
 			assert.Equal(t, message.ResponseCodeRejected, res.ResponseCode)
-			assert.Contains(t, res.Reason, "requested blocks from 32 exceed current height 31")
+			assert.Contains(t, res.Reason,
+				fmt.Sprintf("requested blocks from %v exceed current height %v", curHeight+1, curHeight))
 		})
 
 		t.Run("Request blocks more than `BlockPerSession`", func(t *testing.T) {
@@ -69,7 +80,7 @@ func TestHandlerBlocksRequestParsingMessages(t *testing.T) {
 
 		t.Run("Accept request within `BlockPerSession`", func(t *testing.T) {
 			t.Run("Peer needs more block", func(t *testing.T) {
-				msg := message.NewBlocksRequestMessage(sid, curHeight-types.Height(config.BlockPerMessage), config.BlockPerMessage)
+				msg := message.NewBlocksRequestMessage(sid, curHeight.SafeDecrease(config.BlockPerMessage), config.BlockPerMessage)
 				td.receivingNewMessage(td.sync, msg, pid)
 
 				bdl1 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
@@ -89,13 +100,13 @@ func TestHandlerBlocksRequestParsingMessages(t *testing.T) {
 
 			t.Run("Peer synced", func(t *testing.T) {
 				msg := message.NewBlocksRequestMessage(sid,
-					curHeight-types.Height(config.BlockPerMessage)+1, config.BlockPerMessage)
+					curHeight.SafeDecrease(config.BlockPerMessage-1), config.BlockPerMessage)
 				td.receivingNewMessage(td.sync, msg, pid)
 
 				bdl1 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 				res1 := bdl1.Message.(*message.BlocksResponseMessage)
 				assert.Equal(t, message.ResponseCodeMoreBlocks, res1.ResponseCode)
-				assert.Equal(t, curHeight-types.Height(config.BlockPerMessage)+1, res1.From)
+				assert.Equal(t, curHeight.SafeDecrease(config.BlockPerMessage-1), res1.From)
 				assert.Equal(t, curHeight, res1.To())
 				assert.Equal(t, config.BlockPerMessage, res1.Count())
 
@@ -116,7 +127,6 @@ func TestHandlerBlocksRequestParsingMessages(t *testing.T) {
 		td := setup(t, config)
 		sid := td.RandIntMax(100)
 
-		td.state.CommitTestBlocks(31)
 		pid := td.addPeer(t, status.StatusKnown, service.New(service.None))
 
 		t.Run("Requesting one block", func(t *testing.T) {

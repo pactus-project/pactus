@@ -15,7 +15,7 @@ import (
 func TestBlockchainInfo(t *testing.T) {
 	td := setup(t)
 
-	td.gRPCServer.MockState.CommitTestBlocks(10)
+	td.gRPCServer.FakeState.CommitTestBlocks(10)
 
 	w := httptest.NewRecorder()
 	r := new(http.Request)
@@ -30,7 +30,7 @@ func TestBlock(t *testing.T) {
 	td := setup(t)
 
 	height := td.RandHeight()
-	blk := td.gRPCServer.MockState.TestStore.AddTestBlock(height)
+	blk := td.gRPCServer.FakeState.AddTestBlock(height)
 
 	t.Run("Shall return a block", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -60,7 +60,7 @@ func TestBlock(t *testing.T) {
 		assert.Equal(t, 400, w.Code)
 	})
 
-	t.Run("Shall return an error, non exists", func(t *testing.T) {
+	t.Run("Shall return an error, non-existent", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"hash": td.RandHash().String()})
@@ -102,7 +102,7 @@ func TestBlock(t *testing.T) {
 func TestAccount(t *testing.T) {
 	td := setup(t)
 
-	addr, acc := td.gRPCServer.MockState.TestStore.AddTestAccount()
+	addr, acc := td.gRPCServer.FakeState.AddTestAccount()
 
 	t.Run("Shall return an account", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -115,7 +115,7 @@ func TestAccount(t *testing.T) {
 		fmt.Println(w.Body)
 	})
 
-	t.Run("Shall return nil, non exist", func(t *testing.T) {
+	t.Run("Shall return nil, non-existent", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"address": td.RandAccAddress().String()})
@@ -157,9 +157,9 @@ func TestAccount(t *testing.T) {
 func TestValidator(t *testing.T) {
 	td := setup(t)
 
-	val := td.gRPCServer.MockState.TestStore.AddTestValidator()
+	val := td.gRPCServer.FakeState.AddTestValidator()
 
-	t.Run("Shall return an error, non exist", func(t *testing.T) {
+	t.Run("Shall return an error, non-existent", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"address": td.RandAccAddress().String()})
@@ -213,7 +213,7 @@ func TestValidator(t *testing.T) {
 func TestValidatorByNumber(t *testing.T) {
 	td := setup(t)
 
-	val := td.gRPCServer.MockState.TestStore.AddTestValidator()
+	val := td.gRPCServer.FakeState.AddTestValidator()
 
 	t.Run("Shall return a validator", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -227,7 +227,7 @@ func TestValidatorByNumber(t *testing.T) {
 		fmt.Println(w.Body)
 	})
 
-	t.Run("Shall return a error, non exist", func(t *testing.T) {
+	t.Run("Shall return an error, non-existent", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		fmt.Println(val.Number())
@@ -278,10 +278,10 @@ func TestConsensusInfo(t *testing.T) {
 	vote2, _ := td.GenerateTestPrecommitVote(height, round)
 	prop := td.GenerateTestProposal(height, round)
 
-	td.gRPCServer.MockCons.EXPECT().HeightRound().Return(height, round).Times(1)
-	td.gRPCServer.MockCons.EXPECT().AllVotes().Return([]*vote.Vote{vote1, vote2}).Times(1)
-	td.gRPCServer.MockCons.EXPECT().IsActive().Return(true).Times(1)
-	td.gRPCServer.MockConsMgr.EXPECT().Proposal().Return(prop).Times(1)
+	td.gRPCServer.FakeCons.EXPECT().HeightRound().Return(height, round).Times(1)
+	td.gRPCServer.FakeCons.EXPECT().AllVotes().Return([]*vote.Vote{vote1, vote2}).Times(1)
+	td.gRPCServer.FakeCons.EXPECT().IsActive().Return(true).Times(1)
+	td.gRPCServer.FakeConsMgr.EXPECT().Proposal().Return(prop).Times(1)
 
 	w := httptest.NewRecorder()
 	r := new(http.Request)

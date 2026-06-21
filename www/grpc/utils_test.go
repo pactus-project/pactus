@@ -20,7 +20,7 @@ func TestSignMessageWithPrivateKey(t *testing.T) {
 	invalidPrvStr := "INVSECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67"
 	expectedSig := "923d67a8624cbb7972b29328e15ec76cc846076ccf00a9e94d991c677846f334ae4ba4551396fbcd6d1cab7593baf3b7"
 
-	t.Run("", func(t *testing.T) {
+	t.Run("Should sign message with valid private key", func(t *testing.T) {
 		res, err := client.SignMessageWithPrivateKey(t.Context(),
 			&pactus.SignMessageWithPrivateKeyRequest{
 				Message:    msg,
@@ -31,7 +31,7 @@ func TestSignMessageWithPrivateKey(t *testing.T) {
 		assert.Equal(t, expectedSig, res.Signature)
 	})
 
-	t.Run("", func(t *testing.T) {
+	t.Run("Should fail with invalid private key", func(t *testing.T) {
 		res, err := client.SignMessageWithPrivateKey(t.Context(),
 			&pactus.SignMessageWithPrivateKeyRequest{
 				Message:    msg,
@@ -54,7 +54,7 @@ func TestSignMessageWithED25519PrivateKey(t *testing.T) {
 	expectedSig := "361aaa09c408bfcf7e79dd90c583eeeaefe7c732ca5643cfb2ea7a6d22105b874a412080" +
 		"525a855bbd5df94110a7d0083d6e386e016ecf8b7f522c339f79d305"
 
-	t.Run("", func(t *testing.T) {
+	t.Run("Should sign ED25519 message with valid private key", func(t *testing.T) {
 		res, err := client.SignMessageWithPrivateKey(t.Context(),
 			&pactus.SignMessageWithPrivateKeyRequest{
 				Message:    msg,
@@ -65,7 +65,7 @@ func TestSignMessageWithED25519PrivateKey(t *testing.T) {
 		assert.Equal(t, expectedSig, res.Signature)
 	})
 
-	t.Run("", func(t *testing.T) {
+	t.Run("Should fail with invalid ED25519 private key", func(t *testing.T) {
 		res, err := client.SignMessageWithPrivateKey(t.Context(),
 			&pactus.SignMessageWithPrivateKeyRequest{
 				Message:    msg,

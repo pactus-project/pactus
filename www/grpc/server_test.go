@@ -7,8 +7,8 @@ import (
 
 	"github.com/pactus-project/pactus/util/testsuite"
 	pactusgrpc "github.com/pactus-project/pactus/www/grpc"
+	"github.com/pactus-project/pactus/www/grpc/fake"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
-	"github.com/pactus-project/pactus/www/grpc/mock"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -19,7 +19,7 @@ type testData struct {
 	*testsuite.TestSuite
 
 	listener *bufconn.Listener
-	server   *mock.MockGRPCServer
+	server   *fake.FakeGRPCServer
 }
 
 func testConfig() *pactusgrpc.Config {
@@ -37,7 +37,7 @@ func setup(t *testing.T, conf *pactusgrpc.Config) *testData {
 	}
 
 	ts := testsuite.NewTestSuite(t)
-	gRPCServer := mock.SetupServer(t, ts, conf)
+	gRPCServer := fake.NewFakeGRPCServer(t, ts, conf)
 
 	const bufSize = 1024 * 1024
 	listener := bufconn.Listen(bufSize)

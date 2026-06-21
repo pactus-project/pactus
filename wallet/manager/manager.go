@@ -17,7 +17,7 @@ import (
 	"github.com/pactus-project/pactus/wallet/types"
 )
 
-var _ IManager = (*Manager)(nil)
+var _ WalletManager = (*Manager)(nil)
 
 type Manager struct {
 	ctx               context.Context
@@ -25,14 +25,14 @@ type Manager struct {
 	chainType         genesis.ChainType
 	walletDirectory   string
 	DefaultWalletName string
-	provider          provider.IBlockchainProvider
+	provider          provider.WalletProvider
 	eventPipe         pipeline.Pipeline[any]
 }
 
 func NewManager(ctx context.Context, conf *Config,
-	provider provider.IBlockchainProvider,
+	provider provider.WalletProvider,
 	eventPipe pipeline.Pipeline[any],
-) (IManager, error) {
+) (WalletManager, error) {
 	wallets := make(map[string]*wallet.Wallet)
 	files, err := util.ListFilesInDir(conf.WalletsDir)
 	if err != nil {

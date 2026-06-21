@@ -13,5 +13,6 @@ coverage:
         threshold: "10%"
 
 ignore:
-  - "**/*mock.go"
+  - "**/*_mock.go"
+  - "**/*_fake.go"
   - "www/grpc/gen"

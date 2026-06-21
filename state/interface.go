@@ -46,7 +46,7 @@ type CommitteeInfo struct {
 	CommitteePower   int64
 }
 
-type Facade interface {
+type State interface {
 	Genesis() *genesis.Genesis
 	Params() *param.Params
 	LastBlockHeight() types.Height

@@ -17,35 +17,35 @@ import (
 	block "github.com/pactus-project/pactus/types/block"
 	tx "github.com/pactus-project/pactus/types/tx"
 	payload "github.com/pactus-project/pactus/types/tx/payload"
-	gomock "go.uber.org/mock/gomock"
+	"go.uber.org/mock/gomock"
 )
 
-// MockReader is a mock of Reader interface.
-type MockReader struct {
+// MockTxPoolReader is a mock of TxPoolReader interface.
+type MockTxPoolReader struct {
 	ctrl     *gomock.Controller
-	recorder *MockReaderMockRecorder
+	recorder *MockTxPoolReaderMockRecorder
 	isgomock struct{}
 }
 
-// MockReaderMockRecorder is the mock recorder for MockReader.
-type MockReaderMockRecorder struct {
-	mock *MockReader
+// MockTxPoolReaderMockRecorder is the mock recorder for MockTxPoolReader.
+type MockTxPoolReaderMockRecorder struct {
+	mock *MockTxPoolReader
 }
 
-// NewMockReader creates a new mock instance.
-func NewMockReader(ctrl *gomock.Controller) *MockReader {
-	mock := &MockReader{ctrl: ctrl}
-	mock.recorder = &MockReaderMockRecorder{mock}
+// NewMockTxPoolReader creates a new mock instance.
+func NewMockTxPoolReader(ctrl *gomock.Controller) *MockTxPoolReader {
+	mock := &MockTxPoolReader{ctrl: ctrl}
+	mock.recorder = &MockTxPoolReaderMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockReader) EXPECT() *MockReaderMockRecorder {
+func (m *MockTxPoolReader) EXPECT() *MockTxPoolReaderMockRecorder {
 	return m.recorder
 }
 
 // AllPendingTxs mocks base method.
-func (m *MockReader) AllPendingTxs() []*tx.Tx {
+func (m *MockTxPoolReader) AllPendingTxs() []*tx.Tx {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AllPendingTxs")
 	ret0, _ := ret[0].([]*tx.Tx)
@@ -53,13 +53,13 @@ func (m *MockReader) AllPendingTxs() []*tx.Tx {
 }
 
 // AllPendingTxs indicates an expected call of AllPendingTxs.
-func (mr *MockReaderMockRecorder) AllPendingTxs() *gomock.Call {
+func (mr *MockTxPoolReaderMockRecorder) AllPendingTxs() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AllPendingTxs", reflect.TypeOf((*MockReader)(nil).AllPendingTxs))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AllPendingTxs", reflect.TypeOf((*MockTxPoolReader)(nil).AllPendingTxs))
 }
 
 // EstimatedFee mocks base method.
-func (m *MockReader) EstimatedFee(amt amount.Amount, payloadType payload.Type) amount.Amount {
+func (m *MockTxPoolReader) EstimatedFee(amt amount.Amount, payloadType payload.Type) amount.Amount {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "EstimatedFee", amt, payloadType)
 	ret0, _ := ret[0].(amount.Amount)
@@ -67,13 +67,13 @@ func (m *MockReader) EstimatedFee(amt amount.Amount, payloadType payload.Type) a
 }
 
 // EstimatedFee indicates an expected call of EstimatedFee.
-func (mr *MockReaderMockRecorder) EstimatedFee(amt, payloadType any) *gomock.Call {
+func (mr *MockTxPoolReaderMockRecorder) EstimatedFee(amt, payloadType any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EstimatedFee", reflect.TypeOf((*MockReader)(nil).EstimatedFee), amt, payloadType)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EstimatedFee", reflect.TypeOf((*MockTxPoolReader)(nil).EstimatedFee), amt, payloadType)
 }
 
 // HasTx mocks base method.
-func (m *MockReader) HasTx(txID tx.ID) bool {
+func (m *MockTxPoolReader) HasTx(txID tx.ID) bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HasTx", txID)
 	ret0, _ := ret[0].(bool)
@@ -81,13 +81,13 @@ func (m *MockReader) HasTx(txID tx.ID) bool {
 }
 
 // HasTx indicates an expected call of HasTx.
-func (mr *MockReaderMockRecorder) HasTx(txID any) *gomock.Call {
+func (mr *MockTxPoolReaderMockRecorder) HasTx(txID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasTx", reflect.TypeOf((*MockReader)(nil).HasTx), txID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasTx", reflect.TypeOf((*MockTxPoolReader)(nil).HasTx), txID)
 }
 
 // PendingTx mocks base method.
-func (m *MockReader) PendingTx(txID tx.ID) *tx.Tx {
+func (m *MockTxPoolReader) PendingTx(txID tx.ID) *tx.Tx {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PendingTx", txID)
 	ret0, _ := ret[0].(*tx.Tx)
@@ -95,13 +95,13 @@ func (m *MockReader) PendingTx(txID tx.ID) *tx.Tx {
 }
 
 // PendingTx indicates an expected call of PendingTx.
-func (mr *MockReaderMockRecorder) PendingTx(txID any) *gomock.Call {
+func (mr *MockTxPoolReaderMockRecorder) PendingTx(txID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PendingTx", reflect.TypeOf((*MockReader)(nil).PendingTx), txID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PendingTx", reflect.TypeOf((*MockTxPoolReader)(nil).PendingTx), txID)
 }
 
 // PrepareBlockTransactions mocks base method.
-func (m *MockReader) PrepareBlockTransactions() block.Txs {
+func (m *MockTxPoolReader) PrepareBlockTransactions() block.Txs {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PrepareBlockTransactions")
 	ret0, _ := ret[0].(block.Txs)
@@ -109,13 +109,13 @@ func (m *MockReader) PrepareBlockTransactions() block.Txs {
 }
 
 // PrepareBlockTransactions indicates an expected call of PrepareBlockTransactions.
-func (mr *MockReaderMockRecorder) PrepareBlockTransactions() *gomock.Call {
+func (mr *MockTxPoolReaderMockRecorder) PrepareBlockTransactions() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PrepareBlockTransactions", reflect.TypeOf((*MockReader)(nil).PrepareBlockTransactions))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PrepareBlockTransactions", reflect.TypeOf((*MockTxPoolReader)(nil).PrepareBlockTransactions))
 }
 
 // Size mocks base method.
-func (m *MockReader) Size() int {
+func (m *MockTxPoolReader) Size() int {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Size")
 	ret0, _ := ret[0].(int)
@@ -123,9 +123,9 @@ func (m *MockReader) Size() int {
 }
 
 // Size indicates an expected call of Size.
-func (mr *MockReaderMockRecorder) Size() *gomock.Call {
+func (mr *MockTxPoolReaderMockRecorder) Size() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Size", reflect.TypeOf((*MockReader)(nil).Size))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Size", reflect.TypeOf((*MockTxPoolReader)(nil).Size))
 }
 
 // MockTxPool is a mock of TxPool interface.

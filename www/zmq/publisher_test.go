@@ -46,7 +46,7 @@ func TestPublisherOnSameSockets(t *testing.T) {
 
 	time.Sleep(100 * time.Millisecond)
 
-	blk, _ := td.TestSuite.GenerateTestBlock(td.RandHeight())
+	blk, _ := td.GenerateTestBlock(td.RandHeight())
 	td.pipe.Send(blk)
 
 	for i := 0; i < (len(blk.Transactions())*2)+2; i++ {

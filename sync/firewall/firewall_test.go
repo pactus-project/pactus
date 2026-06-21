@@ -38,8 +38,10 @@ func setup(t *testing.T, conf *Config) *testData {
 	ts := testsuite.NewTestSuite(t)
 
 	peerSet := peerset.NewPeerSet(1 * time.Minute)
-	state := state.MockingState(ts)
 	net := network.MockingNetwork(ts, ts.RandPeerID())
+
+	state := state.NewMockState(ts.MockController())
+	state.EXPECT().Genesis().Return(genesis.MainnetGenesis()).AnyTimes()
 
 	if conf == nil {
 		conf = DefaultConfig()
@@ -169,6 +171,7 @@ func TestDecodeBundles(t *testing.T) {
 
 func TestGossipMismatchBundleHeight(t *testing.T) {
 	td := setup(t, nil)
+
 	corruptedData := "a4" + // Map with 4 key-value pairs
 		"01" + "01" + // Key 1 (Flags), Value: 1 (Mainnet)
 		"02" + "06" + // Key 2 (Message Type), Value: 6 (QueryVote)
@@ -363,7 +366,10 @@ func TestNetworkFlagsMainnet(t *testing.T) {
 
 func TestNetworkFlagsTestnet(t *testing.T) {
 	td := setup(t, nil)
-	td.state.TestGenesis = genesis.TestnetGenesis()
+
+	stateTestnet := state.NewMockState(td.MockController())
+	stateTestnet.EXPECT().Genesis().Return(genesis.TestnetGenesis()).AnyTimes()
+	td.firewall.state = stateTestnet
 
 	bdl := bundle.NewBundle(message.NewQueryVoteMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
@@ -458,8 +464,7 @@ func TestAllowBlockRequest(t *testing.T) {
 
 	td := setup(t, conf)
 
-	testBlk, testCert := td.GenerateTestBlock(2_900_001)
-	require.NoError(t, td.state.CommitBlock(testBlk, testCert))
+	td.state.EXPECT().LastBlockHeight().Return(td.RandHeight()).AnyTimes()
 
 	t.Run("expired message", func(t *testing.T) {
 		msg := makeTestGossipMessage(uint32(td.state.LastBlockHeight() - 2))
@@ -480,6 +485,7 @@ func TestAllowTransactionRequest(t *testing.T) {
 	conf.RateLimit.TransactionTopic = 1
 
 	td := setup(t, conf)
+	td.state.EXPECT().LastBlockHeight().Return(td.RandHeight()).AnyTimes()
 
 	t.Run("rate limit exceeded", func(t *testing.T) {
 		msg := makeTestGossipMessage(uint32(td.state.LastBlockHeight()))
@@ -495,8 +501,7 @@ func TestAllowConsensusRequest(t *testing.T) {
 
 	td := setup(t, conf)
 
-	testBlk, testCert := td.GenerateTestBlock(2_900_001)
-	require.NoError(t, td.state.CommitBlock(testBlk, testCert))
+	td.state.EXPECT().LastBlockHeight().Return(td.RandHeight()).AnyTimes()
 
 	t.Run("expired message", func(t *testing.T) {
 		msg := makeTestGossipMessage(uint32(td.state.LastBlockHeight() - 2))

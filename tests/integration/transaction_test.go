@@ -1,4 +1,4 @@
-package tests
+package integration
 
 import (
 	"encoding/hex"

@@ -40,7 +40,7 @@ import (
 // failures in testing conditions.
 type TestSuite struct {
 	testsuite.TestSuite
-	Ctrl *gomock.Controller
+	ctrl *gomock.Controller
 }
 
 func GenerateSeed() int64 {
@@ -56,7 +56,7 @@ func NewTestSuiteFromSeed(t *testing.T, seed int64) *TestSuite {
 
 	return &TestSuite{
 		TestSuite: *testsuite.NewTestSuiteFromSeed(t, seed),
-		Ctrl:      ctrl,
+		ctrl:      ctrl,
 	}
 }
 
@@ -70,8 +70,8 @@ func NewTestSuite(t *testing.T) *TestSuite {
 	return NewTestSuiteFromSeed(t, seed)
 }
 
-func (ts *TestSuite) MockingController() *gomock.Controller {
-	return ts.Ctrl
+func (ts *TestSuite) MockController() *gomock.Controller {
+	return ts.ctrl
 }
 
 type HeightRange struct {
@@ -582,6 +582,7 @@ func (ts *TestSuite) GenerateTestCertificate(height types.Height) *certificate.C
 }
 
 type ProposalMaker struct {
+	Block       *block.Block
 	ProposerKey *bls.ValidatorKey
 }
 
@@ -592,10 +593,17 @@ func (ts *TestSuite) NewProposalMaker() *ProposalMaker {
 	}
 }
 
-// ProposalWithKey sets the private key of the proposer.
+// ProposalWithKey sets the private key of the proposer for signing the proposal.
 func ProposalWithKey(key *bls.ValidatorKey) func(*ProposalMaker) {
 	return func(pm *ProposalMaker) {
 		pm.ProposerKey = key
+	}
+}
+
+// ProposalWithBlock sets the proposed block of the proposal.
+func ProposalWithBlock(block *block.Block) func(*ProposalMaker) {
+	return func(pm *ProposalMaker) {
+		pm.Block = block
 	}
 }
 
@@ -609,8 +617,12 @@ func (ts *TestSuite) GenerateTestProposal(height types.Height, round types.Round
 		opt(pmk)
 	}
 
-	blk, _ := ts.GenerateTestBlock(height, BlockWithProposer(pmk.ProposerKey.Address()))
-	prop := proposal.NewProposal(height, round, blk)
+	if pmk.Block == nil {
+		pmk.Block, _ = ts.GenerateTestBlock(height,
+			BlockWithProposer(pmk.ProposerKey.Address()))
+	}
+
+	prop := proposal.NewProposal(height, round, pmk.Block)
 	ts.HelperSignProposal(pmk.ProposerKey, prop)
 
 	return prop

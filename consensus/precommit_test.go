@@ -39,7 +39,7 @@ func TestPrecommitDuplicatedProposal(t *testing.T) {
 	round := types.Round(0)
 
 	prop1 := td.makeProposal(t, height, round)
-	prop2 := td.makeProposal(t, height, round, td.RandAccAddress())
+	prop2 := td.makeProposal(t, height, round)
 	assert.NotEqual(t, prop1.Hash(), prop2.Hash())
 
 	td.enterNewHeight(td.consP)

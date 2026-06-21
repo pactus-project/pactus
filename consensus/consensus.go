@@ -41,7 +41,7 @@ type consensus struct {
 	cpRound         int16
 	valKey          *bls.ValidatorKey
 	rewardAddr      crypto.Address
-	bcState         state.Facade // Blockchain state
+	bcState         state.State // Blockchain state
 	changeProposer  *changeProposer
 	newHeightState  consState
 	proposeState    consState
@@ -60,7 +60,7 @@ type consensus struct {
 func NewConsensus(
 	ctx context.Context,
 	conf *Config,
-	bcState state.Facade,
+	bcState state.State,
 	valKey *bls.ValidatorKey,
 	rewardAddr crypto.Address,
 	broadcastPipe pipeline.Pipeline[message.Message],
@@ -77,7 +77,7 @@ func NewConsensus(
 func makeConsensus(
 	ctx context.Context,
 	conf *Config,
-	bcState state.Facade,
+	bcState state.State,
 	valKey *bls.ValidatorKey,
 	rewardAddr crypto.Address,
 	broadcaster broadcaster,
@@ -258,13 +258,13 @@ func (cs *consensus) SetProposal(prop *proposal.Proposal) {
 	} else {
 		proposer := cs.proposer(prop.Round())
 		if err := prop.Verify(proposer.PublicKey()); err != nil {
-			cs.logger.Warn("proposal is invalid", "proposal", prop, "error", err)
+			cs.logger.Warn("invalid proposer", "proposal", prop, "error", err)
 
 			return
 		}
 
 		if err := cs.bcState.ValidateBlock(prop.Block(), prop.Round()); err != nil {
-			cs.logger.Warn("invalid block", "proposal", prop, "error", err)
+			cs.logger.Warn("invalid proposed block", "proposal", prop, "error", err)
 
 			return
 		}

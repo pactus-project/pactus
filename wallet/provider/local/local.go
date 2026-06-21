@@ -11,13 +11,13 @@ import (
 	"github.com/pactus-project/pactus/wallet/provider"
 )
 
-var _ provider.IBlockchainProvider = (*LocalBlockchainProvider)(nil)
+var _ provider.WalletProvider = (*LocalBlockchainProvider)(nil)
 
 type LocalBlockchainProvider struct {
-	state state.Facade
+	state state.State
 }
 
-func NewLocalBlockchainProvider(state state.Facade) *LocalBlockchainProvider {
+func NewLocalBlockchainProvider(state state.State) *LocalBlockchainProvider {
 	return &LocalBlockchainProvider{
 		state: state,
 	}

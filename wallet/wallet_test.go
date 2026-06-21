@@ -29,8 +29,8 @@ type testData struct {
 	wallet       *Wallet
 	password     string
 	testVault    *vault.Vault
-	mockStorage  *storage.MockIStorage
-	mockProvider *provider.MockIBlockchainProvider
+	mockStorage  *storage.MockWalletStorage
+	mockProvider *provider.MockWalletProvider
 }
 
 func setup(t *testing.T) *testData {
@@ -38,8 +38,8 @@ func setup(t *testing.T) *testData {
 
 	ts := testsuite.NewTestSuite(t)
 
-	mockStorage := storage.NewMockIStorage(ts.Ctrl)
-	mockProvider := provider.NewMockIBlockchainProvider(ts.Ctrl)
+	mockStorage := storage.NewMockWalletStorage(ts.MockController())
+	mockProvider := provider.NewMockWalletProvider(ts.MockController())
 
 	mnemonic1, _ := GenerateMnemonic(128)
 	testVault, _ := vault.CreateVaultFromMnemonic(mnemonic1, addresspath.CoinTypePactusMainnet)
@@ -681,7 +681,7 @@ func TestNeuter(t *testing.T) {
 	td := setup(t)
 
 	path := util.TempFilePath()
-	clonedStorage := storage.NewMockIStorage(td.Ctrl)
+	clonedStorage := storage.NewMockWalletStorage(td.MockController())
 
 	td.mockStorage.EXPECT().Clone(path).Return(clonedStorage, nil)
 	clonedStorage.EXPECT().Vault().Return(td.testVault)
@@ -732,7 +732,7 @@ func TestTestnetWallet(t *testing.T) {
 func TestOfflineWallet(t *testing.T) {
 	td := setup(t)
 
-	strg := storage.NewMockIStorage(td.Ctrl)
+	strg := storage.NewMockWalletStorage(td.MockController())
 	strg.EXPECT().Vault().Return(td.testVault).Times(1)
 	strg.EXPECT().Close().Return(nil).Times(1)
 

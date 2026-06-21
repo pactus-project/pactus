@@ -17,35 +17,35 @@ import (
 	types "github.com/pactus-project/pactus/types"
 	proposal "github.com/pactus-project/pactus/types/proposal"
 	vote "github.com/pactus-project/pactus/types/vote"
-	gomock "go.uber.org/mock/gomock"
+	"go.uber.org/mock/gomock"
 )
 
-// MockReader is a mock of Reader interface.
-type MockReader struct {
+// MockConsensusReader is a mock of ConsensusReader interface.
+type MockConsensusReader struct {
 	ctrl     *gomock.Controller
-	recorder *MockReaderMockRecorder
+	recorder *MockConsensusReaderMockRecorder
 	isgomock struct{}
 }
 
-// MockReaderMockRecorder is the mock recorder for MockReader.
-type MockReaderMockRecorder struct {
-	mock *MockReader
+// MockConsensusReaderMockRecorder is the mock recorder for MockConsensusReader.
+type MockConsensusReaderMockRecorder struct {
+	mock *MockConsensusReader
 }
 
-// NewMockReader creates a new mock instance.
-func NewMockReader(ctrl *gomock.Controller) *MockReader {
-	mock := &MockReader{ctrl: ctrl}
-	mock.recorder = &MockReaderMockRecorder{mock}
+// NewMockConsensusReader creates a new mock instance.
+func NewMockConsensusReader(ctrl *gomock.Controller) *MockConsensusReader {
+	mock := &MockConsensusReader{ctrl: ctrl}
+	mock.recorder = &MockConsensusReaderMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockReader) EXPECT() *MockReaderMockRecorder {
+func (m *MockConsensusReader) EXPECT() *MockConsensusReaderMockRecorder {
 	return m.recorder
 }
 
 // AllVotes mocks base method.
-func (m *MockReader) AllVotes() []*vote.Vote {
+func (m *MockConsensusReader) AllVotes() []*vote.Vote {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AllVotes")
 	ret0, _ := ret[0].([]*vote.Vote)
@@ -53,13 +53,13 @@ func (m *MockReader) AllVotes() []*vote.Vote {
 }
 
 // AllVotes indicates an expected call of AllVotes.
-func (mr *MockReaderMockRecorder) AllVotes() *gomock.Call {
+func (mr *MockConsensusReaderMockRecorder) AllVotes() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AllVotes", reflect.TypeOf((*MockReader)(nil).AllVotes))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AllVotes", reflect.TypeOf((*MockConsensusReader)(nil).AllVotes))
 }
 
 // ConsensusKey mocks base method.
-func (m *MockReader) ConsensusKey() *bls.PublicKey {
+func (m *MockConsensusReader) ConsensusKey() *bls.PublicKey {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ConsensusKey")
 	ret0, _ := ret[0].(*bls.PublicKey)
@@ -67,13 +67,13 @@ func (m *MockReader) ConsensusKey() *bls.PublicKey {
 }
 
 // ConsensusKey indicates an expected call of ConsensusKey.
-func (mr *MockReaderMockRecorder) ConsensusKey() *gomock.Call {
+func (mr *MockConsensusReaderMockRecorder) ConsensusKey() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsensusKey", reflect.TypeOf((*MockReader)(nil).ConsensusKey))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsensusKey", reflect.TypeOf((*MockConsensusReader)(nil).ConsensusKey))
 }
 
 // HandleQueryProposal mocks base method.
-func (m *MockReader) HandleQueryProposal(height types.Height, round types.Round) *proposal.Proposal {
+func (m *MockConsensusReader) HandleQueryProposal(height types.Height, round types.Round) *proposal.Proposal {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HandleQueryProposal", height, round)
 	ret0, _ := ret[0].(*proposal.Proposal)
@@ -81,13 +81,13 @@ func (m *MockReader) HandleQueryProposal(height types.Height, round types.Round)
 }
 
 // HandleQueryProposal indicates an expected call of HandleQueryProposal.
-func (mr *MockReaderMockRecorder) HandleQueryProposal(height, round any) *gomock.Call {
+func (mr *MockConsensusReaderMockRecorder) HandleQueryProposal(height, round any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleQueryProposal", reflect.TypeOf((*MockReader)(nil).HandleQueryProposal), height, round)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleQueryProposal", reflect.TypeOf((*MockConsensusReader)(nil).HandleQueryProposal), height, round)
 }
 
 // HandleQueryVote mocks base method.
-func (m *MockReader) HandleQueryVote(height types.Height, round types.Round) *vote.Vote {
+func (m *MockConsensusReader) HandleQueryVote(height types.Height, round types.Round) *vote.Vote {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HandleQueryVote", height, round)
 	ret0, _ := ret[0].(*vote.Vote)
@@ -95,13 +95,13 @@ func (m *MockReader) HandleQueryVote(height types.Height, round types.Round) *vo
 }
 
 // HandleQueryVote indicates an expected call of HandleQueryVote.
-func (mr *MockReaderMockRecorder) HandleQueryVote(height, round any) *gomock.Call {
+func (mr *MockConsensusReaderMockRecorder) HandleQueryVote(height, round any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleQueryVote", reflect.TypeOf((*MockReader)(nil).HandleQueryVote), height, round)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleQueryVote", reflect.TypeOf((*MockConsensusReader)(nil).HandleQueryVote), height, round)
 }
 
 // HasVote mocks base method.
-func (m *MockReader) HasVote(h hash.Hash) bool {
+func (m *MockConsensusReader) HasVote(h hash.Hash) bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HasVote", h)
 	ret0, _ := ret[0].(bool)
@@ -109,13 +109,13 @@ func (m *MockReader) HasVote(h hash.Hash) bool {
 }
 
 // HasVote indicates an expected call of HasVote.
-func (mr *MockReaderMockRecorder) HasVote(h any) *gomock.Call {
+func (mr *MockConsensusReaderMockRecorder) HasVote(h any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasVote", reflect.TypeOf((*MockReader)(nil).HasVote), h)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasVote", reflect.TypeOf((*MockConsensusReader)(nil).HasVote), h)
 }
 
 // HeightRound mocks base method.
-func (m *MockReader) HeightRound() (types.Height, types.Round) {
+func (m *MockConsensusReader) HeightRound() (types.Height, types.Round) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HeightRound")
 	ret0, _ := ret[0].(types.Height)
@@ -124,13 +124,13 @@ func (m *MockReader) HeightRound() (types.Height, types.Round) {
 }
 
 // HeightRound indicates an expected call of HeightRound.
-func (mr *MockReaderMockRecorder) HeightRound() *gomock.Call {
+func (mr *MockConsensusReaderMockRecorder) HeightRound() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HeightRound", reflect.TypeOf((*MockReader)(nil).HeightRound))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HeightRound", reflect.TypeOf((*MockConsensusReader)(nil).HeightRound))
 }
 
 // IsActive mocks base method.
-func (m *MockReader) IsActive() bool {
+func (m *MockConsensusReader) IsActive() bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsActive")
 	ret0, _ := ret[0].(bool)
@@ -138,13 +138,13 @@ func (m *MockReader) IsActive() bool {
 }
 
 // IsActive indicates an expected call of IsActive.
-func (mr *MockReaderMockRecorder) IsActive() *gomock.Call {
+func (mr *MockConsensusReaderMockRecorder) IsActive() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsActive", reflect.TypeOf((*MockReader)(nil).IsActive))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsActive", reflect.TypeOf((*MockConsensusReader)(nil).IsActive))
 }
 
 // IsProposer mocks base method.
-func (m *MockReader) IsProposer() bool {
+func (m *MockConsensusReader) IsProposer() bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsProposer")
 	ret0, _ := ret[0].(bool)
@@ -152,13 +152,13 @@ func (m *MockReader) IsProposer() bool {
 }
 
 // IsProposer indicates an expected call of IsProposer.
-func (mr *MockReaderMockRecorder) IsProposer() *gomock.Call {
+func (mr *MockConsensusReaderMockRecorder) IsProposer() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsProposer", reflect.TypeOf((*MockReader)(nil).IsProposer))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsProposer", reflect.TypeOf((*MockConsensusReader)(nil).IsProposer))
 }
 
 // Proposal mocks base method.
-func (m *MockReader) Proposal() *proposal.Proposal {
+func (m *MockConsensusReader) Proposal() *proposal.Proposal {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Proposal")
 	ret0, _ := ret[0].(*proposal.Proposal)
@@ -166,9 +166,9 @@ func (m *MockReader) Proposal() *proposal.Proposal {
 }
 
 // Proposal indicates an expected call of Proposal.
-func (mr *MockReaderMockRecorder) Proposal() *gomock.Call {
+func (mr *MockConsensusReaderMockRecorder) Proposal() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Proposal", reflect.TypeOf((*MockReader)(nil).Proposal))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Proposal", reflect.TypeOf((*MockConsensusReader)(nil).Proposal))
 }
 
 // MockConsensus is a mock of Consensus interface.

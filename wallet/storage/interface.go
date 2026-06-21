@@ -15,7 +15,7 @@ type QueryParams struct {
 	Skip      int
 }
 
-type IStorage interface {
+type WalletStorage interface {
 	WalletInfo() *wtypes.WalletInfo
 	Vault() *vault.Vault
 	UpdateVault(vault *vault.Vault) error
@@ -36,6 +36,6 @@ type IStorage interface {
 	QueryTransactions(params QueryParams) ([]*wtypes.TransactionInfo, error)
 
 	Close() error
-	Clone(path string) (IStorage, error)
+	Clone(path string) (WalletStorage, error)
 	IsLegacy() bool
 }

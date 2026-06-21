@@ -19,7 +19,7 @@ func (s *cpDecideState) decide() {
 	if cpMainVotes.HasTwoThirdOfTotalPower(s.cpRound) {
 		if cpMainVotes.HasQuorumVotesFor(s.cpRound, vote.CPValueYes) {
 			// decided for yes, and proceeds to the next round
-			s.logger.Info("binary agreement decided", "value", 1, "round", s.cpRound)
+			s.logger.Info("binary agreement decided", "value", 1, "cpRound", s.cpRound)
 
 			votes := cpMainVotes.BinaryVotes(s.cpRound, vote.CPValueYes)
 			cert := s.makeCertificate(votes)
@@ -30,7 +30,7 @@ func (s *cpDecideState) decide() {
 			s.cpStrongTermination(s.round, s.cpRound)
 		} else if cpMainVotes.HasQuorumVotesFor(s.cpRound, vote.CPValueNo) {
 			// decided for no and proceeds to the next round
-			s.logger.Info("binary agreement decided", "value", 0, "round", s.cpRound)
+			s.logger.Info("binary agreement decided", "value", 0, "cpRound", s.cpRound)
 
 			votes := cpMainVotes.BinaryVotes(s.cpRound, vote.CPValueNo)
 			cert := s.makeCertificate(votes)
@@ -41,7 +41,7 @@ func (s *cpDecideState) decide() {
 			s.cpStrongTermination(s.round, s.cpRound)
 		} else {
 			// conflicting votes
-			s.logger.Debug("conflicting main votes", "round", s.cpRound)
+			s.logger.Debug("conflicting main votes", "cpRound", s.cpRound)
 			s.cpRound++
 			s.enterNewState(s.cpPreVoteState)
 		}

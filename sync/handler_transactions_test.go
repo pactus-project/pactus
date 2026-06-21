@@ -15,17 +15,17 @@ func TestHandlerTransactionsParsingMessages(t *testing.T) {
 		msg := message.NewTransactionsMessage([]*tx.Tx{trx1})
 		pid := td.RandPeerID()
 
-		td.state.MockTxPool.EXPECT().AppendTx(trx1).Return(nil).Times(1)
+		td.state.EXPECT().AddPendingTx(trx1).Return(nil).Times(1)
 		td.receivingNewMessage(td.sync, msg, pid)
 	})
 }
 
-// func TestHandlerTransactionsBroadcastingMessages(t *testing.T) {
-// 	td := setup(t, nil)
+func TestHandlerTransactionsBroadcastingMessages(t *testing.T) {
+	td := setup(t, nil)
 
-// 	trx1 := td.GenerateTestBondTx()
-// 	msg := message.NewTransactionsMessage([]*tx.Tx{trx1})
-// 	td.sync.broadcast(msg)
+	trx1 := td.GenerateTestBondTx()
+	msg := message.NewTransactionsMessage([]*tx.Tx{trx1})
+	td.sync.broadcast(msg)
 
-// 	td.shouldPublishMessageWithThisType(t, message.TypeTransaction)
-// }
+	td.shouldPublishMessageWithThisType(t, message.TypeTransaction)
+}

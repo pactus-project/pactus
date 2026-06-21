@@ -1,6 +1,7 @@
 package consensus
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/pactus-project/pactus/sync/bundle/message"
@@ -64,6 +65,7 @@ func TestSetProposalInvalidBlock(t *testing.T) {
 	td.enterNewHeight(td.consP)
 	td.enterNextRound(td.consP)
 	td.enterNextRound(td.consP)
+	td.stateP.ErrValidator = errors.New("some error")
 
 	td.consP.SetProposal(invProp)
 	assert.Nil(t, td.consP.Proposal())

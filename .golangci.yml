@@ -201,6 +201,10 @@ linters:
     generated: lax
     rules:
       - linters:
+          - gocognit
+          - maintidx
+        path: _fake.go
+      - linters:
           - forbidigo
           - gocognit
           - maintidx

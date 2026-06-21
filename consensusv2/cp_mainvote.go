@@ -21,14 +21,14 @@ func (s *cpMainVoteState) decide() {
 	if cpPreVotes.Has2FP1Votes(s.cpRound) {
 		switch {
 		case cpPreVotes.Has2FP1VotesFor(s.cpRound, vote.CPValueNo):
-			s.logger.Debug("cp: quorum for pre-votes", "value", "no")
+			s.logger.Debug("cp: quorum for pre-votes", "value", "no", "cpRound", s.cpRound)
 
 			votes := cpPreVotes.BinaryVotes(s.cpRound, vote.CPValueNo)
 			s.cpDecidedCert = s.makeCertificate(votes)
 			s.enterNewState(s.precommitState)
 
 		case cpPreVotes.Has2FP1VotesFor(s.cpRound, vote.CPValueYes):
-			s.logger.Debug("cp: quorum for pre-votes", "value", "yes")
+			s.logger.Debug("cp: quorum for pre-votes", "value", "yes", "cpRound", s.cpRound)
 
 			votes := cpPreVotes.BinaryVotes(s.cpRound, vote.CPValueYes)
 			cert := s.makeCertificate(votes)
@@ -39,7 +39,7 @@ func (s *cpMainVoteState) decide() {
 			s.enterNewState(s.cpDecideState)
 
 		default:
-			s.logger.Debug("cp: no-quorum for pre-votes", "value", "abstain")
+			s.logger.Debug("cp: no-quorum for pre-votes", "value", "abstain", "cpRound", s.cpRound)
 
 			vote0 := cpPreVotes.GetRandomVote(s.cpRound, vote.CPValueNo)
 			vote1 := cpPreVotes.GetRandomVote(s.cpRound, vote.CPValueYes)

@@ -95,7 +95,7 @@ func OptionDelegateExpiry(expiry types.Height) func(builder *txBuilder) error {
 
 // txBuilder helps build and configure a transaction before submitting it.
 type txBuilder struct {
-	provider       provider.IBlockchainProvider
+	provider       provider.WalletProvider
 	sender         *crypto.Address
 	receiver       *crypto.Address
 	pub            *bls.PublicKey
