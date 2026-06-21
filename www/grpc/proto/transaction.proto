@@ -347,7 +347,6 @@ message DecodeRawTransactionResponse {
   TransactionInfo transaction = 1;
 }
 
-
 // Request message for checking a transaction.
 message CheckTransactionRequest {
   // The raw transaction data to be checked.
