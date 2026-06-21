@@ -166,6 +166,9 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	configAlice := testConfig()
 	configBob := testConfig()
 
+	assert.Equal(t, uint32(11), configAlice.BlockPerMessage)
+	assert.Equal(t, uint32(27), configAlice.BlockPerSession)
+
 	valKeyAlice := []*bls.ValidatorKey{ts.RandValKey()}
 	valKeyBob := []*bls.ValidatorKey{ts.RandValKey()}
 	stateAlice := state.NewFakeState(ts, nil)
@@ -182,6 +185,9 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	stateBob.LastHeight = 0
 	stateAlice.EXPECT().UpdateValidatorProtocolVersion(gomock.Any(), gomock.Any()).AnyTimes()
 	stateBob.EXPECT().UpdateValidatorProtocolVersion(gomock.Any(), gomock.Any()).AnyTimes()
+
+	consV1MgrAlice.EXPECT().MoveToNewHeight().Return().AnyTimes()
+	consV1MgrBob.EXPECT().MoveToNewHeight().Return().AnyTimes()
 
 	consV1MgrAlice.EXPECT().IsDeprecated().Return(false).AnyTimes()
 	consV1MgrBob.EXPECT().IsDeprecated().Return(false).AnyTimes()
@@ -263,22 +269,16 @@ func TestHandlerBlocksResponseIdenticalBundles(t *testing.T) {
 func TestHandlerBlocksResponseSyncing(t *testing.T) {
 	nets := makeAliceAndBobNetworks(t)
 
-	nets.stateAlice.LastHeight = 0
 	nets.stateBob.CommitTestBlocks(100)
 
 	assert.Equal(t, types.Height(0), nets.syncAlice.state.LastBlockHeight())
 	assert.Equal(t, types.Height(100), nets.syncBob.state.LastBlockHeight())
-
-	assert.Equal(t, uint32(11), nets.syncAlice.config.BlockPerMessage)
-	assert.Equal(t, uint32(27), nets.syncAlice.config.BlockPerSession)
 
 	// Announcing a block
 	blk, cert := nets.GenerateTestBlock(nets.RandHeight())
 	msg := message.NewBlockAnnounceMessage(blk, cert, nil)
 	nets.syncBob.broadcast(msg)
 	shouldPublishMessageWithThisType(t, nets.networkBob, message.TypeBlockAnnounce)
-
-	nets.consV1MgrAlice.EXPECT().MoveToNewHeight().Return().AnyTimes()
 
 	// Syncing process:
 	shouldPublishBlockRequest(t, nets.networkAlice, 1)
@@ -305,7 +305,7 @@ func TestHandlerBlocksResponseSyncing(t *testing.T) {
 	shouldPublishBlockResponse(t, nets.networkBob, 100, 0, message.ResponseCodeSynced)     // Synced
 
 	assert.Eventually(t, func() bool {
-		return nets.syncAlice.state.LastBlockHeight() == types.Height(100)
+		return nets.syncAlice.state.LastBlockHeight() == nets.syncBob.state.LastBlockHeight()
 	}, 2*time.Second, 100*time.Millisecond)
 }
 
@@ -313,14 +313,7 @@ func TestHandlerBlocksResponseSyncingHasBlockInCache(t *testing.T) {
 	nets := makeAliceAndBobNetworks(t)
 
 	// Adding some blocks for Bob
-	blockInterval := nets.syncBob.state.Genesis().Params().BlockInterval()
-	blockTime := nets.syncBob.state.Genesis().GenesisTime()
-	for i := types.Height(0); i < 23; i++ {
-		blk, cert := nets.GenerateTestBlock(i+1, testsuite.BlockWithTime(blockTime))
-		require.NoError(t, nets.syncBob.state.CommitBlock(blk, cert))
-
-		blockTime = blockTime.Add(blockInterval)
-	}
+	nets.stateBob.CommitTestBlocks(23)
 
 	assert.Equal(t, types.Height(0), nets.syncAlice.state.LastBlockHeight())
 	assert.Equal(t, types.Height(23), nets.syncBob.state.LastBlockHeight())
@@ -339,11 +332,13 @@ func TestHandlerBlocksResponseSyncingHasBlockInCache(t *testing.T) {
 	nets.syncBob.broadcast(msg)
 	shouldPublishMessageWithThisType(t, nets.networkBob, message.TypeBlockAnnounce)
 
-	nets.consV1MgrAlice.EXPECT().MoveToNewHeight().Return().AnyTimes()
-
 	// blocks 1-2 are inside the cache
 	shouldPublishBlockRequest(t, nets.networkAlice, 4)
 	shouldPublishBlockResponse(t, nets.networkBob, 4, 11, message.ResponseCodeMoreBlocks) // 4-14
 	shouldPublishBlockResponse(t, nets.networkBob, 15, 9, message.ResponseCodeMoreBlocks) // 15-23
 	shouldPublishBlockResponse(t, nets.networkBob, 23, 0, message.ResponseCodeSynced)     // Synced
+
+	assert.Eventually(t, func() bool {
+		return nets.syncAlice.state.LastBlockHeight() == nets.syncBob.state.LastBlockHeight()
+	}, 2*time.Second, 100*time.Millisecond)
 }

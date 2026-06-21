@@ -79,6 +79,15 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	stateB := state.NewFakeState(ts, cmt)
 	stateP := state.NewFakeState(ts, cmt)
 
+	// To prevent triggering timers before starting the tests and
+	// avoid double entries for new heights in some tests.
+	genTime := util.RoundNow(10).Add(time.Duration(10) * time.Second)
+
+	stateX.LastTime = genTime
+	stateY.LastTime = genTime
+	stateB.LastTime = genTime
+	stateP.LastTime = genTime
+
 	td := &testData{
 		TestSuite: ts,
 		valKeys:   valKeys,
@@ -780,11 +789,11 @@ func TestCases(t *testing.T) {
 		round       types.Round
 		description string
 	}{
-		{1781867587065310823, 1, "1/3+ cp:PRE-VOTE in Prepare step"},
-		{1781867626234739290, 2, "1/3+ cp:PRE-VOTE in Precommit step"},
-		{1781868171673143067, 1, "conflicting main votes. cp_round=0"},
-		{1781868234356493471, 1, "conflicting main votes. cp_round=1"},
-		{1781869035138256604, 2, "consP & consB: Change Proposer, consX & consY: Commit (2 block announces)"},
+		{1782063160641027570, 2, "1/3+ cp:PRE-VOTE in Prepare step"},
+		{1782063183054143292, 0, "1/3+ cp:PRE-VOTE in Precommit step"},
+		{1782063306957701890, 1, "conflicting main votes. cp_round=0"},
+		{1782063341311412817, 0, "conflicting main votes. cp_round=1"},
+		{1782063628164830047, 1, "consY & consB: Change Proposer, consX & consP: Commit (2 block announces)"},
 	}
 
 	for no, tt := range tests {

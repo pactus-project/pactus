@@ -2,6 +2,7 @@ package state
 
 import (
 	"errors"
+	"sync"
 	"time"
 
 	"github.com/pactus-project/pactus/committee"
@@ -18,7 +19,6 @@ import (
 	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"go.uber.org/mock/gomock"
 )
@@ -32,6 +32,7 @@ type FakeState struct {
 	*MockState
 	*testsuite.TestSuite
 
+	lk             sync.RWMutex
 	Committee      committee.Committee
 	LastHeight     types.Height
 	LastTime       time.Time
@@ -49,16 +50,12 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 	mock := NewMockState(ts.MockController())
 
 	genDoc := genesis.MainnetGenesis()
+	genTime := genDoc.GenesisTime()
 	stateParams := param.FromGenesis(genesis.MainnetGenesis())
 	stateParams.BlockVersion = protocol.ProtocolVersionLatest
 	testBlocks := make(map[types.Height]*block.Block)
 	testAccounts := make(map[crypto.Address]*account.Account)
 	testValidators := make(map[crypto.Address]*validator.Validator)
-
-	// To prevent triggering timers before starting the tests and
-	// avoid double entries for new heights in some tests.
-	genTime := util.RoundNow(stateParams.BlockIntervalInSecond).
-		Add(time.Duration(stateParams.BlockIntervalInSecond) * time.Second)
 
 	fake := &FakeState{
 		MockState:      mock,
@@ -75,10 +72,16 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 	}
 
 	mock.EXPECT().LastBlockHeight().DoAndReturn(func() types.Height {
+		fake.lk.RLock()
+		defer fake.lk.RUnlock()
+
 		return fake.LastHeight
 	}).AnyTimes()
 
 	mock.EXPECT().LastBlockHash().DoAndReturn(func() hash.Hash {
+		fake.lk.RLock()
+		defer fake.lk.RUnlock()
+
 		if fake.LastHeight == 0 {
 			return hash.UndefHash
 		}
@@ -91,6 +94,9 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 	}).AnyTimes()
 
 	mock.EXPECT().LastBlockTime().DoAndReturn(func() time.Time {
+		fake.lk.RLock()
+		defer fake.lk.RUnlock()
+
 		return fake.LastTime
 	}).AnyTimes()
 
@@ -131,6 +137,9 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 
 	mock.EXPECT().CommitBlock(gomock.Any(), gomock.Any()).DoAndReturn(
 		func(blk *block.Block, cert *certificate.Certificate) error {
+			fake.lk.Lock()
+			defer fake.lk.Unlock()
+
 			if cert.Height() == fake.LastHeight+1 {
 				fake.TestBlocks[blk.Height()] = blk
 				fake.LastHeight++
@@ -302,10 +311,10 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 }
 
 func (f *FakeState) ProposerIndex(round types.Round) int {
-	l := int(len(f.Committee.Validators()))
-	i := int(f.LastHeight)%l + int(round)%l
+	len := f.Committee.Size()
+	i := int(f.LastHeight)%len + int(round)%len
 
-	return i % l
+	return i % len
 }
 
 func (f *FakeState) Proposer(round types.Round) *validator.Validator {

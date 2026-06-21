@@ -81,6 +81,15 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	stateB := state.NewFakeState(ts, cmt)
 	stateP := state.NewFakeState(ts, cmt)
 
+	// To prevent triggering timers before starting the tests and
+	// avoid double entries for new heights in some tests.
+	genTime := util.RoundNow(10).Add(time.Duration(10) * time.Second)
+
+	stateX.LastTime = genTime
+	stateY.LastTime = genTime
+	stateB.LastTime = genTime
+	stateP.LastTime = genTime
+
 	td := &testData{
 		TestSuite: ts,
 		valKeys:   valKeys,
@@ -832,15 +841,15 @@ func TestCasesNormal(t *testing.T) {
 		certRound   types.Round
 		description string
 	}{
-		{1781876182268420040, 2, "precommit: startChangingProposer on 1f+1 pre-votes"},
-		{1781877464322444047, 2, "cp_prevote: has one main-vote for `yes` from previous round"},
-		{1781877432408365514, 1, "cp_prevote: all main-votes are `abstain` from previous round"},
-		{1781877562473469393, 2, "cp_mainvote: has 2f+1 pre-votes for `no`, decided on `no (biased)`"},
-		{1781877611831913484, 1, "cp_mainvote: has 2f+1 pre-votes for `yes`"},
-		{1781877673024395163, 0, "cp_mainvote: has no pre-votes quorum"},
-		{1781877713409302317, 2, "cp_decide: decide on `yes`"},
-		{1781877755112494881, 1, "cp_decide: conflicting main-votes"},
-		{1781878027454719403, 1, "cons.cpRound = 1, decided vote for `yes` in cpRound 0"},
+		{1782063894498428909, 2, "precommit: startChangingProposer on 1f+1 pre-votes"},
+		{1782063989740047763, 1, "cp_prevote: has one main-vote for `yes` from previous round"},
+		{1782064032070813215, 0, "cp_prevote: all main-votes are `abstain` from previous round"},
+		{1782064072877830767, 2, "cp_mainvote: has 2f+1 pre-votes for `no`, decided on `no (biased)`"},
+		{1782064109576078134, 1, "cp_mainvote: has 2f+1 pre-votes for `yes`"},
+		{1782064139608352197, 0, "cp_mainvote: has no pre-votes quorum"},
+		{1782064192915594649, 1, "cp_decide: decide on `yes`"},
+		{1782064230685846282, 1, "cp_decide: conflicting main-votes"},
+		{1782064484202065605, 1, "cons.cpRound = 1, decided vote for `yes` in cpRound 0"},
 	}
 
 	for _, tt := range tests {
