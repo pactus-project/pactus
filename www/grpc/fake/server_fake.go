@@ -17,11 +17,10 @@ import (
 
 type FakeGRPCServer struct {
 	FakeState     *state.FakeState
-	MockState     *state.FakeState
-	MockSync      *sync.FakeSync
-	MockCons      *consensus.FakeConsensus
-	MockConsMgr   *consmgr.FakeConsensusManager
-	MockWalletMgr *wltmgr.FakeWalletManager
+	FakeSync      *sync.FakeSync
+	FakeCons      *consensus.FakeConsensus
+	FakeConsMgr   *consmgr.FakeConsensusManager
+	FakeWalletMgr *wltmgr.FakeWalletManager
 	Server        *grpc.Server
 }
 
@@ -60,11 +59,10 @@ func NewFakeGRPCServer(t *testing.T, ts *testsuite.TestSuite, conf *grpc.Config)
 
 	return &FakeGRPCServer{
 		FakeState:     fakeState,
-		MockState:     fakeState,
-		MockSync:      fakeSync,
-		MockCons:      fakeCons,
-		MockConsMgr:   fakeConsMgr,
-		MockWalletMgr: fakeWalletMgr,
+		FakeSync:      fakeSync,
+		FakeCons:      fakeCons,
+		FakeConsMgr:   fakeConsMgr,
+		FakeWalletMgr: fakeWalletMgr,
 		Server:        server,
 	}
 }

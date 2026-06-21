@@ -183,7 +183,7 @@ func TestGetAccount(t *testing.T) {
 	td := setup(t, nil)
 	client := td.blockchainClient(t)
 
-	addr, acc := td.server.MockState.AddTestAccount()
+	addr, acc := td.server.FakeState.AddTestAccount()
 
 	t.Run("Should return error for non-parseable address", func(t *testing.T) {
 		res, err := client.GetAccount(t.Context(),
@@ -216,7 +216,7 @@ func TestGetValidator(t *testing.T) {
 	td := setup(t, nil)
 	client := td.blockchainClient(t)
 
-	val1 := td.server.MockState.AddTestValidator()
+	val1 := td.server.FakeState.AddTestValidator()
 
 	t.Run("Should return nil value due to invalid address", func(t *testing.T) {
 		res, err := client.GetValidator(t.Context(),
@@ -268,7 +268,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 	td := setup(t, nil)
 	client := td.blockchainClient(t)
 
-	val1 := td.server.MockState.AddTestValidator()
+	val1 := td.server.FakeState.AddTestValidator()
 
 	t.Run("Should return nil value due to invalid number", func(t *testing.T) {
 		res, err := client.GetValidatorByNumber(t.Context(),
@@ -302,8 +302,8 @@ func TestGetValidatorAddresses(t *testing.T) {
 	client := td.blockchainClient(t)
 
 	t.Run("Should return list of validator addresses", func(t *testing.T) {
-		td.server.MockState.AddTestValidator()
-		td.server.MockState.AddTestValidator()
+		td.server.FakeState.AddTestValidator()
+		td.server.FakeState.AddTestValidator()
 
 		res, err := client.GetValidatorAddresses(t.Context(),
 			&pactus.GetValidatorAddressesRequest{})
@@ -360,10 +360,10 @@ func TestConsensusInfo(t *testing.T) {
 	vote2, _ := td.GenerateTestPrecommitVote(height, round)
 	prop := td.GenerateTestProposal(height, round)
 
-	td.server.MockCons.EXPECT().HeightRound().Return(height, round).Times(1)
-	td.server.MockCons.EXPECT().AllVotes().Return([]*vote.Vote{vote1, vote2}).Times(1)
-	td.server.MockCons.EXPECT().IsActive().Return(true).Times(1)
-	td.server.MockConsMgr.EXPECT().Proposal().Return(prop).Times(1)
+	td.server.FakeCons.EXPECT().HeightRound().Return(height, round).Times(1)
+	td.server.FakeCons.EXPECT().AllVotes().Return([]*vote.Vote{vote1, vote2}).Times(1)
+	td.server.FakeCons.EXPECT().IsActive().Return(true).Times(1)
+	td.server.FakeConsMgr.EXPECT().Proposal().Return(prop).Times(1)
 
 	res, err := client.GetConsensusInfo(t.Context(), &pactus.GetConsensusInfoRequest{})
 
@@ -394,7 +394,7 @@ func TestGetTxPoolContent(t *testing.T) {
 	trx6 := td.GenerateTestSortitionTx()
 	trx7 := td.GenerateTestWithdrawTx()
 
-	td.server.MockState.EXPECT().AllPendingTxs().Return([]*tx.Tx{
+	td.server.FakeState.EXPECT().AllPendingTxs().Return([]*tx.Tx{
 		trx1, trx2, trx3, trx4, trx5, trx6, trx7,
 	}).AnyTimes()
 

@@ -13,7 +13,7 @@ import (
 func TestTransaction(t *testing.T) {
 	td := setup(t)
 
-	testBlock := td.gRPCServer.MockState.AddTestBlock(1)
+	testBlock := td.gRPCServer.FakeState.AddTestBlock(1)
 	testTx := testBlock.Transactions()[1]
 
 	t.Run("Shall return a transaction", func(t *testing.T) {

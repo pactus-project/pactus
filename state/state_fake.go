@@ -102,6 +102,12 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 		return ts.GenerateTestCertificate(fake.LastHeight)
 	}).AnyTimes()
 
+	mock.EXPECT().IsProposer(gomock.Any(), gomock.Any()).DoAndReturn(
+		func(addr crypto.Address, round types.Round) bool {
+			return fake.IsProposer(addr, round)
+		},
+	).AnyTimes()
+
 	mock.EXPECT().Proposer(gomock.Any()).DoAndReturn(
 		func(round types.Round) *validator.Validator {
 			return fake.Proposer(round)
@@ -116,7 +122,7 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 
 	mock.EXPECT().ProposeBlock(gomock.Any(), gomock.Any()).DoAndReturn(
 		func(valKey *bls.ValidatorKey, _ crypto.Address) (*block.Block, error) {
-			blk, _ := ts.GenerateTestBlock(fake.LastHeight,
+			blk, _ := ts.GenerateTestBlock(fake.LastHeight+1,
 				testsuite.BlockWithProposer(valKey.Address()))
 
 			return blk, nil
@@ -296,9 +302,10 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 }
 
 func (f *FakeState) ProposerIndex(round types.Round) int {
-	i := int(f.LastHeight%4) + int(round%4)
+	l := int(len(f.Committee.Validators()))
+	i := int(f.LastHeight)%l + int(round)%l
 
-	return i % 4
+	return i % l
 }
 
 func (f *FakeState) Proposer(round types.Round) *validator.Validator {
