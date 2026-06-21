@@ -5,7 +5,7 @@ import grpc
 import utils_pb2 as utils__pb2
 
 
-class UtilsStub(object):
+class UtilsStub:
     """Utils service defines RPC methods for utility functions such as message
     signing, verification, and other cryptographic operations.
     """
@@ -38,7 +38,7 @@ class UtilsStub(object):
                 _registered_method=True)
 
 
-class UtilsServicer(object):
+class UtilsServicer:
     """Utils service defines RPC methods for utility functions such as message
     signing, verification, and other cryptographic operations.
     """
@@ -102,7 +102,7 @@ def add_UtilsServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class Utils(object):
+class Utils:
     """Utils service defines RPC methods for utility functions such as message
     signing, verification, and other cryptographic operations.
     """

@@ -5,7 +5,7 @@ import grpc
 import transaction_pb2 as transaction__pb2
 
 
-class TransactionStub(object):
+class TransactionStub:
     """Transaction service defines various RPC methods for interacting with transactions.
     """
 
@@ -67,7 +67,7 @@ class TransactionStub(object):
                 _registered_method=True)
 
 
-class TransactionServicer(object):
+class TransactionServicer:
     """Transaction service defines various RPC methods for interacting with transactions.
     """
 
@@ -202,7 +202,7 @@ def add_TransactionServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class Transaction(object):
+class Transaction:
     """Transaction service defines various RPC methods for interacting with transactions.
     """
 
