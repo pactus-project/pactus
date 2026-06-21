@@ -761,6 +761,7 @@ func (st *state) CommitteeInfo() *CommitteeInfo {
 		Validators:       st.committee.Validators(),
 		ProtocolVersions: st.committee.ProtocolVersions(),
 		CommitteePower:   st.committee.Power(),
+		TotalPower:       st.totalPower,
 	}
 }
 
