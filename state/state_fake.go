@@ -124,8 +124,8 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 	).AnyTimes()
 
 	mock.EXPECT().CommitBlock(gomock.Any(), gomock.Any()).DoAndReturn(
-		func(blk *block.Block, _ *certificate.Certificate) error {
-			if blk.Height() == fake.LastHeight+1 {
+		func(blk *block.Block, cert *certificate.Certificate) error {
+			if cert.Height() == fake.LastHeight+1 {
 				fake.TestBlocks[blk.Height()] = blk
 				fake.LastHeight++
 				fake.LastTime = fake.LastTime.Add(fake.StateParams.BlockInterval())
