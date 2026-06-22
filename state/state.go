@@ -541,7 +541,7 @@ func (st *state) evaluateSortition() bool {
 		}
 
 		ok, proof := sortition.EvaluateSortition(st.lastInfo.SortitionSeed(),
-			key.PrivateKey(), st.totalPower, int64(val.Stake()))
+			key.PrivateKey(), st.totalPower, val.Power())
 		if ok {
 			trx := tx.NewSortitionTx(st.lastInfo.BlockHeight(), val.Address(), proof)
 			sig := key.Sign(trx.SignBytes())
