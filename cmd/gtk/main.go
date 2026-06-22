@@ -42,6 +42,7 @@ var (
 	testnetOpt      *bool
 	grpcAddrOpt     *string
 	grpcInsecureOpt *bool
+	snapshotURLOpt  *string
 )
 
 func init() {
@@ -50,6 +51,7 @@ func init() {
 	testnetOpt = flag.Bool("testnet", false, "initializing for the testnet")
 	grpcAddrOpt = flag.String("grpc-addr", "", "connect to remote gRPC server instead of starting local node")
 	grpcInsecureOpt = flag.Bool("grpc-insecure", false, "use insecure connection to gRPC server")
+	snapshotURLOpt = flag.String("snapshot-url", cmd.DefaultSnapshotURL, "specific snapshot URL to import")
 	version.NodeAgent.AppType = "gui"
 
 	if runtime.GOOS == "darwin" {
@@ -102,7 +104,7 @@ func main() {
 			if *testnetOpt {
 				network = genesis.Testnet
 			}
-			if !startupAssistant(ctx, workingDir, network) {
+			if !startupAssistant(ctx, workingDir, network, *snapshotURLOpt) {
 				return
 			}
 		}
