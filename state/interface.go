@@ -44,6 +44,7 @@ type CommitteeInfo struct {
 	Validators       []*validator.Validator
 	ProtocolVersions map[protocol.Version]float64
 	CommitteePower   int64
+	TotalPower       int64
 }
 
 type State interface {
