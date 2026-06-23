@@ -25,9 +25,7 @@ func buildImportCmd(parentCmd *cobra.Command) {
 
 	workingDirOpt := addWorkingDirOption(importCmd)
 	serverAddrOpt := importCmd.Flags().String("server-addr", cmd.DefaultSnapshotURL,
-		"import server address (legacy option; use --snapshot-url instead)")
-	snapshotURLOpt := importCmd.Flags().String("snapshot-url", cmd.DefaultSnapshotURL,
-		"snapshot server base URL")
+		"import server address")
 
 	importCmd.Run = func(cobra *cobra.Command, _ []string) {
 		workingDir, err := filepath.Abs(*workingDirOpt)
@@ -53,7 +51,7 @@ func buildImportCmd(parentCmd *cobra.Command) {
 
 		terminal.PrintLine()
 
-		snapshotURL := resolveSnapshotURL(cobra, *snapshotURLOpt, *serverAddrOpt)
+		snapshotURL := *serverAddrOpt
 
 		importer, err := cmd.NewImporter(
 			gen.ChainType(),
@@ -136,25 +134,4 @@ func updateProgressBar(bar *progressbar.ProgressBar, fileName string, stats down
 	if stats.Completed {
 		_ = bar.Finish()
 	}
-}
-
-func resolveSnapshotURL(c *cobra.Command, snapshotURL, serverAddr string) string {
-	resolved := cmd.DefaultSnapshotURL
-
-	snapshotURLSet := c.Flags().Changed("snapshot-url")
-	serverAddrSet := c.Flags().Changed("server-addr")
-
-	if snapshotURLSet {
-		resolved = snapshotURL
-	} else if serverAddrSet {
-		resolved = serverAddr
-	}
-
-	if snapshotURLSet && serverAddrSet && snapshotURL != serverAddr {
-		terminal.PrintWarnMsgf(
-			"both --snapshot-url and --server-addr were provided; using --snapshot-url",
-		)
-	}
-
-	return resolved
 }
