@@ -28,14 +28,14 @@ func TestCloseStream(t *testing.T) {
 				confA.DefaultPort, networkA.SelfID().String())))
 		networkB = makeTestNetwork(t, confB, nil)
 
-		assert.EventuallyWithT(t, func(collect *assert.CollectT) {
+		assert.Eventually(t, func() bool {
 			e := <-networkA.networkPipe.UnsafeGetChannel()
-			assert.Equal(collect, EventTypeConnect, e.Type())
+			return EventTypeConnect == e.Type()
 		}, 5*time.Second, 100*time.Millisecond)
 
-		assert.EventuallyWithT(t, func(collect *assert.CollectT) {
+		assert.Eventually(t, func() bool {
 			e := <-networkB.networkPipe.UnsafeGetChannel()
-			assert.Equal(collect, EventTypeConnect, e.Type())
+			return EventTypeConnect == e.Type()
 		}, 5*time.Second, 100*time.Millisecond)
 
 		return networkA, networkB
