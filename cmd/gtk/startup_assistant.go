@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
@@ -274,80 +275,83 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 									}
 								})
 
+								importOnce := new(sync.Once)
 								ssDLBtn.ConnectClicked(func() {
-									radioImport.SetSensitive(false)
-									ssLabel.SetSensitive(false)
-									listBox.SetSensitive(false)
-									ssDLBtn.SetSensitive(false)
+									importOnce.Do(func() {
+										radioImport.SetSensitive(false)
+										ssLabel.SetSensitive(false)
+										listBox.SetSensitive(false)
+										ssDLBtn.SetSensitive(false)
 
-									ssDLBtn.SetVisible(false)
-									ssPBLabel.SetVisible(true)
-									listBox.SetSelectionMode(gtk.SelectionNone)
+										ssDLBtn.SetVisible(false)
+										ssPBLabel.SetVisible(true)
+										listBox.SetSelectionMode(gtk.SelectionNone)
 
-									gtkutil.ClearLable(ssPBLabel)
+										gtkutil.ClearLable(ssPBLabel)
 
-									go func() {
-										gtkutil.Logf("start downloading...\n")
-										time.Sleep(1 * time.Second)
+										go func() {
+											gtkutil.Logf("start downloading...\n")
+											time.Sleep(1 * time.Second)
 
-										snapshot := metadata[snapshotIndex]
-										err := importer.Download(
-											ctx, &snapshot,
-											func(stats downloader.Stats) {
-												if !stats.Completed {
-													percent := int(stats.Percent)
-													glib.IdleAdd(func() {
-														dlMessage := fmt.Sprintf(
-															"🌐 Downloading %s | %d%% (%s / %s)",
-															snapshot.Data.Name, percent,
-															util.FormatBytesToHumanReadable(uint64(stats.Downloaded)),
-															util.FormatBytesToHumanReadable(uint64(stats.TotalSize)),
-														)
-														ssPBLabel.SetText(dlMessage)
-													})
+											snapshot := metadata[snapshotIndex]
+											err := importer.Download(
+												ctx, &snapshot,
+												func(stats downloader.Stats) {
+													if !stats.Completed {
+														percent := int(stats.Percent)
+														glib.IdleAdd(func() {
+															dlMessage := fmt.Sprintf(
+																"🌐 Downloading %s | %d%% (%s / %s)",
+																snapshot.Data.Name, percent,
+																util.FormatBytesToHumanReadable(uint64(stats.Downloaded)),
+																util.FormatBytesToHumanReadable(uint64(stats.TotalSize)),
+															)
+															ssPBLabel.SetText(dlMessage)
+														})
+													}
+												},
+											)
+
+											gtkutil.Logf("downloaded, error: %v", err)
+
+											glib.IdleAdd(func() {
+												if err != nil {
+													gtkutil.SetColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), gtkutil.ColorRed)
+
+													return
 												}
-											},
-										)
 
-										gtkutil.Logf("downloaded, error: %v", err)
+												gtkutil.Logf("extracting data...\n")
+												ssPBLabel.SetText("📂 Extracting downloaded files...")
+												err = importer.ExtractAndStoreFiles()
+												if err != nil {
+													gtkutil.SetColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), gtkutil.ColorRed)
 
-										glib.IdleAdd(func() {
-											if err != nil {
-												gtkutil.SetColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), gtkutil.ColorRed)
+													return
+												}
 
-												return
-											}
+												gtkutil.Logf("moving data...\n")
+												ssPBLabel.SetText("📑 Moving data...")
+												err = importer.MoveStore()
+												if err != nil {
+													gtkutil.SetColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), gtkutil.ColorRed)
 
-											gtkutil.Logf("extracting data...\n")
-											ssPBLabel.SetText("📂 Extracting downloaded files...")
-											err = importer.ExtractAndStoreFiles()
-											if err != nil {
-												gtkutil.SetColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), gtkutil.ColorRed)
+													return
+												}
 
-												return
-											}
+												gtkutil.Logf("cleanup...\n")
+												err = importer.Cleanup()
+												if err != nil {
+													gtkutil.SetColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), gtkutil.ColorRed)
 
-											gtkutil.Logf("moving data...\n")
-											ssPBLabel.SetText("📑 Moving data...")
-											err = importer.MoveStore()
-											if err != nil {
-												gtkutil.SetColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), gtkutil.ColorRed)
+													return
+												}
 
-												return
-											}
-
-											gtkutil.Logf("cleanup...\n")
-											err = importer.Cleanup()
-											if err != nil {
-												gtkutil.SetColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), gtkutil.ColorRed)
-
-												return
-											}
-
-											gtkutil.SetColoredText(ssPBLabel, "✅ Import completed.", gtkutil.ColorGreen)
-											assistantPageComplete(assistant, wgtNodeType, true)
-										})
-									}()
+												gtkutil.SetColoredText(ssPBLabel, "✅ Import completed.", gtkutil.ColorGreen)
+												assistantPageComplete(assistant, wgtNodeType, true)
+											})
+										}()
+									})
 								})
 							}
 						})
