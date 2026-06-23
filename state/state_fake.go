@@ -282,6 +282,7 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 				Validators:       fake.Committee.Validators(),
 				ProtocolVersions: fake.Committee.ProtocolVersions(),
 				CommitteePower:   fake.Committee.Power(),
+				TotalPower:       fake.Committee.Power(),
 			}
 		},
 	).AnyTimes()
