@@ -11,7 +11,7 @@
 # - `--service_path`: This argument specifies the path to the `pactus` service file to manage systemctl service.
 # - `--data_path`: This argument specifies the path to the Pactus data folder to create snapshots.
 #    - Windows: `C:\Users\{user}\pactus\data`
-#    - Linux or Mac: `/home/{user}/pactus/data`
+#    - Linux or macOS: `/home/{user}/pactus/data`
 # - `--compress`: This argument specifies the compression method based on your choice ['none', 'zip', 'tar'],
 # with 'none' being without compression.
 # - `--retention`: This argument sets the number of snapshots to keep.
@@ -20,7 +20,7 @@
 #
 # How to run?
 #
-# For create snapshots just run this command:
+# To create snapshots just run this command:
 #
 # sudo python3 snapshot.py --service_path /etc/systemd/system/pactus.service --data_path /home/{user}/pactus/data
 # --compress zip --retention 3
@@ -56,7 +56,7 @@ class Metadata:
     @staticmethod
     def sha256(file_path):
         with open(file_path, "rb") as f:
-            return hashlib.sha3_256(f.read()).hexdigest()
+            return hashlib.sha256(f.read()).hexdigest()
 
     @staticmethod
     def update_metadata_file(snapshot_path, snapshot_metadata):
@@ -229,7 +229,7 @@ class SnapshotManager:
         if self.args.compress == "none":
             logging.info(f"Copying data from '{self.args.data_path}' to '{data_dir}'")
             shutil.copytree(self.args.data_path, data_dir)
-            snapshot_metadata = Metadata.create_snapshot_json(data_dir, timestamp_str)
+            snapshot_metadata = Metadata.create_snapshot_json(data_dir, "data")
         elif self.args.compress == "zip":
             zip_file = os.path.join(snapshot_dir, "data.zip")
             rel = os.path.relpath(zip_file, snapshot_dir)
@@ -290,11 +290,11 @@ class Validation:
             raise ValueError(f"Data path '{args.data_path}' does not exist.")
         logging.info(f"Data path '{args.data_path}' exists")
 
-        if not os.access(args.data_path, os.W_OK):
+        if not os.access(args.data_path, os.R_OK):
             raise PermissionError(
-                f"No permission to access data path '{args.data_path}'."
+                f"No read permission for data path '{args.data_path}'."
             )
-        logging.info(f"Permission to access data path '{args.data_path}' confirmed")
+        logging.info(f"Read permission for data path '{args.data_path}' confirmed")
 
         if args.compress == "zip" and not shutil.which("zip"):
             raise EnvironmentError("The 'zip' command is not available.")
