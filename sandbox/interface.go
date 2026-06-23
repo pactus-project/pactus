@@ -13,21 +13,13 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 )
 
-type Sandbox interface {
+type SandboxReader interface {
 	Account(crypto.Address) *account.Account
-	MakeNewAccount(crypto.Address) *account.Account
-	UpdateAccount(crypto.Address, *account.Account)
-
-	CommitTransaction(trx *tx.Tx)
 	RecentTransaction(txID tx.ID) bool
 	IsBanned(crypto.Address) bool
 
 	Validator(crypto.Address) *validator.Validator
-	MakeNewValidator(*bls.PublicKey) *validator.Validator
-	UpdateValidator(*validator.Validator)
-	JoinedToCommittee(crypto.Address)
 	IsJoinedCommittee(crypto.Address) bool
-	UpdatePowerDelta(delta int64)
 	PowerDelta() int64
 	AccumulatedFee() amount.Amount
 
@@ -36,8 +28,21 @@ type Sandbox interface {
 
 	Params() *param.Params
 	CurrentHeight() types.Height
-	IsMainnet() bool
 
 	IterateAccounts(consumer func(crypto.Address, *account.Account, bool))
 	IterateValidators(consumer func(*validator.Validator, bool, bool))
+}
+
+type Sandbox interface {
+	SandboxReader
+
+	MakeNewAccount(crypto.Address) *account.Account
+	UpdateAccount(crypto.Address, *account.Account)
+
+	CommitTransaction(trx *tx.Tx)
+
+	MakeNewValidator(*bls.PublicKey) *validator.Validator
+	UpdateValidator(*validator.Validator)
+	JoinToCommittee(crypto.Address)
+	UpdatePowerDelta(delta int64)
 }

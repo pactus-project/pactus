@@ -117,7 +117,7 @@ func TestSortitionBasicCheck(t *testing.T) {
 	}{
 		{
 			pld: payload.SortitionPayload{
-				Validator: ts.RandAccAddress(),
+				Address: ts.RandAccAddress(),
 			},
 			err: "address is not a validator address",
 		},

@@ -17,7 +17,7 @@ import (
 	tx "github.com/pactus-project/pactus/types/tx"
 	wallet "github.com/pactus-project/pactus/wallet"
 	types "github.com/pactus-project/pactus/wallet/types"
-	"go.uber.org/mock/gomock"
+	gomock "go.uber.org/mock/gomock"
 )
 
 // MockWalletManager is a mock of WalletManager interface.

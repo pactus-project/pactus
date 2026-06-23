@@ -355,7 +355,7 @@ func transactionToProto(trx *tx.Tx, blockHeight types.Height, confirmations int)
 		pld := trx.Payload().(*payload.SortitionPayload)
 		trxInfo.Payload = &pactus.TransactionInfo_Sortition{
 			Sortition: &pactus.PayloadSortition{
-				Address: pld.Validator.String(),
+				Address: pld.Address.String(),
 				Proof:   hex.EncodeToString(pld.Proof[:]),
 			},
 		}

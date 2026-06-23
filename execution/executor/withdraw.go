@@ -11,7 +11,6 @@ import (
 )
 
 type WithdrawExecutor struct {
-	sbx      sandbox.Sandbox
 	pld      *payload.WithdrawPayload
 	fee      amount.Amount
 	sender   *validator.Validator
@@ -36,7 +35,6 @@ func newWithdrawExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*WithdrawExecutor, er
 	}
 
 	return &WithdrawExecutor{
-		sbx:      sbx,
 		pld:      pld,
 		fee:      trx.Fee(),
 		sender:   sender,
@@ -44,7 +42,7 @@ func newWithdrawExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*WithdrawExecutor, er
 	}, nil
 }
 
-func (e *WithdrawExecutor) Check(_ bool) error {
+func (e *WithdrawExecutor) Check(sbx sandbox.SandboxReader, _ bool) error {
 	if e.sender.Stake() < e.pld.Value()+e.fee {
 		return ErrInsufficientFunds
 	}
@@ -53,7 +51,7 @@ func (e *WithdrawExecutor) Check(_ bool) error {
 		return ErrValidatorBonded
 	}
 
-	if e.sbx.CurrentHeight() < e.sender.UnbondingHeight().SafeIncrease(e.sbx.Params().UnbondInterval) {
+	if sbx.CurrentHeight() < e.sender.UnbondingHeight().SafeIncrease(sbx.Params().UnbondInterval) {
 		return ErrUnbondingPeriod
 	}
 
@@ -67,10 +65,10 @@ func (e *WithdrawExecutor) Check(_ bool) error {
 	return nil
 }
 
-func (e *WithdrawExecutor) Execute() {
+func (e *WithdrawExecutor) Execute(sbx sandbox.Sandbox) {
 	e.sender.SubtractFromStake(e.pld.Amount + e.fee)
 	e.receiver.AddToBalance(e.pld.Amount)
 
-	e.sbx.UpdateValidator(e.sender)
-	e.sbx.UpdateAccount(e.pld.To, e.receiver)
+	sbx.UpdateValidator(e.sender)
+	sbx.UpdateAccount(e.pld.To, e.receiver)
 }

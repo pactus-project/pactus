@@ -10,7 +10,6 @@ import (
 )
 
 type TransferExecutor struct {
-	sbx      sandbox.Sandbox
 	pld      *payload.TransferPayload
 	fee      amount.Amount
 	sender   *account.Account
@@ -40,7 +39,6 @@ func newTransferExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*TransferExecutor, er
 	}
 
 	return &TransferExecutor{
-		sbx:      sbx,
 		pld:      pld,
 		fee:      trx.Fee(),
 		sender:   sender,
@@ -48,7 +46,7 @@ func newTransferExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*TransferExecutor, er
 	}, nil
 }
 
-func (e *TransferExecutor) Check(_ bool) error {
+func (e *TransferExecutor) Check(_ sandbox.SandboxReader, _ bool) error {
 	if e.sender.Balance() < e.pld.Amount+e.fee {
 		return ErrInsufficientFunds
 	}
@@ -56,10 +54,10 @@ func (e *TransferExecutor) Check(_ bool) error {
 	return nil
 }
 
-func (e *TransferExecutor) Execute() {
+func (e *TransferExecutor) Execute(sbx sandbox.Sandbox) {
 	e.sender.SubtractFromBalance(e.pld.Amount + e.fee)
 	e.receiver.AddToBalance(e.pld.Amount)
 
-	e.sbx.UpdateAccount(e.pld.From, e.sender)
-	e.sbx.UpdateAccount(e.pld.To, e.receiver)
+	sbx.UpdateAccount(e.pld.From, e.sender)
+	sbx.UpdateAccount(e.pld.To, e.receiver)
 }

@@ -16,7 +16,7 @@ import (
 	amount "github.com/pactus-project/pactus/types/amount"
 	types0 "github.com/pactus-project/pactus/wallet/types"
 	vault "github.com/pactus-project/pactus/wallet/vault"
-	"go.uber.org/mock/gomock"
+	gomock "go.uber.org/mock/gomock"
 )
 
 // MockWalletStorage is a mock of WalletStorage interface.

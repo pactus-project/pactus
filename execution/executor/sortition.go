@@ -12,7 +12,6 @@ import (
 )
 
 type SortitionExecutor struct {
-	sbx             sandbox.Sandbox
 	pld             *payload.SortitionPayload
 	validator       *validator.Validator
 	sortitionHeight types.Height
@@ -21,27 +20,26 @@ type SortitionExecutor struct {
 func newSortitionExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*SortitionExecutor, error) {
 	pld := trx.Payload().(*payload.SortitionPayload)
 
-	val := sbx.Validator(pld.Validator)
+	val := sbx.Validator(pld.Address)
 	if val == nil {
 		return nil, ValidatorNotFoundError{
-			Address: pld.Validator,
+			Address: pld.Address,
 		}
 	}
 
 	return &SortitionExecutor{
 		pld:             pld,
-		sbx:             sbx,
 		validator:       val,
 		sortitionHeight: trx.LockTime(),
 	}, nil
 }
 
-func (e *SortitionExecutor) Check(strict bool) error {
-	if e.sbx.CurrentHeight().SafeSub(e.validator.LastBondingHeight()) < e.sbx.Params().BondInterval {
+func (e *SortitionExecutor) Check(sbx sandbox.SandboxReader, strict bool) error {
+	if sbx.CurrentHeight().SafeSub(e.validator.LastBondingHeight()) < sbx.Params().BondInterval {
 		return ErrBondingPeriod
 	}
 
-	ok := e.sbx.VerifyProof(e.sortitionHeight, e.pld.Proof, e.validator)
+	ok := sbx.VerifyProof(e.sortitionHeight, e.pld.Proof, e.validator)
 	if !ok {
 		return ErrInvalidSortitionProof
 	}
@@ -52,7 +50,7 @@ func (e *SortitionExecutor) Check(strict bool) error {
 	}
 
 	if strict {
-		if err := e.canJoinCommittee(); err != nil {
+		if err := e.canJoinCommittee(sbx); err != nil {
 			return err
 		}
 	}
@@ -60,10 +58,10 @@ func (e *SortitionExecutor) Check(strict bool) error {
 	return nil
 }
 
-func (e *SortitionExecutor) canJoinCommittee() error {
-	if e.sbx.Committee().Size() < e.sbx.Params().CommitteeSize {
+func (e *SortitionExecutor) canJoinCommittee(sbx sandbox.SandboxReader) error {
+	if sbx.Committee().Size() < sbx.Params().CommitteeSize {
 		// There are available seats in the committee.
-		if e.sbx.Committee().Contains(e.pld.Validator) {
+		if sbx.Committee().Contains(e.pld.Address) {
 			return ErrValidatorInCommittee
 		}
 
@@ -73,8 +71,11 @@ func (e *SortitionExecutor) canJoinCommittee() error {
 	// The committee is full, check if the validator can join the committee.
 	joiningNum := 0
 	joiningPower := int64(0)
-	committee := e.sbx.Committee()
-	e.sbx.IterateValidators(func(val *validator.Validator, _ bool, joined bool) {
+	committee := sbx.Committee()
+	committeePower := committee.Power()
+	committeeVals := committee.Validators()
+
+	sbx.IterateValidators(func(val *validator.Validator, _ bool, joined bool) {
 		if joined {
 			if !committee.Contains(val.Address()) {
 				joiningPower += val.Power()
@@ -82,28 +83,30 @@ func (e *SortitionExecutor) canJoinCommittee() error {
 			}
 		}
 	})
-	if !committee.Contains(e.pld.Validator) {
+	if !committee.Contains(e.pld.Address) {
 		joiningPower += e.validator.Power()
 		joiningNum++
 	}
-	if joiningPower >= (committee.Power() / 3) {
+
+	if joiningPower >= (committeePower / 3) {
 		return ErrCommitteeJoinLimitExceeded
 	}
 
-	vals := committee.Validators()
-	slices.SortStableFunc(vals, func(a, b *validator.Validator) int {
+	slices.SortStableFunc(committeeVals, func(a, b *validator.Validator) int {
 		return cmp.Compare(a.LastSortitionHeight(), b.LastSortitionHeight())
 	})
 	leavingPower := int64(0)
+	// The number of leaving validators is the same as the number of joining validators,
+	// and the leaving validators are the ones with the oldest sortition height.
 	for i := 0; i < joiningNum; i++ {
-		leavingPower += vals[i].Power()
+		leavingPower += committeeVals[i].Power()
 	}
-	if leavingPower >= (committee.Power() / 3) {
+	if leavingPower >= (committeePower / 3) {
 		return ErrCommitteeLeaveLimitExceeded
 	}
 
-	oldestSortitionHeight := e.sbx.CurrentHeight()
-	for _, v := range committee.Validators() {
+	oldestSortitionHeight := sbx.CurrentHeight()
+	for _, v := range committeeVals {
 		if v.LastSortitionHeight() < oldestSortitionHeight {
 			oldestSortitionHeight = v.LastSortitionHeight()
 		}
@@ -111,7 +114,7 @@ func (e *SortitionExecutor) canJoinCommittee() error {
 
 	// If the oldest validator in the committee still hasn't propose a block yet,
 	// it stays in the committee.
-	proposerHeight := e.sbx.Committee().Proposer(0).LastSortitionHeight()
+	proposerHeight := sbx.Committee().Proposer(0).LastSortitionHeight()
 	if oldestSortitionHeight >= proposerHeight {
 		return ErrOldestValidatorNotProposed
 	}
@@ -119,9 +122,9 @@ func (e *SortitionExecutor) canJoinCommittee() error {
 	return nil
 }
 
-func (e *SortitionExecutor) Execute() {
+func (e *SortitionExecutor) Execute(sbx sandbox.Sandbox) {
 	e.validator.UpdateLastSortitionHeight(e.sortitionHeight)
 
-	e.sbx.JoinedToCommittee(e.pld.Validator)
-	e.sbx.UpdateValidator(e.validator)
+	sbx.JoinToCommittee(e.pld.Address)
+	sbx.UpdateValidator(e.validator)
 }

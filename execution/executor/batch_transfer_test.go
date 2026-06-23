@@ -11,15 +11,14 @@ import (
 func TestExecuteBatchTransferTx(t *testing.T) {
 	td := setup(t)
 
-	senderAddr, senderAcc := td.sbx.TestStore.RandomTestAcc()
+	senderAcc, senderAddr := td.addTestAccount(t)
 	senderBalance := senderAcc.Balance()
 	receiverAddr1 := td.RandAccAddress()
 	receiverAddr2 := td.RandAccAddress()
 
-	amt := td.RandAmountRange(0, senderBalance)
+	amt, fee := td.randAmountFee(senderBalance)
 	amt1 := td.RandAmount(amt / 2)
 	amt2 := td.RandAmount(amt / 2)
-	fee := td.RandFee()
 	lockTime := td.sbx.CurrentHeight()
 
 	t.Run("Should fail, unknown address", func(t *testing.T) {
@@ -71,11 +70,11 @@ func TestExecuteBatchTransferTx(t *testing.T) {
 func TestBatchTransferToSelf(t *testing.T) {
 	td := setup(t)
 
-	senderAddr, senderAcc := td.sbx.TestStore.RandomTestAcc()
-	amt := td.RandAmountRange(0, senderAcc.Balance())
+	senderAcc, senderAddr := td.addTestAccount(t)
+	firstBalance := senderAcc.Balance()
+	amt, fee := td.randAmountFee(firstBalance)
 	amt1 := td.RandAmount(amt / 2)
 	amt2 := td.RandAmount(amt / 2)
-	fee := td.RandFee()
 	lockTime := td.sbx.CurrentHeight()
 
 	recipients := []payload.BatchRecipient{
@@ -87,9 +86,8 @@ func TestBatchTransferToSelf(t *testing.T) {
 	td.check(t, trx, false, nil)
 	td.execute(t, trx)
 
-	expectedBalance := senderAcc.Balance() - amt1 - fee // Fee should be deducted
-	updatedAcc := td.sbx.Account(senderAddr)
-	assert.Equal(t, expectedBalance, updatedAcc.Balance())
+	secondBalance := senderAcc.Balance()
+	assert.Equal(t, firstBalance-amt1-fee, secondBalance, "balance should only decrease by fee and first amount")
 
 	td.checkTotalCoin(t, fee)
 }
@@ -97,9 +95,8 @@ func TestBatchTransferToSelf(t *testing.T) {
 func TestBatchTransferSecp256k1(t *testing.T) {
 	td := setup(t)
 
-	senderAddr, senderAcc := td.sbx.TestStore.RandomTestAcc()
-	amt := td.RandAmountRange(0, senderAcc.Balance())
-	fee := td.RandFee()
+	senderAcc, senderAddr := td.addTestAccount(t)
+	amt, fee := td.randAmountFee(senderAcc.Balance())
 	lockTime := td.sbx.CurrentHeight()
 
 	recipients := []payload.BatchRecipient{

@@ -10,12 +10,11 @@ import (
 func TestExecuteTransferTx(t *testing.T) {
 	td := setup(t)
 
-	senderAddr, senderAcc := td.sbx.TestStore.RandomTestAcc()
+	senderAcc, senderAddr := td.addTestAccount(t)
 	senderBalance := senderAcc.Balance()
 	receiverAddr := td.RandAccAddress()
 
-	amt := td.RandAmountRange(0, senderBalance)
-	fee := td.RandFee()
+	amt, fee := td.randAmountFee(senderBalance)
 	lockTime := td.sbx.CurrentHeight()
 
 	t.Run("Should fail, unknown address", func(t *testing.T) {
@@ -53,9 +52,9 @@ func TestExecuteTransferTx(t *testing.T) {
 func TestTransferToSelf(t *testing.T) {
 	td := setup(t)
 
-	senderAddr, senderAcc := td.sbx.TestStore.RandomTestAcc()
-	amt := td.RandAmountRange(0, senderAcc.Balance())
-	fee := td.RandFee()
+	senderAcc, senderAddr := td.addTestAccount(t)
+	firstBalance := senderAcc.Balance()
+	amt, fee := td.randAmountFee(senderAcc.Balance())
 	lockTime := td.sbx.CurrentHeight()
 
 	trx := tx.NewTransferTx(lockTime, senderAddr, senderAddr, amt, fee)
@@ -63,9 +62,8 @@ func TestTransferToSelf(t *testing.T) {
 	td.check(t, trx, false, nil)
 	td.execute(t, trx)
 
-	expectedBalance := senderAcc.Balance() - fee // Fee should be deducted
-	updatedAcc := td.sbx.Account(senderAddr)
-	assert.Equal(t, expectedBalance, updatedAcc.Balance())
+	secondBalance := senderAcc.Balance()
+	assert.Equal(t, firstBalance-fee, secondBalance, "balance should only decrease by fee")
 
 	td.checkTotalCoin(t, fee)
 }
@@ -73,9 +71,8 @@ func TestTransferToSelf(t *testing.T) {
 func TestTransferSecp256k1(t *testing.T) {
 	td := setup(t)
 
-	senderAddr, senderAcc := td.sbx.TestStore.RandomTestAcc()
-	amt := td.RandAmountRange(0, senderAcc.Balance())
-	fee := td.RandFee()
+	senderAcc, senderAddr := td.addTestAccount(t)
+	amt, fee := td.randAmountFee(senderAcc.Balance())
 	lockTime := td.sbx.CurrentHeight()
 
 	trx := tx.NewTransferTx(lockTime, senderAddr, td.RandAccAddressSecp256k1(), amt, fee)

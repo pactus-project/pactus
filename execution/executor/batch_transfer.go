@@ -16,7 +16,6 @@ type batchRecipient struct {
 }
 
 type BatchTransferExecutor struct {
-	sbx        sandbox.Sandbox
 	pld        *payload.BatchTransferPayload
 	fee        amount.Amount
 	sender     *account.Account
@@ -52,7 +51,6 @@ func newBatchTransferExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*BatchTransferEx
 	}
 
 	return &BatchTransferExecutor{
-		sbx:        sbx,
 		pld:        pld,
 		fee:        trx.Fee(),
 		sender:     sender,
@@ -60,7 +58,7 @@ func newBatchTransferExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*BatchTransferEx
 	}, nil
 }
 
-func (e *BatchTransferExecutor) Check(_ bool) error {
+func (e *BatchTransferExecutor) Check(_ sandbox.SandboxReader, _ bool) error {
 	if e.sender.Balance() < e.pld.Value()+e.fee {
 		return ErrInsufficientFunds
 	}
@@ -68,13 +66,13 @@ func (e *BatchTransferExecutor) Check(_ bool) error {
 	return nil
 }
 
-func (e *BatchTransferExecutor) Execute() {
+func (e *BatchTransferExecutor) Execute(sbx sandbox.Sandbox) {
 	e.sender.SubtractFromBalance(e.pld.Value() + e.fee)
-	e.sbx.UpdateAccount(e.pld.From, e.sender)
+	sbx.UpdateAccount(e.pld.From, e.sender)
 
 	for _, r := range e.recipients {
 		r.Account.AddToBalance(r.Amount)
 
-		e.sbx.UpdateAccount(r.Address, r.Account)
+		sbx.UpdateAccount(r.Address, r.Account)
 	}
 }
