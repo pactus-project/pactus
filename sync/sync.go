@@ -186,11 +186,22 @@ func (sync *synchronizer) sendTo(msg message.Message, pid peer.ID) {
 
 func (sync *synchronizer) broadcast(msg message.Message) {
 	if msg.Type() == message.TypeBlockAnnounce {
-		m := msg.(*message.BlockAnnounceMessage)
-		if sync.cache.HasBlockInCache(m.Height()) {
+		ann := msg.(*message.BlockAnnounceMessage)
+
+		// Add entropy (random delay) before broadcasting the block announcement.
+		// Most committee members reach consensus at roughly the same time.
+		// By waiting a different amount of time, some nodes will receive
+		// announcements from peers first and skip their own broadcast,
+		// reducing redundant network traffic.
+		entropyDelay := sync.blockAnnouncementEntropyDelay(ann)
+		time.Sleep(time.Duration(entropyDelay) * time.Second)
+
+		if sync.cache.HasBlockInCache(ann.Height()) {
 			// We have received the block announcement from other peers before,
 			// so we can simply ignore broadcasting it again.
 			// This helps to reduce the network bandwidth.
+			sync.logger.Info("block announce skipped: already in cache", "height", ann.Height())
+
 			return
 		}
 	}
@@ -203,6 +214,21 @@ func (sync *synchronizer) broadcast(msg message.Message) {
 	sync.peerSet.UpdateSentMetric(nil, msg.Type(), int64(len(data)))
 
 	sync.logger.Debug("bundle broadcasted", "bundle", bdl)
+}
+
+// blockAnnouncementEntropyDelay returns a randomized delay for block announcement
+// broadcast. Returns 0 for future or stale blocks.
+func (sync *synchronizer) blockAnnouncementEntropyDelay(msg *message.BlockAnnounceMessage) int {
+	blockInterval := sync.state.Params().BlockIntervalInSecond
+	nextBlockTime := msg.Block.Header().Time().Add(time.Duration(blockInterval) * time.Second)
+	maxDelay := int(time.Until(nextBlockTime).Seconds())
+	if maxDelay > blockInterval || maxDelay <= 0 {
+		return 0
+	}
+
+	randDelay := util.RandUint32(uint32(maxDelay))
+
+	return int(randDelay)
 }
 
 func (sync *synchronizer) SelfID() peer.ID {
