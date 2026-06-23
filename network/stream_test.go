@@ -30,11 +30,13 @@ func TestCloseStream(t *testing.T) {
 
 		assert.Eventually(t, func() bool {
 			e := <-networkA.networkPipe.UnsafeGetChannel()
+
 			return EventTypeConnect == e.Type()
 		}, 5*time.Second, 100*time.Millisecond)
 
 		assert.Eventually(t, func() bool {
 			e := <-networkB.networkPipe.UnsafeGetChannel()
+
 			return EventTypeConnect == e.Type()
 		}, 5*time.Second, 100*time.Millisecond)
 
