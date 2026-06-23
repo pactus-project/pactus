@@ -77,12 +77,6 @@ func NewFakeSandbox(ts *testsuite.TestSuite) *FakeSandbox {
 		},
 	).AnyTimes()
 
-	fake.EXPECT().Validator(gomock.Any()).DoAndReturn(
-		func(addr crypto.Address) *validator.Validator {
-			return validators[addr]
-		},
-	).AnyTimes()
-
 	fake.EXPECT().MakeNewValidator(gomock.Any()).DoAndReturn(
 		func(pub *bls.PublicKey) *validator.Validator {
 			return validator.NewValidator(pub, ts.RandInt32())
@@ -95,7 +89,6 @@ func NewFakeSandbox(ts *testsuite.TestSuite) *FakeSandbox {
 		},
 	).AnyTimes()
 
-	fake.EXPECT().CurrentHeight().Return(ts.RandHeight()).AnyTimes()
 	fake.EXPECT().Params().Return(params).AnyTimes()
 	fake.EXPECT().Committee().Return(committee).AnyTimes()
 
