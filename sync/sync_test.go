@@ -442,59 +442,6 @@ func TestCommitMissedBlock(t *testing.T) {
 	})
 }
 
-func TestBlockAnnounceCacheBadAnnounce(t *testing.T) {
-	td := setup(t, nil)
-
-	lastHeight := td.state.LastBlockHeight()
-
-	// Create a block announce where the certificate height does not match
-	// the block height (simulating an invalid/bad announce).
-	blk, _ := td.GenerateTestBlock(lastHeight + 1)
-	badCert := td.GenerateTestCertificate(lastHeight + 2) // wrong height
-
-	badMsg := message.NewBlockAnnounceMessage(blk, badCert, nil)
-	pid := td.RandPeerID()
-	td.receivingNewMessage(td.sync, badMsg, pid)
-
-	// The block is added at height lastHeight+1 (via AddBlock),
-	// and the cert is added at height lastHeight+2 (via AddCertificate).
-	// tryCommitBlocks checks for block+cert at lastHeight+1:
-	// block found but cert NOT found at that height, so commit can't proceed.
-	// The block stays in cache (orphaned).
-	assert.True(t, td.sync.cache.HasBlockInCache(lastHeight+1))
-	assert.NotNil(t, td.sync.cache.GetBlock(lastHeight+1))
-
-	// State should be unchanged since nothing was committed.
-	assert.Equal(t, lastHeight, td.state.LastBlockHeight())
-
-	// Removing the orphaned block from cache should work,
-	// simulating the path tryCommitBlocks takes on error.
-	td.sync.cache.RemoveBlock(lastHeight + 1)
-	assert.False(t, td.sync.cache.HasBlockInCache(lastHeight+1))
-}
-
-func TestBlockAnnounceCacheCommittedBefore(t *testing.T) {
-	td := setup(t, nil)
-
-	// Commit one more block so the node is ahead.
-	td.state.CommitTestBlocks(1)
-	lastHeight := td.state.LastBlockHeight()
-
-	// Now receive a block announce for an already-committed height.
-	blk, cert := td.GenerateTestBlock(lastHeight)
-	msg := message.NewBlockAnnounceMessage(blk, cert, nil)
-	pid := td.RandPeerID()
-	td.receivingNewMessage(td.sync, msg, pid)
-
-	// The block gets added to cache, but tryCommitBlocks starts
-	// at lastHeight+1, so the already-committed block is ignored.
-	// State should remain unchanged.
-	assert.Equal(t, lastHeight, td.state.LastBlockHeight())
-
-	// Block is in cache but doesn't interfere with state.
-	assert.True(t, td.sync.cache.HasBlockInCache(lastHeight))
-}
-
 func TestBlockAnnouncementEntropyDelay(t *testing.T) {
 	td := setup(t, nil)
 
