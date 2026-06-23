@@ -69,6 +69,7 @@ func setup(t *testing.T, config *Config) *testData {
 	consV2Mgr := manager.NewFakeConsensusManager(ts)
 
 	state := state.NewFakeState(ts, nil)
+	state.StateParams.BlockIntervalInSecond = 1
 	state.CommitTestBlocks(100)
 
 	consV1Mgr.EXPECT().IsDeprecated().Return(false).AnyTimes()
@@ -438,5 +439,39 @@ func TestCommitMissedBlock(t *testing.T) {
 
 		newHeight := td.state.LastBlockHeight()
 		assert.Equal(t, lastHeight+2, newHeight)
+	})
+}
+
+func TestBlockAnnouncementEntropyDelay(t *testing.T) {
+	td := setup(t, nil)
+
+	td.state.StateParams.BlockIntervalInSecond = 10
+
+	t.Run("recent block returns delay within block interval", func(t *testing.T) {
+		blk, cert := td.GenerateTestBlock(td.RandHeight(),
+			testsuite.BlockWithTime(time.Now()))
+		msg := message.NewBlockAnnounceMessage(blk, cert, nil)
+
+		delay := td.sync.blockAnnouncementEntropyDelay(msg)
+		assert.GreaterOrEqual(t, delay, 0)
+		assert.LessOrEqual(t, delay, 10)
+	})
+
+	t.Run("future block returns zero delay", func(t *testing.T) {
+		blk, cert := td.GenerateTestBlock(td.RandHeight(),
+			testsuite.BlockWithTime(time.Now().Add(time.Minute)))
+		msg := message.NewBlockAnnounceMessage(blk, cert, nil)
+
+		delay := td.sync.blockAnnouncementEntropyDelay(msg)
+		assert.Zero(t, delay)
+	})
+
+	t.Run("stale block returns zero delay", func(t *testing.T) {
+		blk, cert := td.GenerateTestBlock(td.RandHeight(),
+			testsuite.BlockWithTime(time.Now().Add(-time.Minute)))
+		msg := message.NewBlockAnnounceMessage(blk, cert, nil)
+
+		delay := td.sync.blockAnnouncementEntropyDelay(msg)
+		assert.Zero(t, delay)
 	})
 }

@@ -181,6 +181,8 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	networkAlice := network.MockingNetwork(ts, ts.RandPeerID())
 	networkBob := network.MockingNetwork(ts, ts.RandPeerID())
 
+	stateAlice.StateParams.BlockIntervalInSecond = 1
+	stateBob.StateParams.BlockIntervalInSecond = 1
 	stateAlice.LastHeight = 0
 	stateBob.LastHeight = 0
 	stateAlice.EXPECT().UpdateValidatorProtocolVersion(gomock.Any(), gomock.Any()).AnyTimes()
