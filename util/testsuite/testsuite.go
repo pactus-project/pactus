@@ -81,8 +81,8 @@ type HeightRange struct {
 
 func NewHeightRange() *HeightRange {
 	return &HeightRange{
-		Min: 1e3,
-		Max: 1e6,
+		Min: 1e6,
+		Max: 1e7,
 	}
 }
 
@@ -100,7 +100,7 @@ func HeightWithMax(max uint32) HeightRangeOption {
 	}
 }
 
-// RandHeight returns a random number between [1,000, 1,000,000] for block height.
+// RandHeight returns a random number between [1,000,000, 10,000,000] for block height.
 func (ts *TestSuite) RandHeight(opts ...HeightRangeOption) types.Height {
 	h := NewHeightRange()
 	for _, opt := range opts {
@@ -397,9 +397,10 @@ func (ts *TestSuite) GenerateTestAccount(opts ...AccountMakerOption) (*account.A
 }
 
 type ValidatorMaker struct {
-	Number    int32
-	Stake     amount.Amount
-	PublicKey *bls.PublicKey
+	Number          int32
+	Stake           amount.Amount
+	PublicKey       *bls.PublicKey
+	SortitionHeight types.Height
 }
 
 type ValidatorMakerOption func(*ValidatorMaker)
@@ -407,9 +408,17 @@ type ValidatorMakerOption func(*ValidatorMaker)
 // NewValidatorMaker creates a new instance of ValidatorMaker with random values.
 func (ts *TestSuite) NewValidatorMaker() *ValidatorMaker {
 	return &ValidatorMaker{
-		Number:    ts.RandInt32(testsuite.WithMax(int32(100000))),
-		Stake:     ts.RandAmountRange(100e9, 1000e9),
-		PublicKey: ts.RandValKey().PublicKey(),
+		Number:          ts.RandInt32(testsuite.WithMax(int32(100000))),
+		Stake:           ts.RandAmountRange(100e9, 1000e9),
+		PublicKey:       ts.RandValKey().PublicKey(),
+		SortitionHeight: 0,
+	}
+}
+
+// ValidatorWithSortitionHeight sets the sortition height for the generated test validator.
+func ValidatorWithSortitionHeight(height types.Height) ValidatorMakerOption {
+	return func(vm *ValidatorMaker) {
+		vm.SortitionHeight = height
 	}
 }
 
@@ -443,6 +452,7 @@ func (ts *TestSuite) GenerateTestValidator(opts ...ValidatorMakerOption) *valida
 
 	val := validator.NewValidator(vmk.PublicKey, vmk.Number)
 	val.AddToStake(vmk.Stake)
+	val.UpdateLastSortitionHeight(vmk.SortitionHeight)
 
 	return val
 }

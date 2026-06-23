@@ -11,23 +11,9 @@ import (
 func TestExecuteWithdrawTx(t *testing.T) {
 	td := setup(t)
 
-	bonderAddr, bonderAcc := td.sbx.TestStore.RandomTestAcc()
-	bonderBalance := bonderAcc.Balance()
-	stake := td.RandAmountRange(
-		td.sbx.TestParams.MinimumStake,
-		bonderBalance,
-	)
-	bonderAcc.SubtractFromBalance(stake)
-	td.sbx.UpdateAccount(bonderAddr, bonderAcc)
-
-	valPub, _ := td.RandBLSKeyPair()
-	val := td.sbx.MakeNewValidator(valPub)
-	val.AddToStake(stake)
-	td.sbx.UpdateValidator(val)
-
+	val := td.addTestValidator(t)
 	totalStake := val.Stake()
-	fee := td.RandFee()
-	amt := td.RandAmountRange(0, totalStake-fee)
+	amt, fee := td.randAmountFee(totalStake)
 	senderAddr := val.Address()
 	receiverAddr := td.RandAccAddress()
 	lockTime := td.sbx.CurrentHeight()
@@ -40,16 +26,6 @@ func TestExecuteWithdrawTx(t *testing.T) {
 		td.check(t, trx, false, ValidatorNotFoundError{Address: randomAddr})
 	})
 
-	t.Run("Should fail, hasn't unbonded yet", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr, amt, fee)
-
-		td.check(t, trx, true, ErrValidatorBonded)
-		td.check(t, trx, false, ErrValidatorBonded)
-	})
-
-	val.UpdateUnbondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().UnbondInterval) + 1)
-	td.sbx.UpdateValidator(val)
-
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
 		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr, totalStake, 1)
 
@@ -57,15 +33,22 @@ func TestExecuteWithdrawTx(t *testing.T) {
 		td.check(t, trx, false, ErrInsufficientFunds)
 	})
 
+	t.Run("Should fail, hasn't unbonded yet", func(t *testing.T) {
+		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr, amt, fee)
+
+		td.check(t, trx, true, ErrValidatorBonded)
+		td.check(t, trx, false, ErrValidatorBonded)
+	})
+
 	t.Run("Should fail, hasn't passed unbonding period", func(t *testing.T) {
+		val.UpdateUnbondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().UnbondInterval - 1))
 		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr, amt, fee)
 
 		td.check(t, trx, true, ErrUnbondingPeriod)
 		td.check(t, trx, false, ErrUnbondingPeriod)
 	})
 
-	curHeight := td.sbx.CurrentHeight()
-	td.sbx.TestStore.AddTestBlock(curHeight + 1)
+	val.UpdateUnbondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().UnbondInterval))
 
 	t.Run("Should pass, Everything is Ok!", func(t *testing.T) {
 		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr, amt, fee)
@@ -89,19 +72,15 @@ func TestExecuteDelegatedWithdrawTx(t *testing.T) {
 
 	valPub, _ := td.RandBLSKeyPair()
 	val := td.sbx.MakeNewValidator(valPub)
-	totalStake := td.sbx.TestParams.MaximumStake
+	totalStake := td.sbx.Params().MaximumStake
 	val.AddToStake(totalStake)
 	owner := td.RandAccAddress()
 	val.SetDelegation(owner, amount.Amount(0.3e9), td.sbx.CurrentHeight()+10)
-	val.UpdateUnbondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().UnbondInterval) + 1)
+	val.UpdateUnbondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().UnbondInterval + 1))
 	td.sbx.UpdateValidator(val)
 
-	fee := td.RandFee()
-	amt := td.RandAmountRange(0, totalStake-fee)
+	amt, fee := td.randAmountFee(totalStake)
 	lockTime := td.sbx.CurrentHeight()
-
-	curHeight := td.sbx.CurrentHeight()
-	td.sbx.TestStore.AddTestBlock(curHeight + 1)
 
 	t.Run("Should fail, receiver must be stake owner", func(t *testing.T) {
 		trx := tx.NewWithdrawTx(lockTime, val.Address(), td.RandAccAddress(), amt, fee)
@@ -127,24 +106,15 @@ func TestExecuteDelegatedWithdrawTx(t *testing.T) {
 func TestWithdrawSecp256k1(t *testing.T) {
 	td := setup(t)
 
-	valPub, _ := td.RandBLSKeyPair()
-	val := td.sbx.MakeNewValidator(valPub)
-	totalStake := td.sbx.TestParams.MaximumStake
-	val.AddToStake(totalStake)
-	owner := td.RandAccAddressSecp256k1()
-	val.SetDelegation(owner, amount.Amount(0.3e9), td.sbx.CurrentHeight()+10)
-	val.UpdateUnbondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().UnbondInterval) + 1)
-	td.sbx.UpdateValidator(val)
-
-	fee := td.RandFee()
-	amt := td.RandAmountRange(0, totalStake-fee)
+	val := td.addTestValidator(t)
+	totalStake := val.Stake()
+	amt, fee := td.randAmountFee(totalStake)
+	senderAddr := val.Address()
+	receiverAddr := td.RandAccAddressSecp256k1()
 	lockTime := td.sbx.CurrentHeight()
 
-	curHeight := td.sbx.CurrentHeight()
-	td.sbx.TestStore.AddTestBlock(curHeight + 1)
-
 	t.Run("Should fail, secp256k1 account is not supported yet", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(lockTime, val.Address(), owner, amt, fee)
+		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr, amt, fee)
 
 		td.check(t, trx, true, ErrSecp256k1AccountNotSupported)
 		td.check(t, trx, false, ErrSecp256k1AccountNotSupported)

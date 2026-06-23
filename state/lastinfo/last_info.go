@@ -115,9 +115,9 @@ func (li *LastInfo) restoreCommittee(store store.Store, lastBlock *block.Block,
 		// we should update the last committee.
 		if trx.IsSortitionTx() {
 			pld := trx.Payload().(*payload.SortitionPayload)
-			val, err := store.Validator(pld.Validator)
+			val, err := store.Validator(pld.Address)
 			if err != nil {
-				return nil, fmt.Errorf("unable to retrieve validator %s: %w", pld.Validator, err)
+				return nil, fmt.Errorf("unable to retrieve validator %s: %w", pld.Address, err)
 			}
 			joinedVals = append(joinedVals, val)
 		}

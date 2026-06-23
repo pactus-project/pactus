@@ -4,54 +4,23 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 )
-
-func updateCommittee(td *testData) {
-	joiningCommittee := make([]*validator.Validator, 0)
-	td.sbx.IterateValidators(func(val *validator.Validator, _ bool, joined bool) {
-		if joined {
-			joiningCommittee = append(joiningCommittee, val)
-		}
-	})
-
-	td.sbx.TestCommittee.Update(0, joiningCommittee)
-	td.sbx.TestJoinedValidators = make(map[crypto.Address]bool)
-}
 
 func TestExecuteSortitionTx(t *testing.T) {
 	td := setup(t)
 
-	bonderAddr, bonderAcc := td.sbx.TestStore.RandomTestAcc()
-	bonderBalance := bonderAcc.Balance()
-	stake := td.RandAmountRange(
-		td.sbx.TestParams.MinimumStake,
-		bonderBalance,
-	)
-	bonderAcc.SubtractFromBalance(stake)
-	td.sbx.UpdateAccount(bonderAddr, bonderAcc)
-
-	valPub, _ := td.RandBLSKeyPair()
-	valAddr := valPub.ValidatorAddress()
-	val := td.sbx.MakeNewValidator(valPub)
-	val.AddToStake(stake)
-	td.sbx.UpdateValidator(val)
-
-	curHeight := td.sbx.CurrentHeight()
 	lockTime := td.sbx.CurrentHeight()
 	proof := td.RandProof()
-
-	val.UpdateLastBondingHeight(curHeight.SafeDecrease(td.sbx.Params().BondInterval - 1))
-	val.UpdateLastSortitionHeight(lockTime - 1)
-	td.sbx.UpdateValidator(val)
-
-	assert.False(t, td.sbx.IsJoinedCommittee(val.Address()))
+	val := td.addTestValidator(t)
 
 	t.Run("Should fail, unknown address", func(t *testing.T) {
-		randomAddr := td.RandAccAddress()
+		randomAddr := td.RandValAddress()
 		trx := tx.NewSortitionTx(lockTime, randomAddr, proof)
 
 		td.check(t, trx, true, ValidatorNotFoundError{Address: randomAddr})
@@ -59,30 +28,30 @@ func TestExecuteSortitionTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, Bonding period", func(t *testing.T) {
+		val.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval - 1))
 		trx := tx.NewSortitionTx(lockTime, val.Address(), proof)
 
 		td.check(t, trx, true, ErrBondingPeriod)
 		td.check(t, trx, false, ErrBondingPeriod)
 	})
 
-	// Let's add one more block
-	td.sbx.TestStore.AddTestBlock(curHeight)
+	val.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
 
 	t.Run("Should fail, invalid proof", func(t *testing.T) {
 		trx := tx.NewSortitionTx(lockTime, val.Address(), proof)
-		td.sbx.TestAcceptSortition = false
+
+		td.sbx.EXPECT().VerifyProof(lockTime, proof, val).Return(false).Times(2)
+
 		td.check(t, trx, true, ErrInvalidSortitionProof)
 		td.check(t, trx, false, ErrInvalidSortitionProof)
 	})
 
 	t.Run("Should fail, committee has free seats and validator is in the committee", func(t *testing.T) {
-		val0 := td.sbx.Committee().Proposer(0)
-		val0.UpdateLastSortitionHeight(lockTime - 1)
-		val0.UpdateLastBondingHeight(curHeight.SafeDecrease(td.sbx.Params().BondInterval + 1))
-		td.sbx.UpdateValidator(val0)
+		trx := tx.NewSortitionTx(lockTime, val.Address(), proof)
 
-		trx := tx.NewSortitionTx(lockTime, val0.Address(), proof)
-		td.sbx.TestAcceptSortition = true
+		td.sbx.EXPECT().VerifyProof(lockTime, proof, val).Return(true).Times(2)
+		td.sbx.SbxCommittee.EXPECT().Contains(val.Address()).Return(true).Times(1)
+		td.sbx.SbxCommittee.EXPECT().Size().Return(td.sbx.Params().CommitteeSize - 1).Times(1)
 
 		td.check(t, trx, true, ErrValidatorInCommittee)
 		td.check(t, trx, false, nil)
@@ -90,7 +59,11 @@ func TestExecuteSortitionTx(t *testing.T) {
 
 	t.Run("Should be ok", func(t *testing.T) {
 		trx := tx.NewSortitionTx(lockTime, val.Address(), proof)
-		td.sbx.TestAcceptSortition = true
+
+		td.sbx.EXPECT().VerifyProof(lockTime, proof, val).Return(true).Times(2)
+		td.sbx.SbxCommittee.EXPECT().Contains(val.Address()).Return(false).Times(1)
+		td.sbx.SbxCommittee.EXPECT().Size().Return(td.sbx.Params().CommitteeSize - 1).Times(1)
+		td.sbx.EXPECT().JoinToCommittee(val.Address()).Return().Times(1)
 
 		td.check(t, trx, true, nil)
 		td.check(t, trx, false, nil)
@@ -99,7 +72,9 @@ func TestExecuteSortitionTx(t *testing.T) {
 
 	t.Run("Should fail, expired sortition", func(t *testing.T) {
 		trx := tx.NewSortitionTx(lockTime-1, val.Address(), proof)
-		td.sbx.TestAcceptSortition = true
+
+		td.sbx.EXPECT().VerifyProof(lockTime-1, proof, val).Return(true).Times(2)
+
 		td.check(t, trx, true, ErrExpiredSortition)
 		td.check(t, trx, false, ErrExpiredSortition)
 	})
@@ -107,183 +82,137 @@ func TestExecuteSortitionTx(t *testing.T) {
 	t.Run("Should fail, duplicated sortition", func(t *testing.T) {
 		trx := tx.NewSortitionTx(lockTime, val.Address(), proof)
 
+		td.sbx.EXPECT().VerifyProof(lockTime, proof, val).Return(true).Times(2)
+
 		td.check(t, trx, true, ErrExpiredSortition)
 		td.check(t, trx, false, ErrExpiredSortition)
 	})
 
-	updatedVal := td.sbx.Validator(valAddr)
+	updatedVal := td.sbx.Validator(val.Address())
 
 	assert.Equal(t, lockTime, updatedVal.LastSortitionHeight())
-	assert.True(t, td.sbx.IsJoinedCommittee(val.Address()))
 
 	td.checkTotalCoin(t, 0)
 }
 
-func TestChangePower1(t *testing.T) {
+func TestChangePower(t *testing.T) {
 	td := setup(t)
 
-	// This moves proposer to next validator
-	updateCommittee(td)
-
-	lockTime := td.sbx.CurrentHeight()
+	lockTime := types.Height(1011)
 	proof := td.RandProof()
+	td.sbx.EXPECT().VerifyProof(lockTime, proof, gomock.Any()).Return(true).AnyTimes()
 
-	// Let's create validators first
-	pub1, _ := td.RandBLSKeyPair()
-	amt1 := td.sbx.Committee().Power() / 3
-	val1 := td.sbx.MakeNewValidator(pub1)
-	val1.AddToStake(amount.Amount(amt1 - 1))
-	val1.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
-	val1.UpdateLastSortitionHeight(lockTime - 1)
-	td.sbx.UpdateValidator(val1)
+	// Existing validator in the committee.
+	vals := make([]*validator.Validator, 7)
+	vals[0] = td.addTestValidator(t, testsuite.ValidatorWithStake(1), testsuite.ValidatorWithSortitionHeight(1001))
+	vals[1] = td.addTestValidator(t, testsuite.ValidatorWithStake(1), testsuite.ValidatorWithSortitionHeight(999))
+	vals[2] = td.addTestValidator(t, testsuite.ValidatorWithStake(2), testsuite.ValidatorWithSortitionHeight(1002))
+	vals[3] = td.addTestValidator(t, testsuite.ValidatorWithStake(3), testsuite.ValidatorWithSortitionHeight(997))
+	vals[4] = td.addTestValidator(t, testsuite.ValidatorWithStake(3), testsuite.ValidatorWithSortitionHeight(1004))
+	vals[5] = td.addTestValidator(t, testsuite.ValidatorWithStake(3), testsuite.ValidatorWithSortitionHeight(1007))
+	vals[6] = td.addTestValidator(t, testsuite.ValidatorWithStake(2), testsuite.ValidatorWithSortitionHeight(1009))
 
-	pub2, _ := td.RandBLSKeyPair()
-	val2 := td.sbx.MakeNewValidator(pub2)
-	val2.AddToStake(2)
-	val2.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
-	val2.UpdateLastSortitionHeight(lockTime - 1)
-	td.sbx.UpdateValidator(val2)
+	td.sbx.SbxParams.CommitteeSize = len(vals)
+	td.sbx.SbxCommittee.EXPECT().Size().Return(td.sbx.Params().CommitteeSize).AnyTimes()
+	td.sbx.SbxCommittee.EXPECT().Validators().DoAndReturn(
+		func() []*validator.Validator {
+			vals2 := make([]*validator.Validator, 7)
+			for i, v := range vals {
+				vals2[i] = v.Clone()
+			}
 
-	val3 := td.sbx.Committee().Proposer(0)
-	val3.UpdateLastSortitionHeight(lockTime - 1)
-	td.sbx.UpdateValidator(val3)
+			return vals2
+		},
+	).AnyTimes()
+	td.sbx.SbxCommittee.EXPECT().Contains(gomock.Any()).DoAndReturn(
+		func(addr crypto.Address) bool {
+			for _, v := range vals {
+				if v.Address() == addr {
+					return true
+				}
+			}
 
-	td.sbx.TestParams.CommitteeSize = 4
-	td.sbx.TestAcceptSortition = true
-	trx1 := tx.NewSortitionTx(lockTime, val1.Address(), proof)
-	td.check(t, trx1, true, nil)
-	td.check(t, trx1, false, nil)
-	td.execute(t, trx1)
+			return false
+		},
+	).AnyTimes()
 
-	trx2 := tx.NewSortitionTx(lockTime, val2.Address(), proof)
-	td.check(t, trx2, true, ErrCommitteeJoinLimitExceeded)
-	td.check(t, trx2, false, nil)
+	td.sbx.SbxCommittee.EXPECT().Power().DoAndReturn(
+		func() int64 {
+			power := int64(0)
+			for _, v := range vals {
+				power += v.Power()
+			}
 
-	// Val3 is a Committee member
-	trx3 := tx.NewSortitionTx(lockTime, val3.Address(), proof)
-	td.check(t, trx3, true, nil)
-	td.check(t, trx3, false, nil)
-}
+			return power
+		},
+	).AnyTimes()
 
-func TestChangePower2(t *testing.T) {
-	td := setup(t)
+	t.Run("join power exceeds 1/3 threshold", func(t *testing.T) {
+		// New validator attempting to join the committee.
+		newVal1 := td.addTestValidator(t, testsuite.ValidatorWithStake(1), testsuite.ValidatorWithSortitionHeight(lockTime-3))
+		newVal2 := td.addTestValidator(t, testsuite.ValidatorWithStake(3), testsuite.ValidatorWithSortitionHeight(lockTime-2))
+		newVal3 := td.addTestValidator(t, testsuite.ValidatorWithStake(1), testsuite.ValidatorWithSortitionHeight(lockTime-1))
 
-	// This moves proposer to next validator
-	updateCommittee(td)
+		td.sbx.EXPECT().IterateValidators(gomock.Any()).DoAndReturn(func(consume func(*validator.Validator, bool, bool)) {
+			consume(vals[0], false, false)
+			consume(vals[1], false, true)
+			consume(newVal1, false, true)
+			consume(newVal2, false, true)
+		}).Times(1)
 
-	lockTime := td.sbx.CurrentHeight()
-	proof := td.RandProof()
+		trx1 := tx.NewSortitionTx(lockTime, newVal3.Address(), proof)
 
-	// Let's create validators first
-	pub1, _ := td.RandBLSKeyPair()
-	val1 := td.sbx.MakeNewValidator(pub1)
-	val1.AddToStake(1)
-	val1.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
-	val1.UpdateLastSortitionHeight(lockTime - 1)
-	td.sbx.UpdateValidator(val1)
+		td.check(t, trx1, true, ErrCommitteeJoinLimitExceeded)
+		td.check(t, trx1, false, nil)
+	})
 
-	pub2, _ := td.RandBLSKeyPair()
-	val2 := td.sbx.MakeNewValidator(pub2)
-	val2.AddToStake(1)
-	val2.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
-	val2.UpdateLastSortitionHeight(lockTime - 1)
-	td.sbx.UpdateValidator(val2)
+	t.Run("leaving power exceeds 1/3 threshold", func(t *testing.T) {
+		// New validator attempting to join the committee.
+		newVal1 := td.addTestValidator(t, testsuite.ValidatorWithStake(1), testsuite.ValidatorWithSortitionHeight(lockTime-3))
+		newVal2 := td.addTestValidator(t, testsuite.ValidatorWithStake(1), testsuite.ValidatorWithSortitionHeight(lockTime-2))
+		newVal3 := td.addTestValidator(t, testsuite.ValidatorWithStake(1), testsuite.ValidatorWithSortitionHeight(lockTime-1))
 
-	pub3, _ := td.RandBLSKeyPair()
-	val3 := td.sbx.MakeNewValidator(pub3)
-	val3.AddToStake(1)
-	val3.UpdateLastBondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval))
-	val3.UpdateLastSortitionHeight(lockTime - 1)
-	td.sbx.UpdateValidator(val3)
+		td.sbx.EXPECT().IterateValidators(gomock.Any()).DoAndReturn(func(consume func(*validator.Validator, bool, bool)) {
+			consume(vals[0], false, false)
+			consume(vals[1], false, true)
+			consume(newVal1, false, true)
+			consume(newVal2, false, true)
+		}).Times(1)
 
-	val4 := td.sbx.Committee().Proposer(0)
-	val4.UpdateLastSortitionHeight(lockTime - 1)
-	td.sbx.UpdateValidator(val4)
+		trx1 := tx.NewSortitionTx(lockTime, newVal3.Address(), proof)
 
-	td.sbx.TestParams.CommitteeSize = 7
-	td.sbx.TestAcceptSortition = true
-	trx1 := tx.NewSortitionTx(lockTime, val1.Address(), proof)
-	td.check(t, trx1, true, nil)
-	td.check(t, trx1, false, nil)
-	td.execute(t, trx1)
+		td.check(t, trx1, true, ErrCommitteeLeaveLimitExceeded)
+		td.check(t, trx1, false, nil)
+	})
 
-	trx2 := tx.NewSortitionTx(lockTime, val2.Address(), proof)
-	td.check(t, trx2, true, nil)
-	td.check(t, trx2, false, nil)
-	td.execute(t, trx2)
+	t.Run("oldest validator has not proposed", func(t *testing.T) {
+		// New validator attempting to join the committee.
+		newVal := td.addTestValidator(t, testsuite.ValidatorWithStake(1), testsuite.ValidatorWithSortitionHeight(lockTime-1))
 
-	trx3 := tx.NewSortitionTx(lockTime, val3.Address(), proof)
-	td.check(t, trx3, true, ErrCommitteeLeaveLimitExceeded)
-	td.check(t, trx3, false, nil)
+		td.sbx.EXPECT().IterateValidators(gomock.Any()).DoAndReturn(func(func(*validator.Validator, bool, bool)) {
+		}).Times(1)
 
-	// Committee member
-	trx4 := tx.NewSortitionTx(lockTime, val4.Address(), proof)
-	td.check(t, trx4, true, nil)
-	td.check(t, trx4, false, nil)
-	td.execute(t, trx4)
-}
+		td.sbx.SbxCommittee.EXPECT().Proposer(types.Round(0)).Return(vals[3]).Times(1)
+		trx1 := tx.NewSortitionTx(lockTime, newVal.Address(), proof)
 
-// TestOldestDidNotPropose tests if the oldest validator in the committee had
-// chance to propose a block or not.
-func TestOldestDidNotPropose(t *testing.T) {
-	td := setup(t)
+		td.check(t, trx1, true, ErrOldestValidatorNotProposed)
+		td.check(t, trx1, false, nil)
+	})
 
-	// Let's create validators first
-	vals := make([]*validator.Validator, 9)
-	for index := 0; index < 9; index++ {
-		pub, _ := td.RandBLSKeyPair()
-		val := td.sbx.MakeNewValidator(pub)
-		val.AddToStake(10 * 1e9)
-		val.UpdateLastBondingHeight(
-			td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().BondInterval),
-		)
-		td.sbx.UpdateValidator(val)
-		vals[index] = val
-	}
+	t.Run("no error when validator can join committee safely", func(t *testing.T) {
+		// New validator attempting to join the committee.
+		newVal := td.addTestValidator(t, testsuite.ValidatorWithStake(1), testsuite.ValidatorWithSortitionHeight(lockTime-1))
 
-	td.sbx.TestParams.CommitteeSize = 7
-	td.sbx.TestAcceptSortition = true
+		td.sbx.EXPECT().IterateValidators(gomock.Any()).DoAndReturn(func(func(*validator.Validator, bool, bool)) {
+		}).Times(1)
+		td.sbx.SbxCommittee.EXPECT().Proposer(types.Round(0)).Return(vals[0]).Times(1)
 
-	// This moves proposer to the next validator
-	updateCommittee(td)
+		trx1 := tx.NewSortitionTx(lockTime, newVal.Address(), proof)
 
-	// Let's update committee
-	height := td.sbx.CurrentHeight()
-	for i := uint32(0); i < 7; i++ {
-		height++
-		_ = td.sbx.TestStore.AddTestBlock(height)
+		td.check(t, trx1, true, nil)
+		td.check(t, trx1, false, nil)
 
-		lockTime := height
-		trx := tx.NewSortitionTx(lockTime, vals[i].Address(), td.RandProof())
-
-		td.check(t, trx, true, nil)
-		td.check(t, trx, false, nil)
-		td.execute(t, trx)
-
-		updateCommittee(td)
-	}
-
-	height++
-	_ = td.sbx.TestStore.AddTestBlock(height)
-	lockTime := td.sbx.CurrentHeight()
-
-	trx1 := tx.NewSortitionTx(lockTime, vals[7].Address(), td.RandProof())
-	td.check(t, trx1, true, nil)
-	td.check(t, trx1, false, nil)
-	td.execute(t, trx1)
-
-	trx2 := tx.NewSortitionTx(lockTime, vals[8].Address(), td.RandProof())
-	td.check(t, trx2, true, nil)
-	td.check(t, trx2, false, nil)
-	td.execute(t, trx2)
-
-	updateCommittee(td)
-
-	height++
-	_ = td.sbx.TestStore.AddTestBlock(height)
-	// Entering validator 16
-	trx3 := tx.NewSortitionTx(lockTime+1, vals[8].Address(), td.RandProof())
-	td.check(t, trx3, true, ErrOldestValidatorNotProposed)
-	td.check(t, trx3, false, nil)
-	td.execute(t, trx3)
+		td.sbx.EXPECT().JoinToCommittee(newVal.Address()).Return().Times(1)
+		td.execute(t, trx1)
+	})
 }

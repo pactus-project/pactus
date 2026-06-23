@@ -12,7 +12,7 @@ func Execute(trx *tx.Tx, sbx sandbox.Sandbox) error {
 		return err
 	}
 
-	exe.Execute()
+	exe.Execute(sbx)
 	sbx.CommitTransaction(trx)
 
 	return nil
@@ -40,11 +40,11 @@ func CheckAndExecute(trx *tx.Tx, sbx sandbox.Sandbox, strict bool) error {
 		return err
 	}
 
-	if err := exe.Check(strict); err != nil {
+	if err := exe.Check(sbx, strict); err != nil {
 		return err
 	}
 
-	exe.Execute()
+	exe.Execute(sbx)
 	sbx.CommitTransaction(trx)
 
 	return nil

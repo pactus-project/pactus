@@ -91,8 +91,8 @@ func NewSortitionTx(lockTime types.Height,
 	proof sortition.Proof,
 ) *Tx {
 	pld := &payload.SortitionPayload{
-		Validator: addr,
-		Proof:     proof,
+		Address: addr,
+		Proof:   proof,
 	}
 
 	return newTx(lockTime, pld, 0)

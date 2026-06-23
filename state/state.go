@@ -145,8 +145,7 @@ func LoadOrNewState(
 
 func (st *state) concreteSandbox() sandbox.Sandbox {
 	return sandbox.NewSandbox(st.lastInfo.BlockHeight(),
-		st.store, st.params, st.committee, st.totalPower,
-		st.genDoc.ChainType().IsMainnet())
+		st.store, st.params, st.committee, st.totalPower)
 }
 
 func (st *state) tryLoadLastInfo() error {

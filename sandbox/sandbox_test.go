@@ -55,7 +55,7 @@ func setup(t *testing.T) *testData {
 		mockStore.SaveBlock(blk, cert)
 	}
 	sbx := NewSandbox(mockStore.LastHeight,
-		mockStore, param.FromGenesis(genDoc), cmt, totalPower, true).(*sandbox)
+		mockStore, param.FromGenesis(genDoc), cmt, totalPower).(*sandbox)
 	assert.Equal(t, lastHeight, sbx.CurrentHeight())
 	assert.Equal(t, param.FromGenesis(genDoc), sbx.Params())
 
@@ -399,4 +399,16 @@ func TestVerifyProof(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
 		assert.True(t, td.sbx.VerifyProof(validLockTime, validProof, validVal))
 	})
+}
+
+func TestJoinedToCommittee(t *testing.T) {
+	td := setup(t)
+
+	pub, _ := td.RandBLSKeyPair()
+	td.sbx.MakeNewValidator(pub)
+	assert.False(t, td.sbx.IsJoinedCommittee(pub.ValidatorAddress()))
+	assert.False(t, td.sbx.IsJoinedCommittee(td.RandValAddress()))
+
+	td.sbx.JoinToCommittee(pub.ValidatorAddress())
+	assert.True(t, td.sbx.IsJoinedCommittee(pub.ValidatorAddress()))
 }

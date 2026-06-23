@@ -10,7 +10,6 @@ import (
 )
 
 type BondExecutor struct {
-	sbx      sandbox.Sandbox
 	pld      *payload.BondPayload
 	fee      amount.Amount
 	sender   *account.Account
@@ -36,7 +35,6 @@ func newBondExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*BondExecutor, error) {
 	}
 
 	return &BondExecutor{
-		sbx:      sbx,
 		pld:      pld,
 		fee:      trx.Fee(),
 		sender:   sender,
@@ -44,16 +42,16 @@ func newBondExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*BondExecutor, error) {
 	}, nil
 }
 
-func (e *BondExecutor) Check(strict bool) error {
+func (e *BondExecutor) Check(sbx sandbox.SandboxReader, strict bool) error {
 	if e.receiver.IsUnbonded() {
 		return ErrValidatorUnbonded
 	}
 
 	if e.pld.IsDelegated() {
-		if e.pld.Stake != e.sbx.Params().MaximumStake {
+		if e.pld.Stake != sbx.Params().MaximumStake {
 			return ErrInvalidDelegation
 		}
-		if e.pld.DelegateExpiry <= e.sbx.CurrentHeight() {
+		if e.pld.DelegateExpiry <= sbx.CurrentHeight() {
 			return ErrDelegateExpiryInPast
 		}
 	}
@@ -62,20 +60,20 @@ func (e *BondExecutor) Check(strict bool) error {
 		return ErrInsufficientFunds
 	}
 
-	if e.pld.Stake < e.sbx.Params().MinimumStake {
+	if e.pld.Stake < sbx.Params().MinimumStake {
 		// This check prevents a potential attack where an attacker could send zero
 		// or a small amount of stake to a full validator, effectively parking the
 		// validator for the bonding period.
-		if e.pld.Stake == 0 || e.pld.Stake+e.receiver.Stake() != e.sbx.Params().MaximumStake {
+		if e.pld.Stake == 0 || e.pld.Stake+e.receiver.Stake() != sbx.Params().MaximumStake {
 			return SmallStakeError{
-				Minimum: e.sbx.Params().MinimumStake,
+				Minimum: sbx.Params().MinimumStake,
 			}
 		}
 	}
 
-	if e.receiver.Stake()+e.pld.Stake > e.sbx.Params().MaximumStake {
+	if e.receiver.Stake()+e.pld.Stake > sbx.Params().MaximumStake {
 		return MaximumStakeError{
-			Maximum: e.sbx.Params().MaximumStake,
+			Maximum: sbx.Params().MaximumStake,
 		}
 	}
 
@@ -84,7 +82,7 @@ func (e *BondExecutor) Check(strict bool) error {
 		// already in the committee.
 		// In non-strict mode, they are added to the transaction pool and
 		// processed once eligible.
-		if e.sbx.Committee().Contains(e.pld.To) {
+		if sbx.Committee().Contains(e.pld.To) {
 			return ErrValidatorInCommittee
 		}
 
@@ -92,7 +90,7 @@ func (e *BondExecutor) Check(strict bool) error {
 		// going to join the committee in the next height.
 		// In non-strict mode, they are added to the transaction pool and
 		// processed once eligible.
-		if e.sbx.IsJoinedCommittee(e.pld.To) {
+		if sbx.IsJoinedCommittee(e.pld.To) {
 			return ErrValidatorInCommittee
 		}
 	}
@@ -100,16 +98,16 @@ func (e *BondExecutor) Check(strict bool) error {
 	return nil
 }
 
-func (e *BondExecutor) Execute() {
+func (e *BondExecutor) Execute(sbx sandbox.Sandbox) {
 	e.sender.SubtractFromBalance(e.pld.Stake + e.fee)
 	e.receiver.AddToStake(e.pld.Stake)
-	e.receiver.UpdateLastBondingHeight(e.sbx.CurrentHeight())
+	e.receiver.UpdateLastBondingHeight(sbx.CurrentHeight())
 
 	if e.pld.IsDelegated() {
 		e.receiver.SetDelegation(e.pld.DelegateOwner, e.pld.DelegateShare, e.pld.DelegateExpiry)
 	}
 
-	e.sbx.UpdatePowerDelta(int64(e.pld.Stake))
-	e.sbx.UpdateAccount(e.pld.From, e.sender)
-	e.sbx.UpdateValidator(e.receiver)
+	sbx.UpdatePowerDelta(int64(e.pld.Stake))
+	sbx.UpdateAccount(e.pld.From, e.sender)
+	sbx.UpdateValidator(e.receiver)
 }

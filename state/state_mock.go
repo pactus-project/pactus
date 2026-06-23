@@ -29,7 +29,7 @@ import (
 	payload "github.com/pactus-project/pactus/types/tx/payload"
 	validator "github.com/pactus-project/pactus/types/validator"
 	vote "github.com/pactus-project/pactus/types/vote"
-	"go.uber.org/mock/gomock"
+	gomock "go.uber.org/mock/gomock"
 )
 
 // MockState is a mock of State interface.

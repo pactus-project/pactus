@@ -17,7 +17,7 @@ import (
 	block "github.com/pactus-project/pactus/types/block"
 	tx "github.com/pactus-project/pactus/types/tx"
 	payload "github.com/pactus-project/pactus/types/tx/payload"
-	"go.uber.org/mock/gomock"
+	gomock "go.uber.org/mock/gomock"
 )
 
 // MockTxPoolReader is a mock of TxPoolReader interface.
