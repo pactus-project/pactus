@@ -51,7 +51,11 @@ func init() {
 	testnetOpt = flag.Bool("testnet", false, "initializing for the testnet")
 	grpcAddrOpt = flag.String("grpc-addr", "", "connect to remote gRPC server instead of starting local node")
 	grpcInsecureOpt = flag.Bool("grpc-insecure", false, "use insecure connection to gRPC server")
-	snapshotURLOpt = flag.String("snapshot-url", cmd.DefaultSnapshotURL, "snapshot server base URL (network path will be appended automatically)")
+	snapshotURLOpt = flag.String(
+		"snapshot-url",
+		cmd.DefaultSnapshotURL,
+		"snapshot server base URL (network path will be appended automatically)",
+	)
 	version.NodeAgent.AppType = "gui"
 
 	if runtime.GOOS == "darwin" {

@@ -42,35 +42,35 @@ func TestResolveSnapshotURL(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			c := newImportTestCommand()
+	for _, testCase := range tests {
+		t.Run(testCase.name, func(t *testing.T) {
+			importCmd := newImportTestCommand()
 
-			if tc.setSnapshot {
-				if err := c.Flags().Set("snapshot-url", tc.snapshotURL); err != nil {
+			if testCase.setSnapshot {
+				if err := importCmd.Flags().Set("snapshot-url", testCase.snapshotURL); err != nil {
 					t.Fatalf("set snapshot-url: %v", err)
 				}
 			}
 
-			if tc.setServer {
-				if err := c.Flags().Set("server-addr", tc.serverAddr); err != nil {
+			if testCase.setServer {
+				if err := importCmd.Flags().Set("server-addr", testCase.serverAddr); err != nil {
 					t.Fatalf("set server-addr: %v", err)
 				}
 			}
 
-			snapshotURL, err := c.Flags().GetString("snapshot-url")
+			snapshotURL, err := importCmd.Flags().GetString("snapshot-url")
 			if err != nil {
 				t.Fatalf("get snapshot-url: %v", err)
 			}
 
-			serverAddr, err := c.Flags().GetString("server-addr")
+			serverAddr, err := importCmd.Flags().GetString("server-addr")
 			if err != nil {
 				t.Fatalf("get server-addr: %v", err)
 			}
 
-			got := resolveSnapshotURL(c, snapshotURL, serverAddr)
-			if got != tc.expectedURL {
-				t.Fatalf("expected %q, got %q", tc.expectedURL, got)
+			got := resolveSnapshotURL(importCmd, snapshotURL, serverAddr)
+			if got != testCase.expectedURL {
+				t.Fatalf("expected %q, got %q", testCase.expectedURL, got)
 			}
 		})
 	}
