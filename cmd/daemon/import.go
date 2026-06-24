@@ -52,6 +52,7 @@ func buildImportCmd(parentCmd *cobra.Command) {
 		terminal.PrintLine()
 
 		snapshotURL := *serverAddrOpt
+
 		importer, err := cmd.NewImporter(
 			gen.ChainType(),
 			snapshotURL,

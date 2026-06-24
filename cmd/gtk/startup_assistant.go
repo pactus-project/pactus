@@ -37,7 +37,7 @@ func setDefaultMargin(widget *gtk.Widget) {
 // Returns true if setup completed successfully.
 //
 //nolint:all // Needs refactor.
-func startupAssistant(ctx context.Context, workingDir string, chain genesis.ChainType) bool {
+func startupAssistant(ctx context.Context, workingDir string, chain genesis.ChainType, snapshotURL string) bool {
 	successful := false
 	assistant := gtk.NewAssistant()
 
@@ -250,7 +250,6 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 						time.Sleep(1 * time.Second)
 
 						glib.IdleAdd(func() {
-							snapshotURL := cmd.DefaultSnapshotURL // TODO: make optional
 							storeDir := filepath.Join(workingDir, "data")
 							importer, err := cmd.NewImporter(chain, snapshotURL, storeDir)
 							if err != nil {
