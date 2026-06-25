@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ezex-io/gopkg/pipeline"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
+	"github.com/pactus-project/gopkg/pipeline"
 	consmgr "github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"

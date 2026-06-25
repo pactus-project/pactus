@@ -9,11 +9,6 @@ require (
 	github.com/consensys/gnark-crypto v0.20.1
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.1
 	github.com/diamondburned/gotk4/pkg v0.3.1
-	github.com/ezex-io/gopkg/pipeline v0.0.0-20260127151556-579a32f19aa7
-	github.com/ezex-io/gopkg/retry v0.0.0-20260127151556-579a32f19aa7
-	github.com/ezex-io/gopkg/scheduler v0.0.0-20260127151556-579a32f19aa7
-	github.com/ezex-io/gopkg/signal v0.0.0-20260127151556-579a32f19aa7
-	github.com/ezex-io/gopkg/testsuite v0.0.0-20260127151556-579a32f19aa7
 	github.com/fxamacker/cbor/v2 v2.9.2
 	github.com/glebarez/go-sqlite v1.22.1-0.20250214171204-e6de9fc0c320
 	github.com/go-zeromq/zmq4 v0.17.0
@@ -34,6 +29,11 @@ require (
 	github.com/libp2p/go-libp2p-pubsub v0.16.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/multiformats/go-multiaddr v0.16.1
+	github.com/pactus-project/gopkg/pipeline v0.0.0-20260625084706-612d6d2bb21d
+	github.com/pactus-project/gopkg/retry v0.0.0-20260625084706-612d6d2bb21d
+	github.com/pactus-project/gopkg/scheduler v0.0.0-20260625084706-612d6d2bb21d
+	github.com/pactus-project/gopkg/signal v0.0.0-20260625084706-612d6d2bb21d
+	github.com/pactus-project/gopkg/testsuite v0.0.0-20260625084706-612d6d2bb21d
 	github.com/pacviewer/jrpc-gateway v0.6.0
 	github.com/pelletier/go-toml/v2 v2.4.0
 	github.com/pkg/errors v0.9.1

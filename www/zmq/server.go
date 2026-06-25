@@ -3,8 +3,8 @@ package zmq
 import (
 	"context"
 
-	"github.com/ezex-io/gopkg/pipeline"
 	"github.com/go-zeromq/zmq4"
+	"github.com/pactus-project/gopkg/pipeline"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/logger"

@@ -3,7 +3,7 @@ package manager_test
 import (
 	"testing"
 
-	"github.com/ezex-io/gopkg/pipeline"
+	"github.com/pactus-project/gopkg/pipeline"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"

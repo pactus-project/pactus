@@ -3,7 +3,7 @@ package manager
 import (
 	"context"
 
-	"github.com/ezex-io/gopkg/pipeline"
+	"github.com/pactus-project/gopkg/pipeline"
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/consensusv2"
 	"github.com/pactus-project/pactus/crypto"
