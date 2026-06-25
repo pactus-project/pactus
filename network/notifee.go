@@ -3,13 +3,13 @@ package network
 import (
 	"context"
 
-	"github.com/ezex-io/gopkg/pipeline"
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2pevent "github.com/libp2p/go-libp2p/core/event"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2peventbus "github.com/libp2p/go-libp2p/p2p/host/eventbus"
 	"github.com/multiformats/go-multiaddr"
+	"github.com/pactus-project/gopkg/pipeline"
 	"github.com/pactus-project/pactus/util/logger"
 	"golang.org/x/exp/slices"
 )

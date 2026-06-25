@@ -11,7 +11,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/ezex-io/gopkg/signal"
+	"github.com/pactus-project/gopkg/signal"
 	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"

@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/ezex-io/gopkg/signal"
 	"github.com/gofrs/flock"
+	"github.com/pactus-project/gopkg/signal"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/downloader"

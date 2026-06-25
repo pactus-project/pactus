@@ -7,11 +7,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ezex-io/gopkg/scheduler"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pnet "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/multiformats/go-multiaddr"
+	"github.com/pactus-project/gopkg/scheduler"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 )

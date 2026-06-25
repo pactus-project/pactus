@@ -10,8 +10,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ezex-io/gopkg/retry"
-	"github.com/ezex-io/gopkg/scheduler"
+	"github.com/pactus-project/gopkg/retry"
+	"github.com/pactus-project/gopkg/scheduler"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 )

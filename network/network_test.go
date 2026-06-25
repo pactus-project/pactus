@@ -7,10 +7,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ezex-io/gopkg/pipeline"
 	lp2p "github.com/libp2p/go-libp2p"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	lp2pproto "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/proto"
+	"github.com/pactus-project/gopkg/pipeline"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/testsuite"

@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ezex-io/gopkg/pipeline"
+	"github.com/pactus-project/gopkg/pipeline"
 	"github.com/pactus-project/pactus/committee"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"

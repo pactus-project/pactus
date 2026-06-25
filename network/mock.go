@@ -6,10 +6,10 @@ import (
 	"io"
 	"sync"
 
-	"github.com/ezex-io/gopkg/pipeline"
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
+	"github.com/pactus-project/gopkg/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
 )
 

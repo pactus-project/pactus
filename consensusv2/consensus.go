@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ezex-io/gopkg/pipeline"
-	"github.com/ezex-io/gopkg/scheduler"
+	"github.com/pactus-project/gopkg/pipeline"
+	"github.com/pactus-project/gopkg/scheduler"
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/consensusv2/log"
 	"github.com/pactus-project/pactus/crypto"

@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/ezex-io/gopkg/signal"
 	"github.com/gofrs/flock"
+	"github.com/pactus-project/gopkg/signal"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/util"

@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ezex-io/gopkg/testsuite"
 	"github.com/libp2p/go-libp2p/core/peer"
+	"github.com/pactus-project/gopkg/testsuite"
 	"github.com/pactus-project/pactus/committee"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
