@@ -8,7 +8,7 @@ import (
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/multiformats/go-multiaddr"
-	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/gopkg/logger"
 )
 
 var _ lp2pconnmgr.ConnectionGater = &ConnectionGater{}

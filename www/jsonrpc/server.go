@@ -6,8 +6,8 @@ import (
 	"net"
 
 	ret "github.com/grpc-ecosystem/go-grpc-middleware/retry"
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/pacviewer/jrpc-gateway/jrpc"
 	"github.com/rs/cors"
@@ -28,7 +28,7 @@ func NewServer(ctx context.Context, conf *Config) *Server {
 	return &Server{
 		ctx:    ctx,
 		config: conf,
-		logger: logger.NewSubLogger("_jsonrpc", nil),
+		logger: logger.NewSubLogger(ctx, "_jsonrpc", nil),
 	}
 }
 

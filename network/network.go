@@ -21,9 +21,9 @@ import (
 	lp2quic "github.com/libp2p/go-libp2p/p2p/transport/quic"
 	lp2ptcp "github.com/libp2p/go-libp2p/p2p/transport/tcp"
 	"github.com/multiformats/go-multiaddr"
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/gopkg/pipeline"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/version"
 	"github.com/prometheus/client_golang/prometheus"
 	"golang.org/x/exp/slices"
@@ -82,7 +82,7 @@ func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 }
 
 func NewNetwork(ctx context.Context, conf *Config, networkPipe pipeline.Pipeline[Event]) (Network, error) {
-	log := logger.NewSubLogger("_network", nil)
+	log := logger.NewSubLogger(ctx, "_network", nil)
 
 	return makeNetwork(ctx, conf, log, networkPipe, []lp2p.Option{})
 }

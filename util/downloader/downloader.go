@@ -10,10 +10,10 @@ import (
 	"sync"
 	"time"
 
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/gopkg/retry"
 	"github.com/pactus-project/gopkg/scheduler"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/logger"
 )
 
 const (

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/pactus/committee"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
@@ -14,7 +15,6 @@ import (
 	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
-	"github.com/pactus-project/pactus/util/logger"
 )
 
 type LastInfo struct {

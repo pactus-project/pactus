@@ -4,10 +4,10 @@ import (
 	"context"
 
 	"github.com/go-zeromq/zmq4"
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/gopkg/pipeline"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/util/logger"
 )
 
 type Server struct {
@@ -23,7 +23,7 @@ func New(ctx context.Context, conf *Config, eventPipe pipeline.Pipeline[any]) (*
 	server := &Server{
 		ctx:        ctx,
 		eventPipe:  eventPipe,
-		logger:     logger.NewSubLogger("_zmq", nil),
+		logger:     logger.NewSubLogger(ctx, "_zmq", nil),
 		publishers: make([]Publisher, 0),
 		sockets:    make(map[string]zmq4.Socket),
 		config:     conf,

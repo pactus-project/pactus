@@ -14,9 +14,9 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	ret "github.com/grpc-ecosystem/go-grpc-middleware/retry"
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
@@ -48,7 +48,7 @@ func NewServer(ctx context.Context, conf *Config, enableAuth bool) *Server {
 		ctx:        ctx,
 		config:     conf,
 		enableAuth: enableAuth,
-		logger:     logger.NewSubLogger("_html", nil),
+		logger:     logger.NewSubLogger(ctx, "_html", nil),
 	}
 }
 

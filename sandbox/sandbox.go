@@ -3,6 +3,7 @@ package sandbox
 import (
 	"sync"
 
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/pactus/committee"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -14,7 +15,6 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
-	"github.com/pactus-project/pactus/util/logger"
 )
 
 var _ Sandbox = &sandbox{}

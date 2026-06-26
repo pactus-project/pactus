@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/gopkg/pipeline"
 	"github.com/pactus-project/pactus/config"
 	consmgr "github.com/pactus-project/pactus/consensus/manager"
@@ -17,7 +18,6 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/txpool"
-	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/version"
 	wltmgr "github.com/pactus-project/pactus/wallet/manager"
 	"github.com/pactus-project/pactus/wallet/provider/local"
@@ -75,9 +75,9 @@ func NewNode(ctx context.Context, genDoc *genesis.Genesis, conf *config.Config,
 		"version", version.NodeVersion().StringWithAlias(),
 		"network", chainType, "pruned", store.IsPruned())
 
-	txPool := txpool.NewTxPool(conf.TxPool, store, broadcastPipe, eventPipe)
+	txPool := txpool.NewTxPool(ctx, conf.TxPool, store, broadcastPipe, eventPipe)
 
-	state, err := state.LoadOrNewState(genDoc, valKeys, store, txPool, eventPipe)
+	state, err := state.LoadOrNewState(ctx, genDoc, valKeys, store, txPool, eventPipe)
 	if err != nil {
 		return nil, err
 	}

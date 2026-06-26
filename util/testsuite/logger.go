@@ -1,7 +1,7 @@
 package testsuite
 
 import (
-	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/gopkg/logger"
 )
 
 type OverrideStringer struct {

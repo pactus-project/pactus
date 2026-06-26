@@ -7,11 +7,11 @@ import (
 	"path/filepath"
 
 	"github.com/gofrs/flock"
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/gopkg/signal"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types"
-	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/schollz/progressbar/v3"

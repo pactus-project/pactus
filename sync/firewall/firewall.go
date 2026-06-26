@@ -2,11 +2,13 @@ package firewall
 
 import (
 	"bytes"
+	"context"
 	"encoding/binary"
 	"io"
 	"time"
 
 	"github.com/multiformats/go-multiaddr"
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
@@ -15,7 +17,6 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset/peer"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
 	"github.com/pactus-project/pactus/util/ipblocker"
-	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/ratelimit"
 )
 
@@ -32,7 +33,8 @@ type Firewall struct {
 	logger               *logger.SubLogger
 }
 
-func NewFirewall(conf *Config, network network.Network,
+func NewFirewall(ctx context.Context,
+	conf *Config, network network.Network,
 	peerSet *peerset.PeerSet, state state.State,
 ) (*Firewall, error) {
 	blocker, err := ipblocker.New(conf.BannedNets)
@@ -53,7 +55,7 @@ func NewFirewall(conf *Config, network network.Network,
 		blockRateLimit:       blockRateLimit,
 		transactionRateLimit: transactionRateLimit,
 		consensusRateLimit:   consensusRateLimit,
-		logger:               logger.NewSubLogger("_firewall", nil),
+		logger:               logger.NewSubLogger(ctx, "_firewall", nil),
 	}, nil
 }
 

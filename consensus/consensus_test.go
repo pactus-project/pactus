@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/gopkg/pipeline"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -18,7 +19,6 @@ import (
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -116,7 +116,7 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	// -------------------------------
 	// Better logging during testing
 	overrideLogger := func(cons *consensus, name string) {
-		cons.logger = logger.NewSubLogger("_consensus",
+		cons.logger = logger.NewSubLogger(t.Context(), "_consensus",
 			testsuite.NewOverrideLogStringer(fmt.Sprintf("%s - %s: ", name, t.Name()), cons))
 	}
 

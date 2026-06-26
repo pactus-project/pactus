@@ -4,9 +4,9 @@ import (
 	"encoding/binary"
 
 	"github.com/go-zeromq/zmq4"
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/block"
-	"github.com/pactus-project/pactus/util/logger"
 )
 
 type Publisher interface {

@@ -9,8 +9,8 @@ import (
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2peventbus "github.com/libp2p/go-libp2p/p2p/host/eventbus"
 	"github.com/multiformats/go-multiaddr"
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/gopkg/pipeline"
-	"github.com/pactus-project/pactus/util/logger"
 	"golang.org/x/exp/slices"
 )
 
