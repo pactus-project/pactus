@@ -112,7 +112,9 @@ func defaultConfig() *Config {
 	}
 
 	conf.Logger.Filename = "pactus.log"
+	conf.Logger.Targets = []string{"console", "file"}
 
+	conf.Logger.Levels["default"] = "info"
 	conf.Logger.Levels["_network"] = "error"
 	conf.Logger.Levels["_consensus"] = "warn"
 	conf.Logger.Levels["_state"] = "info"

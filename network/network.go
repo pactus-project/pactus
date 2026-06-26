@@ -82,7 +82,7 @@ func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 }
 
 func NewNetwork(ctx context.Context, conf *Config, networkPipe pipeline.Pipeline[Event]) (Network, error) {
-	log := logger.NewSubLogger("_network", nil)
+	log := logger.NewSubLogger(ctx, "_network", nil)
 
 	return makeNetwork(ctx, conf, log, networkPipe, []lp2p.Option{})
 }

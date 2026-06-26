@@ -70,11 +70,6 @@ func setup(t *testing.T) *testData {
 func setupWithSeed(t *testing.T, seed int64) *testData {
 	t.Helper()
 
-	logger.InitGlobalLogger(t.Context(), &logger.Config{
-		Targets:  []string{"console"},
-		Levels:   map[string]string{"default": "debug"},
-		Colorful: true,
-	})
 	fmt.Printf("=== test %s, seed: %d\n", t.Name(), seed)
 
 	ts := testsuite.NewTestSuiteFromSeed(t, seed)
@@ -127,7 +122,7 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	// -------------------------------
 	// Better logging during testing
 	overrideLogger := func(cons *consensusV2, name string) {
-		cons.logger = logger.NewSubLogger("_consensus",
+		cons.logger = logger.NewSubLogger(t.Context(), "_consensus",
 			testsuite.NewOverrideLogStringer(fmt.Sprintf("%s - %s: ", name, t.Name()), cons))
 	}
 

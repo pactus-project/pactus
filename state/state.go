@@ -2,6 +2,7 @@ package state
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"slices"
 	"sync"
@@ -57,6 +58,7 @@ type state struct {
 }
 
 func LoadOrNewState(
+	ctx context.Context,
 	genDoc *genesis.Genesis,
 	valKeys []*bls.ValidatorKey,
 	store store.Store,
@@ -74,7 +76,7 @@ func LoadOrNewState(
 		validatorMerkle: persistentmerkle.New(),
 		eventPipe:       eventPipe,
 	}
-	state.logger = logger.NewSubLogger("_state", state)
+	state.logger = logger.NewSubLogger(ctx, "_state", state)
 	state.store = store
 
 	// If there is no certificate, we are at the genesis height.

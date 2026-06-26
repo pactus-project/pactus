@@ -47,7 +47,7 @@ func setup(t *testing.T, conf *Config) *testData {
 		conf = DefaultConfig()
 	}
 	require.NoError(t, conf.BasicCheck())
-	firewall, err := NewFirewall(conf, net, peerSet, state)
+	firewall, err := NewFirewall(t.Context(), conf, net, peerSet, state)
 	if err != nil {
 		return nil
 	}

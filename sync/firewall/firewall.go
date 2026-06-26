@@ -2,6 +2,7 @@ package firewall
 
 import (
 	"bytes"
+	"context"
 	"encoding/binary"
 	"io"
 	"time"
@@ -32,7 +33,8 @@ type Firewall struct {
 	logger               *logger.SubLogger
 }
 
-func NewFirewall(conf *Config, network network.Network,
+func NewFirewall(ctx context.Context,
+	conf *Config, network network.Network,
 	peerSet *peerset.PeerSet, state state.State,
 ) (*Firewall, error) {
 	blocker, err := ipblocker.New(conf.BannedNets)
@@ -53,7 +55,7 @@ func NewFirewall(conf *Config, network network.Network,
 		blockRateLimit:       blockRateLimit,
 		transactionRateLimit: transactionRateLimit,
 		consensusRateLimit:   consensusRateLimit,
-		logger:               logger.NewSubLogger("_firewall", nil),
+		logger:               logger.NewSubLogger(ctx, "_firewall", nil),
 	}, nil
 }
 

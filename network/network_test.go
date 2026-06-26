@@ -25,13 +25,8 @@ func alwaysPropagate(_ *GossipMessage) PropagationPolicy {
 func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 	t.Helper()
 
-	logger.InitGlobalLogger(t.Context(), &logger.Config{
-		Targets:  []string{"console"},
-		Levels:   map[string]string{"default": "debug"},
-		Colorful: true,
-	})
 	pipe := pipeline.New[Event](t.Context())
-	log := logger.NewSubLogger("_network", nil)
+	log := logger.NewSubLogger(t.Context(), "_network", nil)
 	net, err := makeNetwork(t.Context(), conf, log, pipe, opts)
 	require.NoError(t, err)
 

@@ -45,7 +45,7 @@ func NewServer(ctx context.Context, conf *Config, state state.State, sync sync.S
 		consMgr:       consMgr,
 		walletMgr:     walletMgr,
 		zmqPublishers: zmqPublishers,
-		logger:        logger.NewSubLogger("_grpc", nil),
+		logger:        logger.NewSubLogger(ctx, "_grpc", nil),
 	}
 }
 

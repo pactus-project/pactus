@@ -75,7 +75,7 @@ func setup(t *testing.T, cfg *Config) *testData {
 	if cfg != nil {
 		config = cfg
 	}
-	poolInt := NewTxPool(config, store, broadcastPipe, eventPipe)
+	poolInt := NewTxPool(t.Context(), config, store, broadcastPipe, eventPipe)
 	poolInt.SetNewSandboxAndRecheck(sbx)
 	pool := poolInt.(*txPool)
 	assert.NotNil(t, pool)

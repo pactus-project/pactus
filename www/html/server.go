@@ -48,7 +48,7 @@ func NewServer(ctx context.Context, conf *Config, enableAuth bool) *Server {
 		ctx:        ctx,
 		config:     conf,
 		enableAuth: enableAuth,
-		logger:     logger.NewSubLogger("_html", nil),
+		logger:     logger.NewSubLogger(ctx, "_html", nil),
 	}
 }
 

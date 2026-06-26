@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/gopkg/testsuite"
 	"github.com/pactus-project/pactus/committee"
 	"github.com/pactus-project/pactus/crypto"
@@ -52,11 +51,6 @@ func GenerateSeed() int64 {
 func NewTestSuiteFromSeed(t *testing.T, seed int64) *TestSuite {
 	t.Helper()
 
-	logger.InitGlobalLogger(t.Context(), &logger.Config{
-		Targets:  []string{"console"},
-		Levels:   map[string]string{"default": "debug"},
-		Colorful: true,
-	})
 	ctrl := gomock.NewController(t)
 	t.Cleanup(ctrl.Finish)
 

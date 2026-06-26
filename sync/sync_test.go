@@ -57,11 +57,6 @@ func testConfig() *Config {
 func setup(t *testing.T, config *Config) *testData {
 	t.Helper()
 
-	logger.InitGlobalLogger(t.Context(), &logger.Config{
-		Targets:  []string{"console"},
-		Levels:   map[string]string{"default": "debug"},
-		Colorful: true,
-	})
 	ts := testsuite.NewTestSuite(t)
 
 	if config == nil {

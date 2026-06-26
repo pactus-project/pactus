@@ -1,6 +1,7 @@
 package txpool
 
 import (
+	"context"
 	"fmt"
 	"sync"
 
@@ -36,7 +37,7 @@ type txPool struct {
 // NewTxPool constructs a new transaction pool with sub-pools per transaction
 // type. The pool also maintains a consumption map for tracking per-address
 // daily byte usage.
-func NewTxPool(conf *Config, storeReader store.Reader,
+func NewTxPool(ctx context.Context, conf *Config, storeReader store.Reader,
 	broadcastPipe pipeline.Pipeline[message.Message],
 	eventPipe pipeline.Pipeline[any],
 ) TxPool {
@@ -57,7 +58,7 @@ func NewTxPool(conf *Config, storeReader store.Reader,
 		eventPipe:      eventPipe,
 	}
 
-	pool.logger = logger.NewSubLogger("_pool", pool)
+	pool.logger = logger.NewSubLogger(ctx, "_pool", pool)
 
 	return pool
 }

@@ -61,7 +61,7 @@ func NewServer(ctx context.Context, conf *Config) *Server {
 	return &Server{
 		ctx:    ctx,
 		config: conf,
-		logger: logger.NewSubLogger("_http", nil),
+		logger: logger.NewSubLogger(ctx, "_http", nil),
 	}
 }
 

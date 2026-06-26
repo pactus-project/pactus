@@ -93,7 +93,7 @@ func makeConsensus(
 
 	// Update height later, See enterNewHeight.
 	cons.log = log.NewLog()
-	cons.logger = logger.NewSubLogger("_consensus", cons)
+	cons.logger = logger.NewSubLogger(ctx, "_consensus", cons)
 	cons.rewardAddr = rewardAddr
 
 	cons.changeProposer = &changeProposer{cons}

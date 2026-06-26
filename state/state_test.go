@@ -91,7 +91,7 @@ func setupWithVersion(t *testing.T, blockVersion protocol.Version) *testData {
 	// First validator is in the committee
 	valKeys := []*bls.ValidatorKey{genValKeys[0], ts.RandValKey()}
 	eventPipe := pipeline.New[any](t.Context())
-	st1, err := LoadOrNewState(gnDoc, valKeys, mockStore, mockTxPool, eventPipe)
+	st1, err := LoadOrNewState(t.Context(), gnDoc, valKeys, mockStore, mockTxPool, eventPipe)
 	require.NoError(t, err)
 
 	state, _ := st1.(*state)
@@ -670,7 +670,7 @@ func TestLoadState(t *testing.T) {
 
 	// Load last state info
 	eventPipe := pipeline.New[any](t.Context())
-	newState, err := LoadOrNewState(td.state.genDoc, td.state.valKeys,
+	newState, err := LoadOrNewState(t.Context(), td.state.genDoc, td.state.valKeys,
 		td.state.store, td.mockTxPool, eventPipe)
 	require.NoError(t, err)
 

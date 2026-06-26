@@ -29,7 +29,7 @@ require (
 	github.com/libp2p/go-libp2p-pubsub v0.16.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/multiformats/go-multiaddr v0.16.1
-	github.com/pactus-project/gopkg/logger v0.0.0-20260625183600-ce8c076c1e12
+	github.com/pactus-project/gopkg/logger v0.0.0-20260626092617-31cb0bb7de41
 	github.com/pactus-project/gopkg/pipeline v0.0.0-20260625084706-612d6d2bb21d
 	github.com/pactus-project/gopkg/retry v0.0.0-20260625084706-612d6d2bb21d
 	github.com/pactus-project/gopkg/scheduler v0.0.0-20260625084706-612d6d2bb21d
