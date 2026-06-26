@@ -7,6 +7,7 @@ import (
 	"time"
 
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/gopkg/pipeline"
 	"github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -18,7 +19,6 @@ import (
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

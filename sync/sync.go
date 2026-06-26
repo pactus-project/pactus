@@ -6,6 +6,7 @@ import (
 	"time"
 
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/gopkg/pipeline"
 	consmgr "github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -23,7 +24,6 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset/session"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/ntp"
 )
 

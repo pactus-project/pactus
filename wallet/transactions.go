@@ -1,10 +1,10 @@
 package wallet
 
 import (
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/wallet/provider"
 	"github.com/pactus-project/pactus/wallet/storage"
 	wtypes "github.com/pactus-project/pactus/wallet/types"

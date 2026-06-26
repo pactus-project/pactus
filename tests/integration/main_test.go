@@ -20,7 +20,6 @@ import (
 	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/wallet"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc"
@@ -49,9 +48,6 @@ const (
 )
 
 func TestMain(m *testing.M) {
-	// Prevent log from messing the workspace
-	logger.LogFilename = util.TempFilePath()
-
 	tValKeys = make([][]*bls.ValidatorKey, tTotalNodes)
 	tConfigs = make([]*config.Config, tTotalNodes)
 	tNodes = make([]*node.Node, tTotalNodes)
@@ -70,6 +66,8 @@ func TestMain(m *testing.M) {
 		tValKeys[i][1] = bls.NewValidatorKey(key1)
 		tValKeys[i][2] = bls.NewValidatorKey(key2)
 		tConfigs[i] = config.DefaultConfigForChain(genesis.Mainnet)
+		// Prevent log from messing the workspace
+		tConfigs[i].Logger.Filename = util.TempFilePath()
 
 		tConfigs[i].TxPool.Fee = &txpool.FeeConfig{
 			FixedFee:   0.000001,

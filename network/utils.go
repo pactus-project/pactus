@@ -13,8 +13,8 @@ import (
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	lp2pswarm "github.com/libp2p/go-libp2p/p2p/net/swarm"
 	"github.com/multiformats/go-multiaddr"
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/util/logger"
 )
 
 // MakeMultiAddrs converts a slice of string peer addresses to MultiAddress.

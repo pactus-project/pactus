@@ -4,12 +4,12 @@ import (
 	"context"
 	"net"
 
+	"github.com/pactus-project/gopkg/logger"
 	consmgr "github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/logger"
 	wltmgr "github.com/pactus-project/pactus/wallet/manager"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/pactus-project/pactus/www/zmq"

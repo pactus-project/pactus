@@ -29,6 +29,7 @@ require (
 	github.com/libp2p/go-libp2p-pubsub v0.16.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/multiformats/go-multiaddr v0.16.1
+	github.com/pactus-project/gopkg/logger v0.0.0-20260625183600-ce8c076c1e12
 	github.com/pactus-project/gopkg/pipeline v0.0.0-20260625084706-612d6d2bb21d
 	github.com/pactus-project/gopkg/retry v0.0.0-20260625084706-612d6d2bb21d
 	github.com/pactus-project/gopkg/scheduler v0.0.0-20260625084706-612d6d2bb21d
@@ -39,7 +40,6 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.23.2
 	github.com/rs/cors v1.11.1
-	github.com/rs/zerolog v1.35.1
 	github.com/schollz/progressbar/v3 v3.19.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.10
@@ -51,7 +51,6 @@ require (
 	golang.org/x/term v0.44.0
 	google.golang.org/grpc v1.81.1
 	google.golang.org/protobuf v1.36.11
-	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	libdb.so/gotk4-sourceview/pkg v0.0.0-20240818070527-98263515a466
 )
 
@@ -156,6 +155,7 @@ require (
 	github.com/quic-go/webtransport-go v0.11.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
+	github.com/rs/zerolog v1.35.1 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/spf13/cast v1.10.0 // indirect
 	github.com/whyrusleeping/go-keyspace v0.0.0-20160322163242-5b898ac5add1 // indirect
@@ -181,6 +181,7 @@ require (
 	gonum.org/v1/gonum v0.17.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20260618152121-87f3d3e198d3 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260618152121-87f3d3e198d3 // indirect
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	lukechampine.com/blake3 v1.4.1 // indirect
 	modernc.org/libc v1.73.4 // indirect

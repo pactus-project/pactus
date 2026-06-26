@@ -14,7 +14,6 @@ import (
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/stretchr/testify/assert"
@@ -24,8 +23,6 @@ import (
 func TestRunningNode(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	// Prevent log from messing the workspace
-	logger.LogFilename = util.TempFilePath()
 	pub, _ := ts.RandBLSKeyPair()
 	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
@@ -34,6 +31,8 @@ func TestRunningNode(t *testing.T) {
 		map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc},
 		[]*validator.Validator{val}, genesis.DefaultGenesisParams())
 	conf := config.DefaultConfigForChain(genesis.Mainnet)
+	// Prevent log from messing the workspace
+	conf.Logger.Filename = util.TempFilePath()
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "0.0.0.0:0"
 	conf.HTML.Enable = true

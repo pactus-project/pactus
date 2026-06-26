@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/gopkg/pipeline"
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto"
@@ -18,7 +19,6 @@ import (
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -70,6 +70,11 @@ func setup(t *testing.T) *testData {
 func setupWithSeed(t *testing.T, seed int64) *testData {
 	t.Helper()
 
+	logger.InitGlobalLogger(t.Context(), &logger.Config{
+		Targets:  []string{"console"},
+		Levels:   map[string]string{"default": "debug"},
+		Colorful: true,
+	})
 	fmt.Printf("=== test %s, seed: %d\n", t.Name(), seed)
 
 	ts := testsuite.NewTestSuiteFromSeed(t, seed)

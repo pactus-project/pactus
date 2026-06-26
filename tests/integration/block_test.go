@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/pactus/types"
-	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 

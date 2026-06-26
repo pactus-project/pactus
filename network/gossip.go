@@ -9,8 +9,8 @@ import (
 	lp2pps "github.com/libp2p/go-libp2p-pubsub"
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/gopkg/pipeline"
-	"github.com/pactus-project/pactus/util/logger"
 )
 
 type gossipService struct {

@@ -3,8 +3,8 @@ package sqlitestorage
 import (
 	"fmt"
 
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/util/logger"
 )
 
 func (s *Storage) upgrade() error {

@@ -147,6 +147,13 @@
   # Default is `true`.
   colorful = true
 
+  # `filename` sets the main log file name. Default is `'pactus.log'`.
+  filename = 'pactus.log'
+
+  # `max_size` is the maximum size of a log file in megabytes before rotation.
+  # Default is `10` MB.
+  max_size = 10
+
   # `max_backups` is the maximum number of old log files to retain.
   # Default is `0`.
   max_backups = 0

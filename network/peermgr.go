@@ -11,9 +11,9 @@ import (
 	lp2pnet "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/multiformats/go-multiaddr"
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/gopkg/scheduler"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/logger"
 )
 
 type peerInfo struct {

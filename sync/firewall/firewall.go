@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/multiformats/go-multiaddr"
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
@@ -15,7 +16,6 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset/peer"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
 	"github.com/pactus-project/pactus/util/ipblocker"
-	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/ratelimit"
 )
 

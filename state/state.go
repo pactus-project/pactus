@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/gopkg/pipeline"
 	"github.com/pactus-project/pactus/committee"
 	"github.com/pactus-project/pactus/crypto"
@@ -32,7 +33,6 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/persistentmerkle"
 	"github.com/pactus-project/pactus/util/simplemerkle"
 	"github.com/pactus-project/pactus/version"

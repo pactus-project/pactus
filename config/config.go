@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/consensusv2"
 	"github.com/pactus-project/pactus/crypto"
@@ -16,7 +17,6 @@ import (
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/logger"
 	wltmgr "github.com/pactus-project/pactus/wallet/manager"
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/html"
@@ -110,6 +110,20 @@ func defaultConfig() *Config {
 		ZeroMq:        zmq.DefaultConfig(),
 		WalletManager: wltmgr.DefaultConfig(),
 	}
+
+	conf.Logger.Filename = "pactus.log"
+
+	conf.Logger.Levels["_network"] = "error"
+	conf.Logger.Levels["_consensus"] = "warn"
+	conf.Logger.Levels["_state"] = "info"
+	conf.Logger.Levels["_sync"] = "error"
+	conf.Logger.Levels["_pool"] = "error"
+	conf.Logger.Levels["_http"] = "info"
+	conf.Logger.Levels["_html"] = "info"
+	conf.Logger.Levels["_grpc"] = "info"
+	conf.Logger.Levels["_jsonrpc"] = "info"
+	conf.Logger.Levels["_zmq"] = "info"
+	conf.Logger.Levels["_firewall"] = "warn"
 
 	return conf
 }
