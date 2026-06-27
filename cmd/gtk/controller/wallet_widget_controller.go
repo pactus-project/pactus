@@ -222,16 +222,13 @@ func (c *WalletWidgetController) RefreshAddresses() {
 	if err != nil {
 		return
 	}
+	var rows []addressRow
+	for no, addr := range infos {
+		rows = append(rows, addressRow{no: no + 1, addr: addr})
+	}
 
 	gtkutil.IdleAddSync(func() {
-		gtkutil.ClearListModel(c.lsAddresses)
-
-		for _, info := range infos {
-			row := addressRow{
-				addr: info,
-			}
-			c.lsAddresses.Append(row)
-		}
+		gtkutil.SyncListModel(c.lsAddresses, rows)
 	})
 }
 
@@ -242,15 +239,13 @@ func (c *WalletWidgetController) RefreshTransactions() {
 		return
 	}
 
-	gtkutil.IdleAddAsync(func() {
-		gtkutil.ClearListModel(c.lsTransactions)
-		for _, info := range infos {
-			row := transactionRow{
-				trx: info,
-			}
-			c.lsTransactions.Append(row)
-		}
+	var rows []transactionRow
+	for _, trx := range infos {
+		rows = append(rows, transactionRow{trx: trx})
+	}
 
+	gtkutil.IdleAddAsync(func() {
+		gtkutil.SyncListModel(c.lsTransactions, rows)
 		hasNext := len(infos) == c.txCount
 		c.view.SetTxPager(c.txSkip > 0, hasNext)
 	})
