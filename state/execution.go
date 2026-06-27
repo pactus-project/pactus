@@ -34,7 +34,8 @@ func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool)
 
 	subsidyTrx := blk.Transactions().Subsidy()
 	accumulatedFee := sbx.AccumulatedFee()
-	subsidyAmt := st.params.BlockReward + sbx.AccumulatedFee()
+	blockReward := st.params.BlockReward(blk.Height())
+	subsidyAmt := blockReward + sbx.AccumulatedFee()
 	if subsidyTrx.Payload().Value() != subsidyAmt {
 		return InvalidSubsidyAmountError{
 			Expected: subsidyAmt,
@@ -69,12 +70,13 @@ func (st *state) checkSubsidy(trx *tx.Tx, proposerAddr crypto.Address, shouldBeS
 		return ErrInvalidSubsidyTransaction
 	}
 
-	if batchTrx.Recipients[0].Amount != st.params.FoundationReward {
+	// LockTime for the subsidy transaction is same as block height.
+	foundationReward := st.params.FoundationReward(lockTime)
+	if batchTrx.Recipients[0].Amount != foundationReward {
 		return ErrInvalidSubsidyTransaction
 	}
 
-	addressIndex := int(lockTime) % len(st.params.FoundationAddress)
-	foundationAddress := st.params.FoundationAddress[addressIndex]
+	foundationAddress := st.params.FoundationAddress(lockTime)
 	if batchTrx.Recipients[0].To != foundationAddress {
 		return ErrInvalidSubsidyTransaction
 	}
@@ -86,7 +88,11 @@ func (st *state) checkSubsidy(trx *tx.Tx, proposerAddr crypto.Address, shouldBeS
 
 	if val.IsDelegated() {
 		if val.DelegateShare() > 0 {
-			if batchTrx.Recipients[1].To != val.DelegateOwner() || batchTrx.Recipients[1].Amount < val.DelegateShare() {
+			rewardCoeff := st.params.RewardCoefficient(lockTime)
+			dlgOwner := val.DelegateOwner()
+			dlgShare := val.DelegateShare().MulF64(rewardCoeff)
+			if batchTrx.Recipients[1].To != dlgOwner ||
+				batchTrx.Recipients[1].Amount < dlgShare {
 				return ErrInvalidSubsidyTransaction
 			}
 		}

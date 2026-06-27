@@ -164,6 +164,19 @@ func (td *testData) commitBlocks(t *testing.T, count types.Height) {
 	}
 }
 
+func (td *testData) checkBlockSubsidy(t *testing.T, blk *block.Block) {
+	t.Helper()
+
+	accumulatedFee := amount.Amount(0)
+	for _, trx := range blk.Transactions() {
+		accumulatedFee += trx.Fee()
+	}
+
+	subsidyTrx := blk.Transactions().Subsidy()
+	reward := td.state.params.BlockReward(blk.Height())
+	assert.Equal(t, reward+accumulatedFee, subsidyTrx.Payload().Value())
+}
+
 func TestClosingState(t *testing.T) {
 	td := setup(t)
 
@@ -176,34 +189,62 @@ func TestBlockSubsidyTx(t *testing.T) {
 	// Without reward address in config
 	rewardAddr := td.RandAccAddress()
 	proposerAddr := td.state.Proposer(0).Address()
-	foundationAddr := td.state.params.FoundationAddress[td.state.LastBlockHeight()+1]
+	height1 := td.RandHeight(testsuite.HeightWithMax(8_000_000))
+	height2 := td.RandHeight(testsuite.HeightWithMin(8_000_000))
+	foundationAddr1 := td.state.params.FoundationAddress(height1 + 1)
+	foundationAddr2 := td.state.params.FoundationAddress(height2 + 1)
 
 	tests := []struct {
 		name               string
+		height             types.Height
 		accumulatedFee     amount.Amount
 		expectedRecipients []payload.BatchRecipient
 	}{
 		{
 			name:           "subsidy with zero transaction fee",
+			height:         height1,
 			accumulatedFee: 0,
 			expectedRecipients: []payload.BatchRecipient{
-				{To: foundationAddr, Amount: 0.3e9},
+				{To: foundationAddr1, Amount: 0.3e9},
 				{To: rewardAddr, Amount: 0.7e9},
 			},
 		},
 
 		{
 			name:           "subsidy with transaction fee",
+			height:         height1,
 			accumulatedFee: 0.01e9, // 0.1 PAC
 			expectedRecipients: []payload.BatchRecipient{
-				{To: foundationAddr, Amount: 0.3e9},
+				{To: foundationAddr1, Amount: 0.3e9},
 				{To: rewardAddr, Amount: 0.71e9},
+			},
+		},
+
+		{
+			name:           "subsidy with zero transaction fee, after first halving",
+			height:         height2,
+			accumulatedFee: 0,
+			expectedRecipients: []payload.BatchRecipient{
+				{To: foundationAddr2, Amount: 0.15e9},
+				{To: rewardAddr, Amount: 0.35e9},
+			},
+		},
+
+		{
+			name:           "subsidy with transaction fee, after first halving",
+			height:         height2,
+			accumulatedFee: 0.01e9, // 0.1 PAC
+			expectedRecipients: []payload.BatchRecipient{
+				{To: foundationAddr2, Amount: 0.15e9},
+				{To: rewardAddr, Amount: 0.36e9},
 			},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			_, cert := td.GenerateTestBlock(tt.height)
+			td.state.lastInfo.UpdateCertificate(cert)
 			trx := td.state.createSubsidyTx(proposerAddr, rewardAddr, tt.accumulatedFee)
 
 			err := td.state.checkSubsidy(trx, td.genValKeys[0].Address(), true)
@@ -226,8 +267,7 @@ func TestBlockSubsidyWithDelegationTx(t *testing.T) {
 	rewardAddr := td.RandAccAddress()
 	dlgOwnerAddr := td.RandAccAddress()
 	proposerAddr := td.state.Proposer(0).Address()
-	addressIndex := int(td.state.LastBlockHeight()+1) % len(td.state.params.FoundationAddress)
-	foundationAddr := td.state.params.FoundationAddress[addressIndex]
+	foundationAddr := td.state.params.FoundationAddress(td.state.LastBlockHeight() + 1)
 
 	tests := []struct {
 		name               string
@@ -781,3 +821,52 @@ func TestBlockVersionUpgrade(t *testing.T) {
 	require.NoError(t, td2.state.CommitBlock(blk2, cert2))
 	assert.Equal(t, protocol.ProtocolVersionLatest, td2.state.Params().BlockVersion)
 }
+
+// func TestProposeBlockVersionUpgradeToV4(t *testing.T) {
+// 	// When BlockVersion is already V4, proposeBlockVersion returns V4 directly.
+// 	td := setupWithVersion(t, protocol.ProtocolVersion4)
+
+// 	assert.Equal(t, protocol.ProtocolVersion4, td.state.proposeBlockVersion())
+
+// 	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).AnyTimes()
+// 	valKey := td.proposerKey(t, 0)
+// 	blk, err := td.state.ProposeBlock(valKey, td.RandAccAddress())
+// 	require.NoError(t, err)
+// 	assert.Equal(t, protocol.ProtocolVersion4, blk.Header().Version())
+// }
+
+// func TestProposeBlockVersionStaysAtV3(t *testing.T) {
+// 	// When BlockVersion is V3 and committee validators don't support V4 yet,
+// 	// proposeBlockVersion should return V3.
+// 	td := setupWithVersion(t, protocol.ProtocolVersion3)
+
+// 	assert.Equal(t, protocol.ProtocolVersion3, td.state.proposeBlockVersion())
+
+// 	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).AnyTimes()
+// 	valKey := td.proposerKey(t, 0)
+// 	blk, err := td.state.ProposeBlock(valKey, td.RandAccAddress())
+// 	require.NoError(t, err)
+// 	assert.Equal(t, protocol.ProtocolVersion3, blk.Header().Version())
+// }
+
+// func TestRewardHalvingWithV4(t *testing.T) {
+// 	// Setup with V4 block version
+// 	td := setupWithVersion(t, protocol.ProtocolVersion4)
+
+// 	// At the test height (7), the coefficient is 1.0 since 7 <= 8,000,000.
+// 	// So reward should be the same as pre-V4: 1 PAC.
+// 	proposerAddr := td.state.Proposer(0).Address()
+// 	trx := td.state.createSubsidyTx(proposerAddr, td.RandAccAddress(), 0, protocol.ProtocolVersion4)
+// 	batchTrx := trx.Payload().(*payload.BatchTransferPayload)
+
+// 	// Foundation reward should be 0.3 * 1.0 = 0.3 PAC
+// 	assert.Equal(t, amount.Amount(0.3e9), batchTrx.Recipients[0].Amount)
+// 	// Validator reward should be 1.0 - 0.3 = 0.7 PAC
+// 	assert.Equal(t, amount.Amount(0.7e9), batchTrx.Recipients[1].Amount)
+
+// 	// With V3, the same height gives the same result.
+// 	trxV3 := td.state.createSubsidyTx(proposerAddr, td.RandAccAddress(), 0, protocol.ProtocolVersion3)
+// 	batchTrxV3 := trxV3.Payload().(*payload.BatchTransferPayload)
+// 	assert.Equal(t, batchTrx.Recipients[0].Amount, batchTrxV3.Recipients[0].Amount)
+// 	assert.Equal(t, batchTrx.Recipients[1].Amount, batchTrxV3.Recipients[1].Amount)
+// }

@@ -55,7 +55,8 @@ func TestProposeBlock(t *testing.T) {
 	assert.Equal(t, td.state.Proposer(0).Address(), blk.Header().ProposerAddress())
 	assert.Equal(t, td.state.LastBlockHash(), blk.Header().PrevBlockHash())
 	assert.Equal(t, block.Txs{rewardTrx, validTrx1, validTrx2}, blockTrxs)
-	assert.Equal(t, td.state.params.BlockReward+validTrx1.Fee()+validTrx2.Fee(), rewardTrx.Payload().Value())
+
+	td.checkBlockSubsidy(t, blk)
 }
 
 func TestExecuteBlock(t *testing.T) {
@@ -195,7 +196,7 @@ func TestExecuteBlock(t *testing.T) {
 
 		// Check if fee is claimed
 		treasury := sb.Account(crypto.TreasuryAddress)
-		assert.Equal(t, 21*1e15-(amount.Amount(blockHeight)*td.state.params.BlockReward), treasury.Balance())
+		assert.Equal(t, 21*1e15-(amount.Amount(blockHeight)*td.state.params.BlockReward(blockHeight)), treasury.Balance())
 	})
 }
 
@@ -225,17 +226,21 @@ func TestSubsidyTransaction(t *testing.T) {
 	})
 
 	t.Run("Split Reward With Invalid Foundation Address", func(t *testing.T) {
+		lockTime := td.RandHeight()
 		recipients := []payload.BatchRecipient{
 			{
 				To:     td.RandAccAddress(),
-				Amount: td.state.params.FoundationReward,
+				Amount: td.state.params.FoundationReward(lockTime),
 			},
 			{
 				To:     td.RandAccAddress(),
 				Amount: td.RandAmount(),
 			},
 		}
-		trx := td.GenerateTestSubsidyTx(testsuite.TransactionWithRecipients(recipients))
+		trx := td.GenerateTestSubsidyTx(
+			testsuite.TransactionWithLockTime(lockTime),
+			testsuite.TransactionWithRecipients(recipients),
+		)
 
 		err := td.state.checkSubsidy(trx, proposerAddr, true)
 		require.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
@@ -245,8 +250,8 @@ func TestSubsidyTransaction(t *testing.T) {
 		lockTime := td.RandHeight()
 		recipients := []payload.BatchRecipient{
 			{
-				To:     td.state.params.FoundationAddress[lockTime%100],
-				Amount: td.state.params.FoundationReward,
+				To:     td.state.params.FoundationAddress(lockTime),
+				Amount: td.state.params.FoundationReward(lockTime),
 			},
 			{
 				To:     td.RandAccAddress(),
@@ -271,8 +276,8 @@ func TestSubsidyTransaction(t *testing.T) {
 
 		recipients := []payload.BatchRecipient{
 			{
-				To:     td.state.params.FoundationAddress[lockTime%100],
-				Amount: td.state.params.FoundationReward,
+				To:     td.state.params.FoundationAddress(lockTime),
+				Amount: td.state.params.FoundationReward(lockTime),
 			},
 			{
 				To:     td.RandAccAddress(),
@@ -304,8 +309,8 @@ func TestSubsidyTransaction(t *testing.T) {
 
 		recipients := []payload.BatchRecipient{
 			{
-				To:     td.state.params.FoundationAddress[lockTime%100],
-				Amount: td.state.params.FoundationReward,
+				To:     td.state.params.FoundationAddress(lockTime),
+				Amount: td.state.params.FoundationReward(lockTime),
 			},
 			{
 				To:     delegateOwner,
@@ -313,7 +318,7 @@ func TestSubsidyTransaction(t *testing.T) {
 			},
 			{
 				To:     td.RandAccAddress(),
-				Amount: td.state.params.BlockReward - td.state.params.FoundationReward - delegateShare,
+				Amount: td.state.params.BlockReward(lockTime) - td.state.params.FoundationReward(lockTime) - delegateShare,
 			},
 		}
 		trx := td.GenerateTestSubsidyTx(
@@ -337,12 +342,12 @@ func TestSubsidyTransaction(t *testing.T) {
 
 		badRecipients := []payload.BatchRecipient{
 			{
-				To:     td.state.params.FoundationAddress[lockTime%100],
-				Amount: td.state.params.FoundationReward,
+				To:     td.state.params.FoundationAddress(lockTime),
+				Amount: td.state.params.FoundationReward(lockTime),
 			},
 			{
 				To:     td.RandAccAddress(),
-				Amount: td.state.params.BlockReward - td.state.params.FoundationReward - delegateShare,
+				Amount: td.state.params.BlockReward(lockTime) - td.state.params.FoundationReward(lockTime) - delegateShare,
 			},
 			{
 				To:     td.RandAccAddress(),
@@ -369,8 +374,8 @@ func TestSubsidyTransaction(t *testing.T) {
 
 		recipients := []payload.BatchRecipient{
 			{
-				To:     td.state.params.FoundationAddress[lockTime%100],
-				Amount: td.state.params.FoundationReward,
+				To:     td.state.params.FoundationAddress(lockTime),
+				Amount: td.state.params.FoundationReward(lockTime),
 			},
 			{
 				To:     td.RandAccAddress(),

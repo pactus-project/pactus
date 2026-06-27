@@ -16,6 +16,15 @@ func (st *state) validateBlock(blk *block.Block, round types.Round) error {
 		}
 	}
 
+	// After the first halving (block 8,000,000), blocks must use version 4 or higher.
+	// This guards against old nodes that didn't upgrade in time.
+	if blk.Header().Version() < protocol.ProtocolVersion4 &&
+		blk.Height() > 8_000_000 {
+		return InvalidBlockVersionError{
+			Version: blk.Header().Version(),
+		}
+	}
+
 	if blk.Header().StateRoot() != st.stateRoot() {
 		return InvalidStateRootHashError{
 			Expected: st.stateRoot(),

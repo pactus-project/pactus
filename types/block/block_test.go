@@ -232,7 +232,7 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		str := "03" + // Version (ProtocolVersionLatest = 3, PIP-49)
+		str := "04" + // Version (ProtocolVersionLatest = 4, PIP-55)
 			"00000000" + // UnixTime
 			"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
 			"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" + // StateRoot
