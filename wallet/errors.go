@@ -15,6 +15,9 @@ var (
 
 	// ErrTransactionExists indicates the transaction already exists in the wallet.
 	ErrTransactionExists = errors.New("transaction already exists")
+
+	// ErrMaxValidatorReached indicates the maximum number of validator addresses (32) has been reached.
+	ErrMaxValidatorReached = errors.New("maximum number of validator addresses (32) reached")
 )
 
 // ExitsError describes an error in which a wallet exists in the

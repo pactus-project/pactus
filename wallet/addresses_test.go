@@ -115,6 +115,16 @@ func TestNewValidatorAddress(t *testing.T) {
 	assert.Equal(t, pub.ValidatorAddress().String(), addressInfo.Address)
 }
 
+func TestNewValidatorAddressMaxReached(t *testing.T) {
+	td := setup(t)
+
+	// Set NextValidatorIndex to 32 to simulate max validators reached
+	td.testVault.Purposes.PurposeBLS.NextValidatorIndex = MaxValidators
+
+	_, err := td.wallet.NewValidatorAddress("extra-validator")
+	require.ErrorIs(t, err, ErrMaxValidatorReached)
+}
+
 func TestNewBLSAccountAddress(t *testing.T) {
 	td := setup(t)
 
