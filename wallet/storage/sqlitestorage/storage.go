@@ -534,7 +534,7 @@ func (s *Storage) QueryTransactions(params storage.QueryParams) ([]*wtypes.Trans
 		queryBuilder.WriteString(where)
 		queryBuilder.WriteString("\n")
 	}
-	queryBuilder.WriteString(`ORDER BY created_at DESC
+	queryBuilder.WriteString(`ORDER BY no DESC
 		LIMIT ? OFFSET ?`)
 
 	query := queryBuilder.String()
