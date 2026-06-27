@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"math"
 	"path/filepath"
 
 	"github.com/pactus-project/pactus/cmd"
@@ -40,7 +41,7 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		"entropy bits for seed generation. range: 128 to 256")
 
 	valNumOpt := initCmd.Flags().IntP("val-num", "", 0,
-		"number of validators to be created. range: 1 to 32")
+		"number of validators to be created")
 
 	initCmd.Run = func(_ *cobra.Command, _ []string) {
 		workingDir, _ := filepath.Abs(*workingDirOpt)
@@ -86,14 +87,13 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		if *valNumOpt == 0 {
 			terminal.PrintLine()
 			terminal.PrintInfoMsgBoldf("🏛️  How many validators do you want to create?")
-			terminal.PrintInfoMsgf("   • Each node can run up to 32 validators")
 			terminal.PrintInfoMsgf("   • Each validator can stake up to 1,000 coins")
 			terminal.PrintInfoMsgf("   • Choose based on your total stake amount")
 			terminal.PrintLine()
-			valNum = prompt.PromptInputWithRange("Number of Validators", 7, 1, 32)
+			valNum = prompt.PromptInputWithRange("Number of Validators", 7, 1, math.MaxInt)
 		} else {
-			if *valNumOpt < 1 || *valNumOpt > 32 {
-				terminal.PrintErrorMsgf("%v is not in valid range of validator number, it should be between 1 and 32", *valNumOpt)
+			if *valNumOpt < 1 {
+				terminal.PrintErrorMsgf("%v is not a valid number of validators, it should be at least 1", *valNumOpt)
 
 				return
 			}
