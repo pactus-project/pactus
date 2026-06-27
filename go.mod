@@ -13,7 +13,7 @@ require (
 	github.com/glebarez/go-sqlite v1.22.1-0.20250214171204-e6de9fc0c320
 	github.com/go-zeromq/zmq4 v0.17.0
 	github.com/gofrs/flock v0.13.0
-	github.com/gogpu/systray v0.1.0
+	github.com/gogpu/systray v0.1.1
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/handlers v1.5.2
@@ -76,9 +76,9 @@ require (
 	github.com/flynn/noise v1.1.0 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
-	github.com/go-webgpu/goffi v0.5.0 // indirect
+	github.com/go-webgpu/goffi v0.5.5 // indirect
 	github.com/go-zeromq/goczmq/v4 v4.2.2 // indirect
-	github.com/godbus/dbus/v5 v5.1.0 // indirect
+	github.com/godbus/dbus/v5 v5.2.2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/snappy v1.0.0 // indirect
 	github.com/google/gopacket v1.1.19 // indirect
