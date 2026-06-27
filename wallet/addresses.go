@@ -11,6 +11,8 @@ import (
 	"github.com/pactus-project/pactus/wallet/types"
 )
 
+const MaxValidators = 32
+
 type addresses struct {
 	storage  storage.WalletStorage
 	provider provider.WalletProvider
@@ -248,6 +250,9 @@ func (a *addresses) NewAddress(addressType crypto.AddressType, label string, opt
 	case crypto.AddressTypeTreasury:
 		return nil, ErrInvalidAddressType
 	case crypto.AddressTypeValidator:
+		if vault.Purposes.PurposeBLS.NextValidatorIndex >= MaxValidators {
+			return nil, ErrMaxValidatorReached
+		}
 		info, err = vault.NewValidatorAddress(label)
 	case crypto.AddressTypeBLSAccount:
 		info, err = vault.NewBLSAccountAddress(label)
