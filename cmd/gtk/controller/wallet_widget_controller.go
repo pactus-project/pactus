@@ -137,24 +137,17 @@ func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) 
 		gtkutil.CaptureDoubleClick(&c.view.ColViewAddresses.Widget, c.ShowAddressDetails)
 	})
 
-	totalBalance1, _ := c.model.TotalBalance()
 	scheduler.Every(refreshWalletInterval).Do(ctx, func(context.Context) {
-		totalBalance2, _ := c.model.TotalBalance()
-
-		if totalBalance1 != totalBalance2 {
+		if gtkutil.IsWidgetShowing(&c.view.BoxInfo.Widget) {
 			c.RefreshInfo()
+		}
 
-			if gtkutil.IsWidgetShowing(&c.view.ColViewAddresses.Widget) {
-				gtkutil.Logf("refreshing addresses")
-				c.RefreshAddresses()
-			}
+		if gtkutil.IsWidgetShowing(&c.view.BoxAddresses.Widget) {
+			c.RefreshAddresses()
+		}
 
-			if gtkutil.IsWidgetShowing(&c.view.ColViewTransactions.Widget) {
-				gtkutil.Logf("refreshing transactions")
-				c.RefreshTransactions()
-			}
-
-			totalBalance1 = totalBalance2
+		if gtkutil.IsWidgetShowing(&c.view.BoxTransactions.Widget) {
+			c.RefreshTransactions()
 		}
 	})
 
@@ -197,6 +190,8 @@ func getDirectionTextWithIcon(dir types.TxDirection) string {
 }
 
 func (c *WalletWidgetController) RefreshInfo() {
+	gtkutil.Logf("refreshing wallet info")
+
 	balance, _ := c.model.TotalBalance()
 	stake, _ := c.model.TotalStake()
 	balanceStr := balance.String()
@@ -218,6 +213,8 @@ func (c *WalletWidgetController) RefreshInfo() {
 
 // RefreshAddresses updates the address list from the model.
 func (c *WalletWidgetController) RefreshAddresses() {
+	gtkutil.Logf("refreshing wallet addresses")
+
 	infos, err := c.model.ListAddresses()
 	if err != nil {
 		return
@@ -234,6 +231,8 @@ func (c *WalletWidgetController) RefreshAddresses() {
 
 // RefreshTransactions updates the transaction list.
 func (c *WalletWidgetController) RefreshTransactions() {
+	gtkutil.Logf("refreshing wallet transactions: count: %v, skip:%v", c.txCount, c.txSkip)
+
 	infos, err := c.model.Transactions(c.txCount, c.txSkip)
 	if err != nil {
 		return

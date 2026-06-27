@@ -11,7 +11,10 @@ import (
 type WalletWidgetView struct {
 	ViewBuilder
 
-	Box *gtk.Box
+	Box             *gtk.Box
+	BoxInfo         *gtk.Box
+	BoxAddresses    *gtk.Box
+	BoxTransactions *gtk.Box
 
 	ColViewAddresses    *gtk.ColumnView
 	ColViewTransactions *gtk.ColumnView
@@ -38,8 +41,11 @@ func NewWalletWidgetView() *WalletWidgetView {
 	builder := NewViewBuilder(assets.WalletWidgetUI)
 
 	view := &WalletWidgetView{
-		ViewBuilder: builder,
-		Box:         builder.GetBoxObj("id_box_wallet"),
+		ViewBuilder:     builder,
+		Box:             builder.GetBoxObj("id_box_wallet"),
+		BoxInfo:         builder.GetBoxObj("id_box_wallet_info"),
+		BoxAddresses:    builder.GetBoxObj("id_box_wallet_addresses"),
+		BoxTransactions: builder.GetBoxObj("id_box_wallet_transactions"),
 
 		ColViewAddresses:    builder.GetColumnViewObj("id_columnview_addresses"),
 		ColViewTransactions: builder.GetColumnViewObj("id_columnview_transactions"),

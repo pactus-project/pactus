@@ -11,7 +11,9 @@ import (
 type CommitteeWidgetView struct {
 	ViewBuilder
 
-	Box *gtk.Box
+	Box        *gtk.Box
+	BoxInfo    *gtk.Box
+	BoxMembers *gtk.Box
 
 	LabelCommitteeSize    *gtk.Label
 	LabelCommitteePower   *gtk.Label
@@ -24,8 +26,11 @@ func NewCommitteeWidgetView() *CommitteeWidgetView {
 	builder := NewViewBuilder(assets.CommitteeWidgetUI)
 
 	view := &CommitteeWidgetView{
-		ViewBuilder:           builder,
-		Box:                   builder.GetBoxObj("id_box_committee"),
+		ViewBuilder: builder,
+		Box:         builder.GetBoxObj("id_box_committee"),
+		BoxInfo:     builder.GetBoxObj("id_box_committee_info"),
+		BoxMembers:  builder.GetBoxObj("id_box_committee_members"),
+
 		LabelCommitteeSize:    builder.GetLabelObj("id_label_committee_size"),
 		LabelCommitteePower:   builder.GetLabelObj("id_label_committee_power"),
 		LabelTotalPower:       builder.GetLabelObj("id_label_total_power"),

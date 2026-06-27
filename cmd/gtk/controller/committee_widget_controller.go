@@ -73,7 +73,6 @@ func (c *CommitteeWidgetController) BuildView(ctx context.Context) error {
 
 	scheduler.Every(refreshCommitteeInterval).Do(ctx, func(ctx context.Context) {
 		if gtkutil.IsWidgetShowing(&c.view.Box.Widget) {
-			gtkutil.Logf("refreshing committee")
 			c.refresh(ctx)
 		}
 	})
@@ -84,6 +83,8 @@ func (c *CommitteeWidgetController) BuildView(ctx context.Context) error {
 }
 
 func (c *CommitteeWidgetController) refresh(_ context.Context) {
+	gtkutil.Logf("refreshing committee")
+
 	res, err := c.model.GetCommitteeInfo()
 	if err != nil {
 		return
