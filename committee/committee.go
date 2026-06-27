@@ -238,8 +238,8 @@ func (c *committee) ProtocolVersions() map[protocol.Version]float64 {
 	return percentages
 }
 
-// SupportProtocolVersion checks if more than 70% of committee members
-// support the given protocol version.
+// SupportProtocolVersion checks if more than 75% of the committee's total power
+// supports the given protocol version.
 func (c *committee) SupportProtocolVersion(version protocol.Version) bool {
 	versions := c.ProtocolVersions()
 	supported := float64(0)
@@ -250,5 +250,5 @@ func (c *committee) SupportProtocolVersion(version protocol.Version) bool {
 		}
 	}
 
-	return supported > 70.0
+	return supported > 75.0
 }
