@@ -416,7 +416,7 @@ func TestSupportProtocolVersion(t *testing.T) {
 	val1 := ts.GenerateTestValidator(testsuite.ValidatorWithStake(1000))
 	val2 := ts.GenerateTestValidator(testsuite.ValidatorWithStake(1000))
 	val3 := ts.GenerateTestValidator(testsuite.ValidatorWithStake(500))
-	val4 := ts.GenerateTestValidator(testsuite.ValidatorWithStake(500))
+	val4 := ts.GenerateTestValidator(testsuite.ValidatorWithStake(501))
 	val5 := ts.GenerateTestValidator(testsuite.ValidatorWithStake(1000))
 
 	val2.UpdateProtocolVersion(protocol.ProtocolVersion1)
