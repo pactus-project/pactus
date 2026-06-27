@@ -8538,9 +8538,9 @@ proto.pactus.GetPrivateKeyResponse.prototype.setPrivateKey = function(value) {
 proto.pactus.AddressType = {
   ADDRESS_TYPE_TREASURY: 0,
   ADDRESS_TYPE_VALIDATOR: 1,
-  ADDRESS_TYPE_BLS_ACCOUNT: 2,
-  ADDRESS_TYPE_ED25519_ACCOUNT: 3,
-  ADDRESS_TYPE_SECP_ACCOUNT: 4
+  ADDRESS_TYPE_BLS: 2,
+  ADDRESS_TYPE_ED25519: 3,
+  ADDRESS_TYPE_SECP256K1: 4
 };
 
 /**

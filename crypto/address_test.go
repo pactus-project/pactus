@@ -262,17 +262,17 @@ func TestAddressTypeString(t *testing.T) {
 			err: nil,
 		},
 		{
-			str: "bls_account",
+			str: "bls",
 			typ: crypto.AddressType(2),
 			err: nil,
 		},
 		{
-			str: "ed25519_account",
+			str: "ed25519",
 			typ: crypto.AddressType(3),
 			err: nil,
 		},
 		{
-			str: "secp256k1_account",
+			str: "secp256k1",
 			typ: crypto.AddressType(4),
 			err: nil,
 		},
@@ -289,4 +289,20 @@ func TestAddressTypeString(t *testing.T) {
 			assert.Equal(t, tt.str, typ.String())
 		}
 	}
+
+	t.Run("backward compatibility with old _account suffix", func(t *testing.T) {
+		oldFormats := []struct {
+			str string
+			typ crypto.AddressType
+		}{
+			{"bls_account", crypto.AddressTypeBLSAccount},
+			{"ed25519_account", crypto.AddressTypeEd25519Account},
+			{"secp256k1_account", crypto.AddressTypeSecp256k1Account},
+		}
+		for _, tc := range oldFormats {
+			typ, err := crypto.AddressTypeFromString(tc.str)
+			require.NoError(t, err)
+			assert.Equal(t, tc.typ, typ)
+		}
+	})
 }

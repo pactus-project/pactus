@@ -79,7 +79,7 @@ func buildAddressNewCmd(parentCmd *cobra.Command) {
 
 	addressType := newCmd.Flags().String("type",
 		crypto.AddressTypeEd25519Account.String(),
-		"the type of address: secp256k1_account, ed25519_account, bls_account and validator")
+		"the type of address: secp256k1, ed25519, bls and validator")
 
 	label := newCmd.Flags().String("label", "", "a label for the address")
 

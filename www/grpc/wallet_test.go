@@ -349,7 +349,7 @@ func TestNewAddress(t *testing.T) {
 		res, err := client.GetNewAddress(t.Context(),
 			&pactus.GetNewAddressRequest{
 				WalletName:  "test",
-				AddressType: pactus.AddressType_ADDRESS_TYPE_BLS_ACCOUNT,
+				AddressType: pactus.AddressType_ADDRESS_TYPE_BLS,
 				Label:       "label",
 				Password:    "password",
 			})
@@ -370,7 +370,7 @@ func TestNewAddress(t *testing.T) {
 		res, err := client.GetNewAddress(t.Context(),
 			&pactus.GetNewAddressRequest{
 				WalletName:  "test",
-				AddressType: pactus.AddressType_ADDRESS_TYPE_BLS_ACCOUNT,
+				AddressType: pactus.AddressType_ADDRESS_TYPE_BLS,
 				Label:       "label",
 				Password:    "password",
 			})

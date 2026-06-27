@@ -4274,9 +4274,9 @@ Deprecated: Will move into utils.</p>
       <li>ADDRESS_TYPE_TREASURY = 0 (Treasury address type.
 Should NOT be used to generate new addresses.)</li>
       <li>ADDRESS_TYPE_VALIDATOR = 1 (Validator address type used for validator nodes.)</li>
-      <li>ADDRESS_TYPE_BLS_ACCOUNT = 2 (Account address type with BLS signature scheme.)</li>
-      <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.)</li>
-      <li>ADDRESS_TYPE_SECP_ACCOUNT = 4 (Account address type with SECP256K1 signature scheme.)</li>
+      <li>ADDRESS_TYPE_BLS = 2 (Address type with BLS signature scheme.)</li>
+      <li>ADDRESS_TYPE_ED25519 = 3 (Address type with Ed25519 signature scheme.)</li>
+      <li>ADDRESS_TYPE_SECP256K1 = 4 (Address type with SECP256K1 signature scheme.)</li>
       </ul>
     </td>
   </tr>
@@ -4394,9 +4394,9 @@ Should NOT be used to generate new addresses.)</li>
       <li>ADDRESS_TYPE_TREASURY = 0 (Treasury address type.
 Should NOT be used to generate new addresses.)</li>
       <li>ADDRESS_TYPE_VALIDATOR = 1 (Validator address type used for validator nodes.)</li>
-      <li>ADDRESS_TYPE_BLS_ACCOUNT = 2 (Account address type with BLS signature scheme.)</li>
-      <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.)</li>
-      <li>ADDRESS_TYPE_SECP_ACCOUNT = 4 (Account address type with SECP256K1 signature scheme.)</li>
+      <li>ADDRESS_TYPE_BLS = 2 (Address type with BLS signature scheme.)</li>
+      <li>ADDRESS_TYPE_ED25519 = 3 (Address type with Ed25519 signature scheme.)</li>
+      <li>ADDRESS_TYPE_SECP256K1 = 4 (Address type with SECP256K1 signature scheme.)</li>
       </ul>
     </td>
   </tr>
@@ -4474,9 +4474,9 @@ Should NOT be used to generate new addresses.)</li>
       <li>ADDRESS_TYPE_TREASURY = 0 (Treasury address type.
 Should NOT be used to generate new addresses.)</li>
       <li>ADDRESS_TYPE_VALIDATOR = 1 (Validator address type used for validator nodes.)</li>
-      <li>ADDRESS_TYPE_BLS_ACCOUNT = 2 (Account address type with BLS signature scheme.)</li>
-      <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.)</li>
-      <li>ADDRESS_TYPE_SECP_ACCOUNT = 4 (Account address type with SECP256K1 signature scheme.)</li>
+      <li>ADDRESS_TYPE_BLS = 2 (Address type with BLS signature scheme.)</li>
+      <li>ADDRESS_TYPE_ED25519 = 3 (Address type with Ed25519 signature scheme.)</li>
+      <li>ADDRESS_TYPE_SECP256K1 = 4 (Address type with SECP256K1 signature scheme.)</li>
       </ul>
     </td>
   </tr>
@@ -4523,9 +4523,9 @@ Should NOT be used to generate new addresses.)</li>
       <li>ADDRESS_TYPE_TREASURY = 0 (Treasury address type.
 Should NOT be used to generate new addresses.)</li>
       <li>ADDRESS_TYPE_VALIDATOR = 1 (Validator address type used for validator nodes.)</li>
-      <li>ADDRESS_TYPE_BLS_ACCOUNT = 2 (Account address type with BLS signature scheme.)</li>
-      <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.)</li>
-      <li>ADDRESS_TYPE_SECP_ACCOUNT = 4 (Account address type with SECP256K1 signature scheme.)</li>
+      <li>ADDRESS_TYPE_BLS = 2 (Address type with BLS signature scheme.)</li>
+      <li>ADDRESS_TYPE_ED25519 = 3 (Address type with Ed25519 signature scheme.)</li>
+      <li>ADDRESS_TYPE_SECP256K1 = 4 (Address type with SECP256K1 signature scheme.)</li>
       </ul>
     </td>
   </tr>
@@ -4603,9 +4603,9 @@ Should NOT be used to generate new addresses.)</li>
       <li>ADDRESS_TYPE_TREASURY = 0 (Treasury address type.
 Should NOT be used to generate new addresses.)</li>
       <li>ADDRESS_TYPE_VALIDATOR = 1 (Validator address type used for validator nodes.)</li>
-      <li>ADDRESS_TYPE_BLS_ACCOUNT = 2 (Account address type with BLS signature scheme.)</li>
-      <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.)</li>
-      <li>ADDRESS_TYPE_SECP_ACCOUNT = 4 (Account address type with SECP256K1 signature scheme.)</li>
+      <li>ADDRESS_TYPE_BLS = 2 (Address type with BLS signature scheme.)</li>
+      <li>ADDRESS_TYPE_ED25519 = 3 (Address type with Ed25519 signature scheme.)</li>
+      <li>ADDRESS_TYPE_SECP256K1 = 4 (Address type with SECP256K1 signature scheme.)</li>
       </ul>
     </td>
   </tr>
