@@ -1232,7 +1232,7 @@
           },
           {
             "name": "addressTypes",
-            "description": "Filter addresses by their types. If empty, all address types are included.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould NOT be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type used for validator nodes.\n - ADDRESS_TYPE_BLS_ACCOUNT: Account address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519_ACCOUNT: Account address type with Ed25519 signature scheme.\n - ADDRESS_TYPE_SECP_ACCOUNT: Account address type with SECP256K1 signature scheme.",
+            "description": "Filter addresses by their types. If empty, all address types are included.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould NOT be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type used for validator nodes.\n - ADDRESS_TYPE_BLS: Address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519: Address type with Ed25519 signature scheme.\n - ADDRESS_TYPE_SECP256K1: Address type with SECP256K1 signature scheme.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1241,9 +1241,9 @@
               "enum": [
                 "ADDRESS_TYPE_TREASURY",
                 "ADDRESS_TYPE_VALIDATOR",
-                "ADDRESS_TYPE_BLS_ACCOUNT",
-                "ADDRESS_TYPE_ED25519_ACCOUNT",
-                "ADDRESS_TYPE_SECP_ACCOUNT"
+                "ADDRESS_TYPE_BLS",
+                "ADDRESS_TYPE_ED25519",
+                "ADDRESS_TYPE_SECP256K1"
               ]
             },
             "collectionFormat": "multi"
@@ -1687,12 +1687,12 @@
       "enum": [
         "ADDRESS_TYPE_TREASURY",
         "ADDRESS_TYPE_VALIDATOR",
-        "ADDRESS_TYPE_BLS_ACCOUNT",
-        "ADDRESS_TYPE_ED25519_ACCOUNT",
-        "ADDRESS_TYPE_SECP_ACCOUNT"
+        "ADDRESS_TYPE_BLS",
+        "ADDRESS_TYPE_ED25519",
+        "ADDRESS_TYPE_SECP256K1"
       ],
       "default": "ADDRESS_TYPE_TREASURY",
-      "description": "AddressType defines different types of blockchain addresses.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould NOT be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type used for validator nodes.\n - ADDRESS_TYPE_BLS_ACCOUNT: Account address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519_ACCOUNT: Account address type with Ed25519 signature scheme.\n - ADDRESS_TYPE_SECP_ACCOUNT: Account address type with SECP256K1 signature scheme."
+      "description": "AddressType defines different types of blockchain addresses.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould NOT be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type used for validator nodes.\n - ADDRESS_TYPE_BLS: Address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519: Address type with Ed25519 signature scheme.\n - ADDRESS_TYPE_SECP256K1: Address type with SECP256K1 signature scheme."
     },
     "pactusBlockHeaderInfo": {
       "type": "object",

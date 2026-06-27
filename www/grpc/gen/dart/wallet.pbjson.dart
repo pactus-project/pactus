@@ -21,17 +21,17 @@ const AddressType$json = {
   '2': [
     {'1': 'ADDRESS_TYPE_TREASURY', '2': 0},
     {'1': 'ADDRESS_TYPE_VALIDATOR', '2': 1},
-    {'1': 'ADDRESS_TYPE_BLS_ACCOUNT', '2': 2},
-    {'1': 'ADDRESS_TYPE_ED25519_ACCOUNT', '2': 3},
-    {'1': 'ADDRESS_TYPE_SECP_ACCOUNT', '2': 4},
+    {'1': 'ADDRESS_TYPE_BLS', '2': 2},
+    {'1': 'ADDRESS_TYPE_ED25519', '2': 3},
+    {'1': 'ADDRESS_TYPE_SECP256K1', '2': 4},
   ],
 };
 
 /// Descriptor for `AddressType`. Decode as a `google.protobuf.EnumDescriptorProto`.
 final $typed_data.Uint8List addressTypeDescriptor = $convert.base64Decode(
     'CgtBZGRyZXNzVHlwZRIZChVBRERSRVNTX1RZUEVfVFJFQVNVUlkQABIaChZBRERSRVNTX1RZUE'
-    'VfVkFMSURBVE9SEAESHAoYQUREUkVTU19UWVBFX0JMU19BQ0NPVU5UEAISIAocQUREUkVTU19U'
-    'WVBFX0VEMjU1MTlfQUNDT1VOVBADEh0KGUFERFJFU1NfVFlQRV9TRUNQX0FDQ09VTlQQBA==');
+    'VfVkFMSURBVE9SEAESFAoQQUREUkVTU19UWVBFX0JMUxACEhgKFEFERFJFU1NfVFlQRV9FRDI1'
+    'NTE5EAMSGgoWQUREUkVTU19UWVBFX1NFQ1AyNTZLMRAE');
 
 @$core.Deprecated('Use txDirectionDescriptor instead')
 const TxDirection$json = {

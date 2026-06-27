@@ -378,9 +378,9 @@ impl serde::Serialize for AddressType {
         let variant = match self {
             Self::Treasury => "ADDRESS_TYPE_TREASURY",
             Self::Validator => "ADDRESS_TYPE_VALIDATOR",
-            Self::BlsAccount => "ADDRESS_TYPE_BLS_ACCOUNT",
-            Self::Ed25519Account => "ADDRESS_TYPE_ED25519_ACCOUNT",
-            Self::SecpAccount => "ADDRESS_TYPE_SECP_ACCOUNT",
+            Self::Bls => "ADDRESS_TYPE_BLS",
+            Self::Ed25519 => "ADDRESS_TYPE_ED25519",
+            Self::Secp256k1 => "ADDRESS_TYPE_SECP256K1",
         };
         serializer.serialize_str(variant)
     }
@@ -394,9 +394,9 @@ impl<'de> serde::Deserialize<'de> for AddressType {
         const FIELDS: &[&str] = &[
             "ADDRESS_TYPE_TREASURY",
             "ADDRESS_TYPE_VALIDATOR",
-            "ADDRESS_TYPE_BLS_ACCOUNT",
-            "ADDRESS_TYPE_ED25519_ACCOUNT",
-            "ADDRESS_TYPE_SECP_ACCOUNT",
+            "ADDRESS_TYPE_BLS",
+            "ADDRESS_TYPE_ED25519",
+            "ADDRESS_TYPE_SECP256K1",
         ];
 
         struct GeneratedVisitor;
@@ -439,9 +439,9 @@ impl<'de> serde::Deserialize<'de> for AddressType {
                 match value {
                     "ADDRESS_TYPE_TREASURY" => Ok(AddressType::Treasury),
                     "ADDRESS_TYPE_VALIDATOR" => Ok(AddressType::Validator),
-                    "ADDRESS_TYPE_BLS_ACCOUNT" => Ok(AddressType::BlsAccount),
-                    "ADDRESS_TYPE_ED25519_ACCOUNT" => Ok(AddressType::Ed25519Account),
-                    "ADDRESS_TYPE_SECP_ACCOUNT" => Ok(AddressType::SecpAccount),
+                    "ADDRESS_TYPE_BLS" => Ok(AddressType::Bls),
+                    "ADDRESS_TYPE_ED25519" => Ok(AddressType::Ed25519),
+                    "ADDRESS_TYPE_SECP256K1" => Ok(AddressType::Secp256k1),
                     _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),
                 }
             }

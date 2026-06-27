@@ -1749,12 +1749,12 @@ pub enum AddressType {
     Treasury = 0,
     /// Validator address type used for validator nodes.
     Validator = 1,
-    /// Account address type with BLS signature scheme.
-    BlsAccount = 2,
-    /// Account address type with Ed25519 signature scheme.
-    Ed25519Account = 3,
-    /// Account address type with SECP256K1 signature scheme.
-    SecpAccount = 4,
+    /// Address type with BLS signature scheme.
+    Bls = 2,
+    /// Address type with Ed25519 signature scheme.
+    Ed25519 = 3,
+    /// Address type with SECP256K1 signature scheme.
+    Secp256k1 = 4,
 }
 impl AddressType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -1765,9 +1765,9 @@ impl AddressType {
         match self {
             Self::Treasury => "ADDRESS_TYPE_TREASURY",
             Self::Validator => "ADDRESS_TYPE_VALIDATOR",
-            Self::BlsAccount => "ADDRESS_TYPE_BLS_ACCOUNT",
-            Self::Ed25519Account => "ADDRESS_TYPE_ED25519_ACCOUNT",
-            Self::SecpAccount => "ADDRESS_TYPE_SECP_ACCOUNT",
+            Self::Bls => "ADDRESS_TYPE_BLS",
+            Self::Ed25519 => "ADDRESS_TYPE_ED25519",
+            Self::Secp256k1 => "ADDRESS_TYPE_SECP256K1",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -1775,9 +1775,9 @@ impl AddressType {
         match value {
             "ADDRESS_TYPE_TREASURY" => Some(Self::Treasury),
             "ADDRESS_TYPE_VALIDATOR" => Some(Self::Validator),
-            "ADDRESS_TYPE_BLS_ACCOUNT" => Some(Self::BlsAccount),
-            "ADDRESS_TYPE_ED25519_ACCOUNT" => Some(Self::Ed25519Account),
-            "ADDRESS_TYPE_SECP_ACCOUNT" => Some(Self::SecpAccount),
+            "ADDRESS_TYPE_BLS" => Some(Self::Bls),
+            "ADDRESS_TYPE_ED25519" => Some(Self::Ed25519),
+            "ADDRESS_TYPE_SECP256K1" => Some(Self::Secp256k1),
             _ => None,
         }
     }

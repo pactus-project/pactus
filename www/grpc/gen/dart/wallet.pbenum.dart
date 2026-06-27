@@ -25,24 +25,24 @@ class AddressType extends $pb.ProtobufEnum {
   static const AddressType ADDRESS_TYPE_VALIDATOR =
       AddressType._(1, _omitEnumNames ? '' : 'ADDRESS_TYPE_VALIDATOR');
 
-  /// Account address type with BLS signature scheme.
-  static const AddressType ADDRESS_TYPE_BLS_ACCOUNT =
-      AddressType._(2, _omitEnumNames ? '' : 'ADDRESS_TYPE_BLS_ACCOUNT');
+  /// Address type with BLS signature scheme.
+  static const AddressType ADDRESS_TYPE_BLS =
+      AddressType._(2, _omitEnumNames ? '' : 'ADDRESS_TYPE_BLS');
 
-  /// Account address type with Ed25519 signature scheme.
-  static const AddressType ADDRESS_TYPE_ED25519_ACCOUNT =
-      AddressType._(3, _omitEnumNames ? '' : 'ADDRESS_TYPE_ED25519_ACCOUNT');
+  /// Address type with Ed25519 signature scheme.
+  static const AddressType ADDRESS_TYPE_ED25519 =
+      AddressType._(3, _omitEnumNames ? '' : 'ADDRESS_TYPE_ED25519');
 
-  /// Account address type with SECP256K1 signature scheme.
-  static const AddressType ADDRESS_TYPE_SECP_ACCOUNT =
-      AddressType._(4, _omitEnumNames ? '' : 'ADDRESS_TYPE_SECP_ACCOUNT');
+  /// Address type with SECP256K1 signature scheme.
+  static const AddressType ADDRESS_TYPE_SECP256K1 =
+      AddressType._(4, _omitEnumNames ? '' : 'ADDRESS_TYPE_SECP256K1');
 
   static const $core.List<AddressType> values = <AddressType>[
     ADDRESS_TYPE_TREASURY,
     ADDRESS_TYPE_VALIDATOR,
-    ADDRESS_TYPE_BLS_ACCOUNT,
-    ADDRESS_TYPE_ED25519_ACCOUNT,
-    ADDRESS_TYPE_SECP_ACCOUNT,
+    ADDRESS_TYPE_BLS,
+    ADDRESS_TYPE_ED25519,
+    ADDRESS_TYPE_SECP256K1,
   ];
 
   static final $core.List<AddressType?> _byValue =
