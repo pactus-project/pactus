@@ -126,5 +126,5 @@ const (
 		no, tx_id, sender, receiver, direction, amount, fee, memo, status, block_height, payload_type,
 		data, comment, created_at, updated_at
 		FROM transactions WHERE status = ?
-		ORDER BY created_at DESC`
+		ORDER BY no DESC`
 )
