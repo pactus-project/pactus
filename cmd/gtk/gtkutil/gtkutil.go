@@ -373,6 +373,29 @@ func ClearListModel[T any](listModel *gioutil.ListModel[T]) {
 	}
 }
 
+// SyncListModel updates a gioutil ListModel with new data, reusing existing
+// items to avoid GObject allocation churn. Items are updated in-place where
+// possible; excess items are removed and new items are appended.
+func SyncListModel[T any](listModel *gioutil.ListModel[T], data []T) {
+	oldLen := int(listModel.NItems())
+	newLen := len(data)
+
+	// Update existing items in-place.
+	for i := 0; i < min(oldLen, newLen); i++ {
+		listModel.Update(i, data[i])
+	}
+
+	// Remove excess items.
+	for i := oldLen - 1; i >= newLen; i-- {
+		listModel.Remove(i)
+	}
+
+	// Append new items.
+	for i := oldLen; i < newLen; i++ {
+		listModel.Append(data[i])
+	}
+}
+
 func IsWidgetShowing(widget *gtk.Widget) bool {
 	return widget.Mapped()
 }

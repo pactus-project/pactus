@@ -83,18 +83,12 @@ func (c *ValidatorWidgetController) refresh(_ context.Context) {
 	if err != nil {
 		return
 	}
+	var rows []validatorRow
+	for no, val := range vals {
+		rows = append(rows, validatorRow{no: no + 1, val: val})
+	}
 
 	gtkutil.IdleAddAsync(func() {
-		gtkutil.ClearListModel(c.lsValidators)
-
-		// Add new validators to the list
-		for i, val := range vals {
-			row := validatorRow{
-				no:  i + 1,
-				val: val,
-			}
-
-			c.lsValidators.Append(row)
-		}
+		gtkutil.SyncListModel(c.lsValidators, rows)
 	})
 }

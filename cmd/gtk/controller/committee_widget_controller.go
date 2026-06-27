@@ -22,8 +22,8 @@ import (
 
 // committeeRow represents a validator in the committee list.
 type committeeRow struct {
-	no        int
-	validator *pactus.ValidatorInfo
+	no  int
+	val *pactus.ValidatorInfo
 }
 
 type CommitteeWidgetController struct {
@@ -52,22 +52,22 @@ func (c *CommitteeWidgetController) BuildView(ctx context.Context) error {
 			return strconv.Itoa(row.no)
 		})
 		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewMembers, "Address", func(row committeeRow) string {
-			return row.validator.GetAddress()
+			return row.val.GetAddress()
 		})
 		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewMembers, "Stake", func(row committeeRow) string {
-			return amount.Amount(row.validator.GetStake()).String()
+			return amount.Amount(row.val.GetStake()).String()
 		})
 		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewMembers, "Bonding Height", func(row committeeRow) string {
-			return strconv.Itoa(int(row.validator.GetLastBondingHeight()))
+			return strconv.Itoa(int(row.val.GetLastBondingHeight()))
 		})
 		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewMembers, "Sortition Height", func(row committeeRow) string {
-			return strconv.Itoa(int(row.validator.GetLastSortitionHeight()))
+			return strconv.Itoa(int(row.val.GetLastSortitionHeight()))
 		})
 		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewMembers, "Protocol Version", func(row committeeRow) string {
-			return strconv.Itoa(int(row.validator.GetProtocolVersion()))
+			return strconv.Itoa(int(row.val.GetProtocolVersion()))
 		})
 		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewMembers, "Availability Score", func(row committeeRow) string {
-			return gtkutil.AvailabilityScorePercent(row.validator.GetAvailabilityScore())
+			return gtkutil.AvailabilityScorePercent(row.val.GetAvailabilityScore())
 		})
 	})
 
@@ -109,21 +109,17 @@ func (c *CommitteeWidgetController) refresh(_ context.Context) {
 		protocolStr = "—"
 	}
 
+	var rows []committeeRow
+	for no, val := range res.Validators {
+		rows = append(rows, committeeRow{no: no + 1, val: val})
+	}
+
 	gtkutil.IdleAddAsync(func() {
 		c.view.LabelCommitteeSize.SetText(strconv.Itoa(int(res.CommitteeSize)))
 		c.view.LabelCommitteePower.SetText(committeePowerStr)
 		c.view.LabelTotalPower.SetText(totalPowerStr)
 		c.view.LabelProtocolVersions.SetText(protocolStr)
 
-		gtkutil.ClearListModel(c.lsMembers)
-
-		for i, val := range res.Validators {
-			row := committeeRow{
-				no:        i + 1,
-				validator: val,
-			}
-
-			c.lsMembers.Append(row)
-		}
+		gtkutil.SyncListModel(c.lsMembers, rows)
 	})
 }

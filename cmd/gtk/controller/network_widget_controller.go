@@ -114,18 +114,12 @@ func (c *NetworkWidgetController) refreshList(_ context.Context) {
 	if err != nil {
 		return
 	}
+	var rows []peerRow
+	for no, peer := range peersRes.GetPeers() {
+		rows = append(rows, peerRow{no: no + 1, peer: peer})
+	}
 
 	gtkutil.IdleAddAsync(func() {
-		gtkutil.ClearListModel(c.lsPeers)
-
-		// Add new peers to the list
-		for i, peer := range peersRes.GetPeers() {
-			row := peerRow{
-				no:   i + 1,
-				peer: peer,
-			}
-
-			c.lsPeers.Append(row)
-		}
+		gtkutil.SyncListModel(c.lsPeers, rows)
 	})
 }
