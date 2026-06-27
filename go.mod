@@ -192,6 +192,3 @@ require (
 	modernc.org/memory v1.11.0 // indirect
 	modernc.org/sqlite v1.52.0 // indirect
 )
-
-//nolint:gomoddirectives // acceptable for this version
-replace github.com/diamondburned/gotk4/pkg => github.com/pactus-project/gotk4/pkg v0.0.0-20260626172655-14e3591aac91
