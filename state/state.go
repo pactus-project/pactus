@@ -305,13 +305,14 @@ func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
 
 func (st *state) createSubsidyTx(valAddr, rewardAddr crypto.Address, accumulatedFee amount.Amount) *tx.Tx {
 	lockTime := st.lastInfo.BlockHeight() + 1
+	blockReward := st.params.BlockReward(lockTime)
+	foundationReward := st.params.FoundationReward(lockTime)
 
-	addressIndex := int(lockTime) % len(st.params.FoundationAddress)
-	foundationAddress := st.params.FoundationAddress[addressIndex]
+	foundationAddress := st.params.FoundationAddress(lockTime)
 	recipients := make([]payload.BatchRecipient, 0, 3)
 	recipients = append(recipients, payload.BatchRecipient{
 		To:     foundationAddress,
-		Amount: st.params.FoundationReward,
+		Amount: foundationReward,
 	})
 
 	val, _ := st.store.Validator(valAddr)
@@ -322,12 +323,14 @@ func (st *state) createSubsidyTx(valAddr, rewardAddr crypto.Address, accumulated
 		// If the delegate share is equal to 0.7 PAC, the delegate owner receives
 		// all the remaining reward, and transaction fee.
 
+		rewardCoeff := st.params.RewardCoefficient(lockTime)
 		dlgOwnerAddr := val.DelegateOwner()
-		dlgOwnerShare := val.DelegateShare()
+		dlgOwnerShare := val.DelegateShare().MulF64(rewardCoeff)
+		maxOwnerShare := param.MaxDelegateOwnerRewardShare.MulF64(rewardCoeff)
 
 		if dlgOwnerShare > 0 {
 			amount := dlgOwnerShare
-			if dlgOwnerShare == param.MaxDelegateOwnerRewardShare {
+			if dlgOwnerShare == maxOwnerShare {
 				amount += accumulatedFee
 			}
 			recipients = append(recipients,
@@ -337,18 +340,18 @@ func (st *state) createSubsidyTx(valAddr, rewardAddr crypto.Address, accumulated
 				})
 		}
 
-		if dlgOwnerShare < param.MaxDelegateOwnerRewardShare {
+		if dlgOwnerShare < maxOwnerShare {
 			recipients = append(recipients,
 				payload.BatchRecipient{
 					To:     rewardAddr,
-					Amount: st.params.BlockReward + accumulatedFee - st.params.FoundationReward - dlgOwnerShare,
+					Amount: blockReward + accumulatedFee - foundationReward - dlgOwnerShare,
 				})
 		}
 	} else {
 		recipients = append(recipients,
 			payload.BatchRecipient{
 				To:     rewardAddr,
-				Amount: st.params.BlockReward + accumulatedFee - st.params.FoundationReward,
+				Amount: blockReward + accumulatedFee - foundationReward,
 			})
 	}
 
@@ -382,13 +385,15 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 		}
 	}
 
+	blockVersion := st.proposeBlockVersion()
+
 	valAddr := valKey.Address()
 	subsidyTx := st.createSubsidyTx(valAddr, rewardAddr, sbx.AccumulatedFee())
 	txs.Prepend(subsidyTx)
 	prevSeed := st.lastInfo.SortitionSeed()
 
 	blk := block.MakeBlock(
-		st.params.BlockVersion,
+		blockVersion,
 		st.proposeNextBlockTime(),
 		txs,
 		st.lastInfo.BlockHash(),
@@ -399,6 +404,18 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 	)
 
 	return blk, nil
+}
+
+// proposeBlockVersion determines the protocol version to use for the next block.
+// Based on PIP-51, if more than 75% of the committee's power supports a higher
+// version, the proposer increases the block version.
+func (st *state) proposeBlockVersion() protocol.Version {
+	if st.params.BlockVersion < protocol.ProtocolVersion4 &&
+		st.committee.SupportProtocolVersion(protocol.ProtocolVersion4) {
+		return protocol.ProtocolVersion4
+	}
+
+	return st.params.BlockVersion
 }
 
 func (st *state) ValidateBlock(blk *block.Block, round types.Round) error {

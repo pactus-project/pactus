@@ -30,7 +30,7 @@ type FakeSandbox struct {
 func NewFakeSandbox(ts *testsuite.TestSuite) *FakeSandbox {
 	mock := NewMockSandbox(ts.MockController())
 	params := param.FromGenesis(genesis.MainnetGenesis())
-	params.BlockVersion = protocol.ProtocolVersion3
+	params.BlockVersion = protocol.ProtocolVersionLatest
 
 	committee := committee.NewMockCommittee(ts.MockController())
 

@@ -12,8 +12,9 @@ const (
 	ProtocolVersion1       Version = 1 // Initial version
 	ProtocolVersion2       Version = 2 // Split Reward Fork (PIP-43)
 	ProtocolVersion3       Version = 3 // Validator Delegation (PIP-49)
+	ProtocolVersion4       Version = 4 // Block Reward Halving (PIP-55)
 
-	ProtocolVersionLatest = ProtocolVersion3
+	ProtocolVersionLatest = ProtocolVersion4
 )
 
 func ParseVersion(s string) (Version, error) {

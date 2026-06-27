@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/protocol"
 )
@@ -31,15 +32,16 @@ type Params struct {
 	BlockIntervalInSecond     int
 	MaxTransactionsPerBlock   int
 	CommitteeSize             int
-	BlockReward               amount.Amount
 	TransactionToLiveInterval uint32
 	BondInterval              uint32
 	UnbondInterval            uint32
 	SortitionInterval         uint32
 	MinimumStake              amount.Amount
 	MaximumStake              amount.Amount
-	FoundationReward          amount.Amount
-	FoundationAddress         []crypto.Address
+	FoundationAddresses       []crypto.Address
+
+	baseBlockReward      amount.Amount
+	baseFoundationReward amount.Amount
 }
 
 func FromGenesis(genDoc *genesis.Genesis) *Params {
@@ -48,7 +50,6 @@ func FromGenesis(genDoc *genesis.Genesis) *Params {
 		BlockVersion:              genDoc.Params().BlockVersion,
 		BlockIntervalInSecond:     genDoc.Params().BlockIntervalInSecond,
 		CommitteeSize:             genDoc.Params().CommitteeSize,
-		BlockReward:               genDoc.Params().BlockReward,
 		TransactionToLiveInterval: genDoc.Params().TransactionToLiveInterval,
 		BondInterval:              genDoc.Params().BondInterval,
 		UnbondInterval:            genDoc.Params().UnbondInterval,
@@ -58,8 +59,10 @@ func FromGenesis(genDoc *genesis.Genesis) *Params {
 
 		// chain parameters
 		MaxTransactionsPerBlock: 1000,
-		FoundationAddress:       make([]crypto.Address, 0, 100),
-		FoundationReward:        amount.Amount(300_000_000),
+		FoundationAddresses:     make([]crypto.Address, 0, 100),
+
+		baseBlockReward:      genDoc.Params().BlockReward,
+		baseFoundationReward: amount.Amount(300_000_000),
 	}
 
 	foundationAddressList := make([]string, 0)
@@ -88,7 +91,7 @@ func FromGenesis(genDoc *genesis.Genesis) *Params {
 		if err != nil {
 			panic(err)
 		}
-		params.FoundationAddress = append(params.FoundationAddress, addr)
+		params.FoundationAddresses = append(params.FoundationAddresses, addr)
 	}
 
 	return params
@@ -96,4 +99,38 @@ func FromGenesis(genDoc *genesis.Genesis) *Params {
 
 func (p *Params) BlockInterval() time.Duration {
 	return time.Duration(p.BlockIntervalInSecond) * time.Second
+}
+
+// RewardCoefficient returns the block reward multiplier based on block height.
+// This implements the halving schedule defined in PIP-55:
+//
+//	Blocks 1 – 8,000,000:    1.000
+//	Blocks 8,000,001 – 24M:  0.500
+//	Blocks 24,000,001 – 56M: 0.250
+//	Blocks 56,000,001+:      0.125
+func (*Params) RewardCoefficient(height types.Height) float64 {
+	switch {
+	case height <= 8_000_000:
+		return 1.0
+	case height <= 24_000_000:
+		return 0.5
+	case height <= 56_000_000:
+		return 0.25
+	default:
+		return 0.125
+	}
+}
+
+func (p *Params) FoundationAddress(height types.Height) crypto.Address {
+	addressIndex := int(height) % len(p.FoundationAddresses)
+
+	return p.FoundationAddresses[addressIndex]
+}
+
+func (p *Params) BlockReward(height types.Height) amount.Amount {
+	return p.baseBlockReward.MulF64(p.RewardCoefficient(height))
+}
+
+func (p *Params) FoundationReward(height types.Height) amount.Amount {
+	return p.baseFoundationReward.MulF64(p.RewardCoefficient(height))
 }

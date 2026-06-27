@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
@@ -207,5 +208,44 @@ func TestBlockValidation(t *testing.T) {
 
 		require.NoError(t, td.state.ValidateBlock(blk, round))
 		require.NoError(t, td.state.CommitBlock(blk, cert))
+	})
+}
+
+func TestRejectV3BlockAfterHalving(t *testing.T) {
+	// Use V3 state so the baseline version check passes.
+	td := setupWithVersion(t, protocol.ProtocolVersion3)
+
+	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).AnyTimes()
+
+	// Propose a block (uses V3), then replace its prev certificate
+	// with one at height > 8M to simulate a block past the halving.
+	valKey := td.proposerKey(t, 0)
+	blk, _ := td.state.ProposeBlock(valKey, td.RandAccAddress())
+
+	highCert := certificate.NewCertificate(8_000_001, 0)
+	committers := []int32{0, 1, 2, 3}
+	absentees := []int32{3}
+	signBytes := highCert.SignBytesPrecommit(blk.Header().PrevBlockHash())
+	sigs := make([]*bls.Signature, 0, len(td.genValKeys))
+	for _, key := range td.genValKeys[:len(td.genValKeys)-1] {
+		sigs = append(sigs, key.Sign(signBytes))
+	}
+	aggSig, _ := bls.SignatureAggregate(sigs...)
+	highCert.SetSignature(committers, absentees, aggSig)
+
+	blk = block.MakeBlock(
+		protocol.ProtocolVersion3,
+		blk.Header().Time(),
+		blk.Transactions(),
+		blk.Header().PrevBlockHash(),
+		blk.Header().StateRoot(),
+		highCert,
+		blk.Header().SortitionSeed(),
+		blk.Header().ProposerAddress(),
+	)
+
+	err := td.state.validateBlock(blk, 0)
+	require.ErrorIs(t, err, InvalidBlockVersionError{
+		Version: protocol.ProtocolVersion3,
 	})
 }
