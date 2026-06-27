@@ -6,7 +6,9 @@ import (
 	"context"
 
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
+	"github.com/gogpu/systray"
 	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/cmd/gtk/assets"
 	"github.com/pactus-project/pactus/cmd/gtk/controller"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
@@ -22,6 +24,8 @@ type GUI struct {
 	ValidatorCtrl *controller.ValidatorWidgetController
 	CommitteeCtrl *controller.CommitteeWidgetController
 	NetworkCtrl   *controller.NetworkWidgetController
+
+	tray *systray.SystemTray
 }
 
 // Run builds and shows the main window, wiring views/controllers.
@@ -117,6 +121,9 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 		return mwView
 	})
 
+	// Create the system tray icon.
+	trayIcon := createTray(mwView, gtkApp)
+
 	return &GUI{
 		MainWindow:    mwView,
 		NodeCtrl:      nodeCtrl,
@@ -124,9 +131,55 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 		ValidatorCtrl: validatorCtrl,
 		CommitteeCtrl: committeeCtrl,
 		NetworkCtrl:   networkCtrl,
+		tray:          trayIcon,
 	}, nil
 }
 
 func (g *GUI) Cleanup() {
 	g.MainWindow.Cleanup()
+	if g.tray != nil {
+		g.tray.Remove()
+	}
+}
+
+// createTray creates a system tray icon with Show and Exit menu items.
+// The tray runs its event loop in a background goroutine.
+func createTray(mwView *view.MainWindowView, gtkApp *gtk.Application) *systray.SystemTray {
+	trayIcon := systray.New()
+
+	menu := systray.NewMenu()
+	menu.Add("Show", func() {
+		gtkutil.IdleAddSync(func() {
+			mwView.Window.Present()
+		})
+	})
+	menu.AddSeparator()
+	menu.Add("Exit", func() {
+		gtkutil.IdleAddSync(func() {
+			mwView.HideOnClose = false
+			gtkApp.Quit()
+		})
+	})
+
+	trayIcon.
+		SetIcon(assets.ImagePactusTrayLight32Data).
+		SetDarkModeIcon(assets.ImagePactusTrayDark32Data).
+		SetTooltip("Pactus GUI").
+		SetMenu(menu).
+		OnClick(func() {
+			gtkutil.IdleAddSync(func() {
+				mwView.Window.Present()
+			})
+		})
+
+	trayIcon.Show()
+
+	// Run the tray event loop in a background goroutine.
+	go func() {
+		if err := trayIcon.Run(); err != nil {
+			gtkutil.Logf("System tray error: %v", err)
+		}
+	}()
+
+	return trayIcon
 }

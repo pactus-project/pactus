@@ -18,6 +18,10 @@ type MainWindowView struct {
 	BoxValidators *gtk.Box
 	BoxCommittee  *gtk.Box
 	BoxNetwork    *gtk.Box
+
+	// HideOnClose controls the window close behavior.
+	// When true, the window is hidden instead of destroyed on close-request.
+	HideOnClose bool
 }
 
 func NewMainWindowView() *MainWindowView {
@@ -31,7 +35,19 @@ func NewMainWindowView() *MainWindowView {
 		BoxValidators: builder.GetBoxObj("id_box_validators"),
 		BoxCommittee:  builder.GetBoxObj("id_box_committee"),
 		BoxNetwork:    builder.GetBoxObj("id_box_network"),
+		HideOnClose:   true,
 	}
+
+	// Intercept the close-request signal to hide instead of destroy.
+	view.Window.ConnectCloseRequest(func() (ok bool) {
+		if view.HideOnClose {
+			view.Window.SetVisible(false)
+
+			return true // prevent default close/destroy
+		}
+
+		return false // allow close
+	})
 
 	return view
 }

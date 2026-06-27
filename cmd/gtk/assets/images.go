@@ -9,16 +9,34 @@ import (
 )
 
 var (
+	//go:embed images/pactus-tray-dark-16.png
+	ImagePactusTrayDark16Data []byte
+
+	//go:embed images/pactus-tray-light-16.png
+	ImagePactusTrayLight16Data []byte
+
+	//go:embed images/pactus-tray-dark-24.png
+	ImagePactusTrayDark24Data []byte
+
+	//go:embed images/pactus-tray-light-24.png
+	ImagePactusTrayLight24Data []byte
+
+	//go:embed images/pactus-tray-dark-32.png
+	ImagePactusTrayDark32Data []byte
+
+	//go:embed images/pactus-tray-light-32.png
+	ImagePactusTrayLight32Data []byte
+
 	//go:embed images/pactus.png
-	imagePactusLogoData    []byte
+	ImagePactusLogoData    []byte
 	ImagePactusLogoTexture *gdk.Texture
 
 	//go:embed images/gtk.png
-	imageGTKLogoData    []byte
+	ImageGTKLogoData    []byte
 	ImageGTKLogoTexture *gdk.Texture
 )
 
 func initImages() {
-	ImagePactusLogoTexture = TextureFromBytes(imagePactusLogoData)
-	ImageGTKLogoTexture = TextureFromBytes(imageGTKLogoData)
+	ImagePactusLogoTexture = TextureFromBytes(ImagePactusLogoData)
+	ImageGTKLogoTexture = TextureFromBytes(ImageGTKLogoData)
 }
