@@ -67,8 +67,7 @@ func (c *ValidatorWidgetController) BuildView(ctx context.Context) error {
 	})
 
 	scheduler.Every(refreshValidatorsInterval).Do(ctx, func(ctx context.Context) {
-		if gtkutil.IsWidgetShowing(&c.view.ColViewValidators.Widget) {
-			gtkutil.Logf("refreshing validators")
+		if gtkutil.IsWidgetShowing(&c.view.BoxValidators.Widget) {
 			c.refresh(ctx)
 		}
 	})
@@ -79,6 +78,8 @@ func (c *ValidatorWidgetController) BuildView(ctx context.Context) error {
 }
 
 func (c *ValidatorWidgetController) refresh(_ context.Context) {
+	gtkutil.Logf("refreshing validators")
+
 	vals, err := c.model.Validators()
 	if err != nil {
 		return

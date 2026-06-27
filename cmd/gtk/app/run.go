@@ -107,7 +107,7 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 
 		mwView.BoxNode.Append(nodeView.Box)
 		mwView.BoxWallet.Append(walletView.Box)
-		mwView.BoxValidators.Append(validatorView.Box)
+		mwView.BoxValidators.Append(validatorView.BoxValidators)
 		mwView.BoxCommittee.Append(committeeView.Box)
 		mwView.BoxNetwork.Append(networkView.Box)
 

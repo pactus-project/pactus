@@ -11,7 +11,7 @@ import (
 type ValidatorWidgetView struct {
 	ViewBuilder
 
-	Box *gtk.Box
+	BoxValidators *gtk.Box
 
 	ColViewValidators *gtk.ColumnView
 }
@@ -20,8 +20,9 @@ func NewValidatorWidgetView() *ValidatorWidgetView {
 	builder := NewViewBuilder(assets.ValidatorWidgetUI)
 
 	view := &ValidatorWidgetView{
-		ViewBuilder:       builder,
-		Box:               builder.GetBoxObj("id_box_validator"),
+		ViewBuilder:   builder,
+		BoxValidators: builder.GetBoxObj("id_box_validator"),
+
 		ColViewValidators: builder.GetColumnViewObj("id_columnview_validators"),
 	}
 

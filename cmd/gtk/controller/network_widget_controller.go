@@ -80,13 +80,11 @@ func (c *NetworkWidgetController) BuildView(ctx context.Context) error {
 	})
 
 	scheduler.Every(refreshNetworkInterval).Do(ctx, func(ctx context.Context) {
-		if gtkutil.IsWidgetShowing(&c.view.LabelConnectedPeers.Widget) {
-			gtkutil.Logf("refreshing network info")
+		if gtkutil.IsWidgetShowing(&c.view.BoxInfo.Widget) {
 			c.refreshInfo(ctx)
 		}
 
-		if gtkutil.IsWidgetShowing(&c.view.ColViewPeers.Widget) {
-			gtkutil.Logf("refreshing peer list")
+		if gtkutil.IsWidgetShowing(&c.view.BoxPeers.Widget) {
 			c.refreshList(ctx)
 		}
 	})
@@ -98,6 +96,8 @@ func (c *NetworkWidgetController) BuildView(ctx context.Context) error {
 }
 
 func (c *NetworkWidgetController) refreshInfo(_ context.Context) {
+	gtkutil.Logf("refreshing network info")
+
 	netInfo, err := c.model.GetNetworkInfo()
 	if err != nil {
 		return
@@ -110,6 +110,8 @@ func (c *NetworkWidgetController) refreshInfo(_ context.Context) {
 }
 
 func (c *NetworkWidgetController) refreshList(_ context.Context) {
+	gtkutil.Logf("refreshing network peer list")
+
 	peersRes, err := c.model.ListPeers(false) // active peers only
 	if err != nil {
 		return

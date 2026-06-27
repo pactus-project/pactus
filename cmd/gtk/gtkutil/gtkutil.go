@@ -366,34 +366,8 @@ func CaptureDoubleClick(widget *gtk.Widget, action func()) {
 	widget.AddController(gesture)
 }
 
-// ClearListModel removes all items from a gioutil ListModel.
-func ClearListModel[T any](listModel *gioutil.ListModel[T]) {
-	for i := int(listModel.NItems()); i > 0; i-- {
-		listModel.Remove(i - 1)
-	}
-}
-
-// SyncListModel updates a gioutil ListModel with new data, reusing existing
-// items to avoid GObject allocation churn. Items are updated in-place where
-// possible; excess items are removed and new items are appended.
 func SyncListModel[T any](listModel *gioutil.ListModel[T], data []T) {
-	oldLen := int(listModel.NItems())
-	newLen := len(data)
-
-	// Update existing items in-place.
-	for i := 0; i < min(oldLen, newLen); i++ {
-		listModel.Update(i, data[i])
-	}
-
-	// Remove excess items.
-	for i := oldLen - 1; i >= newLen; i-- {
-		listModel.Remove(i)
-	}
-
-	// Append new items.
-	for i := oldLen; i < newLen; i++ {
-		listModel.Append(data[i])
-	}
+	listModel.Splice(0, int(listModel.NItems()), data...)
 }
 
 func IsWidgetShowing(widget *gtk.Widget) bool {

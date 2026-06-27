@@ -11,7 +11,9 @@ import (
 type NetworkWidgetView struct {
 	ViewBuilder
 
-	Box *gtk.Box
+	Box      *gtk.Box
+	BoxInfo  *gtk.Box
+	BoxPeers *gtk.Box
 
 	LabelNetworkName    *gtk.Label
 	LabelConnectedPeers *gtk.Label
@@ -23,8 +25,11 @@ func NewNetworkWidgetView() *NetworkWidgetView {
 	builder := NewViewBuilder(assets.NetworkWidgetUI)
 
 	view := &NetworkWidgetView{
-		ViewBuilder:         builder,
-		Box:                 builder.GetBoxObj("id_box_network"),
+		ViewBuilder: builder,
+		Box:         builder.GetBoxObj("id_box_network"),
+		BoxInfo:     builder.GetBoxObj("id_box_network_info"),
+		BoxPeers:    builder.GetBoxObj("id_box_network_peers"),
+
 		LabelNetworkName:    builder.GetLabelObj("id_label_network_name"),
 		LabelConnectedPeers: builder.GetLabelObj("id_label_connected_peers"),
 		ColViewPeers:        builder.GetColumnViewObj("id_columnview_peers"),
