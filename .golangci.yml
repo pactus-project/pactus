@@ -197,10 +197,6 @@ linters:
         - td *testData
         - ma multiaddr.Multiaddr
         - db *leveldb.DB
-    gomoddirectives:
-      # List of allowed `replace` directives.
-      replace-allow-list:
-        - github.com/diamondburned/gotk4/pkg
   exclusions:
     generated: lax
     rules:

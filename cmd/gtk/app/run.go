@@ -162,8 +162,7 @@ func createTray(mwView *view.MainWindowView, gtkApp *gtk.Application) *systray.S
 	})
 
 	trayIcon.
-		SetIcon(assets.ImagePactusTrayLight32Data).
-		SetDarkModeIcon(assets.ImagePactusTrayDark32Data).
+		SetIcon(assets.ImagePactusTrayDark32Data).
 		SetTooltip("Pactus GUI").
 		SetMenu(menu).
 		OnClick(func() {
