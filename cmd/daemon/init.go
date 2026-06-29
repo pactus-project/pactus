@@ -64,6 +64,8 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			terminal.PrintLine()
 			confirmed := prompt.PromptConfirm("Have you written down the seed phrase? Continue with initialization")
 			if !confirmed {
+				terminal.PrintWarnMsgf("Operation canceled")
+
 				return
 			}
 		} else {
@@ -90,7 +92,7 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			terminal.PrintInfoMsgf("   • Each validator can stake up to 1,000 coins")
 			terminal.PrintInfoMsgf("   • Choose based on your total stake amount")
 			terminal.PrintLine()
-			valNum = prompt.PromptInputWithRange("Number of Validators", 7, 1, 32)
+			valNum = prompt.PromptInputWithRange("Number of Validators", 32, 1, 32)
 		} else {
 			if *valNumOpt < 1 || *valNumOpt > 32 {
 				terminal.PrintErrorMsgf("%v is not in valid range of validator number, it should be between 1 and 32", *valNumOpt)

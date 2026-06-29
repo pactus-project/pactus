@@ -245,6 +245,8 @@ func signAndPublishTx(wlt *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass strin
 			terminal.PrintLine()
 			confirmed := prompt.PromptConfirm("Do you want to continue")
 			if !confirmed {
+				terminal.PrintWarnMsgf("Operation canceled")
+
 				return
 			}
 		}
