@@ -3,6 +3,7 @@ package executor
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/stretchr/testify/assert"
 )
@@ -76,6 +77,12 @@ func TestTransferSecp256k1(t *testing.T) {
 	lockTime := td.sbx.CurrentHeight()
 
 	trx := tx.NewTransferTx(lockTime, senderAddr, td.RandAccAddressSecp256k1(), amt, fee)
+
+	td.sbx.SbxParams.BlockVersion = protocol.ProtocolVersion3
 	td.check(t, trx, true, ErrSecp256k1AccountNotSupported)
 	td.check(t, trx, false, ErrSecp256k1AccountNotSupported)
+
+	td.sbx.SbxParams.BlockVersion = protocol.ProtocolVersion4
+	td.check(t, trx, true, nil)
+	td.check(t, trx, false, nil)
 }

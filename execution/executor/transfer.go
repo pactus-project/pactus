@@ -5,6 +5,7 @@ import (
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 )
@@ -19,7 +20,8 @@ type TransferExecutor struct {
 func newTransferExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*TransferExecutor, error) {
 	pld := trx.Payload().(*payload.TransferPayload)
 
-	if pld.To.Type() == crypto.AddressTypeSecp256k1Account {
+	if pld.To.Type() == crypto.AddressTypeSecp256k1Account &&
+		sbx.Params().BlockVersion <= protocol.ProtocolVersion3 {
 		return nil, ErrSecp256k1AccountNotSupported
 	}
 
