@@ -227,9 +227,10 @@ func defaultConfigLocalnet() *Config {
 	conf.Network.MaxConns = 16
 	conf.Network.NetworkName = "pactus-localnet"
 	conf.Network.DefaultPort = 0
+	conf.Network.EnableUDP = true
 	conf.Network.ForcePrivateNetwork = true
 	conf.Network.EnableMdns = true
-	conf.Sync.Moniker = "localnet-1"
+	conf.Sync.Moniker = "localnet"
 	conf.GRPC.Enable = true
 	conf.GRPC.EnableWallet = true
 	conf.GRPC.Listen = "[::]:50052"

@@ -63,6 +63,8 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 		terminal.PrintLine()
 		confirmed := prompt.PromptConfirm("Are you sure you want to continue")
 		if !confirmed {
+			terminal.PrintWarnMsgf("Operation canceled")
+
 			return
 		}
 		terminal.PrintLine()

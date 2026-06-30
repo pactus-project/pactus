@@ -184,7 +184,7 @@ func StartNode(ctx context.Context, workingDir string, passwordFetcher func() (s
 func makeLocalGenesis(wlt *wallet.Wallet) *genesis.Genesis {
 	// Treasury account
 	acc := account.NewAccount(0)
-	acc.AddToBalance(21 * 1e14)
+	acc.AddToBalance(21e15)
 	accs := map[crypto.Address]*account.Account{
 		crypto.TreasuryAddress: acc,
 	}
