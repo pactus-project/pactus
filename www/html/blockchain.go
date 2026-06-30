@@ -126,7 +126,6 @@ func (s *Server) blockByHeight(ctx context.Context, w http.ResponseWriter, block
 	tmk.addRowString("Time", time.Unix(int64(res.BlockTime), 0).String())
 	tmk.addRowInt("Height", int(res.Height))
 	tmk.addRowString("Hash", res.Hash)
-	tmk.addRowString("Data", res.Data)
 	if res.Header != nil {
 		tmk.addRowString("--- Header", "---")
 		tmk.addRowInt("Version", int(res.Header.Version))
