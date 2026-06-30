@@ -75,11 +75,11 @@ func (td *testData) checkTotalCoin(t *testing.T, fee amount.Amount) {
 	t.Helper()
 
 	total := amount.Amount(0)
-	for _, acc := range td.sbx.Accounts {
+	for _, acc := range td.sbx.FakeAccounts {
 		total += acc.Balance()
 	}
 
-	for _, val := range td.sbx.Validators {
+	for _, val := range td.sbx.FakeValidators {
 		total += val.Stake()
 	}
 	assert.Equal(t, total+fee, td.totalCoin)
@@ -124,7 +124,7 @@ func TestBondAndUnbond(t *testing.T) {
 	t.Run("First bond", func(t *testing.T) {
 		trxBond := tx.NewBondTx(lockTime, senderAddr, valAddr, valPub, stake, fee)
 
-		td.sbx.SbxCommittee.EXPECT().Contains(valAddr).Return(false).Times(1)
+		td.sbx.FakeCommittee.EXPECT().Contains(valAddr).Return(false).Times(1)
 		td.sbx.EXPECT().IsJoinedCommittee(valAddr).Return(false).Times(1)
 		td.sbx.EXPECT().UpdatePowerDelta(stake.ToNanoPAC()).Times(1)
 
@@ -144,7 +144,7 @@ func TestBondAndUnbond(t *testing.T) {
 	t.Run("First bond in same block", func(t *testing.T) {
 		trxUnbond := tx.NewUnbondTx(lockTime, valAddr)
 
-		td.sbx.SbxCommittee.EXPECT().Contains(valAddr).Return(false).Times(1)
+		td.sbx.FakeCommittee.EXPECT().Contains(valAddr).Return(false).Times(1)
 		td.sbx.EXPECT().IsJoinedCommittee(valAddr).Return(false).Times(1)
 		td.sbx.EXPECT().UpdatePowerDelta(-1 * stake.ToNanoPAC()).Return().Times(1)
 

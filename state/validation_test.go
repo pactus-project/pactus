@@ -18,7 +18,7 @@ func TestBlockValidation(t *testing.T) {
 	td := setup(t)
 
 	round := td.RandRound()
-	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).AnyTimes()
+	td.fakeTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).AnyTimes()
 
 	t.Run("Invalid version, greater than latest", func(t *testing.T) {
 		blk0, _ := td.makeBlockAndCertificate(t, round)
@@ -215,7 +215,7 @@ func TestRejectV3BlockAfterHalving(t *testing.T) {
 	// Use V3 state so the baseline version check passes.
 	td := setupWithVersion(t, protocol.ProtocolVersion3)
 
-	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).AnyTimes()
+	td.fakeTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).AnyTimes()
 
 	// Propose a block (uses V3), then replace its prev certificate
 	// with one at height > 8M to simulate a block past the halving.

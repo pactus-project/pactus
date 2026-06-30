@@ -19,9 +19,14 @@ type Server struct {
 	ctx      context.Context
 	config   *Config
 	listener net.Listener
+	address  string
 	server   *jrpc.Server
 	grpcConn *grpc.ClientConn
 	logger   *logger.SubLogger
+}
+
+func (s *Server) Address() string {
+	return s.address
 }
 
 func NewServer(ctx context.Context, conf *Config) *Server {
@@ -79,6 +84,7 @@ func (s *Server) StartServer(grpcServer string) error {
 
 	s.server = server
 	s.listener = listener
+	s.address = listener.Addr().String()
 
 	go func() {
 		s.logger.Info("JSON-RPC server start listening", "address", listener.Addr())

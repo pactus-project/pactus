@@ -10,7 +10,6 @@ import (
 
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/gopkg/testsuite"
-	"github.com/pactus-project/pactus/committee"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/ed25519"
@@ -874,30 +873,30 @@ func (ts *TestSuite) GenerateTestPrepareVote(height types.Height, round types.Ro
 	return vote, valKey
 }
 
-// GenerateTestCommittee generates a committee for testing purposes.
-// All committee members have the same power.
-func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []*bls.ValidatorKey) {
-	valKeys := make([]*bls.ValidatorKey, num)
-	vals := make([]*validator.Validator, num)
-	for index := int32(0); index < int32(num); index++ {
-		valKey := ts.RandValKey()
-		val := ts.GenerateTestValidator(
-			ValidatorWithNumber(index),
-			ValidatorWithPublicKey(valKey.PublicKey()),
-		)
-		valKeys[index] = valKey
-		vals[index] = val
+// // GenerateTestCommittee generates a committee for testing purposes.
+// // All committee members have the same power.
+// func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []*bls.ValidatorKey) {
+// 	valKeys := make([]*bls.ValidatorKey, num)
+// 	vals := make([]*validator.Validator, num)
+// 	for index := int32(0); index < int32(num); index++ {
+// 		valKey := ts.RandValKey()
+// 		val := ts.GenerateTestValidator(
+// 			ValidatorWithNumber(index),
+// 			ValidatorWithPublicKey(valKey.PublicKey()),
+// 		)
+// 		valKeys[index] = valKey
+// 		vals[index] = val
 
-		val.UpdateLastBondingHeight(types.Height(1 + index))
-		val.UpdateLastSortitionHeight(types.Height(1 + index))
-		val.SubtractFromStake(val.Stake())
-		val.AddToStake(10e9)
-	}
+// 		val.UpdateLastBondingHeight(types.Height(1 + index))
+// 		val.UpdateLastSortitionHeight(types.Height(1 + index))
+// 		val.SubtractFromStake(val.Stake())
+// 		val.AddToStake(10e9)
+// 	}
 
-	cmt, _ := committee.NewCommittee(vals, num, vals[0].Address())
+// 	cmt, _ := committee.NewCommittee(vals, num, vals[0].Address())
 
-	return cmt, valKeys
-}
+// 	return cmt, valKeys
+// }
 
 func (*TestSuite) HelperSignVote(valKey *bls.ValidatorKey, v *vote.Vote) {
 	sig := valKey.Sign(v.SignBytes())

@@ -12,20 +12,22 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestContains(t *testing.T) {
+func TestConstructValidProposer(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	cmt, valKeys := ts.GenerateTestCommittee(21)
-	nonExist := ts.RandAccAddress()
+	val1 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(0))
+	val2 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(1))
+	val3 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(2))
+	val4 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(3))
 
-	assert.True(t, cmt.Contains(valKeys[0].Address()))
-	assert.False(t, cmt.Contains(nonExist))
-}
+	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val1.Address())
+	require.NoError(t, err)
 
-func TestProposer(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	cmt, _ := ts.GenerateTestCommittee(4)
+	assert.False(t, cmt.Contains(ts.RandValAddress()))
+	assert.True(t, cmt.Contains(val1.Address()))
+	assert.True(t, cmt.Contains(val2.Address()))
+	assert.True(t, cmt.Contains(val3.Address()))
+	assert.True(t, cmt.Contains(val4.Address()))
 
 	assert.Equal(t, int32(0), cmt.Proposer(0).Number())
 	assert.Equal(t, int32(3), cmt.Proposer(3).Number())
@@ -35,7 +37,7 @@ func TestProposer(t *testing.T) {
 	assert.Equal(t, int32(1), cmt.Proposer(0).Number())
 }
 
-func TestInvalidProposerJoinAndLeave(t *testing.T) {
+func TestConstructInvalidProposer(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	val1 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(0))
@@ -180,31 +182,18 @@ func TestProposerJoin(t *testing.T) {
 func TestProposerJoinAndLeave(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pub1, _ := ts.RandBLSKeyPair()
-	pub2, _ := ts.RandBLSKeyPair()
-	pub3, _ := ts.RandBLSKeyPair()
-	pub4, _ := ts.RandBLSKeyPair()
-	pub5, _ := ts.RandBLSKeyPair()
-	pub6, _ := ts.RandBLSKeyPair()
-	pub7, _ := ts.RandBLSKeyPair()
-	pub8, _ := ts.RandBLSKeyPair()
-	pub9, _ := ts.RandBLSKeyPair()
-	pubA, _ := ts.RandBLSKeyPair()
-	pubB, _ := ts.RandBLSKeyPair()
-	pubC, _ := ts.RandBLSKeyPair()
-
-	val1 := validator.NewValidator(pub1, 1)
-	val2 := validator.NewValidator(pub2, 2)
-	val3 := validator.NewValidator(pub3, 3)
-	val4 := validator.NewValidator(pub4, 4)
-	val5 := validator.NewValidator(pub5, 5)
-	val6 := validator.NewValidator(pub6, 6)
-	val7 := validator.NewValidator(pub7, 7)
-	val8 := validator.NewValidator(pub8, 8)
-	val9 := validator.NewValidator(pub9, 9)
-	valA := validator.NewValidator(pubA, 10)
-	valB := validator.NewValidator(pubB, 11)
-	valC := validator.NewValidator(pubC, 12)
+	val1 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(1))
+	val2 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(2))
+	val3 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(3))
+	val4 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(4))
+	val5 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(5))
+	val6 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(6))
+	val7 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(7))
+	val8 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(8))
+	val9 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(9))
+	valA := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(10))
+	valB := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(11))
+	valC := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(12))
 
 	cmt, err := committee.NewCommittee(
 		[]*validator.Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address(),

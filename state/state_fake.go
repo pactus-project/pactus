@@ -32,61 +32,64 @@ type FakeState struct {
 	*MockState
 	*testsuite.TestSuite
 
-	lk             sync.RWMutex
-	Committee      committee.Committee
-	LastHeight     types.Height
-	LastTime       time.Time
-	Score          float64
+	lk sync.RWMutex
+
+	FakeCommittee  *committee.FakeCommittee
+	FakeHeight     types.Height
+	FakeTime       time.Time
+	FakeScore      float64
 	StateParams    *param.Params
-	GenDoc         *genesis.Genesis
-	ErrCommit      error
-	ErrValidator   error
-	TestBlocks     map[types.Height]*block.Block
-	TestAccounts   map[crypto.Address]*account.Account
-	TestValidators map[crypto.Address]*validator.Validator
+	FakeBlocks     map[types.Height]*block.Block
+	FakeAccounts   map[crypto.Address]*account.Account
+	FakeValidators map[crypto.Address]*validator.Validator
+
+	GenDoc       *genesis.Genesis
+	ErrCommit    error
+	ErrValidator error
 }
 
-func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeState {
+func NewFakeState(ts *testsuite.TestSuite) *FakeState {
 	mock := NewMockState(ts.MockController())
 
 	genDoc := genesis.MainnetGenesis()
 	genTime := genDoc.GenesisTime()
 	stateParams := param.FromGenesis(genesis.MainnetGenesis())
 	stateParams.BlockVersion = protocol.ProtocolVersionLatest
-	testBlocks := make(map[types.Height]*block.Block)
-	testAccounts := make(map[crypto.Address]*account.Account)
-	testValidators := make(map[crypto.Address]*validator.Validator)
+	fakeBlocks := make(map[types.Height]*block.Block)
+	fakeAccounts := make(map[crypto.Address]*account.Account)
+	fakeValidators := make(map[crypto.Address]*validator.Validator)
+	fakeCommittee := committee.NewFakeCommittee(ts)
 
 	fake := &FakeState{
 		MockState:      mock,
 		TestSuite:      ts,
-		Committee:      committee,
-		LastHeight:     0,
-		Score:          0.987,
-		LastTime:       genTime,
+		FakeCommittee:  fakeCommittee,
+		FakeHeight:     0,
+		FakeScore:      0.987,
+		FakeTime:       genTime,
 		GenDoc:         genDoc,
 		StateParams:    stateParams,
-		TestBlocks:     testBlocks,
-		TestAccounts:   testAccounts,
-		TestValidators: testValidators,
+		FakeBlocks:     fakeBlocks,
+		FakeAccounts:   fakeAccounts,
+		FakeValidators: fakeValidators,
 	}
 
 	mock.EXPECT().LastBlockHeight().DoAndReturn(func() types.Height {
 		fake.lk.RLock()
 		defer fake.lk.RUnlock()
 
-		return fake.LastHeight
+		return fake.FakeHeight
 	}).AnyTimes()
 
 	mock.EXPECT().LastBlockHash().DoAndReturn(func() hash.Hash {
 		fake.lk.RLock()
 		defer fake.lk.RUnlock()
 
-		if fake.LastHeight == 0 {
+		if fake.FakeHeight == 0 {
 			return hash.UndefHash
 		}
 
-		return fake.TestBlocks[fake.LastHeight].Hash()
+		return fake.FakeBlocks[fake.FakeHeight].Hash()
 	}).AnyTimes()
 
 	mock.EXPECT().Genesis().DoAndReturn(func() *genesis.Genesis {
@@ -97,7 +100,7 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 		fake.lk.RLock()
 		defer fake.lk.RUnlock()
 
-		return fake.LastTime
+		return fake.FakeTime
 	}).AnyTimes()
 
 	mock.EXPECT().Params().DoAndReturn(func() *param.Params {
@@ -105,7 +108,7 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 	}).AnyTimes()
 
 	mock.EXPECT().LastCertificate().DoAndReturn(func() *certificate.Certificate {
-		return ts.GenerateTestCertificate(fake.LastHeight)
+		return ts.GenerateTestCertificate(fake.FakeHeight)
 	}).AnyTimes()
 
 	mock.EXPECT().IsProposer(gomock.Any(), gomock.Any()).DoAndReturn(
@@ -122,13 +125,13 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 
 	mock.EXPECT().AvailabilityScore(gomock.Any()).DoAndReturn(
 		func(int32) float64 {
-			return fake.Score
+			return fake.FakeScore
 		},
 	).AnyTimes()
 
 	mock.EXPECT().ProposeBlock(gomock.Any(), gomock.Any()).DoAndReturn(
 		func(valKey *bls.ValidatorKey, _ crypto.Address) (*block.Block, error) {
-			blk, _ := ts.GenerateTestBlock(fake.LastHeight+1,
+			blk, _ := ts.GenerateTestBlock(fake.FakeHeight+1,
 				testsuite.BlockWithProposer(valKey.Address()))
 
 			return blk, nil
@@ -140,10 +143,10 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 			fake.lk.Lock()
 			defer fake.lk.Unlock()
 
-			if cert.Height() == fake.LastHeight+1 {
-				fake.TestBlocks[blk.Height()] = blk
-				fake.LastHeight++
-				fake.LastTime = fake.LastTime.Add(fake.StateParams.BlockInterval())
+			if cert.Height() == fake.FakeHeight+1 {
+				fake.FakeBlocks[blk.Height()] = blk
+				fake.FakeHeight++
+				fake.FakeTime = fake.FakeTime.Add(fake.StateParams.BlockInterval())
 
 				return nil
 			}
@@ -154,7 +157,7 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 
 	mock.EXPECT().BlockHash(gomock.Any()).DoAndReturn(
 		func(height types.Height) hash.Hash {
-			blk, ok := fake.TestBlocks[height]
+			blk, ok := fake.FakeBlocks[height]
 			if ok {
 				return blk.Hash()
 			}
@@ -171,7 +174,7 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 
 	mock.EXPECT().CommittedBlock(gomock.Any()).DoAndReturn(
 		func(height types.Height) (*store.CommittedBlock, error) {
-			blk, ok := fake.TestBlocks[height]
+			blk, ok := fake.FakeBlocks[height]
 			if ok {
 				data, _ := blk.Bytes()
 
@@ -188,19 +191,19 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 
 	mock.EXPECT().CommitteeValidators().DoAndReturn(
 		func() []*validator.Validator {
-			return fake.Committee.Validators()
+			return fake.FakeCommittee.Validators()
 		},
 	).AnyTimes()
 
 	mock.EXPECT().IsInCommittee(gomock.Any()).DoAndReturn(
 		func(addr crypto.Address) bool {
-			return fake.Committee.Contains(addr)
+			return fake.FakeCommittee.Contains(addr)
 		},
 	).AnyTimes()
 
 	mock.EXPECT().BlockHeight(gomock.Any()).DoAndReturn(
 		func(h hash.Hash) types.Height {
-			for height, blk := range fake.TestBlocks {
+			for height, blk := range fake.FakeBlocks {
 				if blk.Hash() == h {
 					return height
 				}
@@ -212,7 +215,7 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 
 	mock.EXPECT().CommittedTx(gomock.Any()).DoAndReturn(
 		func(txID tx.ID) (*store.CommittedTx, error) {
-			for height, blk := range fake.TestBlocks {
+			for height, blk := range fake.FakeBlocks {
 				for _, trx := range blk.Transactions() {
 					if trx.ID() == txID {
 						data, _ := trx.Bytes()
@@ -233,7 +236,7 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 
 	mock.EXPECT().AccountByAddress(gomock.Any()).DoAndReturn(
 		func(addr crypto.Address) (*account.Account, error) {
-			acc, ok := fake.TestAccounts[addr]
+			acc, ok := fake.FakeAccounts[addr]
 			if ok {
 				return acc, nil
 			}
@@ -244,7 +247,7 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 
 	mock.EXPECT().ValidatorByAddress(gomock.Any()).DoAndReturn(
 		func(addr crypto.Address) (*validator.Validator, error) {
-			val, ok := fake.TestValidators[addr]
+			val, ok := fake.FakeValidators[addr]
 			if ok {
 				return val, nil
 			}
@@ -255,7 +258,7 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 
 	mock.EXPECT().ValidatorByNumber(gomock.Any()).DoAndReturn(
 		func(num int32) (*validator.Validator, error) {
-			for _, val := range fake.TestValidators {
+			for _, val := range fake.FakeValidators {
 				if val.Number() == num {
 					return val, nil
 				}
@@ -267,8 +270,8 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 
 	mock.EXPECT().ValidatorAddresses().DoAndReturn(
 		func() []crypto.Address {
-			addrs := make([]crypto.Address, 0, len(fake.TestValidators))
-			for _, val := range fake.TestValidators {
+			addrs := make([]crypto.Address, 0, len(fake.FakeValidators))
+			for _, val := range fake.FakeValidators {
 				addrs = append(addrs, val.Address())
 			}
 
@@ -279,10 +282,10 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 	mock.EXPECT().CommitteeInfo().DoAndReturn(
 		func() *CommitteeInfo {
 			return &CommitteeInfo{
-				Validators:       fake.Committee.Validators(),
-				ProtocolVersions: fake.Committee.ProtocolVersions(),
-				CommitteePower:   fake.Committee.Power(),
-				TotalPower:       fake.Committee.Power(),
+				Validators:       fake.FakeCommittee.Validators(),
+				ProtocolVersions: fake.FakeCommittee.ProtocolVersions(),
+				CommitteePower:   fake.FakeCommittee.Power(),
+				TotalPower:       fake.FakeCommittee.Power(),
 			}
 		},
 	).AnyTimes()
@@ -290,20 +293,20 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 	mock.EXPECT().ChainInfo().DoAndReturn(
 		func() *ChainInfo {
 			lastBlockHash := hash.UndefHash
-			if fake.LastHeight > 0 {
-				lastBlockHash = fake.TestBlocks[fake.LastHeight].Hash()
+			if fake.FakeHeight > 0 {
+				lastBlockHash = fake.FakeBlocks[fake.FakeHeight].Hash()
 			}
 
 			return &ChainInfo{
-				LastBlockHeight: fake.LastHeight,
+				LastBlockHeight: fake.FakeHeight,
 				LastBlockHash:   lastBlockHash,
-				LastBlockTime:   fake.LastTime,
-				TotalPower:      fake.Committee.Power(),
-				CommitteePower:  fake.Committee.Power(),
-				CommitteeSize:   fake.Committee.Size(),
-				TotalAccounts:   int32(len(fake.TestAccounts)),
-				TotalValidators: int32(len(fake.TestValidators)),
-				AverageScore:    fake.Score,
+				LastBlockTime:   fake.FakeTime,
+				TotalPower:      fake.FakeCommittee.Power(),
+				CommitteePower:  fake.FakeCommittee.Power(),
+				CommitteeSize:   fake.FakeCommittee.Size(),
+				TotalAccounts:   int32(len(fake.FakeAccounts)),
+				TotalValidators: int32(len(fake.FakeValidators)),
+				AverageScore:    fake.FakeScore,
 			}
 		},
 	).AnyTimes()
@@ -312,40 +315,40 @@ func NewFakeState(ts *testsuite.TestSuite, committee committee.Committee) *FakeS
 }
 
 func (f *FakeState) ProposerIndex(round types.Round) int {
-	len := f.Committee.Size()
-	i := int(f.LastHeight)%len + int(round)%len
+	len := f.FakeCommittee.Size()
+	i := int(f.FakeHeight)%len + int(round)%len
 
 	return i % len
 }
 
 func (f *FakeState) Proposer(round types.Round) *validator.Validator {
-	return f.Committee.Validators()[f.ProposerIndex(round)]
+	return f.FakeCommittee.Validators()[f.ProposerIndex(round)]
 }
 
 func (f *FakeState) CommitTestBlocks(count int) {
 	for i := 0; i < count; i++ {
-		blk, cert := f.GenerateTestBlock(f.LastHeight + 1)
+		blk, cert := f.GenerateTestBlock(f.FakeHeight + 1)
 		_ = f.CommitBlock(blk, cert)
 	}
 }
 
 func (f *FakeState) AddTestBlock(height types.Height, opts ...testsuite.BlockMakerOption) *block.Block {
 	blk, _ := f.GenerateTestBlock(height, opts...)
-	f.TestBlocks[height] = blk
+	f.FakeBlocks[height] = blk
 
 	return blk
 }
 
 func (f *FakeState) AddTestAccount(opts ...testsuite.AccountMakerOption) (crypto.Address, *account.Account) {
 	acc, addr := f.GenerateTestAccount(opts...)
-	f.TestAccounts[addr] = acc
+	f.FakeAccounts[addr] = acc
 
 	return addr, acc
 }
 
 func (f *FakeState) AddTestValidator(opts ...testsuite.ValidatorMakerOption) *validator.Validator {
 	val := f.GenerateTestValidator(opts...)
-	f.TestValidators[val.Address()] = val
+	f.FakeValidators[val.Address()] = val
 
 	return val
 }

@@ -27,7 +27,7 @@ func TestExecuteUnbondTx(t *testing.T) {
 	t.Run("Should fail, inside committee", func(t *testing.T) {
 		trx := tx.NewUnbondTx(lockTime, val.Address())
 
-		td.sbx.SbxCommittee.EXPECT().Contains(val.Address()).Return(true).Times(1)
+		td.sbx.FakeCommittee.EXPECT().Contains(val.Address()).Return(true).Times(1)
 
 		td.check(t, trx, true, ErrValidatorInCommittee)
 		td.check(t, trx, false, nil)
@@ -36,7 +36,7 @@ func TestExecuteUnbondTx(t *testing.T) {
 	t.Run("Should fail, joining committee", func(t *testing.T) {
 		trx := tx.NewUnbondTx(lockTime, val.Address())
 
-		td.sbx.SbxCommittee.EXPECT().Contains(val.Address()).Return(false).Times(1)
+		td.sbx.FakeCommittee.EXPECT().Contains(val.Address()).Return(false).Times(1)
 		td.sbx.EXPECT().IsJoinedCommittee(val.Address()).Return(true).Times(1)
 
 		td.check(t, trx, true, ErrValidatorInCommittee)
@@ -46,7 +46,7 @@ func TestExecuteUnbondTx(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
 		trx := tx.NewUnbondTx(lockTime, val.Address())
 
-		td.sbx.SbxCommittee.EXPECT().Contains(val.Address()).Return(false).Times(1)
+		td.sbx.FakeCommittee.EXPECT().Contains(val.Address()).Return(false).Times(1)
 		td.sbx.EXPECT().IsJoinedCommittee(val.Address()).Return(false).Times(1)
 		td.sbx.EXPECT().UpdatePowerDelta(-1 * val.Stake().ToNanoPAC()).Return().Times(1)
 
@@ -105,7 +105,7 @@ func TestExecuteDelegatedUnbondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, delegation is not expired", func(t *testing.T) {
-		td.sbx.SbxHeight = expiry - 1
+		td.sbx.FakeHeight = expiry - 1
 		trx := tx.NewUnbondTx(td.RandHeight(), val.Address())
 		pld := trx.Payload().(*payload.UnbondPayload)
 		pld.DelegateOwner = owner
@@ -115,12 +115,12 @@ func TestExecuteDelegatedUnbondTx(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		td.sbx.SbxHeight = expiry
+		td.sbx.FakeHeight = expiry
 		trx := tx.NewUnbondTx(td.RandHeight(), val.Address())
 		pld := trx.Payload().(*payload.UnbondPayload)
 		pld.DelegateOwner = owner
 
-		td.sbx.SbxCommittee.EXPECT().Contains(val.Address()).Return(false).Times(1)
+		td.sbx.FakeCommittee.EXPECT().Contains(val.Address()).Return(false).Times(1)
 		td.sbx.EXPECT().IsJoinedCommittee(val.Address()).Return(false).Times(1)
 		td.sbx.EXPECT().UpdatePowerDelta(-1 * val.Stake().ToNanoPAC()).Return().Times(1)
 

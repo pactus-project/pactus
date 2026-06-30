@@ -159,8 +159,8 @@ func TestGetBlockchainInfo(t *testing.T) {
 		&pactus.GetBlockchainInfoRequest{})
 
 	require.NoError(t, err)
-	assert.Equal(t, uint32(td.server.FakeState.LastHeight), res.LastBlockHeight)
-	assert.Equal(t, td.server.FakeState.LastTime.Unix(), res.LastBlockTime)
+	assert.Equal(t, uint32(td.server.FakeState.FakeHeight), res.LastBlockHeight)
+	assert.Equal(t, td.server.FakeState.FakeTime.Unix(), res.LastBlockTime)
 	assert.Equal(t, td.server.FakeState.LastBlockHash().String(), res.LastBlockHash)
 	assert.Zero(t, res.PruningHeight)
 	assert.False(t, res.IsPruned)

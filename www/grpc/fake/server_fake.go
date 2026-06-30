@@ -30,8 +30,7 @@ func NewFakeGRPCServer(t *testing.T, ts *testsuite.TestSuite, conf *grpc.Config)
 	// for saving test wallets in temp directory
 	t.Chdir(util.TempDirPath())
 
-	cmt, _ := ts.GenerateTestCommittee(51)
-	fakeState := state.NewFakeState(ts, cmt)
+	fakeState := state.NewFakeState(ts)
 	fakeNetwork := network.MockingNetwork(ts, ts.RandPeerID())
 	fakeSync := sync.NewFakeSync(ts)
 	fakeConsMgr := consmgr.NewFakeConsensusManager(ts)

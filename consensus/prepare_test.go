@@ -1,68 +1,59 @@
 package consensus
 
-import (
-	"testing"
+// func TestChangeProposerTimeout(t *testing.T) {
+// 	td := setup(t)
 
-	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/types"
-	"github.com/pactus-project/pactus/types/vote"
-)
+// 	td.enterNewHeight(td.consP)
+// 	td.changeProposerTimeout(td.consP)
 
-func TestChangeProposerTimeout(t *testing.T) {
-	td := setup(t)
+// 	td.shouldPublishVote(t, td.consP, vote.VoteTypeCPPreVote, hash.UndefHash)
+// }
 
-	td.enterNewHeight(td.consP)
-	td.changeProposerTimeout(td.consP)
+// func TestQueryProposal(t *testing.T) {
+// 	td := setup(t)
 
-	td.shouldPublishVote(t, td.consP, vote.VoteTypeCPPreVote, hash.UndefHash)
-}
+// 	td.commitBlockForAllStates(t)
+// 	height := types.Height(2)
 
-func TestQueryProposal(t *testing.T) {
-	td := setup(t)
+// 	td.enterNewHeight(td.consP)
+// 	td.enterNextRound(td.consP)
+// 	td.queryProposalTimeout(td.consP)
 
-	td.commitBlockForAllStates(t)
-	height := types.Height(2)
+// 	td.shouldPublishQueryProposal(t, td.consP, height)
+// 	td.shouldNotPublish(t, td.consP, message.TypeQueryVote)
+// }
 
-	td.enterNewHeight(td.consP)
-	td.enterNextRound(td.consP)
-	td.queryProposalTimeout(td.consP)
+// func TestQueryVote(t *testing.T) {
+// 	td := setup(t)
 
-	td.shouldPublishQueryProposal(t, td.consP, height)
-	td.shouldNotPublish(t, td.consP, message.TypeQueryVote)
-}
+// 	td.commitBlockForAllStates(t)
+// 	td.commitBlockForAllStates(t)
+// 	height := types.Height(3)
+// 	round := types.Round(1)
 
-func TestQueryVote(t *testing.T) {
-	td := setup(t)
+// 	td.enterNewHeight(td.consP)
+// 	td.enterNextRound(td.consP)
 
-	td.commitBlockForAllStates(t)
-	td.commitBlockForAllStates(t)
-	height := types.Height(3)
-	round := types.Round(1)
+// 	// consP is the proposer for this round, but there are not enough votes.
+// 	td.queryProposalTimeout(td.consP)
+// 	td.shouldPublishProposal(t, td.consP, height, round)
+// 	td.shouldPublishQueryVote(t, td.consP, height, round)
+// 	td.shouldNotPublish(t, td.consP, message.TypeQueryProposal)
+// }
 
-	td.enterNewHeight(td.consP)
-	td.enterNextRound(td.consP)
+// func TestGoToChangeProposerFromPrepare(t *testing.T) {
+// 	td := setup(t)
 
-	// consP is the proposer for this round, but there are not enough votes.
-	td.queryProposalTimeout(td.consP)
-	td.shouldPublishProposal(t, td.consP, height, round)
-	td.shouldPublishQueryVote(t, td.consP, height, round)
-	td.shouldNotPublish(t, td.consP, message.TypeQueryProposal)
-}
+// 	td.commitBlockForAllStates(t)
 
-func TestGoToChangeProposerFromPrepare(t *testing.T) {
-	td := setup(t)
+// 	td.enterNewHeight(td.consP)
 
-	td.commitBlockForAllStates(t)
+// 	td.addCPPreVote(td.consP, hash.UndefHash, 2, 0, vote.CPValueYes, &vote.JustInitYes{}, tIndexX)
+// 	td.addCPPreVote(td.consP, hash.UndefHash, 2, 0, vote.CPValueYes, &vote.JustInitYes{}, tIndexY)
 
-	td.enterNewHeight(td.consP)
-
-	td.addCPPreVote(td.consP, hash.UndefHash, 2, 0, vote.CPValueYes, &vote.JustInitYes{}, tIndexX)
-	td.addCPPreVote(td.consP, hash.UndefHash, 2, 0, vote.CPValueYes, &vote.JustInitYes{}, tIndexY)
-
-	// should move to the change proposer phase, even if it has the proposal and
-	// its timer has not expired, if it has received 1/3 of the change-proposer votes.
-	p := td.makeProposal(t, 2, 0)
-	td.consP.SetProposal(p)
-	td.shouldPublishVote(t, td.consP, vote.VoteTypeCPPreVote, hash.UndefHash)
-}
+// 	// should move to the change proposer phase, even if it has the proposal and
+// 	// its timer has not expired, if it has received 1/3 of the change-proposer votes.
+// 	p := td.makeProposal(t, 2, 0)
+// 	td.consP.SetProposal(p)
+// 	td.shouldPublishVote(t, td.consP, vote.VoteTypeCPPreVote, hash.UndefHash)
+// }

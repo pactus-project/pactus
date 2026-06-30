@@ -85,10 +85,10 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	// avoid double entries for new heights in some tests.
 	genTime := util.RoundNow(10).Add(time.Duration(10) * time.Second)
 
-	stateX.LastTime = genTime
-	stateY.LastTime = genTime
-	stateB.LastTime = genTime
-	stateP.LastTime = genTime
+	stateX.FakeTime = genTime
+	stateY.FakeTime = genTime
+	stateB.FakeTime = genTime
+	stateP.FakeTime = genTime
 
 	td := &testData{
 		TestSuite: ts,
@@ -353,7 +353,7 @@ func (*testData) commitBlock(t *testing.T, state *state.FakeState,
 func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certificate.Certificate) {
 	t.Helper()
 
-	blk, cert := td.GenerateTestBlock(td.stateX.LastHeight + 1)
+	blk, cert := td.GenerateTestBlock(td.stateX.FakeHeight + 1)
 
 	_ = td.stateX.CommitBlock(blk, cert)
 	_ = td.stateY.CommitBlock(blk, cert)
@@ -464,7 +464,7 @@ func TestScheduler(t *testing.T) {
 	td := setup(t)
 
 	blockInterval := td.stateB.Params().BlockInterval()
-	td.stateX.LastTime = time.Now().Add(-blockInterval)
+	td.stateX.FakeTime = time.Now().Add(-blockInterval)
 	td.consX.MoveToNewHeight()
 
 	assert.Eventually(t, func() bool {

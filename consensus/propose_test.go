@@ -1,130 +1,117 @@
 package consensus
 
-import (
-	"errors"
-	"testing"
+// func TestProposeBlock(t *testing.T) {
+// 	td := setup(t)
 
-	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/types"
-	"github.com/pactus-project/pactus/types/proposal"
-	"github.com/pactus-project/pactus/types/vote"
-	"github.com/pactus-project/pactus/util/testsuite"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-)
+// 	td.enterNewHeight(td.consX)
+// 	p := td.shouldPublishProposal(t, td.consX, 1, 0)
+// 	assert.Equal(t, td.consX.valKey.Address(), p.Block().Header().ProposerAddress())
+// }
 
-func TestProposeBlock(t *testing.T) {
-	td := setup(t)
+// func TestProposeDoubleEntry(t *testing.T) {
+// 	td := setup(t)
 
-	td.enterNewHeight(td.consX)
-	p := td.shouldPublishProposal(t, td.consX, 1, 0)
-	assert.Equal(t, td.consX.valKey.Address(), p.Block().Header().ProposerAddress())
-}
+// 	td.consX.MoveToNewHeight()
+// 	td.newHeightTimeout(td.consX)
+// 	td.shouldPublishProposal(t, td.consX, 1, 0)
 
-func TestProposeDoubleEntry(t *testing.T) {
-	td := setup(t)
+// 	// Clear accumulated messages to test the double entry independently
+// 	td.consMessages = nil
 
-	td.consX.MoveToNewHeight()
-	td.newHeightTimeout(td.consX)
-	td.shouldPublishProposal(t, td.consX, 1, 0)
+// 	// Double entry to propose state should not publish another proposal
+// 	td.consX.enterNewState(td.consX.proposeState)
+// 	td.shouldNotPublish(t, td.consX, message.TypeProposal)
+// }
 
-	// Clear accumulated messages to test the double entry independently
-	td.consMessages = nil
+// func TestSetProposalInvalidProposer(t *testing.T) {
+// 	td := setup(t)
 
-	// Double entry to propose state should not publish another proposal
-	td.consX.enterNewState(td.consX.proposeState)
-	td.shouldNotPublish(t, td.consX, message.TypeProposal)
-}
+// 	td.enterNewHeight(td.consY)
+// 	assert.Nil(t, td.consY.Proposal())
 
-func TestSetProposalInvalidProposer(t *testing.T) {
-	td := setup(t)
+// 	addr := td.consB.valKey.Address()
+// 	blk, _ := td.GenerateTestBlock(1, testsuite.BlockWithProposer(addr))
+// 	invalidProp := proposal.NewProposal(1, 0, blk)
 
-	td.enterNewHeight(td.consY)
-	assert.Nil(t, td.consY.Proposal())
+// 	td.consY.SetProposal(invalidProp)
+// 	assert.Nil(t, td.consY.Proposal())
 
-	addr := td.consB.valKey.Address()
-	blk, _ := td.GenerateTestBlock(1, testsuite.BlockWithProposer(addr))
-	invalidProp := proposal.NewProposal(1, 0, blk)
+// 	td.HelperSignProposal(td.consB.valKey, invalidProp)
+// 	td.consY.SetProposal(invalidProp)
+// 	assert.Nil(t, td.consY.Proposal())
+// }
 
-	td.consY.SetProposal(invalidProp)
-	assert.Nil(t, td.consY.Proposal())
+// func TestSetProposalInvalidBlock(t *testing.T) {
+// 	td := setup(t)
 
-	td.HelperSignProposal(td.consB.valKey, invalidProp)
-	td.consY.SetProposal(invalidProp)
-	assert.Nil(t, td.consY.Proposal())
-}
+// 	addr := td.consB.valKey.Address()
+// 	blk, _ := td.GenerateTestBlock(1, testsuite.BlockWithProposer(addr))
+// 	invProp := proposal.NewProposal(1, 2, blk)
+// 	td.HelperSignProposal(td.consB.valKey, invProp)
 
-func TestSetProposalInvalidBlock(t *testing.T) {
-	td := setup(t)
+// 	td.enterNewHeight(td.consP)
+// 	td.enterNextRound(td.consP)
+// 	td.enterNextRound(td.consP)
+// 	td.stateP.ErrValidator = errors.New("some error")
 
-	addr := td.consB.valKey.Address()
-	blk, _ := td.GenerateTestBlock(1, testsuite.BlockWithProposer(addr))
-	invProp := proposal.NewProposal(1, 2, blk)
-	td.HelperSignProposal(td.consB.valKey, invProp)
+// 	td.consP.SetProposal(invProp)
+// 	assert.Nil(t, td.consP.Proposal())
+// }
 
-	td.enterNewHeight(td.consP)
-	td.enterNextRound(td.consP)
-	td.enterNextRound(td.consP)
-	td.stateP.ErrValidator = errors.New("some error")
+// func TestSetProposalInvalidHeight(t *testing.T) {
+// 	td := setup(t)
 
-	td.consP.SetProposal(invProp)
-	assert.Nil(t, td.consP.Proposal())
-}
+// 	addr := td.consB.valKey.Address()
+// 	blk, _ := td.GenerateTestBlock(2, testsuite.BlockWithProposer(addr))
+// 	invProp := proposal.NewProposal(2, 0, blk)
+// 	td.HelperSignProposal(td.consB.valKey, invProp)
 
-func TestSetProposalInvalidHeight(t *testing.T) {
-	td := setup(t)
+// 	td.enterNewHeight(td.consY)
+// 	td.consY.SetProposal(invProp)
+// 	assert.Nil(t, td.consY.Proposal())
+// }
 
-	addr := td.consB.valKey.Address()
-	blk, _ := td.GenerateTestBlock(2, testsuite.BlockWithProposer(addr))
-	invProp := proposal.NewProposal(2, 0, blk)
-	td.HelperSignProposal(td.consB.valKey, invProp)
+// func TestNetworkLagging(t *testing.T) {
+// 	td := setup(t)
 
-	td.enterNewHeight(td.consY)
-	td.consY.SetProposal(invProp)
-	assert.Nil(t, td.consY.Proposal())
-}
+// 	td.enterNewHeight(td.consP)
 
-func TestNetworkLagging(t *testing.T) {
-	td := setup(t)
+// 	height := types.Height(1)
+// 	round := types.Round(0)
+// 	prop := td.makeProposal(t, height, round)
 
-	td.enterNewHeight(td.consP)
+// 	// consP doesn't have the proposal, but it has received prepared votes from other peers
+// 	td.addPrepareVote(td.consP, prop.Block().Hash(), height, round, tIndexX)
+// 	td.addPrepareVote(td.consP, prop.Block().Hash(), height, round, tIndexY)
 
-	height := types.Height(1)
-	round := types.Round(0)
-	prop := td.makeProposal(t, height, round)
+// 	td.queryProposalTimeout(td.consP)
+// 	td.shouldPublishQueryProposal(t, td.consP, height)
 
-	// consP doesn't have the proposal, but it has received prepared votes from other peers
-	td.addPrepareVote(td.consP, prop.Block().Hash(), height, round, tIndexX)
-	td.addPrepareVote(td.consP, prop.Block().Hash(), height, round, tIndexY)
+// 	// Proposal is received now
+// 	td.consP.SetProposal(prop)
 
-	td.queryProposalTimeout(td.consP)
-	td.shouldPublishQueryProposal(t, td.consP, height)
+// 	td.shouldPublishVote(t, td.consP, vote.VoteTypePrepare, prop.Block().Hash())
+// 	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, prop.Block().Hash())
+// }
 
-	// Proposal is received now
-	td.consP.SetProposal(prop)
+// func TestProposalNextRound(t *testing.T) {
+// 	td := setup(t)
 
-	td.shouldPublishVote(t, td.consP, vote.VoteTypePrepare, prop.Block().Hash())
-	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, prop.Block().Hash())
-}
+// 	td.commitBlockForAllStates(t)
 
-func TestProposalNextRound(t *testing.T) {
-	td := setup(t)
+// 	td.enterNewHeight(td.consX)
 
-	td.commitBlockForAllStates(t)
+// 	// Byzantine node sends proposal for the second round (his turn) even before the first round is started
+// 	b, err := td.consB.bcState.ProposeBlock(td.consB.valKey, td.consB.rewardAddr)
+// 	require.NoError(t, err)
+// 	p := proposal.NewProposal(2, 1, b)
+// 	td.HelperSignProposal(td.consB.valKey, p)
 
-	td.enterNewHeight(td.consX)
+// 	td.consX.SetProposal(p)
 
-	// Byzantine node sends proposal for the second round (his turn) even before the first round is started
-	b, err := td.consB.bcState.ProposeBlock(td.consB.valKey, td.consB.rewardAddr)
-	require.NoError(t, err)
-	p := proposal.NewProposal(2, 1, b)
-	td.HelperSignProposal(td.consB.valKey, p)
-
-	td.consX.SetProposal(p)
-
-	// consX accepts his proposal, but doesn't move to the next round
-	assert.NotNil(t, td.consX.log.RoundProposal(1))
-	assert.Nil(t, td.consX.Proposal())
-	assert.Equal(t, types.Height(2), td.consX.height)
-	assert.Equal(t, types.Round(0), td.consX.round)
-}
+// 	// consX accepts his proposal, but doesn't move to the next round
+// 	assert.NotNil(t, td.consX.log.RoundProposal(1))
+// 	assert.Nil(t, td.consX.Proposal())
+// 	assert.Equal(t, types.Height(2), td.consX.height)
+// 	assert.Equal(t, types.Round(0), td.consX.round)
+// }

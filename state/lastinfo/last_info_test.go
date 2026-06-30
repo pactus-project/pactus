@@ -23,15 +23,15 @@ import (
 type testData struct {
 	*testsuite.TestSuite
 
-	store    *store.MockStore
-	lastInfo *LastInfo
+	fakeStore *store.FakeStore
+	lastInfo  *LastInfo
 }
 
 func setup(t *testing.T) *testData {
 	t.Helper()
 
 	ts := testsuite.NewTestSuite(t)
-	mockStore := store.MockingStore(ts)
+	mockStore := store.NewFakeStore(ts)
 	lastInfo := NewLastInfo()
 
 	require.Zero(t, lastInfo.BlockHeight())
@@ -94,7 +94,7 @@ func setup(t *testing.T) *testData {
 
 	return &testData{
 		TestSuite: ts,
-		store:     mockStore,
+		fakeStore: mockStore,
 		lastInfo:  lastInfo,
 	}
 }
@@ -104,13 +104,13 @@ func TestRestoreLastInfo(t *testing.T) {
 
 	lastInfo := NewLastInfo()
 
-	cmt, ver, err := lastInfo.RestoreLastInfo(td.store, 4)
+	cmt, ver, err := lastInfo.RestoreLastInfo(td.fakeStore, 4)
 	require.NoError(t, err)
 
-	val0, _ := td.store.ValidatorByNumber(0)
-	val1, _ := td.store.ValidatorByNumber(1)
-	val2, _ := td.store.ValidatorByNumber(2)
-	val3, _ := td.store.ValidatorByNumber(3)
+	val0, _ := td.fakeStore.ValidatorByNumber(0)
+	val1, _ := td.fakeStore.ValidatorByNumber(1)
+	val2, _ := td.fakeStore.ValidatorByNumber(2)
+	val3, _ := td.fakeStore.ValidatorByNumber(3)
 
 	assert.Equal(t, td.lastInfo.SortitionSeed(), lastInfo.SortitionSeed())
 	assert.Equal(t, td.lastInfo.BlockHeight(), lastInfo.BlockHeight())
@@ -130,8 +130,8 @@ func TestRestoreFailed(t *testing.T) {
 
 		li := NewLastInfo()
 
-		td.store.Validators = make(map[crypto.Address]*validator.Validator) // Reset Validators
-		_, _, err := li.RestoreLastInfo(td.store, 4)
+		td.fakeStore.Validators = make(map[crypto.Address]*validator.Validator) // Reset Validators
+		_, _, err := li.RestoreLastInfo(td.fakeStore, 4)
 		require.Error(t, err)
 	})
 
@@ -140,8 +140,8 @@ func TestRestoreFailed(t *testing.T) {
 
 		li := NewLastInfo()
 
-		td.store.Blocks = make(map[types.Height]*block.Block) // Reset Blocks
-		_, _, err := li.RestoreLastInfo(td.store, 4)
+		td.fakeStore.Blocks = make(map[types.Height]*block.Block) // Reset Blocks
+		_, _, err := li.RestoreLastInfo(td.fakeStore, 4)
 		require.Error(t, err)
 	})
 }

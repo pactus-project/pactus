@@ -171,8 +171,8 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 
 	valKeyAlice := []*bls.ValidatorKey{ts.RandValKey()}
 	valKeyBob := []*bls.ValidatorKey{ts.RandValKey()}
-	stateAlice := state.NewFakeState(ts, nil)
-	stateBob := state.NewFakeState(ts, nil)
+	stateAlice := state.NewFakeState(ts)
+	stateBob := state.NewFakeState(ts)
 	consV1MgrAlice := manager.NewFakeConsensusManager(ts)
 	consV2MgrAlice := manager.NewFakeConsensusManager(ts)
 	consV1MgrBob := manager.NewFakeConsensusManager(ts)
@@ -181,8 +181,8 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	networkAlice := network.MockingNetwork(ts, ts.RandPeerID())
 	networkBob := network.MockingNetwork(ts, ts.RandPeerID())
 
-	stateAlice.LastHeight = 0
-	stateBob.LastHeight = 0
+	stateAlice.FakeHeight = 0
+	stateBob.FakeHeight = 0
 	stateAlice.EXPECT().UpdateValidatorProtocolVersion(gomock.Any(), gomock.Any()).AnyTimes()
 	stateBob.EXPECT().UpdateValidatorProtocolVersion(gomock.Any(), gomock.Any()).AnyTimes()
 
