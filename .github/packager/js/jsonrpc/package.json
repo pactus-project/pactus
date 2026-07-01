@@ -1,5 +1,5 @@
 {
-  "name": "pactus-jsonrpc",
+  "name": "@pactus/jsonrpc",
   "version": "{{ VERSION }}",
   "description": "JavaScript client for interacting with the Pactus blockchain via JSON-RPC",
   "author": "Pactus Development Team",

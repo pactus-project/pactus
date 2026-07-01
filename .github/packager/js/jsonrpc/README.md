@@ -1,17 +1,17 @@
-# pactus-jsonrpc
+# @pactus/jsonrpc
 
 JavaScript client for interacting with the [Pactus](https://pactus.org) blockchain via JSON-RPC.
 
 ## Installation
 
 ```bash
-npm install pactus-jsonrpc
+npm install @pactus/jsonrpc
 ```
 
 ## Usage
 
 ```javascript
-import PactusOpenRPC from "pactus-jsonrpc";
+import PactusOpenRPC from "@pactus/jsonrpc";
 
 const jsonrpcClient = new PactusOpenRPC({
   transport: {

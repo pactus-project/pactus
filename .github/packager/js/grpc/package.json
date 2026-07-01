@@ -1,5 +1,5 @@
 {
-  "name": "pactus-grpc",
+  "name": "@pactus/grpc",
   "version": "{{ VERSION }}",
   "description": "JavaScript client for interacting with the Pactus blockchain via gRPC",
   "author": "Pactus Development Team",
