@@ -2731,7 +2731,8 @@ Parameters has no fields.
 
 #### pactus.blockchain.get_validator_addresses <span id="pactus.blockchain.get_validator_addresses" class="rpc-badge"></span>
 
-<p>GetValidatorAddresses retrieves a list of all validator addresses.</p>
+<p>GetValidatorAddresses retrieves a list of all validator addresses.
+deprecated: It will be removed in a future version.</p>
 
 <h4>Parameters</h4>
 Parameters has no fields.

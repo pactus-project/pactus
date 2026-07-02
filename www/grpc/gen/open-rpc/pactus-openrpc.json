@@ -571,7 +571,7 @@
         }
       },{
       "name": "pactus.blockchain.get_validator_addresses",
-      "description": "GetValidatorAddresses retrieves a list of all validator addresses.",
+      "description": "GetValidatorAddresses retrieves a list of all validator addresses. deprecated: It will be removed in a future version.",
       "tags": [{ "name": "blockchain"}],
       "paramStructure": "by-name",
       "params": [],

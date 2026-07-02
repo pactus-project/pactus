@@ -546,6 +546,7 @@ public final class BlockchainGrpc {
     /**
      * <pre>
      * GetValidatorAddresses retrieves a list of all validator addresses.
+     * deprecated: It will be removed in a future version.
      * </pre>
      */
     default void getValidatorAddresses(pactus.BlockchainOuterClass.GetValidatorAddressesRequest request,
@@ -709,6 +710,7 @@ public final class BlockchainGrpc {
     /**
      * <pre>
      * GetValidatorAddresses retrieves a list of all validator addresses.
+     * deprecated: It will be removed in a future version.
      * </pre>
      */
     public void getValidatorAddresses(pactus.BlockchainOuterClass.GetValidatorAddressesRequest request,
@@ -852,6 +854,7 @@ public final class BlockchainGrpc {
     /**
      * <pre>
      * GetValidatorAddresses retrieves a list of all validator addresses.
+     * deprecated: It will be removed in a future version.
      * </pre>
      */
     public pactus.BlockchainOuterClass.GetValidatorAddressesResponse getValidatorAddresses(pactus.BlockchainOuterClass.GetValidatorAddressesRequest request) throws io.grpc.StatusException {
@@ -992,6 +995,7 @@ public final class BlockchainGrpc {
     /**
      * <pre>
      * GetValidatorAddresses retrieves a list of all validator addresses.
+     * deprecated: It will be removed in a future version.
      * </pre>
      */
     public pactus.BlockchainOuterClass.GetValidatorAddressesResponse getValidatorAddresses(pactus.BlockchainOuterClass.GetValidatorAddressesRequest request) {
@@ -1141,6 +1145,7 @@ public final class BlockchainGrpc {
     /**
      * <pre>
      * GetValidatorAddresses retrieves a list of all validator addresses.
+     * deprecated: It will be removed in a future version.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.BlockchainOuterClass.GetValidatorAddressesResponse> getValidatorAddresses(

@@ -2700,7 +2700,8 @@ Request Message has no fields.
 
 #### GetValidatorAddresses <span id="pactus.Blockchain.GetValidatorAddresses" class="rpc-badge"></span>
 
-<p>GetValidatorAddresses retrieves a list of all validator addresses.</p>
+<p>GetValidatorAddresses retrieves a list of all validator addresses.
+deprecated: It will be removed in a future version.</p>
 
 <h4>GetValidatorAddressesRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 Request Message has no fields.

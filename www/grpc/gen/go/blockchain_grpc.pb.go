@@ -58,6 +58,7 @@ type BlockchainClient interface {
 	// GetValidatorByNumber retrieves information about a validator based on the provided number.
 	GetValidatorByNumber(ctx context.Context, in *GetValidatorByNumberRequest, opts ...grpc.CallOption) (*GetValidatorResponse, error)
 	// GetValidatorAddresses retrieves a list of all validator addresses.
+	// deprecated: It will be removed in a future version.
 	GetValidatorAddresses(ctx context.Context, in *GetValidatorAddressesRequest, opts ...grpc.CallOption) (*GetValidatorAddressesResponse, error)
 	// GetPublicKey retrieves the public key of an account based on the provided address.
 	GetPublicKey(ctx context.Context, in *GetPublicKeyRequest, opts ...grpc.CallOption) (*GetPublicKeyResponse, error)
@@ -218,6 +219,7 @@ type BlockchainServer interface {
 	// GetValidatorByNumber retrieves information about a validator based on the provided number.
 	GetValidatorByNumber(context.Context, *GetValidatorByNumberRequest) (*GetValidatorResponse, error)
 	// GetValidatorAddresses retrieves a list of all validator addresses.
+	// deprecated: It will be removed in a future version.
 	GetValidatorAddresses(context.Context, *GetValidatorAddressesRequest) (*GetValidatorAddressesResponse, error)
 	// GetPublicKey retrieves the public key of an account based on the provided address.
 	GetPublicKey(context.Context, *GetPublicKeyRequest) (*GetPublicKeyResponse, error)

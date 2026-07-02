@@ -415,7 +415,7 @@ func _BlockchainGetValidatorAddressesCommand(cfg *client.Config) *cobra.Command 
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetValidatorAddresses"),
 		Short: "GetValidatorAddresses RPC client",
-		Long:  "GetValidatorAddresses retrieves a list of all validator addresses.",
+		Long:  "GetValidatorAddresses retrieves a list of all validator addresses.\n deprecated: It will be removed in a future version.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
