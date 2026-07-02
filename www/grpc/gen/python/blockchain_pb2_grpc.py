@@ -146,6 +146,7 @@ class BlockchainServicer:
 
     def GetValidatorAddresses(self, request, context):
         """GetValidatorAddresses retrieves a list of all validator addresses.
+        deprecated: It will be removed in a future version.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')

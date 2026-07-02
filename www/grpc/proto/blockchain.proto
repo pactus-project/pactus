@@ -36,6 +36,7 @@ service Blockchain {
   rpc GetValidatorByNumber(GetValidatorByNumberRequest) returns (GetValidatorResponse);
 
   // GetValidatorAddresses retrieves a list of all validator addresses.
+  // deprecated: It will be removed in a future version.
   rpc GetValidatorAddresses(GetValidatorAddressesRequest) returns (GetValidatorAddressesResponse);
 
   // GetPublicKey retrieves the public key of an account based on the provided address.

@@ -370,6 +370,7 @@ getValidatorByNumber: {
     responseDeserialize: deserialize_pactus_GetValidatorResponse,
   },
   // GetValidatorAddresses retrieves a list of all validator addresses.
+// deprecated: It will be removed in a future version.
 getValidatorAddresses: {
     path: '/pactus.Blockchain/GetValidatorAddresses',
     requestStream: false,

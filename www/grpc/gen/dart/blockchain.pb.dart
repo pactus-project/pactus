@@ -2503,6 +2503,7 @@ class BlockchainApi {
           'GetValidatorByNumber', request, GetValidatorResponse());
 
   /// GetValidatorAddresses retrieves a list of all validator addresses.
+  /// deprecated: It will be removed in a future version.
   $async.Future<GetValidatorAddressesResponse> getValidatorAddresses(
           $pb.ClientContext? ctx, GetValidatorAddressesRequest request) =>
       _client.invoke<GetValidatorAddressesResponse>(ctx, 'Blockchain',

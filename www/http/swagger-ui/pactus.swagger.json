@@ -498,7 +498,7 @@
     },
     "/pactus/blockchain/get_validator_addresses": {
       "get": {
-        "summary": "GetValidatorAddresses retrieves a list of all validator addresses.",
+        "summary": "GetValidatorAddresses retrieves a list of all validator addresses.\ndeprecated: It will be removed in a future version.",
         "operationId": "Blockchain_GetValidatorAddresses",
         "responses": {
           "200": {
