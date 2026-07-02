@@ -112,15 +112,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "24"
           registry-url: "https://registry.npmjs.org"
 
       - name: Publish to npm
         run: |
           if [[ "${{ needs.packager.outputs.dry_run }}" == "true" ]]; then
-            npm publish --access public --dry-run
+            npm publish --dry-run
           else
-            npm publish --access public
+            npm publish --provenance --access public
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
@@ -143,15 +143,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "24"
           registry-url: "https://registry.npmjs.org"
 
       - name: Publish to npm
         run: |
           if [[ "${{ needs.packager.outputs.dry_run }}" == "true" ]]; then
-            npm publish --access public --dry-run
+            npm publish --dry-run
           else
-            npm publish --access public
+            npm publish --provenance --access public
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}

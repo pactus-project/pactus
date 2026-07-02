@@ -1,19 +1,19 @@
-# pactus-grpc
+# @pactus/grpc
 
 JavaScript client for interacting with the [Pactus](https://pactus.org) blockchain via gRPC.
 
 ## Installation
 
 ```bash
-npm install pactus-grpc
+npm install @pactus/grpc
 ```
 
 ## Usage
 
 ```javascript
 import grpc from '@grpc/grpc-js';
-import blockchain_pb from "pactus-grpc/blockchain_pb.js";
-import blockchain_grpc_pb from "pactus-grpc/blockchain_grpc_pb.js";
+import blockchain_pb from "@pactus/grpc/blockchain_pb.js";
+import blockchain_grpc_pb from "@pactus/grpc/blockchain_grpc_pb.js";
 
 const client = new blockchain_grpc_pb.BlockchainClient(
   "127.0.0.1:50051",
