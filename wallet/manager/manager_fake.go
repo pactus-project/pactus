@@ -9,7 +9,9 @@ type FakeWalletManager struct {
 }
 
 func NewFakeWalletManager(ts *testsuite.TestSuite) *FakeWalletManager {
-	return &FakeWalletManager{
+	fake := &FakeWalletManager{
 		MockWalletManager: NewMockWalletManager(ts.MockController()),
 	}
+
+	return fake
 }

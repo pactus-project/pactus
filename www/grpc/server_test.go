@@ -17,9 +17,9 @@ import (
 
 type testData struct {
 	*testsuite.TestSuite
+	*fake.FakeGRPCServer
 
 	listener *bufconn.Listener
-	server   *fake.FakeGRPCServer
 }
 
 func testConfig() *pactusgrpc.Config {
@@ -42,6 +42,14 @@ func setup(t *testing.T, conf *pactusgrpc.Config) *testData {
 	const bufSize = 1024 * 1024
 	listener := bufconn.Listen(bufSize)
 
+	if conf.EnableWallet {
+		gRPCServer.FakeWalletMgr.EXPECT().ListWallets().DoAndReturn(
+			func() ([]string, error) {
+				return []string{}, nil
+			},
+		).Times(1)
+	}
+
 	err := gRPCServer.Server.StartListening(listener)
 	require.NoError(t, err)
 
@@ -50,9 +58,9 @@ func setup(t *testing.T, conf *pactusgrpc.Config) *testData {
 	})
 
 	return &testData{
-		TestSuite: ts,
-		listener:  listener,
-		server:    gRPCServer,
+		TestSuite:      ts,
+		FakeGRPCServer: gRPCServer,
+		listener:       listener,
 	}
 }
 

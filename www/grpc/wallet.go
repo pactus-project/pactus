@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"errors"
+	"fmt"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/amount"
@@ -18,11 +19,27 @@ type walletServer struct {
 	walletManager wltmgr.WalletManager
 }
 
-func newWalletServer(server *Server, manager wltmgr.WalletManager) *walletServer {
+func newWalletServer(server *Server, mgr wltmgr.WalletManager) (*walletServer, error) {
+	wltList, err := mgr.ListWallets()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, name := range wltList {
+		wltInfo, err := mgr.WalletInfo(name)
+		if err != nil {
+			return nil, err
+		}
+
+		if !wltInfo.Encrypted {
+			return nil, fmt.Errorf("wallet is not encrypted: %s", name)
+		}
+	}
+
 	return &walletServer{
 		Server:        server,
-		walletManager: manager,
-	}
+		walletManager: mgr,
+	}, nil
 }
 
 func (*walletServer) addressInfoToProto(info *types.AddressInfo) *pactus.AddressInfo {

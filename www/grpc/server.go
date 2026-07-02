@@ -88,7 +88,10 @@ func (s *Server) StartListening(listener net.Listener) error {
 	pactus.RegisterUtilsServer(grpcServer, utilServer)
 
 	if s.config.EnableWallet {
-		walletServer := newWalletServer(s, s.walletMgr)
+		walletServer, err := newWalletServer(s, s.walletMgr)
+		if err != nil {
+			return err
+		}
 
 		pactus.RegisterWalletServer(grpcServer, walletServer)
 	}

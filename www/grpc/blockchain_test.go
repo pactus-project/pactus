@@ -17,7 +17,7 @@ func TestGetBlock(t *testing.T) {
 	client := td.blockchainClient(t)
 
 	height := td.RandHeight()
-	blk := td.server.FakeState.AddTestBlock(height)
+	blk := td.FakeState.AddTestBlock(height)
 	data, _ := blk.Bytes()
 
 	t.Run("Should return nil for non-existing block", func(t *testing.T) {
@@ -100,7 +100,7 @@ func TestGetBlockHash(t *testing.T) {
 	client := td.blockchainClient(t)
 
 	height := td.RandHeight()
-	blk := td.server.FakeState.AddTestBlock(height)
+	blk := td.FakeState.AddTestBlock(height)
 
 	t.Run("Should return error for non-existing block", func(t *testing.T) {
 		res, err := client.GetBlockHash(t.Context(),
@@ -124,7 +124,7 @@ func TestGetBlockHeight(t *testing.T) {
 	client := td.blockchainClient(t)
 
 	height := td.RandHeight()
-	blk := td.server.FakeState.AddTestBlock(height)
+	blk := td.FakeState.AddTestBlock(height)
 
 	t.Run("Should return error for invalid hash", func(t *testing.T) {
 		res, err := client.GetBlockHeight(t.Context(),
@@ -159,9 +159,9 @@ func TestGetBlockchainInfo(t *testing.T) {
 		&pactus.GetBlockchainInfoRequest{})
 
 	require.NoError(t, err)
-	assert.Equal(t, uint32(td.server.FakeState.LastHeight), res.LastBlockHeight)
-	assert.Equal(t, td.server.FakeState.LastTime.Unix(), res.LastBlockTime)
-	assert.Equal(t, td.server.FakeState.LastBlockHash().String(), res.LastBlockHash)
+	assert.Equal(t, uint32(td.FakeState.LastHeight), res.LastBlockHeight)
+	assert.Equal(t, td.FakeState.LastTime.Unix(), res.LastBlockTime)
+	assert.Equal(t, td.FakeState.LastBlockHash().String(), res.LastBlockHash)
 	assert.Zero(t, res.PruningHeight)
 	assert.False(t, res.IsPruned)
 }
@@ -183,7 +183,7 @@ func TestGetAccount(t *testing.T) {
 	td := setup(t, nil)
 	client := td.blockchainClient(t)
 
-	addr, acc := td.server.FakeState.AddTestAccount()
+	addr, acc := td.FakeState.AddTestAccount()
 
 	t.Run("Should return error for non-parseable address", func(t *testing.T) {
 		res, err := client.GetAccount(t.Context(),
@@ -216,7 +216,7 @@ func TestGetValidator(t *testing.T) {
 	td := setup(t, nil)
 	client := td.blockchainClient(t)
 
-	val1 := td.server.FakeState.AddTestValidator()
+	val1 := td.FakeState.AddTestValidator()
 
 	t.Run("Should return nil value due to invalid address", func(t *testing.T) {
 		res, err := client.GetValidator(t.Context(),
@@ -268,7 +268,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 	td := setup(t, nil)
 	client := td.blockchainClient(t)
 
-	val1 := td.server.FakeState.AddTestValidator()
+	val1 := td.FakeState.AddTestValidator()
 
 	t.Run("Should return nil value due to invalid number", func(t *testing.T) {
 		res, err := client.GetValidatorByNumber(t.Context(),
@@ -302,8 +302,8 @@ func TestGetValidatorAddresses(t *testing.T) {
 	client := td.blockchainClient(t)
 
 	t.Run("Should return list of validator addresses", func(t *testing.T) {
-		td.server.FakeState.AddTestValidator()
-		td.server.FakeState.AddTestValidator()
+		td.FakeState.AddTestValidator()
+		td.FakeState.AddTestValidator()
 
 		res, err := client.GetValidatorAddresses(t.Context(),
 			&pactus.GetValidatorAddressesRequest{})
@@ -321,8 +321,8 @@ func TestGetPublicKey(t *testing.T) {
 	indexedPub, _ := td.RandBLSKeyPair()
 	rndAddr := td.RandAccAddress()
 
-	td.server.FakeState.EXPECT().PublicKey(rndAddr).Return(nil, errors.New("not found")).Times(1)
-	td.server.FakeState.EXPECT().PublicKey(indexedPub.AccountAddress()).Return(indexedPub, nil).Times(1)
+	td.FakeState.EXPECT().PublicKey(rndAddr).Return(nil, errors.New("not found")).Times(1)
+	td.FakeState.EXPECT().PublicKey(indexedPub.AccountAddress()).Return(indexedPub, nil).Times(1)
 
 	t.Run("Should return error for non-parseable address", func(t *testing.T) {
 		res, err := client.GetPublicKey(t.Context(),
@@ -360,10 +360,10 @@ func TestConsensusInfo(t *testing.T) {
 	vote2, _ := td.GenerateTestPrecommitVote(height, round)
 	prop := td.GenerateTestProposal(height, round)
 
-	td.server.FakeCons.EXPECT().HeightRound().Return(height, round).Times(1)
-	td.server.FakeCons.EXPECT().AllVotes().Return([]*vote.Vote{vote1, vote2}).Times(1)
-	td.server.FakeCons.EXPECT().IsActive().Return(true).Times(1)
-	td.server.FakeConsMgr.EXPECT().Proposal().Return(prop).Times(1)
+	td.FakeCons.EXPECT().HeightRound().Return(height, round).Times(1)
+	td.FakeCons.EXPECT().AllVotes().Return([]*vote.Vote{vote1, vote2}).Times(1)
+	td.FakeCons.EXPECT().IsActive().Return(true).Times(1)
+	td.FakeConsMgr.EXPECT().Proposal().Return(prop).Times(1)
 
 	res, err := client.GetConsensusInfo(t.Context(), &pactus.GetConsensusInfoRequest{})
 
@@ -394,7 +394,7 @@ func TestGetTxPoolContent(t *testing.T) {
 	trx6 := td.GenerateTestSortitionTx()
 	trx7 := td.GenerateTestWithdrawTx()
 
-	td.server.FakeState.EXPECT().AllPendingTxs().Return([]*tx.Tx{
+	td.FakeState.EXPECT().AllPendingTxs().Return([]*tx.Tx{
 		trx1, trx2, trx3, trx4, trx5, trx6, trx7,
 	}).AnyTimes()
 
