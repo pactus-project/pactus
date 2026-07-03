@@ -154,10 +154,7 @@ func (addr Address) IsTreasuryAddress() bool {
 }
 
 func (addr Address) IsAccountAddress() bool {
-	return addr.Type() == AddressTypeTreasury ||
-		addr.Type() == AddressTypeBLSAccount ||
-		addr.Type() == AddressTypeEd25519Account ||
-		addr.Type() == AddressTypeSecp256k1Account
+	return !addr.IsValidatorAddress()
 }
 
 func (addr Address) IsValidatorAddress() bool {
