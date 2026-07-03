@@ -289,7 +289,7 @@ jobs:
       - name: Download SHA256SUMS artifact
         uses: actions/download-artifact@v8
         with:
-          name: sha256sums
+          name: SHA256SUMS
 
       - uses: sigstore/cosign-installer@v4.1.0
 
