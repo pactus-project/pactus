@@ -291,7 +291,7 @@ jobs:
         with:
           name: sha256sums
 
-      - uses: sigstore/cosign-installer@v4
+      - uses: sigstore/cosign-installer@v4.1.0
 
       - name: Sign Checksum
         run: cosign sign-blob --yes --key env://COSIGN_PRIVATE_KEY SHA256SUMS > SHA256SUMS.sig
