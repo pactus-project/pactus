@@ -263,7 +263,7 @@ func WriteElement(w io.Writer, elm any) error {
 		err = binarySerializer.PutUint64(w, uint64(elm))
 	case uint64:
 		err = binarySerializer.PutUint64(w, elm)
-	case *hash.Hash:
+	case hash.Hash:
 		_, err = w.Write(elm[:])
 	default:
 		// Fall back to the slower binary.Write if a fast path was not available
