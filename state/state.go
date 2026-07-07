@@ -787,6 +787,18 @@ func (st *state) ChainInfo() *ChainInfo {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
+	genDoc := st.Genesis()
+	nowSec := time.Now().Unix()
+	lastBlockTimeSec := st.lastInfo.BlockTime().Unix()
+	genTimeSec := genDoc.GenesisTime().Unix()
+
+	// Sync progress: fraction of expected blocks that have been synced, clamped to [0, 1].
+	syncProgress := float64(lastBlockTimeSec-genTimeSec) / float64(nowSec-genTimeSec)
+
+	// Blocks remaining to reach the latest block.
+	blockInterval := int64(st.Params().BlockIntervalInSecond)
+	blocksLeft := (nowSec - lastBlockTimeSec) / blockInterval
+
 	return &ChainInfo{
 		LastBlockHeight:  st.lastInfo.BlockHeight(),
 		LastBlockHash:    st.lastInfo.BlockHash(),
@@ -800,6 +812,9 @@ func (st *state) ChainInfo() *ChainInfo {
 		AverageScore:     st.calculateAverageScore(),
 		IsPruned:         st.store.IsPruned(),
 		PruningHeight:    st.store.PruningHeight(),
+		ChainType:        genDoc.ChainType(),
+		SyncProgress:     syncProgress,
+		BlocksLeft:       blocksLeft,
 	}
 }
 

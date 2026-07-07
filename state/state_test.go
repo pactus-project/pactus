@@ -822,51 +822,19 @@ func TestBlockVersionUpgrade(t *testing.T) {
 	assert.Equal(t, protocol.ProtocolVersionLatest, td2.state.Params().BlockVersion)
 }
 
-// func TestProposeBlockVersionUpgradeToV4(t *testing.T) {
-// 	// When BlockVersion is already V4, proposeBlockVersion returns V4 directly.
-// 	td := setupWithVersion(t, protocol.ProtocolVersion4)
+func TestChainInfo(t *testing.T) {
+	td := setup(t)
 
-// 	assert.Equal(t, protocol.ProtocolVersion4, td.state.proposeBlockVersion())
+	td.state.genDoc = genesis.MainnetGenesis()
+	td.state.lastInfo.UpdateBlockTime(time.Now().Add(-1 * time.Second))
+	chainInfo := td.state.ChainInfo()
 
-// 	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).AnyTimes()
-// 	valKey := td.proposerKey(t, 0)
-// 	blk, err := td.state.ProposeBlock(valKey, td.RandAccAddress())
-// 	require.NoError(t, err)
-// 	assert.Equal(t, protocol.ProtocolVersion4, blk.Header().Version())
-// }
-
-// func TestProposeBlockVersionStaysAtV3(t *testing.T) {
-// 	// When BlockVersion is V3 and committee validators don't support V4 yet,
-// 	// proposeBlockVersion should return V3.
-// 	td := setupWithVersion(t, protocol.ProtocolVersion3)
-
-// 	assert.Equal(t, protocol.ProtocolVersion3, td.state.proposeBlockVersion())
-
-// 	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).AnyTimes()
-// 	valKey := td.proposerKey(t, 0)
-// 	blk, err := td.state.ProposeBlock(valKey, td.RandAccAddress())
-// 	require.NoError(t, err)
-// 	assert.Equal(t, protocol.ProtocolVersion3, blk.Header().Version())
-// }
-
-// func TestRewardHalvingWithV4(t *testing.T) {
-// 	// Setup with V4 block version
-// 	td := setupWithVersion(t, protocol.ProtocolVersion4)
-
-// 	// At the test height (7), the coefficient is 1.0 since 7 <= 8,000,000.
-// 	// So reward should be the same as pre-V4: 1 PAC.
-// 	proposerAddr := td.state.Proposer(0).Address()
-// 	trx := td.state.createSubsidyTx(proposerAddr, td.RandAccAddress(), 0, protocol.ProtocolVersion4)
-// 	batchTrx := trx.Payload().(*payload.BatchTransferPayload)
-
-// 	// Foundation reward should be 0.3 * 1.0 = 0.3 PAC
-// 	assert.Equal(t, amount.Amount(0.3e9), batchTrx.Recipients[0].Amount)
-// 	// Validator reward should be 1.0 - 0.3 = 0.7 PAC
-// 	assert.Equal(t, amount.Amount(0.7e9), batchTrx.Recipients[1].Amount)
-
-// 	// With V3, the same height gives the same result.
-// 	trxV3 := td.state.createSubsidyTx(proposerAddr, td.RandAccAddress(), 0, protocol.ProtocolVersion3)
-// 	batchTrxV3 := trxV3.Payload().(*payload.BatchTransferPayload)
-// 	assert.Equal(t, batchTrx.Recipients[0].Amount, batchTrxV3.Recipients[0].Amount)
-// 	assert.Equal(t, batchTrx.Recipients[1].Amount, batchTrxV3.Recipients[1].Amount)
-// }
+	assert.Equal(t, int32(4), chainInfo.ActiveValidators)
+	assert.Equal(t, int32(4), chainInfo.TotalValidators)
+	assert.Equal(t, int64(4), chainInfo.TotalPower)
+	assert.False(t, chainInfo.IsPruned)
+	assert.Equal(t, types.Height(0), chainInfo.PruningHeight)
+	assert.Equal(t, genesis.Mainnet, chainInfo.ChainType)
+	assert.InEpsilon(t, 1, chainInfo.SyncProgress, 0.0001)
+	assert.Equal(t, int64(0), chainInfo.BlocksLeft)
+}
