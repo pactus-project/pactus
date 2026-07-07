@@ -303,8 +303,8 @@ func (a *addresses) NewEd25519AccountAddress(label, password string) (*types.Add
 
 // NewSecp256k1AccountAddress create a new Secp256k1-based account address and
 // associates it with the given label.
-func (a *addresses) NewSecp256k1AccountAddress(label string) (*types.AddressInfo, error) {
-	return a.NewAddress(crypto.AddressTypeSecp256k1Account, label)
+func (a *addresses) NewSecp256k1AccountAddress(label, password string) (*types.AddressInfo, error) {
+	return a.NewAddress(crypto.AddressTypeSecp256k1Account, label, WithPassword(password))
 }
 
 func (a *addresses) HasAddress(addr string) bool {

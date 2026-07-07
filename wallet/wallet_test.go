@@ -13,6 +13,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet/addresspath"
+	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/pactus-project/pactus/wallet/provider"
 	"github.com/pactus-project/pactus/wallet/provider/offline"
 	"github.com/pactus-project/pactus/wallet/storage"
@@ -42,7 +43,15 @@ func setup(t *testing.T) *testData {
 	mockProvider := provider.NewMockWalletProvider(ts.MockController())
 
 	mnemonic1, _ := GenerateMnemonic(128)
-	testVault, _ := vault.CreateVaultFromMnemonic(mnemonic1, addresspath.CoinTypePactusMainnet)
+	password := ts.RandString(32)
+
+	opts := []encrypter.Option{
+		encrypter.OptionIteration(1),
+		encrypter.OptionMemory(8),
+		encrypter.OptionParallelism(1),
+	}
+
+	testVault, _ := vault.CreateVaultFromMnemonic(mnemonic1, addresspath.CoinTypePactusMainnet, password, opts...)
 	mockStorage.EXPECT().Vault().Return(testVault).AnyTimes()
 
 	var wlt *Wallet
@@ -64,7 +73,7 @@ func setup(t *testing.T) *testData {
 		mockStorage:  mockStorage,
 		mockProvider: mockProvider,
 		wallet:       wlt,
-		password:     "",
+		password:     password,
 	}
 }
 
@@ -96,7 +105,7 @@ func TestOpenWallet(t *testing.T) {
 
 func TestCreateWallet(t *testing.T) {
 	mnemonic, _ := GenerateMnemonic(256)
-	password := ""
+	password := "password"
 	t.Run("Wallet exists", func(t *testing.T) {
 		path := util.TempFilePath()
 		err := util.WriteFile(path, []byte("something-here"))
@@ -109,6 +118,11 @@ func TestCreateWallet(t *testing.T) {
 	t.Run("Invalid mnemonic", func(t *testing.T) {
 		_, err := Create(t.Context(), util.TempFilePath(), "invalid mnemonic", password, genesis.Mainnet)
 		require.Error(t, err)
+	})
+
+	t.Run("Empty password", func(t *testing.T) {
+		_, err := Create(t.Context(), util.TempFilePath(), mnemonic, "", genesis.Mainnet)
+		require.ErrorIs(t, err, vault.ErrEmptyPassword)
 	})
 
 	t.Run("Invalid path", func(t *testing.T) {
@@ -698,10 +712,11 @@ func TestNeuter(t *testing.T) {
 
 func TestTestnetWallet(t *testing.T) {
 	walletPath := util.TempFilePath()
+	password := "password"
 
 	t.Run("Create Testnet wallet", func(t *testing.T) {
 		mnemonic, _ := GenerateMnemonic(128)
-		wlt, err := Create(t.Context(), walletPath, mnemonic, "", genesis.Testnet)
+		wlt, err := Create(t.Context(), walletPath, mnemonic, password, genesis.Testnet)
 		require.NoError(t, err)
 
 		assert.Equal(t, genesis.Testnet, wlt.Info().Network)
@@ -743,4 +758,26 @@ func TestOfflineWallet(t *testing.T) {
 	require.ErrorIs(t, err, offline.ErrOffline)
 
 	wlt.Close()
+}
+
+func TestUpdatePassword(t *testing.T) {
+	td := setup(t)
+
+	t.Run("Empty new password", func(t *testing.T) {
+		err := td.wallet.UpdatePassword(td.password, "")
+		require.ErrorIs(t, err, vault.ErrEmptyPassword)
+	})
+
+	t.Run("Valid password update", func(t *testing.T) {
+		td.mockStorage.EXPECT().UpdateVault(td.testVault).Return(nil).Times(1)
+
+		opts := []encrypter.Option{
+			encrypter.OptionIteration(1),
+			encrypter.OptionMemory(8),
+			encrypter.OptionParallelism(1),
+		}
+		err := td.wallet.UpdatePassword(td.password, "new-password", opts...)
+		require.NoError(t, err)
+		assert.True(t, td.testVault.IsEncrypted())
+	})
 }

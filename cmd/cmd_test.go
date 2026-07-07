@@ -148,10 +148,11 @@ func TestPathsWindows(t *testing.T) {
 func TestMakeRewardAddresses(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
+	password := "password"
 	setupWallet := func() *wallet.Wallet {
 		walletPath := util.TempFilePath()
 		mnemonic, _ := wallet.GenerateMnemonic(128)
-		wlt, err := wallet.Create(t.Context(), walletPath, mnemonic, "", genesis.Mainnet)
+		wlt, err := wallet.Create(t.Context(), walletPath, mnemonic, password, genesis.Mainnet)
 		require.NoError(t, err)
 
 		_, _ = wlt.NewValidatorAddress("Validator 1")
@@ -173,8 +174,8 @@ func TestMakeRewardAddresses(t *testing.T) {
 	t.Run("Wallet with one Ed25519 address", func(t *testing.T) {
 		wlt := setupWallet()
 
-		addr1Info, _ := wlt.NewEd25519AccountAddress("", "")
-		_, _ = wlt.NewEd25519AccountAddress("", "")
+		addr1Info, _ := wlt.NewEd25519AccountAddress("", password)
+		_, _ = wlt.NewEd25519AccountAddress("", password)
 		_, _ = wlt.NewBLSAccountAddress("")
 
 		valAddrsInfo := wlt.ListAddresses(wallet.OnlyValidatorAddresses())
@@ -317,9 +318,10 @@ func TestCreateNode(t *testing.T) {
 		},
 	}
 
+	password := "password"
 	for _, tt := range tests {
 		wlt, rewardAddrs, err := CreateNode(t.Context(),
-			tt.numValidators, tt.chain, tt.workingDir, tt.mnemonic, "")
+			tt.numValidators, tt.chain, tt.workingDir, tt.mnemonic, password)
 
 		if tt.withErr {
 			require.Error(t, err)

@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/pactus-project/pactus/wallet/vault"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -16,7 +17,12 @@ var testMnemonic = "abandon abandon abandon abandon abandon abandon abandon aban
 func TestCreate(t *testing.T) {
 	tempPath := util.TempFilePath()
 
-	vlt, err := vault.CreateVaultFromMnemonic(testMnemonic, 21888)
+	opts := []encrypter.Option{
+		encrypter.OptionIteration(1),
+		encrypter.OptionMemory(8),
+		encrypter.OptionParallelism(1),
+	}
+	vlt, err := vault.CreateVaultFromMnemonic(testMnemonic, 21888, "password", opts...)
 	require.NoError(t, err)
 
 	strg, err := Create(tempPath, genesis.Mainnet, vlt)

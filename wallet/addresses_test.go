@@ -165,7 +165,7 @@ func TestNewSecp256k1AccountAddress(t *testing.T) {
 	td.mockStorage.EXPECT().InsertAddress(gomock.Any()).Return(nil)
 	td.mockStorage.EXPECT().UpdateVault(td.testVault).Return(nil)
 	label := td.RandString(16)
-	addressInfo, err := td.wallet.NewSecp256k1AccountAddress(label)
+	addressInfo, err := td.wallet.NewSecp256k1AccountAddress(label, td.password)
 	require.NoError(t, err)
 	assert.NotEmpty(t, addressInfo.Address)
 	assert.NotEmpty(t, addressInfo.PublicKey)

@@ -31,8 +31,10 @@ func TestWalletManager(t *testing.T) {
 		require.ErrorContains(t, err, "illegal file path")
 	})
 
+	password := "password"
+
 	t.Run("create wallet", func(t *testing.T) {
-		_, err := mgr.CreateWallet(testWalletName, "")
+		_, err := mgr.CreateWallet(testWalletName, password)
 		require.NoError(t, err)
 	})
 
@@ -43,7 +45,7 @@ func TestWalletManager(t *testing.T) {
 	})
 
 	t.Run("get mnemonic", func(t *testing.T) {
-		mnemonic, err := mgr.Mnemonic(testWalletName, "")
+		mnemonic, err := mgr.Mnemonic(testWalletName, password)
 		require.NoError(t, err)
 		require.NoError(t, vault.CheckMnemonic(mnemonic))
 	})

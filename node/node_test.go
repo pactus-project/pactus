@@ -49,7 +49,8 @@ func TestRunningNode(t *testing.T) {
 
 	walletPath := filepath.Join(conf.WalletManager.WalletsDir, "default_wallet")
 	mnemonic, _ := wallet.GenerateMnemonic(128)
-	wlt, err := wallet.Create(t.Context(), walletPath, mnemonic, "", genesis.Mainnet)
+	password := "password"
+	wlt, err := wallet.Create(t.Context(), walletPath, mnemonic, password, genesis.Mainnet)
 	require.NoError(t, err)
 	wlt.Close()
 

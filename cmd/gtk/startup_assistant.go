@@ -672,6 +672,12 @@ func pagePassword(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widg
 
 	validatePassword := func() {
 		pass1 := gtkutil.EntryGetText(entryPassword)
+		if pass1 == "" {
+			gtkutil.SetColoredText(labelMessage, "Password cannot be empty", gtkutil.ColorYellow)
+
+			return
+		}
+
 		pass2 := gtkutil.EntryGetText(entryConfirmPassword)
 
 		if pass1 == pass2 {

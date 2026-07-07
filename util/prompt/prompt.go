@@ -44,6 +44,10 @@ func PromptPassword(label string, confirmation bool) string {
 
 	if confirmation {
 		validate := func(input string) error {
+			if input == "" {
+				return errors.New("password cannot be empty")
+			}
+
 			if input != password {
 				return errors.New("passwords do not match")
 			}
