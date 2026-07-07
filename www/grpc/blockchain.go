@@ -3,6 +3,8 @@ package grpc
 import (
 	"context"
 	"encoding/hex"
+	"math"
+	"time"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
@@ -42,6 +44,24 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 		}
 	}
 
+	// Map genesis chain type to the protobuf enum.
+	genDoc := s.state.Genesis()
+	chainType := pactus.ChainType(genDoc.ChainType())
+
+	blockInterval := int64(s.state.Params().BlockIntervalInSecond)
+	genesisTime := genDoc.GenesisTime()
+	expectedBlocks := (time.Now().Unix() - genesisTime.Unix()) / blockInterval
+
+	// Sync progress: fraction of expected blocks that have been synced, clamped to [0, 1].
+	syncProgress := float64(chainInfo.LastBlockHeight) / float64(expectedBlocks)
+	syncProgress = math.Min(math.Max(syncProgress, 0), 1)
+
+	// Blocks remaining to reach the latest block.
+	blocksLeft := expectedBlocks - int64(chainInfo.LastBlockHeight)
+	if blocksLeft < 0 {
+		blocksLeft = 0
+	}
+
 	return &pactus.GetBlockchainInfoResponse{
 		LastBlockHeight:  uint32(chainInfo.LastBlockHeight),
 		LastBlockHash:    chainInfo.LastBlockHash.String(),
@@ -56,6 +76,9 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 		IsPruned:         chainInfo.IsPruned,
 		PruningHeight:    uint32(chainInfo.PruningHeight),
 		InCommittee:      inCommittee,
+		ChainType:        chainType,
+		SyncProgress:     syncProgress,
+		BlocksLeft:       blocksLeft,
 	}, nil
 }
 
