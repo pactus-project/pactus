@@ -34,20 +34,25 @@ func checkError(err error) {
 // If confirmation is true, the user will be asked to re-enter the password
 // for confirmation.
 func PromptPassword(label string, confirmation bool) string {
+	emptyCheck := func(input string) error {
+		if input == "" {
+			return errors.New("password cannot be empty")
+		}
+
+		return nil
+	}
+
 	prompt := promptui.Prompt{
-		Label:   label,
-		Mask:    '*',
-		Pointer: promptui.PipeCursor,
+		Label:    label,
+		Mask:     '*',
+		Validate: emptyCheck,
+		Pointer:  promptui.PipeCursor,
 	}
 	password, err := prompt.Run()
 	checkError(err)
 
 	if confirmation {
-		validate := func(input string) error {
-			if input == "" {
-				return errors.New("password cannot be empty")
-			}
-
+		matchCheck := func(input string) error {
 			if input != password {
 				return errors.New("passwords do not match")
 			}
@@ -57,7 +62,7 @@ func PromptPassword(label string, confirmation bool) string {
 
 		confirmPrompt := promptui.Prompt{
 			Label:    "Confirm password",
-			Validate: validate,
+			Validate: matchCheck,
 			Mask:     '*',
 			Pointer:  promptui.PipeCursor,
 		}
