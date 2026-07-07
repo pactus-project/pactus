@@ -95,7 +95,7 @@ func upgrade(path string) error {
 
 	case Version5:
 		store.Version = Version6
-		store.Vault.Purposes.PurposeBIP44.NextSexp256k1Index = 0
+		store.Vault.Purposes.PurposeBIP44.NextSecp256k1Index = 0
 
 		logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d", Version5, Version6))
 

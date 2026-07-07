@@ -3,7 +3,7 @@
   "uuid": "44156117-268a-49f0-a906-400659b7a051",
   "created_at": "2024-08-27T16:45:08Z",
   "network": 0,
-  "crc": 3456918530,
+  "crc": 3037999230,
   "default_fee": 20000000,
   "vault": {
     "type": 1,
@@ -27,8 +27,7 @@
       },
       "purpose_bip44": {
         "next_ed25519_index": 1,
-        "next_secp256k1_index": 1,
-        "xpub_secp256k1": ""
+        "next_secp256k1_index": 1
       }
     }
   },

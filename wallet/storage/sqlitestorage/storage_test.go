@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet/addresspath"
+	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/pactus-project/pactus/wallet/storage"
 	"github.com/pactus-project/pactus/wallet/types"
 	"github.com/pactus-project/pactus/wallet/vault"
@@ -30,7 +31,12 @@ func setup(t *testing.T) *testData {
 
 	ts := testsuite.NewTestSuite(t)
 
-	vlt, err := vault.CreateVaultFromMnemonic(testMnemonic, addresspath.CoinTypePactusTestnet)
+	opts := []encrypter.Option{
+		encrypter.OptionIteration(1),
+		encrypter.OptionMemory(8),
+		encrypter.OptionParallelism(1),
+	}
+	vlt, err := vault.CreateVaultFromMnemonic(testMnemonic, addresspath.CoinTypePactusTestnet, "password", opts...)
 	require.NoError(t, err)
 
 	path := util.TempDirPath()
@@ -125,7 +131,7 @@ func TestVault(t *testing.T) {
 
 	vlt := td.storage.Vault()
 	require.NotNil(t, vlt)
-	assert.False(t, vlt.IsEncrypted())
+	assert.True(t, vlt.IsEncrypted())
 	assert.False(t, vlt.IsNeutered())
 }
 

@@ -15,7 +15,7 @@ func (s *Storage) upgrade() error {
 	switch s.info.Version {
 	case Version1:
 		vlt := s.Vault()
-		vlt.Purposes.PurposeBIP44.NextSexp256k1Index = 0
+		vlt.Purposes.PurposeBIP44.NextSecp256k1Index = 0
 		err := s.saveVault(vlt)
 		if err != nil {
 			return err

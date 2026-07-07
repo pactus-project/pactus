@@ -100,7 +100,7 @@ func TestUpgrade(t *testing.T) {
 		require.NoError(t, err)
 
 		assert.Equal(t, VersionLatest, strg.WalletInfo().Version)
-		assert.Zero(t, strg.Vault().Purposes.PurposeBIP44.NextSexp256k1Index)
+		assert.Zero(t, strg.Vault().Purposes.PurposeBIP44.NextSecp256k1Index)
 	})
 
 	t.Run("Upgrade Wallet From Version 6", func(t *testing.T) {
