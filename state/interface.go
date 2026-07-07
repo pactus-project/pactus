@@ -37,6 +37,10 @@ type ChainInfo struct {
 
 	IsPruned      bool
 	PruningHeight types.Height
+
+	ChainType    genesis.ChainType
+	SyncProgress float64
+	BlocksLeft   int64
 }
 
 // CommitteeInfo holds committee validators, protocol versions, and total power.
