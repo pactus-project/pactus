@@ -14,6 +14,34 @@ import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
 
+/// Enumeration for blockchain network types.
+class ChainType extends $pb.ProtobufEnum {
+  /// Mainnet is the production blockchain network.
+  static const ChainType CHAIN_TYPE_MAINNET =
+      ChainType._(0, _omitEnumNames ? '' : 'CHAIN_TYPE_MAINNET');
+
+  /// Testnet is the public test blockchain network.
+  static const ChainType CHAIN_TYPE_TESTNET =
+      ChainType._(1, _omitEnumNames ? '' : 'CHAIN_TYPE_TESTNET');
+
+  /// Localnet is for local development and testing.
+  static const ChainType CHAIN_TYPE_LOCALNET =
+      ChainType._(2, _omitEnumNames ? '' : 'CHAIN_TYPE_LOCALNET');
+
+  static const $core.List<ChainType> values = <ChainType>[
+    CHAIN_TYPE_MAINNET,
+    CHAIN_TYPE_TESTNET,
+    CHAIN_TYPE_LOCALNET,
+  ];
+
+  static final $core.List<ChainType?> _byValue =
+      $pb.ProtobufEnum.$_initByValueList(values, 2);
+  static ChainType? valueOf($core.int value) =>
+      value < 0 || value >= _byValue.length ? null : _byValue[value];
+
+  const ChainType._(super.value, super.name);
+}
+
 /// Enumeration for verbosity levels when requesting block information.
 class BlockVerbosity extends $pb.ProtobufEnum {
   /// Request only block data.

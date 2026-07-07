@@ -1287,6 +1287,80 @@ impl<'de> serde::Deserialize<'de> for CertificateInfo {
         deserializer.deserialize_struct("pactus.CertificateInfo", FIELDS, GeneratedVisitor)
     }
 }
+impl serde::Serialize for ChainType {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let variant = match self {
+            Self::Mainnet => "CHAIN_TYPE_MAINNET",
+            Self::Testnet => "CHAIN_TYPE_TESTNET",
+            Self::Localnet => "CHAIN_TYPE_LOCALNET",
+        };
+        serializer.serialize_str(variant)
+    }
+}
+impl<'de> serde::Deserialize<'de> for ChainType {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "CHAIN_TYPE_MAINNET",
+            "CHAIN_TYPE_TESTNET",
+            "CHAIN_TYPE_LOCALNET",
+        ];
+
+        struct GeneratedVisitor;
+
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = ChainType;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                write!(formatter, "expected one of: {:?}", &FIELDS)
+            }
+
+            fn visit_i64<E>(self, v: i64) -> std::result::Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                i32::try_from(v)
+                    .ok()
+                    .and_then(|x| x.try_into().ok())
+                    .ok_or_else(|| {
+                        serde::de::Error::invalid_value(serde::de::Unexpected::Signed(v), &self)
+                    })
+            }
+
+            fn visit_u64<E>(self, v: u64) -> std::result::Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                i32::try_from(v)
+                    .ok()
+                    .and_then(|x| x.try_into().ok())
+                    .ok_or_else(|| {
+                        serde::de::Error::invalid_value(serde::de::Unexpected::Unsigned(v), &self)
+                    })
+            }
+
+            fn visit_str<E>(self, value: &str) -> std::result::Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                match value {
+                    "CHAIN_TYPE_MAINNET" => Ok(ChainType::Mainnet),
+                    "CHAIN_TYPE_TESTNET" => Ok(ChainType::Testnet),
+                    "CHAIN_TYPE_LOCALNET" => Ok(ChainType::Localnet),
+                    _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),
+                }
+            }
+        }
+        deserializer.deserialize_any(GeneratedVisitor)
+    }
+}
 impl serde::Serialize for CheckTransactionRequest {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
@@ -3579,6 +3653,15 @@ impl serde::Serialize for GetBlockchainInfoResponse {
         if self.average_score != 0. {
             len += 1;
         }
+        if self.chain_type != 0 {
+            len += 1;
+        }
+        if self.sync_progress != 0. {
+            len += 1;
+        }
+        if self.blocks_left != 0 {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.GetBlockchainInfoResponse", len)?;
         if self.last_block_height != 0 {
             struct_ser.serialize_field("lastBlockHeight", &self.last_block_height)?;
@@ -3625,6 +3708,19 @@ impl serde::Serialize for GetBlockchainInfoResponse {
         if self.average_score != 0. {
             struct_ser.serialize_field("averageScore", &self.average_score)?;
         }
+        if self.chain_type != 0 {
+            let v = ChainType::try_from(self.chain_type)
+                .map_err(|_| serde::ser::Error::custom(format!("Invalid variant {}", self.chain_type)))?;
+            struct_ser.serialize_field("chainType", &v)?;
+        }
+        if self.sync_progress != 0. {
+            struct_ser.serialize_field("syncProgress", &self.sync_progress)?;
+        }
+        if self.blocks_left != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("blocksLeft", ToString::to_string(&self.blocks_left).as_str())?;
+        }
         struct_ser.end()
     }
 }
@@ -3661,6 +3757,12 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
             "committeeSize",
             "average_score",
             "averageScore",
+            "chain_type",
+            "chainType",
+            "sync_progress",
+            "syncProgress",
+            "blocks_left",
+            "blocksLeft",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -3678,6 +3780,9 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
             InCommittee,
             CommitteeSize,
             AverageScore,
+            ChainType,
+            SyncProgress,
+            BlocksLeft,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -3712,6 +3817,9 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                             "inCommittee" | "in_committee" => Ok(GeneratedField::InCommittee),
                             "committeeSize" | "committee_size" => Ok(GeneratedField::CommitteeSize),
                             "averageScore" | "average_score" => Ok(GeneratedField::AverageScore),
+                            "chainType" | "chain_type" => Ok(GeneratedField::ChainType),
+                            "syncProgress" | "sync_progress" => Ok(GeneratedField::SyncProgress),
+                            "blocksLeft" | "blocks_left" => Ok(GeneratedField::BlocksLeft),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -3744,6 +3852,9 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                 let mut in_committee__ = None;
                 let mut committee_size__ = None;
                 let mut average_score__ = None;
+                let mut chain_type__ = None;
+                let mut sync_progress__ = None;
+                let mut blocks_left__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::LastBlockHeight => {
@@ -3844,6 +3955,28 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                                 Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
+                        GeneratedField::ChainType => {
+                            if chain_type__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("chainType"));
+                            }
+                            chain_type__ = Some(map_.next_value::<ChainType>()? as i32);
+                        }
+                        GeneratedField::SyncProgress => {
+                            if sync_progress__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("syncProgress"));
+                            }
+                            sync_progress__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::BlocksLeft => {
+                            if blocks_left__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("blocksLeft"));
+                            }
+                            blocks_left__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
                     }
                 }
                 Ok(GetBlockchainInfoResponse {
@@ -3860,6 +3993,9 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                     in_committee: in_committee__.unwrap_or_default(),
                     committee_size: committee_size__.unwrap_or_default(),
                     average_score: average_score__.unwrap_or_default(),
+                    chain_type: chain_type__.unwrap_or_default(),
+                    sync_progress: sync_progress__.unwrap_or_default(),
+                    blocks_left: blocks_left__.unwrap_or_default(),
                 })
             }
         }
