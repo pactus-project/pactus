@@ -9,6 +9,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/vote"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -39,6 +40,9 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
 	tmk.addRowBool("Is Pruned", res.IsPruned)
 	tmk.addRowInt("Pruning Height", int(res.PruningHeight))
 	tmk.addRowBool("In Committee", res.InCommittee)
+	tmk.addRowString("Chain Type", genesis.ChainType(res.ChainType).String())
+	tmk.addRowInt("Blocks Left", int(res.BlocksLeft))
+	tmk.addRowDouble("Sync Progress", res.SyncProgress)
 
 	s.writeHTML(w, tmk.html())
 }
