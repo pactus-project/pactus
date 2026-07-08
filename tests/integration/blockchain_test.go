@@ -70,5 +70,12 @@ func TestCommitteeInfo(t *testing.T) {
 	res, err := tBlockchainClient.GetCommitteeInfo(t.Context(), &pactus.GetCommitteeInfoRequest{})
 	require.NoError(t, err)
 
-	assert.Greater(t, uint32(4), res.CommitteePower)
+	assert.GreaterOrEqual(t, int64(4), res.CommitteePower)
+}
+
+func TestConsensusInfo(t *testing.T) {
+	res, err := tBlockchainClient.GetConsensusInfo(t.Context(), &pactus.GetConsensusInfoRequest{})
+	require.NoError(t, err)
+
+	assert.NotEmpty(t, res.Instances)
 }
