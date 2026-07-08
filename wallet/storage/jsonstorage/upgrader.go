@@ -102,8 +102,10 @@ func upgrade(path string) error {
 		return store.Save(path)
 
 	case Version6:
-		// Latest version, no need to upgrade.
-		return nil
+		// Recalculate the CRC after removing unused `xpub_secp256k1`, no need to upgrade the version.
+		store.VaultCRC = store.calcVaultCRC()
+
+		return store.Save(path)
 
 	default:
 		return UnsupportedVersionError{
