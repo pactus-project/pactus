@@ -2,11 +2,14 @@ package integration
 
 import (
 	"fmt"
+	"testing"
 	"time"
 
 	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/pactus/types"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func lastHeight() types.Height {
@@ -54,4 +57,18 @@ func getBlockAt(height types.Height) *pactus.GetBlockResponse {
 	logger.Panic("getBlockAt timeout", "height", height)
 
 	return nil
+}
+
+func TestChainInfo(t *testing.T) {
+	res, err := tBlockchainClient.GetBlockchainInfo(t.Context(), &pactus.GetBlockchainInfoRequest{})
+	require.NoError(t, err)
+
+	assert.Greater(t, res.LastBlockHeight, uint32(8))
+}
+
+func TestCommitteeInfo(t *testing.T) {
+	res, err := tBlockchainClient.GetCommitteeInfo(t.Context(), &pactus.GetCommitteeInfoRequest{})
+	require.NoError(t, err)
+
+	assert.Greater(t, uint32(4), res.CommitteePower)
 }
