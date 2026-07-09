@@ -351,7 +351,7 @@ func (tx *Tx) encodeWithNoSignatory(w io.Writer) error {
 	if err != nil {
 		return err
 	}
-	err = encoding.WriteVarInt(w, uint64(tx.data.Fee))
+	err = tx.data.Fee.Encode(w)
 	if err != nil {
 		return err
 	}
@@ -378,11 +378,10 @@ func (tx *Tx) Decode(r io.Reader) error {
 		return err
 	}
 
-	fee, err := encoding.ReadVarInt(r)
+	err = tx.data.Fee.Decode(r)
 	if err != nil {
 		return err
 	}
-	tx.data.Fee = amount.Amount(fee)
 
 	tx.data.Memo, err = encoding.ReadVarString(r)
 	if err != nil {
