@@ -5,7 +5,7 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleIdentifier</key>
-    <string>com.github.pactus-project.pactus.pactus-gui</string>
+    <string>org.pactus.pacgui</string>
     <key>CFBundleExecutable</key>
     <string>pactus-gui</string>
     <key>CFBundleName</key>
