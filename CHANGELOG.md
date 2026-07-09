@@ -1,5 +1,62 @@
 # Changelog
 
+## [1.16.0](https://github.com/pactus-project/pactus/compare/v1.15.0...v1.16.0) (2026-07-09)
+
+### Feat
+
+- **grpc**: add sync progress and blocks left to GetBlockchainInfo ([#2369](https://github.com/pactus-project/pactus/pull/2369))
+- **wallet**: enforce password for vault ([#2367](https://github.com/pactus-project/pactus/pull/2367))
+- **execution**: allow secp256k1 transactions ([#2343](https://github.com/pactus-project/pactus/pull/2343))
+- **state**: implement PIP-55 block reward halving ([#2341](https://github.com/pactus-project/pactus/pull/2341))
+- **gtk**: add system tray support with minimize-to-tray on close ([#2340](https://github.com/pactus-project/pactus/pull/2340))
+- **gtk**: make snapshot url configurable in gui ([#2323](https://github.com/pactus-project/pactus/pull/2323))
+- **sync**: add entropy delay to block announcement broadcast ([#2329](https://github.com/pactus-project/pactus/pull/2329))
+- **state**: add TotalPower to CommitteeInfo ([#2320](https://github.com/pactus-project/pactus/pull/2320))
+- **util**: add Options pattern to DecompressBuffer ([#2311](https://github.com/pactus-project/pactus/pull/2311))
+
+### Fix
+
+- **wallet**: recalculate CRC for V6 JSON wallets ([#2375](https://github.com/pactus-project/pactus/pull/2375))
+- **state**: prevent recursive lock on ChainInfo call ([#2373](https://github.com/pactus-project/pactus/pull/2373))
+- **html**: add sync info to blockchain page ([#2371](https://github.com/pactus-project/pactus/pull/2371))
+- **grpc**: check for unencrypted wallets ([#2358](https://github.com/pactus-project/pactus/pull/2358))
+- **wallet**: enforce 32-validator limit when creating validator addresses ([#2349](https://github.com/pactus-project/pactus/pull/2349))
+- **wallet**: order transactions by no instead of created_at ([#2352](https://github.com/pactus-project/pactus/pull/2352))
+- **gtk**: refactor widget layout structure ([#2351](https://github.com/pactus-project/pactus/pull/2351))
+- **gtk**: sync list model ([#2339](https://github.com/pactus-project/pactus/pull/2339))
+- **gtk**: prevent multiple concurrent snapshot downloads in startup assistant ([#2331](https://github.com/pactus-project/pactus/pull/2331))
+- **committee**: align protocol upgrade threshold with PIP-51 ([#2335](https://github.com/pactus-project/pactus/pull/2335))
+- **state**: use Power() instead of Stake() in sortition evaluation ([#2322](https://github.com/pactus-project/pactus/pull/2322))
+- **sync**: remove entropy delay from block announcement broadcast ([#2333](https://github.com/pactus-project/pactus/pull/2333))
+- **scripts**: fix metadata path and permission check bugs ([#2324](https://github.com/pactus-project/pactus/pull/2324))
+- **sync**: stop compressing bundle messages ([#2310](https://github.com/pactus-project/pactus/pull/2310))
+- **gtk**: skip file lock when connecting to remote node ([#2300](https://github.com/pactus-project/pactus/pull/2300))
+- **state**: sync BlockVersion on each block commit ([#2304](https://github.com/pactus-project/pactus/pull/2304))
+- **consensus**: prevent double proposal on re-entry to propose state ([#2302](https://github.com/pactus-project/pactus/pull/2302))
+- **execution**: check validator expiry for unbond ([#2294](https://github.com/pactus-project/pactus/pull/2294))
+- **types, message**: nil-pointer check ([#2292](https://github.com/pactus-project/pactus/pull/2292))
+- **execution**: unbond authorization bypass
+- **sync**: set limit for decompress buffer ([#2290](https://github.com/pactus-project/pactus/pull/2290))
+- **wallet**: sanitize wallet path ([#2289](https://github.com/pactus-project/pactus/pull/2289))
+- **sync**: prevent concurrent-map read/write for metrics ([#2288](https://github.com/pactus-project/pactus/pull/2288))
+- **consensus**: discard future messages ([#2283](https://github.com/pactus-project/pactus/pull/2283))
+- **gtk**: enforce left-to-right widget direction ([#2285](https://github.com/pactus-project/pactus/pull/2285))
+- **util**: refactor and fix importer issues ([#2245](https://github.com/pactus-project/pactus/pull/2245))
+- **cmd**: single instance for prune progress bar ([#2282](https://github.com/pactus-project/pactus/pull/2282))
+- **store**: call CompactRange after pruning ([#2278](https://github.com/pactus-project/pactus/pull/2278))
+- **types**: pip-54 implementation ([#2277](https://github.com/pactus-project/pactus/pull/2277))
+- **gtk**: reduce the memory leaks ([#2270](https://github.com/pactus-project/pactus/pull/2270))
+- **gtk**: multiple instances of the application to run simultaneously ([#2269](https://github.com/pactus-project/pactus/pull/2269))
+- **types**: set maximum allowed value to 1e6 for batch transafer ([#2268](https://github.com/pactus-project/pactus/pull/2268))
+- **store**: remove transactions from pruned block ([#2266](https://github.com/pactus-project/pactus/pull/2266))
+
+### Refactor
+
+- **state**: move syncing fields to ChainInfo ([#2372](https://github.com/pactus-project/pactus/pull/2372))
+- **crypto**: remove redundant _account suffix from address type strings ([#2345](https://github.com/pactus-project/pactus/pull/2345))
+- **util**: migrate to gopkg/logger ([#2338](https://github.com/pactus-project/pactus/pull/2338))
+- **execution**: remove redundant SafeDecrease guard in CheckLockTime ([#2296](https://github.com/pactus-project/pactus/pull/2296))
+
 ## [1.15.0](https://github.com/pactus-project/pactus/compare/v1.14.0...v1.15.0) (2026-06-09)
 
 ### Feat
