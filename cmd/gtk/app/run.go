@@ -6,6 +6,7 @@ import (
 	"context"
 
 	adw "github.com/diamondburned/gotk4-adwaita/pkg/adw"
+	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/gogpu/systray"
 	"github.com/pactus-project/pactus/cmd"
@@ -100,6 +101,9 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 	mwView := gtkutil.IdleAddSyncT(func() *view.MainWindowView {
 		mwView := view.NewMainWindowView()
 
+		// Register the main window so dialogs open centered over it.
+		gtkutil.SetMainWindow(&mwView.Window.Window)
+
 		// Custom title bar: small Pactus logo next to the app name on the left,
 		// and a round light/dark toggle on the right, beside the window buttons.
 		header := gtk.NewHeaderBar()
@@ -107,7 +111,7 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 		brand := gtk.NewBox(gtk.OrientationHorizontal, 8)
 		brand.SetVAlign(gtk.AlignCenter)
 		logo := gtk.NewImageFromPaintable(assets.ImagePactusLogoTexture)
-		logo.SetPixelSize(24)
+		logo.SetPixelSize(20)
 		logo.AddCSSClass("app-logo")
 		title := gtk.NewLabel("Pactus GUI")
 		title.AddCSSClass("app-title")
@@ -159,6 +163,14 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 
 		gtkApp.AddWindow(&mwView.Window.Window)
 		mwView.Window.Present()
+
+		// Center the main window on first show; GTK4 cannot position it, so do
+		// it natively once mapped (no-op on Linux/macOS).
+		glib.TimeoutAdd(80, func() bool {
+			gtkutil.CenterActiveWindow()
+
+			return false
+		})
 
 		return mwView
 	})

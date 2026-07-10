@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/pactus-project/gopkg/scheduler"
@@ -49,7 +50,8 @@ func (c *NodeWidgetController) BuildView(ctx context.Context, connectionLabel, c
 		c.view.LabelConnectionValue.SetText(connectionValue)
 		c.view.LabelNetwork.SetText(nodeInfo.NetworkName)
 		c.view.LabelNetworkID.SetText(nodeInfo.PeerId)
-		c.view.LabelAgent.SetText(nodeInfo.Agent)
+		c.view.LabelAgent.SetText(parseAgent(nodeInfo.Agent))
+		c.view.LabelAgent.SetTooltipText(nodeInfo.Agent)
 		c.view.LabelMoniker.SetText(nodeInfo.Moniker)
 		c.view.LabelIsPrune.SetText(strconv.FormatBool(chainInfo.IsPruned))
 	})
@@ -90,7 +92,19 @@ func (c *NodeWidgetController) timeoutProgress() {
 			c.view.LabelBlocksLeft.SetText(strconv.FormatInt(chainInfo.BlocksLeft, 10))
 		}
 		c.view.ProgressSynced.SetFraction(percentage)
+		c.setSyncStatus(percentage)
 	})
+}
+
+// setSyncStatus shows a short caption under the sync ring.
+func (c *NodeWidgetController) setSyncStatus(percentage float64) {
+	if percentage >= 1 {
+		c.view.LabelSyncStatus.SetMarkup(
+			"<span foreground=\"#00a085\">All blocks downloaded</span>")
+
+		return
+	}
+	c.view.LabelSyncStatus.SetText("Downloading blocks…")
 }
 
 func (c *NodeWidgetController) timeoutInfo() {
@@ -130,7 +144,7 @@ func (c *NodeWidgetController) timeoutInfo() {
 		c.view.LabelTotalPower.SetText(totalStake.String())
 		c.view.LabelAverageScore.SetText(fmt.Sprintf("%.2f", chainInfo.AverageScore))
 		c.view.LabelNumConnections.SetText(numConnections)
-		c.view.LabelReachability.SetText(reachability)
+		c.setReachability(reachability)
 
 		c.setInCommittee(chainInfo.InCommittee)
 	})
@@ -159,9 +173,64 @@ func (c *NodeWidgetController) setClockOffset(offset time.Duration, offsetErr er
 	c.view.LabelClockOffset.RemoveCSSClass("warning")
 }
 
+// setReachability shows the reachability with a status color.
+func (c *NodeWidgetController) setReachability(reachability string) {
+	color := ""
+	switch strings.ToLower(reachability) {
+	case "public":
+		color = "#00a085"
+	case "private":
+		color = "#e0a500"
+	}
+
+	if color != "" {
+		c.view.LabelReachability.SetMarkup(
+			fmt.Sprintf("<span foreground=\"%s\">%s</span>", color, reachability))
+
+		return
+	}
+
+	c.view.LabelReachability.SetText(reachability)
+}
+
+// parseAgent turns the raw node agent string into a friendly summary, e.g.
+// "node=gui/node-version=1.17.0-beta/protocol-version=4/os=windows/arch=amd64"
+// becomes "GUI · v1.17.0-beta · windows/amd64 · protocol 4".
+func parseAgent(agent string) string {
+	fields := map[string]string{}
+	for _, part := range strings.Split(agent, "/") {
+		if kv := strings.SplitN(part, "=", 2); len(kv) == 2 {
+			fields[kv[0]] = kv[1]
+		}
+	}
+
+	var parts []string
+	if node := fields["node"]; node != "" {
+		parts = append(parts, strings.ToUpper(node))
+	}
+	if version := fields["node-version"]; version != "" {
+		parts = append(parts, "v"+version)
+	}
+	if os := fields["os"]; os != "" {
+		parts = append(parts, strings.ToUpper(os[:1])+os[1:])
+	}
+	if arch := fields["arch"]; arch != "" {
+		parts = append(parts, arch)
+	}
+	if protocol := fields["protocol-version"]; protocol != "" {
+		parts = append(parts, "protocol "+protocol)
+	}
+
+	if len(parts) == 0 {
+		return agent
+	}
+
+	return strings.Join(parts, " · ")
+}
+
 func (c *NodeWidgetController) setInCommittee(inCommittee bool) {
 	if inCommittee {
-		c.view.LabelInCommittee.SetMarkup("<span foreground=\"#10c92f\">Yes</span>")
+		c.view.LabelInCommittee.SetMarkup("<span foreground=\"#00a085\">Yes</span>")
 
 		return
 	}

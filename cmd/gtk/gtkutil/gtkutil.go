@@ -20,7 +20,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
-	"github.com/pactus-project/pactus/cmd/gtk/assets"
 )
 
 func ShowQuestionDialog(parent *gtk.Window, msg string,
@@ -154,17 +153,58 @@ func BuildExtendedEntry(builder *gtk.Builder, overlayID string) *gtk.Entry {
 	return entry
 }
 
+// mainWindow is the top-level window used as the transient parent for dialogs
+// so they open centered over the application instead of at the screen corner.
+var mainWindow *gtk.Window
+
+// SetMainWindow registers the main window as the parent for dialog windows.
+func SetMainWindow(win *gtk.Window) {
+	mainWindow = win
+}
+
+// parentForDialog makes the dialog transient for the main window so it opens
+// centered over it. It reports whether a parent was set; when it was not (for
+// example dialogs shown during startup before the main window exists), the
+// caller centers the window natively instead.
+func parentForDialog(win *gtk.Window) bool {
+	if mainWindow != nil && mainWindow != win {
+		win.SetTransientFor(mainWindow)
+
+		return true
+	}
+
+	return false
+}
+
+// centerParentlessWindow centers a window that has no transient parent once it
+// has been mapped. This is a no-op on platforms other than Windows.
+func centerParentlessWindow() {
+	glib.TimeoutAdd(80, func() bool {
+		CenterActiveWindow()
+
+		return false
+	})
+}
+
 func ShowNonModalWindow(win *gtk.Window) {
 	IdleAddSync(func() {
+		hasParent := parentForDialog(win)
 		win.SetModal(false)
 		win.Present()
+		if !hasParent {
+			centerParentlessWindow()
+		}
 	})
 }
 
 func ShowModalWindow(win *gtk.Window) {
 	IdleAddAsync(func() {
+		hasParent := parentForDialog(win)
 		win.SetModal(true)
 		win.Present()
+		if !hasParent {
+			centerParentlessWindow()
+		}
 	})
 }
 
@@ -276,31 +316,30 @@ func GoroutineID() int64 {
 }
 
 func UpdateSendButton(button *gtk.Button) {
-	ExtendImageButton(button, "_Send", "Send this transaction", assets.IconSendTexture)
+	ExtendImageButton(button, "_Send", "Send this transaction", nil)
+	button.AddCSSClass("suggested-action")
 }
 
 func UpdateOKButton(window *gtk.Window, button *gtk.Button) {
-	ExtendImageButton(button, "_OK", "Perform this operation", assets.IconOkTexture)
+	ExtendImageButton(button, "_OK", "Perform this operation", nil)
+	button.AddCSSClass("suggested-action")
 	window.SetDefaultWidget(button)
 }
 
 func UpdateCancelButton(button *gtk.Button) {
-	ExtendImageButton(button, "_Cancel", "Cancel this operation", assets.IconCancelTexture)
+	ExtendImageButton(button, "_Cancel", "Cancel this operation", nil)
 }
 
 func UpdateCloseButton(button *gtk.Button) {
-	ExtendImageButton(button, "_Close", "Close this window", assets.IconCloseTexture)
+	ExtendImageButton(button, "_Close", "Close this window", nil)
 }
 
-func ExtendImageButton(btn *gtk.Button, text, tooltip string, texture *gdk.Texture) {
-	box := gtk.NewBox(gtk.OrientationHorizontal, 4)
-	pic := NewScaledPictureFromTexture(texture, 16, 16)
-	label := gtk.NewLabel(text)
-	label.SetUseUnderline(true)
-
-	box.Append(pic)
-	box.Append(label)
-	btn.SetChild(box)
+// ExtendImageButton sets a clean, text-only label on a dialog button. The
+// texture argument is kept for backwards compatibility and ignored, as the
+// dated icon glyphs were replaced by a flat, modern button style.
+func ExtendImageButton(btn *gtk.Button, text, tooltip string, _ *gdk.Texture) {
+	btn.SetLabel(text)
+	btn.SetUseUnderline(true)
 	btn.SetTooltipText(tooltip)
 }
 
