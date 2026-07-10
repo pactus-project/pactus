@@ -1,98 +1,263 @@
+/*
+ * Pactus GUI theme foundation.
+ *
+ * Colors are derived from GTK's adaptive named colors (@theme_bg_color,
+ * @theme_fg_color, @theme_base_color ...) so the interface follows the
+ * active light or dark theme automatically. Only the Pactus brand accent
+ * is fixed; it is a mid-tone teal chosen to stay legible on both light
+ * and dark backgrounds.
+ *
+ * Note: GTK CSS variables (@define-color) hold colors only, not lengths,
+ * so radii and spacing are written as literal values kept consistent here.
+ */
+
+/* ---- Brand + token layer ------------------------------------------------ */
+
+@define-color pactus_navy       #002235;
+@define-color pactus_accent     #12909e;
+@define-color pactus_accent_hi  #16a7b8;
+
+/* Route GTK's own accent/selection through the brand teal for cohesion. */
+@define-color accent_color         @pactus_accent;
+@define-color accent_bg_color      @pactus_accent;
+@define-color theme_selected_bg_color @pactus_accent;
+@define-color theme_selected_fg_color #ffffff;
+
+/* Surfaces + lines derived from the active theme (adapts to light/dark). */
+@define-color surface     @theme_bg_color;
+@define-color card_bg     mix(@theme_base_color, @theme_fg_color, 0.03);
+@define-color card_border alpha(@theme_fg_color, 0.10);
+@define-color hairline    alpha(@theme_fg_color, 0.12);
+@define-color muted_fg    alpha(@theme_fg_color, 0.62);
+@define-color hover_bg    alpha(@theme_fg_color, 0.06);
+@define-color danger_fg   #e0483a;
+
+/* ---- Base --------------------------------------------------------------- */
+
+window {
+    background-color: @surface;
+}
+
+label {
+    /* Gentle default; specific labels override below. */
+}
+
+separator {
+    margin: 8px 4px;
+    background-color: @hairline;
+    min-width: 1px;
+    min-height: 1px;
+}
+
+/* ---- Notebook tabs (main navigation) ------------------------------------ */
+
+notebook > header {
+    background-color: @surface;
+    border-bottom: 1px solid @hairline;
+    padding: 2px 4px 0 4px;
+}
+
+notebook > header tab {
+    margin: 0 2px;
+    padding: 8px 16px;
+    border-radius: 8px 8px 0 0;
+    border: none;
+    color: @muted_fg;
+    font-weight: 500;
+    transition: background-color 150ms ease, color 150ms ease;
+}
+
+notebook > header tab:hover {
+    background-color: @hover_bg;
+    color: @theme_fg_color;
+}
+
+notebook > header tab:checked {
+    color: @pactus_accent;
+    box-shadow: inset 0 -2px 0 0 @pactus_accent;
+}
+
+notebook > header tab:checked label {
+    font-weight: 700;
+}
+
+/* ---- Buttons ------------------------------------------------------------ */
+
+button {
+    border-radius: 8px;
+    padding: 6px 14px;
+    transition: background-color 150ms ease, box-shadow 150ms ease;
+}
+
+button:hover {
+    background-color: @hover_bg;
+}
+
+button.suggested-action,
+button.default {
+    background-image: none;
+    background-color: @pactus_accent;
+    color: #ffffff;
+    border: none;
+}
+
+button.suggested-action:hover,
+button.default:hover {
+    background-color: @pactus_accent_hi;
+}
+
+button.destructive-action {
+    background-image: none;
+    background-color: @danger_fg;
+    color: #ffffff;
+    border: none;
+}
+
 .inline_button {
-    padding: 2px;
-    margin-right: 3px;
+    padding: 4px;
+    margin-right: 4px;
+    border-radius: 6px;
+}
+
+/* ---- Entries ------------------------------------------------------------ */
+
+entry {
+    border-radius: 8px;
+    padding: 6px 10px;
+    border: 1px solid @hairline;
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+entry:focus-within {
+    border-color: @pactus_accent;
+    box-shadow: 0 0 0 2px alpha(@pactus_accent, 0.30);
 }
 
 .copyable_entry {
     padding-right: 36px;
 }
 
-.warning {
-    color: red;
+/* ---- Lists + rows ------------------------------------------------------- */
+
+list {
+    padding: 4px;
+    background-color: transparent;
 }
 
+list > row {
+    border-radius: 8px;
+    padding: 6px 8px;
+    margin: 1px 2px;
+    transition: background-color 150ms ease;
+}
 
-separator {
-    margin: 8px;
+list > row:hover {
+    background-color: @hover_bg;
+}
+
+/* ---- Cards / framed sections ------------------------------------------- */
+
+frame {
+    border-radius: 12px;
+    border: 1px solid @card_border;
+    background-color: @card_bg;
+    padding: 4px;
+}
+
+frame > label {
+    font-weight: 600;
+    margin: 2px 6px;
 }
 
 .widget-grid {
-    margin-top: 12px;
-    margin-bottom: 8px;
-    margin-right: 4px;
-    margin-left: 4px;
+    margin: 12px 6px 8px 6px;
 }
 
 .dialog-box {
-    margin-top: 12px;
-    margin-bottom: 8px;
-    margin-right: 4px;
-    margin-left: 4px;
+    margin: 12px 6px 8px 6px;
 }
 
 .dialog-action-bar {
-
+    padding-top: 8px;
 }
 
 .toolbar {
     background-image: none;
     background-color: @theme_bg_color;
     box-shadow: none;
+    border-bottom: 1px solid @hairline;
 }
 
-/*** Styles for Gtk.ListBox ***/
-list {
-    padding: 2px;
-    margin: 2px;
-}
+/* ---- TextView ----------------------------------------------------------- */
 
-/*** Styles for Gtk.TextView ***/
 textview.view {
-    padding: 2px;
-    margin: 2px;
-    border: 1px solid #000000;
+    padding: 6px;
+    border-radius: 8px;
+    border: 1px solid @hairline;
 }
 
-/* Styles for the assistant page */
+/* ---- Status colors ------------------------------------------------------ */
+
+.warning {
+    color: @danger_fg;
+    font-weight: 600;
+}
+
+/* ---- Startup assistant -------------------------------------------------- */
 
 .assistant-frame {
     font-size: 14px;
-    margin: 4px;
-    padding: 4px;
+    margin: 8px;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid @card_border;
+    background-color: @card_bg;
+    transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.assistant-frame:hover {
+    border-color: alpha(@pactus_accent, 0.55);
 }
 
 .assistant-frame-label {
+    font-weight: 700;
     margin-bottom: 12px;
 }
 
 .assistant-frame-desc {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: normal;
+    color: @muted_fg;
     margin-bottom: 12px;
-    margin-left: 8px;
+    margin-left: 4px;
 }
 
+/* ---- Splash screen ------------------------------------------------------ */
+
 .splash {
-    padding: 24px;
+    padding: 28px 32px;
+    background-color: @surface;
+    border-radius: 16px;
 }
 
 .splash-logo {
-    margin-bottom: 8px;
-    padding: 0px;
+    margin-bottom: 10px;
+    padding: 0;
 }
 
 .splash-spinner {
     margin-bottom: 6px;
-    padding: 0px;
+    padding: 0;
 }
 
 .splash-status {
     font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 6px;
+    font-weight: 600;
+    margin-bottom: 4px;
 }
 
 .splash-version {
     font-size: 12px;
-    opacity: 0.7;
+    color: @muted_fg;
+    opacity: 0.8;
 }
