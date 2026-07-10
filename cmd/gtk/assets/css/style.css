@@ -13,11 +13,13 @@
 
 /* ---- Brand + token layer ------------------------------------------------ */
 
+/* Pactus brand palette, taken from the logo and the site's action buttons. */
 @define-color pactus_navy       #002235;
-@define-color pactus_accent     #12909e;
-@define-color pactus_accent_hi  #16a7b8;
+@define-color pactus_accent     #00a085;   /* green - primary actions/accent */
+@define-color pactus_accent_hi  #12b89a;   /* green hover */
+@define-color pactus_blue       #217aff;   /* blue - navigation */
 
-/* Route GTK's own accent/selection through the brand teal for cohesion. */
+/* Route GTK's own accent/selection through the brand green for cohesion. */
 @define-color accent_color         @pactus_accent;
 @define-color accent_bg_color      @pactus_accent;
 @define-color theme_selected_bg_color @pactus_accent;
@@ -52,29 +54,35 @@ separator {
 /* ---- Header bar (title bar with logo) ----------------------------------- */
 
 headerbar {
-    min-height: 42px;
-    padding: 3px 8px;
+    min-height: 32px;
+    padding: 1px 6px;
     background-color: @surface;
     border-bottom: 1px solid @hairline;
     box-shadow: none;
 }
 
 .app-logo {
-    margin: 0 8px 0 2px;
+    margin: 0 6px 0 2px;
 }
 
 .app-title {
     font-weight: 700;
-    font-size: 14px;
+    font-size: 13px;
     color: @theme_fg_color;
 }
 
 .theme-toggle {
-    margin-right: 6px;
-    min-width: 28px;
-    min-height: 28px;
+    margin-right: 4px;
+    min-width: 24px;
+    min-height: 24px;
     padding: 0;
-    font-size: 14px;
+    font-size: 13px;
+}
+
+headerbar windowcontrols > button {
+    min-height: 24px;
+    min-width: 24px;
+    padding: 0;
 }
 
 /* ---- Notebook tabs (main navigation) ------------------------------------ */
@@ -107,6 +115,50 @@ notebook > header tab:checked {
 
 notebook > header tab:checked label {
     font-weight: 700;
+}
+
+/* ---- Sidebar navigation ------------------------------------------------- */
+
+.sidebar {
+    background-color: mix(@theme_bg_color, @theme_fg_color, 0.03);
+    border-right: 1px solid @hairline;
+    min-width: 210px;
+    padding: 10px 8px;
+}
+
+.sidebar-list {
+    background: transparent;
+}
+
+.sidebar-list > row {
+    border-radius: 8px;
+    margin: 2px;
+    min-height: 0;
+}
+
+.sidebar-list > row:hover {
+    background-color: @hover_bg;
+}
+
+.sidebar-list > row:selected {
+    background-color: alpha(@pactus_blue, 0.16);
+}
+
+.sidebar-list > row:selected .sidebar-label {
+    color: @pactus_blue;
+    font-weight: 700;
+}
+
+.sidebar-row {
+    padding: 10px 12px;
+}
+
+.sidebar-icon {
+    font-size: 15px;
+}
+
+.sidebar-label {
+    font-size: 14px;
 }
 
 /* ---- Buttons ------------------------------------------------------------ */
@@ -149,11 +201,27 @@ button.destructive-action {
 
 /* ---- Entries ------------------------------------------------------------ */
 
+/* Keep all input controls the same height. min-height is only a floor, so the
+   entry padding is kept small and the floor equalizes entries, dropdowns,
+   combo boxes and spin buttons. */
 entry {
     border-radius: 8px;
-    padding: 6px 10px;
+    padding: 3px 10px;
+    min-height: 32px;
     border: 1px solid @hairline;
     transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+spinbutton,
+dropdown > button,
+combobox button {
+    min-height: 32px;
+    border-radius: 8px;
+}
+
+dropdown,
+combobox {
+    min-height: 32px;
 }
 
 entry:focus-within {
@@ -202,11 +270,16 @@ frame > label {
 }
 
 .dialog-box {
-    margin: 12px 6px 8px 6px;
+    margin: 18px 20px 14px 20px;
 }
 
 .dialog-action-bar {
-    padding-top: 8px;
+    padding-top: 14px;
+}
+
+.dialog-action-bar button {
+    min-width: 90px;
+    margin-left: 8px;
 }
 
 .toolbar {
@@ -230,33 +303,29 @@ textview.view {
     margin: 16px;
 }
 
-.card {
-    padding: 14px 16px;
-    min-width: 190px;
+.page-header {
+    margin-bottom: 4px;
 }
 
-.overview-flow > flowboxchild {
-    padding: 0;
+.page-title {
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.card {
+    padding: 16px 18px;
+    min-width: 190px;
+    border-radius: 14px;
+    background-color: @card_bg;
+    border: 1px solid @card_border;
+    box-shadow: 0 1px 3px alpha(@theme_fg_color, 0.06);
 }
 
 .section-title {
     font-weight: 800;
-    font-size: 12px;
+    font-size: 11px;
     color: @muted_fg;
-    margin-bottom: 8px;
-}
-
-.metric {
-    padding: 7px 0;
-    border-bottom: 1px solid @hairline;
-}
-
-.metric-last {
-    border-bottom: none;
-}
-
-.metric-icon {
-    font-size: 15px;
+    margin-bottom: 2px;
 }
 
 .metric-label {
@@ -265,12 +334,46 @@ textview.view {
 }
 
 .metric-value {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 700;
 }
 
+.metric-mono {
+    font-size: 12px;
+    font-weight: 600;
+    font-family: monospace;
+    background-color: alpha(@theme_fg_color, 0.05);
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-top: 2px;
+}
+
 .sync-card {
-    padding: 20px 24px;
+    padding: 16px 18px;
+}
+
+.sync-status {
+    font-size: 13px;
+    font-weight: 600;
+    color: @muted_fg;
+    margin-top: 4px;
+}
+
+/* Local Node Info: aligned definition list. */
+.info-key {
+    font-size: 13px;
+    color: @muted_fg;
+}
+
+.info-val {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.info-mono {
+    font-family: monospace;
+    font-size: 12px;
+    font-weight: 600;
 }
 
 /* ---- Circular sync gauge ------------------------------------------------ */

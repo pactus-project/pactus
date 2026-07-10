@@ -10,11 +10,11 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 )
 
-// Pactus accent teal (#12909e), matching the CSS accent color.
+// Pactus accent green (#00a085), matching the CSS accent color.
 const (
-	accentRed   = 0x12 / 255.0
-	accentGreen = 0x90 / 255.0
-	accentBlue  = 0x9e / 255.0
+	accentRed   = 0x00 / 255.0
+	accentGreen = 0xa0 / 255.0
+	accentBlue  = 0x85 / 255.0
 )
 
 // CircularProgress is a ring gauge that fills clockwise with the sync progress
