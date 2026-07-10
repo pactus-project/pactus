@@ -89,8 +89,7 @@ func (c *NodeWidgetController) timeoutProgress() {
 		} else {
 			c.view.LabelBlocksLeft.SetText(strconv.FormatInt(chainInfo.BlocksLeft, 10))
 		}
-		c.view.ProgressBarSynced.SetFraction(percentage)
-		c.view.ProgressBarSynced.SetText(fmt.Sprintf("%s %%", strconv.FormatFloat(percentage*100, 'f', 2, 64)))
+		c.view.ProgressSynced.SetFraction(percentage)
 	})
 }
 

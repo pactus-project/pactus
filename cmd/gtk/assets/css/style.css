@@ -224,6 +224,63 @@ textview.view {
     border: 1px solid @hairline;
 }
 
+/* ---- Node status cards -------------------------------------------------- */
+
+.node-content {
+    margin: 16px;
+}
+
+.card {
+    padding: 14px 16px;
+    min-width: 190px;
+}
+
+.overview-flow > flowboxchild {
+    padding: 0;
+}
+
+.section-title {
+    font-weight: 800;
+    font-size: 12px;
+    color: @muted_fg;
+    margin-bottom: 8px;
+}
+
+.metric {
+    padding: 7px 0;
+    border-bottom: 1px solid @hairline;
+}
+
+.metric-last {
+    border-bottom: none;
+}
+
+.metric-icon {
+    font-size: 15px;
+}
+
+.metric-label {
+    font-size: 11px;
+    color: @muted_fg;
+}
+
+.metric-value {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.sync-card {
+    padding: 20px 24px;
+}
+
+/* ---- Circular sync gauge ------------------------------------------------ */
+
+.circular-progress-label {
+    font-size: 15px;
+    font-weight: 700;
+    color: @theme_fg_color;
+}
+
 /* ---- Progress + controls ------------------------------------------------ */
 
 progressbar > trough {
