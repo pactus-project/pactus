@@ -13,6 +13,7 @@ import (
 	"sync"
 	"time"
 
+	adw "github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
@@ -64,6 +65,9 @@ func init() {
 	}
 
 	gtk.Init()
+	// Initialize libadwaita so its StyleManager controls the light/dark
+	// appearance, independent of the operating system theme.
+	adw.Init()
 }
 
 //nolint:gocognit // needs refactoring
@@ -79,8 +83,6 @@ func main() {
 	// Create a new app.
 	app := gtk.NewApplication(appID, gio.ApplicationNonUnique)
 	gtk.WidgetSetDefaultDirection(gtk.TextDirLTR)
-	settings := gtk.SettingsGetDefault()
-	settings.Object.SetObjectProperty("gtk-application-prefer-dark-theme", true)
 
 	// apply custom css
 	provider := gtk.NewCSSProvider()

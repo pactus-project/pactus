@@ -49,6 +49,34 @@ separator {
     min-height: 1px;
 }
 
+/* ---- Header bar (title bar with logo) ----------------------------------- */
+
+headerbar {
+    min-height: 42px;
+    padding: 3px 8px;
+    background-color: @surface;
+    border-bottom: 1px solid @hairline;
+    box-shadow: none;
+}
+
+.app-logo {
+    margin: 0 8px 0 2px;
+}
+
+.app-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: @theme_fg_color;
+}
+
+.theme-toggle {
+    margin-right: 6px;
+    min-width: 28px;
+    min-height: 28px;
+    padding: 0;
+    font-size: 14px;
+}
+
 /* ---- Notebook tabs (main navigation) ------------------------------------ */
 
 notebook > header {
@@ -194,6 +222,45 @@ textview.view {
     padding: 6px;
     border-radius: 8px;
     border: 1px solid @hairline;
+}
+
+/* ---- Progress + controls ------------------------------------------------ */
+
+progressbar > trough {
+    border-radius: 6px;
+    min-height: 8px;
+    background-color: @hover_bg;
+}
+
+progressbar > trough > progress {
+    background-image: none;
+    background-color: @pactus_accent;
+    border-radius: 6px;
+}
+
+progressbar text {
+    color: @muted_fg;
+    font-size: 11px;
+}
+
+/* Brand the interactive controls. */
+spinner {
+    color: @pactus_accent;
+}
+
+check:checked,
+radio:checked {
+    background-image: none;
+    background-color: @pactus_accent;
+    border-color: @pactus_accent;
+}
+
+switch:checked {
+    background-color: @pactus_accent;
+}
+
+scale > trough > highlight {
+    background-color: @pactus_accent;
 }
 
 /* ---- Status colors ------------------------------------------------------ */

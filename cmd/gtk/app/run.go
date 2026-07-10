@@ -5,6 +5,7 @@ package app
 import (
 	"context"
 
+	adw "github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/gogpu/systray"
 	"github.com/pactus-project/pactus/cmd"
@@ -98,6 +99,47 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 
 	mwView := gtkutil.IdleAddSyncT(func() *view.MainWindowView {
 		mwView := view.NewMainWindowView()
+
+		// Custom title bar: small Pactus logo next to the app name on the left,
+		// and a round light/dark toggle on the right, beside the window buttons.
+		header := gtk.NewHeaderBar()
+
+		brand := gtk.NewBox(gtk.OrientationHorizontal, 8)
+		brand.SetVAlign(gtk.AlignCenter)
+		logo := gtk.NewImageFromPaintable(assets.ImagePactusLogoTexture)
+		logo.SetPixelSize(24)
+		logo.AddCSSClass("app-logo")
+		title := gtk.NewLabel("Pactus GUI")
+		title.AddCSSClass("app-title")
+		brand.Append(logo)
+		brand.Append(title)
+		header.PackStart(brand)
+		// Suppress the centered window title so the brand stays left-aligned.
+		header.SetTitleWidget(gtk.NewLabel(""))
+
+		themeToggle := gtk.NewToggleButton()
+		themeToggle.AddCSSClass("theme-toggle")
+		themeToggle.AddCSSClass("circular")
+		themeToggle.SetVAlign(gtk.AlignCenter)
+		themeToggle.SetTooltipText("Toggle light / dark mode")
+		applyThemeIcon := func(dark bool) {
+			if dark {
+				themeToggle.SetLabel("🌙")
+			} else {
+				themeToggle.SetLabel("☀")
+			}
+		}
+		startDark := adw.StyleManagerGetDefault().Dark()
+		themeToggle.SetActive(startDark)
+		applyThemeIcon(startDark)
+		themeToggle.ConnectToggled(func() {
+			active := themeToggle.Active()
+			nav.SetDarkMode(active)
+			applyThemeIcon(active)
+		})
+		header.PackEnd(themeToggle)
+
+		mwView.Window.SetTitlebar(header)
 
 		walletCtrl.SetupMenu(mwView.Window)
 
