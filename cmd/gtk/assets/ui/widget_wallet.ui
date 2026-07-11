@@ -1,241 +1,278 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!-- Created with Cambalache 1.0.2 -->
 <interface>
   <!-- interface-name widget_wallet.ui -->
   <requires lib="gtk" version="4.14"/>
   <object class="GtkBox" id="id_box_wallet">
-    <property name="css-classes">widget-main-box</property>
-    <property name="homogeneous">True</property>
+    <property name="css-classes">node-content</property>
     <property name="orientation">vertical</property>
+    <property name="spacing">12</property>
+
+    <!-- Header with wallet actions -->
     <child>
-      <object class="GtkNotebook">
-        <property name="tab-pos">left</property>
+      <object class="GtkBox">
+        <property name="css-classes">page-header</property>
+        <property name="spacing">8</property>
         <child>
-          <object class="GtkBox" id="id_box_wallet_info">
+          <object class="GtkBox">
             <property name="orientation">vertical</property>
+            <property name="hexpand">True</property>
+            <property name="valign">center</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="label">Wallet</property>
+                <property name="css-classes">page-title</property>
+                <property name="halign">start</property>
+                <property name="xalign">0</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="id_label_wallet_name">
+                <property name="css-classes">page-subtitle</property>
+                <property name="halign">start</property>
+                <property name="xalign">0</property>
+                <property name="selectable">True</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="id_button_new_address">
+            <property name="css-classes">suggested-action</property>
+            <property name="valign">center</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="id_button_set_default_fee">
+            <property name="valign">center</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="id_button_change_password">
+            <property name="valign">center</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="id_button_show_seed">
+            <property name="valign">center</property>
+          </object>
+        </child>
+      </object>
+    </child>
+
+    <!-- Balance stat cards -->
+    <child>
+      <object class="GtkBox" id="id_box_wallet_info">
+        <property name="homogeneous">True</property>
+        <property name="spacing">12</property>
+        <child>
+          <object class="GtkBox">
+            <property name="css-classes">card</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">4</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="label">Total Balance</property>
+                <property name="css-classes">section-title</property>
+                <property name="halign">start</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="id_label_wallet_total_balance">
+                <property name="css-classes">stat-value</property>
+                <property name="halign">start</property>
+                <property name="xalign">0</property>
+                <property name="selectable">True</property>
+                <property name="ellipsize">end</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="css-classes">card</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">4</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="label">Total Stake</property>
+                <property name="css-classes">section-title</property>
+                <property name="halign">start</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="id_label_wallet_total_stake">
+                <property name="css-classes">stat-value</property>
+                <property name="halign">start</property>
+                <property name="xalign">0</property>
+                <property name="selectable">True</property>
+                <property name="ellipsize">end</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="css-classes">card</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">4</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="label">Default Fee</property>
+                <property name="css-classes">section-title</property>
+                <property name="halign">start</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="id_label_wallet_default_fee">
+                <property name="css-classes">stat-value</property>
+                <property name="halign">start</property>
+                <property name="xalign">0</property>
+                <property name="selectable">True</property>
+                <property name="ellipsize">end</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+
+    <!-- Wallet details -->
+    <child>
+      <object class="GtkBox">
+        <property name="css-classes">card</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">10</property>
+        <child>
+          <object class="GtkBox">
+            <property name="homogeneous">True</property>
+            <property name="spacing">24</property>
             <child>
               <object class="GtkGrid">
-                <property name="column-spacing">8</property>
-                <property name="css-classes">widget-grid</property>
-                <property name="hexpand">True</property>
-                <property name="row-spacing">8</property>
-                <property name="vexpand">True</property>
+                <property name="css-classes">info-grid</property>
+                <property name="column-spacing">16</property>
+                <property name="row-spacing">10</property>
                 <child>
                   <object class="GtkLabel">
+                    <property name="label">Driver</property>
+                    <property name="css-classes">info-key</property>
                     <property name="halign">start</property>
-                    <property name="label">Name:</property>
-                    <property name="valign">start</property>
-                    <layout>
-                      <property name="column">0</property>
-                      <property name="row">0</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="id_label_wallet_name">
-                    <property name="halign">start</property>
-                    <property name="selectable">True</property>
-                    <property name="valign">start</property>
-                    <layout>
-                      <property name="column">1</property>
-                      <property name="row">0</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="halign">start</property>
-                    <property name="label">Location:</property>
-                    <property name="valign">start</property>
-                    <layout>
-                      <property name="column">0</property>
-                      <property name="row">1</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="id_label_wallet_location">
-                    <property name="halign">start</property>
-                    <property name="selectable">True</property>
-                    <property name="valign">start</property>
-                    <layout>
-                      <property name="column">1</property>
-                      <property name="row">1</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="halign">start</property>
-                    <property name="label">Driver:</property>
-                    <property name="selectable">True</property>
-                    <property name="valign">start</property>
-                    <layout>
-                      <property name="column">0</property>
-                      <property name="row">2</property>
-                    </layout>
+                    <layout><property name="column">0</property><property name="row">0</property></layout>
                   </object>
                 </child>
                 <child>
                   <object class="GtkLabel" id="id_label_wallet_driver">
+                    <property name="css-classes">info-val</property>
                     <property name="halign">start</property>
+                    <property name="xalign">0</property>
+                    <property name="hexpand">True</property>
                     <property name="selectable">True</property>
-                    <property name="valign">start</property>
-                    <layout>
-                      <property name="column">1</property>
-                      <property name="row">2</property>
-                    </layout>
+                    <layout><property name="column">1</property><property name="row">0</property></layout>
                   </object>
                 </child>
                 <child>
                   <object class="GtkLabel">
+                    <property name="label">Created At</property>
+                    <property name="css-classes">info-key</property>
                     <property name="halign">start</property>
-                    <property name="label">Created At:</property>
-                    <property name="selectable">True</property>
-                    <property name="valign">start</property>
-                    <layout>
-                      <property name="column">0</property>
-                      <property name="row">3</property>
-                    </layout>
+                    <layout><property name="column">0</property><property name="row">1</property></layout>
                   </object>
                 </child>
                 <child>
                   <object class="GtkLabel" id="id_label_wallet_created_at">
+                    <property name="css-classes">info-val</property>
                     <property name="halign">start</property>
+                    <property name="xalign">0</property>
+                    <property name="hexpand">True</property>
                     <property name="selectable">True</property>
-                    <property name="valign">start</property>
-                    <layout>
-                      <property name="column">1</property>
-                      <property name="row">3</property>
-                    </layout>
+                    <layout><property name="column">1</property><property name="row">1</property></layout>
                   </object>
                 </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkGrid">
+                <property name="css-classes">info-grid</property>
+                <property name="column-spacing">16</property>
+                <property name="row-spacing">10</property>
                 <child>
                   <object class="GtkLabel">
+                    <property name="label">Encrypted</property>
+                    <property name="css-classes">info-key</property>
                     <property name="halign">start</property>
-                    <property name="label">Encrypted:</property>
-                    <property name="valign">start</property>
-                    <layout>
-                      <property name="column">0</property>
-                      <property name="row">4</property>
-                    </layout>
+                    <layout><property name="column">0</property><property name="row">0</property></layout>
                   </object>
                 </child>
                 <child>
                   <object class="GtkLabel" id="id_label_wallet_encrypted">
+                    <property name="css-classes">info-val</property>
                     <property name="halign">start</property>
-                    <property name="valign">start</property>
-                    <layout>
-                      <property name="column">1</property>
-                      <property name="row">4</property>
-                    </layout>
+                    <property name="xalign">0</property>
+                    <property name="hexpand">True</property>
+                    <layout><property name="column">1</property><property name="row">0</property></layout>
                   </object>
                 </child>
                 <child>
                   <object class="GtkLabel">
+                    <property name="label">Location</property>
+                    <property name="css-classes">info-key</property>
                     <property name="halign">start</property>
-                    <property name="label">Total Balance:</property>
-                    <property name="valign">start</property>
-                    <layout>
-                      <property name="column">0</property>
-                      <property name="row">5</property>
-                    </layout>
+                    <layout><property name="column">0</property><property name="row">1</property></layout>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="id_label_wallet_total_balance">
+                  <object class="GtkLabel" id="id_label_wallet_location">
+                    <property name="css-classes">info-val</property>
                     <property name="halign">start</property>
-                    <property name="valign">start</property>
-                    <layout>
-                      <property name="column">1</property>
-                      <property name="row">5</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="halign">start</property>
-                    <property name="label">Total Stake:</property>
-                    <property name="valign">start</property>
-                    <layout>
-                      <property name="column">0</property>
-                      <property name="row">6</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="id_label_wallet_total_stake">
-                    <property name="halign">start</property>
-                    <property name="valign">start</property>
-                    <layout>
-                      <property name="column">1</property>
-                      <property name="row">6</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="halign">start</property>
-                    <property name="label">Default Fee:</property>
-                    <property name="valign">start</property>
-                    <layout>
-                      <property name="column">0</property>
-                      <property name="row">7</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="id_label_wallet_default_fee">
-                    <property name="halign">start</property>
-                    <property name="valign">start</property>
-                    <layout>
-                      <property name="column">1</property>
-                      <property name="row">7</property>
-                    </layout>
+                    <property name="xalign">0</property>
+                    <property name="hexpand">True</property>
+                    <property name="selectable">True</property>
+                    <property name="ellipsize">end</property>
+                    <layout><property name="column">1</property><property name="row">1</property></layout>
                   </object>
                 </child>
               </object>
             </child>
           </object>
         </child>
-        <child type="tab">
-          <object class="GtkLabel">
-            <property name="label">Info</property>
-          </object>
-        </child>
+      </object>
+    </child>
+
+    <!-- Addresses / Transactions -->
+    <child>
+      <object class="GtkNotebook">
+        <property name="css-classes">wallet-tabs</property>
+        <property name="vexpand">True</property>
         <child>
           <object class="GtkBox" id="id_box_wallet_addresses">
             <property name="orientation">vertical</property>
+            <property name="spacing">10</property>
             <child>
               <object class="GtkBox">
-                <property name="orientation">vertical</property>
+                <property name="spacing">8</property>
                 <child>
-                  <object class="GtkScrolledWindow">
-                    <child>
-                      <object class="GtkColumnView" id="id_columnview_addresses">
-                        <property name="vexpand">True</property>
-                      </object>
-                    </child>
+                  <object class="GtkLabel">
+                    <property name="label">Addresses</property>
+                    <property name="css-classes">section-title</property>
+                    <property name="halign">start</property>
+                    <property name="hexpand">True</property>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkBox">
-                    <property name="css-classes">toolbar</property>
-                    <child>
-                      <object class="GtkButton" id="id_button_refresh_addresses"/>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="id_button_new_address"/>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="id_button_set_default_fee"/>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="id_button_change_password"/>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="id_button_show_seed"/>
-                    </child>
+                  <object class="GtkButton" id="id_button_refresh_addresses">
+                    <property name="valign">center</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
+                <property name="hscrollbar-policy">never</property>
+                <child>
+                  <object class="GtkColumnView" id="id_columnview_addresses">
+                    <property name="hexpand">True</property>
+                    <property name="vexpand">True</property>
                   </object>
                 </child>
               </object>
@@ -250,30 +287,44 @@
         <child>
           <object class="GtkBox" id="id_box_wallet_transactions">
             <property name="orientation">vertical</property>
+            <property name="spacing">10</property>
             <child>
               <object class="GtkBox">
-                <property name="orientation">vertical</property>
+                <property name="spacing">8</property>
                 <child>
-                  <object class="GtkScrolledWindow">
-                    <child>
-                      <object class="GtkColumnView" id="id_columnview_transactions">
-                        <property name="vexpand">True</property>
-                      </object>
-                    </child>
+                  <object class="GtkLabel">
+                    <property name="label">Transactions</property>
+                    <property name="css-classes">section-title</property>
+                    <property name="halign">start</property>
+                    <property name="hexpand">True</property>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkBox">
-                    <property name="css-classes">toolbar</property>
-                    <child>
-                      <object class="GtkButton" id="id_button_tx_refresh"/>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="id_button_tx_prev"/>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="id_button_tx_next"/>
-                    </child>
+                  <object class="GtkButton" id="id_button_tx_refresh">
+                    <property name="valign">center</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="id_button_tx_prev">
+                    <property name="valign">center</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="id_button_tx_next">
+                    <property name="valign">center</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
+                <property name="hscrollbar-policy">never</property>
+                <child>
+                  <object class="GtkColumnView" id="id_columnview_transactions">
+                    <property name="hexpand">True</property>
+                    <property name="vexpand">True</property>
                   </object>
                 </child>
               </object>

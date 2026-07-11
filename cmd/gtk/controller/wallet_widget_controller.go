@@ -61,10 +61,11 @@ func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) 
 		gtkutil.ColumnViewSetup(c.view.ColViewTransactions, c.lsTransactions)
 
 		// Setup address columns
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewAddresses, "No", func(row addressRow) string {
-			return strconv.Itoa(row.no)
-		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewAddresses, "Address", func(row addressRow) string {
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewAddresses, "No", 0, false, "cell-dim",
+			func(row addressRow) string {
+				return strconv.Itoa(row.no)
+			})
+		gtkutil.ColumnViewAppendAddressColumn(c.view.ColViewAddresses, "Address", func(row addressRow) string {
 			return row.addr.Address
 		})
 		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewAddresses, "Type", func(row addressRow) string {
@@ -75,41 +76,49 @@ func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) 
 
 			return typ.String()
 		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewAddresses, "Label", func(row addressRow) string {
-			return row.addr.Label
-		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewAddresses, "Balance", func(row addressRow) string {
-			return amount.Amount(row.addr.Balance).String()
-		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewAddresses, "Stake", func(row addressRow) string {
-			return amount.Amount(row.addr.Stake).String()
-		})
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewAddresses, "Label", 0, false, "",
+			func(row addressRow) string {
+				return row.addr.Label
+			})
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewAddresses, "Balance", 1, false, "cell-num",
+			func(row addressRow) string {
+				return amount.Amount(row.addr.Balance).String()
+			})
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewAddresses, "Stake", 1, false, "cell-num",
+			func(row addressRow) string {
+				return amount.Amount(row.addr.Stake).String()
+			})
 		// Setup transaction columns
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewTransactions, "No", func(row transactionRow) string {
-			return strconv.Itoa(int(row.trx.No))
-		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewTransactions, "ID", func(row transactionRow) string {
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewTransactions, "No", 0, false, "cell-dim",
+			func(row transactionRow) string {
+				return strconv.Itoa(int(row.trx.No))
+			})
+		gtkutil.ColumnViewAppendAddressColumn(c.view.ColViewTransactions, "ID", func(row transactionRow) string {
 			return row.trx.TxId
 		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewTransactions, "Sender", func(row transactionRow) string {
+		gtkutil.ColumnViewAppendAddressColumn(c.view.ColViewTransactions, "Sender", func(row transactionRow) string {
 			return row.trx.Sender
 		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewTransactions, "Receiver", func(row transactionRow) string {
+		gtkutil.ColumnViewAppendAddressColumn(c.view.ColViewTransactions, "Receiver", func(row transactionRow) string {
 			return row.trx.Receiver
 		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewTransactions, "Type", func(row transactionRow) string {
-			return payload.Type(row.trx.PayloadType).String()
-		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewTransactions, "Amount", func(row transactionRow) string {
-			return amount.Amount(row.trx.Amount).String()
-		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewTransactions, "Direction", func(row transactionRow) string {
-			return getDirectionTextWithIcon(types.TxDirection(row.trx.Direction))
-		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewTransactions, "Status", func(row transactionRow) string {
-			return types.TransactionStatus(row.trx.Status).String()
-		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewTransactions, "Comment", func(row transactionRow) string {
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewTransactions, "Type", 0, false, "",
+			func(row transactionRow) string {
+				return payload.Type(row.trx.PayloadType).String()
+			})
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewTransactions, "Amount", 1, false, "cell-num",
+			func(row transactionRow) string {
+				return amount.Amount(row.trx.Amount).String()
+			})
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewTransactions, "Direction", 0, false, "",
+			func(row transactionRow) string {
+				return getDirectionTextWithIcon(types.TxDirection(row.trx.Direction))
+			})
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewTransactions, "Status", 0, false, "",
+			func(row transactionRow) string {
+				return types.TransactionStatus(row.trx.Status).String()
+			})
+		gtkutil.ColumnViewAppendEllipsizedColumn(c.view.ColViewTransactions, "Comment", func(row transactionRow) string {
 			return row.trx.Comment
 		})
 	})
