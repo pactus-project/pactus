@@ -100,11 +100,11 @@ func (c *NodeWidgetController) timeoutProgress() {
 func (c *NodeWidgetController) setSyncStatus(percentage float64) {
 	if percentage >= 1 {
 		c.view.LabelSyncStatus.SetMarkup(
-			"<span foreground=\"#00a085\">All blocks downloaded</span>")
+			"<span foreground=\"#00a085\">Fully synced</span>")
 
 		return
 	}
-	c.view.LabelSyncStatus.SetText("Downloading blocks…")
+	c.view.LabelSyncStatus.SetText("Syncing blocks…")
 }
 
 func (c *NodeWidgetController) timeoutInfo() {

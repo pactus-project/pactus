@@ -48,27 +48,33 @@ func NewCommitteeWidgetController(
 
 func (c *CommitteeWidgetController) BuildView(ctx context.Context) error {
 	gtkutil.IdleAddSync(func() {
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewMembers, "No", func(row committeeRow) string {
-			return strconv.Itoa(row.no)
-		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewMembers, "Address", func(row committeeRow) string {
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewMembers, "No", 0, false, "cell-dim",
+			func(row committeeRow) string {
+				return strconv.Itoa(row.no)
+			})
+		gtkutil.ColumnViewAppendAddressColumn(c.view.ColViewMembers, "Address", func(row committeeRow) string {
 			return row.val.GetAddress()
 		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewMembers, "Stake", func(row committeeRow) string {
-			return amount.Amount(row.val.GetStake()).String()
-		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewMembers, "Bonding Height", func(row committeeRow) string {
-			return strconv.Itoa(int(row.val.GetLastBondingHeight()))
-		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewMembers, "Sortition Height", func(row committeeRow) string {
-			return strconv.Itoa(int(row.val.GetLastSortitionHeight()))
-		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewMembers, "Protocol Version", func(row committeeRow) string {
-			return strconv.Itoa(int(row.val.GetProtocolVersion()))
-		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewMembers, "Availability Score", func(row committeeRow) string {
-			return gtkutil.AvailabilityScorePercent(row.val.GetAvailabilityScore())
-		})
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewMembers, "Stake", 1, false, "cell-num",
+			func(row committeeRow) string {
+				return amount.Amount(row.val.GetStake()).String()
+			})
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewMembers, "Bonding Height", 1, false, "cell-num",
+			func(row committeeRow) string {
+				return strconv.Itoa(int(row.val.GetLastBondingHeight()))
+			})
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewMembers, "Sortition Height", 1, false, "cell-num",
+			func(row committeeRow) string {
+				return strconv.Itoa(int(row.val.GetLastSortitionHeight()))
+			})
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewMembers, "Protocol", 1, false, "cell-num",
+			func(row committeeRow) string {
+				return strconv.Itoa(int(row.val.GetProtocolVersion()))
+			})
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewMembers, "Availability", 1, false, "cell-num",
+			func(row committeeRow) string {
+				return gtkutil.AvailabilityScorePercent(row.val.GetAvailabilityScore())
+			})
 	})
 
 	scheduler.Every(refreshCommitteeInterval).Do(ctx, func(ctx context.Context) {
