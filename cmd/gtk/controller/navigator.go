@@ -3,6 +3,7 @@
 package controller
 
 import (
+	adw "github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
@@ -160,6 +161,18 @@ func (*Navigator) openWebsite(url string) {
 
 func (n *Navigator) Quit() {
 	n.gtkApp.Quit()
+}
+
+// SetDarkMode forces the light or dark appearance at runtime through the
+// libadwaita style manager, independent of the operating system theme.
+// It must be called on the UI thread.
+func (*Navigator) SetDarkMode(enabled bool) {
+	scheme := adw.ColorSchemeForceLight
+	if enabled {
+		scheme = adw.ColorSchemeForceDark
+	}
+	adw.StyleManagerGetDefault().SetColorScheme(scheme)
+	gtkutil.SaveDarkMode(enabled)
 }
 
 func (n *Navigator) CreateMenu(isLocal bool) *gio.Menu {

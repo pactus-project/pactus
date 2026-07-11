@@ -24,7 +24,8 @@ type NodeWidgetView struct {
 	LabelLastBlockTime   *gtk.Label
 	LabelLastBlockHeight *gtk.Label
 	LabelBlocksLeft      *gtk.Label
-	ProgressBarSynced    *gtk.ProgressBar
+	ProgressSynced       *CircularProgress
+	LabelSyncStatus      *gtk.Label
 	LabelActiveValidator *gtk.Label
 	LabelInCommittee     *gtk.Label
 	LabelTotalPower      *gtk.Label
@@ -51,14 +52,17 @@ func NewNodeWidgetView() *NodeWidgetView {
 		LabelLastBlockTime:   builder.GetLabelObj("id_label_last_block_time"),
 		LabelLastBlockHeight: builder.GetLabelObj("id_label_last_block_height"),
 		LabelBlocksLeft:      builder.GetLabelObj("id_label_blocks_left"),
-		ProgressBarSynced:    builder.GetProgressBarObj("id_progress_synced"),
 		LabelActiveValidator: builder.GetLabelObj("id_label_active_validators"),
 		LabelInCommittee:     builder.GetLabelObj("id_label_in_committee"),
 		LabelTotalPower:      builder.GetLabelObj("id_label_total_power"),
 		LabelAverageScore:    builder.GetLabelObj("id_label_average_score"),
 		LabelNumConnections:  builder.GetLabelObj("id_label_num_connections"),
 		LabelReachability:    builder.GetLabelObj("id_label_reachability"),
+		LabelSyncStatus:      builder.GetLabelObj("id_label_sync_status"),
 	}
+
+	view.ProgressSynced = NewCircularProgress(128)
+	builder.GetBoxObj("id_sync_container").Append(view.ProgressSynced)
 
 	return view
 }

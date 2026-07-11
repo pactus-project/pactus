@@ -56,27 +56,31 @@ func NewNetworkWidgetController(
 
 func (c *NetworkWidgetController) BuildView(ctx context.Context) error {
 	gtkutil.IdleAddSync(func() {
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewPeers, "No", func(row peerRow) string {
-			return strconv.Itoa(row.no)
-		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewPeers, "Moniker", func(row peerRow) string {
-			return row.peer.GetMoniker()
-		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewPeers, "Address", func(row peerRow) string {
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewPeers, "No", 0, false, "cell-dim",
+			func(row peerRow) string {
+				return strconv.Itoa(row.no)
+			})
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewPeers, "Moniker", 0, false, "",
+			func(row peerRow) string {
+				return row.peer.GetMoniker()
+			})
+		gtkutil.ColumnViewAppendAddressColumn(c.view.ColViewPeers, "Address", func(row peerRow) string {
 			return row.peer.GetAddress()
 		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewPeers, "Peer ID", func(row peerRow) string {
+		gtkutil.ColumnViewAppendAddressColumn(c.view.ColViewPeers, "Peer ID", func(row peerRow) string {
 			return row.peer.GetPeerId()
 		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewPeers, "Height", func(row peerRow) string {
-			return strconv.Itoa(int(row.peer.GetHeight()))
-		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewPeers, "Agent", func(row peerRow) string {
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewPeers, "Height", 1, false, "cell-num",
+			func(row peerRow) string {
+				return strconv.Itoa(int(row.peer.GetHeight()))
+			})
+		gtkutil.ColumnViewAppendEllipsizedColumn(c.view.ColViewPeers, "Agent", func(row peerRow) string {
 			return row.peer.GetAgent()
 		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewPeers, "Direction", func(row peerRow) string {
-			return peerDirectionString(row.peer.GetDirection())
-		})
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewPeers, "Direction", 0, false, "",
+			func(row peerRow) string {
+				return peerDirectionString(row.peer.GetDirection())
+			})
 	})
 
 	scheduler.Every(refreshNetworkInterval).Do(ctx, func(ctx context.Context) {

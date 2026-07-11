@@ -43,27 +43,33 @@ func NewValidatorWidgetController(
 
 func (c *ValidatorWidgetController) BuildView(ctx context.Context) error {
 	gtkutil.IdleAddSync(func() {
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewValidators, "No", func(row validatorRow) string {
-			return strconv.Itoa(row.no)
-		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewValidators, "Address", func(row validatorRow) string {
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewValidators, "No", 0, false, "cell-dim",
+			func(row validatorRow) string {
+				return strconv.Itoa(row.no)
+			})
+		gtkutil.ColumnViewAppendAddressColumn(c.view.ColViewValidators, "Address", func(row validatorRow) string {
 			return row.val.GetAddress()
 		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewValidators, "Stake", func(row validatorRow) string {
-			return amount.Amount(row.val.GetStake()).String()
-		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewValidators, "Bonding Height", func(row validatorRow) string {
-			return strconv.Itoa(int(row.val.GetLastBondingHeight()))
-		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewValidators, "Sortition Height", func(row validatorRow) string {
-			return strconv.Itoa(int(row.val.GetLastSortitionHeight()))
-		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewValidators, "Unbonding Height", func(row validatorRow) string {
-			return strconv.Itoa(int(row.val.GetUnbondingHeight()))
-		})
-		gtkutil.ColumnViewAppendTextColumn(c.view.ColViewValidators, "Availability Score", func(row validatorRow) string {
-			return gtkutil.AvailabilityScorePercent(row.val.GetAvailabilityScore())
-		})
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewValidators, "Stake", 1, false, "cell-num",
+			func(row validatorRow) string {
+				return amount.Amount(row.val.GetStake()).String()
+			})
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewValidators, "Bonding Height", 1, false, "cell-num",
+			func(row validatorRow) string {
+				return strconv.Itoa(int(row.val.GetLastBondingHeight()))
+			})
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewValidators, "Sortition Height", 1, false, "cell-num",
+			func(row validatorRow) string {
+				return strconv.Itoa(int(row.val.GetLastSortitionHeight()))
+			})
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewValidators, "Unbonding Height", 1, false, "cell-num",
+			func(row validatorRow) string {
+				return strconv.Itoa(int(row.val.GetUnbondingHeight()))
+			})
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewValidators, "Availability Score", 1, false, "cell-num",
+			func(row validatorRow) string {
+				return gtkutil.AvailabilityScorePercent(row.val.GetAvailabilityScore())
+			})
 	})
 
 	scheduler.Every(refreshValidatorsInterval).Do(ctx, func(ctx context.Context) {
