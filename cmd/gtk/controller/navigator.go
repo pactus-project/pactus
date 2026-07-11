@@ -172,6 +172,7 @@ func (*Navigator) SetDarkMode(enabled bool) {
 		scheme = adw.ColorSchemeForceDark
 	}
 	adw.StyleManagerGetDefault().SetColorScheme(scheme)
+	gtkutil.SaveDarkMode(enabled)
 }
 
 func (n *Navigator) CreateMenu(isLocal bool) *gio.Menu {
