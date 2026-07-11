@@ -16,6 +16,7 @@ import (
 	adw "github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
+	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/gofrs/flock"
 	"github.com/pactus-project/gopkg/signal"
@@ -68,7 +69,11 @@ func init() {
 	// (assistant navigation, about dialog, file choosers ...) to English too
 	// instead of following the operating system locale. This affects message
 	// translation only, not number or date formatting.
-	_ = os.Setenv("LANGUAGE", "en")
+	// Use g_setenv, not os.Setenv: on Windows the latter uses the Win32
+	// environment block, which the C runtime that GTK/libintl links against
+	// does not read, so the change would be invisible to gettext.
+	glib.Setenv("LANGUAGE", "en", true)
+	glib.Setenv("LC_MESSAGES", "en", true)
 	forceEnglishUILanguage()
 
 	gtk.Init()
