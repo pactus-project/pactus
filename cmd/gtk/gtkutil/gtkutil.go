@@ -413,6 +413,29 @@ func IsWidgetShowing(widget *gtk.Widget) bool {
 	return widget.Mapped()
 }
 
+// DisableLabelSelection walks the widget tree and makes every label
+// non-selectable. GtkAboutDialog otherwise auto-selects its program-name label
+// when it grabs focus on open, which looks like highlighted text.
+func DisableLabelSelection(root gtk.Widgetter) {
+	parent, ok := root.(interface{ FirstChild() gtk.Widgetter })
+	if !ok {
+		return
+	}
+
+	for child := parent.FirstChild(); child != nil; {
+		if label, isLabel := child.(*gtk.Label); isLabel {
+			label.SetSelectable(false)
+		}
+		DisableLabelSelection(child)
+
+		sibling, hasSibling := child.(interface{ NextSibling() gtk.Widgetter })
+		if !hasSibling {
+			break
+		}
+		child = sibling.NextSibling()
+	}
+}
+
 func ClearLable(label *gtk.Label) {
 	label.SetText("")
 }

@@ -15,5 +15,7 @@ func NewAboutGTKDialog() *gtk.AboutDialog {
 	pic := gtkutil.NewScaledPictureFromTexture(assets.ImageGTKLogoTexture, 128, 128)
 	dlg.SetLogo(pic.Paintable())
 
+	gtkutil.DisableLabelSelection(dlg)
+
 	return dlg
 }
