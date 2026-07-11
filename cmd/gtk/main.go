@@ -64,6 +64,12 @@ func init() {
 		_ = os.Setenv("PANGOCAIRO_BACKEND", "fontconfig")
 	}
 
+	// The GUI text is English only, so force GTK's built-in widget strings
+	// (assistant navigation, about dialog, file choosers ...) to English too
+	// instead of following the operating system locale. This affects message
+	// translation only, not number or date formatting.
+	_ = os.Setenv("LANGUAGE", "en")
+
 	gtk.Init()
 	// Initialize libadwaita so its StyleManager controls the light/dark
 	// appearance, independent of the operating system theme.
