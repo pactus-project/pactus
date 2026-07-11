@@ -69,6 +69,7 @@ func init() {
 	// instead of following the operating system locale. This affects message
 	// translation only, not number or date formatting.
 	_ = os.Setenv("LANGUAGE", "en")
+	forceEnglishUILanguage()
 
 	gtk.Init()
 	// Initialize libadwaita so its StyleManager controls the light/dark
