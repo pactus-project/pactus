@@ -5,7 +5,6 @@ import (
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 )
@@ -33,11 +32,6 @@ func newBatchTransferExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*BatchTransferEx
 
 	recipients := make([]batchRecipient, len(pld.Recipients))
 	for i, r := range pld.Recipients {
-		if r.To.Type() == crypto.AddressTypeSecp256k1Account &&
-			sbx.Params().BlockVersion <= protocol.ProtocolVersion3 {
-			return nil, ErrSecp256k1AccountNotSupported
-		}
-
 		if r.To == pld.From {
 			recipients[i].Account = sender
 		} else {
