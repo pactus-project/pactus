@@ -23,5 +23,6 @@ packages/
 .ai
 .entire
 .claude
-.agent
+.agents
 .cursor
+.deepcode
