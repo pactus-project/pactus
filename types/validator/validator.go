@@ -28,13 +28,13 @@ type validatorData struct {
 	LastSortitionHeight types.Height
 
 	// Optional delegation (PIP-49). Zero DelegateOwner means not delegated.
-	DelegateOwner  crypto.Address
-	DelegateShare  amount.Amount
 	DelegateExpiry types.Height
-
+	DelegateOwner  crypto.Address
 	// The protocol version of the validator.
 	// This is in memory and not saved to the blockchain.
 	ProtocolVersion protocol.Version
+
+	DelegateShare amount.Amount
 }
 
 const delegationPayloadSize = 21 + 8 + 4 // owner + share + expiry

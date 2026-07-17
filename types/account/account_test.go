@@ -3,6 +3,7 @@ package account_test
 import (
 	"encoding/hex"
 	"testing"
+	"unsafe"
 
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/account"
@@ -11,6 +12,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func TestMemoryAlignment(t *testing.T) {
+	s := unsafe.Sizeof(account.Account{})
+	assert.Equal(t, 16, int(s))
+}
 
 func TestFromBytes(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)

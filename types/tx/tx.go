@@ -30,13 +30,13 @@ const (
 type ID = hash.Hash
 
 type Tx struct {
-	memorizedID  *ID
-	basicChecked bool
-
-	data txData
+	memorizedID *ID
+	data        txData
 }
 
 type txData struct {
+	basicChecked bool
+
 	Version   uint8
 	LockTime  types.Height
 	Fee       amount.Amount
@@ -124,17 +124,17 @@ func (tx *Tx) IsFreeTx() bool {
 }
 
 func (tx *Tx) SetSignature(sig crypto.Signature) {
-	tx.basicChecked = false
+	tx.data.basicChecked = false
 	tx.data.Signature = sig
 }
 
 func (tx *Tx) SetPublicKey(pub crypto.PublicKey) {
-	tx.basicChecked = false
+	tx.data.basicChecked = false
 	tx.data.PublicKey = pub
 }
 
 func (tx *Tx) BasicCheck() error {
-	if tx.basicChecked {
+	if tx.data.basicChecked {
 		return nil
 	}
 	if tx.Version() != versionLatest {
@@ -169,7 +169,7 @@ func (tx *Tx) BasicCheck() error {
 		return err
 	}
 
-	tx.basicChecked = true
+	tx.data.basicChecked = true
 
 	return nil
 }
