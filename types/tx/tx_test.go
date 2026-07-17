@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 	"testing"
+	"unsafe"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/crypto"
@@ -21,6 +22,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func TestMemoryAlignment(t *testing.T) {
+	assert.Equal(t, 88, int(unsafe.Sizeof(tx.Tx{})))
+}
 
 func TestCBORMarshaling(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)

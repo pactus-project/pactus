@@ -2,7 +2,7 @@ package vote
 
 import "fmt"
 
-type Type int
+type Type int8
 
 const (
 	VoteTypePrepare    = Type(1) // Deprecated  prepare vote
