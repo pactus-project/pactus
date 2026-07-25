@@ -50,7 +50,7 @@ require (
 	golang.org/x/crypto v0.53.0
 	golang.org/x/exp v0.0.0-20260611194520-c48552f49976
 	golang.org/x/term v0.44.0
-	google.golang.org/grpc v1.81.1
+	google.golang.org/grpc v1.82.1
 	google.golang.org/protobuf v1.36.11
 	libdb.so/gotk4-sourceview/pkg v0.0.0-20240818070527-98263515a466
 )
