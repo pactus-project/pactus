@@ -34,7 +34,8 @@ type testData struct {
 	*testsuite.TestSuite
 
 	state      *state
-	mockTxPool *txpool.MockTxPool
+	fakeTxPool *txpool.FakeTxPool
+	fakeStore  *store.FakeStore
 	genValKeys []*bls.ValidatorKey
 	genAccKey  *ed25519.PrivateKey
 }
@@ -62,12 +63,12 @@ func setupWithVersion(t *testing.T, blockVersion protocol.Version) *testData {
 	}
 
 	numBlocks := types.Height(7)
-	mockTxPool := txpool.NewMockTxPool(ts.MockController())
-	mockTxPool.EXPECT().SetNewSandboxAndRecheck(gomock.Any()).Return().AnyTimes()
-	mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(int(numBlocks))
-	mockTxPool.EXPECT().HandleCommittedBlock(gomock.Any()).Return().AnyTimes()
+	fakeTxPool := txpool.NewFakeTxPool(ts)
+	fakeTxPool.EXPECT().SetNewSandboxAndRecheck(gomock.Any()).Return().AnyTimes()
+	fakeTxPool.EXPECT().HandleCommittedBlock(gomock.Any()).Return().AnyTimes()
+	fakeTxPool.EXPECT().AppendTxAndBroadcast(gomock.Any()).Return(nil).AnyTimes()
 
-	mockStore := store.MockingStore(ts)
+	fakeStore := store.NewFakeStore(ts)
 	genTime := util.RoundNow(10).Add(-8640 * time.Second)
 
 	genParams := genesis.DefaultGenesisParams()
@@ -91,7 +92,12 @@ func setupWithVersion(t *testing.T, blockVersion protocol.Version) *testData {
 	// First validator is in the committee
 	valKeys := []*bls.ValidatorKey{genValKeys[0], ts.RandValKey()}
 	eventPipe := pipeline.New[any](t.Context())
-	st1, err := LoadOrNewState(t.Context(), gnDoc, valKeys, mockStore, mockTxPool, eventPipe)
+
+	fakeStore.EXPECT().UpdateValidatorProtocolVersion(gomock.Any(), gomock.Any()).AnyTimes()
+	fakeStore.EXPECT().IsBanned(gomock.Any()).Return(false).AnyTimes()
+	fakeStore.EXPECT().RecentTransaction(gomock.Any()).Return(false).AnyTimes()
+
+	st1, err := LoadOrNewState(t.Context(), gnDoc, valKeys, fakeStore, fakeTxPool, eventPipe)
 	require.NoError(t, err)
 
 	state, _ := st1.(*state)
@@ -99,7 +105,7 @@ func setupWithVersion(t *testing.T, blockVersion protocol.Version) *testData {
 	td := &testData{
 		TestSuite:  ts,
 		state:      state,
-		mockTxPool: mockTxPool,
+		fakeTxPool: fakeTxPool,
 		genValKeys: genValKeys,
 		genAccKey:  genAccPrvKey,
 	}
@@ -155,10 +161,16 @@ func (td *testData) makeCertificateAndSign(t *testing.T, blockHash hash.Hash,
 	return cert
 }
 
-func (td *testData) commitBlocks(t *testing.T, count types.Height) {
+func (td *testData) commitBlocks(t *testing.T, count types.Height, txs ...block.Txs) {
 	t.Helper()
 
 	for i := types.Height(0); i < count; i++ {
+		var txns block.Txs
+		if i < types.Height(len(txs)) {
+			txns = txs[i]
+		}
+
+		td.fakeTxPool.EXPECT().PrepareBlockTransactions().Return(txns).Times(1)
 		blk, cert := td.makeBlockAndCertificate(t, 0)
 		require.NoError(t, td.state.CommitBlock(blk, cert))
 	}
@@ -357,7 +369,7 @@ func TestBlockSubsidyWithDelegationTx(t *testing.T) {
 func TestTryCommitInvalidCertificate(t *testing.T) {
 	td := setup(t)
 
-	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(1)
+	td.fakeTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(1)
 
 	blk, _ := td.makeBlockAndCertificate(t, td.RandRound())
 	invCert := td.GenerateTestCertificate(td.state.LastBlockHeight() + 1)
@@ -368,7 +380,7 @@ func TestTryCommitInvalidCertificate(t *testing.T) {
 func TestTryCommitValidBlocks(t *testing.T) {
 	td := setup(t)
 
-	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(1)
+	td.fakeTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(1)
 
 	blk, cert := td.makeBlockAndCertificate(t, 0)
 	require.NoError(t, td.state.CommitBlock(blk, cert))
@@ -479,7 +491,7 @@ func TestCommitSandbox(t *testing.T) {
 func TestUpdateLastCertificate(t *testing.T) {
 	td := setup(t)
 
-	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(1)
+	td.fakeTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(1)
 	blk, cert := td.makeBlockAndCertificate(t, 1)
 	_ = td.state.CommitBlock(blk, cert)
 
@@ -528,7 +540,7 @@ func TestForkDetection(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Two blocks with different previous block hashes", func(t *testing.T) {
-		td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(1)
+		td.fakeTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(1)
 
 		assert.Panics(t, func() {
 			blk0, _ := td.makeBlockAndCertificate(t, 0)
@@ -559,8 +571,7 @@ func TestSortition(t *testing.T) {
 	trx := tx.NewBondTx(1, td.genAccKey.PublicKeyNative().AccountAddress(),
 		valKey.Address(), valKey.PublicKey(), 1000000000, 100000)
 
-	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{trx}).Times(1)
-	td.commitBlocks(t, 1)
+	td.commitBlocks(t, 1, block.Txs{trx})
 
 	assert.False(t, td.state.evaluateSortition()) // bonding period
 	assert.Equal(t, int64(4), td.state.ChainInfo().CommitteePower)
@@ -569,8 +580,7 @@ func TestSortition(t *testing.T) {
 	// Committing another 10 blocks
 	var sortitionTrx *tx.Tx
 
-	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(10)
-	td.mockTxPool.EXPECT().AppendTxAndBroadcast(gomock.Any()).Do(func(trx *tx.Tx) {
+	td.fakeTxPool.EXPECT().AppendTxAndBroadcast(gomock.Any()).Do(func(trx *tx.Tx) {
 		sortitionTrx = trx // Capture the input argument here
 	}).Return(nil).Times(1)
 	td.commitBlocks(t, 10)
@@ -579,10 +589,9 @@ func TestSortition(t *testing.T) {
 	assert.Equal(t, valKey.Address(), sortitionTrx.Payload().Signer())
 	assert.False(t, td.state.committee.Contains(valKey.Address())) // Still not in the committee
 
-	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{sortitionTrx}).Times(1)
-	td.mockTxPool.EXPECT().AppendTxAndBroadcast(gomock.Any()).Return(nil).Times(1)
+	td.fakeTxPool.EXPECT().AppendTxAndBroadcast(gomock.Any()).Return(nil).Times(1)
 
-	td.commitBlocks(t, 1)
+	td.commitBlocks(t, 1, block.Txs{sortitionTrx})
 
 	assert.Equal(t, int64(1000000004), td.state.ChainInfo().CommitteePower)
 	assert.True(t, td.state.committee.Contains(valKey.Address())) // In the committee
@@ -700,18 +709,18 @@ func TestLoadState(t *testing.T) {
 	bondTrx := tx.NewBondTx(lockTime, td.genAccKey.PublicKeyNative().AccountAddress(),
 		pub.ValidatorAddress(), pub, 1000000000, 100000)
 
-	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{bondTrx}).Times(1)
+	td.fakeTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{bondTrx}).Times(1)
 	blk5, cert5 := td.makeBlockAndCertificate(t, 1)
 	assert.Equal(t, 2, blk5.Transactions().Len())
 	require.NoError(t, td.state.CommitBlock(blk5, cert5))
 
-	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(1)
+	td.fakeTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(1)
 	blk6, cert6 := td.makeBlockAndCertificate(t, 0)
 
 	// Load last state info
 	eventPipe := pipeline.New[any](t.Context())
 	newState, err := LoadOrNewState(t.Context(), td.state.genDoc, td.state.valKeys,
-		td.state.store, td.mockTxPool, eventPipe)
+		td.state.store, td.fakeTxPool, eventPipe)
 	require.NoError(t, err)
 
 	assert.Equal(t, td.state.Params(), newState.Params())
@@ -742,7 +751,7 @@ func TestCalculateFee(t *testing.T) {
 	td := setup(t)
 
 	expectedFee := td.RandFee()
-	td.mockTxPool.EXPECT().EstimatedFee(gomock.Any(), payload.TypeTransfer).Return(expectedFee).Times(1)
+	td.fakeTxPool.EXPECT().EstimatedFee(gomock.Any(), payload.TypeTransfer).Return(expectedFee).Times(1)
 
 	fee := td.state.CalculateFee(td.RandAmount(), payload.TypeTransfer)
 
@@ -763,7 +772,7 @@ func TestCheckMaximumTransactionPerBlock(t *testing.T) {
 		txs = append(txs, trx)
 	}
 
-	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(txs).Times(1)
+	td.fakeTxPool.EXPECT().PrepareBlockTransactions().Return(txs).Times(1)
 	blk, err := td.state.ProposeBlock(td.state.valKeys[0], td.RandAccAddress())
 	require.NoError(t, err)
 	assert.Equal(t, td.state.params.MaxTransactionsPerBlock, blk.Transactions().Len())
@@ -810,8 +819,8 @@ func TestBlockVersionUpgrade(t *testing.T) {
 	td1 := setupWithVersion(t, protocol.ProtocolVersionLatest-1)
 	td2 := setupWithVersion(t, protocol.ProtocolVersionLatest)
 
-	td1.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).AnyTimes()
-	td2.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).AnyTimes()
+	td1.fakeTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).AnyTimes()
+	td2.fakeTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).AnyTimes()
 
 	blk1, cert1 := td1.makeBlockAndCertificate(t, 0)
 	require.NoError(t, td1.state.CommitBlock(blk1, cert1))

@@ -82,7 +82,7 @@ func TestExecuteBondTx(t *testing.T) {
 	t.Run("Should fail, inside committee", func(t *testing.T) {
 		trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, valPub, stake, fee)
 
-		td.sbx.SbxCommittee.EXPECT().Contains(receiverAddr).Return(true).Times(1)
+		td.sbx.FakeCommittee.EXPECT().Contains(receiverAddr).Return(true).Times(1)
 
 		td.check(t, trx, true, ErrValidatorInCommittee)
 		td.check(t, trx, false, nil)
@@ -91,7 +91,7 @@ func TestExecuteBondTx(t *testing.T) {
 	t.Run("Should fail, joining committee", func(t *testing.T) {
 		trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, valPub, stake, fee)
 
-		td.sbx.SbxCommittee.EXPECT().Contains(receiverAddr).Return(false).Times(1)
+		td.sbx.FakeCommittee.EXPECT().Contains(receiverAddr).Return(false).Times(1)
 		td.sbx.EXPECT().IsJoinedCommittee(receiverAddr).Return(true).Times(1)
 
 		td.check(t, trx, true, ErrValidatorInCommittee)
@@ -101,7 +101,7 @@ func TestExecuteBondTx(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
 		trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, valPub, stake, fee)
 
-		td.sbx.SbxCommittee.EXPECT().Contains(receiverAddr).Return(false).Times(1)
+		td.sbx.FakeCommittee.EXPECT().Contains(receiverAddr).Return(false).Times(1)
 		td.sbx.EXPECT().IsJoinedCommittee(receiverAddr).Return(false).Times(1)
 		td.sbx.EXPECT().UpdatePowerDelta(stake.ToNanoPAC()).Times(1)
 
@@ -149,7 +149,7 @@ func TestSmallBond(t *testing.T) {
 	lockTime := td.sbx.CurrentHeight()
 	fee := td.RandFee()
 
-	td.sbx.SbxCommittee.EXPECT().Contains(receiverAddr).Return(false).AnyTimes()
+	td.sbx.FakeCommittee.EXPECT().Contains(receiverAddr).Return(false).AnyTimes()
 	td.sbx.EXPECT().IsJoinedCommittee(receiverAddr).Return(false).AnyTimes()
 
 	t.Run("Rejects bond transaction with zero amount", func(t *testing.T) {
@@ -230,7 +230,7 @@ func TestExecuteDelegatedBondTx(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
 		trx := makeDelegatedBond(td.sbx.Params().MaximumStake)
 
-		td.sbx.SbxCommittee.EXPECT().Contains(receiverAddr).Return(false).Times(1)
+		td.sbx.FakeCommittee.EXPECT().Contains(receiverAddr).Return(false).Times(1)
 		td.sbx.EXPECT().IsJoinedCommittee(receiverAddr).Return(false).Times(1)
 		td.sbx.EXPECT().UpdatePowerDelta(td.sbx.Params().MaximumStake.ToNanoPAC()).Times(1)
 

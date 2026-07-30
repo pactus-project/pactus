@@ -13,7 +13,9 @@ import (
 func TestTransaction(t *testing.T) {
 	td := setup(t)
 
-	testBlock := td.gRPCServer.FakeState.AddTestBlock(1)
+	testHeight := td.RandHeight()
+	testBlock, testCert := td.GenerateTestBlock(testHeight)
+	td.gRPCServer.FakeState.AddTestBlock(testBlock, testCert)
 	testTx := testBlock.Transactions()[1]
 
 	t.Run("Shall return a transaction", func(t *testing.T) {

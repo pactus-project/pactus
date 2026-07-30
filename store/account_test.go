@@ -14,7 +14,7 @@ import (
 func TestAccountCounter(t *testing.T) {
 	td := setup(t, nil)
 
-	acc, addr := td.GenerateTestAccount()
+	addr, acc := td.GenerateTestAccount()
 
 	t.Run("Add new account, should increase the total accounts number", func(t *testing.T) {
 		assert.Zero(t, td.store.TotalAccounts())
@@ -48,7 +48,7 @@ func TestAccountBatchSaving(t *testing.T) {
 	total := td.RandInt32NonZero(100)
 	t.Run("Add some accounts", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
-			acc, addr := td.GenerateTestAccount(testsuite.AccountWithNumber(i))
+			addr, acc := td.GenerateTestAccount(testsuite.AccountWithNumber(i))
 			td.store.UpdateAccount(addr, acc)
 		}
 		require.NoError(t, td.store.WriteBatch())
@@ -69,7 +69,7 @@ func TestAccountByAddress(t *testing.T) {
 	var lastAddr crypto.Address
 	t.Run("Add some accounts", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
-			acc, addr := td.GenerateTestAccount(testsuite.AccountWithNumber(i))
+			addr, acc := td.GenerateTestAccount(testsuite.AccountWithNumber(i))
 			td.store.UpdateAccount(addr, acc)
 
 			lastAddr = addr
@@ -105,7 +105,7 @@ func TestIterateAccounts(t *testing.T) {
 	total := td.RandInt32NonZero(100)
 	hashes1 := []hash.Hash{}
 	for i := int32(0); i < total; i++ {
-		acc, addr := td.GenerateTestAccount(testsuite.AccountWithNumber(i))
+		addr, acc := td.GenerateTestAccount(testsuite.AccountWithNumber(i))
 		td.store.UpdateAccount(addr, acc)
 		hashes1 = append(hashes1, acc.Hash())
 	}
@@ -133,8 +133,8 @@ func TestIterateAccounts(t *testing.T) {
 func TestAccountDeepCopy(t *testing.T) {
 	td := setup(t, nil)
 
-	acc1, addr := td.GenerateTestAccount()
-	td.store.UpdateAccount(addr, acc1)
+	addr, acc := td.GenerateTestAccount()
+	td.store.UpdateAccount(addr, acc)
 
 	acc2, _ := td.store.Account(addr)
 	acc2.AddToBalance(1)

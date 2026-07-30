@@ -66,6 +66,7 @@ func TestGetTransaction(t *testing.T) {
 	txs.Append(trx1)
 	txs.Append(trx2)
 	assert.Equal(t, trx1, txs.Get(0))
+	assert.Equal(t, trx2, txs.Get(1))
 }
 
 func TestSubsidy(t *testing.T) {

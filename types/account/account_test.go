@@ -21,7 +21,7 @@ func TestMemoryAlignment(t *testing.T) {
 func TestFromBytes(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	acc, _ := ts.GenerateTestAccount()
+	_, acc := ts.GenerateTestAccount()
 	bs, err := acc.Bytes()
 	require.NoError(t, err)
 	require.Equal(t, len(bs), acc.SerializeSize())
@@ -54,7 +54,7 @@ func TestDecoding(t *testing.T) {
 func TestAddToBalance(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	acc, _ := ts.GenerateTestAccount()
+	_, acc := ts.GenerateTestAccount()
 	bal := acc.Balance()
 	acc.AddToBalance(1)
 	assert.Equal(t, bal+1, acc.Balance())
@@ -63,7 +63,7 @@ func TestAddToBalance(t *testing.T) {
 func TestSubtractFromBalance(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	acc, _ := ts.GenerateTestAccount()
+	_, acc := ts.GenerateTestAccount()
 	bal := acc.Balance()
 	acc.SubtractFromBalance(1)
 	assert.Equal(t, bal-1, acc.Balance())
@@ -72,7 +72,7 @@ func TestSubtractFromBalance(t *testing.T) {
 func TestClone(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	acc, _ := ts.GenerateTestAccount()
+	_, acc := ts.GenerateTestAccount()
 	cloned := acc.Clone()
 	cloned.AddToBalance(1)
 

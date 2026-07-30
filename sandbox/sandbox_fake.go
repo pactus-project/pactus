@@ -8,7 +8,6 @@ import (
 	"github.com/pactus-project/pactus/state/param"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
-	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -19,12 +18,11 @@ type FakeSandbox struct {
 	*MockSandbox
 	*testsuite.TestSuite
 
-	SbxParams    *param.Params
-	SbxHeight    types.Height
-	Accounts     map[crypto.Address]*account.Account
-	Validators   map[crypto.Address]*validator.Validator
-	TotalCoin    amount.Amount
-	SbxCommittee *committee.MockCommittee
+	FakeParams     *param.Params
+	FakeCommittee  *committee.MockCommittee
+	FakeHeight     types.Height
+	FakeAccounts   map[crypto.Address]*account.Account
+	FakeValidators map[crypto.Address]*validator.Validator
 }
 
 func NewFakeSandbox(ts *testsuite.TestSuite) *FakeSandbox {
@@ -38,13 +36,13 @@ func NewFakeSandbox(ts *testsuite.TestSuite) *FakeSandbox {
 	validators := make(map[crypto.Address]*validator.Validator)
 
 	fake := &FakeSandbox{
-		MockSandbox:  mock,
-		TestSuite:    ts,
-		Accounts:     accounts,
-		Validators:   validators,
-		SbxCommittee: committee,
-		SbxParams:    params,
-		SbxHeight:    ts.RandHeight(),
+		MockSandbox:    mock,
+		TestSuite:      ts,
+		FakeAccounts:   accounts,
+		FakeValidators: validators,
+		FakeCommittee:  committee,
+		FakeParams:     params,
+		FakeHeight:     ts.RandHeight(),
 	}
 
 	fake.EXPECT().Account(gomock.Any()).DoAndReturn(
@@ -73,7 +71,7 @@ func NewFakeSandbox(ts *testsuite.TestSuite) *FakeSandbox {
 
 	fake.EXPECT().CurrentHeight().DoAndReturn(
 		func() types.Height {
-			return fake.SbxHeight
+			return fake.FakeHeight
 		},
 	).AnyTimes()
 
@@ -96,9 +94,9 @@ func NewFakeSandbox(ts *testsuite.TestSuite) *FakeSandbox {
 }
 
 func (f *FakeSandbox) AddValidator(val *validator.Validator) {
-	f.Validators[val.Address()] = val
+	f.FakeValidators[val.Address()] = val
 }
 
 func (f *FakeSandbox) AddAccount(addr crypto.Address, acc *account.Account) {
-	f.Accounts[addr] = acc
+	f.FakeAccounts[addr] = acc
 }

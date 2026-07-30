@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"testing"
 
+	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -13,18 +14,20 @@ import (
 func TestMustGetRound(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	cmt, _ := ts.GenerateTestCommittee(4)
 	log := NewLog()
-	log.MoveToNewHeight(cmt.Validators())
+	log.MoveToNewHeight(nil)
 	assert.NotNil(t, log.RoundMessages(ts.RandRound()))
 }
 
 func TestAddValidVote(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	cmt, valKeys := ts.GenerateTestCommittee(4)
+	valKey := ts.RandValKey()
+	val := ts.GenerateTestValidator(
+		testsuite.ValidatorWithPublicKey(valKey.PublicKey()),
+	)
 	log := NewLog()
-	log.MoveToNewHeight(cmt.Validators())
+	log.MoveToNewHeight([]*validator.Validator{val})
 	height := ts.RandHeight()
 	round := ts.RandRound()
 
@@ -33,13 +36,13 @@ func TestAddValidVote(t *testing.T) {
 	preVotes := log.CPPreVoteVoteSet(round)
 	mainVotes := log.CPMainVoteVoteSet(round)
 
-	vote1 := vote.NewPrepareVote(ts.RandHash(), height, round, valKeys[0].Address())
-	vote2 := vote.NewPrecommitVote(ts.RandHash(), height, round, valKeys[0].Address())
-	vote3 := vote.NewCPPreVote(ts.RandHash(), height, round, 0, vote.CPValueYes, &vote.JustInitYes{}, valKeys[0].Address())
-	vote4 := vote.NewCPMainVote(ts.RandHash(), height, round, 0, vote.CPValueNo, &vote.JustInitYes{}, valKeys[0].Address())
+	vote1 := vote.NewPrepareVote(ts.RandHash(), height, round, val.Address())
+	vote2 := vote.NewPrecommitVote(ts.RandHash(), height, round, val.Address())
+	vote3 := vote.NewCPPreVote(ts.RandHash(), height, round, 0, vote.CPValueYes, &vote.JustInitYes{}, val.Address())
+	vote4 := vote.NewCPMainVote(ts.RandHash(), height, round, 0, vote.CPValueNo, &vote.JustInitYes{}, val.Address())
 
 	for _, v := range []*vote.Vote{vote1, vote2, vote3, vote4} {
-		ts.HelperSignVote(valKeys[0], v)
+		ts.HelperSignVote(valKey, v)
 
 		added, err := log.AddVote(v)
 		require.NoError(t, err)
@@ -59,11 +62,8 @@ func TestAddValidVote(t *testing.T) {
 }
 
 func TestAddInvalidVoteType(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	cmt, _ := ts.GenerateTestCommittee(4)
 	log := NewLog()
-	log.MoveToNewHeight(cmt.Validators())
+	log.MoveToNewHeight(nil)
 
 	data, _ := hex.DecodeString("A7010F0218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
 		"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6")
@@ -83,10 +83,9 @@ func TestSetRoundProposal(t *testing.T) {
 	height := ts.RandHeight()
 	round := ts.RandRound()
 
-	cmt, _ := ts.GenerateTestCommittee(7)
 	prop := ts.GenerateTestProposal(height, round)
 	log := NewLog()
-	log.MoveToNewHeight(cmt.Validators())
+	log.MoveToNewHeight(nil)
 	log.SetRoundProposal(round, prop)
 	assert.False(t, log.HasRoundProposal(round+1))
 	assert.True(t, log.HasRoundProposal(round))
@@ -97,11 +96,10 @@ func TestSetRoundProposal(t *testing.T) {
 func TestCanVote(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	cmt, valKeys := ts.GenerateTestCommittee(4)
+	val := ts.GenerateTestValidator()
 	log := NewLog()
-	log.MoveToNewHeight(cmt.Validators())
+	log.MoveToNewHeight([]*validator.Validator{val})
 
-	addr := ts.RandAccAddress()
-	assert.True(t, log.CanVote(valKeys[0].Address()))
-	assert.False(t, log.CanVote(addr))
+	assert.True(t, log.CanVote(val.Address()))
+	assert.False(t, log.CanVote(ts.RandValAddress()))
 }

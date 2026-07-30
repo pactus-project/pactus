@@ -189,7 +189,7 @@ func TestBalance(t *testing.T) {
 	td := setup(t)
 
 	t.Run("existing account", func(t *testing.T) {
-		acc, addr := td.GenerateTestAccount()
+		addr, acc := td.GenerateTestAccount()
 		td.mockProvider.EXPECT().GetAccount(addr.String()).Return(acc, nil)
 
 		amt, err := td.wallet.Balance(addr.String())
@@ -653,8 +653,8 @@ func TestTotalBalance(t *testing.T) {
 	addr2, err := crypto.AddressFromString(accInfo2.Address)
 	require.NoError(t, err)
 
-	acc1, _ := td.GenerateTestAccount(testsuite.AccountWithAddress(addr1))
-	acc2, _ := td.GenerateTestAccount(testsuite.AccountWithAddress(addr2))
+	_, acc1 := td.GenerateTestAccount(testsuite.AccountWithAddress(addr1))
+	_, acc2 := td.GenerateTestAccount(testsuite.AccountWithAddress(addr2))
 
 	td.mockStorage.EXPECT().AllAddresses().Return([]*wtypes.AddressInfo{accInfo1, accInfo2, accInfo3})
 	td.mockProvider.EXPECT().GetAccount(accInfo1.Address).Return(acc1, nil)

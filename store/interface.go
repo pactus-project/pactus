@@ -13,19 +13,17 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 )
 
-// TODO: store blocks inside flat files (to reduce the size of levelDB)
-// Bitcoin impl:
-// https://github.com/btcsuite/btcd/blob/0886f1e5c1fd28ad24aaca4dbccc5f4ab85e58ca/database/ffldb/blockio.go
-// https://bitcoindev.network/understanding-the-data/
-
-// TODO: How to undo or rollback at least for last 21 blocks
-
+// CommittedBlock is a lazy reference to a committed block stored in the database.
+// It carries raw serialized bytes and metadata, but does not parse or deserialize
+// the block eagerly. The full [block.Block] is constructed on demand by calling
+// [CommittedBlock.ToBlock], which deserializes the data and restores any stripped
+// public keys by looking them up through the backing [Store].
 type CommittedBlock struct {
-	store Store
+	store Store // back-reference to the store, used by ToBlock to restore public keys.
 
-	BlockHash hash.Hash
-	Height    types.Height
-	Data      []byte
+	BlockHash hash.Hash    // hash of this block.
+	Height    types.Height // height at which this block was committed.
+	Data      []byte       // raw serialized block bytes, as returned by the database.
 }
 
 func (s *CommittedBlock) ToBlock() (*block.Block, error) {
