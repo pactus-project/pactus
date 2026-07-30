@@ -24,16 +24,18 @@ func TestProposeBlock(t *testing.T) {
 func TestProposeDoubleEntry(t *testing.T) {
 	td := setup(t)
 
-	td.consX.MoveToNewHeight()
-	td.newHeightTimeout(td.consX)
-	td.shouldPublishProposal(t, td.consX, 1, 0)
+	td.commitBlockForAllStates(t)
+
+	td.consY.MoveToNewHeight()
+	td.newHeightTimeout(td.consY)
+	td.shouldPublishProposal(t, td.consY, 2, 0)
 
 	// Clear accumulated messages to test the double entry independently
 	td.consMessages = nil
 
 	// Double entry to propose state should not publish another proposal
-	td.consX.enterNewState(td.consX.proposeState)
-	td.shouldNotPublish(t, td.consX, message.TypeProposal)
+	td.consY.enterNewState(td.consY.proposeState)
+	td.shouldNotPublish(t, td.consY, message.TypeProposal)
 }
 
 func TestSetProposalInvalidProposer(t *testing.T) {

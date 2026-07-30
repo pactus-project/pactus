@@ -16,7 +16,7 @@ import (
 	types "github.com/pactus-project/pactus/types"
 	proposal "github.com/pactus-project/pactus/types/proposal"
 	vote "github.com/pactus-project/pactus/types/vote"
-	gomock "go.uber.org/mock/gomock"
+	"go.uber.org/mock/gomock"
 )
 
 // MockConsensusManagerReader is a mock of ConsensusManagerReader interface.

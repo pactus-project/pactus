@@ -34,7 +34,7 @@ func TestProposeBlock(t *testing.T) {
 		testsuite.TransactionWithSigner(td.genAccKey),
 	)
 
-	td.mockTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{
+	td.fakeTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{
 		invTransferTx,
 		invBondTx,
 		invSortitionTx,

@@ -16,7 +16,7 @@ import (
 	account "github.com/pactus-project/pactus/types/account"
 	tx "github.com/pactus-project/pactus/types/tx"
 	validator "github.com/pactus-project/pactus/types/validator"
-	gomock "go.uber.org/mock/gomock"
+	"go.uber.org/mock/gomock"
 )
 
 // MockWalletProvider is a mock of WalletProvider interface.

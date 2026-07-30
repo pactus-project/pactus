@@ -13,7 +13,7 @@ import (
 	reflect "reflect"
 
 	sandbox "github.com/pactus-project/pactus/sandbox"
-	gomock "go.uber.org/mock/gomock"
+	"go.uber.org/mock/gomock"
 )
 
 // MockExecutor is a mock of Executor interface.

@@ -68,13 +68,13 @@ func setup(t *testing.T, config *Config) *testData {
 	consV1Mgr := manager.NewFakeConsensusManager(ts)
 	consV2Mgr := manager.NewFakeConsensusManager(ts)
 
-	state := state.NewFakeState(ts, nil)
+	state := state.NewFakeState(ts)
 	state.CommitTestBlocks(100)
 
 	consV1Mgr.EXPECT().IsDeprecated().Return(false).AnyTimes()
 	consV1Mgr.EXPECT().MoveToNewHeight().Return().AnyTimes()
 	consV1Mgr.EXPECT().HeightRound().DoAndReturn(func() (types.Height, types.Round) {
-		return state.LastHeight + 1, ts.RandRound()
+		return state.FakeHeight + 1, ts.RandRound()
 	}).AnyTimes()
 
 	mockNetwork := network.MockingNetwork(ts, ts.RandPeerID())

@@ -22,7 +22,7 @@ import (
 	amount "github.com/pactus-project/pactus/types/amount"
 	tx "github.com/pactus-project/pactus/types/tx"
 	validator "github.com/pactus-project/pactus/types/validator"
-	gomock "go.uber.org/mock/gomock"
+	"go.uber.org/mock/gomock"
 )
 
 // MockSandboxReader is a mock of SandboxReader interface.

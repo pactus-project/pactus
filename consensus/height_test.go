@@ -11,8 +11,8 @@ import (
 func TestNewHeightTimeout(t *testing.T) {
 	td := setup(t)
 
-	td.enterNewHeight(td.consY)
 	td.commitBlockForAllStates(t)
+	td.enterNewHeight(td.consY)
 
 	consState := &newHeightState{td.consY}
 	consState.enter()
