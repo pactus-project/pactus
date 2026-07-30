@@ -26,7 +26,7 @@ func TestGetTransaction(t *testing.T) {
 	)
 
 	testBlock, testCert := td.GenerateTestBlock(blockHeight, testsuite.BlockWithTransactions([]*tx.Tx{textTrx}))
-	td.server.FakeState.AddTestBlock(testBlock, testCert)
+	td.FakeState.AddTestBlock(testBlock, testCert)
 
 	t.Run("Should return transaction (verbosity: 0)", func(t *testing.T) {
 		res, err := client.GetTransaction(t.Context(),
