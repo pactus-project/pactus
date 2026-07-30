@@ -69,13 +69,18 @@ func TestBlockchainInfo(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	resp, err := http.Post(
+	req, err := http.NewRequestWithContext(t.Context(), http.MethodPost,
 		"http://"+td.jsonrpcServer.Address(),
-		"application/json",
 		bytes.NewBuffer(requestBody),
 	)
 	require.NoError(t, err)
-	defer resp.Body.Close()
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := http.DefaultClient.Do(req)
+	require.NoError(t, err)
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	var response map[string]any
 	err = json.NewDecoder(resp.Body).Decode(&response)
@@ -93,7 +98,7 @@ func TestBlockchainInfo(t *testing.T) {
 	assert.False(t, hasLastBlockHeight, "last_block_height should be omitted (value is 0)")
 
 	assert.Equal(t, fakeState.LastBlockHash().String(), result["last_block_hash"])
-	assert.Equal(t, float64(fakeState.LastBlockTime().Unix()), result["last_block_time"])
+	assert.InEpsilon(t, float64(fakeState.LastBlockTime().Unix()), result["last_block_time"], 0)
 
 	_, hasPruningHeight := result["pruning_height"]
 	assert.False(t, hasPruningHeight, "pruning_height should be omitted (value is 0)")

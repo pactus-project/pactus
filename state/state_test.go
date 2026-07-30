@@ -35,7 +35,6 @@ type testData struct {
 
 	state      *state
 	fakeTxPool *txpool.FakeTxPool
-	fakeStore  *store.FakeStore
 	genValKeys []*bls.ValidatorKey
 	genAccKey  *ed25519.PrivateKey
 }

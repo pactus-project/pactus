@@ -1,7 +1,6 @@
 package state
 
 import (
-	"errors"
 	"sync"
 	"time"
 
@@ -22,8 +21,6 @@ import (
 	"github.com/pactus-project/pactus/util/testsuite"
 	"go.uber.org/mock/gomock"
 )
-
-var errFakeInvalid = errors.New("invalid")
 
 type FakeState struct {
 	*MockState

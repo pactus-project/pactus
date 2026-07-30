@@ -19,10 +19,9 @@ import (
 type testData struct {
 	*testsuite.TestSuite
 
-	fakeCommittee *committee.FakeCommittee
-	fakeStore     *store.FakeStore
-	fakeParams    *param.Params
-	sbx           *sandbox
+	fakeStore  *store.FakeStore
+	fakeParams *param.Params
+	sbx        *sandbox
 }
 
 func setup(t *testing.T) *testData {
@@ -362,6 +361,7 @@ func TestVerifyProof(t *testing.T) {
 		ok, evalProof := sortition.EvaluateSortition(seed, prv, td.sbx.totalPower, val.Power())
 		if ok {
 			proof = evalProof
+
 			break
 		}
 	}

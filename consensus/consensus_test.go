@@ -712,8 +712,6 @@ func TestDuplicateProposal(t *testing.T) {
 func TestNonActiveValidator(t *testing.T) {
 	td := setup(t)
 
-	// committee, _ := td.GenerateTestCommittee(4)
-
 	valKey := td.RandValKey()
 	pipe := pipeline.New[message.Message](t.Context())
 	state := state.NewFakeState(td.TestSuite)

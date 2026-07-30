@@ -12,7 +12,7 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
-	gomock "go.uber.org/mock/gomock"
+	"go.uber.org/mock/gomock"
 )
 
 type FakeStore struct {
@@ -95,7 +95,6 @@ func NewFakeStore(ts *testsuite.TestSuite) *FakeStore {
 			for _, blk := range fake.FakeBlocks {
 				for _, trx := range blk.Transactions() {
 					if txID == trx.ID() {
-
 						data, _ := trx.Bytes()
 
 						return &CommittedTx{

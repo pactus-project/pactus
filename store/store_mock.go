@@ -22,7 +22,7 @@ import (
 	protocol "github.com/pactus-project/pactus/types/protocol"
 	tx "github.com/pactus-project/pactus/types/tx"
 	validator "github.com/pactus-project/pactus/types/validator"
-	gomock "go.uber.org/mock/gomock"
+	"go.uber.org/mock/gomock"
 )
 
 // MockReader is a mock of Reader interface.
