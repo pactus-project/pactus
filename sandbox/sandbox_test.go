@@ -14,7 +14,6 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
-	"go.uber.org/mock/gomock"
 )
 
 type testData struct {
@@ -367,13 +366,12 @@ func TestVerifyProof(t *testing.T) {
 		}
 	}
 
-	t.Run("invalid height", func(t *testing.T) {
-		td.fakeStore.EXPECT().SortitionSeed(gomock.Any()).Return(nil).Times(1)
+	blk, cert := td.GenerateTestBlock(lockTime, testsuite.BlockWithSeed(seed))
+	td.fakeStore.SaveBlock(blk, cert)
 
+	t.Run("invalid height", func(t *testing.T) {
 		assert.False(t, td.sbx.VerifyProof(td.RandHeight(), proof, val))
 	})
-
-	td.fakeStore.EXPECT().SortitionSeed(lockTime).Return(&seed).AnyTimes()
 
 	t.Run("invalid proof", func(t *testing.T) {
 		invalidProof := td.RandProof()

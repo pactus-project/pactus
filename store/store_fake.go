@@ -3,10 +3,12 @@ package store
 import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -227,6 +229,28 @@ func NewFakeStore(ts *testsuite.TestSuite) *FakeStore {
 		func(blk *block.Block, cert *certificate.Certificate) {
 			fake.FakeBlocks[blk.Height()] = blk
 			fake.FakeCertificates[cert.Height()] = cert
+		},
+	).AnyTimes()
+
+	fake.EXPECT().UpdateValidatorProtocolVersion(gomock.Any(), gomock.Any()).DoAndReturn(
+		func(addr crypto.Address, ver protocol.Version) {
+			val, ok := fake.FakeValidators[addr]
+			if ok {
+				val.UpdateProtocolVersion(ver)
+			}
+		},
+	).AnyTimes()
+
+	fake.EXPECT().SortitionSeed(gomock.Any()).DoAndReturn(
+		func(height types.Height) *sortition.VerifiableSeed {
+			blk, ok := fake.FakeBlocks[height]
+			if ok {
+				seed := blk.Header().SortitionSeed()
+
+				return &seed
+			}
+
+			return &sortition.UndefVerifiableSeed
 		},
 	).AnyTimes()
 

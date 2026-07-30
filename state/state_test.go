@@ -66,7 +66,6 @@ func setupWithVersion(t *testing.T, blockVersion protocol.Version) *testData {
 	fakeTxPool := txpool.NewFakeTxPool(ts)
 	fakeTxPool.EXPECT().SetNewSandboxAndRecheck(gomock.Any()).Return().AnyTimes()
 	fakeTxPool.EXPECT().HandleCommittedBlock(gomock.Any()).Return().AnyTimes()
-	fakeTxPool.EXPECT().AppendTxAndBroadcast(gomock.Any()).Return(nil).AnyTimes()
 
 	fakeStore := store.NewFakeStore(ts)
 	genTime := util.RoundNow(10).Add(-8640 * time.Second)
@@ -93,7 +92,6 @@ func setupWithVersion(t *testing.T, blockVersion protocol.Version) *testData {
 	valKeys := []*bls.ValidatorKey{genValKeys[0], ts.RandValKey()}
 	eventPipe := pipeline.New[any](t.Context())
 
-	fakeStore.EXPECT().UpdateValidatorProtocolVersion(gomock.Any(), gomock.Any()).AnyTimes()
 	fakeStore.EXPECT().IsBanned(gomock.Any()).Return(false).AnyTimes()
 	fakeStore.EXPECT().RecentTransaction(gomock.Any()).Return(false).AnyTimes()
 
@@ -704,10 +702,11 @@ func TestLoadState(t *testing.T) {
 	td := setup(t)
 
 	// Add a bond transactions to change total power (stake)
-	pub, _ := td.RandBLSKeyPair()
+	pub, prv := td.RandBLSKeyPair()
 	lockTime := td.state.LastBlockHeight()
 	bondTrx := tx.NewBondTx(lockTime, td.genAccKey.PublicKeyNative().AccountAddress(),
 		pub.ValidatorAddress(), pub, 1000000000, 100000)
+	td.HelperSignTransaction(prv, bondTrx)
 
 	td.fakeTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{bondTrx}).Times(1)
 	blk5, cert5 := td.makeBlockAndCertificate(t, 1)
