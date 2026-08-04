@@ -109,11 +109,16 @@ type purposeBLS struct {
 
 type purposeBIP44 struct {
 	NextEd25519Index   uint32 `json:"next_ed25519_index"`   // Index of next Ed25519 derived account: m/44'/21888'/3'/0'
-	NextSexp256k1Index uint32 `json:"next_secp256k1_index"` // Index of next Secp256k1 derived account: m/44'/21888'/4'/0
-	XPubSecp256K1      string `json:"xpub_secp256k1"`       // Extended public key for account: m/44'/21888'/4'/0
+	NextSecp256k1Index uint32 `json:"next_secp256k1_index"` // Index of next Secp256k1 derived account: m/44'/21888'/4'/0
 }
 
-func CreateVaultFromMnemonic(mnemonic string, coinType addresspath.CoinType) (*Vault, error) {
+func CreateVaultFromMnemonic(mnemonic string, coinType addresspath.CoinType,
+	password string, opts ...encrypter.Option,
+) (*Vault, error) {
+	if password == "" {
+		return nil, ErrEmptyPassword
+	}
+
 	seed, err := bip39.NewSeedWithErrorChecking(mnemonic, "")
 	if err != nil {
 		return nil, err
@@ -122,7 +127,6 @@ func CreateVaultFromMnemonic(mnemonic string, coinType addresspath.CoinType) (*V
 	if err != nil {
 		return nil, err
 	}
-	enc := encrypter.NopeEncrypter()
 
 	xPubBLSValidator, err := blsMasterKey.DerivePath([]uint32{
 		addresspath.Harden(addresspath.PurposeBLS12381),
@@ -142,19 +146,7 @@ func CreateVaultFromMnemonic(mnemonic string, coinType addresspath.CoinType) (*V
 		return nil, err
 	}
 
-	secp256k1MasterKey, err := secp256k1hdkeychain.NewMaster(seed)
-	if err != nil {
-		return nil, err
-	}
-	xPubSecp256k1, err := secp256k1MasterKey.DerivePath([]uint32{
-		addresspath.Harden(addresspath.PurposeBIP44),
-		addresspath.Harden(coinType),
-		addresspath.Harden(crypto.AddressTypeSecp256k1Account),
-	})
-	if err != nil {
-		return nil, err
-	}
-
+	enc := encrypter.DefaultEncrypter(opts...)
 	store := keyStore{
 		MasterNode: masterNode{
 			Mnemonic: mnemonic,
@@ -162,7 +154,7 @@ func CreateVaultFromMnemonic(mnemonic string, coinType addresspath.CoinType) (*V
 		ImportedKeys: make([]string, 0),
 	}
 
-	storeDate, err := json.Marshal(store)
+	storeDate, err := encryptKeyStore(&store, enc, password)
 	if err != nil {
 		return nil, err
 	}
@@ -171,14 +163,11 @@ func CreateVaultFromMnemonic(mnemonic string, coinType addresspath.CoinType) (*V
 		Type:      TypeFull,
 		CoinType:  coinType,
 		Encrypter: enc,
-		KeyStore:  string(storeDate),
+		KeyStore:  storeDate,
 		Purposes: Purposes{
 			PurposeBLS: purposeBLS{
 				XPubValidator: xPubBLSValidator.Neuter().String(),
 				XPubAccount:   xPubBLSAccount.Neuter().String(),
-			},
-			PurposeBIP44: purposeBIP44{
-				XPubSecp256K1: xPubSecp256k1.Neuter().String(),
 			},
 		},
 	}, nil
@@ -199,22 +188,20 @@ func (v *Vault) UpdatePassword(oldPassword, newPassword string, opts ...encrypte
 		return ErrNeutered
 	}
 
+	if newPassword == "" {
+		return ErrEmptyPassword
+	}
+
 	keyStore, err := v.decryptKeyStore(oldPassword)
 	if err != nil {
 		return err
 	}
 
-	newEncrypter := encrypter.NopeEncrypter()
-	if newPassword != "" {
-		newEncrypter = encrypter.DefaultEncrypter(opts...)
-	}
-	v.Encrypter = newEncrypter
+	v.Encrypter = encrypter.DefaultEncrypter(opts...)
 	err = v.encryptKeyStore(keyStore, newPassword)
 	if err != nil {
 		return err
 	}
-
-	v.Encrypter = newEncrypter
 
 	return nil
 }
@@ -452,12 +439,12 @@ func (v *Vault) NewSecp256k1AccountAddress(label, password string) (*types.Addre
 		return nil, err
 	}
 
-	index := v.Purposes.PurposeBIP44.NextSexp256k1Index
+	index := v.Purposes.PurposeBIP44.NextSecp256k1Index
 	info, err := v.deriveSecp256k1AccountAddressAt(masterKey, index, label)
 	if err != nil {
 		return nil, err
 	}
-	v.Purposes.PurposeBIP44.NextSexp256k1Index++
+	v.Purposes.PurposeBIP44.NextSecp256k1Index++
 
 	return info, nil
 }
@@ -529,16 +516,28 @@ func (v *Vault) decryptKeyStore(password string) (*keyStore, error) {
 	return keyStore, nil
 }
 
-func (v *Vault) encryptKeyStore(keyStore *keyStore, password string) error {
+func encryptKeyStore(keyStore *keyStore,
+	encrypter encrypter.Encrypter, password string,
+) (string, error) {
 	keyStoreData, err := json.Marshal(keyStore)
+	if err != nil {
+		return "", err
+	}
+
+	keyStoreEnc, err := encrypter.Encrypt(string(keyStoreData), password)
+	if err != nil {
+		return "", err
+	}
+
+	return keyStoreEnc, nil
+}
+
+func (v *Vault) encryptKeyStore(keyStore *keyStore, password string) error {
+	keyStoreEnc, err := encryptKeyStore(keyStore, v.Encrypter, password)
 	if err != nil {
 		return err
 	}
 
-	keyStoreEnc, err := v.Encrypter.Encrypt(string(keyStoreData), password)
-	if err != nil {
-		return err
-	}
 	v.KeyStore = keyStoreEnc
 
 	return nil

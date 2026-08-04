@@ -3,6 +3,7 @@ package block_test
 import (
 	"encoding/hex"
 	"testing"
+	"unsafe"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/crypto/hash"
@@ -15,6 +16,14 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func TestMemoryAlignment(t *testing.T) {
+	s1 := unsafe.Sizeof(block.Block{})
+	assert.Equal(t, 72, int(s1))
+
+	s2 := unsafe.Sizeof(block.Header{})
+	assert.Equal(t, 140, int(s2))
+}
 
 func TestBasicCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)

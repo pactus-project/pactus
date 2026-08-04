@@ -56,6 +56,9 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 		IsPruned:         chainInfo.IsPruned,
 		PruningHeight:    uint32(chainInfo.PruningHeight),
 		InCommittee:      inCommittee,
+		ChainType:        pactus.ChainType(chainInfo.ChainType),
+		SyncProgress:     chainInfo.SyncProgress,
+		BlocksLeft:       chainInfo.BlocksLeft,
 	}, nil
 }
 

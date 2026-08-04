@@ -1,24 +1,25 @@
-package vault
+package vault_test
 
 import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/wallet/vault"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestGenerateMnemonic(t *testing.T) {
-	_, err := GenerateMnemonic(127)
+	_, err := vault.GenerateMnemonic(127)
 	require.Error(t, err, "low entropy")
 
-	_, err = GenerateMnemonic(128)
+	_, err = vault.GenerateMnemonic(128)
 	require.NoError(t, err)
 
-	_, err = GenerateMnemonic(257)
+	_, err = vault.GenerateMnemonic(257)
 	require.Error(t, err, "high entropy")
 
-	_, err = GenerateMnemonic(256)
+	_, err = vault.GenerateMnemonic(256)
 	require.NoError(t, err)
 }
 
@@ -49,7 +50,7 @@ func TestValidateMnemonic(t *testing.T) {
 		},
 	}
 	for no, tt := range tests {
-		err := CheckMnemonic(tt.mnenomic)
+		err := vault.CheckMnemonic(tt.mnenomic)
 		if err != nil {
 			assert.Equal(t, tt.errStr, err.Error(), "test %v failed", no)
 		}
@@ -64,11 +65,11 @@ func TestPrivateKeyFromString(t *testing.T) {
 		{str: "SECRET1PQQQSYQCYQ5RQWZQFPG9SCRGWPUGPZYSNZS23V9CCRYDPK8QARC0SEZYD4L", err: nil},
 		{str: "SECRET1RQQQSYQCYQ5RQWZQFPG9SCRGWPUGPZYSNZS23V9CCRYDPK8QARC0SW5D8X2", err: nil},
 		{str: "SECRET1YQQQSYQCYQ5RQWZQFPG9SCRGWPUGPZYSNZS23V9CCRYDPK8QARC0SPVXU8Z", err: nil},
-		{str: "SECRET19QQQSYQCYQ5RQWZQFPG9SCRGWPUGPZYSNZS23V9CCRYDPK8QARC0S78KE6U", err: ErrInvalidPrivateKey},
+		{str: "SECRET19QQQSYQCYQ5RQWZQFPG9SCRGWPUGPZYSNZS23V9CCRYDPK8QARC0S78KE6U", err: vault.ErrInvalidPrivateKey},
 	}
 
 	for _, tt := range tests {
-		_, err := PrivateKeyFromString(tt.str)
+		_, err := vault.PrivateKeyFromString(tt.str)
 		require.ErrorIs(t, err, tt.err, "unexpected error for input: %s", tt.str)
 	}
 }
@@ -82,11 +83,11 @@ func TestPublicKeyFromString(t *testing.T) {
 			"5ymglpssq6pfc36m0428vwjs9h7hzl5a28zucl02u2vpu4sfp2ppe8zmet7p9xu9nysr4wvsx86vuujrva2z", err: nil},
 		{str: "public1rqwss00lnecgtu8tsm5vwwj7qn9n7f43snwjs6hcamjrxgyj4xxuq5agu5g", err: nil},
 		{str: "public1yqdkke2kzfzheda405lusfa2sy5aq70hn7k4zle5r322my9nfz35wyfamrfs", err: nil},
-		{str: "public19qdkke2kzfzheda405lusfa2sy5aq70hn7k4zle5r322my9nfz35wygp96am", err: ErrInvalidPublicKey},
+		{str: "public19qdkke2kzfzheda405lusfa2sy5aq70hn7k4zle5r322my9nfz35wygp96am", err: vault.ErrInvalidPublicKey},
 	}
 
 	for _, tt := range tests {
-		_, err := PublicKeyFromString(tt.str)
+		_, err := vault.PublicKeyFromString(tt.str)
 		require.ErrorIs(t, err, tt.err, "unexpected error for input: %s", tt.str)
 	}
 }
@@ -114,7 +115,7 @@ func TestSignatureFromString(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		_, err := SignatureFromString(tt.str, tt.typ)
+		_, err := vault.SignatureFromString(tt.str, tt.typ)
 		require.ErrorIs(t, err, tt.err, "unexpected error for input: %s", tt.str)
 	}
 }

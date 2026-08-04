@@ -17,7 +17,8 @@ func TestGetBlock(t *testing.T) {
 	client := td.blockchainClient(t)
 
 	height := td.RandHeight()
-	blk := td.FakeState.AddTestBlock(height)
+	blk, cert := td.GenerateTestBlock(height)
+	td.FakeState.AddTestBlock(blk, cert)
 	data, _ := blk.Bytes()
 
 	t.Run("Should return nil for non-existing block", func(t *testing.T) {
@@ -100,7 +101,8 @@ func TestGetBlockHash(t *testing.T) {
 	client := td.blockchainClient(t)
 
 	height := td.RandHeight()
-	blk := td.FakeState.AddTestBlock(height)
+	blk, cert := td.GenerateTestBlock(height)
+	td.FakeState.AddTestBlock(blk, cert)
 
 	t.Run("Should return error for non-existing block", func(t *testing.T) {
 		res, err := client.GetBlockHash(t.Context(),
@@ -124,7 +126,8 @@ func TestGetBlockHeight(t *testing.T) {
 	client := td.blockchainClient(t)
 
 	height := td.RandHeight()
-	blk := td.FakeState.AddTestBlock(height)
+	blk, cert := td.GenerateTestBlock(height)
+	td.FakeState.AddTestBlock(blk, cert)
 
 	t.Run("Should return error for invalid hash", func(t *testing.T) {
 		res, err := client.GetBlockHeight(t.Context(),
@@ -159,8 +162,8 @@ func TestGetBlockchainInfo(t *testing.T) {
 		&pactus.GetBlockchainInfoRequest{})
 
 	require.NoError(t, err)
-	assert.Equal(t, uint32(td.FakeState.LastHeight), res.LastBlockHeight)
-	assert.Equal(t, td.FakeState.LastTime.Unix(), res.LastBlockTime)
+	assert.Equal(t, uint32(td.FakeState.FakeHeight), res.LastBlockHeight)
+	assert.Equal(t, td.FakeState.LastBlockTime().Unix(), res.LastBlockTime)
 	assert.Equal(t, td.FakeState.LastBlockHash().String(), res.LastBlockHash)
 	assert.Zero(t, res.PruningHeight)
 	assert.False(t, res.IsPruned)
@@ -183,7 +186,8 @@ func TestGetAccount(t *testing.T) {
 	td := setup(t, nil)
 	client := td.blockchainClient(t)
 
-	addr, acc := td.FakeState.AddTestAccount()
+	addr, acc := td.GenerateTestAccount()
+	td.FakeState.AddTestAccount(addr, acc)
 
 	t.Run("Should return error for non-parseable address", func(t *testing.T) {
 		res, err := client.GetAccount(t.Context(),
@@ -216,7 +220,8 @@ func TestGetValidator(t *testing.T) {
 	td := setup(t, nil)
 	client := td.blockchainClient(t)
 
-	val1 := td.FakeState.AddTestValidator()
+	val := td.GenerateTestValidator()
+	td.FakeState.AddTestValidator(val)
 
 	t.Run("Should return nil value due to invalid address", func(t *testing.T) {
 		res, err := client.GetValidator(t.Context(),
@@ -236,11 +241,11 @@ func TestGetValidator(t *testing.T) {
 
 	t.Run("Should return validator, and the public keys should match", func(t *testing.T) {
 		res, err := client.GetValidator(t.Context(),
-			&pactus.GetValidatorRequest{Address: val1.Address().String()})
+			&pactus.GetValidatorRequest{Address: val.Address().String()})
 
 		require.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, val1.PublicKey().String(), res.GetValidator().PublicKey)
+		assert.Equal(t, val.PublicKey().String(), res.GetValidator().PublicKey)
 	})
 
 	t.Run("Should return delegation info for delegated validators", func(t *testing.T) {
@@ -248,10 +253,10 @@ func TestGetValidator(t *testing.T) {
 		dlgOwnerShare := td.RandAmount()
 		dlgExpiry := td.RandHeight()
 
-		val1.SetDelegation(dlgOwnerAddr, dlgOwnerShare, dlgExpiry)
+		val.SetDelegation(dlgOwnerAddr, dlgOwnerShare, dlgExpiry)
 
 		res, err := client.GetValidator(t.Context(),
-			&pactus.GetValidatorRequest{Address: val1.Address().String()})
+			&pactus.GetValidatorRequest{Address: val.Address().String()})
 
 		require.NoError(t, err)
 		assert.NotNil(t, res)
@@ -268,7 +273,8 @@ func TestGetValidatorByNumber(t *testing.T) {
 	td := setup(t, nil)
 	client := td.blockchainClient(t)
 
-	val1 := td.FakeState.AddTestValidator()
+	val := td.GenerateTestValidator()
+	td.FakeState.AddTestValidator(val)
 
 	t.Run("Should return nil value due to invalid number", func(t *testing.T) {
 		res, err := client.GetValidatorByNumber(t.Context(),
@@ -280,7 +286,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 
 	t.Run("Should return Not Found", func(t *testing.T) {
 		res, err := client.GetValidatorByNumber(t.Context(),
-			&pactus.GetValidatorByNumberRequest{Number: val1.Number() + 1})
+			&pactus.GetValidatorByNumberRequest{Number: val.Number() + 1})
 
 		require.Error(t, err)
 		assert.Nil(t, res)
@@ -288,12 +294,12 @@ func TestGetValidatorByNumber(t *testing.T) {
 
 	t.Run("Should return validator matching with public key and number", func(t *testing.T) {
 		res, err := client.GetValidatorByNumber(t.Context(),
-			&pactus.GetValidatorByNumberRequest{Number: val1.Number()})
+			&pactus.GetValidatorByNumberRequest{Number: val.Number()})
 
 		require.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, val1.PublicKey().String(), res.GetValidator().PublicKey)
-		assert.Equal(t, val1.Number(), res.GetValidator().GetNumber())
+		assert.Equal(t, val.PublicKey().String(), res.GetValidator().PublicKey)
+		assert.Equal(t, val.Number(), res.GetValidator().GetNumber())
 	})
 }
 
@@ -302,8 +308,11 @@ func TestGetValidatorAddresses(t *testing.T) {
 	client := td.blockchainClient(t)
 
 	t.Run("Should return list of validator addresses", func(t *testing.T) {
-		td.FakeState.AddTestValidator()
-		td.FakeState.AddTestValidator()
+		val1 := td.GenerateTestValidator()
+		val2 := td.GenerateTestValidator()
+
+		td.FakeState.AddTestValidator(val1)
+		td.FakeState.AddTestValidator(val2)
 
 		res, err := client.GetValidatorAddresses(t.Context(),
 			&pactus.GetValidatorAddressesRequest{})

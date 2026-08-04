@@ -32,7 +32,7 @@ type testData struct {
 	pool          *txPool
 	sbx           *sandbox.MockSandbox
 	exe           *executor.MockExecutor
-	store         *store.MockStore
+	fakeStore     *store.FakeStore
 	broadcastPipe pipeline.Pipeline[message.Message]
 	eventPipe     pipeline.Pipeline[any]
 }
@@ -70,12 +70,12 @@ func setup(t *testing.T, cfg *Config) *testData {
 		return exe, nil
 	}
 
-	store := store.MockingStore(ts)
+	fakeStore := store.NewFakeStore(ts)
 	config := testDefaultConfig()
 	if cfg != nil {
 		config = cfg
 	}
-	poolInt := NewTxPool(t.Context(), config, store, broadcastPipe, eventPipe)
+	poolInt := NewTxPool(t.Context(), config, fakeStore, broadcastPipe, eventPipe)
 	poolInt.SetNewSandboxAndRecheck(sbx)
 	pool := poolInt.(*txPool)
 	assert.NotNil(t, pool)
@@ -85,7 +85,7 @@ func setup(t *testing.T, cfg *Config) *testData {
 		pool:          pool,
 		sbx:           sbx,
 		exe:           exe,
-		store:         store,
+		fakeStore:     fakeStore,
 		broadcastPipe: broadcastPipe,
 		eventPipe:     eventPipe,
 	}
@@ -240,7 +240,7 @@ func TestCalculatingConsumption(t *testing.T) {
 	// Commit the first block
 	blk1, cert1 := td.GenerateTestBlock(1,
 		testsuite.BlockWithTransactions([]*tx.Tx{trx10, trx11, trx12, trx13}))
-	td.store.SaveBlock(blk1, cert1)
+	td.fakeStore.SaveBlock(blk1, cert1)
 
 	// Expected consumption map after transactions
 	diff2 := 0
@@ -268,7 +268,7 @@ func TestCalculatingConsumption(t *testing.T) {
 	for _, tt := range tests {
 		// Generate a block with the transactions for the given height
 		blk, cert := td.GenerateTestBlock(tt.height, testsuite.BlockWithTransactions(tt.txs))
-		td.store.SaveBlock(blk, cert)
+		td.fakeStore.SaveBlock(blk, cert)
 
 		// Handle the block in the transaction pool
 		td.pool.HandleCommittedBlock(blk)
@@ -283,11 +283,8 @@ func TestEstimatedConsumptionalFee(t *testing.T) {
 	td := setup(t, testConsumptionalConfig())
 
 	t.Run("Test indexed signer", func(t *testing.T) {
-		_, accPrv := td.RandEd25519KeyPair()
-		trx := td.makeTransferTx(testsuite.TransactionWithSigner(accPrv))
-
-		blk, cert := td.GenerateTestBlock(td.RandHeight(), testsuite.BlockWithTransactions([]*tx.Tx{trx}))
-		td.store.SaveBlock(blk, cert)
+		accPub, accPrv := td.RandEd25519KeyPair()
+		td.fakeStore.EXPECT().HasPublicKey(accPub.AccountAddress()).Return(true).AnyTimes()
 
 		tests := []struct {
 			fee     amount.Amount
@@ -320,6 +317,8 @@ func TestEstimatedConsumptionalFee(t *testing.T) {
 	})
 
 	t.Run("Test non-indexed signer", func(t *testing.T) {
+		td.fakeStore.EXPECT().HasPublicKey(gomock.Any()).Return(false).AnyTimes()
+
 		trx := td.makeTransferTx(testsuite.TransactionWithFee(0))
 
 		td.mockExecution(trx, nil)

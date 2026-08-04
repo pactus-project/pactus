@@ -30,7 +30,8 @@ func TestBlock(t *testing.T) {
 	td := setup(t)
 
 	height := td.RandHeight()
-	blk := td.gRPCServer.FakeState.AddTestBlock(height)
+	blk, cert := td.GenerateTestBlock(height)
+	td.gRPCServer.FakeState.AddTestBlock(blk, cert)
 
 	t.Run("Shall return a block", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -102,7 +103,8 @@ func TestBlock(t *testing.T) {
 func TestAccount(t *testing.T) {
 	td := setup(t)
 
-	addr, acc := td.gRPCServer.FakeState.AddTestAccount()
+	addr, acc := td.GenerateTestAccount()
+	td.gRPCServer.FakeState.AddTestAccount(addr, acc)
 
 	t.Run("Shall return an account", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -157,7 +159,8 @@ func TestAccount(t *testing.T) {
 func TestValidator(t *testing.T) {
 	td := setup(t)
 
-	val := td.gRPCServer.FakeState.AddTestValidator()
+	val := td.GenerateTestValidator()
+	td.gRPCServer.FakeState.AddTestValidator(val)
 
 	t.Run("Shall return an error, non-existent", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -213,7 +216,8 @@ func TestValidator(t *testing.T) {
 func TestValidatorByNumber(t *testing.T) {
 	td := setup(t)
 
-	val := td.gRPCServer.FakeState.AddTestValidator()
+	val := td.GenerateTestValidator()
+	td.gRPCServer.FakeState.AddTestValidator(val)
 
 	t.Run("Shall return a validator", func(t *testing.T) {
 		w := httptest.NewRecorder()

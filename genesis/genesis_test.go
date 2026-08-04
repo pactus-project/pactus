@@ -20,7 +20,7 @@ import (
 func TestMarshaling(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	acc, addr := ts.GenerateTestAccount(
+	addr, acc := ts.GenerateTestAccount(
 		testsuite.AccountWithNumber(0),
 		testsuite.AccountWithBalance(100000),
 	)

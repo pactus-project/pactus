@@ -3,6 +3,7 @@ package vote_test
 import (
 	"encoding/hex"
 	"testing"
+	"unsafe"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
@@ -12,6 +13,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func TestMemoryAlignment(t *testing.T) {
+	s := unsafe.Sizeof(vote.Vote{})
+	assert.Equal(t, 80, int(s))
+}
 
 func TestVoteMarshaling(t *testing.T) {
 	tests := []struct {

@@ -21,6 +21,59 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Enumeration for blockchain network types.
+type ChainType int32
+
+const (
+	// Mainnet is the production blockchain network.
+	ChainType_CHAIN_TYPE_MAINNET ChainType = 0
+	// Testnet is the public test blockchain network.
+	ChainType_CHAIN_TYPE_TESTNET ChainType = 1
+	// Localnet is for local development and testing.
+	ChainType_CHAIN_TYPE_LOCALNET ChainType = 2
+)
+
+// Enum value maps for ChainType.
+var (
+	ChainType_name = map[int32]string{
+		0: "CHAIN_TYPE_MAINNET",
+		1: "CHAIN_TYPE_TESTNET",
+		2: "CHAIN_TYPE_LOCALNET",
+	}
+	ChainType_value = map[string]int32{
+		"CHAIN_TYPE_MAINNET":  0,
+		"CHAIN_TYPE_TESTNET":  1,
+		"CHAIN_TYPE_LOCALNET": 2,
+	}
+)
+
+func (x ChainType) Enum() *ChainType {
+	p := new(ChainType)
+	*p = x
+	return p
+}
+
+func (x ChainType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ChainType) Descriptor() protoreflect.EnumDescriptor {
+	return file_blockchain_proto_enumTypes[0].Descriptor()
+}
+
+func (ChainType) Type() protoreflect.EnumType {
+	return &file_blockchain_proto_enumTypes[0]
+}
+
+func (x ChainType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ChainType.Descriptor instead.
+func (ChainType) EnumDescriptor() ([]byte, []int) {
+	return file_blockchain_proto_rawDescGZIP(), []int{0}
+}
+
 // Enumeration for verbosity levels when requesting block information.
 type BlockVerbosity int32
 
@@ -58,11 +111,11 @@ func (x BlockVerbosity) String() string {
 }
 
 func (BlockVerbosity) Descriptor() protoreflect.EnumDescriptor {
-	return file_blockchain_proto_enumTypes[0].Descriptor()
+	return file_blockchain_proto_enumTypes[1].Descriptor()
 }
 
 func (BlockVerbosity) Type() protoreflect.EnumType {
-	return &file_blockchain_proto_enumTypes[0]
+	return &file_blockchain_proto_enumTypes[1]
 }
 
 func (x BlockVerbosity) Number() protoreflect.EnumNumber {
@@ -71,7 +124,7 @@ func (x BlockVerbosity) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use BlockVerbosity.Descriptor instead.
 func (BlockVerbosity) EnumDescriptor() ([]byte, []int) {
-	return file_blockchain_proto_rawDescGZIP(), []int{0}
+	return file_blockchain_proto_rawDescGZIP(), []int{1}
 }
 
 // Enumeration for types of votes.
@@ -123,11 +176,11 @@ func (x VoteType) String() string {
 }
 
 func (VoteType) Descriptor() protoreflect.EnumDescriptor {
-	return file_blockchain_proto_enumTypes[1].Descriptor()
+	return file_blockchain_proto_enumTypes[2].Descriptor()
 }
 
 func (VoteType) Type() protoreflect.EnumType {
-	return &file_blockchain_proto_enumTypes[1]
+	return &file_blockchain_proto_enumTypes[2]
 }
 
 func (x VoteType) Number() protoreflect.EnumNumber {
@@ -136,7 +189,7 @@ func (x VoteType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use VoteType.Descriptor instead.
 func (VoteType) EnumDescriptor() ([]byte, []int) {
-	return file_blockchain_proto_rawDescGZIP(), []int{1}
+	return file_blockchain_proto_rawDescGZIP(), []int{2}
 }
 
 // Request message for retrieving account information.
@@ -950,7 +1003,13 @@ type GetBlockchainInfoResponse struct {
 	// The number of validators in the current committee.
 	CommitteeSize int32 `protobuf:"varint,14,opt,name=committee_size,json=committeeSize,proto3" json:"committee_size,omitempty"`
 	// Average availability score of validators with stake, in percentage (0-100).
-	AverageScore  float64 `protobuf:"fixed64,15,opt,name=average_score,json=averageScore,proto3" json:"average_score,omitempty"`
+	AverageScore float64 `protobuf:"fixed64,15,opt,name=average_score,json=averageScore,proto3" json:"average_score,omitempty"`
+	// The chain type identifying the blockchain network.
+	ChainType ChainType `protobuf:"varint,16,opt,name=chain_type,json=chainType,proto3,enum=pactus.ChainType" json:"chain_type,omitempty"`
+	// Estimated sync progress of the node, in the range [0, 1].
+	SyncProgress float64 `protobuf:"fixed64,17,opt,name=sync_progress,json=syncProgress,proto3" json:"sync_progress,omitempty"`
+	// Estimated number of blocks remaining to reach the latest block.
+	BlocksLeft    int64 `protobuf:"varint,18,opt,name=blocks_left,json=blocksLeft,proto3" json:"blocks_left,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1072,6 +1131,27 @@ func (x *GetBlockchainInfoResponse) GetCommitteeSize() int32 {
 func (x *GetBlockchainInfoResponse) GetAverageScore() float64 {
 	if x != nil {
 		return x.AverageScore
+	}
+	return 0
+}
+
+func (x *GetBlockchainInfoResponse) GetChainType() ChainType {
+	if x != nil {
+		return x.ChainType
+	}
+	return ChainType_CHAIN_TYPE_MAINNET
+}
+
+func (x *GetBlockchainInfoResponse) GetSyncProgress() float64 {
+	if x != nil {
+		return x.SyncProgress
+	}
+	return 0
+}
+
+func (x *GetBlockchainInfoResponse) GetBlocksLeft() int64 {
+	if x != nil {
+		return x.BlocksLeft
 	}
 	return 0
 }
@@ -2086,7 +2166,7 @@ const file_blockchain_proto_rawDesc = "" +
 	"\x04hash\x18\x01 \x01(\tR\x04hash\"0\n" +
 	"\x16GetBlockHeightResponse\x12\x16\n" +
 	"\x06height\x18\x01 \x01(\rR\x06height\"\x1a\n" +
-	"\x18GetBlockchainInfoRequest\"\x93\x04\n" +
+	"\x18GetBlockchainInfoRequest\"\x8b\x05\n" +
 	"\x19GetBlockchainInfoResponse\x12*\n" +
 	"\x11last_block_height\x18\x01 \x01(\rR\x0flastBlockHeight\x12&\n" +
 	"\x0flast_block_hash\x18\x02 \x01(\tR\rlastBlockHash\x12&\n" +
@@ -2102,7 +2182,12 @@ const file_blockchain_proto_rawDesc = "" +
 	"\x0epruning_height\x18\t \x01(\rR\rpruningHeight\x12!\n" +
 	"\fin_committee\x18\r \x01(\bR\vinCommittee\x12%\n" +
 	"\x0ecommittee_size\x18\x0e \x01(\x05R\rcommitteeSize\x12#\n" +
-	"\raverage_score\x18\x0f \x01(\x01R\faverageScore\"\x19\n" +
+	"\raverage_score\x18\x0f \x01(\x01R\faverageScore\x120\n" +
+	"\n" +
+	"chain_type\x18\x10 \x01(\x0e2\x11.pactus.ChainTypeR\tchainType\x12#\n" +
+	"\rsync_progress\x18\x11 \x01(\x01R\fsyncProgress\x12\x1f\n" +
+	"\vblocks_left\x18\x12 \x01(\x03R\n" +
+	"blocksLeft\"\x19\n" +
 	"\x17GetCommitteeInfoRequest\"\xec\x02\n" +
 	"\x18GetCommitteeInfoResponse\x12%\n" +
 	"\x0ecommittee_size\x18\x01 \x01(\x05R\rcommitteeSize\x12'\n" +
@@ -2182,7 +2267,11 @@ const file_blockchain_proto_rawDesc = "" +
 	"\x05round\x18\x02 \x01(\x05R\x05round\x12\x1d\n" +
 	"\n" +
 	"block_data\x18\x03 \x01(\tR\tblockData\x12\x1c\n" +
-	"\tsignature\x18\x04 \x01(\tR\tsignature*f\n" +
+	"\tsignature\x18\x04 \x01(\tR\tsignature*T\n" +
+	"\tChainType\x12\x16\n" +
+	"\x12CHAIN_TYPE_MAINNET\x10\x00\x12\x16\n" +
+	"\x12CHAIN_TYPE_TESTNET\x10\x01\x12\x17\n" +
+	"\x13CHAIN_TYPE_LOCALNET\x10\x02*f\n" +
 	"\x0eBlockVerbosity\x12\x18\n" +
 	"\x14BLOCK_VERBOSITY_DATA\x10\x00\x12\x18\n" +
 	"\x14BLOCK_VERBOSITY_INFO\x10\x01\x12 \n" +
@@ -2223,89 +2312,91 @@ func file_blockchain_proto_rawDescGZIP() []byte {
 	return file_blockchain_proto_rawDescData
 }
 
-var file_blockchain_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_blockchain_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
 var file_blockchain_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
 var file_blockchain_proto_goTypes = []any{
-	(BlockVerbosity)(0),                   // 0: pactus.BlockVerbosity
-	(VoteType)(0),                         // 1: pactus.VoteType
-	(*GetAccountRequest)(nil),             // 2: pactus.GetAccountRequest
-	(*GetAccountResponse)(nil),            // 3: pactus.GetAccountResponse
-	(*GetValidatorAddressesRequest)(nil),  // 4: pactus.GetValidatorAddressesRequest
-	(*GetValidatorAddressesResponse)(nil), // 5: pactus.GetValidatorAddressesResponse
-	(*GetValidatorRequest)(nil),           // 6: pactus.GetValidatorRequest
-	(*GetValidatorByNumberRequest)(nil),   // 7: pactus.GetValidatorByNumberRequest
-	(*GetValidatorResponse)(nil),          // 8: pactus.GetValidatorResponse
-	(*GetPublicKeyRequest)(nil),           // 9: pactus.GetPublicKeyRequest
-	(*GetPublicKeyResponse)(nil),          // 10: pactus.GetPublicKeyResponse
-	(*GetBlockRequest)(nil),               // 11: pactus.GetBlockRequest
-	(*GetBlockResponse)(nil),              // 12: pactus.GetBlockResponse
-	(*GetBlockHashRequest)(nil),           // 13: pactus.GetBlockHashRequest
-	(*GetBlockHashResponse)(nil),          // 14: pactus.GetBlockHashResponse
-	(*GetBlockHeightRequest)(nil),         // 15: pactus.GetBlockHeightRequest
-	(*GetBlockHeightResponse)(nil),        // 16: pactus.GetBlockHeightResponse
-	(*GetBlockchainInfoRequest)(nil),      // 17: pactus.GetBlockchainInfoRequest
-	(*GetBlockchainInfoResponse)(nil),     // 18: pactus.GetBlockchainInfoResponse
-	(*GetCommitteeInfoRequest)(nil),       // 19: pactus.GetCommitteeInfoRequest
-	(*GetCommitteeInfoResponse)(nil),      // 20: pactus.GetCommitteeInfoResponse
-	(*GetConsensusInfoRequest)(nil),       // 21: pactus.GetConsensusInfoRequest
-	(*GetConsensusInfoResponse)(nil),      // 22: pactus.GetConsensusInfoResponse
-	(*GetTxPoolContentRequest)(nil),       // 23: pactus.GetTxPoolContentRequest
-	(*GetTxPoolContentResponse)(nil),      // 24: pactus.GetTxPoolContentResponse
-	(*ValidatorInfo)(nil),                 // 25: pactus.ValidatorInfo
-	(*AccountInfo)(nil),                   // 26: pactus.AccountInfo
-	(*BlockHeaderInfo)(nil),               // 27: pactus.BlockHeaderInfo
-	(*CertificateInfo)(nil),               // 28: pactus.CertificateInfo
-	(*VoteInfo)(nil),                      // 29: pactus.VoteInfo
-	(*ConsensusInfo)(nil),                 // 30: pactus.ConsensusInfo
-	(*ProposalInfo)(nil),                  // 31: pactus.ProposalInfo
-	nil,                                   // 32: pactus.GetCommitteeInfoResponse.ProtocolVersionsEntry
-	(*TransactionInfo)(nil),               // 33: pactus.TransactionInfo
-	(PayloadType)(0),                      // 34: pactus.PayloadType
+	(ChainType)(0),                        // 0: pactus.ChainType
+	(BlockVerbosity)(0),                   // 1: pactus.BlockVerbosity
+	(VoteType)(0),                         // 2: pactus.VoteType
+	(*GetAccountRequest)(nil),             // 3: pactus.GetAccountRequest
+	(*GetAccountResponse)(nil),            // 4: pactus.GetAccountResponse
+	(*GetValidatorAddressesRequest)(nil),  // 5: pactus.GetValidatorAddressesRequest
+	(*GetValidatorAddressesResponse)(nil), // 6: pactus.GetValidatorAddressesResponse
+	(*GetValidatorRequest)(nil),           // 7: pactus.GetValidatorRequest
+	(*GetValidatorByNumberRequest)(nil),   // 8: pactus.GetValidatorByNumberRequest
+	(*GetValidatorResponse)(nil),          // 9: pactus.GetValidatorResponse
+	(*GetPublicKeyRequest)(nil),           // 10: pactus.GetPublicKeyRequest
+	(*GetPublicKeyResponse)(nil),          // 11: pactus.GetPublicKeyResponse
+	(*GetBlockRequest)(nil),               // 12: pactus.GetBlockRequest
+	(*GetBlockResponse)(nil),              // 13: pactus.GetBlockResponse
+	(*GetBlockHashRequest)(nil),           // 14: pactus.GetBlockHashRequest
+	(*GetBlockHashResponse)(nil),          // 15: pactus.GetBlockHashResponse
+	(*GetBlockHeightRequest)(nil),         // 16: pactus.GetBlockHeightRequest
+	(*GetBlockHeightResponse)(nil),        // 17: pactus.GetBlockHeightResponse
+	(*GetBlockchainInfoRequest)(nil),      // 18: pactus.GetBlockchainInfoRequest
+	(*GetBlockchainInfoResponse)(nil),     // 19: pactus.GetBlockchainInfoResponse
+	(*GetCommitteeInfoRequest)(nil),       // 20: pactus.GetCommitteeInfoRequest
+	(*GetCommitteeInfoResponse)(nil),      // 21: pactus.GetCommitteeInfoResponse
+	(*GetConsensusInfoRequest)(nil),       // 22: pactus.GetConsensusInfoRequest
+	(*GetConsensusInfoResponse)(nil),      // 23: pactus.GetConsensusInfoResponse
+	(*GetTxPoolContentRequest)(nil),       // 24: pactus.GetTxPoolContentRequest
+	(*GetTxPoolContentResponse)(nil),      // 25: pactus.GetTxPoolContentResponse
+	(*ValidatorInfo)(nil),                 // 26: pactus.ValidatorInfo
+	(*AccountInfo)(nil),                   // 27: pactus.AccountInfo
+	(*BlockHeaderInfo)(nil),               // 28: pactus.BlockHeaderInfo
+	(*CertificateInfo)(nil),               // 29: pactus.CertificateInfo
+	(*VoteInfo)(nil),                      // 30: pactus.VoteInfo
+	(*ConsensusInfo)(nil),                 // 31: pactus.ConsensusInfo
+	(*ProposalInfo)(nil),                  // 32: pactus.ProposalInfo
+	nil,                                   // 33: pactus.GetCommitteeInfoResponse.ProtocolVersionsEntry
+	(*TransactionInfo)(nil),               // 34: pactus.TransactionInfo
+	(PayloadType)(0),                      // 35: pactus.PayloadType
 }
 var file_blockchain_proto_depIdxs = []int32{
-	26, // 0: pactus.GetAccountResponse.account:type_name -> pactus.AccountInfo
-	25, // 1: pactus.GetValidatorResponse.validator:type_name -> pactus.ValidatorInfo
-	0,  // 2: pactus.GetBlockRequest.verbosity:type_name -> pactus.BlockVerbosity
-	27, // 3: pactus.GetBlockResponse.header:type_name -> pactus.BlockHeaderInfo
-	28, // 4: pactus.GetBlockResponse.prev_cert:type_name -> pactus.CertificateInfo
-	33, // 5: pactus.GetBlockResponse.txs:type_name -> pactus.TransactionInfo
-	25, // 6: pactus.GetCommitteeInfoResponse.validators:type_name -> pactus.ValidatorInfo
-	32, // 7: pactus.GetCommitteeInfoResponse.protocol_versions:type_name -> pactus.GetCommitteeInfoResponse.ProtocolVersionsEntry
-	31, // 8: pactus.GetConsensusInfoResponse.proposal:type_name -> pactus.ProposalInfo
-	30, // 9: pactus.GetConsensusInfoResponse.instances:type_name -> pactus.ConsensusInfo
-	34, // 10: pactus.GetTxPoolContentRequest.payload_type:type_name -> pactus.PayloadType
-	33, // 11: pactus.GetTxPoolContentResponse.txs:type_name -> pactus.TransactionInfo
-	1,  // 12: pactus.VoteInfo.type:type_name -> pactus.VoteType
-	29, // 13: pactus.ConsensusInfo.votes:type_name -> pactus.VoteInfo
-	11, // 14: pactus.Blockchain.GetBlock:input_type -> pactus.GetBlockRequest
-	13, // 15: pactus.Blockchain.GetBlockHash:input_type -> pactus.GetBlockHashRequest
-	15, // 16: pactus.Blockchain.GetBlockHeight:input_type -> pactus.GetBlockHeightRequest
-	17, // 17: pactus.Blockchain.GetBlockchainInfo:input_type -> pactus.GetBlockchainInfoRequest
-	19, // 18: pactus.Blockchain.GetCommitteeInfo:input_type -> pactus.GetCommitteeInfoRequest
-	21, // 19: pactus.Blockchain.GetConsensusInfo:input_type -> pactus.GetConsensusInfoRequest
-	2,  // 20: pactus.Blockchain.GetAccount:input_type -> pactus.GetAccountRequest
-	6,  // 21: pactus.Blockchain.GetValidator:input_type -> pactus.GetValidatorRequest
-	7,  // 22: pactus.Blockchain.GetValidatorByNumber:input_type -> pactus.GetValidatorByNumberRequest
-	4,  // 23: pactus.Blockchain.GetValidatorAddresses:input_type -> pactus.GetValidatorAddressesRequest
-	9,  // 24: pactus.Blockchain.GetPublicKey:input_type -> pactus.GetPublicKeyRequest
-	23, // 25: pactus.Blockchain.GetTxPoolContent:input_type -> pactus.GetTxPoolContentRequest
-	12, // 26: pactus.Blockchain.GetBlock:output_type -> pactus.GetBlockResponse
-	14, // 27: pactus.Blockchain.GetBlockHash:output_type -> pactus.GetBlockHashResponse
-	16, // 28: pactus.Blockchain.GetBlockHeight:output_type -> pactus.GetBlockHeightResponse
-	18, // 29: pactus.Blockchain.GetBlockchainInfo:output_type -> pactus.GetBlockchainInfoResponse
-	20, // 30: pactus.Blockchain.GetCommitteeInfo:output_type -> pactus.GetCommitteeInfoResponse
-	22, // 31: pactus.Blockchain.GetConsensusInfo:output_type -> pactus.GetConsensusInfoResponse
-	3,  // 32: pactus.Blockchain.GetAccount:output_type -> pactus.GetAccountResponse
-	8,  // 33: pactus.Blockchain.GetValidator:output_type -> pactus.GetValidatorResponse
-	8,  // 34: pactus.Blockchain.GetValidatorByNumber:output_type -> pactus.GetValidatorResponse
-	5,  // 35: pactus.Blockchain.GetValidatorAddresses:output_type -> pactus.GetValidatorAddressesResponse
-	10, // 36: pactus.Blockchain.GetPublicKey:output_type -> pactus.GetPublicKeyResponse
-	24, // 37: pactus.Blockchain.GetTxPoolContent:output_type -> pactus.GetTxPoolContentResponse
-	26, // [26:38] is the sub-list for method output_type
-	14, // [14:26] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	27, // 0: pactus.GetAccountResponse.account:type_name -> pactus.AccountInfo
+	26, // 1: pactus.GetValidatorResponse.validator:type_name -> pactus.ValidatorInfo
+	1,  // 2: pactus.GetBlockRequest.verbosity:type_name -> pactus.BlockVerbosity
+	28, // 3: pactus.GetBlockResponse.header:type_name -> pactus.BlockHeaderInfo
+	29, // 4: pactus.GetBlockResponse.prev_cert:type_name -> pactus.CertificateInfo
+	34, // 5: pactus.GetBlockResponse.txs:type_name -> pactus.TransactionInfo
+	0,  // 6: pactus.GetBlockchainInfoResponse.chain_type:type_name -> pactus.ChainType
+	26, // 7: pactus.GetCommitteeInfoResponse.validators:type_name -> pactus.ValidatorInfo
+	33, // 8: pactus.GetCommitteeInfoResponse.protocol_versions:type_name -> pactus.GetCommitteeInfoResponse.ProtocolVersionsEntry
+	32, // 9: pactus.GetConsensusInfoResponse.proposal:type_name -> pactus.ProposalInfo
+	31, // 10: pactus.GetConsensusInfoResponse.instances:type_name -> pactus.ConsensusInfo
+	35, // 11: pactus.GetTxPoolContentRequest.payload_type:type_name -> pactus.PayloadType
+	34, // 12: pactus.GetTxPoolContentResponse.txs:type_name -> pactus.TransactionInfo
+	2,  // 13: pactus.VoteInfo.type:type_name -> pactus.VoteType
+	30, // 14: pactus.ConsensusInfo.votes:type_name -> pactus.VoteInfo
+	12, // 15: pactus.Blockchain.GetBlock:input_type -> pactus.GetBlockRequest
+	14, // 16: pactus.Blockchain.GetBlockHash:input_type -> pactus.GetBlockHashRequest
+	16, // 17: pactus.Blockchain.GetBlockHeight:input_type -> pactus.GetBlockHeightRequest
+	18, // 18: pactus.Blockchain.GetBlockchainInfo:input_type -> pactus.GetBlockchainInfoRequest
+	20, // 19: pactus.Blockchain.GetCommitteeInfo:input_type -> pactus.GetCommitteeInfoRequest
+	22, // 20: pactus.Blockchain.GetConsensusInfo:input_type -> pactus.GetConsensusInfoRequest
+	3,  // 21: pactus.Blockchain.GetAccount:input_type -> pactus.GetAccountRequest
+	7,  // 22: pactus.Blockchain.GetValidator:input_type -> pactus.GetValidatorRequest
+	8,  // 23: pactus.Blockchain.GetValidatorByNumber:input_type -> pactus.GetValidatorByNumberRequest
+	5,  // 24: pactus.Blockchain.GetValidatorAddresses:input_type -> pactus.GetValidatorAddressesRequest
+	10, // 25: pactus.Blockchain.GetPublicKey:input_type -> pactus.GetPublicKeyRequest
+	24, // 26: pactus.Blockchain.GetTxPoolContent:input_type -> pactus.GetTxPoolContentRequest
+	13, // 27: pactus.Blockchain.GetBlock:output_type -> pactus.GetBlockResponse
+	15, // 28: pactus.Blockchain.GetBlockHash:output_type -> pactus.GetBlockHashResponse
+	17, // 29: pactus.Blockchain.GetBlockHeight:output_type -> pactus.GetBlockHeightResponse
+	19, // 30: pactus.Blockchain.GetBlockchainInfo:output_type -> pactus.GetBlockchainInfoResponse
+	21, // 31: pactus.Blockchain.GetCommitteeInfo:output_type -> pactus.GetCommitteeInfoResponse
+	23, // 32: pactus.Blockchain.GetConsensusInfo:output_type -> pactus.GetConsensusInfoResponse
+	4,  // 33: pactus.Blockchain.GetAccount:output_type -> pactus.GetAccountResponse
+	9,  // 34: pactus.Blockchain.GetValidator:output_type -> pactus.GetValidatorResponse
+	9,  // 35: pactus.Blockchain.GetValidatorByNumber:output_type -> pactus.GetValidatorResponse
+	6,  // 36: pactus.Blockchain.GetValidatorAddresses:output_type -> pactus.GetValidatorAddressesResponse
+	11, // 37: pactus.Blockchain.GetPublicKey:output_type -> pactus.GetPublicKeyResponse
+	25, // 38: pactus.Blockchain.GetTxPoolContent:output_type -> pactus.GetTxPoolContentResponse
+	27, // [27:39] is the sub-list for method output_type
+	15, // [15:27] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_blockchain_proto_init() }
@@ -2319,7 +2410,7 @@ func file_blockchain_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_blockchain_proto_rawDesc), len(file_blockchain_proto_rawDesc)),
-			NumEnums:      2,
+			NumEnums:      3,
 			NumMessages:   31,
 			NumExtensions: 0,
 			NumServices:   1,

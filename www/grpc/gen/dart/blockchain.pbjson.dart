@@ -17,6 +17,21 @@ import 'dart:typed_data' as $typed_data;
 
 import 'transaction.pbjson.dart' as $0;
 
+@$core.Deprecated('Use chainTypeDescriptor instead')
+const ChainType$json = {
+  '1': 'ChainType',
+  '2': [
+    {'1': 'CHAIN_TYPE_MAINNET', '2': 0},
+    {'1': 'CHAIN_TYPE_TESTNET', '2': 1},
+    {'1': 'CHAIN_TYPE_LOCALNET', '2': 2},
+  ],
+};
+
+/// Descriptor for `ChainType`. Decode as a `google.protobuf.EnumDescriptorProto`.
+final $typed_data.Uint8List chainTypeDescriptor = $convert.base64Decode(
+    'CglDaGFpblR5cGUSFgoSQ0hBSU5fVFlQRV9NQUlOTkVUEAASFgoSQ0hBSU5fVFlQRV9URVNUTk'
+    'VUEAESFwoTQ0hBSU5fVFlQRV9MT0NBTE5FVBAC');
+
 @$core.Deprecated('Use blockVerbosityDescriptor instead')
 const BlockVerbosity$json = {
   '1': 'BlockVerbosity',
@@ -331,6 +346,16 @@ const GetBlockchainInfoResponse$json = {
     {'1': 'in_committee', '3': 13, '4': 1, '5': 8, '10': 'inCommittee'},
     {'1': 'committee_size', '3': 14, '4': 1, '5': 5, '10': 'committeeSize'},
     {'1': 'average_score', '3': 15, '4': 1, '5': 1, '10': 'averageScore'},
+    {
+      '1': 'chain_type',
+      '3': 16,
+      '4': 1,
+      '5': 14,
+      '6': '.pactus.ChainType',
+      '10': 'chainType'
+    },
+    {'1': 'sync_progress', '3': 17, '4': 1, '5': 1, '10': 'syncProgress'},
+    {'1': 'blocks_left', '3': 18, '4': 1, '5': 3, '10': 'blocksLeft'},
   ],
 };
 
@@ -345,7 +370,9 @@ final $typed_data.Uint8List getBlockchainInfoResponseDescriptor = $convert.base6
     'ASgDUg5jb21taXR0ZWVQb3dlchIbCglpc19wcnVuZWQYCCABKAhSCGlzUHJ1bmVkEiUKDnBydW'
     '5pbmdfaGVpZ2h0GAkgASgNUg1wcnVuaW5nSGVpZ2h0EiEKDGluX2NvbW1pdHRlZRgNIAEoCFIL'
     'aW5Db21taXR0ZWUSJQoOY29tbWl0dGVlX3NpemUYDiABKAVSDWNvbW1pdHRlZVNpemUSIwoNYX'
-    'ZlcmFnZV9zY29yZRgPIAEoAVIMYXZlcmFnZVNjb3Jl');
+    'ZlcmFnZV9zY29yZRgPIAEoAVIMYXZlcmFnZVNjb3JlEjAKCmNoYWluX3R5cGUYECABKA4yES5w'
+    'YWN0dXMuQ2hhaW5UeXBlUgljaGFpblR5cGUSIwoNc3luY19wcm9ncmVzcxgRIAEoAVIMc3luY1'
+    'Byb2dyZXNzEh8KC2Jsb2Nrc19sZWZ0GBIgASgDUgpibG9ja3NMZWZ0');
 
 @$core.Deprecated('Use getCommitteeInfoRequestDescriptor instead')
 const GetCommitteeInfoRequest$json = {

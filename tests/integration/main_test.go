@@ -105,7 +105,7 @@ func TestMain(m *testing.M) {
 
 		walletPath := filepath.Join(tConfigs[i].WalletManager.WalletsDir, "default_wallet")
 		mnemonic, _ := wallet.GenerateMnemonic(128)
-		wlt, err := wallet.Create(context.Background(), walletPath, mnemonic, "", genesis.Mainnet)
+		wlt, err := wallet.Create(context.Background(), walletPath, mnemonic, "password", genesis.Mainnet)
 		if err != nil {
 			panic(fmt.Errorf("failed to create wallet: %w", err))
 		}

@@ -2085,6 +2085,32 @@ of its running validators is a member of the current committee.
   Average availability score of validators with stake, in percentage (0-100).
     </td>
   </tr>
+   <tr>
+    <td class="fw-bold">chain_type</td>
+    <td> numeric</td>
+    <td>
+  (Enum)The chain type identifying the blockchain network.
+      <br>Available values:<ul>
+      <li>CHAIN_TYPE_MAINNET = 0 (Mainnet is the production blockchain network.)</li>
+      <li>CHAIN_TYPE_TESTNET = 1 (Testnet is the public test blockchain network.)</li>
+      <li>CHAIN_TYPE_LOCALNET = 2 (Localnet is for local development and testing.)</li>
+      </ul>
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">sync_progress</td>
+    <td> numeric</td>
+    <td>
+  Estimated sync progress of the node, in the range [0, 1].
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">blocks_left</td>
+    <td> numeric</td>
+    <td>
+  Estimated number of blocks remaining to reach the latest block.
+    </td>
+  </tr>
    </tbody>
 </table>
 

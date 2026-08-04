@@ -24,9 +24,10 @@ func buildCreateCmd(parentCmd *cobra.Command) {
 		"specify the entropy bit length")
 
 	createCmd.Run = func(_ *cobra.Command, _ []string) {
-		password := prompt.PromptPassword("Password", true)
 		mnemonic, err := wallet.GenerateMnemonic(*entropyOpt)
 		terminal.FatalErrorCheck(err)
+
+		password := prompt.PromptPassword("Password", true)
 
 		network := genesis.Mainnet
 		if *testnetOpt {

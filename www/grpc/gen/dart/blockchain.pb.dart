@@ -1007,6 +1007,9 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     $core.bool? inCommittee,
     $core.int? committeeSize,
     $core.double? averageScore,
+    ChainType? chainType,
+    $core.double? syncProgress,
+    $fixnum.Int64? blocksLeft,
   }) {
     final result = create();
     if (lastBlockHeight != null) result.lastBlockHeight = lastBlockHeight;
@@ -1022,6 +1025,9 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     if (inCommittee != null) result.inCommittee = inCommittee;
     if (committeeSize != null) result.committeeSize = committeeSize;
     if (averageScore != null) result.averageScore = averageScore;
+    if (chainType != null) result.chainType = chainType;
+    if (syncProgress != null) result.syncProgress = syncProgress;
+    if (blocksLeft != null) result.blocksLeft = blocksLeft;
     return result;
   }
 
@@ -1053,6 +1059,10 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     ..aOB(13, _omitFieldNames ? '' : 'inCommittee')
     ..aI(14, _omitFieldNames ? '' : 'committeeSize')
     ..aD(15, _omitFieldNames ? '' : 'averageScore')
+    ..aE<ChainType>(16, _omitFieldNames ? '' : 'chainType',
+        enumValues: ChainType.values)
+    ..aD(17, _omitFieldNames ? '' : 'syncProgress')
+    ..aInt64(18, _omitFieldNames ? '' : 'blocksLeft')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1205,6 +1215,36 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
   $core.bool hasAverageScore() => $_has(12);
   @$pb.TagNumber(15)
   void clearAverageScore() => $_clearField(15);
+
+  /// The chain type identifying the blockchain network.
+  @$pb.TagNumber(16)
+  ChainType get chainType => $_getN(13);
+  @$pb.TagNumber(16)
+  set chainType(ChainType value) => $_setField(16, value);
+  @$pb.TagNumber(16)
+  $core.bool hasChainType() => $_has(13);
+  @$pb.TagNumber(16)
+  void clearChainType() => $_clearField(16);
+
+  /// Estimated sync progress of the node, in the range [0, 1].
+  @$pb.TagNumber(17)
+  $core.double get syncProgress => $_getN(14);
+  @$pb.TagNumber(17)
+  set syncProgress($core.double value) => $_setDouble(14, value);
+  @$pb.TagNumber(17)
+  $core.bool hasSyncProgress() => $_has(14);
+  @$pb.TagNumber(17)
+  void clearSyncProgress() => $_clearField(17);
+
+  /// Estimated number of blocks remaining to reach the latest block.
+  @$pb.TagNumber(18)
+  $fixnum.Int64 get blocksLeft => $_getI64(15);
+  @$pb.TagNumber(18)
+  set blocksLeft($fixnum.Int64 value) => $_setInt64(15, value);
+  @$pb.TagNumber(18)
+  $core.bool hasBlocksLeft() => $_has(15);
+  @$pb.TagNumber(18)
+  void clearBlocksLeft() => $_clearField(18);
 }
 
 /// Request message for retrieving committee information.

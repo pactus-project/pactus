@@ -19,6 +19,10 @@ import (
 // clockOutOfSyncThreshold is the clock offset above which we show a warning.
 const clockOutOfSyncThreshold = 5 * time.Second
 
+// syncProgressWindowBlocks is the number of blocks behind that maps to 0% sync progress (~10 min at 10s/block).
+// Used as a fallback when the server does not provide SyncProgress (backward compatibility).
+const syncProgressWindowBlocks = 60
+
 type NodeWidgetController struct {
 	view  *view.NodeWidgetView
 	model *model.NodeModel
@@ -60,33 +64,30 @@ func (c *NodeWidgetController) BuildView(ctx context.Context, connectionLabel, c
 	return nil
 }
 
-// syncProgressWindowBlocks is the number of blocks behind that maps to 0% sync progress (~10 min at 10s/block).
-const syncProgressWindowBlocks = 60
-
 func (c *NodeWidgetController) timeoutProgress() {
 	chainInfo, err := c.model.GetBlockchainInfo()
 	if err != nil {
 		return
 	}
 	lastBlockTime := time.Unix(chainInfo.LastBlockTime, 0)
-	lastBlockHeight := chainInfo.LastBlockHeight
 
 	gtkutil.IdleAddSync(func() {
 		c.view.LabelLastBlockTime.SetText(lastBlockTime.Format("02 Jan 06 15:04:05 MST"))
-		c.view.LabelLastBlockHeight.SetText(strconv.FormatInt(int64(lastBlockHeight), 10))
+		c.view.LabelLastBlockHeight.SetText(strconv.FormatInt(int64(chainInfo.LastBlockHeight), 10))
 
-		nowSec := time.Now().Unix()
-		lastBlockTimeSec := lastBlockTime.Unix()
-		blocksLeft := (nowSec - lastBlockTimeSec) / 10
-		c.view.LabelBlocksLeft.SetText(strconv.FormatInt(blocksLeft, 10))
-
-		// Sync progress: 100% when up-to-date, 0% when syncProgressWindowBlocks behind (no genesis time).
-		percentage := 1.0 - float64(blocksLeft)/float64(syncProgressWindowBlocks)
-		if percentage < 0 {
-			percentage = 0
-		}
-		if percentage > 1 {
-			percentage = 1
+		percentage := chainInfo.SyncProgress
+		if percentage == 0 {
+			// Backward compatibility: old servers do not send SyncProgress.
+			// Fall back to the local blocks-left heuristic.
+			// TODO: remove this fallback in a future release.
+			blocksLeft := (time.Now().Unix() - lastBlockTime.Unix()) / 10
+			if blocksLeft > syncProgressWindowBlocks {
+				blocksLeft = syncProgressWindowBlocks
+			}
+			percentage = 1.0 - float64(blocksLeft)/float64(syncProgressWindowBlocks)
+			c.view.LabelBlocksLeft.SetText(strconv.FormatInt(blocksLeft, 10))
+		} else {
+			c.view.LabelBlocksLeft.SetText(strconv.FormatInt(chainInfo.BlocksLeft, 10))
 		}
 		c.view.ProgressBarSynced.SetFraction(percentage)
 		c.view.ProgressBarSynced.SetText(fmt.Sprintf("%s %%", strconv.FormatFloat(percentage*100, 'f', 2, 64)))

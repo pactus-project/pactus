@@ -117,11 +117,7 @@ func (log *Log) MoveToNewHeight(validators []*validator.Validator) {
 }
 
 func (log *Log) CanVote(addr crypto.Address) bool {
-	for _, val := range log.validators {
-		if val.Address() == addr {
-			return true
-		}
-	}
+	_, ok := log.validators[addr]
 
-	return false
+	return ok
 }

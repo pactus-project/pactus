@@ -17,12 +17,12 @@ type Header struct {
 }
 
 type headerData struct {
-	Version         protocol.Version
 	UnixTime        uint32
 	PrevBlockHash   hash.Hash
 	StateRoot       hash.Hash
 	SortitionSeed   sortition.VerifiableSeed
 	ProposerAddress crypto.Address
+	Version         protocol.Version
 }
 
 // Version returns the block version.

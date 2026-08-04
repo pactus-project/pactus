@@ -61,12 +61,7 @@ func Create(ctx context.Context, walletPath, mnemonic, password string,
 		crypto.ToTestnetHRP()
 	}
 
-	vlt, err := vault.CreateVaultFromMnemonic(mnemonic, coinType)
-	if err != nil {
-		return nil, err
-	}
-
-	err = vlt.UpdatePassword("", password)
+	vlt, err := vault.CreateVaultFromMnemonic(mnemonic, coinType, password)
 	if err != nil {
 		return nil, err
 	}
@@ -438,13 +433,13 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 }
 
 func (w *Wallet) UpdatePassword(oldPassword, newPassword string, opts ...encrypter.Option) error {
-	vault := w.storage.Vault()
-	err := vault.UpdatePassword(oldPassword, newPassword, opts...)
+	vlt := w.storage.Vault()
+	err := vlt.UpdatePassword(oldPassword, newPassword, opts...)
 	if err != nil {
 		return err
 	}
 
-	return w.storage.UpdateVault(vault)
+	return w.storage.UpdateVault(vlt)
 }
 
 func (w *Wallet) Mnemonic(password string) (string, error) {

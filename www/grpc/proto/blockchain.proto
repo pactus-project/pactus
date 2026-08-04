@@ -180,6 +180,12 @@ message GetBlockchainInfoResponse {
   int32 committee_size = 14;
   // Average availability score of validators with stake, in percentage (0-100).
   double average_score = 15;
+  // The chain type identifying the blockchain network.
+  ChainType chain_type = 16;
+  // Estimated sync progress of the node, in the range [0, 1].
+  double sync_progress = 17;
+  // Estimated number of blocks remaining to reach the latest block.
+  int64 blocks_left = 18;
 }
 
 // Request message for retrieving committee information.
@@ -338,6 +344,16 @@ message ProposalInfo {
   string block_data = 3;
   // The signature of the proposal, signed by the proposer.
   string signature = 4;
+}
+
+// Enumeration for blockchain network types.
+enum ChainType {
+  // Mainnet is the production blockchain network.
+  CHAIN_TYPE_MAINNET = 0;
+  // Testnet is the public test blockchain network.
+  CHAIN_TYPE_TESTNET = 1;
+  // Localnet is for local development and testing.
+  CHAIN_TYPE_LOCALNET = 2;
 }
 
 // Enumeration for verbosity levels when requesting block information.

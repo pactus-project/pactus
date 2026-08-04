@@ -3,6 +3,7 @@ package validator_test
 import (
 	"encoding/hex"
 	"testing"
+	"unsafe"
 
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types"
@@ -13,6 +14,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func TestMemoryAlignment(t *testing.T) {
+	s := unsafe.Sizeof(validator.Validator{})
+	assert.Equal(t, 72, int(s))
+}
 
 func TestFromBytes(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)

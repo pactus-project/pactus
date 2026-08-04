@@ -17,6 +17,7 @@ import (
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/proposal"
+	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -74,21 +75,27 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 
 	ts := testsuite.NewTestSuiteFromSeed(t, seed)
 
-	cmt, valKeys := ts.GenerateTestCommittee(4)
+	stateX := state.NewFakeState(ts)
+	stateY := state.NewFakeState(ts)
+	stateB := state.NewFakeState(ts)
+	stateP := state.NewFakeState(ts)
 
-	stateX := state.NewFakeState(ts, cmt)
-	stateY := state.NewFakeState(ts, cmt)
-	stateB := state.NewFakeState(ts, cmt)
-	stateP := state.NewFakeState(ts, cmt)
+	keyX := ts.RandValKey()
+	keyY := ts.RandValKey()
+	keyB := ts.RandValKey()
+	keyP := ts.RandValKey()
 
-	// To prevent triggering timers before starting the tests and
-	// avoid double entries for new heights in some tests.
-	genTime := util.RoundNow(10).Add(time.Duration(10) * time.Second)
-
-	stateX.LastTime = genTime
-	stateY.LastTime = genTime
-	stateB.LastTime = genTime
-	stateP.LastTime = genTime
+	valKeys := []*bls.ValidatorKey{keyX, keyY, keyB, keyP}
+	vals := []*validator.Validator{
+		validator.NewValidator(keyX.PublicKey(), 0),
+		validator.NewValidator(keyY.PublicKey(), 1),
+		validator.NewValidator(keyB.PublicKey(), 2),
+		validator.NewValidator(keyP.PublicKey(), 3),
+	}
+	stateX.FakeCommittee.FakeValidators = vals
+	stateY.FakeCommittee.FakeValidators = vals
+	stateB.FakeCommittee.FakeValidators = vals
+	stateP.FakeCommittee.FakeValidators = vals
 
 	td := &testData{
 		TestSuite: ts,
@@ -353,7 +360,7 @@ func (*testData) commitBlock(t *testing.T, state *state.FakeState,
 func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certificate.Certificate) {
 	t.Helper()
 
-	blk, cert := td.GenerateTestBlock(td.stateX.LastHeight + 1)
+	blk, cert := td.GenerateTestBlock(td.stateX.FakeHeight + 1)
 
 	_ = td.stateX.CommitBlock(blk, cert)
 	_ = td.stateY.CommitBlock(blk, cert)
@@ -463,8 +470,6 @@ func TestStart(t *testing.T) {
 func TestScheduler(t *testing.T) {
 	td := setup(t)
 
-	blockInterval := td.stateB.Params().BlockInterval()
-	td.stateX.LastTime = time.Now().Add(-blockInterval)
 	td.consX.MoveToNewHeight()
 
 	assert.Eventually(t, func() bool {
@@ -758,11 +763,9 @@ func TestDoubleProposal(t *testing.T) {
 func TestNonActiveValidator(t *testing.T) {
 	td := setup(t)
 
-	committee, _ := td.GenerateTestCommittee(4)
-
 	valKey := td.RandValKey()
 	pipe := pipeline.New[message.Message](t.Context())
-	state := state.NewFakeState(td.TestSuite, committee)
+	state := state.NewFakeState(td.TestSuite)
 	consInt := NewConsensus(t.Context(), testConfig(), state,
 		valKey, valKey.Address(), pipe, consensus.NewConcreteMediator())
 	nonActiveCons := consInt.(*consensusV2)
@@ -841,15 +844,16 @@ func TestCasesNormal(t *testing.T) {
 		certRound   types.Round
 		description string
 	}{
-		{1782063894498428909, 2, "precommit: startChangingProposer on 1f+1 pre-votes"},
-		{1782063989740047763, 1, "cp_prevote: has one main-vote for `yes` from previous round"},
-		{1782064032070813215, 0, "cp_prevote: all main-votes are `abstain` from previous round"},
-		{1782064072877830767, 2, "cp_mainvote: has 2f+1 pre-votes for `no`, decided on `no (biased)`"},
-		{1782064109576078134, 1, "cp_mainvote: has 2f+1 pre-votes for `yes`"},
-		{1782064139608352197, 0, "cp_mainvote: has no pre-votes quorum"},
-		{1782064192915594649, 1, "cp_decide: decide on `yes`"},
-		{1782064230685846282, 1, "cp_decide: conflicting main-votes"},
-		{1782064484202065605, 1, "cons.cpRound = 1, decided vote for `yes` in cpRound 0"},
+		{1784786000324511846, 2, "precommit: startChangingProposer on 1f+1 pre-votes"},
+		{1784786056703880925, 1, "cp_prevote: has one main-vote for `yes` from previous round"},
+		{1784786098044602675, 0, "cp_prevote: all main-votes are `abstain` from previous round"},
+		{1784786172574945802, 2, "cp_mainvote: has 2f+1 pre-votes for `no`, decided on `no (biased)`"},
+		{1784786136303466131, 2, "cp_mainvote: has 2f+1 pre-votes for `yes`"},
+		{1784786228025976329, 0, "cp_mainvote: has no pre-votes quorum"},
+		{1784786273910094618, 1, "cp_decide: decide on `yes`"},
+		{1784786336983928905, 0, "cp_decide: conflicting main-votes"},
+		{1784787594464296926, 1, "cpStrongTermination: cp.cpRound = 1, decided vote for `yes` in cpRound 0"},
+		{1784786796978064212, 0, "consX & consB: Change Proposer, consY & consP: Commit (2 block announces)"},
 	}
 
 	for _, tt := range tests {
@@ -899,7 +903,7 @@ func TestCasesByzantine(t *testing.T) {
 		certRound   types.Round
 		description string
 	}{
-		{1781875292013549829, 0, "double proposal detected"},
+		{1784787681031410796, 0, "double proposal detected"},
 	}
 
 	for _, tt := range tests {

@@ -50,8 +50,8 @@ func TestExecuteSortitionTx(t *testing.T) {
 		trx := tx.NewSortitionTx(lockTime, val.Address(), proof)
 
 		td.sbx.EXPECT().VerifyProof(lockTime, proof, val).Return(true).Times(2)
-		td.sbx.SbxCommittee.EXPECT().Contains(val.Address()).Return(true).Times(1)
-		td.sbx.SbxCommittee.EXPECT().Size().Return(td.sbx.Params().CommitteeSize - 1).Times(1)
+		td.sbx.FakeCommittee.EXPECT().Contains(val.Address()).Return(true).Times(1)
+		td.sbx.FakeCommittee.EXPECT().Size().Return(td.sbx.Params().CommitteeSize - 1).Times(1)
 
 		td.check(t, trx, true, ErrValidatorInCommittee)
 		td.check(t, trx, false, nil)
@@ -61,8 +61,8 @@ func TestExecuteSortitionTx(t *testing.T) {
 		trx := tx.NewSortitionTx(lockTime, val.Address(), proof)
 
 		td.sbx.EXPECT().VerifyProof(lockTime, proof, val).Return(true).Times(2)
-		td.sbx.SbxCommittee.EXPECT().Contains(val.Address()).Return(false).Times(1)
-		td.sbx.SbxCommittee.EXPECT().Size().Return(td.sbx.Params().CommitteeSize - 1).Times(1)
+		td.sbx.FakeCommittee.EXPECT().Contains(val.Address()).Return(false).Times(1)
+		td.sbx.FakeCommittee.EXPECT().Size().Return(td.sbx.Params().CommitteeSize - 1).Times(1)
 		td.sbx.EXPECT().JoinToCommittee(val.Address()).Return().Times(1)
 
 		td.check(t, trx, true, nil)
@@ -112,9 +112,9 @@ func TestChangePower(t *testing.T) {
 	vals[5] = td.addTestValidator(t, testsuite.ValidatorWithStake(3), testsuite.ValidatorWithSortitionHeight(1007))
 	vals[6] = td.addTestValidator(t, testsuite.ValidatorWithStake(2), testsuite.ValidatorWithSortitionHeight(1009))
 
-	td.sbx.SbxParams.CommitteeSize = len(vals)
-	td.sbx.SbxCommittee.EXPECT().Size().Return(td.sbx.Params().CommitteeSize).AnyTimes()
-	td.sbx.SbxCommittee.EXPECT().Validators().DoAndReturn(
+	td.sbx.FakeParams.CommitteeSize = len(vals)
+	td.sbx.FakeCommittee.EXPECT().Size().Return(td.sbx.Params().CommitteeSize).AnyTimes()
+	td.sbx.FakeCommittee.EXPECT().Validators().DoAndReturn(
 		func() []*validator.Validator {
 			vals2 := make([]*validator.Validator, 7)
 			for i, v := range vals {
@@ -124,7 +124,7 @@ func TestChangePower(t *testing.T) {
 			return vals2
 		},
 	).AnyTimes()
-	td.sbx.SbxCommittee.EXPECT().Contains(gomock.Any()).DoAndReturn(
+	td.sbx.FakeCommittee.EXPECT().Contains(gomock.Any()).DoAndReturn(
 		func(addr crypto.Address) bool {
 			for _, v := range vals {
 				if v.Address() == addr {
@@ -136,7 +136,7 @@ func TestChangePower(t *testing.T) {
 		},
 	).AnyTimes()
 
-	td.sbx.SbxCommittee.EXPECT().Power().DoAndReturn(
+	td.sbx.FakeCommittee.EXPECT().Power().DoAndReturn(
 		func() int64 {
 			power := int64(0)
 			for _, v := range vals {
@@ -192,7 +192,7 @@ func TestChangePower(t *testing.T) {
 		td.sbx.EXPECT().IterateValidators(gomock.Any()).DoAndReturn(func(func(*validator.Validator, bool, bool)) {
 		}).Times(1)
 
-		td.sbx.SbxCommittee.EXPECT().Proposer(types.Round(0)).Return(vals[3]).Times(1)
+		td.sbx.FakeCommittee.EXPECT().Proposer(types.Round(0)).Return(vals[3]).Times(1)
 		trx1 := tx.NewSortitionTx(lockTime, newVal.Address(), proof)
 
 		td.check(t, trx1, true, ErrOldestValidatorNotProposed)
@@ -205,7 +205,7 @@ func TestChangePower(t *testing.T) {
 
 		td.sbx.EXPECT().IterateValidators(gomock.Any()).DoAndReturn(func(func(*validator.Validator, bool, bool)) {
 		}).Times(1)
-		td.sbx.SbxCommittee.EXPECT().Proposer(types.Round(0)).Return(vals[0]).Times(1)
+		td.sbx.FakeCommittee.EXPECT().Proposer(types.Round(0)).Return(vals[0]).Times(1)
 
 		trx1 := tx.NewSortitionTx(lockTime, newVal.Address(), proof)
 

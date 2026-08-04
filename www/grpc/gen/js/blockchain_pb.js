@@ -21,6 +21,7 @@ goog.exportSymbol('proto.pactus.AccountInfo', null, global);
 goog.exportSymbol('proto.pactus.BlockHeaderInfo', null, global);
 goog.exportSymbol('proto.pactus.BlockVerbosity', null, global);
 goog.exportSymbol('proto.pactus.CertificateInfo', null, global);
+goog.exportSymbol('proto.pactus.ChainType', null, global);
 goog.exportSymbol('proto.pactus.ConsensusInfo', null, global);
 goog.exportSymbol('proto.pactus.GetAccountRequest', null, global);
 goog.exportSymbol('proto.pactus.GetAccountResponse', null, global);
@@ -3095,7 +3096,10 @@ isPruned: jspb.Message.getBooleanFieldWithDefault(msg, 8, false),
 pruningHeight: jspb.Message.getFieldWithDefault(msg, 9, 0),
 inCommittee: jspb.Message.getBooleanFieldWithDefault(msg, 13, false),
 committeeSize: jspb.Message.getFieldWithDefault(msg, 14, 0),
-averageScore: jspb.Message.getFloatingPointFieldWithDefault(msg, 15, 0.0)
+averageScore: jspb.Message.getFloatingPointFieldWithDefault(msg, 15, 0.0),
+chainType: jspb.Message.getFieldWithDefault(msg, 16, 0),
+syncProgress: jspb.Message.getFloatingPointFieldWithDefault(msg, 17, 0.0),
+blocksLeft: jspb.Message.getFieldWithDefault(msg, 18, 0)
   };
 
   if (includeInstance) {
@@ -3183,6 +3187,18 @@ proto.pactus.GetBlockchainInfoResponse.deserializeBinaryFromReader = function(ms
     case 15:
       var value = /** @type {number} */ (reader.readDouble());
       msg.setAverageScore(value);
+      break;
+    case 16:
+      var value = /** @type {!proto.pactus.ChainType} */ (reader.readEnum());
+      msg.setChainType(value);
+      break;
+    case 17:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setSyncProgress(value);
+      break;
+    case 18:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setBlocksLeft(value);
       break;
     default:
       reader.skipField();
@@ -3301,6 +3317,27 @@ proto.pactus.GetBlockchainInfoResponse.serializeBinaryToWriter = function(messag
   if (f !== 0.0) {
     writer.writeDouble(
       15,
+      f
+    );
+  }
+  f = message.getChainType();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      16,
+      f
+    );
+  }
+  f = message.getSyncProgress();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      17,
+      f
+    );
+  }
+  f = message.getBlocksLeft();
+  if (f !== 0) {
+    writer.writeInt64(
+      18,
       f
     );
   }
@@ -3538,6 +3575,60 @@ proto.pactus.GetBlockchainInfoResponse.prototype.getAverageScore = function() {
  */
 proto.pactus.GetBlockchainInfoResponse.prototype.setAverageScore = function(value) {
   return jspb.Message.setProto3FloatField(this, 15, value);
+};
+
+
+/**
+ * optional ChainType chain_type = 16;
+ * @return {!proto.pactus.ChainType}
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.getChainType = function() {
+  return /** @type {!proto.pactus.ChainType} */ (jspb.Message.getFieldWithDefault(this, 16, 0));
+};
+
+
+/**
+ * @param {!proto.pactus.ChainType} value
+ * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.setChainType = function(value) {
+  return jspb.Message.setProto3EnumField(this, 16, value);
+};
+
+
+/**
+ * optional double sync_progress = 17;
+ * @return {number}
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.getSyncProgress = function() {
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 17, 0.0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.setSyncProgress = function(value) {
+  return jspb.Message.setProto3FloatField(this, 17, value);
+};
+
+
+/**
+ * optional int64 blocks_left = 18;
+ * @return {number}
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.getBlocksLeft = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 18, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.setBlocksLeft = function(value) {
+  return jspb.Message.setProto3IntField(this, 18, value);
 };
 
 
@@ -6655,6 +6746,15 @@ proto.pactus.ProposalInfo.prototype.setSignature = function(value) {
   return jspb.Message.setProto3StringField(this, 4, value);
 };
 
+
+/**
+ * @enum {number}
+ */
+proto.pactus.ChainType = {
+  CHAIN_TYPE_MAINNET: 0,
+  CHAIN_TYPE_TESTNET: 1,
+  CHAIN_TYPE_LOCALNET: 2
+};
 
 /**
  * @enum {number}

@@ -8,6 +8,12 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
+class ChainType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    CHAIN_TYPE_MAINNET: _ClassVar[ChainType]
+    CHAIN_TYPE_TESTNET: _ClassVar[ChainType]
+    CHAIN_TYPE_LOCALNET: _ClassVar[ChainType]
+
 class BlockVerbosity(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
     BLOCK_VERBOSITY_DATA: _ClassVar[BlockVerbosity]
@@ -22,6 +28,9 @@ class VoteType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     VOTE_TYPE_CP_PRE_VOTE: _ClassVar[VoteType]
     VOTE_TYPE_CP_MAIN_VOTE: _ClassVar[VoteType]
     VOTE_TYPE_CP_DECIDED: _ClassVar[VoteType]
+CHAIN_TYPE_MAINNET: ChainType
+CHAIN_TYPE_TESTNET: ChainType
+CHAIN_TYPE_LOCALNET: ChainType
 BLOCK_VERBOSITY_DATA: BlockVerbosity
 BLOCK_VERBOSITY_INFO: BlockVerbosity
 BLOCK_VERBOSITY_TRANSACTIONS: BlockVerbosity
@@ -153,6 +162,9 @@ class GetBlockchainInfoResponse(_message.Message):
     IN_COMMITTEE_FIELD_NUMBER: _ClassVar[int]
     COMMITTEE_SIZE_FIELD_NUMBER: _ClassVar[int]
     AVERAGE_SCORE_FIELD_NUMBER: _ClassVar[int]
+    CHAIN_TYPE_FIELD_NUMBER: _ClassVar[int]
+    SYNC_PROGRESS_FIELD_NUMBER: _ClassVar[int]
+    BLOCKS_LEFT_FIELD_NUMBER: _ClassVar[int]
     last_block_height: int
     last_block_hash: str
     last_block_time: int
@@ -166,7 +178,10 @@ class GetBlockchainInfoResponse(_message.Message):
     in_committee: bool
     committee_size: int
     average_score: float
-    def __init__(self, last_block_height: _Optional[int] = ..., last_block_hash: _Optional[str] = ..., last_block_time: _Optional[int] = ..., total_accounts: _Optional[int] = ..., total_validators: _Optional[int] = ..., active_validators: _Optional[int] = ..., total_power: _Optional[int] = ..., committee_power: _Optional[int] = ..., is_pruned: _Optional[bool] = ..., pruning_height: _Optional[int] = ..., in_committee: _Optional[bool] = ..., committee_size: _Optional[int] = ..., average_score: _Optional[float] = ...) -> None: ...
+    chain_type: ChainType
+    sync_progress: float
+    blocks_left: int
+    def __init__(self, last_block_height: _Optional[int] = ..., last_block_hash: _Optional[str] = ..., last_block_time: _Optional[int] = ..., total_accounts: _Optional[int] = ..., total_validators: _Optional[int] = ..., active_validators: _Optional[int] = ..., total_power: _Optional[int] = ..., committee_power: _Optional[int] = ..., is_pruned: _Optional[bool] = ..., pruning_height: _Optional[int] = ..., in_committee: _Optional[bool] = ..., committee_size: _Optional[int] = ..., average_score: _Optional[float] = ..., chain_type: _Optional[_Union[ChainType, str]] = ..., sync_progress: _Optional[float] = ..., blocks_left: _Optional[int] = ...) -> None: ...
 
 class GetCommitteeInfoRequest(_message.Message):
     __slots__ = ()

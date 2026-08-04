@@ -19,7 +19,6 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 	}
 	parentCmd.AddCommand(recoverCmd)
 
-	passOpt := addPasswordOption(recoverCmd)
 	testnetOpt := recoverCmd.Flags().Bool("testnet", false,
 		"recover the wallet for the testnet environment")
 	seedOpt := recoverCmd.Flags().StringP("seed", "s", "", "mnemonic or seed phrase used for wallet recovery")
@@ -29,19 +28,24 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 		if mnemonic == "" {
 			mnemonic = prompt.PromptInput("Seed")
 		}
+
+		terminal.PrintLine()
+
+		password := prompt.PromptPassword("Password", true)
+
 		chainType := genesis.Mainnet
 		if *testnetOpt {
 			chainType = genesis.Testnet
 		}
 		ctx := context.Background()
 
-		wlt, err := wallet.Create(ctx, *pathOpt, mnemonic, *passOpt, chainType)
+		wlt, err := wallet.Create(ctx, *pathOpt, mnemonic, password, chainType)
 		terminal.FatalErrorCheck(err)
 
 		err = setProvider(ctx, wlt)
 		terminal.FatalErrorCheck(err)
 
-		cmd.RecoverWalletAddresses(wlt, *passOpt)
+		cmd.RecoverWalletAddresses(wlt, password)
 
 		// Always save the wallet before exiting
 		terminal.PrintLine()

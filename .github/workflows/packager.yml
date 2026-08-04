@@ -118,7 +118,7 @@ jobs:
       - name: Publish to npm
         run: |
           if [[ "${{ needs.packager.outputs.dry_run }}" == "true" ]]; then
-            npm publish --dry-run
+            npm publish --tag rc --dry-run
           else
             npm publish --provenance --access public
           fi
@@ -149,7 +149,7 @@ jobs:
       - name: Publish to npm
         run: |
           if [[ "${{ needs.packager.outputs.dry_run }}" == "true" ]]; then
-            npm publish --dry-run
+            npm publish --tag rc --dry-run
           else
             npm publish --provenance --access public
           fi

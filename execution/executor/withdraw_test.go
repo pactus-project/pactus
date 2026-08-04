@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/stretchr/testify/assert"
 )
@@ -102,27 +101,4 @@ func TestExecuteDelegatedWithdrawTx(t *testing.T) {
 	updatedOwner := td.sbx.Account(owner)
 	assert.Equal(t, totalStake-amt-fee, updatedVal.Stake())
 	assert.Equal(t, amt, updatedOwner.Balance())
-}
-
-func TestWithdrawSecp256k1(t *testing.T) {
-	td := setup(t)
-
-	val := td.addTestValidator(t)
-	totalStake := val.Stake()
-	amt, fee := td.randAmountFee(totalStake)
-	senderAddr := val.Address()
-	receiverAddr := td.RandAccAddressSecp256k1()
-	lockTime := td.sbx.CurrentHeight()
-
-	t.Run("Should fail, secp256k1 account is not supported yet", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr, amt, fee)
-
-		td.sbx.SbxParams.BlockVersion = protocol.ProtocolVersion3
-		td.check(t, trx, true, ErrSecp256k1AccountNotSupported)
-		td.check(t, trx, false, ErrSecp256k1AccountNotSupported)
-
-		td.sbx.SbxParams.BlockVersion = protocol.ProtocolVersion4
-		td.check(t, trx, true, ErrValidatorBonded)
-		td.check(t, trx, false, ErrValidatorBonded)
-	})
 }

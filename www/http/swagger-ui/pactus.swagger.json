@@ -1821,6 +1821,16 @@
       },
       "description": "Message contains information about a certificate."
     },
+    "pactusChainType": {
+      "type": "string",
+      "enum": [
+        "CHAIN_TYPE_MAINNET",
+        "CHAIN_TYPE_TESTNET",
+        "CHAIN_TYPE_LOCALNET"
+      ],
+      "default": "CHAIN_TYPE_MAINNET",
+      "description": "Enumeration for blockchain network types.\n\n - CHAIN_TYPE_MAINNET: Mainnet is the production blockchain network.\n - CHAIN_TYPE_TESTNET: Testnet is the public test blockchain network.\n - CHAIN_TYPE_LOCALNET: Localnet is for local development and testing."
+    },
     "pactusConnectionInfo": {
       "type": "object",
       "properties": {
@@ -2097,6 +2107,20 @@
           "type": "number",
           "format": "double",
           "description": "Average availability score of validators with stake, in percentage (0-100)."
+        },
+        "chainType": {
+          "$ref": "#/definitions/pactusChainType",
+          "description": "The chain type identifying the blockchain network."
+        },
+        "syncProgress": {
+          "type": "number",
+          "format": "double",
+          "description": "Estimated sync progress of the node, in the range [0, 1]."
+        },
+        "blocksLeft": {
+          "type": "string",
+          "format": "int64",
+          "description": "Estimated number of blocks remaining to reach the latest block."
         }
       },
       "description": "Response message contains general blockchain information."

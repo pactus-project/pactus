@@ -45,6 +45,7 @@ build_gui:
 ### Testing
 mocks:
 	@echo "Generating mocks..."
+	@mockgen -source=store/interface.go -destination=store/store_mock.go -package=store
 	@mockgen -source=state/interface.go -destination=state/state_mock.go -package=state
 	@mockgen -source=consensus/interface.go -destination=consensus/consensus_mock.go -package=consensus
 	@mockgen -source=consensus/manager/interface.go -destination=consensus/manager/manager_mock.go -package=manager

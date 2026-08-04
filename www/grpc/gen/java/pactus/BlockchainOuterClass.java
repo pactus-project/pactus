@@ -28,6 +28,160 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
   }
   /**
    * <pre>
+   * Enumeration for blockchain network types.
+   * </pre>
+   *
+   * Protobuf enum {@code pactus.ChainType}
+   */
+  public enum ChainType
+      implements com.google.protobuf.ProtocolMessageEnum {
+    /**
+     * <pre>
+     * Mainnet is the production blockchain network.
+     * </pre>
+     *
+     * <code>CHAIN_TYPE_MAINNET = 0;</code>
+     */
+    CHAIN_TYPE_MAINNET(0),
+    /**
+     * <pre>
+     * Testnet is the public test blockchain network.
+     * </pre>
+     *
+     * <code>CHAIN_TYPE_TESTNET = 1;</code>
+     */
+    CHAIN_TYPE_TESTNET(1),
+    /**
+     * <pre>
+     * Localnet is for local development and testing.
+     * </pre>
+     *
+     * <code>CHAIN_TYPE_LOCALNET = 2;</code>
+     */
+    CHAIN_TYPE_LOCALNET(2),
+    UNRECOGNIZED(-1),
+    ;
+
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 33,
+        /* patch= */ 2,
+        /* suffix= */ "",
+        "ChainType");
+    }
+    /**
+     * <pre>
+     * Mainnet is the production blockchain network.
+     * </pre>
+     *
+     * <code>CHAIN_TYPE_MAINNET = 0;</code>
+     */
+    public static final int CHAIN_TYPE_MAINNET_VALUE = 0;
+    /**
+     * <pre>
+     * Testnet is the public test blockchain network.
+     * </pre>
+     *
+     * <code>CHAIN_TYPE_TESTNET = 1;</code>
+     */
+    public static final int CHAIN_TYPE_TESTNET_VALUE = 1;
+    /**
+     * <pre>
+     * Localnet is for local development and testing.
+     * </pre>
+     *
+     * <code>CHAIN_TYPE_LOCALNET = 2;</code>
+     */
+    public static final int CHAIN_TYPE_LOCALNET_VALUE = 2;
+
+
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static ChainType valueOf(int value) {
+      return forNumber(value);
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     */
+    public static ChainType forNumber(int value) {
+      switch (value) {
+        case 0: return CHAIN_TYPE_MAINNET;
+        case 1: return CHAIN_TYPE_TESTNET;
+        case 2: return CHAIN_TYPE_LOCALNET;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<ChainType>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        ChainType> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<ChainType>() {
+            public ChainType findValueByNumber(int number) {
+              return ChainType.forNumber(number);
+            }
+          };
+
+    public final com.google.protobuf.Descriptors.EnumValueDescriptor
+        getValueDescriptor() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalStateException(
+            "Can't get the descriptor of an unrecognized enum value.");
+      }
+      return getDescriptor().getValues().get(ordinal());
+    }
+    public final com.google.protobuf.Descriptors.EnumDescriptor
+        getDescriptorForType() {
+      return getDescriptor();
+    }
+    public static com.google.protobuf.Descriptors.EnumDescriptor
+        getDescriptor() {
+      return pactus.BlockchainOuterClass.getDescriptor().getEnumTypes().get(0);
+    }
+
+    private static final ChainType[] VALUES = values();
+
+    public static ChainType valueOf(
+        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+      if (desc.getType() != getDescriptor()) {
+        throw new java.lang.IllegalArgumentException(
+          "EnumValueDescriptor is not for this type.");
+      }
+      if (desc.getIndex() == -1) {
+        return UNRECOGNIZED;
+      }
+      return VALUES[desc.getIndex()];
+    }
+
+    private final int value;
+
+    private ChainType(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:pactus.ChainType)
+  }
+
+  /**
+   * <pre>
    * Enumeration for verbosity levels when requesting block information.
    * </pre>
    *
@@ -154,7 +308,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
     }
     public static com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return pactus.BlockchainOuterClass.getDescriptor().getEnumTypes().get(0);
+      return pactus.BlockchainOuterClass.getDescriptor().getEnumTypes().get(1);
     }
 
     private static final BlockVerbosity[] VALUES = values();
@@ -359,7 +513,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
     }
     public static com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return pactus.BlockchainOuterClass.getDescriptor().getEnumTypes().get(1);
+      return pactus.BlockchainOuterClass.getDescriptor().getEnumTypes().get(2);
     }
 
     private static final VoteType[] VALUES = values();
@@ -10463,6 +10617,45 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      * @return The averageScore.
      */
     double getAverageScore();
+
+    /**
+     * <pre>
+     * The chain type identifying the blockchain network.
+     * </pre>
+     *
+     * <code>.pactus.ChainType chain_type = 16 [json_name = "chainType"];</code>
+     * @return The enum numeric value on the wire for chainType.
+     */
+    int getChainTypeValue();
+    /**
+     * <pre>
+     * The chain type identifying the blockchain network.
+     * </pre>
+     *
+     * <code>.pactus.ChainType chain_type = 16 [json_name = "chainType"];</code>
+     * @return The chainType.
+     */
+    pactus.BlockchainOuterClass.ChainType getChainType();
+
+    /**
+     * <pre>
+     * Estimated sync progress of the node, in the range [0, 1].
+     * </pre>
+     *
+     * <code>double sync_progress = 17 [json_name = "syncProgress"];</code>
+     * @return The syncProgress.
+     */
+    double getSyncProgress();
+
+    /**
+     * <pre>
+     * Estimated number of blocks remaining to reach the latest block.
+     * </pre>
+     *
+     * <code>int64 blocks_left = 18 [json_name = "blocksLeft"];</code>
+     * @return The blocksLeft.
+     */
+    long getBlocksLeft();
   }
   /**
    * <pre>
@@ -10491,6 +10684,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
     }
     private GetBlockchainInfoResponse() {
       lastBlockHash_ = "";
+      chainType_ = 0;
     }
 
     public static final com.google.protobuf.Descriptors.Descriptor
@@ -10734,6 +10928,62 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       return averageScore_;
     }
 
+    public static final int CHAIN_TYPE_FIELD_NUMBER = 16;
+    private int chainType_ = 0;
+    /**
+     * <pre>
+     * The chain type identifying the blockchain network.
+     * </pre>
+     *
+     * <code>.pactus.ChainType chain_type = 16 [json_name = "chainType"];</code>
+     * @return The enum numeric value on the wire for chainType.
+     */
+    @java.lang.Override public int getChainTypeValue() {
+      return chainType_;
+    }
+    /**
+     * <pre>
+     * The chain type identifying the blockchain network.
+     * </pre>
+     *
+     * <code>.pactus.ChainType chain_type = 16 [json_name = "chainType"];</code>
+     * @return The chainType.
+     */
+    @java.lang.Override public pactus.BlockchainOuterClass.ChainType getChainType() {
+      pactus.BlockchainOuterClass.ChainType result = pactus.BlockchainOuterClass.ChainType.forNumber(chainType_);
+      return result == null ? pactus.BlockchainOuterClass.ChainType.UNRECOGNIZED : result;
+    }
+
+    public static final int SYNC_PROGRESS_FIELD_NUMBER = 17;
+    private double syncProgress_ = 0D;
+    /**
+     * <pre>
+     * Estimated sync progress of the node, in the range [0, 1].
+     * </pre>
+     *
+     * <code>double sync_progress = 17 [json_name = "syncProgress"];</code>
+     * @return The syncProgress.
+     */
+    @java.lang.Override
+    public double getSyncProgress() {
+      return syncProgress_;
+    }
+
+    public static final int BLOCKS_LEFT_FIELD_NUMBER = 18;
+    private long blocksLeft_ = 0L;
+    /**
+     * <pre>
+     * Estimated number of blocks remaining to reach the latest block.
+     * </pre>
+     *
+     * <code>int64 blocks_left = 18 [json_name = "blocksLeft"];</code>
+     * @return The blocksLeft.
+     */
+    @java.lang.Override
+    public long getBlocksLeft() {
+      return blocksLeft_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -10786,6 +11036,15 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       }
       if (java.lang.Double.doubleToRawLongBits(averageScore_) != 0) {
         output.writeDouble(15, averageScore_);
+      }
+      if (chainType_ != pactus.BlockchainOuterClass.ChainType.CHAIN_TYPE_MAINNET.getNumber()) {
+        output.writeEnum(16, chainType_);
+      }
+      if (java.lang.Double.doubleToRawLongBits(syncProgress_) != 0) {
+        output.writeDouble(17, syncProgress_);
+      }
+      if (blocksLeft_ != 0L) {
+        output.writeInt64(18, blocksLeft_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -10847,6 +11106,18 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         size += com.google.protobuf.CodedOutputStream
           .computeDoubleSize(15, averageScore_);
       }
+      if (chainType_ != pactus.BlockchainOuterClass.ChainType.CHAIN_TYPE_MAINNET.getNumber()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(16, chainType_);
+      }
+      if (java.lang.Double.doubleToRawLongBits(syncProgress_) != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeDoubleSize(17, syncProgress_);
+      }
+      if (blocksLeft_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(18, blocksLeft_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -10889,6 +11160,12 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       if (java.lang.Double.doubleToLongBits(getAverageScore())
           != java.lang.Double.doubleToLongBits(
               other.getAverageScore())) return false;
+      if (chainType_ != other.chainType_) return false;
+      if (java.lang.Double.doubleToLongBits(getSyncProgress())
+          != java.lang.Double.doubleToLongBits(
+              other.getSyncProgress())) return false;
+      if (getBlocksLeft()
+          != other.getBlocksLeft()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -10932,6 +11209,14 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       hash = (37 * hash) + AVERAGE_SCORE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           java.lang.Double.doubleToLongBits(getAverageScore()));
+      hash = (37 * hash) + CHAIN_TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + chainType_;
+      hash = (37 * hash) + SYNC_PROGRESS_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          java.lang.Double.doubleToLongBits(getSyncProgress()));
+      hash = (37 * hash) + BLOCKS_LEFT_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getBlocksLeft());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -11080,6 +11365,9 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         inCommittee_ = false;
         committeeSize_ = 0;
         averageScore_ = 0D;
+        chainType_ = 0;
+        syncProgress_ = 0D;
+        blocksLeft_ = 0L;
         return this;
       }
 
@@ -11152,6 +11440,15 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         if (((from_bitField0_ & 0x00001000) != 0)) {
           result.averageScore_ = averageScore_;
         }
+        if (((from_bitField0_ & 0x00002000) != 0)) {
+          result.chainType_ = chainType_;
+        }
+        if (((from_bitField0_ & 0x00004000) != 0)) {
+          result.syncProgress_ = syncProgress_;
+        }
+        if (((from_bitField0_ & 0x00008000) != 0)) {
+          result.blocksLeft_ = blocksLeft_;
+        }
       }
 
       @java.lang.Override
@@ -11206,6 +11503,15 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         }
         if (java.lang.Double.doubleToRawLongBits(other.getAverageScore()) != 0) {
           setAverageScore(other.getAverageScore());
+        }
+        if (other.chainType_ != 0) {
+          setChainTypeValue(other.getChainTypeValue());
+        }
+        if (java.lang.Double.doubleToRawLongBits(other.getSyncProgress()) != 0) {
+          setSyncProgress(other.getSyncProgress());
+        }
+        if (other.getBlocksLeft() != 0L) {
+          setBlocksLeft(other.getBlocksLeft());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -11298,6 +11604,21 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
                 bitField0_ |= 0x00001000;
                 break;
               } // case 121
+              case 128: {
+                chainType_ = input.readEnum();
+                bitField0_ |= 0x00002000;
+                break;
+              } // case 128
+              case 137: {
+                syncProgress_ = input.readDouble();
+                bitField0_ |= 0x00004000;
+                break;
+              } // case 137
+              case 144: {
+                blocksLeft_ = input.readInt64();
+                bitField0_ |= 0x00008000;
+                break;
+              } // case 144
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -11934,6 +12255,165 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       public Builder clearAverageScore() {
         bitField0_ = (bitField0_ & ~0x00001000);
         averageScore_ = 0D;
+        onChanged();
+        return this;
+      }
+
+      private int chainType_ = 0;
+      /**
+       * <pre>
+       * The chain type identifying the blockchain network.
+       * </pre>
+       *
+       * <code>.pactus.ChainType chain_type = 16 [json_name = "chainType"];</code>
+       * @return The enum numeric value on the wire for chainType.
+       */
+      @java.lang.Override public int getChainTypeValue() {
+        return chainType_;
+      }
+      /**
+       * <pre>
+       * The chain type identifying the blockchain network.
+       * </pre>
+       *
+       * <code>.pactus.ChainType chain_type = 16 [json_name = "chainType"];</code>
+       * @param value The enum numeric value on the wire for chainType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setChainTypeValue(int value) {
+        chainType_ = value;
+        bitField0_ |= 0x00002000;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The chain type identifying the blockchain network.
+       * </pre>
+       *
+       * <code>.pactus.ChainType chain_type = 16 [json_name = "chainType"];</code>
+       * @return The chainType.
+       */
+      @java.lang.Override
+      public pactus.BlockchainOuterClass.ChainType getChainType() {
+        pactus.BlockchainOuterClass.ChainType result = pactus.BlockchainOuterClass.ChainType.forNumber(chainType_);
+        return result == null ? pactus.BlockchainOuterClass.ChainType.UNRECOGNIZED : result;
+      }
+      /**
+       * <pre>
+       * The chain type identifying the blockchain network.
+       * </pre>
+       *
+       * <code>.pactus.ChainType chain_type = 16 [json_name = "chainType"];</code>
+       * @param value The chainType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setChainType(pactus.BlockchainOuterClass.ChainType value) {
+        if (value == null) { throw new NullPointerException(); }
+        bitField0_ |= 0x00002000;
+        chainType_ = value.getNumber();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The chain type identifying the blockchain network.
+       * </pre>
+       *
+       * <code>.pactus.ChainType chain_type = 16 [json_name = "chainType"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearChainType() {
+        bitField0_ = (bitField0_ & ~0x00002000);
+        chainType_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private double syncProgress_ ;
+      /**
+       * <pre>
+       * Estimated sync progress of the node, in the range [0, 1].
+       * </pre>
+       *
+       * <code>double sync_progress = 17 [json_name = "syncProgress"];</code>
+       * @return The syncProgress.
+       */
+      @java.lang.Override
+      public double getSyncProgress() {
+        return syncProgress_;
+      }
+      /**
+       * <pre>
+       * Estimated sync progress of the node, in the range [0, 1].
+       * </pre>
+       *
+       * <code>double sync_progress = 17 [json_name = "syncProgress"];</code>
+       * @param value The syncProgress to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSyncProgress(double value) {
+
+        syncProgress_ = value;
+        bitField0_ |= 0x00004000;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Estimated sync progress of the node, in the range [0, 1].
+       * </pre>
+       *
+       * <code>double sync_progress = 17 [json_name = "syncProgress"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearSyncProgress() {
+        bitField0_ = (bitField0_ & ~0x00004000);
+        syncProgress_ = 0D;
+        onChanged();
+        return this;
+      }
+
+      private long blocksLeft_ ;
+      /**
+       * <pre>
+       * Estimated number of blocks remaining to reach the latest block.
+       * </pre>
+       *
+       * <code>int64 blocks_left = 18 [json_name = "blocksLeft"];</code>
+       * @return The blocksLeft.
+       */
+      @java.lang.Override
+      public long getBlocksLeft() {
+        return blocksLeft_;
+      }
+      /**
+       * <pre>
+       * Estimated number of blocks remaining to reach the latest block.
+       * </pre>
+       *
+       * <code>int64 blocks_left = 18 [json_name = "blocksLeft"];</code>
+       * @param value The blocksLeft to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBlocksLeft(long value) {
+
+        blocksLeft_ = value;
+        bitField0_ |= 0x00008000;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Estimated number of blocks remaining to reach the latest block.
+       * </pre>
+       *
+       * <code>int64 blocks_left = 18 [json_name = "blocksLeft"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearBlocksLeft() {
+        bitField0_ = (bitField0_ & ~0x00008000);
+        blocksLeft_ = 0L;
         onChanged();
         return this;
       }
@@ -26146,7 +26626,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       "ashResponse\022\022\n\004hash\030\001 \001(\tR\004hash\"+\n\025GetBl" +
       "ockHeightRequest\022\022\n\004hash\030\001 \001(\tR\004hash\"0\n\026" +
       "GetBlockHeightResponse\022\026\n\006height\030\001 \001(\rR\006" +
-      "height\"\032\n\030GetBlockchainInfoRequest\"\223\004\n\031G" +
+      "height\"\032\n\030GetBlockchainInfoRequest\"\213\005\n\031G" +
       "etBlockchainInfoResponse\022*\n\021last_block_h" +
       "eight\030\001 \001(\rR\017lastBlockHeight\022&\n\017last_blo" +
       "ck_hash\030\002 \001(\tR\rlastBlockHash\022&\n\017last_blo" +
@@ -26160,7 +26640,10 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       "(\rR\rpruningHeight\022!\n\014in_committee\030\r \001(\010R" +
       "\013inCommittee\022%\n\016committee_size\030\016 \001(\005R\rco" +
       "mmitteeSize\022#\n\raverage_score\030\017 \001(\001R\014aver" +
-      "ageScore\"\031\n\027GetCommitteeInfoRequest\"\354\002\n\030" +
+      "ageScore\0220\n\nchain_type\030\020 \001(\0162\021.pactus.Ch" +
+      "ainTypeR\tchainType\022#\n\rsync_progress\030\021 \001(" +
+      "\001R\014syncProgress\022\037\n\013blocks_left\030\022 \001(\003R\nbl" +
+      "ocksLeft\"\031\n\027GetCommitteeInfoRequest\"\354\002\n\030" +
       "GetCommitteeInfoResponse\022%\n\016committee_si" +
       "ze\030\001 \001(\005R\rcommitteeSize\022\'\n\017committee_pow" +
       "er\030\002 \001(\003R\016committeePower\022\037\n\013total_power\030" +
@@ -26215,40 +26698,42 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       "es\"y\n\014ProposalInfo\022\026\n\006height\030\001 \001(\rR\006heig" +
       "ht\022\024\n\005round\030\002 \001(\005R\005round\022\035\n\nblock_data\030\003" +
       " \001(\tR\tblockData\022\034\n\tsignature\030\004 \001(\tR\tsign" +
-      "ature*f\n\016BlockVerbosity\022\030\n\024BLOCK_VERBOSI" +
-      "TY_DATA\020\000\022\030\n\024BLOCK_VERBOSITY_INFO\020\001\022 \n\034B" +
-      "LOCK_VERBOSITY_TRANSACTIONS\020\002*\246\001\n\010VoteTy" +
-      "pe\022\031\n\025VOTE_TYPE_UNSPECIFIED\020\000\022\025\n\021VOTE_TY" +
-      "PE_PREPARE\020\001\022\027\n\023VOTE_TYPE_PRECOMMIT\020\002\022\031\n" +
-      "\025VOTE_TYPE_CP_PRE_VOTE\020\003\022\032\n\026VOTE_TYPE_CP" +
-      "_MAIN_VOTE\020\004\022\030\n\024VOTE_TYPE_CP_DECIDED\020\0052\342" +
-      "\007\n\nBlockchain\022=\n\010GetBlock\022\027.pactus.GetBl" +
-      "ockRequest\032\030.pactus.GetBlockResponse\022I\n\014" +
-      "GetBlockHash\022\033.pactus.GetBlockHashReques" +
-      "t\032\034.pactus.GetBlockHashResponse\022O\n\016GetBl" +
-      "ockHeight\022\035.pactus.GetBlockHeightRequest" +
-      "\032\036.pactus.GetBlockHeightResponse\022X\n\021GetB" +
-      "lockchainInfo\022 .pactus.GetBlockchainInfo" +
-      "Request\032!.pactus.GetBlockchainInfoRespon" +
-      "se\022U\n\020GetCommitteeInfo\022\037.pactus.GetCommi" +
-      "tteeInfoRequest\032 .pactus.GetCommitteeInf" +
-      "oResponse\022U\n\020GetConsensusInfo\022\037.pactus.G" +
-      "etConsensusInfoRequest\032 .pactus.GetConse" +
-      "nsusInfoResponse\022C\n\nGetAccount\022\031.pactus." +
-      "GetAccountRequest\032\032.pactus.GetAccountRes" +
-      "ponse\022I\n\014GetValidator\022\033.pactus.GetValida" +
-      "torRequest\032\034.pactus.GetValidatorResponse" +
-      "\022Y\n\024GetValidatorByNumber\022#.pactus.GetVal" +
-      "idatorByNumberRequest\032\034.pactus.GetValida" +
-      "torResponse\022d\n\025GetValidatorAddresses\022$.p" +
-      "actus.GetValidatorAddressesRequest\032%.pac" +
-      "tus.GetValidatorAddressesResponse\022I\n\014Get" +
-      "PublicKey\022\033.pactus.GetPublicKeyRequest\032\034" +
-      ".pactus.GetPublicKeyResponse\022U\n\020GetTxPoo" +
-      "lContent\022\037.pactus.GetTxPoolContentReques" +
-      "t\032 .pactus.GetTxPoolContentResponseB:\n\006p" +
-      "actusZ0github.com/pactus-project/pactus/" +
-      "www/grpc/pactusb\006proto3"
+      "ature*T\n\tChainType\022\026\n\022CHAIN_TYPE_MAINNET" +
+      "\020\000\022\026\n\022CHAIN_TYPE_TESTNET\020\001\022\027\n\023CHAIN_TYPE" +
+      "_LOCALNET\020\002*f\n\016BlockVerbosity\022\030\n\024BLOCK_V" +
+      "ERBOSITY_DATA\020\000\022\030\n\024BLOCK_VERBOSITY_INFO\020" +
+      "\001\022 \n\034BLOCK_VERBOSITY_TRANSACTIONS\020\002*\246\001\n\010" +
+      "VoteType\022\031\n\025VOTE_TYPE_UNSPECIFIED\020\000\022\025\n\021V" +
+      "OTE_TYPE_PREPARE\020\001\022\027\n\023VOTE_TYPE_PRECOMMI" +
+      "T\020\002\022\031\n\025VOTE_TYPE_CP_PRE_VOTE\020\003\022\032\n\026VOTE_T" +
+      "YPE_CP_MAIN_VOTE\020\004\022\030\n\024VOTE_TYPE_CP_DECID" +
+      "ED\020\0052\342\007\n\nBlockchain\022=\n\010GetBlock\022\027.pactus" +
+      ".GetBlockRequest\032\030.pactus.GetBlockRespon" +
+      "se\022I\n\014GetBlockHash\022\033.pactus.GetBlockHash" +
+      "Request\032\034.pactus.GetBlockHashResponse\022O\n" +
+      "\016GetBlockHeight\022\035.pactus.GetBlockHeightR" +
+      "equest\032\036.pactus.GetBlockHeightResponse\022X" +
+      "\n\021GetBlockchainInfo\022 .pactus.GetBlockcha" +
+      "inInfoRequest\032!.pactus.GetBlockchainInfo" +
+      "Response\022U\n\020GetCommitteeInfo\022\037.pactus.Ge" +
+      "tCommitteeInfoRequest\032 .pactus.GetCommit" +
+      "teeInfoResponse\022U\n\020GetConsensusInfo\022\037.pa" +
+      "ctus.GetConsensusInfoRequest\032 .pactus.Ge" +
+      "tConsensusInfoResponse\022C\n\nGetAccount\022\031.p" +
+      "actus.GetAccountRequest\032\032.pactus.GetAcco" +
+      "untResponse\022I\n\014GetValidator\022\033.pactus.Get" +
+      "ValidatorRequest\032\034.pactus.GetValidatorRe" +
+      "sponse\022Y\n\024GetValidatorByNumber\022#.pactus." +
+      "GetValidatorByNumberRequest\032\034.pactus.Get" +
+      "ValidatorResponse\022d\n\025GetValidatorAddress" +
+      "es\022$.pactus.GetValidatorAddressesRequest" +
+      "\032%.pactus.GetValidatorAddressesResponse\022" +
+      "I\n\014GetPublicKey\022\033.pactus.GetPublicKeyReq" +
+      "uest\032\034.pactus.GetPublicKeyResponse\022U\n\020Ge" +
+      "tTxPoolContent\022\037.pactus.GetTxPoolContent" +
+      "Request\032 .pactus.GetTxPoolContentRespons" +
+      "eB:\n\006pactusZ0github.com/pactus-project/p" +
+      "actus/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -26356,7 +26841,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
     internal_static_pactus_GetBlockchainInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetBlockchainInfoResponse_descriptor,
-        new java.lang.String[] { "LastBlockHeight", "LastBlockHash", "LastBlockTime", "TotalAccounts", "TotalValidators", "ActiveValidators", "TotalPower", "CommitteePower", "IsPruned", "PruningHeight", "InCommittee", "CommitteeSize", "AverageScore", });
+        new java.lang.String[] { "LastBlockHeight", "LastBlockHash", "LastBlockTime", "TotalAccounts", "TotalValidators", "ActiveValidators", "TotalPower", "CommitteePower", "IsPruned", "PruningHeight", "InCommittee", "CommitteeSize", "AverageScore", "ChainType", "SyncProgress", "BlocksLeft", });
     internal_static_pactus_GetCommitteeInfoRequest_descriptor =
       getDescriptor().getMessageType(17);
     internal_static_pactus_GetCommitteeInfoRequest_fieldAccessorTable = new

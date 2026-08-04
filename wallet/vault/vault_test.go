@@ -1,4 +1,4 @@
-package vault
+package vault_test
 
 import (
 	"context"
@@ -13,6 +13,7 @@ import (
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/pactus-project/pactus/wallet/types"
+	"github.com/pactus-project/pactus/wallet/vault"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -20,10 +21,21 @@ import (
 type testData struct {
 	*testsuite.TestSuite
 
-	vault     *Vault
+	vault     *vault.Vault
 	mnemonic  string
 	password  string
 	testAddrs []*types.AddressInfo
+}
+
+func createTestVault(mnemonic, password string) (*vault.Vault, error) {
+	// Set encryption options to minimal values for faster test execution.
+	opts := []encrypter.Option{
+		encrypter.OptionIteration(1),
+		encrypter.OptionMemory(8),
+		encrypter.OptionParallelism(1),
+	}
+
+	return vault.CreateVaultFromMnemonic(mnemonic, 21888, password, opts...)
 }
 
 // setup returns an instances of vault fo testing.
@@ -33,38 +45,27 @@ func setup(t *testing.T) *testData {
 	ts := testsuite.NewTestSuite(t)
 
 	password := ts.RandString(32)
-	mnemonic, _ := GenerateMnemonic(128)
-	vault, err := CreateVaultFromMnemonic(mnemonic, 21888)
+	mnemonic, _ := vault.GenerateMnemonic(128)
+	vlt, err := createTestVault(mnemonic, password)
 	require.NoError(t, err)
 
 	// Create some test address
-	addr3, err := vault.NewValidatorAddress("validator-address")
+	addr3, err := vlt.NewValidatorAddress("validator-address")
 	require.NoError(t, err)
-	addr1, err := vault.NewBLSAccountAddress("bls-account-address")
+	addr1, err := vlt.NewBLSAccountAddress("bls-account-address")
 	require.NoError(t, err)
-	addr2, err := vault.NewEd25519AccountAddress("ed25519-account-address", "")
+	addr2, err := vlt.NewEd25519AccountAddress("ed25519-account-address", password)
 	require.NoError(t, err)
-	addr4, err := vault.NewSecp256k1AccountAddress("secp256k1-account-address", "")
+	addr4, err := vlt.NewSecp256k1AccountAddress("secp256k1-account-address", password)
 	require.NoError(t, err)
 
 	testAddrs := []*types.AddressInfo{addr1, addr2, addr3, addr4}
 
-	assert.False(t, vault.IsEncrypted())
-
-	// Set encryption options to minimal values for faster test execution.
-	opts := []encrypter.Option{
-		encrypter.OptionIteration(1),
-		encrypter.OptionMemory(8),
-		encrypter.OptionParallelism(1),
-	}
-
-	err = vault.UpdatePassword("", password, opts...)
-	require.NoError(t, err)
-	assert.True(t, vault.IsEncrypted())
+	assert.True(t, vlt.IsEncrypted())
 
 	return &testData{
 		TestSuite: ts,
-		vault:     vault,
+		vault:     vlt,
 		password:  password,
 		mnemonic:  mnemonic,
 		testAddrs: testAddrs,
@@ -75,15 +76,20 @@ func TestCreateVaultFromMnemonic(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Invalid mnemonic", func(t *testing.T) {
-		_, err := CreateVaultFromMnemonic("invalid mnemonic phrase seed", 21888)
+		_, err := createTestVault("invalid mnemonic phrase seed", td.password)
 		require.Error(t, err)
 	})
 
+	t.Run("Empty password", func(t *testing.T) {
+		_, err := createTestVault(td.mnemonic, "")
+		require.ErrorIs(t, err, vault.ErrEmptyPassword)
+	})
+
 	t.Run("Ok", func(t *testing.T) {
-		recovered, err := CreateVaultFromMnemonic(td.mnemonic, 21888)
+		recovered, err := createTestVault(td.mnemonic, td.password)
 		require.NoError(t, err)
 
-		vaultMnemonic, err := recovered.Mnemonic("")
+		vaultMnemonic, err := recovered.Mnemonic(td.password)
 		require.NoError(t, err)
 		assert.Equal(t, vaultMnemonic, td.mnemonic)
 
@@ -96,9 +102,9 @@ func TestCreateVaultFromMnemonic(t *testing.T) {
 		require.NoError(t, err)
 		_, err = recovered.NewBLSAccountAddress("bls-account-address")
 		require.NoError(t, err)
-		_, err = recovered.NewEd25519AccountAddress("ed25519-account-address", "")
+		_, err = recovered.NewEd25519AccountAddress("ed25519-account-address", td.password)
 		require.NoError(t, err)
-		_, err = recovered.NewSecp256k1AccountAddress("secp256k1-account-address", "")
+		_, err = recovered.NewSecp256k1AccountAddress("secp256k1-account-address", td.password)
 		require.NoError(t, err)
 
 		assert.Equal(t, recovered.Purposes, td.vault.Purposes)
@@ -111,7 +117,7 @@ func TestGetPrivateKeys(t *testing.T) {
 	t.Run("Unknown purpose", func(t *testing.T) {
 		path, _ := addresspath.FromString("m/0")
 		_, err := td.vault.PrivateKeys(td.password, []addresspath.Path{path})
-		require.ErrorIs(t, err, ErrUnsupportedPurpose)
+		require.ErrorIs(t, err, vault.ErrUnsupportedPurpose)
 	})
 
 	t.Run("No password", func(t *testing.T) {
@@ -232,7 +238,7 @@ func TestUpdatePassword(t *testing.T) {
 
 	opts := []encrypter.Option{
 		encrypter.OptionIteration(1),
-		encrypter.OptionMemory(1),
+		encrypter.OptionMemory(8),
 		encrypter.OptionParallelism(1),
 	}
 
@@ -258,9 +264,9 @@ func TestUpdatePassword(t *testing.T) {
 		require.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
-	t.Run("Clears vault password when new password is empty", func(t *testing.T) {
-		require.NoError(t, td.vault.UpdatePassword(newPassword, ""))
-		assert.False(t, td.vault.IsEncrypted())
+	t.Run("rejects empty new password", func(t *testing.T) {
+		err := td.vault.UpdatePassword(newPassword, "")
+		require.ErrorIs(t, err, vault.ErrEmptyPassword)
 	})
 }
 
@@ -272,16 +278,16 @@ func TestNeuter(t *testing.T) {
 	assert.True(t, td.vault.IsNeutered())
 
 	_, err := td.vault.Mnemonic(td.password)
-	require.ErrorIs(t, err, ErrNeutered)
+	require.ErrorIs(t, err, vault.ErrNeutered)
 
 	_, err = td.vault.PrivateKeys(td.password, []addresspath.Path{})
-	require.ErrorIs(t, err, ErrNeutered)
+	require.ErrorIs(t, err, vault.ErrNeutered)
 
 	_, err = td.vault.ImportPrivateKey("any", nil)
-	require.ErrorIs(t, err, ErrNeutered)
+	require.ErrorIs(t, err, vault.ErrNeutered)
 
 	err = td.vault.UpdatePassword("any", "any")
-	require.ErrorIs(t, err, ErrNeutered)
+	require.ErrorIs(t, err, vault.ErrNeutered)
 }
 
 // TestAddressRecovery tests the address recovery functionality according to PIP-41 specification.
@@ -312,9 +318,10 @@ func TestNeuter(t *testing.T) {
 func TestAddressRecovery(t *testing.T) {
 	//nolint:dupword // has duplicated words
 	testMnemonic := "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon cactus"
+	testPassword := "password1"
 
 	t.Run("recover addresses from a fresh wallet without any active addresses", func(t *testing.T) {
-		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
+		vlt, err := createTestVault(testMnemonic, testPassword)
 		require.NoError(t, err)
 
 		// Mock hasActivity to return false for all addresses (no active addresses)
@@ -322,14 +329,14 @@ func TestAddressRecovery(t *testing.T) {
 			return false, nil
 		}
 
-		recovered, err := vault.RecoverAddresses(t.Context(), "", hasActivity)
+		recovered, err := vlt.RecoverAddresses(t.Context(), testPassword, hasActivity)
 		require.NoError(t, err)
 
 		assert.Empty(t, recovered)
 	})
 
 	t.Run("recover addresses with one gap at the beginning", func(t *testing.T) {
-		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
+		vlt, err := createTestVault(testMnemonic, testPassword)
 		require.NoError(t, err)
 
 		// Mock hasActivity to return true only for the first call (address at index 0)
@@ -338,7 +345,7 @@ func TestAddressRecovery(t *testing.T) {
 				addr == "pc1z4xuja689hg2434yhr32clhn97x6afw58a5n9ns", nil
 		}
 
-		recovered, err := vault.RecoverAddresses(t.Context(), "", hasActivity)
+		recovered, err := vlt.RecoverAddresses(t.Context(), testPassword, hasActivity)
 		require.NoError(t, err)
 
 		// Should have 4 addresses
@@ -350,7 +357,7 @@ func TestAddressRecovery(t *testing.T) {
 	})
 
 	t.Run("recover addresses with gaps in the middle of the address list", func(t *testing.T) {
-		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
+		vlt, err := createTestVault(testMnemonic, testPassword)
 		require.NoError(t, err)
 
 		hasActivity := func(addr string) (bool, error) {
@@ -361,7 +368,7 @@ func TestAddressRecovery(t *testing.T) {
 				addr == "pc1ztmex7taes23h6z4jf0awwmps0zpzmecuzcsev0", nil
 		}
 
-		recovered, err := vault.RecoverAddresses(t.Context(), "", hasActivity)
+		recovered, err := vlt.RecoverAddresses(t.Context(), testPassword, hasActivity)
 		require.NoError(t, err)
 
 		assert.Len(t, recovered, 8)
@@ -377,23 +384,23 @@ func TestAddressRecovery(t *testing.T) {
 	})
 
 	t.Run("prevent recovering existing address", func(t *testing.T) {
-		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
+		vlt, err := createTestVault(testMnemonic, testPassword)
 		require.NoError(t, err)
 
-		_, _ = vault.NewEd25519AccountAddress("existing address", "")
+		_, _ = vlt.NewEd25519AccountAddress("existing address", testPassword)
 
 		hasActivity := func(addr string) (bool, error) {
 			return addr == "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3", nil
 		}
 
-		recovered, err := vault.RecoverAddresses(t.Context(), "", hasActivity)
+		recovered, err := vlt.RecoverAddresses(t.Context(), testPassword, hasActivity)
 		require.NoError(t, err)
 
 		assert.Empty(t, recovered)
 	})
 
 	t.Run("error handling", func(t *testing.T) {
-		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
+		vlt, err := createTestVault(testMnemonic, testPassword)
 		require.NoError(t, err)
 
 		// Mock hasActivity to return an error
@@ -401,13 +408,13 @@ func TestAddressRecovery(t *testing.T) {
 			return false, errors.New("blockchain connection error")
 		}
 
-		_, err = vault.RecoverAddresses(t.Context(), "", hasActivity)
+		_, err = vlt.RecoverAddresses(t.Context(), testPassword, hasActivity)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "blockchain connection error")
 	})
 
 	t.Run("cancel recovery with context cancel signal", func(t *testing.T) {
-		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
+		vlt, err := createTestVault(testMnemonic, testPassword)
 		require.NoError(t, err)
 
 		// Create a cancellable context
@@ -427,7 +434,7 @@ func TestAddressRecovery(t *testing.T) {
 			return false, nil
 		}
 
-		_, err = vault.RecoverAddresses(ctx, "", hasActivity)
+		_, err = vlt.RecoverAddresses(ctx, "", hasActivity)
 		require.Error(t, err)
 		assert.Equal(t, context.Canceled, err)
 	})

@@ -178,7 +178,7 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 					assistant.PreviousPage()
 				}
 			}
-			assistantPageComplete(assistant, wgtPassword, true)
+			assistantPageComplete(assistant, wgtPassword, false)
 
 		case pageNumValidatorsName:
 			assistantPageComplete(assistant, wgtNumValidators, true)
@@ -671,17 +671,22 @@ func pagePassword(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widg
 	grid.Attach(labelMessage, 1, 2, 1, 1)
 
 	validatePassword := func() {
+		assistantPageComplete(assistant, page, false)
+
 		pass1 := gtkutil.EntryGetText(entryPassword)
+		if pass1 == "" {
+			gtkutil.SetColoredText(labelMessage, "Password cannot be empty", gtkutil.ColorYellow)
+
+			return
+		}
+
 		pass2 := gtkutil.EntryGetText(entryConfirmPassword)
 
 		if pass1 == pass2 {
 			labelMessage.SetText("")
 			assistantPageComplete(assistant, page, true)
 		} else {
-			if pass2 != "" {
-				gtkutil.SetColoredText(labelMessage, "Passwords do not match", gtkutil.ColorYellow)
-			}
-			assistantPageComplete(assistant, page, false)
+			gtkutil.SetColoredText(labelMessage, "Passwords do not match", gtkutil.ColorYellow)
 		}
 	}
 

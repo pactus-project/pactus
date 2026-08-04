@@ -642,6 +642,15 @@ pub struct GetBlockchainInfoResponse {
     /// Average availability score of validators with stake, in percentage (0-100).
     #[prost(double, tag="15")]
     pub average_score: f64,
+    /// The chain type identifying the blockchain network.
+    #[prost(enumeration="ChainType", tag="16")]
+    pub chain_type: i32,
+    /// Estimated sync progress of the node, in the range \[0, 1\].
+    #[prost(double, tag="17")]
+    pub sync_progress: f64,
+    /// Estimated number of blocks remaining to reach the latest block.
+    #[prost(int64, tag="18")]
+    pub blocks_left: i64,
 }
 /// Request message for retrieving committee information.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
@@ -856,6 +865,39 @@ pub struct ProposalInfo {
     /// The signature of the proposal, signed by the proposer.
     #[prost(string, tag="4")]
     pub signature: ::prost::alloc::string::String,
+}
+/// Enumeration for blockchain network types.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum ChainType {
+    /// Mainnet is the production blockchain network.
+    Mainnet = 0,
+    /// Testnet is the public test blockchain network.
+    Testnet = 1,
+    /// Localnet is for local development and testing.
+    Localnet = 2,
+}
+impl ChainType {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Mainnet => "CHAIN_TYPE_MAINNET",
+            Self::Testnet => "CHAIN_TYPE_TESTNET",
+            Self::Localnet => "CHAIN_TYPE_LOCALNET",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "CHAIN_TYPE_MAINNET" => Some(Self::Mainnet),
+            "CHAIN_TYPE_TESTNET" => Some(Self::Testnet),
+            "CHAIN_TYPE_LOCALNET" => Some(Self::Localnet),
+            _ => None,
+        }
+    }
 }
 /// Enumeration for verbosity levels when requesting block information.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]

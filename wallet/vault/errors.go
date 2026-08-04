@@ -22,4 +22,7 @@ var (
 
 	// ErrUnsupportedPurpose describes an error in which the purpose is not supported.
 	ErrUnsupportedPurpose = errors.New("unsupported purpose")
+
+	// ErrEmptyPassword describes an error in which the password is empty.
+	ErrEmptyPassword = errors.New("password cannot be empty")
 )

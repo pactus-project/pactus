@@ -95,15 +95,17 @@ func upgrade(path string) error {
 
 	case Version5:
 		store.Version = Version6
-		store.Vault.Purposes.PurposeBIP44.NextSexp256k1Index = 0
+		store.Vault.Purposes.PurposeBIP44.NextSecp256k1Index = 0
 
 		logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d", Version5, Version6))
 
 		return store.Save(path)
 
 	case Version6:
-		// Latest version, no need to upgrade.
-		return nil
+		// Recalculate the CRC after removing unused `xpub_secp256k1`, no need to upgrade the version.
+		store.VaultCRC = store.calcVaultCRC()
+
+		return store.Save(path)
 
 	default:
 		return UnsupportedVersionError{
