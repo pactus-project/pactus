@@ -7,6 +7,7 @@
 package amount_test
 
 import (
+	"bytes"
 	"math"
 	"strconv"
 	"testing"
@@ -426,13 +427,50 @@ func TestSQLDriver(t *testing.T) {
 	})
 
 	t.Run("Round trip Value and Scan", func(t *testing.T) {
-		original := amount.Amount(util.RandInt64(1000e9))
-		val, err := original.Value()
-		require.NoError(t, err)
+		tests := []struct {
+			amount amount.Amount
+		}{
+			{amount: 0},
+			{amount: amount.Amount(util.RandInt64(1000e9))},
+			{amount: amount.Amount(-1 * util.RandInt64(1000e9))},
+		}
+		for _, tt := range tests {
+			val, err := tt.amount.Value()
+			require.NoError(t, err)
 
-		var scanned amount.Amount
-		err = scanned.Scan(val)
-		require.NoError(t, err)
-		assert.Equal(t, original.ToNanoPAC(), scanned.ToNanoPAC())
+			var scanned amount.Amount
+			err = scanned.Scan(val)
+			require.NoError(t, err)
+			assert.Equal(t, tt.amount.ToNanoPAC(), scanned.ToNanoPAC())
+		}
+	})
+}
+
+func TestAmountEncoding(t *testing.T) {
+	t.Run("Invalid input", func(t *testing.T) {
+		w := bytes.NewBuffer([]byte{0xff})
+		var decoded amount.Amount
+		err := decoded.Decode(w)
+		require.Error(t, err)
+	})
+
+	t.Run("Round trip Encode and Decode", func(t *testing.T) {
+		tests := []struct {
+			amount amount.Amount
+		}{
+			{amount: 0},
+			{amount: amount.Amount(util.RandInt64(1000e9))},
+			{amount: amount.Amount(-1 * util.RandInt64(1000e9))},
+		}
+		for _, tt := range tests {
+			w := bytes.NewBuffer(nil)
+			err := tt.amount.Encode(w)
+			require.NoError(t, err)
+
+			var decoded amount.Amount
+			err = decoded.Decode(w)
+			require.NoError(t, err)
+			assert.Equal(t, tt.amount.ToNanoPAC(), decoded.ToNanoPAC())
+		}
 	})
 }

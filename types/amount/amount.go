@@ -9,11 +9,13 @@ package amount
 import (
 	"database/sql/driver"
 	"errors"
+	"io"
 	"math"
 	"strconv"
 	"strings"
 
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/encoding"
 )
 
 const (
@@ -217,4 +219,21 @@ func (a *Amount) Scan(src any) error {
 // It returns the Amount as NanoPAC (int64) to avoid floating-point precision issues.
 func (a Amount) Value() (driver.Value, error) {
 	return int64(a), nil
+}
+
+// Encode writes the raw bytes of the Amount to the provided writer.
+func (a Amount) Encode(w io.Writer) error {
+	return encoding.WriteVarInt(w, uint64(a))
+}
+
+// Decode reads the raw bytes of the Amount from the provided reader and initializes the Amount.
+func (a *Amount) Decode(r io.Reader) error {
+	val, err := encoding.ReadVarInt(r)
+	if err != nil {
+		return err
+	}
+
+	*a = Amount(val)
+
+	return nil
 }

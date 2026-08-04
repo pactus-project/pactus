@@ -123,7 +123,7 @@ func (p *BondPayload) Encode(w io.Writer) error {
 		}
 	}
 
-	if err := encoding.WriteVarInt(w, uint64(p.Stake)); err != nil {
+	if err := p.Stake.Encode(w); err != nil {
 		return err
 	}
 
@@ -131,7 +131,7 @@ func (p *BondPayload) Encode(w io.Writer) error {
 		if err := p.DelegateOwner.Encode(w); err != nil {
 			return err
 		}
-		if err := encoding.WriteVarInt(w, uint64(p.DelegateShare)); err != nil {
+		if err := p.DelegateShare.Encode(w); err != nil {
 			return err
 		}
 		if err := encoding.WriteElement(w, p.DelegateExpiry); err != nil {
@@ -167,22 +167,20 @@ func (p *BondPayload) Decode(ctx DecodeContext, r io.Reader) error {
 		return ErrInvalidPublicKeySize
 	}
 
-	stake, err := encoding.ReadVarInt(r)
+	err = p.Stake.Decode(r)
 	if err != nil {
 		return err
 	}
-	p.Stake = amount.Amount(stake)
 
 	if ctx.WithDelegation {
 		if err := p.DelegateOwner.Decode(r); err != nil {
 			return err
 		}
 
-		share, err := encoding.ReadVarInt(r)
+		err = p.DelegateShare.Decode(r)
 		if err != nil {
 			return err
 		}
-		p.DelegateShare = amount.Amount(share)
 
 		if err := encoding.ReadElement(r, &p.DelegateExpiry); err != nil {
 			return err

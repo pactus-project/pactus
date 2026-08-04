@@ -41,7 +41,7 @@ func (tr *BatchRecipient) Encode(w io.Writer) error {
 		return err
 	}
 
-	return encoding.WriteVarInt(w, uint64(tr.Amount))
+	return tr.Amount.Encode(w)
 }
 
 func (tr *BatchRecipient) Decode(r io.Reader) error {
@@ -50,11 +50,10 @@ func (tr *BatchRecipient) Decode(r io.Reader) error {
 		return err
 	}
 
-	amt, err := encoding.ReadVarInt(r)
+	err = tr.Amount.Decode(r)
 	if err != nil {
 		return err
 	}
-	tr.Amount = amount.Amount(amt)
 
 	return nil
 }

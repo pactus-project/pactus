@@ -60,7 +60,7 @@ func (p *WithdrawPayload) Encode(w io.Writer) error {
 		return err
 	}
 
-	return encoding.WriteVarInt(w, uint64(p.Amount))
+	return p.Amount.Encode(w)
 }
 
 func (p *WithdrawPayload) Decode(_ DecodeContext, r io.Reader) error {
@@ -74,13 +74,7 @@ func (p *WithdrawPayload) Decode(_ DecodeContext, r io.Reader) error {
 		return err
 	}
 
-	amt, err := encoding.ReadVarInt(r)
-	if err != nil {
-		return err
-	}
-	p.Amount = amount.Amount(amt)
-
-	return nil
+	return p.Amount.Decode(r)
 }
 
 // LogString returns a concise string representation intended for use in logs.
