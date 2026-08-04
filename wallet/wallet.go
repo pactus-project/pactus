@@ -2,6 +2,7 @@ package wallet
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/gopkg/pipeline"
@@ -108,6 +109,37 @@ func Open(ctx context.Context, walletPath string, opts ...OpenWalletOption) (*Wa
 	}
 
 	return New(ctx, jsonStrg, opts...)
+}
+
+// Migrate converts a legacy JSON wallet to the SQLite format and saves it at
+// the given path (a directory). The wallet metadata (network, default fee,
+// UUID and creation time), the vault and all addresses are preserved.
+// The legacy JSON wallet file is left untouched; it is up to the caller to
+// decide whether to remove it.
+func Migrate(ctx context.Context, jsonPath, sqlitePath string, opts ...OpenWalletOption) (*Wallet, error) {
+	jsonPath = util.MakeAbs(jsonPath)
+	sqlitePath = util.MakeAbs(sqlitePath)
+
+	if util.IsDir(jsonPath) {
+		return nil, fmt.Errorf("not a legacy JSON wallet: %s", jsonPath)
+	}
+
+	if util.PathExists(sqlitePath) {
+		return nil, ExitsError{Path: sqlitePath}
+	}
+
+	cfg := defaultOpenWalletConfig
+	for _, opt := range opts {
+		opt(&cfg)
+	}
+
+	strg, err := sqlitestorage.Migrate(ctx, jsonPath, sqlitePath,
+		sqlitestorage.WithLockingMode(cfg.lockMode))
+	if err != nil {
+		return nil, err
+	}
+
+	return New(ctx, strg, opts...)
 }
 
 type openWalletConfig struct {
