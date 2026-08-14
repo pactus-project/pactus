@@ -91,6 +91,7 @@ func main() {
 	buildTransactionCmd(rootCmd)
 	buildInfoCmd(rootCmd)
 	buildNeuterCmd(rootCmd)
+	buildMigrateCmd(rootCmd)
 
 	err := rootCmd.Execute()
 	if err != nil {
