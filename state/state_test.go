@@ -829,6 +829,35 @@ func TestBlockVersionUpgrade(t *testing.T) {
 	assert.Equal(t, protocol.ProtocolVersionLatest, td2.state.Params().BlockVersion)
 }
 
+func TestProposeBlockVersion(t *testing.T) {
+	t.Run("Committee supports the latest version", func(t *testing.T) {
+		td := setupWithVersion(t, protocol.ProtocolVersionLatest-1)
+
+		// Update all committee validators to support the latest protocol version
+		vals := td.state.committee.Validators()
+		for _, val := range vals {
+			val.UpdateProtocolVersion(protocol.ProtocolVersionLatest)
+		}
+		td.state.committee.Update(0, vals)
+
+		assert.True(t, td.state.committee.SupportProtocolVersion(protocol.ProtocolVersionLatest))
+		assert.Equal(t, protocol.ProtocolVersionLatest, td.state.proposeBlockVersion())
+	})
+
+	t.Run("Committee does not support the latest version", func(t *testing.T) {
+		td := setupWithVersion(t, protocol.ProtocolVersionLatest-1)
+
+		assert.False(t, td.state.committee.SupportProtocolVersion(protocol.ProtocolVersionLatest))
+		assert.Equal(t, protocol.ProtocolVersionLatest-1, td.state.proposeBlockVersion())
+	})
+
+	t.Run("Block version is already the latest", func(t *testing.T) {
+		td := setupWithVersion(t, protocol.ProtocolVersionLatest)
+
+		assert.Equal(t, protocol.ProtocolVersionLatest, td.state.proposeBlockVersion())
+	})
+}
+
 func TestChainInfo(t *testing.T) {
 	td := setup(t)
 
