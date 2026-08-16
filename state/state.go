@@ -410,9 +410,9 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 // Based on PIP-51, if more than 75% of the committee's power supports a higher
 // version, the proposer increases the block version.
 func (st *state) proposeBlockVersion() protocol.Version {
-	if st.params.BlockVersion < protocol.ProtocolVersion4 &&
-		st.committee.SupportProtocolVersion(protocol.ProtocolVersion4) {
-		return protocol.ProtocolVersion4
+	if st.params.BlockVersion < protocol.ProtocolVersionLatest &&
+		st.committee.SupportProtocolVersion(protocol.ProtocolVersionLatest) {
+		return protocol.ProtocolVersionLatest
 	}
 
 	return st.params.BlockVersion
