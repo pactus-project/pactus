@@ -1,136 +1,147 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!-- Created with Cambalache 1.0.2 -->
 <interface>
   <!-- interface-name widget_committee.ui -->
   <requires lib="gtk" version="4.14"/>
   <object class="GtkBox" id="id_box_committee">
-    <property name="homogeneous">True</property>
+    <property name="css-classes">node-content</property>
     <property name="orientation">vertical</property>
+    <property name="spacing">12</property>
+
     <child>
-      <object class="GtkNotebook">
-        <property name="tab-pos">left</property>
+      <object class="GtkLabel">
+        <property name="label">Committee</property>
+        <property name="css-classes">page-title</property>
+        <property name="halign">start</property>
+        <property name="xalign">0</property>
+      </object>
+    </child>
+
+    <!-- Info stat cards -->
+    <child>
+      <object class="GtkBox" id="id_box_committee_info">
+        <property name="homogeneous">True</property>
+        <property name="spacing">12</property>
         <child>
-          <object class="GtkBox" id="id_box_committee_info">
+          <object class="GtkBox">
+            <property name="css-classes">card</property>
             <property name="orientation">vertical</property>
+            <property name="spacing">4</property>
             <child>
-              <object class="GtkGrid">
-                <property name="column-spacing">8</property>
-                <property name="css-classes">widget-grid</property>
-                <property name="row-spacing">8</property>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="halign">start</property>
-                    <property name="label">Committee Size:</property>
-                    <layout>
-                      <property name="column">0</property>
-                      <property name="row">0</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="id_label_committee_size">
-                    <property name="halign">start</property>
-                    <property name="selectable">True</property>
-                    <layout>
-                      <property name="column">1</property>
-                      <property name="row">0</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="halign">start</property>
-                    <property name="label">Committee Power:</property>
-                    <layout>
-                      <property name="column">0</property>
-                      <property name="row">1</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="id_label_committee_power">
-                    <property name="halign">start</property>
-                    <property name="selectable">True</property>
-                    <layout>
-                      <property name="column">1</property>
-                      <property name="row">1</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="halign">start</property>
-                    <property name="label">Total Power:</property>
-                    <layout>
-                      <property name="column">0</property>
-                      <property name="row">2</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="id_label_total_power">
-                    <property name="halign">start</property>
-                    <property name="selectable">True</property>
-                    <layout>
-                      <property name="column">1</property>
-                      <property name="row">2</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="halign">start</property>
-                    <property name="label">Protocol Versions:</property>
-                    <layout>
-                      <property name="column">0</property>
-                      <property name="row">3</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="id_label_protocol_versions">
-                    <property name="halign">start</property>
-                    <property name="selectable">True</property>
-                    <property name="valign">start</property>
-                    <property name="wrap">True</property>
-                    <layout>
-                      <property name="column">1</property>
-                      <property name="row">3</property>
-                    </layout>
-                  </object>
-                </child>
+              <object class="GtkLabel">
+                <property name="label">Committee Size</property>
+                <property name="css-classes">section-title</property>
+                <property name="halign">start</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="id_label_committee_size">
+                <property name="css-classes">stat-value</property>
+                <property name="halign">start</property>
+                <property name="xalign">0</property>
+                <property name="selectable">True</property>
               </object>
             </child>
           </object>
         </child>
-        <child type="tab">
-          <object class="GtkLabel">
-            <property name="label">_Info</property>
-            <property name="use-underline">True</property>
+        <child>
+          <object class="GtkBox">
+            <property name="css-classes">card</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">4</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="label">Committee Power</property>
+                <property name="css-classes">section-title</property>
+                <property name="halign">start</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="id_label_committee_power">
+                <property name="css-classes">stat-value</property>
+                <property name="halign">start</property>
+                <property name="xalign">0</property>
+                <property name="selectable">True</property>
+                <property name="ellipsize">end</property>
+              </object>
+            </child>
           </object>
         </child>
         <child>
-          <object class="GtkBox" id="id_box_committee_members">
+          <object class="GtkBox">
+            <property name="css-classes">card</property>
             <property name="orientation">vertical</property>
+            <property name="spacing">4</property>
             <child>
-              <object class="GtkScrolledWindow">
+              <object class="GtkLabel">
+                <property name="label">Total Power</property>
+                <property name="css-classes">section-title</property>
+                <property name="halign">start</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="id_label_total_power">
+                <property name="css-classes">stat-value</property>
+                <property name="halign">start</property>
+                <property name="xalign">0</property>
+                <property name="selectable">True</property>
+                <property name="ellipsize">end</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="css-classes">card</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">4</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="label">Protocol Versions</property>
+                <property name="css-classes">section-title</property>
+                <property name="halign">start</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="id_label_protocol_versions">
+                <property name="css-classes">metric-value</property>
+                <property name="halign">start</property>
+                <property name="xalign">0</property>
+                <property name="valign">start</property>
+                <property name="selectable">True</property>
+                <property name="wrap">True</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+
+    <!-- Members table -->
+    <child>
+      <object class="GtkBox" id="id_box_committee_members">
+        <property name="css-classes">card table-card</property>
+        <property name="orientation">vertical</property>
+        <property name="vexpand">True</property>
+        <property name="spacing">10</property>
+        <child>
+          <object class="GtkLabel">
+            <property name="label">Members</property>
+            <property name="css-classes">section-title</property>
+            <property name="halign">start</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+            <property name="hscrollbar-policy">never</property>
+            <child>
+              <object class="GtkColumnView" id="id_columnview_committee_members">
                 <property name="hexpand">True</property>
                 <property name="vexpand">True</property>
-                <child>
-                  <object class="GtkColumnView" id="id_columnview_committee_members">
-                    <property name="hexpand">True</property>
-                    <property name="single-click-activate">True</property>
-                    <property name="vexpand">True</property>
-                  </object>
-                </child>
+                <property name="single-click-activate">True</property>
               </object>
             </child>
-          </object>
-        </child>
-        <child type="tab">
-          <object class="GtkLabel">
-            <property name="label">_Members</property>
-            <property name="use-underline">True</property>
           </object>
         </child>
       </object>

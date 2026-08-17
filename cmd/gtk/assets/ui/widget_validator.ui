@@ -1,16 +1,46 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!-- Created with Cambalache 1.0.2 -->
 <interface>
   <!-- interface-name widget_validator.ui -->
-  <requires lib="gtk" version="4.14" />
+  <requires lib="gtk" version="4.14"/>
   <object class="GtkBox" id="id_box_validator">
+    <property name="css-classes">node-content</property>
+    <property name="orientation">vertical</property>
+    <property name="spacing">12</property>
+
     <child>
-      <object class="GtkScrolledWindow">
-        <property name="hexpand">True</property>
+      <object class="GtkLabel">
+        <property name="label">My Validators</property>
+        <property name="css-classes">page-title</property>
+        <property name="halign">start</property>
+        <property name="xalign">0</property>
+      </object>
+    </child>
+
+    <child>
+      <object class="GtkBox">
+        <property name="css-classes">card table-card</property>
+        <property name="orientation">vertical</property>
         <property name="vexpand">True</property>
+        <property name="spacing">10</property>
         <child>
-          <object class="GtkColumnView" id="id_columnview_validators">
+          <object class="GtkLabel">
+            <property name="label">Validators</property>
+            <property name="css-classes">section-title</property>
+            <property name="halign">start</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="hexpand">True</property>
             <property name="vexpand">True</property>
+            <property name="hscrollbar-policy">never</property>
+            <child>
+              <object class="GtkColumnView" id="id_columnview_validators">
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
+                <property name="single-click-activate">True</property>
+              </object>
+            </child>
           </object>
         </child>
       </object>

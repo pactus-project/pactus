@@ -56,6 +56,26 @@ var (
 	//go:embed icons/save.svg
 	iconSaveData    []byte
 	IconSaveTexture *gdk.Texture
+
+	//go:embed icons/nav_overview.svg
+	iconNavOverviewData    []byte
+	IconNavOverviewTexture *gdk.Texture
+
+	//go:embed icons/nav_committee.svg
+	iconNavCommitteeData    []byte
+	IconNavCommitteeTexture *gdk.Texture
+
+	//go:embed icons/nav_network.svg
+	iconNavNetworkData    []byte
+	IconNavNetworkTexture *gdk.Texture
+
+	//go:embed icons/nav_validators.svg
+	iconNavValidatorsData    []byte
+	IconNavValidatorsTexture *gdk.Texture
+
+	//go:embed icons/nav_wallet.svg
+	iconNavWalletData    []byte
+	IconNavWalletTexture *gdk.Texture
 )
 
 func initIcons() {
@@ -71,4 +91,9 @@ func initIcons() {
 	IconPrevTexture = TextureFromBytes(iconPrevData)
 	IconNextTexture = TextureFromBytes(iconNextData)
 	IconSaveTexture = TextureFromBytes(iconSaveData)
+	IconNavOverviewTexture = TextureFromBytes(iconNavOverviewData)
+	IconNavCommitteeTexture = TextureFromBytes(iconNavCommitteeData)
+	IconNavNetworkTexture = TextureFromBytes(iconNavNetworkData)
+	IconNavValidatorsTexture = TextureFromBytes(iconNavValidatorsData)
+	IconNavWalletTexture = TextureFromBytes(iconNavWalletData)
 }

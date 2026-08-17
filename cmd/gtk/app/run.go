@@ -5,6 +5,8 @@ package app
 import (
 	"context"
 
+	adw "github.com/diamondburned/gotk4-adwaita/pkg/adw"
+	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/gogpu/systray"
 	"github.com/pactus-project/pactus/cmd"
@@ -99,6 +101,56 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 	mwView := gtkutil.IdleAddSyncT(func() *view.MainWindowView {
 		mwView := view.NewMainWindowView()
 
+		// Register the main window so dialogs open centered over it.
+		gtkutil.SetMainWindow(&mwView.Window.Window)
+
+		// Custom title bar: small Pactus logo next to the app name on the left,
+		// and a round light/dark toggle on the right, beside the window buttons.
+		header := gtk.NewHeaderBar()
+
+		brand := gtk.NewBox(gtk.OrientationHorizontal, 8)
+		brand.SetVAlign(gtk.AlignCenter)
+		logo := gtk.NewImageFromPaintable(assets.ImagePactusLogoTexture)
+		logo.SetPixelSize(20)
+		logo.AddCSSClass("app-logo")
+		title := gtk.NewLabel("Pactus GUI")
+		title.AddCSSClass("app-title")
+		brand.Append(logo)
+		brand.Append(title)
+		header.PackStart(brand)
+		// Suppress the centered window title so the brand stays left-aligned.
+		header.SetTitleWidget(gtk.NewLabel(""))
+
+		themeToggle := gtk.NewToggleButton()
+		themeToggle.AddCSSClass("theme-toggle")
+		themeToggle.AddCSSClass("circular")
+		themeToggle.SetVAlign(gtk.AlignCenter)
+		themeToggle.SetTooltipText("Toggle light / dark mode")
+		applyThemeIcon := func(dark bool) {
+			if dark {
+				themeToggle.SetLabel("🌙")
+			} else {
+				themeToggle.SetLabel("☀")
+			}
+		}
+		// Restore the persisted light/dark choice, falling back to the system
+		// theme when the user has not chosen yet.
+		startDark := adw.StyleManagerGetDefault().Dark()
+		if saved, ok := gtkutil.LoadDarkMode(); ok {
+			startDark = saved
+			nav.SetDarkMode(saved)
+		}
+		themeToggle.SetActive(startDark)
+		applyThemeIcon(startDark)
+		themeToggle.ConnectToggled(func() {
+			active := themeToggle.Active()
+			nav.SetDarkMode(active)
+			applyThemeIcon(active)
+		})
+		header.PackEnd(themeToggle)
+
+		mwView.Window.SetTitlebar(header)
+
 		walletCtrl.SetupMenu(mwView.Window)
 
 		menu := nav.CreateMenu(isLocal)
@@ -117,6 +169,14 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 
 		gtkApp.AddWindow(&mwView.Window.Window)
 		mwView.Window.Present()
+
+		// Center the main window on first show; GTK4 cannot position it, so do
+		// it natively once mapped (no-op on Linux/macOS).
+		glib.TimeoutAdd(80, func() bool {
+			gtkutil.CenterActiveWindow()
+
+			return false
+		})
 
 		return mwView
 	})

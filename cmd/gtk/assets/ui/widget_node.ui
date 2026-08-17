@@ -1,383 +1,498 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!-- Created with Cambalache 1.0.2 -->
 <interface>
   <!-- interface-name widget_node.ui -->
   <requires lib="gtk" version="4.14"/>
   <object class="GtkBox" id="id_box_node">
-    <property name="baseline-position">top</property>
+    <property name="css-classes">node-content</property>
     <property name="orientation">vertical</property>
+    <property name="spacing">12</property>
+
+    <!-- Page header with quick transaction actions -->
     <child>
-      <object class="GtkGrid">
-        <property name="css-classes">widget-grid</property>
-        <property name="column-spacing">8</property>
+      <object class="GtkBox">
+        <property name="css-classes">page-header</property>
+        <property name="spacing">8</property>
+        <child>
+          <object class="GtkLabel">
+            <property name="label">Node Overview</property>
+            <property name="css-classes">page-title</property>
+            <property name="halign">start</property>
+            <property name="hexpand">True</property>
+            <property name="xalign">0</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton">
+            <property name="label">Transfer</property>
+            <property name="action-name">app.transfer</property>
+            <property name="css-classes">suggested-action</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton">
+            <property name="label">Bond</property>
+            <property name="action-name">app.bond</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton">
+            <property name="label">Unbond</property>
+            <property name="action-name">app.unbond</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton">
+            <property name="label">Withdraw</property>
+            <property name="action-name">app.withdraw</property>
+          </object>
+        </child>
+      </object>
+    </child>
+
+    <!-- Three columns that fill the available height -->
+    <child>
+      <object class="GtkBox">
+        <property name="homogeneous">True</property>
         <property name="hexpand">True</property>
-        <property name="row-spacing">8</property>
-        <property name="vexpand">True</property>
+        <property name="valign">start</property>
+        <property name="spacing">12</property>
+
+        <!-- Network Health -->
         <child>
-          <object class="GtkLabel" id="id_label_connection_type">
-            <property name="halign">start</property>
-            <property name="label"/>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="row">0</property>
-            </layout>
+          <object class="GtkBox">
+            <property name="css-classes">card</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">14</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="label">Network Health</property>
+                <property name="css-classes">section-title</property>
+                <property name="halign">start</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="css-classes">metric</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label">Synced Height</property>
+                    <property name="css-classes">metric-label</property>
+                    <property name="halign">start</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="id_label_last_block_height">
+                    <property name="css-classes">metric-value</property>
+                    <property name="halign">start</property>
+                    <property name="xalign">0</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="css-classes">metric</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label">Last Block</property>
+                    <property name="css-classes">metric-label</property>
+                    <property name="halign">start</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="id_label_last_block_time">
+                    <property name="css-classes">metric-value</property>
+                    <property name="halign">start</property>
+                    <property name="xalign">0</property>
+                    <property name="ellipsize">end</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="css-classes">metric</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label">Connections</property>
+                    <property name="css-classes">metric-label</property>
+                    <property name="halign">start</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="id_label_num_connections">
+                    <property name="css-classes">metric-value</property>
+                    <property name="halign">start</property>
+                    <property name="xalign">0</property>
+                    <property name="selectable">True</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="css-classes">metric</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label">Reachability</property>
+                    <property name="css-classes">metric-label</property>
+                    <property name="halign">start</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="id_label_reachability">
+                    <property name="css-classes">metric-value</property>
+                    <property name="halign">start</property>
+                    <property name="xalign">0</property>
+                    <property name="selectable">True</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="css-classes">metric</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label">Clock Offset</property>
+                    <property name="css-classes">metric-label</property>
+                    <property name="halign">start</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="id_label_clock_offset">
+                    <property name="css-classes">metric-value</property>
+                    <property name="halign">start</property>
+                    <property name="xalign">0</property>
+                  </object>
+                </child>
+              </object>
+            </child>
           </object>
         </child>
+
+        <!-- Validator Network -->
         <child>
-          <object class="GtkLabel" id="id_label_connection_value">
-            <property name="halign">start</property>
-            <property name="selectable">True</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">1</property>
-              <property name="row">0</property>
-            </layout>
+          <object class="GtkBox">
+            <property name="css-classes">card</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">14</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="label">Validator Network</property>
+                <property name="css-classes">section-title</property>
+                <property name="halign">start</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="css-classes">metric</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label">Active Validators</property>
+                    <property name="css-classes">metric-label</property>
+                    <property name="halign">start</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="id_label_active_validators">
+                    <property name="css-classes">metric-value</property>
+                    <property name="halign">start</property>
+                    <property name="xalign">0</property>
+                    <property name="selectable">True</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="css-classes">metric</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label">Total Staked Power</property>
+                    <property name="css-classes">metric-label</property>
+                    <property name="halign">start</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="id_label_total_power">
+                    <property name="css-classes">metric-value</property>
+                    <property name="halign">start</property>
+                    <property name="xalign">0</property>
+                    <property name="selectable">True</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="css-classes">metric</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label">Average Score</property>
+                    <property name="css-classes">metric-label</property>
+                    <property name="halign">start</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="id_label_average_score">
+                    <property name="css-classes">metric-value</property>
+                    <property name="halign">start</property>
+                    <property name="xalign">0</property>
+                    <property name="selectable">True</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="css-classes">metric</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label">In Committee Now</property>
+                    <property name="css-classes">metric-label</property>
+                    <property name="halign">start</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="id_label_in_committee">
+                    <property name="css-classes">metric-value</property>
+                    <property name="halign">start</property>
+                    <property name="xalign">0</property>
+                  </object>
+                </child>
+              </object>
+            </child>
           </object>
         </child>
+
+        <!-- Sync Status hero -->
+        <child>
+          <object class="GtkBox">
+            <property name="css-classes">card sync-card</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">6</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="label">Sync Status</property>
+                <property name="css-classes">section-title</property>
+                <property name="halign">start</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox" id="id_sync_container">
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="margin-top">8</property>
+                <property name="margin-bottom">8</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="id_label_sync_status">
+                <property name="css-classes">sync-status</property>
+                <property name="halign">center</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="css-classes">metric</property>
+                <property name="orientation">vertical</property>
+                <property name="halign">center</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label">Remaining Blocks</property>
+                    <property name="css-classes">metric-label</property>
+                    <property name="halign">center</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="id_label_blocks_left">
+                    <property name="css-classes">metric-value</property>
+                    <property name="halign">center</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+
+    <!-- Local Node Info -->
+    <child>
+      <object class="GtkBox">
+        <property name="css-classes">card</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">12</property>
         <child>
           <object class="GtkLabel">
+            <property name="label">Local Node Info</property>
+            <property name="css-classes">section-title</property>
             <property name="halign">start</property>
-            <property name="label">🌐 Network:</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="row">1</property>
-            </layout>
           </object>
         </child>
         <child>
-          <object class="GtkLabel" id="id_label_network">
-            <property name="halign">start</property>
-            <property name="selectable">True</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">1</property>
-              <property name="row">1</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="halign">start</property>
-            <property name="label">🧾 Network ID:</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="row">2</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel" id="id_label_network_id">
-            <property name="halign">start</property>
-            <property name="selectable">True</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">1</property>
-              <property name="row">2</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="halign">start</property>
-            <property name="label">🤖 Node Agent:</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="row">3</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel" id="id_label_agent">
-            <property name="halign">start</property>
-            <property name="selectable">True</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">1</property>
-              <property name="row">3</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="halign">start</property>
-            <property name="label">⏰ Clock Offset:</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="row">4</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel" id="id_label_clock_offset">
-            <property name="halign">start</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">1</property>
-              <property name="row">4</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="halign">start</property>
-            <property name="label">📡 Connections:</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="row">5</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel" id="id_label_num_connections">
-            <property name="halign">start</property>
-            <property name="selectable">True</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">1</property>
-              <property name="row">5</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="halign">start</property>
-            <property name="label">🔰 Moniker:</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="row">6</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel" id="id_label_moniker">
-            <property name="halign">start</property>
-            <property name="selectable">True</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">1</property>
-              <property name="row">6</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="halign">start</property>
-            <property name="label">🔍 Reachability:</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="row">7</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel" id="id_label_reachability">
-            <property name="halign">start</property>
-            <property name="selectable">True</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">1</property>
-              <property name="row">7</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="halign">start</property>
-            <property name="label">✂️ Pruned:</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="row">8</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel" id="id_label_is_prune">
-            <property name="halign">start</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">1</property>
-              <property name="row">8</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="halign">start</property>
-            <property name="label">✅ Active Validators:</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="row">9</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel" id="id_label_active_validators">
-            <property name="halign">start</property>
-            <property name="selectable">True</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">1</property>
-              <property name="row">9</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="halign">start</property>
-            <property name="label">✨ Total Power:</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="row">10</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel" id="id_label_total_power">
-            <property name="halign">start</property>
-            <property name="selectable">True</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">1</property>
-              <property name="row">10</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="halign">start</property>
-            <property name="label">📈 Average Score:</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="row">11</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel" id="id_label_average_score">
-            <property name="halign">start</property>
-            <property name="selectable">True</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">1</property>
-              <property name="row">11</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="halign">start</property>
-            <property name="label">💎 In Committee Now:</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="row">12</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel" id="id_label_in_committee">
-            <property name="halign">start</property>
-            <property name="selectable">True</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">1</property>
-              <property name="row">12</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="halign">start</property>
-            <property name="label">⛓️ Last Block Height:</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="row">13</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel" id="id_label_last_block_height">
-            <property name="halign">start</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">1</property>
-              <property name="row">13</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="halign">start</property>
-            <property name="label">🕔 Last Block Time:</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="row">14</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel" id="id_label_last_block_time">
-            <property name="halign">start</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">1</property>
-              <property name="row">14</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="halign">start</property>
-            <property name="label">📦 Remaining Blocks:</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="row">15</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel" id="id_label_blocks_left">
-            <property name="halign">start</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">1</property>
-              <property name="row">15</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="halign">start</property>
-            <property name="label">🔄 Syncing Progress:</property>
-            <property name="valign">start</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="row">16</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkProgressBar" id="id_progress_synced">
-            <property name="pulse-step">0.01</property>
-            <property name="show-text">True</property>
-            <layout>
-              <property name="column">1</property>
-              <property name="row">16</property>
-            </layout>
+          <object class="GtkGrid">
+            <property name="css-classes">info-grid</property>
+            <property name="column-spacing">24</property>
+            <property name="row-spacing">10</property>
+            <child>
+              <object class="GtkLabel" id="id_label_connection_type">
+                <property name="css-classes">info-key</property>
+                <property name="halign">start</property>
+                <property name="valign">start</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="row">0</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="id_label_connection_value">
+                <property name="css-classes">info-val</property>
+                <property name="halign">start</property>
+                <property name="xalign">0</property>
+                <property name="hexpand">True</property>
+                <property name="selectable">True</property>
+                <property name="ellipsize">end</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="row">0</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="label">Network</property>
+                <property name="css-classes">info-key</property>
+                <property name="halign">start</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="row">1</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="id_label_network">
+                <property name="css-classes">info-val</property>
+                <property name="halign">start</property>
+                <property name="xalign">0</property>
+                <property name="hexpand">True</property>
+                <property name="selectable">True</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="row">1</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="label">Moniker</property>
+                <property name="css-classes">info-key</property>
+                <property name="halign">start</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="row">2</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="id_label_moniker">
+                <property name="css-classes">info-val</property>
+                <property name="halign">start</property>
+                <property name="xalign">0</property>
+                <property name="hexpand">True</property>
+                <property name="selectable">True</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="row">2</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="label">Pruned</property>
+                <property name="css-classes">info-key</property>
+                <property name="halign">start</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="row">3</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="id_label_is_prune">
+                <property name="css-classes">info-val</property>
+                <property name="halign">start</property>
+                <property name="xalign">0</property>
+                <property name="hexpand">True</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="row">3</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="label">Node Agent</property>
+                <property name="css-classes">info-key</property>
+                <property name="halign">start</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="row">4</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="id_label_agent">
+                <property name="css-classes">info-val</property>
+                <property name="halign">start</property>
+                <property name="xalign">0</property>
+                <property name="hexpand">True</property>
+                <property name="selectable">True</property>
+                <property name="ellipsize">end</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="row">4</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="label">Network ID</property>
+                <property name="css-classes">info-key</property>
+                <property name="halign">start</property>
+                <property name="valign">start</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="row">5</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="id_label_network_id">
+                <property name="css-classes">info-val info-mono</property>
+                <property name="halign">start</property>
+                <property name="xalign">0</property>
+                <property name="hexpand">True</property>
+                <property name="selectable">True</property>
+                <property name="wrap">True</property>
+                <property name="wrap-mode">char</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="row">5</property>
+                </layout>
+              </object>
+            </child>
           </object>
         </child>
       </object>
