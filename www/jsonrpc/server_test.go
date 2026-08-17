@@ -69,7 +69,8 @@ func TestBlockchainInfo(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	req, err := http.NewRequestWithContext(t.Context(), http.MethodPost,
+	req, err := http.NewRequestWithContext(
+		t.Context(), http.MethodPost,
 		"http://"+td.jsonrpcServer.Address(),
 		bytes.NewBuffer(requestBody),
 	)

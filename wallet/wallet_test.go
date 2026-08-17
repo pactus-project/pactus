@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"context"
 	"errors"
 	"path/filepath"
 	"strings"
@@ -785,90 +786,45 @@ func TestUpdatePassword(t *testing.T) {
 }
 
 func TestMigrate(t *testing.T) {
-	newTestVault := func(t *testing.T) *vault.Vault {
-		t.Helper()
+	t.Run("Migrate legacy JSON wallet in place", func(t *testing.T) {
+		td := setup(t)
 
-		opts := []encrypter.Option{
-			encrypter.OptionIteration(1),
-			encrypter.OptionMemory(8),
-			encrypter.OptionParallelism(1),
-		}
-		mnemonic, _ := GenerateMnemonic(128)
-		vlt, err := vault.CreateVaultFromMnemonic(mnemonic, addresspath.CoinTypePactusTestnet, "password", opts...)
-		require.NoError(t, err)
-
-		return vlt
-	}
-
-	t.Run("Migrate legacy JSON wallet", func(t *testing.T) {
-		ts := testsuite.NewTestSuite(t)
-
-		vlt := newTestVault(t)
 		jsonPath := util.TempFilePath()
-		jsonStrg, err := jsonstorage.Create(jsonPath, genesis.Testnet, vlt)
+		_, err := jsonstorage.Create(jsonPath, genesis.Mainnet, td.testVault)
 		require.NoError(t, err)
 
-		addrInfo := &wtypes.AddressInfo{
-			Address:   ts.RandAccAddress().String(),
-			PublicKey: ts.RandString(32),
-			Label:     ts.RandString(16),
-			Path:      ts.RandString(16),
-		}
-		require.NoError(t, jsonStrg.InsertAddress(addrInfo))
-		jsonInfo := jsonStrg.WalletInfo()
-
-		sqlitePath := filepath.Join(util.TempDirPath(), "wallet")
-		wlt, err := Migrate(t.Context(), jsonPath, sqlitePath, WithOfflineProvider())
+		err = Migrate(t.Context(), jsonPath)
 		require.NoError(t, err)
-		defer wlt.Close()
-
-		// The legacy JSON file should be left untouched.
-		assert.True(t, util.PathExists(jsonPath))
-
-		// The wallet info should be preserved.
-		info := wlt.Info()
-		assert.Equal(t, "SQLite", info.Driver)
-		assert.Equal(t, jsonInfo.Network, info.Network)
-		assert.Equal(t, jsonInfo.DefaultFee, info.DefaultFee)
-		assert.Equal(t, jsonInfo.UUID, info.UUID)
-		assert.True(t, jsonInfo.CreatedAt.Equal(info.CreatedAt))
-
-		// The address should be preserved.
-		migratedAddr, err := wlt.AddressInfo(addrInfo.Address)
-		require.NoError(t, err)
-		assert.Equal(t, addrInfo.Address, migratedAddr.Address)
-		assert.Equal(t, addrInfo.PublicKey, migratedAddr.PublicKey)
-		assert.Equal(t, addrInfo.Label, migratedAddr.Label)
-		assert.Equal(t, addrInfo.Path, migratedAddr.Path)
 	})
 
-	t.Run("Invalid legacy wallet", func(t *testing.T) {
+	t.Run("Failed migration restores the original wallet", func(t *testing.T) {
+		td := setup(t)
+
+		jsonPath := util.TempFilePath()
+		_, err := jsonstorage.Create(jsonPath, genesis.Mainnet, td.testVault)
+		require.NoError(t, err)
+
+		ctx, cancel := context.WithCancel(t.Context())
+		cancel()
+
+		err = Migrate(ctx, jsonPath)
+		require.Error(t, err)
+
+		_, err = jsonstorage.Open(jsonPath)
+		require.NoError(t, err)
+	})
+
+	t.Run("Invalid JSON data", func(t *testing.T) {
 		jsonPath := util.TempFilePath()
 		require.NoError(t, util.WriteFile(jsonPath, []byte("invalid_data")))
 
-		_, err := Migrate(t.Context(), jsonPath, util.TempDirPath(), WithOfflineProvider())
+		err := Migrate(t.Context(), jsonPath)
 		require.Error(t, err)
-
-		// The invalid file should not be deleted.
-		assert.True(t, util.PathExists(jsonPath))
 	})
 
-	t.Run("Destination already exists", func(t *testing.T) {
-		vlt := newTestVault(t)
-		jsonPath := util.TempFilePath()
-		_, err := jsonstorage.Create(jsonPath, genesis.Testnet, vlt)
-		require.NoError(t, err)
-
-		sqlitePath := util.TempDirPath()
-		_, err = Migrate(t.Context(), jsonPath, sqlitePath, WithOfflineProvider())
-		require.ErrorIs(t, err, ExitsError{Path: sqlitePath})
-
-		// The legacy file should not be deleted.
-		assert.True(t, util.PathExists(jsonPath))
-	})
-
-	t.Run("Invalid source path", func(t *testing.T) {
-		_, err := Migrate(t.Context(), util.TempDirPath(), util.TempDirPath(), WithOfflineProvider())
+	t.Run("Non-existent source path", func(t *testing.T) {
+		err := Migrate(t.Context(),
+			filepath.Join(util.TempDirPath(), "no-such-wallet.json"))
 		require.Error(t, err)
 	})
 }

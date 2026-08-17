@@ -1,7 +1,6 @@
 package sqlitestorage
 
 import (
-	"path"
 	"testing"
 
 	"github.com/pactus-project/pactus/genesis"
@@ -13,11 +12,8 @@ import (
 func openTestStorage(t *testing.T, dir string) (*Storage, error) {
 	t.Helper()
 
-	data, err := util.ReadFile(path.Join(dir, "wallet.db"))
-	require.NoError(t, err)
-
 	tempPath := util.TempDirPath()
-	err = util.WriteFile(path.Join(tempPath, "wallet.db"), data)
+	err := util.CopyDirectory(dir, tempPath)
 	require.NoError(t, err)
 
 	return Open(t.Context(), tempPath)
