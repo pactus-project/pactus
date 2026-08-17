@@ -64,7 +64,7 @@ func TestMigrate(t *testing.T) {
 		assert.Equal(t, "SQLite", strg.WalletInfo().Driver)
 		assert.Equal(t, defFee, strg.WalletInfo().DefaultFee)
 		assert.Equal(t, genesis.Mainnet, strg.WalletInfo().Network)
-		assert.Equal(t, true, strg.WalletInfo().Encrypted)
+		assert.True(t, strg.WalletInfo().Encrypted)
 		assert.Equal(t, path, strg.WalletInfo().Path)
 		assert.Equal(t, VersionLatest, strg.WalletInfo().Version)
 
@@ -76,7 +76,7 @@ func TestMigrate(t *testing.T) {
 
 	t.Run("Neutered migration", func(t *testing.T) {
 		vlt.Neuter()
-		jsonStrg.UpdateVault(vlt)
+		_ = jsonStrg.UpdateVault(vlt)
 
 		path := util.TempFilePath()
 		err := Migrate(t.Context(), path, jsonStrg)
@@ -86,7 +86,7 @@ func TestMigrate(t *testing.T) {
 		require.NoError(t, err)
 
 		assert.Equal(t, vlt, strg.Vault())
-		assert.Equal(t, false, strg.WalletInfo().Encrypted)
-		assert.Equal(t, true, strg.WalletInfo().Neutered)
+		assert.False(t, strg.WalletInfo().Encrypted)
+		assert.True(t, strg.WalletInfo().Neutered)
 	})
 }

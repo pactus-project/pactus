@@ -137,7 +137,6 @@ func TestMoveDirectory(t *testing.T) {
 	})
 
 	t.Run("MoveDirectorySuccess", func(t *testing.T) {
-
 		type testCase struct {
 			name   string
 			srcDir string
@@ -161,10 +160,6 @@ func TestMoveDirectory(t *testing.T) {
 		}
 
 		for _, tt := range tests {
-
-			defer func() { _ = os.RemoveAll(tt.srcDir) }()
-			defer func() { _ = os.RemoveAll(tt.dstDir) }()
-
 			// Create a subdirectory in the source directory
 			subDir := filepath.Join(tt.srcDir, "subdir")
 			err := Mkdir(subDir)
@@ -203,6 +198,9 @@ func TestMoveDirectory(t *testing.T) {
 				require.NoError(t, err)
 				assert.Equal(t, file.content, string(data))
 			}
+
+			_ = os.RemoveAll(tt.srcDir)
+			_ = os.RemoveAll(tt.dstDir)
 		}
 	})
 }
