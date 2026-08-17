@@ -225,7 +225,7 @@ func MoveDirectory(srcDir, dstDir string) error {
 	err := os.Rename(srcDir, dstDir)
 	if err != nil {
 		// To prevent invalid cross-device link perform a manual copy
-		if err := copyDirectory(srcDir, dstDir); err != nil {
+		if err := CopyDirectory(srcDir, dstDir); err != nil {
 			return fmt.Errorf("failed to move directory from %s to %s: %w", srcDir, dstDir, err)
 		}
 
@@ -238,7 +238,7 @@ func MoveDirectory(srcDir, dstDir string) error {
 	return nil
 }
 
-func copyDirectory(src, dst string) error {
+func CopyDirectory(src, dst string) error {
 	return filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -254,15 +254,20 @@ func copyDirectory(src, dst string) error {
 			return os.MkdirAll(dstPath, info.Mode())
 		}
 
-		return copyFile(path, dstPath, info)
+		return CopyFile(path, dstPath)
 	})
 }
 
-func copyFile(src, dst string, info os.FileInfo) error {
+func CopyFile(src, dst string) error {
 	input, err := os.Open(src)
 	if err != nil {
 		return err
 	}
+	info, err := input.Stat()
+	if err != nil {
+		return err
+	}
+
 	defer func() {
 		_ = input.Close()
 	}()

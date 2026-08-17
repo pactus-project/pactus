@@ -13,11 +13,8 @@ import (
 func openTestStorage(t *testing.T, path string) (*Storage, error) {
 	t.Helper()
 
-	data, err := util.ReadFile(path)
-	require.NoError(t, err)
-
 	tempPath := util.TempFilePath()
-	err = util.WriteFile(tempPath, data)
+	err := util.CopyFile(path, tempPath)
 	require.NoError(t, err)
 
 	return Open(tempPath)

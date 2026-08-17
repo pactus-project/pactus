@@ -3,6 +3,7 @@ package wallet
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/gopkg/pipeline"
@@ -111,35 +112,35 @@ func Open(ctx context.Context, walletPath string, opts ...OpenWalletOption) (*Wa
 	return New(ctx, jsonStrg, opts...)
 }
 
-// Migrate converts a legacy JSON wallet to the SQLite format and saves it at
-// the given path (a directory). The wallet metadata (network, default fee,
-// UUID and creation time), the vault and all addresses are preserved.
-// The legacy JSON wallet file is left untouched; it is up to the caller to
-// decide whether to remove it.
-func Migrate(ctx context.Context, jsonPath, sqlitePath string, opts ...OpenWalletOption) (*Wallet, error) {
-	jsonPath = util.MakeAbs(jsonPath)
-	sqlitePath = util.MakeAbs(sqlitePath)
+// Migrate converts a legacy JSON wallet to the SQLite format in place: the
+// JSON file at the given path is replaced by a SQLite wallet directory at the
+// same path.
+//
+// If the migration fails, the original JSON wallet is restored.
+func Migrate(ctx context.Context, jsonPath string) error {
+	walletPath := util.MakeAbs(jsonPath)
 
-	if util.IsDir(jsonPath) {
-		return nil, fmt.Errorf("not a legacy JSON wallet: %s", jsonPath)
-	}
-
-	if util.PathExists(sqlitePath) {
-		return nil, ExitsError{Path: sqlitePath}
-	}
-
-	cfg := defaultOpenWalletConfig
-	for _, opt := range opts {
-		opt(&cfg)
-	}
-
-	strg, err := sqlitestorage.Migrate(ctx, jsonPath, sqlitePath,
-		sqlitestorage.WithLockingMode(cfg.lockMode))
+	jsonStrg, err := jsonstorage.Open(walletPath)
 	if err != nil {
-		return nil, err
+		return fmt.Errorf("not a legacy JSON wallet: %s", walletPath)
 	}
 
-	return New(ctx, strg, opts...)
+	backupJSONPath := jsonPath + ".bak"
+	err = os.Rename(jsonPath, backupJSONPath)
+	if err != nil {
+		return fmt.Errorf("failed to create backup of JSON wallet: %w", err)
+	}
+
+	err = sqlitestorage.Migrate(ctx, walletPath, jsonStrg)
+	if err != nil {
+		// Restores the original JSON wallet on failure.
+		_ = os.RemoveAll(walletPath)
+		_ = os.Rename(backupJSONPath, walletPath)
+
+		return err
+	}
+
+	return nil
 }
 
 type openWalletConfig struct {

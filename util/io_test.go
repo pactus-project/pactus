@@ -137,49 +137,72 @@ func TestMoveDirectory(t *testing.T) {
 	})
 
 	t.Run("MoveDirectorySuccess", func(t *testing.T) {
-		// Create temporary directories
-		srcDir := TempDirPath()
-		dstDir := TempDirPath()
-		defer func() { _ = os.RemoveAll(srcDir) }()
-		defer func() { _ = os.RemoveAll(dstDir) }()
 
-		// Create a subdirectory in the source directory
-		subDir := filepath.Join(srcDir, "subdir")
-		err := Mkdir(subDir)
-		require.NoError(t, err)
-
-		// Create multiple files in the subdirectory
-		files := []struct {
-			name    string
-			content string
-		}{
-			{"file1.txt", "content 1"},
-			{"file2.txt", "content 2"},
+		type testCase struct {
+			name   string
+			srcDir string
+			dstDir string
 		}
 
-		for _, file := range files {
-			filePath := filepath.Join(subDir, file.name)
-			err = WriteFile(filePath, []byte(file.content))
-			require.NoError(t, err)
+		tests := []testCase{
+			{
+				name:   "move between directories",
+				srcDir: TempDirPath(),
+				dstDir: TempDirPath(),
+			},
 		}
 
-		// Move the directory
-		dstDirPath := filepath.Join(dstDir, "movedir")
-		err = MoveDirectory(srcDir, dstDirPath)
-		require.NoError(t, err)
+		if runtime.GOOS == "linux" {
+			tests = append(tests, testCase{
+				name:   "invalid cross-device link",
+				srcDir: TempDirPath(),
+				dstDir: "/dev/shm/test",
+			})
+		}
 
-		// Assert the source directory no longer exists
-		assert.False(t, PathExists(srcDir))
+		for _, tt := range tests {
 
-		// Assert the destination directory exists
-		assert.True(t, PathExists(dstDirPath))
+			defer func() { _ = os.RemoveAll(tt.srcDir) }()
+			defer func() { _ = os.RemoveAll(tt.dstDir) }()
 
-		// Verify that all files have been moved and their contents are correct
-		for _, file := range files {
-			movedFilePath := filepath.Join(dstDirPath, "subdir", file.name)
-			data, err := ReadFile(movedFilePath)
+			// Create a subdirectory in the source directory
+			subDir := filepath.Join(tt.srcDir, "subdir")
+			err := Mkdir(subDir)
 			require.NoError(t, err)
-			assert.Equal(t, file.content, string(data))
+
+			// Create multiple files in the subdirectory
+			files := []struct {
+				name    string
+				content string
+			}{
+				{"file1.txt", "content 1"},
+				{"file2.txt", "content 2"},
+			}
+
+			for _, file := range files {
+				filePath := filepath.Join(subDir, file.name)
+				err = WriteFile(filePath, []byte(file.content))
+				require.NoError(t, err)
+			}
+
+			// Move the directory
+			dstDirPath := filepath.Join(tt.dstDir, "movedir")
+			err = MoveDirectory(tt.srcDir, dstDirPath)
+			require.NoError(t, err)
+
+			// Assert the source directory no longer exists
+			assert.False(t, PathExists(tt.srcDir))
+
+			// Assert the destination directory exists
+			assert.True(t, PathExists(dstDirPath))
+
+			// Verify that all files have been moved and their contents are correct
+			for _, file := range files {
+				movedFilePath := filepath.Join(dstDirPath, "subdir", file.name)
+				data, err := ReadFile(movedFilePath)
+				require.NoError(t, err)
+				assert.Equal(t, file.content, string(data))
+			}
 		}
 	})
 }
