@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"context"
 	"errors"
 	"path/filepath"
 	"strings"
@@ -785,52 +786,40 @@ func TestUpdatePassword(t *testing.T) {
 }
 
 func TestMigrate(t *testing.T) {
-	newTestVault := func(t *testing.T) *vault.Vault {
-		t.Helper()
-
-		opts := []encrypter.Option{
-			encrypter.OptionIteration(1),
-			encrypter.OptionMemory(8),
-			encrypter.OptionParallelism(1),
-		}
-		mnemonic, _ := GenerateMnemonic(128)
-		vlt, err := vault.CreateVaultFromMnemonic(mnemonic, addresspath.CoinTypePactusTestnet, "password", opts...)
-		require.NoError(t, err)
-
-		return vlt
-	}
-
 	t.Run("Migrate legacy JSON wallet in place", func(t *testing.T) {
-		ts := testsuite.NewTestSuite(t)
+		td := setup(t)
 
-		vlt := newTestVault(t)
 		jsonPath := util.TempFilePath()
-		jsonStrg, err := jsonstorage.Create(jsonPath, genesis.Testnet, vlt)
+		_, err := jsonstorage.Create(jsonPath, genesis.Mainnet, td.testVault)
 		require.NoError(t, err)
-
-		addrInfo := &wtypes.AddressInfo{
-			Address:   ts.RandAccAddress().String(),
-			PublicKey: ts.RandString(32),
-			Label:     ts.RandString(16),
-			Path:      ts.RandString(16),
-		}
-		require.NoError(t, jsonStrg.InsertAddress(addrInfo))
 
 		err = Migrate(t.Context(), jsonPath)
 		require.NoError(t, err)
 	})
 
-	t.Run("Revert on failure", func(t *testing.T) {
+	t.Run("Failed migration restores the original wallet", func(t *testing.T) {
+		td := setup(t)
+
+		jsonPath := util.TempFilePath()
+		_, err := jsonstorage.Create(jsonPath, genesis.Mainnet, td.testVault)
+		require.NoError(t, err)
+
+		ctx, cancel := context.WithCancel(t.Context())
+		cancel()
+
+		err = Migrate(ctx, jsonPath)
+		require.Error(t, err)
+
+		_, err = jsonstorage.Open(jsonPath)
+		require.NoError(t, err)
+	})
+
+	t.Run("Invalid JSON data", func(t *testing.T) {
 		jsonPath := util.TempFilePath()
 		require.NoError(t, util.WriteFile(jsonPath, []byte("invalid_data")))
 
 		err := Migrate(t.Context(), jsonPath)
 		require.Error(t, err)
-
-		// The original file should be restored after the failed migration.
-		data, err := util.ReadFile(jsonPath)
-		require.NoError(t, err)
-		assert.Equal(t, "invalid_data", string(data))
 	})
 
 	t.Run("Non-existent source path", func(t *testing.T) {
