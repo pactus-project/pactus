@@ -77,6 +77,37 @@ public final class WalletGrpc {
     return getRestoreWalletMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pactus.WalletOuterClass.MigrateWalletRequest,
+      pactus.WalletOuterClass.MigrateWalletResponse> getMigrateWalletMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "MigrateWallet",
+      requestType = pactus.WalletOuterClass.MigrateWalletRequest.class,
+      responseType = pactus.WalletOuterClass.MigrateWalletResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.WalletOuterClass.MigrateWalletRequest,
+      pactus.WalletOuterClass.MigrateWalletResponse> getMigrateWalletMethod() {
+    io.grpc.MethodDescriptor<pactus.WalletOuterClass.MigrateWalletRequest, pactus.WalletOuterClass.MigrateWalletResponse> getMigrateWalletMethod;
+    if ((getMigrateWalletMethod = WalletGrpc.getMigrateWalletMethod) == null) {
+      synchronized (WalletGrpc.class) {
+        if ((getMigrateWalletMethod = WalletGrpc.getMigrateWalletMethod) == null) {
+          WalletGrpc.getMigrateWalletMethod = getMigrateWalletMethod =
+              io.grpc.MethodDescriptor.<pactus.WalletOuterClass.MigrateWalletRequest, pactus.WalletOuterClass.MigrateWalletResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "MigrateWallet"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.WalletOuterClass.MigrateWalletRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.WalletOuterClass.MigrateWalletResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("MigrateWallet"))
+              .build();
+        }
+      }
+    }
+    return getMigrateWalletMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<pactus.WalletOuterClass.LoadWalletRequest,
       pactus.WalletOuterClass.LoadWalletResponse> getLoadWalletMethod;
 
@@ -723,6 +754,16 @@ public final class WalletGrpc {
 
     /**
      * <pre>
+     * MigrateWallet migrates a legacy JSON wallet to the SQLite format in place.
+     * </pre>
+     */
+    default void migrateWallet(pactus.WalletOuterClass.MigrateWalletRequest request,
+        io.grpc.stub.StreamObserver<pactus.WalletOuterClass.MigrateWalletResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getMigrateWalletMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
      * LoadWallet loads an existing wallet with the given name.
      * deprecated: It will be removed in a future version.
      * </pre>
@@ -959,6 +1000,17 @@ public final class WalletGrpc {
         io.grpc.stub.StreamObserver<pactus.WalletOuterClass.RestoreWalletResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getRestoreWalletMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * MigrateWallet migrates a legacy JSON wallet to the SQLite format in place.
+     * </pre>
+     */
+    public void migrateWallet(pactus.WalletOuterClass.MigrateWalletRequest request,
+        io.grpc.stub.StreamObserver<pactus.WalletOuterClass.MigrateWalletResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getMigrateWalletMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -1205,6 +1257,16 @@ public final class WalletGrpc {
 
     /**
      * <pre>
+     * MigrateWallet migrates a legacy JSON wallet to the SQLite format in place.
+     * </pre>
+     */
+    public pactus.WalletOuterClass.MigrateWalletResponse migrateWallet(pactus.WalletOuterClass.MigrateWalletRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getMigrateWalletMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
      * LoadWallet loads an existing wallet with the given name.
      * deprecated: It will be removed in a future version.
      * </pre>
@@ -1425,6 +1487,16 @@ public final class WalletGrpc {
     public pactus.WalletOuterClass.RestoreWalletResponse restoreWallet(pactus.WalletOuterClass.RestoreWalletRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getRestoreWalletMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * MigrateWallet migrates a legacy JSON wallet to the SQLite format in place.
+     * </pre>
+     */
+    public pactus.WalletOuterClass.MigrateWalletResponse migrateWallet(pactus.WalletOuterClass.MigrateWalletRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getMigrateWalletMethod(), getCallOptions(), request);
     }
 
     /**
@@ -1655,6 +1727,17 @@ public final class WalletGrpc {
 
     /**
      * <pre>
+     * MigrateWallet migrates a legacy JSON wallet to the SQLite format in place.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.WalletOuterClass.MigrateWalletResponse> migrateWallet(
+        pactus.WalletOuterClass.MigrateWalletRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getMigrateWalletMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
      * LoadWallet loads an existing wallet with the given name.
      * deprecated: It will be removed in a future version.
      * </pre>
@@ -1858,24 +1941,25 @@ public final class WalletGrpc {
 
   private static final int METHODID_CREATE_WALLET = 0;
   private static final int METHODID_RESTORE_WALLET = 1;
-  private static final int METHODID_LOAD_WALLET = 2;
-  private static final int METHODID_UNLOAD_WALLET = 3;
-  private static final int METHODID_LIST_WALLETS = 4;
-  private static final int METHODID_GET_WALLET_INFO = 5;
-  private static final int METHODID_UPDATE_PASSWORD = 6;
-  private static final int METHODID_GET_TOTAL_BALANCE = 7;
-  private static final int METHODID_GET_TOTAL_STAKE = 8;
-  private static final int METHODID_GET_VALIDATOR_ADDRESS = 9;
-  private static final int METHODID_GET_ADDRESS_INFO = 10;
-  private static final int METHODID_SET_ADDRESS_LABEL = 11;
-  private static final int METHODID_GET_NEW_ADDRESS = 12;
-  private static final int METHODID_LIST_ADDRESSES = 13;
-  private static final int METHODID_SIGN_MESSAGE = 14;
-  private static final int METHODID_SIGN_RAW_TRANSACTION = 15;
-  private static final int METHODID_LIST_TRANSACTIONS = 16;
-  private static final int METHODID_SET_DEFAULT_FEE = 17;
-  private static final int METHODID_GET_MNEMONIC = 18;
-  private static final int METHODID_GET_PRIVATE_KEY = 19;
+  private static final int METHODID_MIGRATE_WALLET = 2;
+  private static final int METHODID_LOAD_WALLET = 3;
+  private static final int METHODID_UNLOAD_WALLET = 4;
+  private static final int METHODID_LIST_WALLETS = 5;
+  private static final int METHODID_GET_WALLET_INFO = 6;
+  private static final int METHODID_UPDATE_PASSWORD = 7;
+  private static final int METHODID_GET_TOTAL_BALANCE = 8;
+  private static final int METHODID_GET_TOTAL_STAKE = 9;
+  private static final int METHODID_GET_VALIDATOR_ADDRESS = 10;
+  private static final int METHODID_GET_ADDRESS_INFO = 11;
+  private static final int METHODID_SET_ADDRESS_LABEL = 12;
+  private static final int METHODID_GET_NEW_ADDRESS = 13;
+  private static final int METHODID_LIST_ADDRESSES = 14;
+  private static final int METHODID_SIGN_MESSAGE = 15;
+  private static final int METHODID_SIGN_RAW_TRANSACTION = 16;
+  private static final int METHODID_LIST_TRANSACTIONS = 17;
+  private static final int METHODID_SET_DEFAULT_FEE = 18;
+  private static final int METHODID_GET_MNEMONIC = 19;
+  private static final int METHODID_GET_PRIVATE_KEY = 20;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1901,6 +1985,10 @@ public final class WalletGrpc {
         case METHODID_RESTORE_WALLET:
           serviceImpl.restoreWallet((pactus.WalletOuterClass.RestoreWalletRequest) request,
               (io.grpc.stub.StreamObserver<pactus.WalletOuterClass.RestoreWalletResponse>) responseObserver);
+          break;
+        case METHODID_MIGRATE_WALLET:
+          serviceImpl.migrateWallet((pactus.WalletOuterClass.MigrateWalletRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.WalletOuterClass.MigrateWalletResponse>) responseObserver);
           break;
         case METHODID_LOAD_WALLET:
           serviceImpl.loadWallet((pactus.WalletOuterClass.LoadWalletRequest) request,
@@ -2006,6 +2094,13 @@ public final class WalletGrpc {
               pactus.WalletOuterClass.RestoreWalletRequest,
               pactus.WalletOuterClass.RestoreWalletResponse>(
                 service, METHODID_RESTORE_WALLET)))
+        .addMethod(
+          getMigrateWalletMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              pactus.WalletOuterClass.MigrateWalletRequest,
+              pactus.WalletOuterClass.MigrateWalletResponse>(
+                service, METHODID_MIGRATE_WALLET)))
         .addMethod(
           getLoadWalletMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -2182,6 +2277,7 @@ public final class WalletGrpc {
               .setSchemaDescriptor(new WalletFileDescriptorSupplier())
               .addMethod(getCreateWalletMethod())
               .addMethod(getRestoreWalletMethod())
+              .addMethod(getMigrateWalletMethod())
               .addMethod(getLoadWalletMethod())
               .addMethod(getUnloadWalletMethod())
               .addMethod(getListWalletsMethod())

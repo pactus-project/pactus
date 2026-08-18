@@ -22,6 +22,7 @@ func WalletClientCommand(options ...client.Option) *cobra.Command {
 	cmd.AddCommand(
 		_WalletCreateWalletCommand(cfg),
 		_WalletRestoreWalletCommand(cfg),
+		_WalletMigrateWalletCommand(cfg),
 		_WalletLoadWalletCommand(cfg),
 		_WalletUnloadWalletCommand(cfg),
 		_WalletListWalletsCommand(cfg),
@@ -127,6 +128,48 @@ func _WalletRestoreWalletCommand(cfg *client.Config) *cobra.Command {
 	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "The name for the restored wallet.")
 	cmd.PersistentFlags().StringVar(&req.Mnemonic, cfg.FlagNamer("Mnemonic"), "", "The mnemonic (seed phrase) for wallet recovery.")
 	cmd.PersistentFlags().StringVar(&req.Password, cfg.FlagNamer("Password"), "", "Password to secure the restored wallet.")
+
+	return cmd
+}
+
+func _WalletMigrateWalletCommand(cfg *client.Config) *cobra.Command {
+	req := &MigrateWalletRequest{}
+
+	cmd := &cobra.Command{
+		Use:   cfg.CommandNamer("MigrateWallet"),
+		Short: "MigrateWallet RPC client",
+		Long:  "MigrateWallet migrates a legacy JSON wallet to the SQLite format in place.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "MigrateWallet"); err != nil {
+					return err
+				}
+			}
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+				cli := NewWalletClient(cc)
+				v := &MigrateWalletRequest{}
+
+				if err := in(v); err != nil {
+					return err
+				}
+				proto.Merge(v, req)
+
+				res, err := cli.MigrateWallet(cmd.Context(), v)
+
+				if err != nil {
+					return err
+				}
+
+				return out(res)
+
+			})
+		},
+	}
+
+	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "The name of the wallet to migrate.")
 
 	return cmd
 }

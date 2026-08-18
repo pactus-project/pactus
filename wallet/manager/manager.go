@@ -132,6 +132,29 @@ func (wm *Manager) RestoreWallet(walletName, mnemonic, password string) error {
 	return wm.createWalletWithMnemonic(walletName, mnemonic, password)
 }
 
+func (wm *Manager) MigrateWallet(walletName string) error {
+	walletPath, err := wm.getWalletPath(walletName)
+	if err != nil {
+		return err
+	}
+
+	if err := wallet.Migrate(wm.ctx, walletPath); err != nil {
+		return err
+	}
+
+	// Reload the migrated wallet and replace the previous in-memory instance.
+	wlt, err := wallet.Open(wm.ctx, walletPath,
+		wallet.WithBlockchainProvider(wm.provider),
+		wallet.WithEventPipe(wm.eventPipe))
+	if err != nil {
+		return err
+	}
+
+	wm.wallets[walletName] = wlt
+
+	return nil
+}
+
 func (wm *Manager) NewAddress(walletName string, addressType crypto.AddressType, label string,
 	opts ...wallet.NewAddressOption,
 ) (*types.AddressInfo, error) {

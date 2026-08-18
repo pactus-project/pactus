@@ -141,6 +141,48 @@ func TestRestoreWallet(t *testing.T) {
 	})
 }
 
+func TestMigrateWallet(t *testing.T) {
+	conf := testConfig()
+	conf.EnableWallet = true
+
+	td := setup(t, conf)
+	client := td.walletClient(t)
+
+	t.Run("No wallet name, should return an error", func(t *testing.T) {
+		res, err := client.MigrateWallet(t.Context(),
+			&pactus.MigrateWalletRequest{})
+		require.Error(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("Migrate wallet failed", func(t *testing.T) {
+		td.FakeWalletMgr.EXPECT().
+			MigrateWallet("test").
+			Return(errors.New("error on migrating wallet"))
+
+		res, err := client.MigrateWallet(t.Context(),
+			&pactus.MigrateWalletRequest{
+				WalletName: "test",
+			})
+		require.Error(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("Migrate wallet successfully", func(t *testing.T) {
+		td.FakeWalletMgr.EXPECT().
+			MigrateWallet("test").
+			Return(nil)
+
+		res, err := client.MigrateWallet(t.Context(),
+			&pactus.MigrateWalletRequest{
+				WalletName: "test",
+			})
+		require.NoError(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, "test", res.WalletName)
+	})
+}
+
 func TestGetTotalBalance(t *testing.T) {
 	conf := testConfig()
 	conf.EnableWallet = true

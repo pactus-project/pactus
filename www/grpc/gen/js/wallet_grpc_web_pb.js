@@ -201,6 +201,67 @@ proto.pactus.WalletPromiseClient.prototype.restoreWallet =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.MigrateWalletRequest,
+ *   !proto.pactus.MigrateWalletResponse>}
+ */
+const methodDescriptor_Wallet_MigrateWallet = new grpc.web.MethodDescriptor(
+  '/pactus.Wallet/MigrateWallet',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.MigrateWalletRequest,
+  proto.pactus.MigrateWalletResponse,
+  /**
+   * @param {!proto.pactus.MigrateWalletRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.MigrateWalletResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.MigrateWalletRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.MigrateWalletResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.MigrateWalletResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.WalletClient.prototype.migrateWallet =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Wallet/MigrateWallet',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_MigrateWallet,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.MigrateWalletRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.MigrateWalletResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.WalletPromiseClient.prototype.migrateWallet =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Wallet/MigrateWallet',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_MigrateWallet);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.pactus.LoadWalletRequest,
  *   !proto.pactus.LoadWalletResponse>}
  */

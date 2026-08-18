@@ -3348,6 +3348,30 @@ pub mod wallet_client {
                 .insert(GrpcMethod::new("pactus.Wallet", "RestoreWallet"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn migrate_wallet(
+            &mut self,
+            request: impl tonic::IntoRequest<super::MigrateWalletRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::MigrateWalletResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pactus.Wallet/MigrateWallet",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pactus.Wallet", "MigrateWallet"));
+            self.inner.unary(req, path, codec).await
+        }
         pub async fn load_wallet(
             &mut self,
             request: impl tonic::IntoRequest<super::LoadWalletRequest>,
@@ -3803,6 +3827,13 @@ pub mod wallet_server {
             tonic::Response<super::RestoreWalletResponse>,
             tonic::Status,
         >;
+        async fn migrate_wallet(
+            &self,
+            request: tonic::Request<super::MigrateWalletRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::MigrateWalletResponse>,
+            tonic::Status,
+        >;
         async fn load_wallet(
             &self,
             request: tonic::Request<super::LoadWalletRequest>,
@@ -4081,6 +4112,51 @@ pub mod wallet_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = RestoreWalletSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pactus.Wallet/MigrateWallet" => {
+                    #[allow(non_camel_case_types)]
+                    struct MigrateWalletSvc<T: Wallet>(pub Arc<T>);
+                    impl<
+                        T: Wallet,
+                    > tonic::server::UnaryService<super::MigrateWalletRequest>
+                    for MigrateWalletSvc<T> {
+                        type Response = super::MigrateWalletResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::MigrateWalletRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Wallet>::migrate_wallet(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = MigrateWalletSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

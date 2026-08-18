@@ -108,6 +108,22 @@ func (s *walletServer) RestoreWallet(_ context.Context,
 	}, nil
 }
 
+func (s *walletServer) MigrateWallet(_ context.Context,
+	req *pactus.MigrateWalletRequest,
+) (*pactus.MigrateWalletResponse, error) {
+	if req.WalletName == "" {
+		return nil, errors.New("wallet name is required")
+	}
+
+	if err := s.walletManager.MigrateWallet(req.WalletName); err != nil {
+		return nil, err
+	}
+
+	return &pactus.MigrateWalletResponse{
+		WalletName: req.WalletName,
+	}, nil
+}
+
 func (*walletServer) LoadWallet(_ context.Context,
 	req *pactus.LoadWalletRequest,
 ) (*pactus.LoadWalletResponse, error) {

@@ -101,6 +101,10 @@ http:
       post: "/pactus/wallet/restore_wallet"
       body: "*"
 
+    - selector: pactus.Wallet.MigrateWallet
+      post: "/pactus/wallet/migrate_wallet"
+      body: "*"
+
     - selector: pactus.Wallet.LoadWallet
       post: "/pactus/wallet/load_wallet"
       body: "*"

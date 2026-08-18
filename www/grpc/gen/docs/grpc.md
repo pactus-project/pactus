@@ -172,6 +172,10 @@ For seamless integration with Pactus, you can use these client libraries:
           <span class="rpc-badge"></span>RestoreWallet</a>
         </li>
         <li>
+          <a href="#pactus.Wallet.MigrateWallet">
+          <span class="rpc-badge"></span>MigrateWallet</a>
+        </li>
+        <li>
           <a href="#pactus.Wallet.LoadWallet">
           <span class="rpc-badge"></span>LoadWallet</a>
         </li>
@@ -3850,6 +3854,42 @@ signing, verification, and other cryptographic operations.</p>
     <td> string</td>
     <td>
   The name of the restored wallet.
+    </td>
+  </tr>
+   </tbody>
+</table>
+
+#### MigrateWallet <span id="pactus.Wallet.MigrateWallet" class="rpc-badge"></span>
+
+<p>MigrateWallet migrates a legacy JSON wallet to the SQLite format in place.</p>
+
+<h4>MigrateWalletRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+  The name of the wallet to migrate.
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<h4>MigrateWalletResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+  The name of the migrated wallet.
     </td>
   </tr>
    </tbody>

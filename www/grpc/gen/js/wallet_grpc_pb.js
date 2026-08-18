@@ -291,6 +291,28 @@ function deserialize_pactus_LoadWalletResponse(buffer_arg) {
   return wallet_pb.LoadWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_MigrateWalletRequest(arg) {
+  if (!(arg instanceof wallet_pb.MigrateWalletRequest)) {
+    throw new Error('Expected argument of type pactus.MigrateWalletRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_MigrateWalletRequest(buffer_arg) {
+  return wallet_pb.MigrateWalletRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_MigrateWalletResponse(arg) {
+  if (!(arg instanceof wallet_pb.MigrateWalletResponse)) {
+    throw new Error('Expected argument of type pactus.MigrateWalletResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_MigrateWalletResponse(buffer_arg) {
+  return wallet_pb.MigrateWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_RestoreWalletRequest(arg) {
   if (!(arg instanceof wallet_pb.RestoreWalletRequest)) {
     throw new Error('Expected argument of type pactus.RestoreWalletRequest');
@@ -471,6 +493,18 @@ restoreWallet: {
     requestDeserialize: deserialize_pactus_RestoreWalletRequest,
     responseSerialize: serialize_pactus_RestoreWalletResponse,
     responseDeserialize: deserialize_pactus_RestoreWalletResponse,
+  },
+  // MigrateWallet migrates a legacy JSON wallet to the SQLite format in place.
+migrateWallet: {
+    path: '/pactus.Wallet/MigrateWallet',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.MigrateWalletRequest,
+    responseType: wallet_pb.MigrateWalletResponse,
+    requestSerialize: serialize_pactus_MigrateWalletRequest,
+    requestDeserialize: deserialize_pactus_MigrateWalletRequest,
+    responseSerialize: serialize_pactus_MigrateWalletResponse,
+    responseDeserialize: deserialize_pactus_MigrateWalletResponse,
   },
   // LoadWallet loads an existing wallet with the given name.
 // deprecated: It will be removed in a future version.

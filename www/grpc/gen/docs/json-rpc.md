@@ -222,6 +222,10 @@ curl --location 'http://localhost:8545/' \
           <span class="rpc-badge"></span>pactus.wallet.restore_wallet</a>
         </li>
         <li>
+          <a href="#pactus.wallet.migrate_wallet">
+          <span class="rpc-badge"></span>pactus.wallet.migrate_wallet</a>
+        </li>
+        <li>
           <a href="#pactus.wallet.load_wallet">
           <span class="rpc-badge"></span>pactus.wallet.load_wallet</a>
         </li>
@@ -3869,6 +3873,41 @@ signing, verification, and other cryptographic operations.</p>
     <td> string</td>
     <td>
   The name of the restored wallet.
+    </td>
+  </tr>
+   </tbody>
+</table>
+
+#### pactus.wallet.migrate_wallet <span id="pactus.wallet.migrate_wallet" class="rpc-badge"></span>
+
+<p>MigrateWallet migrates a legacy JSON wallet to the SQLite format in place.</p>
+
+<h4>Parameters</h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+  The name of the wallet to migrate.
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<h4>Result</h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+  <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider"><tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+  The name of the migrated wallet.
     </td>
   </tr>
    </tbody>

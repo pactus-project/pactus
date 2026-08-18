@@ -466,6 +466,119 @@ class RestoreWalletResponse extends $pb.GeneratedMessage {
   void clearWalletName() => $_clearField(1);
 }
 
+/// Request message for migrating a legacy JSON wallet to the SQLite format.
+class MigrateWalletRequest extends $pb.GeneratedMessage {
+  factory MigrateWalletRequest({
+    $core.String? walletName,
+  }) {
+    final result = create();
+    if (walletName != null) result.walletName = walletName;
+    return result;
+  }
+
+  MigrateWalletRequest._();
+
+  factory MigrateWalletRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory MigrateWalletRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'MigrateWalletRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'walletName')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  MigrateWalletRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  MigrateWalletRequest copyWith(void Function(MigrateWalletRequest) updates) =>
+      super.copyWith((message) => updates(message as MigrateWalletRequest))
+          as MigrateWalletRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static MigrateWalletRequest create() => MigrateWalletRequest._();
+  @$core.override
+  MigrateWalletRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static MigrateWalletRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<MigrateWalletRequest>(create);
+  static MigrateWalletRequest? _defaultInstance;
+
+  /// The name of the wallet to migrate.
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => $_clearField(1);
+}
+
+/// Response message confirming wallet migration.
+class MigrateWalletResponse extends $pb.GeneratedMessage {
+  factory MigrateWalletResponse({
+    $core.String? walletName,
+  }) {
+    final result = create();
+    if (walletName != null) result.walletName = walletName;
+    return result;
+  }
+
+  MigrateWalletResponse._();
+
+  factory MigrateWalletResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory MigrateWalletResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'MigrateWalletResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'walletName')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  MigrateWalletResponse clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  MigrateWalletResponse copyWith(
+          void Function(MigrateWalletResponse) updates) =>
+      super.copyWith((message) => updates(message as MigrateWalletResponse))
+          as MigrateWalletResponse;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static MigrateWalletResponse create() => MigrateWalletResponse._();
+  @$core.override
+  MigrateWalletResponse createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static MigrateWalletResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<MigrateWalletResponse>(create);
+  static MigrateWalletResponse? _defaultInstance;
+
+  /// The name of the migrated wallet.
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => $_clearField(1);
+}
+
 /// Request message for creating a new wallet.
 class CreateWalletRequest extends $pb.GeneratedMessage {
   factory CreateWalletRequest({
@@ -3264,6 +3377,12 @@ class WalletApi {
           $pb.ClientContext? ctx, RestoreWalletRequest request) =>
       _client.invoke<RestoreWalletResponse>(
           ctx, 'Wallet', 'RestoreWallet', request, RestoreWalletResponse());
+
+  /// MigrateWallet migrates a legacy JSON wallet to the SQLite format in place.
+  $async.Future<MigrateWalletResponse> migrateWallet(
+          $pb.ClientContext? ctx, MigrateWalletRequest request) =>
+      _client.invoke<MigrateWalletResponse>(
+          ctx, 'Wallet', 'MigrateWallet', request, MigrateWalletResponse());
 
   /// LoadWallet loads an existing wallet with the given name.
   /// deprecated: It will be removed in a future version.

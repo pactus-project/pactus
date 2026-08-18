@@ -17,7 +17,7 @@ import (
 	tx "github.com/pactus-project/pactus/types/tx"
 	wallet "github.com/pactus-project/pactus/wallet"
 	types "github.com/pactus-project/pactus/wallet/types"
-	"go.uber.org/mock/gomock"
+	gomock "go.uber.org/mock/gomock"
 )
 
 // MockWalletManager is a mock of WalletManager interface.
@@ -267,6 +267,20 @@ func (mr *MockWalletManagerMockRecorder) MakeWithdrawTx(walletName, sender, rece
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]any{walletName, sender, receiver, amt}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MakeWithdrawTx", reflect.TypeOf((*MockWalletManager)(nil).MakeWithdrawTx), varargs...)
+}
+
+// MigrateWallet mocks base method.
+func (m *MockWalletManager) MigrateWallet(walletName string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MigrateWallet", walletName)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// MigrateWallet indicates an expected call of MigrateWallet.
+func (mr *MockWalletManagerMockRecorder) MigrateWallet(walletName any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MigrateWallet", reflect.TypeOf((*MockWalletManager)(nil).MigrateWallet), walletName)
 }
 
 // Mnemonic mocks base method.

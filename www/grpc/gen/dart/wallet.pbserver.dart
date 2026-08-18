@@ -25,6 +25,8 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
       $pb.ServerContext ctx, $1.CreateWalletRequest request);
   $async.Future<$1.RestoreWalletResponse> restoreWallet(
       $pb.ServerContext ctx, $1.RestoreWalletRequest request);
+  $async.Future<$1.MigrateWalletResponse> migrateWallet(
+      $pb.ServerContext ctx, $1.MigrateWalletRequest request);
   $async.Future<$1.LoadWalletResponse> loadWallet(
       $pb.ServerContext ctx, $1.LoadWalletRequest request);
   $async.Future<$1.UnloadWalletResponse> unloadWallet(
@@ -68,6 +70,8 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
         return $1.CreateWalletRequest();
       case 'RestoreWallet':
         return $1.RestoreWalletRequest();
+      case 'MigrateWallet':
+        return $1.MigrateWalletRequest();
       case 'LoadWallet':
         return $1.LoadWalletRequest();
       case 'UnloadWallet':
@@ -116,6 +120,8 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
         return createWallet(ctx, request as $1.CreateWalletRequest);
       case 'RestoreWallet':
         return restoreWallet(ctx, request as $1.RestoreWalletRequest);
+      case 'MigrateWallet':
+        return migrateWallet(ctx, request as $1.MigrateWalletRequest);
       case 'LoadWallet':
         return loadWallet(ctx, request as $1.LoadWalletRequest);
       case 'UnloadWallet':
