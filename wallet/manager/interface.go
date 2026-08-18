@@ -16,6 +16,7 @@ type WalletManager interface {
 	GetValidatorAddress(publicKey string) (string, error)
 	CreateWallet(walletName, password string) (string, error)
 	RestoreWallet(walletName, mnemonic, password string) error
+	MigrateWallet(walletName string) error
 
 	ListWallets() ([]string, error)
 	WalletInfo(walletName string) (*types.WalletInfo, error)

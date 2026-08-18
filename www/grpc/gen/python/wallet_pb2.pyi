@@ -93,6 +93,18 @@ class RestoreWalletResponse(_message.Message):
     wallet_name: str
     def __init__(self, wallet_name: _Optional[str] = ...) -> None: ...
 
+class MigrateWalletRequest(_message.Message):
+    __slots__ = ()
+    WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
+    wallet_name: str
+    def __init__(self, wallet_name: _Optional[str] = ...) -> None: ...
+
+class MigrateWalletResponse(_message.Message):
+    __slots__ = ()
+    WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
+    wallet_name: str
+    def __init__(self, wallet_name: _Optional[str] = ...) -> None: ...
+
 class CreateWalletRequest(_message.Message):
     __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]

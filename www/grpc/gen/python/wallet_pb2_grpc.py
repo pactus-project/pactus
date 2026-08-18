@@ -25,6 +25,11 @@ class WalletStub:
                 request_serializer=wallet__pb2.RestoreWalletRequest.SerializeToString,
                 response_deserializer=wallet__pb2.RestoreWalletResponse.FromString,
                 _registered_method=True)
+        self.MigrateWallet = channel.unary_unary(
+                '/pactus.Wallet/MigrateWallet',
+                request_serializer=wallet__pb2.MigrateWalletRequest.SerializeToString,
+                response_deserializer=wallet__pb2.MigrateWalletResponse.FromString,
+                _registered_method=True)
         self.LoadWallet = channel.unary_unary(
                 '/pactus.Wallet/LoadWallet',
                 request_serializer=wallet__pb2.LoadWalletRequest.SerializeToString,
@@ -130,6 +135,13 @@ class WalletServicer:
 
     def RestoreWallet(self, request, context):
         """RestoreWallet restores an existing wallet with the given mnemonic.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def MigrateWallet(self, request, context):
+        """MigrateWallet migrates a legacy JSON wallet to the SQLite format in place.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -278,6 +290,11 @@ def add_WalletServicer_to_server(servicer, server):
                     request_deserializer=wallet__pb2.RestoreWalletRequest.FromString,
                     response_serializer=wallet__pb2.RestoreWalletResponse.SerializeToString,
             ),
+            'MigrateWallet': grpc.unary_unary_rpc_method_handler(
+                    servicer.MigrateWallet,
+                    request_deserializer=wallet__pb2.MigrateWalletRequest.FromString,
+                    response_serializer=wallet__pb2.MigrateWalletResponse.SerializeToString,
+            ),
             'LoadWallet': grpc.unary_unary_rpc_method_handler(
                     servicer.LoadWallet,
                     request_deserializer=wallet__pb2.LoadWalletRequest.FromString,
@@ -424,6 +441,33 @@ class Wallet:
             '/pactus.Wallet/RestoreWallet',
             wallet__pb2.RestoreWalletRequest.SerializeToString,
             wallet__pb2.RestoreWalletResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def MigrateWallet(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/pactus.Wallet/MigrateWallet',
+            wallet__pb2.MigrateWalletRequest.SerializeToString,
+            wallet__pb2.MigrateWalletResponse.FromString,
             options,
             channel_credentials,
             insecure,

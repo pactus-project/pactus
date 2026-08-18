@@ -1356,6 +1356,20 @@ pub struct RestoreWalletResponse {
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,
 }
+/// Request message for migrating a legacy JSON wallet to the SQLite format.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct MigrateWalletRequest {
+    /// The name of the wallet to migrate.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+}
+/// Response message confirming wallet migration.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct MigrateWalletResponse {
+    /// The name of the migrated wallet.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+}
 /// Request message for creating a new wallet.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct CreateWalletRequest {

@@ -1393,6 +1393,40 @@
         ]
       }
     },
+    "/pactus/wallet/migrate_wallet": {
+      "post": {
+        "summary": "MigrateWallet migrates a legacy JSON wallet to the SQLite format in place.",
+        "operationId": "Wallet_MigrateWallet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusMigrateWalletResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "Request message for migrating a legacy JSON wallet to the SQLite format.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusMigrateWalletRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
     "/pactus/wallet/restore_wallet": {
       "post": {
         "summary": "RestoreWallet restores an existing wallet with the given mnemonic.",
@@ -2763,6 +2797,26 @@
         }
       },
       "description": "MetricInfo contains metrics data regarding network activity."
+    },
+    "pactusMigrateWalletRequest": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name of the wallet to migrate."
+        }
+      },
+      "description": "Request message for migrating a legacy JSON wallet to the SQLite format."
+    },
+    "pactusMigrateWalletResponse": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name of the migrated wallet."
+        }
+      },
+      "description": "Response message confirming wallet migration."
     },
     "pactusPayloadBatchTransfer": {
       "type": "object",

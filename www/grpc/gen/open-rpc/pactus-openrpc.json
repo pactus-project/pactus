@@ -900,6 +900,23 @@
           }
         }
       },{
+      "name": "pactus.wallet.migrate_wallet",
+      "description": "MigrateWallet migrates a legacy JSON wallet to the SQLite format in place.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
+      "params": [{
+          "name": "wallet_name",
+          "description": "The name of the wallet to migrate.",
+          "schema": { "type": "string" }
+        }],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object","required": ["wallet_name"],
+          "properties": {"wallet_name": { "type": "string" }}
+          }
+        }
+      },{
       "name": "pactus.wallet.load_wallet",
       "description": "LoadWallet loads an existing wallet with the given name. deprecated: It will be removed in a future version.",
       "tags": [{ "name": "wallet"}],

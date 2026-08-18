@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	Wallet_CreateWallet_FullMethodName        = "/pactus.Wallet/CreateWallet"
 	Wallet_RestoreWallet_FullMethodName       = "/pactus.Wallet/RestoreWallet"
+	Wallet_MigrateWallet_FullMethodName       = "/pactus.Wallet/MigrateWallet"
 	Wallet_LoadWallet_FullMethodName          = "/pactus.Wallet/LoadWallet"
 	Wallet_UnloadWallet_FullMethodName        = "/pactus.Wallet/UnloadWallet"
 	Wallet_ListWallets_FullMethodName         = "/pactus.Wallet/ListWallets"
@@ -51,6 +52,8 @@ type WalletClient interface {
 	CreateWallet(ctx context.Context, in *CreateWalletRequest, opts ...grpc.CallOption) (*CreateWalletResponse, error)
 	// RestoreWallet restores an existing wallet with the given mnemonic.
 	RestoreWallet(ctx context.Context, in *RestoreWalletRequest, opts ...grpc.CallOption) (*RestoreWalletResponse, error)
+	// MigrateWallet migrates a legacy JSON wallet to the SQLite format in place.
+	MigrateWallet(ctx context.Context, in *MigrateWalletRequest, opts ...grpc.CallOption) (*MigrateWalletResponse, error)
 	// LoadWallet loads an existing wallet with the given name.
 	// deprecated: It will be removed in a future version.
 	LoadWallet(ctx context.Context, in *LoadWalletRequest, opts ...grpc.CallOption) (*LoadWalletResponse, error)
@@ -115,6 +118,16 @@ func (c *walletClient) RestoreWallet(ctx context.Context, in *RestoreWalletReque
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RestoreWalletResponse)
 	err := c.cc.Invoke(ctx, Wallet_RestoreWallet_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *walletClient) MigrateWallet(ctx context.Context, in *MigrateWalletRequest, opts ...grpc.CallOption) (*MigrateWalletResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MigrateWalletResponse)
+	err := c.cc.Invoke(ctx, Wallet_MigrateWallet_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -311,6 +324,8 @@ type WalletServer interface {
 	CreateWallet(context.Context, *CreateWalletRequest) (*CreateWalletResponse, error)
 	// RestoreWallet restores an existing wallet with the given mnemonic.
 	RestoreWallet(context.Context, *RestoreWalletRequest) (*RestoreWalletResponse, error)
+	// MigrateWallet migrates a legacy JSON wallet to the SQLite format in place.
+	MigrateWallet(context.Context, *MigrateWalletRequest) (*MigrateWalletResponse, error)
 	// LoadWallet loads an existing wallet with the given name.
 	// deprecated: It will be removed in a future version.
 	LoadWallet(context.Context, *LoadWalletRequest) (*LoadWalletResponse, error)
@@ -365,6 +380,9 @@ func (UnimplementedWalletServer) CreateWallet(context.Context, *CreateWalletRequ
 }
 func (UnimplementedWalletServer) RestoreWallet(context.Context, *RestoreWalletRequest) (*RestoreWalletResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method RestoreWallet not implemented")
+}
+func (UnimplementedWalletServer) MigrateWallet(context.Context, *MigrateWalletRequest) (*MigrateWalletResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method MigrateWallet not implemented")
 }
 func (UnimplementedWalletServer) LoadWallet(context.Context, *LoadWalletRequest) (*LoadWalletResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method LoadWallet not implemented")
@@ -472,6 +490,24 @@ func _Wallet_RestoreWallet_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(WalletServer).RestoreWallet(ctx, req.(*RestoreWalletRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Wallet_MigrateWallet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MigrateWalletRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).MigrateWallet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Wallet_MigrateWallet_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).MigrateWallet(ctx, req.(*MigrateWalletRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -814,6 +850,10 @@ var Wallet_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RestoreWallet",
 			Handler:    _Wallet_RestoreWallet_Handler,
+		},
+		{
+			MethodName: "MigrateWallet",
+			Handler:    _Wallet_MigrateWallet_Handler,
 		},
 		{
 			MethodName: "LoadWallet",
