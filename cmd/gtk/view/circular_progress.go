@@ -49,8 +49,8 @@ func NewCircularProgress(size int) *CircularProgress {
 		label:   label,
 	}
 
-	area.SetDrawFunc(func(_ *gtk.DrawingArea, cr *cairo.Context, width, height int) {
-		progress.draw(cr, width, height)
+	area.SetDrawFunc(func(_ *gtk.DrawingArea, cairoCtx *cairo.Context, width, height int) {
+		progress.draw(cairoCtx, width, height)
 	})
 
 	return progress
@@ -64,7 +64,7 @@ func (cp *CircularProgress) SetFraction(fraction float64) {
 	cp.area.QueueDraw()
 }
 
-func (cp *CircularProgress) draw(cr *cairo.Context, width, height int) {
+func (cp *CircularProgress) draw(cairoCtx *cairo.Context, width, height int) {
 	w := float64(width)
 	h := float64(height)
 	lineWidth := math.Max(6, math.Min(w, h)*0.09)
@@ -72,21 +72,21 @@ func (cp *CircularProgress) draw(cr *cairo.Context, width, height int) {
 	centerX := w / 2
 	centerY := h / 2
 
-	cr.SetLineWidth(lineWidth)
-	cr.SetLineCap(cairo.LineCapRound)
+	cairoCtx.SetLineWidth(lineWidth)
+	cairoCtx.SetLineCap(cairo.LineCapRound)
 
 	// Track: widget foreground color at low opacity, so it adapts to the theme.
 	fg := cp.area.Color()
-	cr.SetSourceRGBA(float64(fg.Red()), float64(fg.Green()), float64(fg.Blue()), 0.15)
-	cr.Arc(centerX, centerY, radius, 0, 2*math.Pi)
-	cr.Stroke()
+	cairoCtx.SetSourceRGBA(float64(fg.Red()), float64(fg.Green()), float64(fg.Blue()), 0.15)
+	cairoCtx.Arc(centerX, centerY, radius, 0, 2*math.Pi)
+	cairoCtx.Stroke()
 
 	// Progress arc, clockwise starting from the top (-90 degrees).
 	if cp.fraction > 0 {
 		start := -math.Pi / 2
 		end := start + 2*math.Pi*cp.fraction
-		cr.SetSourceRGBA(accentRed, accentGreen, accentBlue, 1)
-		cr.Arc(centerX, centerY, radius, start, end)
-		cr.Stroke()
+		cairoCtx.SetSourceRGBA(accentRed, accentGreen, accentBlue, 1)
+		cairoCtx.Arc(centerX, centerY, radius, start, end)
+		cairoCtx.Stroke()
 	}
 }

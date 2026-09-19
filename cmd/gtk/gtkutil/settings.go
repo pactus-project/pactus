@@ -26,7 +26,7 @@ func SaveDarkMode(dark bool) {
 		return
 	}
 
-	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(path), 0o750); err != nil {
 		return
 	}
 
@@ -35,7 +35,7 @@ func SaveDarkMode(dark bool) {
 		value = "1"
 	}
 
-	_ = os.WriteFile(path, []byte(value), 0o644)
+	_ = os.WriteFile(path, []byte(value), 0o600)
 }
 
 // LoadDarkMode returns the persisted dark-mode choice. ok is false when the

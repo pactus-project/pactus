@@ -185,7 +185,7 @@ func (c *NodeWidgetController) setReachability(reachability string) {
 
 	if color != "" {
 		c.view.LabelReachability.SetMarkup(
-			fmt.Sprintf("<span foreground=\"%s\">%s</span>", color, reachability))
+			fmt.Sprintf("<span foreground=%q>%s</span>", color, reachability))
 
 		return
 	}
