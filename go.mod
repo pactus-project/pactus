@@ -8,7 +8,7 @@ require (
 	github.com/c-bata/go-prompt v0.2.6
 	github.com/consensys/gnark-crypto v0.20.1
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.1
-	github.com/diamondburned/gotk4-adwaita/pkg v0.0.0-20250703085337-e94555b846b6
+	github.com/diamondburned/gotk4-adwaita/pkg v0.0.0-20250703085740-f81761ef0e0d
 	github.com/diamondburned/gotk4/pkg v0.3.2-0.20250703063411-16654385f59a
 	github.com/fxamacker/cbor/v2 v2.9.2
 	github.com/glebarez/go-sqlite v1.22.1-0.20250214171204-e6de9fc0c320
