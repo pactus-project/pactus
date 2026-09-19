@@ -12,5 +12,8 @@ func forceEnglishUILanguage() {
 	const langEnUS = 0x0409
 
 	proc := windows.NewLazySystemDLL("kernel32.dll").NewProc("SetThreadUILanguage")
+	// A failure here is harmless: the built-in strings then keep following
+	// the Windows display language.
+	//nolint:dogsled // Win32 entry points always return three values
 	_, _, _ = proc.Call(uintptr(langEnUS))
 }
