@@ -8,7 +8,8 @@ require (
 	github.com/c-bata/go-prompt v0.2.6
 	github.com/consensys/gnark-crypto v0.20.1
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.1
-	github.com/diamondburned/gotk4/pkg v0.3.1
+	github.com/diamondburned/gotk4-adwaita/pkg v0.0.0-20250703085740-f81761ef0e0d
+	github.com/diamondburned/gotk4/pkg v0.3.2-0.20250703063411-16654385f59a
 	github.com/fxamacker/cbor/v2 v2.9.2
 	github.com/glebarez/go-sqlite v1.22.1-0.20250214171204-e6de9fc0c320
 	github.com/go-zeromq/zmq4 v0.17.0
@@ -49,6 +50,7 @@ require (
 	go.uber.org/mock v0.6.0
 	golang.org/x/crypto v0.53.0
 	golang.org/x/exp v0.0.0-20260611194520-c48552f49976
+	golang.org/x/sys v0.46.0
 	golang.org/x/term v0.44.0
 	google.golang.org/grpc v1.81.1
 	google.golang.org/protobuf v1.36.11
@@ -176,7 +178,6 @@ require (
 	golang.org/x/mod v0.37.0 // indirect
 	golang.org/x/net v0.56.0 // indirect
 	golang.org/x/sync v0.21.0 // indirect
-	golang.org/x/sys v0.46.0 // indirect
 	golang.org/x/telemetry v0.0.0-20260619171412-e028bae49277 // indirect
 	golang.org/x/text v0.38.0 // indirect
 	golang.org/x/time v0.15.0 // indirect

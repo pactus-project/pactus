@@ -39,11 +39,11 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt update
-          sudo apt install -y libgtk-4-dev libcairo2-dev libglib2.0-dev gobject-introspection libgtksourceview-5-dev
+          sudo apt install -y libgtk-4-dev libcairo2-dev libglib2.0-dev gobject-introspection libgtksourceview-5-dev libadwaita-1-dev
 
       - name: Install Dependencies (macOS)
         if: runner.os == 'macOS'
-        run: brew install gtk+4 gobject-introspection gtksourceview5
+        run: brew install gtk+4 gobject-introspection gtksourceview5 libadwaita
 
       - name: Setup MSYS2 and Dependencies (Windows)
         if: runner.os == 'Windows'
@@ -61,6 +61,7 @@ jobs:
             mingw-w64-x86_64-pkg-config
             mingw-w64-x86_64-gtksourceview5
             mingw-w64-x86_64-gobject-introspection
+            mingw-w64-x86_64-libadwaita
 
       #######################################################
       ## Caching Go modules and GTK dependencies

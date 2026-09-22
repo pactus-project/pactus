@@ -3,6 +3,7 @@
 package view
 
 import (
+	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd/gtk/assets"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
@@ -66,6 +67,14 @@ func NewSplashWindow(app *gtk.Application) *SplashWindow {
 func (s *SplashWindow) ShowAll() {
 	s.window.Present()
 	s.spinner.Start()
+
+	// The splash has no parent to center over and GTK4 cannot move a window,
+	// so center it natively once it has been mapped.
+	glib.TimeoutAdd(80, func() bool {
+		gtkutil.CenterActiveWindow()
+
+		return false
+	})
 }
 
 func (s *SplashWindow) Destroy() {
