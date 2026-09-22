@@ -7,7 +7,7 @@ import (
 
 	ret "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	"github.com/pactus-project/gopkg/logger"
-	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/gopkg/netutil"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/pacviewer/jrpc-gateway/jrpc"
 	"github.com/rs/cors"
@@ -77,7 +77,7 @@ func (s *Server) StartServer(grpcServer string) error {
 	server := jrpc.NewServer(opts...)
 	server.RegisterServices(blockchainService, networkService, transactionService, walletService, utilsService)
 
-	listener, err := util.NetworkListen(s.ctx, "tcp", s.config.Listen)
+	listener, err := netutil.NetworkListen(s.ctx, "tcp", s.config.Listen)
 	if err != nil {
 		return err
 	}

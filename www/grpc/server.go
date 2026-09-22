@@ -5,11 +5,11 @@ import (
 	"net"
 
 	"github.com/pactus-project/gopkg/logger"
+	"github.com/pactus-project/gopkg/netutil"
 	consmgr "github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
-	"github.com/pactus-project/pactus/util"
 	wltmgr "github.com/pactus-project/pactus/wallet/manager"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/pactus-project/pactus/www/zmq"
@@ -58,7 +58,7 @@ func (s *Server) StartServer() error {
 		return nil
 	}
 
-	listener, err := util.NetworkListen(s.ctx, "tcp", s.config.Listen)
+	listener, err := netutil.NetworkListen(s.ctx, "tcp", s.config.Listen)
 	if err != nil {
 		return err
 	}

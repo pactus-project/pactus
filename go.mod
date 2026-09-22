@@ -132,6 +132,7 @@ require (
 	github.com/multiformats/go-varint v0.1.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/ncruces/go-strftime v1.0.0 // indirect
+	github.com/pactus-project/gopkg/netutil v0.0.0-20260830111502-69bc38f13410 // indirect
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58 // indirect
 	github.com/pion/datachannel v1.6.1 // indirect
 	github.com/pion/dtls/v3 v3.1.4 // indirect

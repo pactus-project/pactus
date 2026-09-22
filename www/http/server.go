@@ -13,7 +13,7 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/pactus-project/gopkg/logger"
-	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/gopkg/netutil"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -130,7 +130,7 @@ func (s *Server) StartServer(grpcAddr string) error {
 		gwServer.Handler = allowCORS(gwServer.Handler)
 	}
 
-	listener, err := util.NetworkListen(s.ctx, "tcp", s.config.Listen)
+	listener, err := netutil.NetworkListen(s.ctx, "tcp", s.config.Listen)
 	if err != nil {
 		return err
 	}

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/libp2p/go-libp2p/core/peer"
+	"github.com/pactus-project/gopkg/netutil"
 	"github.com/pactus-project/gopkg/testsuite"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -895,7 +896,7 @@ func FindFreePort() int {
 	var freePort int
 	for {
 		// Find a free TCP port
-		listenerTCP, err := util.NetworkListen(context.Background(), "tcp", "127.0.0.1:0")
+		listenerTCP, err := netutil.NetworkListen(context.Background(), "tcp", "127.0.0.1:0")
 		if err != nil {
 			continue
 		}

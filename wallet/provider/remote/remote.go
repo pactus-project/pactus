@@ -8,6 +8,7 @@ import (
 	"net"
 	"time"
 
+	"github.com/pactus-project/gopkg/netutil"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
@@ -115,7 +116,7 @@ func (p *RemoteBlockchainProvider) connect() error {
 		conn, err := grpc.NewClient(server,
 			grpc.WithTransportCredentials(insecure.NewCredentials()),
 			grpc.WithContextDialer(func(ctx context.Context, address string) (net.Conn, error) {
-				return util.NetworkDialTimeout(ctx, "tcp", address, p.timeout)
+				return netutil.NetworkDialTimeout(ctx, "tcp", address, p.timeout)
 			}))
 		if err != nil {
 			continue

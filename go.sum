@@ -331,6 +331,8 @@ github.com/onsi/gomega v1.19.0/go.mod h1:LY+I3pBVzYsTBU1AnDwOSxaYi9WoWiqgwooUqq9
 github.com/opentracing/opentracing-go v1.1.0/go.mod h1:UkNAQd3GIcIGf0SeVgPpRdFStlNbqXla1AfSYxPUl2o=
 github.com/pactus-project/gopkg/logger v0.0.0-20260626092617-31cb0bb7de41 h1:UVRSy+5NPp/tPyDP+0HM90C5ycQSwAGQ/HtFOeAJmuo=
 github.com/pactus-project/gopkg/logger v0.0.0-20260626092617-31cb0bb7de41/go.mod h1:Lu4/oBpaS/aZJZvEyAZNLTuzAz/sjiXmKnNWgLY1FZU=
+github.com/pactus-project/gopkg/netutil v0.0.0-20260830111502-69bc38f13410 h1:1DozHWOBOGn6ghzmUo81EgmJ+FOT7Ezl6EOxBMarK7Y=
+github.com/pactus-project/gopkg/netutil v0.0.0-20260830111502-69bc38f13410/go.mod h1:h5dI+KnuMzH0PawOz9H6nox92S0cNXAq3kyphLwJD+8=
 github.com/pactus-project/gopkg/pipeline v0.0.0-20260625084706-612d6d2bb21d h1:I8q6uNtidRMKqzDbNB5ennqEJyLnXQLtjSlG6FCKE5Y=
 github.com/pactus-project/gopkg/pipeline v0.0.0-20260625084706-612d6d2bb21d/go.mod h1:Jyu5lG3erj/BKxZrh6FttqH/HBVbYYiOqBnXcpgKzvs=
 github.com/pactus-project/gopkg/retry v0.0.0-20260625084706-612d6d2bb21d h1:q/FoAAD1HIzsAypz1PEoUenrB7ZXbUvxroCqneSGOGA=
