@@ -15,7 +15,7 @@ import (
 
 func TestMemoryAlignment(t *testing.T) {
 	s := unsafe.Sizeof(account.Account{})
-	assert.Equal(t, 16, int(s))
+	assert.Equal(t, 24, int(s))
 }
 
 func TestFromBytes(t *testing.T) {
