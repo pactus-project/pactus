@@ -28,7 +28,7 @@ class GetTransactionRequest extends $pb.GeneratedMessage {
     $core.String? id,
     TransactionVerbosity? verbosity,
   }) {
-    final result = create();
+    final result = GetTransactionRequest._();
     if (id != null) result.id = id;
     if (verbosity != null) result.verbosity = verbosity;
     return result;
@@ -38,15 +38,15 @@ class GetTransactionRequest extends $pb.GeneratedMessage {
 
   factory GetTransactionRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetTransactionRequest()..mergeFromBuffer(data, registry);
   factory GetTransactionRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetTransactionRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetTransactionRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetTransactionRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'id')
     ..aE<TransactionVerbosity>(2, _omitFieldNames ? '' : 'verbosity',
         enumValues: TransactionVerbosity.values)
@@ -64,12 +64,16 @@ class GetTransactionRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetTransactionRequest() / GetTransactionRequest.new instead')
   static GetTransactionRequest create() => GetTransactionRequest._();
+  static $pb.GeneratedMessage $_createMessage() => GetTransactionRequest._();
   @$core.override
-  GetTransactionRequest createEmptyInstance() => create();
+  GetTransactionRequest createEmptyInstance() => GetTransactionRequest._();
   @$core.pragma('dart2js:noInline')
   static GetTransactionRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetTransactionRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetTransactionRequest>(
+          GetTransactionRequest.$_createMessage);
   static GetTransactionRequest? _defaultInstance;
 
   /// The unique ID of the transaction to retrieve.
@@ -100,7 +104,7 @@ class GetTransactionResponse extends $pb.GeneratedMessage {
     $core.int? blockTime,
     TransactionInfo? transaction,
   }) {
-    final result = create();
+    final result = GetTransactionResponse._();
     if (blockHeight != null) result.blockHeight = blockHeight;
     if (blockTime != null) result.blockTime = blockTime;
     if (transaction != null) result.transaction = transaction;
@@ -111,20 +115,20 @@ class GetTransactionResponse extends $pb.GeneratedMessage {
 
   factory GetTransactionResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetTransactionResponse()..mergeFromBuffer(data, registry);
   factory GetTransactionResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetTransactionResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetTransactionResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetTransactionResponse.$_createMessage)
     ..aI(1, _omitFieldNames ? '' : 'blockHeight',
         fieldType: $pb.PbFieldType.OU3)
     ..aI(2, _omitFieldNames ? '' : 'blockTime', fieldType: $pb.PbFieldType.OU3)
     ..aOM<TransactionInfo>(3, _omitFieldNames ? '' : 'transaction',
-        subBuilder: TransactionInfo.create)
+        subBuilder: TransactionInfo.$_createMessage)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -139,12 +143,16 @@ class GetTransactionResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetTransactionResponse() / GetTransactionResponse.new instead')
   static GetTransactionResponse create() => GetTransactionResponse._();
+  static $pb.GeneratedMessage $_createMessage() => GetTransactionResponse._();
   @$core.override
-  GetTransactionResponse createEmptyInstance() => create();
+  GetTransactionResponse createEmptyInstance() => GetTransactionResponse._();
   @$core.pragma('dart2js:noInline')
   static GetTransactionResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetTransactionResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetTransactionResponse>(
+          GetTransactionResponse.$_createMessage);
   static GetTransactionResponse? _defaultInstance;
 
   /// The height of the block containing the transaction.
@@ -187,7 +195,7 @@ class CalculateFeeRequest extends $pb.GeneratedMessage {
     PayloadType? payloadType,
     $core.bool? fixedAmount,
   }) {
-    final result = create();
+    final result = CalculateFeeRequest._();
     if (amount != null) result.amount = amount;
     if (payloadType != null) result.payloadType = payloadType;
     if (fixedAmount != null) result.fixedAmount = fixedAmount;
@@ -198,15 +206,15 @@ class CalculateFeeRequest extends $pb.GeneratedMessage {
 
   factory CalculateFeeRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      CalculateFeeRequest()..mergeFromBuffer(data, registry);
   factory CalculateFeeRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      CalculateFeeRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'CalculateFeeRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: CalculateFeeRequest.$_createMessage)
     ..aInt64(1, _omitFieldNames ? '' : 'amount')
     ..aE<PayloadType>(2, _omitFieldNames ? '' : 'payloadType',
         enumValues: PayloadType.values)
@@ -224,12 +232,16 @@ class CalculateFeeRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core
+      .Deprecated('Use CalculateFeeRequest() / CalculateFeeRequest.new instead')
   static CalculateFeeRequest create() => CalculateFeeRequest._();
+  static $pb.GeneratedMessage $_createMessage() => CalculateFeeRequest._();
   @$core.override
-  CalculateFeeRequest createEmptyInstance() => create();
+  CalculateFeeRequest createEmptyInstance() => CalculateFeeRequest._();
   @$core.pragma('dart2js:noInline')
   static CalculateFeeRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<CalculateFeeRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<CalculateFeeRequest>(
+          CalculateFeeRequest.$_createMessage);
   static CalculateFeeRequest? _defaultInstance;
 
   /// The amount involved in the transaction, specified in NanoPAC.
@@ -269,7 +281,7 @@ class CalculateFeeResponse extends $pb.GeneratedMessage {
     $fixnum.Int64? amount,
     $fixnum.Int64? fee,
   }) {
-    final result = create();
+    final result = CalculateFeeResponse._();
     if (amount != null) result.amount = amount;
     if (fee != null) result.fee = fee;
     return result;
@@ -279,15 +291,15 @@ class CalculateFeeResponse extends $pb.GeneratedMessage {
 
   factory CalculateFeeResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      CalculateFeeResponse()..mergeFromBuffer(data, registry);
   factory CalculateFeeResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      CalculateFeeResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'CalculateFeeResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: CalculateFeeResponse.$_createMessage)
     ..aInt64(1, _omitFieldNames ? '' : 'amount')
     ..aInt64(2, _omitFieldNames ? '' : 'fee')
     ..hasRequiredFields = false;
@@ -303,12 +315,16 @@ class CalculateFeeResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use CalculateFeeResponse() / CalculateFeeResponse.new instead')
   static CalculateFeeResponse create() => CalculateFeeResponse._();
+  static $pb.GeneratedMessage $_createMessage() => CalculateFeeResponse._();
   @$core.override
-  CalculateFeeResponse createEmptyInstance() => create();
+  CalculateFeeResponse createEmptyInstance() => CalculateFeeResponse._();
   @$core.pragma('dart2js:noInline')
   static CalculateFeeResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<CalculateFeeResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<CalculateFeeResponse>(
+          CalculateFeeResponse.$_createMessage);
   static CalculateFeeResponse? _defaultInstance;
 
   /// The calculated amount in NanoPAC.
@@ -337,7 +353,7 @@ class BroadcastTransactionRequest extends $pb.GeneratedMessage {
   factory BroadcastTransactionRequest({
     $core.String? signedRawTransaction,
   }) {
-    final result = create();
+    final result = BroadcastTransactionRequest._();
     if (signedRawTransaction != null)
       result.signedRawTransaction = signedRawTransaction;
     return result;
@@ -347,15 +363,15 @@ class BroadcastTransactionRequest extends $pb.GeneratedMessage {
 
   factory BroadcastTransactionRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      BroadcastTransactionRequest()..mergeFromBuffer(data, registry);
   factory BroadcastTransactionRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      BroadcastTransactionRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'BroadcastTransactionRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: BroadcastTransactionRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'signedRawTransaction')
     ..hasRequiredFields = false;
 
@@ -372,13 +388,19 @@ class BroadcastTransactionRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use BroadcastTransactionRequest() / BroadcastTransactionRequest.new instead')
   static BroadcastTransactionRequest create() =>
       BroadcastTransactionRequest._();
+  static $pb.GeneratedMessage $_createMessage() =>
+      BroadcastTransactionRequest._();
   @$core.override
-  BroadcastTransactionRequest createEmptyInstance() => create();
+  BroadcastTransactionRequest createEmptyInstance() =>
+      BroadcastTransactionRequest._();
   @$core.pragma('dart2js:noInline')
   static BroadcastTransactionRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<BroadcastTransactionRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<BroadcastTransactionRequest>(
+          BroadcastTransactionRequest.$_createMessage);
   static BroadcastTransactionRequest? _defaultInstance;
 
   /// The signed raw transaction data to be broadcasted.
@@ -397,7 +419,7 @@ class BroadcastTransactionResponse extends $pb.GeneratedMessage {
   factory BroadcastTransactionResponse({
     $core.String? id,
   }) {
-    final result = create();
+    final result = BroadcastTransactionResponse._();
     if (id != null) result.id = id;
     return result;
   }
@@ -406,15 +428,15 @@ class BroadcastTransactionResponse extends $pb.GeneratedMessage {
 
   factory BroadcastTransactionResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      BroadcastTransactionResponse()..mergeFromBuffer(data, registry);
   factory BroadcastTransactionResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      BroadcastTransactionResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'BroadcastTransactionResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: BroadcastTransactionResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'id')
     ..hasRequiredFields = false;
 
@@ -431,13 +453,19 @@ class BroadcastTransactionResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use BroadcastTransactionResponse() / BroadcastTransactionResponse.new instead')
   static BroadcastTransactionResponse create() =>
       BroadcastTransactionResponse._();
+  static $pb.GeneratedMessage $_createMessage() =>
+      BroadcastTransactionResponse._();
   @$core.override
-  BroadcastTransactionResponse createEmptyInstance() => create();
+  BroadcastTransactionResponse createEmptyInstance() =>
+      BroadcastTransactionResponse._();
   @$core.pragma('dart2js:noInline')
   static BroadcastTransactionResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<BroadcastTransactionResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<BroadcastTransactionResponse>(
+          BroadcastTransactionResponse.$_createMessage);
   static BroadcastTransactionResponse? _defaultInstance;
 
   /// The unique ID of the broadcasted transaction.
@@ -461,7 +489,7 @@ class GetRawTransferTransactionRequest extends $pb.GeneratedMessage {
     $fixnum.Int64? fee,
     $core.String? memo,
   }) {
-    final result = create();
+    final result = GetRawTransferTransactionRequest._();
     if (lockTime != null) result.lockTime = lockTime;
     if (sender != null) result.sender = sender;
     if (receiver != null) result.receiver = receiver;
@@ -476,15 +504,15 @@ class GetRawTransferTransactionRequest extends $pb.GeneratedMessage {
   factory GetRawTransferTransactionRequest.fromBuffer(
           $core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetRawTransferTransactionRequest()..mergeFromBuffer(data, registry);
   factory GetRawTransferTransactionRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetRawTransferTransactionRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetRawTransferTransactionRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetRawTransferTransactionRequest.$_createMessage)
     ..aI(1, _omitFieldNames ? '' : 'lockTime', fieldType: $pb.PbFieldType.OU3)
     ..aOS(2, _omitFieldNames ? '' : 'sender')
     ..aOS(3, _omitFieldNames ? '' : 'receiver')
@@ -506,14 +534,19 @@ class GetRawTransferTransactionRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetRawTransferTransactionRequest() / GetRawTransferTransactionRequest.new instead')
   static GetRawTransferTransactionRequest create() =>
       GetRawTransferTransactionRequest._();
+  static $pb.GeneratedMessage $_createMessage() =>
+      GetRawTransferTransactionRequest._();
   @$core.override
-  GetRawTransferTransactionRequest createEmptyInstance() => create();
+  GetRawTransferTransactionRequest createEmptyInstance() =>
+      GetRawTransferTransactionRequest._();
   @$core.pragma('dart2js:noInline')
   static GetRawTransferTransactionRequest getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<GetRawTransferTransactionRequest>(
-          create);
+          GetRawTransferTransactionRequest.$_createMessage);
   static GetRawTransferTransactionRequest? _defaultInstance;
 
   /// The lock time for the transaction. If not set, defaults to the last block height.
@@ -591,7 +624,7 @@ class GetRawBondTransactionRequest extends $pb.GeneratedMessage {
     $fixnum.Int64? delegateShare,
     $core.int? delegateExpiry,
   }) {
-    final result = create();
+    final result = GetRawBondTransactionRequest._();
     if (lockTime != null) result.lockTime = lockTime;
     if (sender != null) result.sender = sender;
     if (receiver != null) result.receiver = receiver;
@@ -609,15 +642,15 @@ class GetRawBondTransactionRequest extends $pb.GeneratedMessage {
 
   factory GetRawBondTransactionRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetRawBondTransactionRequest()..mergeFromBuffer(data, registry);
   factory GetRawBondTransactionRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetRawBondTransactionRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetRawBondTransactionRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetRawBondTransactionRequest.$_createMessage)
     ..aI(1, _omitFieldNames ? '' : 'lockTime', fieldType: $pb.PbFieldType.OU3)
     ..aOS(2, _omitFieldNames ? '' : 'sender')
     ..aOS(3, _omitFieldNames ? '' : 'receiver')
@@ -644,13 +677,19 @@ class GetRawBondTransactionRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetRawBondTransactionRequest() / GetRawBondTransactionRequest.new instead')
   static GetRawBondTransactionRequest create() =>
       GetRawBondTransactionRequest._();
+  static $pb.GeneratedMessage $_createMessage() =>
+      GetRawBondTransactionRequest._();
   @$core.override
-  GetRawBondTransactionRequest createEmptyInstance() => create();
+  GetRawBondTransactionRequest createEmptyInstance() =>
+      GetRawBondTransactionRequest._();
   @$core.pragma('dart2js:noInline')
   static GetRawBondTransactionRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetRawBondTransactionRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetRawBondTransactionRequest>(
+          GetRawBondTransactionRequest.$_createMessage);
   static GetRawBondTransactionRequest? _defaultInstance;
 
   /// The lock time for the transaction. If not set, defaults to the last block height.
@@ -767,7 +806,7 @@ class GetRawUnbondTransactionRequest extends $pb.GeneratedMessage {
     $core.String? memo,
     $core.String? delegateOwner,
   }) {
-    final result = create();
+    final result = GetRawUnbondTransactionRequest._();
     if (lockTime != null) result.lockTime = lockTime;
     if (validatorAddress != null) result.validatorAddress = validatorAddress;
     if (memo != null) result.memo = memo;
@@ -779,15 +818,15 @@ class GetRawUnbondTransactionRequest extends $pb.GeneratedMessage {
 
   factory GetRawUnbondTransactionRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetRawUnbondTransactionRequest()..mergeFromBuffer(data, registry);
   factory GetRawUnbondTransactionRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetRawUnbondTransactionRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetRawUnbondTransactionRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetRawUnbondTransactionRequest.$_createMessage)
     ..aI(1, _omitFieldNames ? '' : 'lockTime', fieldType: $pb.PbFieldType.OU3)
     ..aOS(2, _omitFieldNames ? '' : 'validatorAddress')
     ..aOS(3, _omitFieldNames ? '' : 'memo')
@@ -807,13 +846,19 @@ class GetRawUnbondTransactionRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetRawUnbondTransactionRequest() / GetRawUnbondTransactionRequest.new instead')
   static GetRawUnbondTransactionRequest create() =>
       GetRawUnbondTransactionRequest._();
+  static $pb.GeneratedMessage $_createMessage() =>
+      GetRawUnbondTransactionRequest._();
   @$core.override
-  GetRawUnbondTransactionRequest createEmptyInstance() => create();
+  GetRawUnbondTransactionRequest createEmptyInstance() =>
+      GetRawUnbondTransactionRequest._();
   @$core.pragma('dart2js:noInline')
   static GetRawUnbondTransactionRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetRawUnbondTransactionRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetRawUnbondTransactionRequest>(
+          GetRawUnbondTransactionRequest.$_createMessage);
   static GetRawUnbondTransactionRequest? _defaultInstance;
 
   /// The lock time for the transaction. If not set, defaults to the last block height.
@@ -868,7 +913,7 @@ class GetRawWithdrawTransactionRequest extends $pb.GeneratedMessage {
     $fixnum.Int64? fee,
     $core.String? memo,
   }) {
-    final result = create();
+    final result = GetRawWithdrawTransactionRequest._();
     if (lockTime != null) result.lockTime = lockTime;
     if (validatorAddress != null) result.validatorAddress = validatorAddress;
     if (accountAddress != null) result.accountAddress = accountAddress;
@@ -883,15 +928,15 @@ class GetRawWithdrawTransactionRequest extends $pb.GeneratedMessage {
   factory GetRawWithdrawTransactionRequest.fromBuffer(
           $core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetRawWithdrawTransactionRequest()..mergeFromBuffer(data, registry);
   factory GetRawWithdrawTransactionRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetRawWithdrawTransactionRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetRawWithdrawTransactionRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetRawWithdrawTransactionRequest.$_createMessage)
     ..aI(1, _omitFieldNames ? '' : 'lockTime', fieldType: $pb.PbFieldType.OU3)
     ..aOS(2, _omitFieldNames ? '' : 'validatorAddress')
     ..aOS(3, _omitFieldNames ? '' : 'accountAddress')
@@ -913,14 +958,19 @@ class GetRawWithdrawTransactionRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetRawWithdrawTransactionRequest() / GetRawWithdrawTransactionRequest.new instead')
   static GetRawWithdrawTransactionRequest create() =>
       GetRawWithdrawTransactionRequest._();
+  static $pb.GeneratedMessage $_createMessage() =>
+      GetRawWithdrawTransactionRequest._();
   @$core.override
-  GetRawWithdrawTransactionRequest createEmptyInstance() => create();
+  GetRawWithdrawTransactionRequest createEmptyInstance() =>
+      GetRawWithdrawTransactionRequest._();
   @$core.pragma('dart2js:noInline')
   static GetRawWithdrawTransactionRequest getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<GetRawWithdrawTransactionRequest>(
-          create);
+          GetRawWithdrawTransactionRequest.$_createMessage);
   static GetRawWithdrawTransactionRequest? _defaultInstance;
 
   /// The lock time for the transaction. If not set, defaults to the last block height.
@@ -993,7 +1043,7 @@ class GetRawBatchTransferTransactionRequest extends $pb.GeneratedMessage {
     $fixnum.Int64? fee,
     $core.String? memo,
   }) {
-    final result = create();
+    final result = GetRawBatchTransferTransactionRequest._();
     if (lockTime != null) result.lockTime = lockTime;
     if (sender != null) result.sender = sender;
     if (recipients != null) result.recipients.addAll(recipients);
@@ -1007,19 +1057,20 @@ class GetRawBatchTransferTransactionRequest extends $pb.GeneratedMessage {
   factory GetRawBatchTransferTransactionRequest.fromBuffer(
           $core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetRawBatchTransferTransactionRequest()..mergeFromBuffer(data, registry);
   factory GetRawBatchTransferTransactionRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetRawBatchTransferTransactionRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetRawBatchTransferTransactionRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance:
+          GetRawBatchTransferTransactionRequest.$_createMessage)
     ..aI(1, _omitFieldNames ? '' : 'lockTime', fieldType: $pb.PbFieldType.OU3)
     ..aOS(2, _omitFieldNames ? '' : 'sender')
     ..pPM<Recipient>(3, _omitFieldNames ? '' : 'recipients',
-        subBuilder: Recipient.create)
+        subBuilder: Recipient.$_createMessage)
     ..aInt64(4, _omitFieldNames ? '' : 'fee')
     ..aOS(5, _omitFieldNames ? '' : 'memo')
     ..hasRequiredFields = false;
@@ -1037,14 +1088,20 @@ class GetRawBatchTransferTransactionRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetRawBatchTransferTransactionRequest() / GetRawBatchTransferTransactionRequest.new instead')
   static GetRawBatchTransferTransactionRequest create() =>
       GetRawBatchTransferTransactionRequest._();
+  static $pb.GeneratedMessage $_createMessage() =>
+      GetRawBatchTransferTransactionRequest._();
   @$core.override
-  GetRawBatchTransferTransactionRequest createEmptyInstance() => create();
+  GetRawBatchTransferTransactionRequest createEmptyInstance() =>
+      GetRawBatchTransferTransactionRequest._();
   @$core.pragma('dart2js:noInline')
   static GetRawBatchTransferTransactionRequest getDefault() =>
       _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<
-          GetRawBatchTransferTransactionRequest>(create);
+              GetRawBatchTransferTransactionRequest>(
+          GetRawBatchTransferTransactionRequest.$_createMessage);
   static GetRawBatchTransferTransactionRequest? _defaultInstance;
 
   /// The lock time for the transaction. If not set, defaults to the last block height.
@@ -1098,7 +1155,7 @@ class GetRawTransactionResponse extends $pb.GeneratedMessage {
     $core.String? rawTransaction,
     $core.String? id,
   }) {
-    final result = create();
+    final result = GetRawTransactionResponse._();
     if (rawTransaction != null) result.rawTransaction = rawTransaction;
     if (id != null) result.id = id;
     return result;
@@ -1108,15 +1165,15 @@ class GetRawTransactionResponse extends $pb.GeneratedMessage {
 
   factory GetRawTransactionResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetRawTransactionResponse()..mergeFromBuffer(data, registry);
   factory GetRawTransactionResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetRawTransactionResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetRawTransactionResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetRawTransactionResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'rawTransaction')
     ..aOS(2, _omitFieldNames ? '' : 'id')
     ..hasRequiredFields = false;
@@ -1133,12 +1190,18 @@ class GetRawTransactionResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetRawTransactionResponse() / GetRawTransactionResponse.new instead')
   static GetRawTransactionResponse create() => GetRawTransactionResponse._();
+  static $pb.GeneratedMessage $_createMessage() =>
+      GetRawTransactionResponse._();
   @$core.override
-  GetRawTransactionResponse createEmptyInstance() => create();
+  GetRawTransactionResponse createEmptyInstance() =>
+      GetRawTransactionResponse._();
   @$core.pragma('dart2js:noInline')
   static GetRawTransactionResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetRawTransactionResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetRawTransactionResponse>(
+          GetRawTransactionResponse.$_createMessage);
   static GetRawTransactionResponse? _defaultInstance;
 
   /// The raw transaction data in hexadecimal format.
@@ -1169,7 +1232,7 @@ class PayloadTransfer extends $pb.GeneratedMessage {
     $core.String? receiver,
     $fixnum.Int64? amount,
   }) {
-    final result = create();
+    final result = PayloadTransfer._();
     if (sender != null) result.sender = sender;
     if (receiver != null) result.receiver = receiver;
     if (amount != null) result.amount = amount;
@@ -1180,15 +1243,15 @@ class PayloadTransfer extends $pb.GeneratedMessage {
 
   factory PayloadTransfer.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      PayloadTransfer()..mergeFromBuffer(data, registry);
   factory PayloadTransfer.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      PayloadTransfer()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'PayloadTransfer',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: PayloadTransfer.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'sender')
     ..aOS(2, _omitFieldNames ? '' : 'receiver')
     ..aInt64(3, _omitFieldNames ? '' : 'amount')
@@ -1205,12 +1268,15 @@ class PayloadTransfer extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use PayloadTransfer() / PayloadTransfer.new instead')
   static PayloadTransfer create() => PayloadTransfer._();
+  static $pb.GeneratedMessage $_createMessage() => PayloadTransfer._();
   @$core.override
-  PayloadTransfer createEmptyInstance() => create();
+  PayloadTransfer createEmptyInstance() => PayloadTransfer._();
   @$core.pragma('dart2js:noInline')
-  static PayloadTransfer getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<PayloadTransfer>(create);
+  static PayloadTransfer getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PayloadTransfer>(
+          PayloadTransfer.$_createMessage);
   static PayloadTransfer? _defaultInstance;
 
   /// The sender's address.
@@ -1256,7 +1322,7 @@ class PayloadBond extends $pb.GeneratedMessage {
     $fixnum.Int64? delegateShare,
     $core.int? delegateExpiry,
   }) {
-    final result = create();
+    final result = PayloadBond._();
     if (sender != null) result.sender = sender;
     if (receiver != null) result.receiver = receiver;
     if (stake != null) result.stake = stake;
@@ -1272,15 +1338,15 @@ class PayloadBond extends $pb.GeneratedMessage {
 
   factory PayloadBond.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      PayloadBond()..mergeFromBuffer(data, registry);
   factory PayloadBond.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      PayloadBond()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'PayloadBond',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: PayloadBond.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'sender')
     ..aOS(2, _omitFieldNames ? '' : 'receiver')
     ..aInt64(3, _omitFieldNames ? '' : 'stake')
@@ -1303,12 +1369,15 @@ class PayloadBond extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use PayloadBond() / PayloadBond.new instead')
   static PayloadBond create() => PayloadBond._();
+  static $pb.GeneratedMessage $_createMessage() => PayloadBond._();
   @$core.override
-  PayloadBond createEmptyInstance() => create();
+  PayloadBond createEmptyInstance() => PayloadBond._();
   @$core.pragma('dart2js:noInline')
-  static PayloadBond getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<PayloadBond>(create);
+  static PayloadBond getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PayloadBond>(
+          PayloadBond.$_createMessage);
   static PayloadBond? _defaultInstance;
 
   /// The sender's address.
@@ -1402,7 +1471,7 @@ class PayloadSortition extends $pb.GeneratedMessage {
     $core.String? address,
     $core.String? proof,
   }) {
-    final result = create();
+    final result = PayloadSortition._();
     if (address != null) result.address = address;
     if (proof != null) result.proof = proof;
     return result;
@@ -1412,15 +1481,15 @@ class PayloadSortition extends $pb.GeneratedMessage {
 
   factory PayloadSortition.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      PayloadSortition()..mergeFromBuffer(data, registry);
   factory PayloadSortition.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      PayloadSortition()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'PayloadSortition',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: PayloadSortition.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'address')
     ..aOS(2, _omitFieldNames ? '' : 'proof')
     ..hasRequiredFields = false;
@@ -1436,12 +1505,15 @@ class PayloadSortition extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use PayloadSortition() / PayloadSortition.new instead')
   static PayloadSortition create() => PayloadSortition._();
+  static $pb.GeneratedMessage $_createMessage() => PayloadSortition._();
   @$core.override
-  PayloadSortition createEmptyInstance() => create();
+  PayloadSortition createEmptyInstance() => PayloadSortition._();
   @$core.pragma('dart2js:noInline')
-  static PayloadSortition getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<PayloadSortition>(create);
+  static PayloadSortition getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PayloadSortition>(
+          PayloadSortition.$_createMessage);
   static PayloadSortition? _defaultInstance;
 
   /// The validator address associated with the sortition proof.
@@ -1471,7 +1543,7 @@ class PayloadUnbond extends $pb.GeneratedMessage {
     $core.String? validator,
     $core.String? delegateOwner,
   }) {
-    final result = create();
+    final result = PayloadUnbond._();
     if (validator != null) result.validator = validator;
     if (delegateOwner != null) result.delegateOwner = delegateOwner;
     return result;
@@ -1481,15 +1553,15 @@ class PayloadUnbond extends $pb.GeneratedMessage {
 
   factory PayloadUnbond.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      PayloadUnbond()..mergeFromBuffer(data, registry);
   factory PayloadUnbond.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      PayloadUnbond()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'PayloadUnbond',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: PayloadUnbond.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'validator')
     ..aOS(2, _omitFieldNames ? '' : 'delegateOwner')
     ..hasRequiredFields = false;
@@ -1505,12 +1577,15 @@ class PayloadUnbond extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use PayloadUnbond() / PayloadUnbond.new instead')
   static PayloadUnbond create() => PayloadUnbond._();
+  static $pb.GeneratedMessage $_createMessage() => PayloadUnbond._();
   @$core.override
-  PayloadUnbond createEmptyInstance() => create();
+  PayloadUnbond createEmptyInstance() => PayloadUnbond._();
   @$core.pragma('dart2js:noInline')
-  static PayloadUnbond getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<PayloadUnbond>(create);
+  static PayloadUnbond getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PayloadUnbond>(
+          PayloadUnbond.$_createMessage);
   static PayloadUnbond? _defaultInstance;
 
   /// The address of the validator to unbond from.
@@ -1542,7 +1617,7 @@ class PayloadWithdraw extends $pb.GeneratedMessage {
     $core.String? accountAddress,
     $fixnum.Int64? amount,
   }) {
-    final result = create();
+    final result = PayloadWithdraw._();
     if (validatorAddress != null) result.validatorAddress = validatorAddress;
     if (accountAddress != null) result.accountAddress = accountAddress;
     if (amount != null) result.amount = amount;
@@ -1553,15 +1628,15 @@ class PayloadWithdraw extends $pb.GeneratedMessage {
 
   factory PayloadWithdraw.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      PayloadWithdraw()..mergeFromBuffer(data, registry);
   factory PayloadWithdraw.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      PayloadWithdraw()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'PayloadWithdraw',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: PayloadWithdraw.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'validatorAddress')
     ..aOS(2, _omitFieldNames ? '' : 'accountAddress')
     ..aInt64(3, _omitFieldNames ? '' : 'amount')
@@ -1578,12 +1653,15 @@ class PayloadWithdraw extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use PayloadWithdraw() / PayloadWithdraw.new instead')
   static PayloadWithdraw create() => PayloadWithdraw._();
+  static $pb.GeneratedMessage $_createMessage() => PayloadWithdraw._();
   @$core.override
-  PayloadWithdraw createEmptyInstance() => create();
+  PayloadWithdraw createEmptyInstance() => PayloadWithdraw._();
   @$core.pragma('dart2js:noInline')
-  static PayloadWithdraw getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<PayloadWithdraw>(create);
+  static PayloadWithdraw getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PayloadWithdraw>(
+          PayloadWithdraw.$_createMessage);
   static PayloadWithdraw? _defaultInstance;
 
   /// The address of the validator to withdraw from.
@@ -1623,7 +1701,7 @@ class PayloadBatchTransfer extends $pb.GeneratedMessage {
     $core.String? sender,
     $core.Iterable<Recipient>? recipients,
   }) {
-    final result = create();
+    final result = PayloadBatchTransfer._();
     if (sender != null) result.sender = sender;
     if (recipients != null) result.recipients.addAll(recipients);
     return result;
@@ -1633,18 +1711,18 @@ class PayloadBatchTransfer extends $pb.GeneratedMessage {
 
   factory PayloadBatchTransfer.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      PayloadBatchTransfer()..mergeFromBuffer(data, registry);
   factory PayloadBatchTransfer.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      PayloadBatchTransfer()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'PayloadBatchTransfer',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: PayloadBatchTransfer.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'sender')
     ..pPM<Recipient>(2, _omitFieldNames ? '' : 'recipients',
-        subBuilder: Recipient.create)
+        subBuilder: Recipient.$_createMessage)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1658,12 +1736,16 @@ class PayloadBatchTransfer extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use PayloadBatchTransfer() / PayloadBatchTransfer.new instead')
   static PayloadBatchTransfer create() => PayloadBatchTransfer._();
+  static $pb.GeneratedMessage $_createMessage() => PayloadBatchTransfer._();
   @$core.override
-  PayloadBatchTransfer createEmptyInstance() => create();
+  PayloadBatchTransfer createEmptyInstance() => PayloadBatchTransfer._();
   @$core.pragma('dart2js:noInline')
   static PayloadBatchTransfer getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<PayloadBatchTransfer>(create);
+      $pb.GeneratedMessage.$_defaultFor<PayloadBatchTransfer>(
+          PayloadBatchTransfer.$_createMessage);
   static PayloadBatchTransfer? _defaultInstance;
 
   /// The sender's address.
@@ -1687,7 +1769,7 @@ class Recipient extends $pb.GeneratedMessage {
     $core.String? receiver,
     $fixnum.Int64? amount,
   }) {
-    final result = create();
+    final result = Recipient._();
     if (receiver != null) result.receiver = receiver;
     if (amount != null) result.amount = amount;
     return result;
@@ -1697,15 +1779,15 @@ class Recipient extends $pb.GeneratedMessage {
 
   factory Recipient.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      Recipient()..mergeFromBuffer(data, registry);
   factory Recipient.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      Recipient()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'Recipient',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: Recipient.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'receiver')
     ..aInt64(2, _omitFieldNames ? '' : 'amount')
     ..hasRequiredFields = false;
@@ -1720,12 +1802,14 @@ class Recipient extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use Recipient() / Recipient.new instead')
   static Recipient create() => Recipient._();
+  static $pb.GeneratedMessage $_createMessage() => Recipient._();
   @$core.override
-  Recipient createEmptyInstance() => create();
+  Recipient createEmptyInstance() => Recipient._();
   @$core.pragma('dart2js:noInline')
-  static Recipient getDefault() =>
-      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Recipient>(create);
+  static Recipient getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<Recipient>(Recipient.$_createMessage);
   static Recipient? _defaultInstance;
 
   /// The receiver's address.
@@ -1782,7 +1866,7 @@ class TransactionInfo extends $pb.GeneratedMessage {
     PayloadWithdraw? withdraw,
     PayloadBatchTransfer? batchTransfer,
   }) {
-    final result = create();
+    final result = TransactionInfo._();
     if (id != null) result.id = id;
     if (data != null) result.data = data;
     if (version != null) result.version = version;
@@ -1809,10 +1893,10 @@ class TransactionInfo extends $pb.GeneratedMessage {
 
   factory TransactionInfo.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      TransactionInfo()..mergeFromBuffer(data, registry);
   factory TransactionInfo.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      TransactionInfo()..mergeFromJson(json, registry);
 
   static const $core.Map<$core.int, TransactionInfo_Payload>
       _TransactionInfo_PayloadByTag = {
@@ -1827,7 +1911,7 @@ class TransactionInfo extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'TransactionInfo',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: TransactionInfo.$_createMessage)
     ..oo(0, [30, 31, 32, 33, 34, 35])
     ..aOS(1, _omitFieldNames ? '' : 'id')
     ..aOS(2, _omitFieldNames ? '' : 'data')
@@ -1845,17 +1929,17 @@ class TransactionInfo extends $pb.GeneratedMessage {
     ..aOB(12, _omitFieldNames ? '' : 'confirmed')
     ..aI(13, _omitFieldNames ? '' : 'confirmations')
     ..aOM<PayloadTransfer>(30, _omitFieldNames ? '' : 'transfer',
-        subBuilder: PayloadTransfer.create)
+        subBuilder: PayloadTransfer.$_createMessage)
     ..aOM<PayloadBond>(31, _omitFieldNames ? '' : 'bond',
-        subBuilder: PayloadBond.create)
+        subBuilder: PayloadBond.$_createMessage)
     ..aOM<PayloadSortition>(32, _omitFieldNames ? '' : 'sortition',
-        subBuilder: PayloadSortition.create)
+        subBuilder: PayloadSortition.$_createMessage)
     ..aOM<PayloadUnbond>(33, _omitFieldNames ? '' : 'unbond',
-        subBuilder: PayloadUnbond.create)
+        subBuilder: PayloadUnbond.$_createMessage)
     ..aOM<PayloadWithdraw>(34, _omitFieldNames ? '' : 'withdraw',
-        subBuilder: PayloadWithdraw.create)
+        subBuilder: PayloadWithdraw.$_createMessage)
     ..aOM<PayloadBatchTransfer>(35, _omitFieldNames ? '' : 'batchTransfer',
-        subBuilder: PayloadBatchTransfer.create)
+        subBuilder: PayloadBatchTransfer.$_createMessage)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1869,12 +1953,15 @@ class TransactionInfo extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use TransactionInfo() / TransactionInfo.new instead')
   static TransactionInfo create() => TransactionInfo._();
+  static $pb.GeneratedMessage $_createMessage() => TransactionInfo._();
   @$core.override
-  TransactionInfo createEmptyInstance() => create();
+  TransactionInfo createEmptyInstance() => TransactionInfo._();
   @$core.pragma('dart2js:noInline')
-  static TransactionInfo getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<TransactionInfo>(create);
+  static TransactionInfo getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<TransactionInfo>(
+          TransactionInfo.$_createMessage);
   static TransactionInfo? _defaultInstance;
 
   @$pb.TagNumber(30)
@@ -2103,7 +2190,7 @@ class DecodeRawTransactionRequest extends $pb.GeneratedMessage {
   factory DecodeRawTransactionRequest({
     $core.String? rawTransaction,
   }) {
-    final result = create();
+    final result = DecodeRawTransactionRequest._();
     if (rawTransaction != null) result.rawTransaction = rawTransaction;
     return result;
   }
@@ -2112,15 +2199,15 @@ class DecodeRawTransactionRequest extends $pb.GeneratedMessage {
 
   factory DecodeRawTransactionRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      DecodeRawTransactionRequest()..mergeFromBuffer(data, registry);
   factory DecodeRawTransactionRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      DecodeRawTransactionRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'DecodeRawTransactionRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: DecodeRawTransactionRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'rawTransaction')
     ..hasRequiredFields = false;
 
@@ -2137,13 +2224,19 @@ class DecodeRawTransactionRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use DecodeRawTransactionRequest() / DecodeRawTransactionRequest.new instead')
   static DecodeRawTransactionRequest create() =>
       DecodeRawTransactionRequest._();
+  static $pb.GeneratedMessage $_createMessage() =>
+      DecodeRawTransactionRequest._();
   @$core.override
-  DecodeRawTransactionRequest createEmptyInstance() => create();
+  DecodeRawTransactionRequest createEmptyInstance() =>
+      DecodeRawTransactionRequest._();
   @$core.pragma('dart2js:noInline')
   static DecodeRawTransactionRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<DecodeRawTransactionRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<DecodeRawTransactionRequest>(
+          DecodeRawTransactionRequest.$_createMessage);
   static DecodeRawTransactionRequest? _defaultInstance;
 
   /// The raw transaction data in hexadecimal format.
@@ -2162,7 +2255,7 @@ class DecodeRawTransactionResponse extends $pb.GeneratedMessage {
   factory DecodeRawTransactionResponse({
     TransactionInfo? transaction,
   }) {
-    final result = create();
+    final result = DecodeRawTransactionResponse._();
     if (transaction != null) result.transaction = transaction;
     return result;
   }
@@ -2171,17 +2264,17 @@ class DecodeRawTransactionResponse extends $pb.GeneratedMessage {
 
   factory DecodeRawTransactionResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      DecodeRawTransactionResponse()..mergeFromBuffer(data, registry);
   factory DecodeRawTransactionResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      DecodeRawTransactionResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'DecodeRawTransactionResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: DecodeRawTransactionResponse.$_createMessage)
     ..aOM<TransactionInfo>(1, _omitFieldNames ? '' : 'transaction',
-        subBuilder: TransactionInfo.create)
+        subBuilder: TransactionInfo.$_createMessage)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -2197,13 +2290,19 @@ class DecodeRawTransactionResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use DecodeRawTransactionResponse() / DecodeRawTransactionResponse.new instead')
   static DecodeRawTransactionResponse create() =>
       DecodeRawTransactionResponse._();
+  static $pb.GeneratedMessage $_createMessage() =>
+      DecodeRawTransactionResponse._();
   @$core.override
-  DecodeRawTransactionResponse createEmptyInstance() => create();
+  DecodeRawTransactionResponse createEmptyInstance() =>
+      DecodeRawTransactionResponse._();
   @$core.pragma('dart2js:noInline')
   static DecodeRawTransactionResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<DecodeRawTransactionResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<DecodeRawTransactionResponse>(
+          DecodeRawTransactionResponse.$_createMessage);
   static DecodeRawTransactionResponse? _defaultInstance;
 
   /// The decoded transaction information.
@@ -2224,7 +2323,7 @@ class CheckTransactionRequest extends $pb.GeneratedMessage {
   factory CheckTransactionRequest({
     $core.String? rawTransaction,
   }) {
-    final result = create();
+    final result = CheckTransactionRequest._();
     if (rawTransaction != null) result.rawTransaction = rawTransaction;
     return result;
   }
@@ -2233,15 +2332,15 @@ class CheckTransactionRequest extends $pb.GeneratedMessage {
 
   factory CheckTransactionRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      CheckTransactionRequest()..mergeFromBuffer(data, registry);
   factory CheckTransactionRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      CheckTransactionRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'CheckTransactionRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: CheckTransactionRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'rawTransaction')
     ..hasRequiredFields = false;
 
@@ -2257,12 +2356,16 @@ class CheckTransactionRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use CheckTransactionRequest() / CheckTransactionRequest.new instead')
   static CheckTransactionRequest create() => CheckTransactionRequest._();
+  static $pb.GeneratedMessage $_createMessage() => CheckTransactionRequest._();
   @$core.override
-  CheckTransactionRequest createEmptyInstance() => create();
+  CheckTransactionRequest createEmptyInstance() => CheckTransactionRequest._();
   @$core.pragma('dart2js:noInline')
   static CheckTransactionRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<CheckTransactionRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<CheckTransactionRequest>(
+          CheckTransactionRequest.$_createMessage);
   static CheckTransactionRequest? _defaultInstance;
 
   /// The raw transaction data to be checked.
@@ -2282,7 +2385,7 @@ class CheckTransactionResponse extends $pb.GeneratedMessage {
     $core.bool? isValid,
     $core.String? errorMessage,
   }) {
-    final result = create();
+    final result = CheckTransactionResponse._();
     if (isValid != null) result.isValid = isValid;
     if (errorMessage != null) result.errorMessage = errorMessage;
     return result;
@@ -2292,15 +2395,15 @@ class CheckTransactionResponse extends $pb.GeneratedMessage {
 
   factory CheckTransactionResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      CheckTransactionResponse()..mergeFromBuffer(data, registry);
   factory CheckTransactionResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      CheckTransactionResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'CheckTransactionResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: CheckTransactionResponse.$_createMessage)
     ..aOB(1, _omitFieldNames ? '' : 'isValid')
     ..aOS(2, _omitFieldNames ? '' : 'errorMessage')
     ..hasRequiredFields = false;
@@ -2317,12 +2420,17 @@ class CheckTransactionResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use CheckTransactionResponse() / CheckTransactionResponse.new instead')
   static CheckTransactionResponse create() => CheckTransactionResponse._();
+  static $pb.GeneratedMessage $_createMessage() => CheckTransactionResponse._();
   @$core.override
-  CheckTransactionResponse createEmptyInstance() => create();
+  CheckTransactionResponse createEmptyInstance() =>
+      CheckTransactionResponse._();
   @$core.pragma('dart2js:noInline')
   static CheckTransactionResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<CheckTransactionResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<CheckTransactionResponse>(
+          CheckTransactionResponse.$_createMessage);
   static CheckTransactionResponse? _defaultInstance;
 
   /// Indicates whether the transaction is valid.
