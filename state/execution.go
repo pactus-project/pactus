@@ -10,6 +10,8 @@ import (
 )
 
 func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool) error {
+	sbx.SetBlockContext(blk.Header().Version(), blk.Header().UnixTime())
+
 	proposerAddr := blk.Header().ProposerAddress()
 	for i, trx := range blk.Transactions() {
 		if check {

@@ -13,6 +13,7 @@ import (
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 )
@@ -29,6 +30,8 @@ type sandbox struct {
 	committedTrxs   map[tx.ID]*tx.Tx
 	params          *param.Params
 	height          types.Height
+	blockVersion    protocol.Version
+	unixTime        uint32
 	totalAccounts   int32
 	totalValidators int32
 	totalPower      int64
@@ -51,11 +54,12 @@ func NewSandbox(height types.Height, store store.Reader, params *param.Params,
 	committee committee.Reader, totalPower int64,
 ) Sandbox {
 	sbx := &sandbox{
-		height:     height,
-		store:      store,
-		committee:  committee,
-		totalPower: totalPower,
-		params:     params,
+		height:       height,
+		store:        store,
+		committee:    committee,
+		totalPower:   totalPower,
+		params:       params,
+		blockVersion: params.BlockVersion,
 	}
 
 	sbx.accounts = make(map[crypto.Address]*sandboxAccount)
@@ -237,6 +241,28 @@ func (sb *sandbox) CurrentHeight() types.Height {
 	defer sb.lk.RUnlock()
 
 	return sb.height + 1
+}
+
+func (sb *sandbox) BlockVersion() protocol.Version {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	return sb.blockVersion
+}
+
+func (sb *sandbox) CurrentUnixTime() uint32 {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	return sb.unixTime
+}
+
+func (sb *sandbox) SetBlockContext(version protocol.Version, unixTime uint32) {
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
+
+	sb.blockVersion = version
+	sb.unixTime = unixTime
 }
 
 func (sb *sandbox) IterateAccounts(

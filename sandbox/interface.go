@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 )
@@ -28,6 +29,8 @@ type SandboxReader interface {
 
 	Params() *param.Params
 	CurrentHeight() types.Height
+	BlockVersion() protocol.Version
+	CurrentUnixTime() uint32
 
 	IterateAccounts(consumer func(crypto.Address, *account.Account, bool))
 	IterateValidators(consumer func(*validator.Validator, bool, bool))
@@ -45,4 +48,5 @@ type Sandbox interface {
 	UpdateValidator(*validator.Validator)
 	JoinToCommittee(crypto.Address)
 	UpdatePowerDelta(delta int64)
+	SetBlockContext(protocol.Version, uint32)
 }

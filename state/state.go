@@ -364,6 +364,9 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 
 	// Create new sandbox and execute transactions
 	sbx := st.concreteSandbox()
+	blockVersion := st.proposeBlockVersion()
+	blockTime := st.proposeNextBlockTime()
+	sbx.SetBlockContext(blockVersion, uint32(blockTime.Unix()))
 
 	// Re-check all transactions strictly and remove invalid ones
 	txs := st.txPool.PrepareBlockTransactions()
@@ -385,8 +388,6 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 		}
 	}
 
-	blockVersion := st.proposeBlockVersion()
-
 	valAddr := valKey.Address()
 	subsidyTx := st.createSubsidyTx(valAddr, rewardAddr, sbx.AccumulatedFee())
 	txs.Prepend(subsidyTx)
@@ -394,7 +395,7 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 
 	blk := block.MakeBlock(
 		blockVersion,
-		st.proposeNextBlockTime(),
+		blockTime,
 		txs,
 		st.lastInfo.BlockHash(),
 		st.stateRoot(),

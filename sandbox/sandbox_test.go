@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -397,4 +398,15 @@ func TestJoinedToCommittee(t *testing.T) {
 
 	td.sbx.JoinToCommittee(addr)
 	assert.True(t, td.sbx.IsJoinedCommittee(addr))
+}
+
+func TestBlockContext(t *testing.T) {
+	td := setup(t)
+
+	assert.Equal(t, td.fakeParams.BlockVersion, td.sbx.BlockVersion())
+	assert.Equal(t, uint32(0), td.sbx.CurrentUnixTime())
+
+	td.sbx.SetBlockContext(protocol.Version(5), 1_700_000_000)
+	assert.Equal(t, protocol.Version(5), td.sbx.BlockVersion())
+	assert.Equal(t, uint32(1_700_000_000), td.sbx.CurrentUnixTime())
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/execution/executor"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/stretchr/testify/require"
@@ -19,6 +20,8 @@ func TestAnchorRejectedByPool(t *testing.T) {
 	t.Cleanup(func() {
 		executor.DefaultFactory = previous
 	})
+	td.sbx.EXPECT().BlockVersion().Return(protocol.ProtocolVersionLatest).AnyTimes()
+
 	mockExe := td.exe
 	executor.DefaultFactory = func(trx *tx.Tx, sbx sandbox.Sandbox) (executor.Executor, error) {
 		if trx.Payload().Type() == payload.TypeAnchor {
