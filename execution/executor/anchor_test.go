@@ -26,6 +26,7 @@ import (
 
 func TestAnchorRejectedByExecutor(t *testing.T) {
 	td := setup(t)
+	td.sbx.FakeBlockVersion = protocol.ProtocolVersion4
 
 	acc, addr := td.addTestAccount(t)
 	before, err := acc.Bytes()

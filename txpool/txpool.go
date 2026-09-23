@@ -160,6 +160,12 @@ func (p *txPool) checkTx(trx *tx.Tx) error {
 		return err
 	}
 
+	if _, ok := p.pools[trx.Payload().Type()]; !ok {
+		p.logger.Debug("unsupported payload type", "trx", trx)
+
+		return ErrPayloadTypeNotSupported
+	}
+
 	if err := execution.CheckAndExecute(trx, p.sbx, false); err != nil {
 		p.logger.Debug("invalid transaction", "trx", trx, "error", err)
 

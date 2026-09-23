@@ -22,6 +22,7 @@ type FakeStore struct {
 	FakeCertificates map[types.Height]*certificate.Certificate
 	FakeAccounts     map[crypto.Address]*account.Account
 	FakeValidators   map[crypto.Address]*validator.Validator
+	RecentTxs        map[tx.ID]struct{}
 }
 
 func NewFakeStore(ts *testsuite.TestSuite) *FakeStore {
@@ -31,6 +32,7 @@ func NewFakeStore(ts *testsuite.TestSuite) *FakeStore {
 		FakeCertificates: make(map[types.Height]*certificate.Certificate),
 		FakeAccounts:     make(map[crypto.Address]*account.Account),
 		FakeValidators:   make(map[crypto.Address]*validator.Validator),
+		RecentTxs:        make(map[tx.ID]struct{}),
 	}
 
 	fake.EXPECT().LastCertificate().DoAndReturn(
@@ -228,6 +230,9 @@ func NewFakeStore(ts *testsuite.TestSuite) *FakeStore {
 		func(blk *block.Block, cert *certificate.Certificate) {
 			fake.FakeBlocks[blk.Height()] = blk
 			fake.FakeCertificates[cert.Height()] = cert
+			for _, trx := range blk.Transactions() {
+				fake.RecentTxs[trx.ID()] = struct{}{}
+			}
 		},
 	).AnyTimes()
 

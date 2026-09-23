@@ -48,6 +48,12 @@ func setup(t *testing.T) *testData {
 func setupWithVersion(t *testing.T, blockVersion protocol.Version) *testData {
 	t.Helper()
 
+	return setupCommittee(t, blockVersion)
+}
+
+func setupCommittee(t *testing.T, blockVersion protocol.Version) *testData {
+	t.Helper()
+
 	ts := testsuite.NewTestSuite(t)
 
 	genValNum := 4
@@ -92,7 +98,11 @@ func setupWithVersion(t *testing.T, blockVersion protocol.Version) *testData {
 	eventPipe := pipeline.New[any](t.Context())
 
 	fakeStore.EXPECT().IsBanned(gomock.Any()).Return(false).AnyTimes()
-	fakeStore.EXPECT().RecentTransaction(gomock.Any()).Return(false).AnyTimes()
+	fakeStore.EXPECT().RecentTransaction(gomock.Any()).DoAndReturn(func(id tx.ID) bool {
+		_, ok := fakeStore.RecentTxs[id]
+
+		return ok
+	}).AnyTimes()
 
 	st1, err := LoadOrNewState(t.Context(), gnDoc, valKeys, fakeStore, fakeTxPool, eventPipe)
 	require.NoError(t, err)

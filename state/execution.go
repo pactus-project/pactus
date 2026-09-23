@@ -14,23 +14,9 @@ func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool)
 
 	proposerAddr := blk.Header().ProposerAddress()
 	for i, trx := range blk.Transactions() {
-		if check {
-			// The first transaction should be subsidy transaction
-			shouldBeSubsidyTx := (i == 0)
-			err := st.checkSubsidy(trx, proposerAddr, shouldBeSubsidyTx)
-			if err != nil {
-				return err
-			}
-
-			err = execution.CheckAndExecute(trx, sbx, true)
-			if err != nil {
-				return err
-			}
-		} else {
-			err := execution.Execute(trx, sbx)
-			if err != nil {
-				return err
-			}
+		err := st.executeBlockTx(trx, sbx, proposerAddr, i, check)
+		if err != nil {
+			return err
 		}
 	}
 
@@ -51,6 +37,22 @@ func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool)
 	sbx.UpdateAccount(crypto.TreasuryAddress, acc)
 
 	return nil
+}
+
+func (st *state) executeBlockTx(trx *tx.Tx, sbx sandbox.Sandbox, proposer crypto.Address, index int, check bool) error {
+	// A rejected anchor must fail the block. Skipping it would still add its fee.
+	if check || trx.Payload().Type() == payload.TypeAnchor {
+		if check {
+			err := st.checkSubsidy(trx, proposer, index == 0)
+			if err != nil {
+				return err
+			}
+		}
+
+		return execution.CheckAndExecute(trx, sbx, true)
+	}
+
+	return execution.Execute(trx, sbx)
 }
 
 func (st *state) checkSubsidy(trx *tx.Tx, proposerAddr crypto.Address, shouldBeSubsidyTx bool) error {

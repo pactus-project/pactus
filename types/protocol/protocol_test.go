@@ -17,7 +17,9 @@ func TestParseVersion(t *testing.T) {
 		{"2", ProtocolVersion2, false},
 		{"3", ProtocolVersion3, false},
 		{"4", ProtocolVersion4, false},
-		{"4", ProtocolVersionLatest, false},
+		{"5", ProtocolVersion5, false},
+		{"5", ProtocolVersionLatest, false},
+		{"6", Version(6), false},
 		{"invalid", 0, true},
 		{"0", 0, false},
 		{"-1", Version(255), false},
@@ -34,6 +36,15 @@ func TestParseVersion(t *testing.T) {
 			assert.Equal(t, test.expected, result, "ParseVersion(%q)", test.input)
 		}
 	}
+
+	four, err := ParseVersion("4")
+	require.NoError(t, err)
+	assert.Equal(t, ProtocolVersion4, four)
+	assert.NotEqual(t, ProtocolVersionLatest, four)
+
+	six, err := ParseVersion("6")
+	require.NoError(t, err)
+	assert.NotEqual(t, ProtocolVersionLatest, six)
 }
 
 func TestVersionString(t *testing.T) {
@@ -45,7 +56,8 @@ func TestVersionString(t *testing.T) {
 		{ProtocolVersion2, "2"},
 		{ProtocolVersion3, "3"},
 		{ProtocolVersion4, "4"},
-		{ProtocolVersionLatest, "4"},
+		{ProtocolVersion5, "5"},
+		{ProtocolVersionLatest, "5"},
 		{0, "0"},
 		{127, "127"},
 		{255, "255"},
