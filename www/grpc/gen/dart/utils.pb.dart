@@ -23,7 +23,7 @@ class SignMessageWithPrivateKeyRequest extends $pb.GeneratedMessage {
     $core.String? privateKey,
     $core.String? message,
   }) {
-    final result = create();
+    final result = SignMessageWithPrivateKeyRequest._();
     if (privateKey != null) result.privateKey = privateKey;
     if (message != null) result.message = message;
     return result;
@@ -34,15 +34,15 @@ class SignMessageWithPrivateKeyRequest extends $pb.GeneratedMessage {
   factory SignMessageWithPrivateKeyRequest.fromBuffer(
           $core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      SignMessageWithPrivateKeyRequest()..mergeFromBuffer(data, registry);
   factory SignMessageWithPrivateKeyRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      SignMessageWithPrivateKeyRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'SignMessageWithPrivateKeyRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: SignMessageWithPrivateKeyRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'privateKey')
     ..aOS(2, _omitFieldNames ? '' : 'message')
     ..hasRequiredFields = false;
@@ -60,14 +60,19 @@ class SignMessageWithPrivateKeyRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use SignMessageWithPrivateKeyRequest() / SignMessageWithPrivateKeyRequest.new instead')
   static SignMessageWithPrivateKeyRequest create() =>
       SignMessageWithPrivateKeyRequest._();
+  static $pb.GeneratedMessage $_createMessage() =>
+      SignMessageWithPrivateKeyRequest._();
   @$core.override
-  SignMessageWithPrivateKeyRequest createEmptyInstance() => create();
+  SignMessageWithPrivateKeyRequest createEmptyInstance() =>
+      SignMessageWithPrivateKeyRequest._();
   @$core.pragma('dart2js:noInline')
   static SignMessageWithPrivateKeyRequest getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<SignMessageWithPrivateKeyRequest>(
-          create);
+          SignMessageWithPrivateKeyRequest.$_createMessage);
   static SignMessageWithPrivateKeyRequest? _defaultInstance;
 
   /// The private key to sign the message.
@@ -96,7 +101,7 @@ class SignMessageWithPrivateKeyResponse extends $pb.GeneratedMessage {
   factory SignMessageWithPrivateKeyResponse({
     $core.String? signature,
   }) {
-    final result = create();
+    final result = SignMessageWithPrivateKeyResponse._();
     if (signature != null) result.signature = signature;
     return result;
   }
@@ -106,15 +111,15 @@ class SignMessageWithPrivateKeyResponse extends $pb.GeneratedMessage {
   factory SignMessageWithPrivateKeyResponse.fromBuffer(
           $core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      SignMessageWithPrivateKeyResponse()..mergeFromBuffer(data, registry);
   factory SignMessageWithPrivateKeyResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      SignMessageWithPrivateKeyResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'SignMessageWithPrivateKeyResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: SignMessageWithPrivateKeyResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'signature')
     ..hasRequiredFields = false;
 
@@ -131,14 +136,19 @@ class SignMessageWithPrivateKeyResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use SignMessageWithPrivateKeyResponse() / SignMessageWithPrivateKeyResponse.new instead')
   static SignMessageWithPrivateKeyResponse create() =>
       SignMessageWithPrivateKeyResponse._();
+  static $pb.GeneratedMessage $_createMessage() =>
+      SignMessageWithPrivateKeyResponse._();
   @$core.override
-  SignMessageWithPrivateKeyResponse createEmptyInstance() => create();
+  SignMessageWithPrivateKeyResponse createEmptyInstance() =>
+      SignMessageWithPrivateKeyResponse._();
   @$core.pragma('dart2js:noInline')
   static SignMessageWithPrivateKeyResponse getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<SignMessageWithPrivateKeyResponse>(
-          create);
+          SignMessageWithPrivateKeyResponse.$_createMessage);
   static SignMessageWithPrivateKeyResponse? _defaultInstance;
 
   /// The resulting signature in hexadecimal format.
@@ -159,7 +169,7 @@ class VerifyMessageRequest extends $pb.GeneratedMessage {
     $core.String? signature,
     $core.String? publicKey,
   }) {
-    final result = create();
+    final result = VerifyMessageRequest._();
     if (message != null) result.message = message;
     if (signature != null) result.signature = signature;
     if (publicKey != null) result.publicKey = publicKey;
@@ -170,15 +180,15 @@ class VerifyMessageRequest extends $pb.GeneratedMessage {
 
   factory VerifyMessageRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      VerifyMessageRequest()..mergeFromBuffer(data, registry);
   factory VerifyMessageRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      VerifyMessageRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'VerifyMessageRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: VerifyMessageRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'message')
     ..aOS(2, _omitFieldNames ? '' : 'signature')
     ..aOS(3, _omitFieldNames ? '' : 'publicKey')
@@ -195,12 +205,16 @@ class VerifyMessageRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use VerifyMessageRequest() / VerifyMessageRequest.new instead')
   static VerifyMessageRequest create() => VerifyMessageRequest._();
+  static $pb.GeneratedMessage $_createMessage() => VerifyMessageRequest._();
   @$core.override
-  VerifyMessageRequest createEmptyInstance() => create();
+  VerifyMessageRequest createEmptyInstance() => VerifyMessageRequest._();
   @$core.pragma('dart2js:noInline')
   static VerifyMessageRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<VerifyMessageRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<VerifyMessageRequest>(
+          VerifyMessageRequest.$_createMessage);
   static VerifyMessageRequest? _defaultInstance;
 
   /// The original message content that was signed.
@@ -239,7 +253,7 @@ class VerifyMessageResponse extends $pb.GeneratedMessage {
   factory VerifyMessageResponse({
     $core.bool? isValid,
   }) {
-    final result = create();
+    final result = VerifyMessageResponse._();
     if (isValid != null) result.isValid = isValid;
     return result;
   }
@@ -248,15 +262,15 @@ class VerifyMessageResponse extends $pb.GeneratedMessage {
 
   factory VerifyMessageResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      VerifyMessageResponse()..mergeFromBuffer(data, registry);
   factory VerifyMessageResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      VerifyMessageResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'VerifyMessageResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: VerifyMessageResponse.$_createMessage)
     ..aOB(1, _omitFieldNames ? '' : 'isValid')
     ..hasRequiredFields = false;
 
@@ -272,12 +286,16 @@ class VerifyMessageResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use VerifyMessageResponse() / VerifyMessageResponse.new instead')
   static VerifyMessageResponse create() => VerifyMessageResponse._();
+  static $pb.GeneratedMessage $_createMessage() => VerifyMessageResponse._();
   @$core.override
-  VerifyMessageResponse createEmptyInstance() => create();
+  VerifyMessageResponse createEmptyInstance() => VerifyMessageResponse._();
   @$core.pragma('dart2js:noInline')
   static VerifyMessageResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<VerifyMessageResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<VerifyMessageResponse>(
+          VerifyMessageResponse.$_createMessage);
   static VerifyMessageResponse? _defaultInstance;
 
   /// Boolean indicating whether the signature is valid for the given message and public key.
@@ -296,7 +314,7 @@ class PublicKeyAggregationRequest extends $pb.GeneratedMessage {
   factory PublicKeyAggregationRequest({
     $core.Iterable<$core.String>? publicKeys,
   }) {
-    final result = create();
+    final result = PublicKeyAggregationRequest._();
     if (publicKeys != null) result.publicKeys.addAll(publicKeys);
     return result;
   }
@@ -305,15 +323,15 @@ class PublicKeyAggregationRequest extends $pb.GeneratedMessage {
 
   factory PublicKeyAggregationRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      PublicKeyAggregationRequest()..mergeFromBuffer(data, registry);
   factory PublicKeyAggregationRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      PublicKeyAggregationRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'PublicKeyAggregationRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: PublicKeyAggregationRequest.$_createMessage)
     ..pPS(1, _omitFieldNames ? '' : 'publicKeys')
     ..hasRequiredFields = false;
 
@@ -330,13 +348,19 @@ class PublicKeyAggregationRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use PublicKeyAggregationRequest() / PublicKeyAggregationRequest.new instead')
   static PublicKeyAggregationRequest create() =>
       PublicKeyAggregationRequest._();
+  static $pb.GeneratedMessage $_createMessage() =>
+      PublicKeyAggregationRequest._();
   @$core.override
-  PublicKeyAggregationRequest createEmptyInstance() => create();
+  PublicKeyAggregationRequest createEmptyInstance() =>
+      PublicKeyAggregationRequest._();
   @$core.pragma('dart2js:noInline')
   static PublicKeyAggregationRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<PublicKeyAggregationRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<PublicKeyAggregationRequest>(
+          PublicKeyAggregationRequest.$_createMessage);
   static PublicKeyAggregationRequest? _defaultInstance;
 
   /// List of BLS public keys to be aggregated.
@@ -350,7 +374,7 @@ class PublicKeyAggregationResponse extends $pb.GeneratedMessage {
     $core.String? publicKey,
     $core.String? address,
   }) {
-    final result = create();
+    final result = PublicKeyAggregationResponse._();
     if (publicKey != null) result.publicKey = publicKey;
     if (address != null) result.address = address;
     return result;
@@ -360,15 +384,15 @@ class PublicKeyAggregationResponse extends $pb.GeneratedMessage {
 
   factory PublicKeyAggregationResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      PublicKeyAggregationResponse()..mergeFromBuffer(data, registry);
   factory PublicKeyAggregationResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      PublicKeyAggregationResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'PublicKeyAggregationResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: PublicKeyAggregationResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'publicKey')
     ..aOS(2, _omitFieldNames ? '' : 'address')
     ..hasRequiredFields = false;
@@ -386,13 +410,19 @@ class PublicKeyAggregationResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use PublicKeyAggregationResponse() / PublicKeyAggregationResponse.new instead')
   static PublicKeyAggregationResponse create() =>
       PublicKeyAggregationResponse._();
+  static $pb.GeneratedMessage $_createMessage() =>
+      PublicKeyAggregationResponse._();
   @$core.override
-  PublicKeyAggregationResponse createEmptyInstance() => create();
+  PublicKeyAggregationResponse createEmptyInstance() =>
+      PublicKeyAggregationResponse._();
   @$core.pragma('dart2js:noInline')
   static PublicKeyAggregationResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<PublicKeyAggregationResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<PublicKeyAggregationResponse>(
+          PublicKeyAggregationResponse.$_createMessage);
   static PublicKeyAggregationResponse? _defaultInstance;
 
   /// The aggregated BLS public key.
@@ -421,7 +451,7 @@ class SignatureAggregationRequest extends $pb.GeneratedMessage {
   factory SignatureAggregationRequest({
     $core.Iterable<$core.String>? signatures,
   }) {
-    final result = create();
+    final result = SignatureAggregationRequest._();
     if (signatures != null) result.signatures.addAll(signatures);
     return result;
   }
@@ -430,15 +460,15 @@ class SignatureAggregationRequest extends $pb.GeneratedMessage {
 
   factory SignatureAggregationRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      SignatureAggregationRequest()..mergeFromBuffer(data, registry);
   factory SignatureAggregationRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      SignatureAggregationRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'SignatureAggregationRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: SignatureAggregationRequest.$_createMessage)
     ..pPS(1, _omitFieldNames ? '' : 'signatures')
     ..hasRequiredFields = false;
 
@@ -455,13 +485,19 @@ class SignatureAggregationRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use SignatureAggregationRequest() / SignatureAggregationRequest.new instead')
   static SignatureAggregationRequest create() =>
       SignatureAggregationRequest._();
+  static $pb.GeneratedMessage $_createMessage() =>
+      SignatureAggregationRequest._();
   @$core.override
-  SignatureAggregationRequest createEmptyInstance() => create();
+  SignatureAggregationRequest createEmptyInstance() =>
+      SignatureAggregationRequest._();
   @$core.pragma('dart2js:noInline')
   static SignatureAggregationRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<SignatureAggregationRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<SignatureAggregationRequest>(
+          SignatureAggregationRequest.$_createMessage);
   static SignatureAggregationRequest? _defaultInstance;
 
   /// List of BLS signatures to be aggregated.
@@ -474,7 +510,7 @@ class SignatureAggregationResponse extends $pb.GeneratedMessage {
   factory SignatureAggregationResponse({
     $core.String? signature,
   }) {
-    final result = create();
+    final result = SignatureAggregationResponse._();
     if (signature != null) result.signature = signature;
     return result;
   }
@@ -483,15 +519,15 @@ class SignatureAggregationResponse extends $pb.GeneratedMessage {
 
   factory SignatureAggregationResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      SignatureAggregationResponse()..mergeFromBuffer(data, registry);
   factory SignatureAggregationResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      SignatureAggregationResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'SignatureAggregationResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: SignatureAggregationResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'signature')
     ..hasRequiredFields = false;
 
@@ -508,13 +544,19 @@ class SignatureAggregationResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use SignatureAggregationResponse() / SignatureAggregationResponse.new instead')
   static SignatureAggregationResponse create() =>
       SignatureAggregationResponse._();
+  static $pb.GeneratedMessage $_createMessage() =>
+      SignatureAggregationResponse._();
   @$core.override
-  SignatureAggregationResponse createEmptyInstance() => create();
+  SignatureAggregationResponse createEmptyInstance() =>
+      SignatureAggregationResponse._();
   @$core.pragma('dart2js:noInline')
   static SignatureAggregationResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<SignatureAggregationResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<SignatureAggregationResponse>(
+          SignatureAggregationResponse.$_createMessage);
   static SignatureAggregationResponse? _defaultInstance;
 
   /// The aggregated BLS signature in hexadecimal format.
