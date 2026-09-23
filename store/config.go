@@ -1,6 +1,7 @@
 package store
 
 import (
+	"fmt"
 	"path/filepath"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -46,7 +47,7 @@ func (conf *Config) StorePath() string {
 func (conf *Config) BasicCheck() error {
 	if !util.IsValidDirPath(conf.Path) {
 		return ConfigError{
-			Reason: "path is not valid",
+			Reason: fmt.Sprintf("path is invalid or inaccessible: %s", conf.Path),
 		}
 	}
 
