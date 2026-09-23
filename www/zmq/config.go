@@ -6,20 +6,22 @@ import (
 
 // Config defines parameters for the ZeroMQ publishers.
 type Config struct {
-	ZmqPubBlockInfo string `toml:"zmqpubblockinfo"`
-	ZmqPubTxInfo    string `toml:"zmqpubtxinfo"`
-	ZmqPubRawBlock  string `toml:"zmqpubrawblock"`
-	ZmqPubRawTx     string `toml:"zmqpubrawtx"`
-	ZmqPubHWM       int    `toml:"zmqpubhwm"`
+	ZmqPubBlockInfo  string `toml:"zmqpubblockinfo"`
+	ZmqPubTxInfo     string `toml:"zmqpubtxinfo"`
+	ZmqPubRawBlock   string `toml:"zmqpubrawblock"`
+	ZmqPubRawTx      string `toml:"zmqpubrawtx"`
+	ZmqPubAnchorInfo string `toml:"zmqpubanchorinfo"`
+	ZmqPubHWM        int    `toml:"zmqpubhwm"`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
-		ZmqPubBlockInfo: "",
-		ZmqPubTxInfo:    "",
-		ZmqPubRawBlock:  "",
-		ZmqPubRawTx:     "",
-		ZmqPubHWM:       1000,
+		ZmqPubBlockInfo:  "",
+		ZmqPubTxInfo:     "",
+		ZmqPubRawBlock:   "",
+		ZmqPubRawTx:      "",
+		ZmqPubAnchorInfo: "",
+		ZmqPubHWM:        1000,
 	}
 }
 

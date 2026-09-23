@@ -27,6 +27,8 @@ func BlockchainClientCommand(options ...client.Option) *cobra.Command {
 		_BlockchainGetCommitteeInfoCommand(cfg),
 		_BlockchainGetConsensusInfoCommand(cfg),
 		_BlockchainGetAccountCommand(cfg),
+		_BlockchainGetAnchorCommand(cfg),
+		_BlockchainListAnchorsCommand(cfg),
 		_BlockchainGetValidatorCommand(cfg),
 		_BlockchainGetValidatorByNumberCommand(cfg),
 		_BlockchainGetValidatorAddressesCommand(cfg),
@@ -325,6 +327,91 @@ func _BlockchainGetAccountCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
+func _BlockchainGetAnchorCommand(cfg *client.Config) *cobra.Command {
+	req := &GetAnchorRequest{}
+
+	cmd := &cobra.Command{
+		Use:   cfg.CommandNamer("GetAnchor"),
+		Short: "GetAnchor RPC client",
+		Long:  "GetAnchor retrieves the active anchor for an account, if any.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain", "GetAnchor"); err != nil {
+					return err
+				}
+			}
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+				cli := NewBlockchainClient(cc)
+				v := &GetAnchorRequest{}
+
+				if err := in(v); err != nil {
+					return err
+				}
+				proto.Merge(v, req)
+
+				res, err := cli.GetAnchor(cmd.Context(), v)
+
+				if err != nil {
+					return err
+				}
+
+				return out(res)
+
+			})
+		},
+	}
+
+	cmd.PersistentFlags().StringVar(&req.Address, cfg.FlagNamer("Address"), "", "The address of the account.")
+
+	return cmd
+}
+
+func _BlockchainListAnchorsCommand(cfg *client.Config) *cobra.Command {
+	req := &ListAnchorsRequest{}
+
+	cmd := &cobra.Command{
+		Use:   cfg.CommandNamer("ListAnchors"),
+		Short: "ListAnchors RPC client",
+		Long:  "ListAnchors lists accounts that currently have an anchor, ordered by account number.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain", "ListAnchors"); err != nil {
+					return err
+				}
+			}
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+				cli := NewBlockchainClient(cc)
+				v := &ListAnchorsRequest{}
+
+				if err := in(v); err != nil {
+					return err
+				}
+				proto.Merge(v, req)
+
+				res, err := cli.ListAnchors(cmd.Context(), v)
+
+				if err != nil {
+					return err
+				}
+
+				return out(res)
+
+			})
+		},
+	}
+
+	cmd.PersistentFlags().Uint32Var(&req.Skip, cfg.FlagNamer("Skip"), 0, "Number of matching accounts to skip.")
+	cmd.PersistentFlags().Uint32Var(&req.Count, cfg.FlagNamer("Count"), 0, "Page size. 0 means 20. Maximum is 100.")
+
+	return cmd
+}
+
 func _BlockchainGetValidatorCommand(cfg *client.Config) *cobra.Command {
 	req := &GetValidatorRequest{}
 
@@ -415,7 +502,7 @@ func _BlockchainGetValidatorAddressesCommand(cfg *client.Config) *cobra.Command 
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetValidatorAddresses"),
 		Short: "GetValidatorAddresses RPC client",
-		Long:  "GetValidatorAddresses retrieves a list of all validator addresses.\n deprecated: It will be removed in a future version.",
+		Long:  "GetValidatorAddresses retrieves a list of all validator addresses.\r\n deprecated: It will be removed in a future version.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {

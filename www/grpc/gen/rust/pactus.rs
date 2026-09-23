@@ -179,6 +179,37 @@ pub struct GetRawBatchTransferTransactionRequest {
     #[prost(string, tag="5")]
     pub memo: ::prost::alloc::string::String,
 }
+/// Request message for retrieving raw details of an anchor transaction.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetRawAnchorTransactionRequest {
+    /// The sender's account address.
+    #[prost(string, tag="1")]
+    pub from: ::prost::alloc::string::String,
+    /// 0 = set, 1 = delete.
+    #[prost(uint32, tag="2")]
+    pub action: u32,
+    /// Required when action is set.
+    #[prost(bytes="vec", tag="3")]
+    pub root_hash: ::prost::alloc::vec::Vec<u8>,
+    /// Manifest URI. Ignored on delete.
+    #[prost(string, tag="4")]
+    pub manifest_uri: ::prost::alloc::string::String,
+    /// Anchor type byte. Ignored on delete.
+    #[prost(uint32, tag="5")]
+    pub anchor_type: u32,
+    /// Additional lock in NanoPAC. Must be 0 on delete.
+    #[prost(int64, tag="6")]
+    pub deposit: i64,
+    /// The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+    #[prost(int64, tag="7")]
+    pub fee: i64,
+    /// A memo string for the transaction.
+    #[prost(string, tag="8")]
+    pub memo: ::prost::alloc::string::String,
+    /// The lock time for the transaction. If not set, defaults to the last block height.
+    #[prost(uint32, tag="9")]
+    pub lock_time: u32,
+}
 /// Response message contains raw transaction data.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct GetRawTransactionResponse {
@@ -268,6 +299,28 @@ pub struct PayloadWithdraw {
     #[prost(int64, tag="3")]
     pub amount: i64,
 }
+/// Payload for an anchor transaction.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct PayloadAnchor {
+    /// The sender's address.
+    #[prost(string, tag="1")]
+    pub from: ::prost::alloc::string::String,
+    /// 0 = set, 1 = delete.
+    #[prost(uint32, tag="2")]
+    pub action: u32,
+    /// Empty when action is delete.
+    #[prost(bytes="vec", tag="3")]
+    pub root_hash: ::prost::alloc::vec::Vec<u8>,
+    /// Manifest URI.
+    #[prost(string, tag="4")]
+    pub manifest_uri: ::prost::alloc::string::String,
+    /// Anchor type byte.
+    #[prost(uint32, tag="5")]
+    pub anchor_type: u32,
+    /// Deposit in NanoPAC.
+    #[prost(int64, tag="6")]
+    pub deposit: i64,
+}
 /// Payload for a batch transfer transaction.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PayloadBatchTransfer {
@@ -333,7 +386,7 @@ pub struct TransactionInfo {
     #[prost(int32, tag="13")]
     pub confirmations: i32,
     /// Transaction payload.
-    #[prost(oneof="transaction_info::Payload", tags="30, 31, 32, 33, 34, 35")]
+    #[prost(oneof="transaction_info::Payload", tags="30, 31, 32, 33, 34, 35, 36")]
     pub payload: ::core::option::Option<transaction_info::Payload>,
 }
 /// Nested message and enum types in `TransactionInfo`.
@@ -359,6 +412,9 @@ pub mod transaction_info {
         /// Batch Transfer transaction payload.
         #[prost(message, tag="35")]
         BatchTransfer(super::PayloadBatchTransfer),
+        /// Anchor transaction payload.
+        #[prost(message, tag="36")]
+        Anchor(super::PayloadAnchor),
     }
 }
 /// Request message for decoding a raw transaction.
@@ -411,6 +467,8 @@ pub enum PayloadType {
     Withdraw = 5,
     /// Batch transfer payload type.
     BatchTransfer = 6,
+    /// Anchor payload type.
+    Anchor = 7,
 }
 impl PayloadType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -426,6 +484,7 @@ impl PayloadType {
             Self::Unbond => "PAYLOAD_TYPE_UNBOND",
             Self::Withdraw => "PAYLOAD_TYPE_WITHDRAW",
             Self::BatchTransfer => "PAYLOAD_TYPE_BATCH_TRANSFER",
+            Self::Anchor => "PAYLOAD_TYPE_ANCHOR",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -438,6 +497,7 @@ impl PayloadType {
             "PAYLOAD_TYPE_UNBOND" => Some(Self::Unbond),
             "PAYLOAD_TYPE_WITHDRAW" => Some(Self::Withdraw),
             "PAYLOAD_TYPE_BATCH_TRANSFER" => Some(Self::BatchTransfer),
+            "PAYLOAD_TYPE_ANCHOR" => Some(Self::Anchor),
             _ => None,
         }
     }
@@ -752,6 +812,84 @@ pub struct ValidatorInfo {
     #[prost(uint32, tag="15")]
     pub delegate_expiry: u32,
 }
+/// Request message for retrieving the active anchor of an account.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetAnchorRequest {
+    /// The address of the account.
+    #[prost(string, tag="1")]
+    pub address: ::prost::alloc::string::String,
+}
+/// Response message contains the active anchor, when one exists.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetAnchorResponse {
+    /// True when the account exists and has an anchor.
+    #[prost(bool, tag="1")]
+    pub found: bool,
+    /// The requested address.
+    #[prost(string, tag="2")]
+    pub address: ::prost::alloc::string::String,
+    /// Set only when found is true.
+    #[prost(message, optional, tag="3")]
+    pub anchor: ::core::option::Option<AnchorInfo>,
+}
+/// Request message for listing active anchors.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListAnchorsRequest {
+    /// Number of matching accounts to skip.
+    #[prost(uint32, tag="1")]
+    pub skip: u32,
+    /// Page size. 0 means 20. Maximum is 100.
+    #[prost(uint32, tag="2")]
+    pub count: u32,
+}
+/// Response message contains one page of active anchors.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListAnchorsResponse {
+    /// The page, ordered by account number.
+    #[prost(message, repeated, tag="1")]
+    pub items: ::prost::alloc::vec::Vec<AnchorListItem>,
+    /// Accounts that currently have an anchor.
+    #[prost(uint32, tag="2")]
+    pub total: u32,
+}
+/// One anchored account.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct AnchorListItem {
+    /// The account address.
+    #[prost(string, tag="1")]
+    pub address: ::prost::alloc::string::String,
+    /// The active anchor.
+    #[prost(message, optional, tag="2")]
+    pub anchor: ::core::option::Option<AnchorInfo>,
+}
+/// Active anchor stored on an account.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct AnchorInfo {
+    /// Root hash bytes.
+    #[prost(bytes="vec", tag="1")]
+    pub root_hash: ::prost::alloc::vec::Vec<u8>,
+    /// Manifest URI.
+    #[prost(string, tag="2")]
+    pub manifest_uri: ::prost::alloc::string::String,
+    /// Anchor type byte.
+    #[prost(uint32, tag="3")]
+    pub anchor_type: u32,
+    /// Locked deposit in NanoPAC.
+    #[prost(int64, tag="4")]
+    pub locked_deposit: i64,
+    /// Height of the first set.
+    #[prost(uint32, tag="5")]
+    pub created_at_height: u32,
+    /// Unix time of the first set.
+    #[prost(uint32, tag="6")]
+    pub created_at_time: u32,
+    /// Height of the latest set.
+    #[prost(uint32, tag="7")]
+    pub updated_at_height: u32,
+    /// Unix time of the latest set.
+    #[prost(uint32, tag="8")]
+    pub updated_at_time: u32,
+}
 /// Message contains information about an account.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct AccountInfo {
@@ -770,6 +908,9 @@ pub struct AccountInfo {
     /// The address of the account.
     #[prost(string, tag="5")]
     pub address: ::prost::alloc::string::String,
+    /// The active anchor. Unset when the account has none.
+    #[prost(message, optional, tag="6")]
+    pub anchor: ::core::option::Option<AnchorInfo>,
 }
 /// Message contains information about the header of a block.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]

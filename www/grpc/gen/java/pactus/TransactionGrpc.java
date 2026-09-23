@@ -263,6 +263,37 @@ public final class TransactionGrpc {
     return getGetRawBatchTransferTransactionMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pactus.TransactionOuterClass.GetRawAnchorTransactionRequest,
+      pactus.TransactionOuterClass.GetRawTransactionResponse> getGetRawAnchorTransactionMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetRawAnchorTransaction",
+      requestType = pactus.TransactionOuterClass.GetRawAnchorTransactionRequest.class,
+      responseType = pactus.TransactionOuterClass.GetRawTransactionResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.TransactionOuterClass.GetRawAnchorTransactionRequest,
+      pactus.TransactionOuterClass.GetRawTransactionResponse> getGetRawAnchorTransactionMethod() {
+    io.grpc.MethodDescriptor<pactus.TransactionOuterClass.GetRawAnchorTransactionRequest, pactus.TransactionOuterClass.GetRawTransactionResponse> getGetRawAnchorTransactionMethod;
+    if ((getGetRawAnchorTransactionMethod = TransactionGrpc.getGetRawAnchorTransactionMethod) == null) {
+      synchronized (TransactionGrpc.class) {
+        if ((getGetRawAnchorTransactionMethod = TransactionGrpc.getGetRawAnchorTransactionMethod) == null) {
+          TransactionGrpc.getGetRawAnchorTransactionMethod = getGetRawAnchorTransactionMethod =
+              io.grpc.MethodDescriptor.<pactus.TransactionOuterClass.GetRawAnchorTransactionRequest, pactus.TransactionOuterClass.GetRawTransactionResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetRawAnchorTransaction"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.TransactionOuterClass.GetRawAnchorTransactionRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.TransactionOuterClass.GetRawTransactionResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new TransactionMethodDescriptorSupplier("GetRawAnchorTransaction"))
+              .build();
+        }
+      }
+    }
+    return getGetRawAnchorTransactionMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<pactus.TransactionOuterClass.DecodeRawTransactionRequest,
       pactus.TransactionOuterClass.DecodeRawTransactionResponse> getDecodeRawTransactionMethod;
 
@@ -473,6 +504,16 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
+     * GetRawAnchorTransaction retrieves raw details of an anchor transaction.
+     * </pre>
+     */
+    default void getRawAnchorTransaction(pactus.TransactionOuterClass.GetRawAnchorTransactionRequest request,
+        io.grpc.stub.StreamObserver<pactus.TransactionOuterClass.GetRawTransactionResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetRawAnchorTransactionMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
      * DecodeRawTransaction accepts raw transaction and returns decoded transaction.
      * </pre>
      */
@@ -615,6 +656,17 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
+     * GetRawAnchorTransaction retrieves raw details of an anchor transaction.
+     * </pre>
+     */
+    public void getRawAnchorTransaction(pactus.TransactionOuterClass.GetRawAnchorTransactionRequest request,
+        io.grpc.stub.StreamObserver<pactus.TransactionOuterClass.GetRawTransactionResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetRawAnchorTransactionMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
      * DecodeRawTransaction accepts raw transaction and returns decoded transaction.
      * </pre>
      */
@@ -737,6 +789,16 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
+     * GetRawAnchorTransaction retrieves raw details of an anchor transaction.
+     * </pre>
+     */
+    public pactus.TransactionOuterClass.GetRawTransactionResponse getRawAnchorTransaction(pactus.TransactionOuterClass.GetRawAnchorTransactionRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getGetRawAnchorTransactionMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
      * DecodeRawTransaction accepts raw transaction and returns decoded transaction.
      * </pre>
      */
@@ -853,6 +915,16 @@ public final class TransactionGrpc {
     public pactus.TransactionOuterClass.GetRawTransactionResponse getRawBatchTransferTransaction(pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetRawBatchTransferTransactionMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * GetRawAnchorTransaction retrieves raw details of an anchor transaction.
+     * </pre>
+     */
+    public pactus.TransactionOuterClass.GetRawTransactionResponse getRawAnchorTransaction(pactus.TransactionOuterClass.GetRawAnchorTransactionRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetRawAnchorTransactionMethod(), getCallOptions(), request);
     }
 
     /**
@@ -985,6 +1057,17 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
+     * GetRawAnchorTransaction retrieves raw details of an anchor transaction.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.TransactionOuterClass.GetRawTransactionResponse> getRawAnchorTransaction(
+        pactus.TransactionOuterClass.GetRawAnchorTransactionRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetRawAnchorTransactionMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
      * DecodeRawTransaction accepts raw transaction and returns decoded transaction.
      * </pre>
      */
@@ -1014,8 +1097,9 @@ public final class TransactionGrpc {
   private static final int METHODID_GET_RAW_UNBOND_TRANSACTION = 5;
   private static final int METHODID_GET_RAW_WITHDRAW_TRANSACTION = 6;
   private static final int METHODID_GET_RAW_BATCH_TRANSFER_TRANSACTION = 7;
-  private static final int METHODID_DECODE_RAW_TRANSACTION = 8;
-  private static final int METHODID_CHECK_TRANSACTION = 9;
+  private static final int METHODID_GET_RAW_ANCHOR_TRANSACTION = 8;
+  private static final int METHODID_DECODE_RAW_TRANSACTION = 9;
+  private static final int METHODID_CHECK_TRANSACTION = 10;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1064,6 +1148,10 @@ public final class TransactionGrpc {
           break;
         case METHODID_GET_RAW_BATCH_TRANSFER_TRANSACTION:
           serviceImpl.getRawBatchTransferTransaction((pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.TransactionOuterClass.GetRawTransactionResponse>) responseObserver);
+          break;
+        case METHODID_GET_RAW_ANCHOR_TRANSACTION:
+          serviceImpl.getRawAnchorTransaction((pactus.TransactionOuterClass.GetRawAnchorTransactionRequest) request,
               (io.grpc.stub.StreamObserver<pactus.TransactionOuterClass.GetRawTransactionResponse>) responseObserver);
           break;
         case METHODID_DECODE_RAW_TRANSACTION:
@@ -1149,6 +1237,13 @@ public final class TransactionGrpc {
               pactus.TransactionOuterClass.GetRawTransactionResponse>(
                 service, METHODID_GET_RAW_BATCH_TRANSFER_TRANSACTION)))
         .addMethod(
+          getGetRawAnchorTransactionMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              pactus.TransactionOuterClass.GetRawAnchorTransactionRequest,
+              pactus.TransactionOuterClass.GetRawTransactionResponse>(
+                service, METHODID_GET_RAW_ANCHOR_TRANSACTION)))
+        .addMethod(
           getDecodeRawTransactionMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
@@ -1218,6 +1313,7 @@ public final class TransactionGrpc {
               .addMethod(getGetRawUnbondTransactionMethod())
               .addMethod(getGetRawWithdrawTransactionMethod())
               .addMethod(getGetRawBatchTransferTransactionMethod())
+              .addMethod(getGetRawAnchorTransactionMethod())
               .addMethod(getDecodeRawTransactionMethod())
               .addMethod(getCheckTransactionMethod())
               .build();

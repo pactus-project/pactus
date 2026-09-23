@@ -1851,6 +1851,503 @@ class ValidatorInfo extends $pb.GeneratedMessage {
   void clearDelegateExpiry() => $_clearField(15);
 }
 
+/// Request message for retrieving the active anchor of an account.
+class GetAnchorRequest extends $pb.GeneratedMessage {
+  factory GetAnchorRequest({
+    $core.String? address,
+  }) {
+    final result = create();
+    if (address != null) result.address = address;
+    return result;
+  }
+
+  GetAnchorRequest._();
+
+  factory GetAnchorRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetAnchorRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetAnchorRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'address')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetAnchorRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetAnchorRequest copyWith(void Function(GetAnchorRequest) updates) =>
+      super.copyWith((message) => updates(message as GetAnchorRequest))
+          as GetAnchorRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetAnchorRequest create() => GetAnchorRequest._();
+  @$core.override
+  GetAnchorRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static GetAnchorRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetAnchorRequest>(create);
+  static GetAnchorRequest? _defaultInstance;
+
+  /// The address of the account.
+  @$pb.TagNumber(1)
+  $core.String get address => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set address($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasAddress() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearAddress() => $_clearField(1);
+}
+
+/// Response message contains the active anchor, when one exists.
+class GetAnchorResponse extends $pb.GeneratedMessage {
+  factory GetAnchorResponse({
+    $core.bool? found,
+    $core.String? address,
+    AnchorInfo? anchor,
+  }) {
+    final result = create();
+    if (found != null) result.found = found;
+    if (address != null) result.address = address;
+    if (anchor != null) result.anchor = anchor;
+    return result;
+  }
+
+  GetAnchorResponse._();
+
+  factory GetAnchorResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetAnchorResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetAnchorResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOB(1, _omitFieldNames ? '' : 'found')
+    ..aOS(2, _omitFieldNames ? '' : 'address')
+    ..aOM<AnchorInfo>(3, _omitFieldNames ? '' : 'anchor',
+        subBuilder: AnchorInfo.create)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetAnchorResponse clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetAnchorResponse copyWith(void Function(GetAnchorResponse) updates) =>
+      super.copyWith((message) => updates(message as GetAnchorResponse))
+          as GetAnchorResponse;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetAnchorResponse create() => GetAnchorResponse._();
+  @$core.override
+  GetAnchorResponse createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static GetAnchorResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetAnchorResponse>(create);
+  static GetAnchorResponse? _defaultInstance;
+
+  /// True when the account exists and has an anchor.
+  @$pb.TagNumber(1)
+  $core.bool get found => $_getBF(0);
+  @$pb.TagNumber(1)
+  set found($core.bool value) => $_setBool(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasFound() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearFound() => $_clearField(1);
+
+  /// The requested address.
+  @$pb.TagNumber(2)
+  $core.String get address => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set address($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasAddress() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearAddress() => $_clearField(2);
+
+  /// Set only when found is true.
+  @$pb.TagNumber(3)
+  AnchorInfo get anchor => $_getN(2);
+  @$pb.TagNumber(3)
+  set anchor(AnchorInfo value) => $_setField(3, value);
+  @$pb.TagNumber(3)
+  $core.bool hasAnchor() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearAnchor() => $_clearField(3);
+  @$pb.TagNumber(3)
+  AnchorInfo ensureAnchor() => $_ensure(2);
+}
+
+/// Request message for listing active anchors.
+class ListAnchorsRequest extends $pb.GeneratedMessage {
+  factory ListAnchorsRequest({
+    $core.int? skip,
+    $core.int? count,
+  }) {
+    final result = create();
+    if (skip != null) result.skip = skip;
+    if (count != null) result.count = count;
+    return result;
+  }
+
+  ListAnchorsRequest._();
+
+  factory ListAnchorsRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory ListAnchorsRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'ListAnchorsRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'skip', fieldType: $pb.PbFieldType.OU3)
+    ..aI(2, _omitFieldNames ? '' : 'count', fieldType: $pb.PbFieldType.OU3)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ListAnchorsRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ListAnchorsRequest copyWith(void Function(ListAnchorsRequest) updates) =>
+      super.copyWith((message) => updates(message as ListAnchorsRequest))
+          as ListAnchorsRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ListAnchorsRequest create() => ListAnchorsRequest._();
+  @$core.override
+  ListAnchorsRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static ListAnchorsRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ListAnchorsRequest>(create);
+  static ListAnchorsRequest? _defaultInstance;
+
+  /// Number of matching accounts to skip.
+  @$pb.TagNumber(1)
+  $core.int get skip => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set skip($core.int value) => $_setUnsignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasSkip() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSkip() => $_clearField(1);
+
+  /// Page size. 0 means 20. Maximum is 100.
+  @$pb.TagNumber(2)
+  $core.int get count => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set count($core.int value) => $_setUnsignedInt32(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasCount() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearCount() => $_clearField(2);
+}
+
+/// Response message contains one page of active anchors.
+class ListAnchorsResponse extends $pb.GeneratedMessage {
+  factory ListAnchorsResponse({
+    $core.Iterable<AnchorListItem>? items,
+    $core.int? total,
+  }) {
+    final result = create();
+    if (items != null) result.items.addAll(items);
+    if (total != null) result.total = total;
+    return result;
+  }
+
+  ListAnchorsResponse._();
+
+  factory ListAnchorsResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory ListAnchorsResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'ListAnchorsResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..pPM<AnchorListItem>(1, _omitFieldNames ? '' : 'items',
+        subBuilder: AnchorListItem.create)
+    ..aI(2, _omitFieldNames ? '' : 'total', fieldType: $pb.PbFieldType.OU3)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ListAnchorsResponse clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ListAnchorsResponse copyWith(void Function(ListAnchorsResponse) updates) =>
+      super.copyWith((message) => updates(message as ListAnchorsResponse))
+          as ListAnchorsResponse;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ListAnchorsResponse create() => ListAnchorsResponse._();
+  @$core.override
+  ListAnchorsResponse createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static ListAnchorsResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ListAnchorsResponse>(create);
+  static ListAnchorsResponse? _defaultInstance;
+
+  /// The page, ordered by account number.
+  @$pb.TagNumber(1)
+  $pb.PbList<AnchorListItem> get items => $_getList(0);
+
+  /// Accounts that currently have an anchor.
+  @$pb.TagNumber(2)
+  $core.int get total => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set total($core.int value) => $_setUnsignedInt32(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasTotal() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearTotal() => $_clearField(2);
+}
+
+/// One anchored account.
+class AnchorListItem extends $pb.GeneratedMessage {
+  factory AnchorListItem({
+    $core.String? address,
+    AnchorInfo? anchor,
+  }) {
+    final result = create();
+    if (address != null) result.address = address;
+    if (anchor != null) result.anchor = anchor;
+    return result;
+  }
+
+  AnchorListItem._();
+
+  factory AnchorListItem.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory AnchorListItem.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'AnchorListItem',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'address')
+    ..aOM<AnchorInfo>(2, _omitFieldNames ? '' : 'anchor',
+        subBuilder: AnchorInfo.create)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  AnchorListItem clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  AnchorListItem copyWith(void Function(AnchorListItem) updates) =>
+      super.copyWith((message) => updates(message as AnchorListItem))
+          as AnchorListItem;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static AnchorListItem create() => AnchorListItem._();
+  @$core.override
+  AnchorListItem createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static AnchorListItem getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<AnchorListItem>(create);
+  static AnchorListItem? _defaultInstance;
+
+  /// The account address.
+  @$pb.TagNumber(1)
+  $core.String get address => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set address($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasAddress() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearAddress() => $_clearField(1);
+
+  /// The active anchor.
+  @$pb.TagNumber(2)
+  AnchorInfo get anchor => $_getN(1);
+  @$pb.TagNumber(2)
+  set anchor(AnchorInfo value) => $_setField(2, value);
+  @$pb.TagNumber(2)
+  $core.bool hasAnchor() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearAnchor() => $_clearField(2);
+  @$pb.TagNumber(2)
+  AnchorInfo ensureAnchor() => $_ensure(1);
+}
+
+/// Active anchor stored on an account.
+class AnchorInfo extends $pb.GeneratedMessage {
+  factory AnchorInfo({
+    $core.List<$core.int>? rootHash,
+    $core.String? manifestUri,
+    $core.int? anchorType,
+    $fixnum.Int64? lockedDeposit,
+    $core.int? createdAtHeight,
+    $core.int? createdAtTime,
+    $core.int? updatedAtHeight,
+    $core.int? updatedAtTime,
+  }) {
+    final result = create();
+    if (rootHash != null) result.rootHash = rootHash;
+    if (manifestUri != null) result.manifestUri = manifestUri;
+    if (anchorType != null) result.anchorType = anchorType;
+    if (lockedDeposit != null) result.lockedDeposit = lockedDeposit;
+    if (createdAtHeight != null) result.createdAtHeight = createdAtHeight;
+    if (createdAtTime != null) result.createdAtTime = createdAtTime;
+    if (updatedAtHeight != null) result.updatedAtHeight = updatedAtHeight;
+    if (updatedAtTime != null) result.updatedAtTime = updatedAtTime;
+    return result;
+  }
+
+  AnchorInfo._();
+
+  factory AnchorInfo.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory AnchorInfo.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'AnchorInfo',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..a<$core.List<$core.int>>(
+        1, _omitFieldNames ? '' : 'rootHash', $pb.PbFieldType.OY)
+    ..aOS(2, _omitFieldNames ? '' : 'manifestUri')
+    ..aI(3, _omitFieldNames ? '' : 'anchorType', fieldType: $pb.PbFieldType.OU3)
+    ..aInt64(4, _omitFieldNames ? '' : 'lockedDeposit')
+    ..aI(5, _omitFieldNames ? '' : 'createdAtHeight',
+        fieldType: $pb.PbFieldType.OU3)
+    ..aI(6, _omitFieldNames ? '' : 'createdAtTime',
+        fieldType: $pb.PbFieldType.OU3)
+    ..aI(7, _omitFieldNames ? '' : 'updatedAtHeight',
+        fieldType: $pb.PbFieldType.OU3)
+    ..aI(8, _omitFieldNames ? '' : 'updatedAtTime',
+        fieldType: $pb.PbFieldType.OU3)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  AnchorInfo clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  AnchorInfo copyWith(void Function(AnchorInfo) updates) =>
+      super.copyWith((message) => updates(message as AnchorInfo)) as AnchorInfo;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static AnchorInfo create() => AnchorInfo._();
+  @$core.override
+  AnchorInfo createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static AnchorInfo getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<AnchorInfo>(create);
+  static AnchorInfo? _defaultInstance;
+
+  /// Root hash bytes.
+  @$pb.TagNumber(1)
+  $core.List<$core.int> get rootHash => $_getN(0);
+  @$pb.TagNumber(1)
+  set rootHash($core.List<$core.int> value) => $_setBytes(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasRootHash() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearRootHash() => $_clearField(1);
+
+  /// Manifest URI.
+  @$pb.TagNumber(2)
+  $core.String get manifestUri => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set manifestUri($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasManifestUri() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearManifestUri() => $_clearField(2);
+
+  /// Anchor type byte.
+  @$pb.TagNumber(3)
+  $core.int get anchorType => $_getIZ(2);
+  @$pb.TagNumber(3)
+  set anchorType($core.int value) => $_setUnsignedInt32(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasAnchorType() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearAnchorType() => $_clearField(3);
+
+  /// Locked deposit in NanoPAC.
+  @$pb.TagNumber(4)
+  $fixnum.Int64 get lockedDeposit => $_getI64(3);
+  @$pb.TagNumber(4)
+  set lockedDeposit($fixnum.Int64 value) => $_setInt64(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasLockedDeposit() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearLockedDeposit() => $_clearField(4);
+
+  /// Height of the first set.
+  @$pb.TagNumber(5)
+  $core.int get createdAtHeight => $_getIZ(4);
+  @$pb.TagNumber(5)
+  set createdAtHeight($core.int value) => $_setUnsignedInt32(4, value);
+  @$pb.TagNumber(5)
+  $core.bool hasCreatedAtHeight() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearCreatedAtHeight() => $_clearField(5);
+
+  /// Unix time of the first set.
+  @$pb.TagNumber(6)
+  $core.int get createdAtTime => $_getIZ(5);
+  @$pb.TagNumber(6)
+  set createdAtTime($core.int value) => $_setUnsignedInt32(5, value);
+  @$pb.TagNumber(6)
+  $core.bool hasCreatedAtTime() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearCreatedAtTime() => $_clearField(6);
+
+  /// Height of the latest set.
+  @$pb.TagNumber(7)
+  $core.int get updatedAtHeight => $_getIZ(6);
+  @$pb.TagNumber(7)
+  set updatedAtHeight($core.int value) => $_setUnsignedInt32(6, value);
+  @$pb.TagNumber(7)
+  $core.bool hasUpdatedAtHeight() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearUpdatedAtHeight() => $_clearField(7);
+
+  /// Unix time of the latest set.
+  @$pb.TagNumber(8)
+  $core.int get updatedAtTime => $_getIZ(7);
+  @$pb.TagNumber(8)
+  set updatedAtTime($core.int value) => $_setUnsignedInt32(7, value);
+  @$pb.TagNumber(8)
+  $core.bool hasUpdatedAtTime() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearUpdatedAtTime() => $_clearField(8);
+}
+
 /// Message contains information about an account.
 class AccountInfo extends $pb.GeneratedMessage {
   factory AccountInfo({
@@ -1859,6 +2356,7 @@ class AccountInfo extends $pb.GeneratedMessage {
     $core.int? number,
     $fixnum.Int64? balance,
     $core.String? address,
+    AnchorInfo? anchor,
   }) {
     final result = create();
     if (hash != null) result.hash = hash;
@@ -1866,6 +2364,7 @@ class AccountInfo extends $pb.GeneratedMessage {
     if (number != null) result.number = number;
     if (balance != null) result.balance = balance;
     if (address != null) result.address = address;
+    if (anchor != null) result.anchor = anchor;
     return result;
   }
 
@@ -1887,6 +2386,8 @@ class AccountInfo extends $pb.GeneratedMessage {
     ..aI(3, _omitFieldNames ? '' : 'number')
     ..aInt64(4, _omitFieldNames ? '' : 'balance')
     ..aOS(5, _omitFieldNames ? '' : 'address')
+    ..aOM<AnchorInfo>(6, _omitFieldNames ? '' : 'anchor',
+        subBuilder: AnchorInfo.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1957,6 +2458,18 @@ class AccountInfo extends $pb.GeneratedMessage {
   $core.bool hasAddress() => $_has(4);
   @$pb.TagNumber(5)
   void clearAddress() => $_clearField(5);
+
+  /// The active anchor. Unset when the account has none.
+  @$pb.TagNumber(6)
+  AnchorInfo get anchor => $_getN(5);
+  @$pb.TagNumber(6)
+  set anchor(AnchorInfo value) => $_setField(6, value);
+  @$pb.TagNumber(6)
+  $core.bool hasAnchor() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearAnchor() => $_clearField(6);
+  @$pb.TagNumber(6)
+  AnchorInfo ensureAnchor() => $_ensure(5);
 }
 
 /// Message contains information about the header of a block.
@@ -2529,6 +3042,18 @@ class BlockchainApi {
           $pb.ClientContext? ctx, GetAccountRequest request) =>
       _client.invoke<GetAccountResponse>(
           ctx, 'Blockchain', 'GetAccount', request, GetAccountResponse());
+
+  /// GetAnchor retrieves the active anchor for an account, if any.
+  $async.Future<GetAnchorResponse> getAnchor(
+          $pb.ClientContext? ctx, GetAnchorRequest request) =>
+      _client.invoke<GetAnchorResponse>(
+          ctx, 'Blockchain', 'GetAnchor', request, GetAnchorResponse());
+
+  /// ListAnchors lists accounts that currently have an anchor, ordered by account number.
+  $async.Future<ListAnchorsResponse> listAnchors(
+          $pb.ClientContext? ctx, ListAnchorsRequest request) =>
+      _client.invoke<ListAnchorsResponse>(
+          ctx, 'Blockchain', 'ListAnchors', request, ListAnchorsResponse());
 
   /// GetValidator retrieves information about a validator based on the provided address.
   $async.Future<GetValidatorResponse> getValidator(

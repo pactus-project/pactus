@@ -11,6 +11,8 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types"
+	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -827,4 +829,64 @@ func TestMigrate(t *testing.T) {
 			filepath.Join(util.TempDirPath(), "no-such-wallet.json"))
 		require.Error(t, err)
 	})
+}
+
+func TestSignAnchorTransaction(t *testing.T) {
+	td := setup(t)
+
+	senderInfo, err := td.testVault.NewBLSAccountAddress("anchor")
+	require.NoError(t, err)
+	from, err := crypto.AddressFromString(senderInfo.Address)
+	require.NoError(t, err)
+
+	root := bytesOf(0x41, 32)
+	builder := &txBuilder{
+		typ:        payload.TypeAnchor,
+		lockTime:   4,
+		sender:     &from,
+		anchorRoot: root,
+		anchorURI:  "uri",
+		anchorType: 0,
+		amount:     3,
+		fee:        4,
+		memo:       "note",
+	}
+	trx, err := builder.build()
+	require.NoError(t, err)
+	raw, err := trx.Bytes()
+	require.NoError(t, err)
+	unsigned, err := tx.FromBytes(raw)
+	require.NoError(t, err)
+	require.Nil(t, unsigned.PublicKey())
+	require.Nil(t, unsigned.Signature())
+
+	td.mockStorage.EXPECT().AddressInfo(senderInfo.Address).Return(senderInfo, nil).Times(2)
+	require.NoError(t, td.wallet.SignTransaction(td.password, trx))
+	require.NoError(t, trx.BasicCheck())
+	require.NotNil(t, trx.PublicKey())
+	require.NotNil(t, trx.Signature())
+	pld := trx.Payload().(*payload.AnchorPayload)
+	require.Equal(t, root, pld.RootHash)
+	require.Equal(t, amount.Amount(3), pld.Deposit)
+	require.Equal(t, amount.Amount(4), trx.Fee())
+
+	again, err := tx.FromBytes(raw)
+	require.NoError(t, err)
+	require.NoError(t, td.wallet.SignTransaction(td.password, again))
+	require.Equal(t, trx.Signature().Bytes(), again.Signature().Bytes())
+
+	signed, err := trx.Bytes()
+	require.NoError(t, err)
+	signed[20] ^= 0x01
+	broken, err := tx.FromBytes(signed)
+	if err == nil {
+		require.Error(t, broken.BasicCheck())
+	}
+
+	_, other := td.RandBLSKeyPair()
+	wrong, err := tx.FromBytes(raw)
+	require.NoError(t, err)
+	wrong.SetSignature(other.Sign(wrong.SignBytes()))
+	wrong.SetPublicKey(other.PublicKey())
+	require.Error(t, wrong.BasicCheck())
 }

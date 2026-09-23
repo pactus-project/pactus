@@ -91,6 +91,14 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
      * <code>PAYLOAD_TYPE_BATCH_TRANSFER = 6;</code>
      */
     PAYLOAD_TYPE_BATCH_TRANSFER(6),
+    /**
+     * <pre>
+     * Anchor payload type.
+     * </pre>
+     *
+     * <code>PAYLOAD_TYPE_ANCHOR = 7;</code>
+     */
+    PAYLOAD_TYPE_ANCHOR(7),
     UNRECOGNIZED(-1),
     ;
 
@@ -159,6 +167,14 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
      * <code>PAYLOAD_TYPE_BATCH_TRANSFER = 6;</code>
      */
     public static final int PAYLOAD_TYPE_BATCH_TRANSFER_VALUE = 6;
+    /**
+     * <pre>
+     * Anchor payload type.
+     * </pre>
+     *
+     * <code>PAYLOAD_TYPE_ANCHOR = 7;</code>
+     */
+    public static final int PAYLOAD_TYPE_ANCHOR_VALUE = 7;
 
 
     public final int getNumber() {
@@ -192,6 +208,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
         case 4: return PAYLOAD_TYPE_UNBOND;
         case 5: return PAYLOAD_TYPE_WITHDRAW;
         case 6: return PAYLOAD_TYPE_BATCH_TRANSFER;
+        case 7: return PAYLOAD_TYPE_ANCHOR;
         default: return null;
       }
     }
@@ -10881,6 +10898,1483 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
 
   }
 
+  public interface GetRawAnchorTransactionRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.GetRawAnchorTransactionRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * The sender's account address.
+     * </pre>
+     *
+     * <code>string from = 1 [json_name = "from"];</code>
+     * @return The from.
+     */
+    java.lang.String getFrom();
+    /**
+     * <pre>
+     * The sender's account address.
+     * </pre>
+     *
+     * <code>string from = 1 [json_name = "from"];</code>
+     * @return The bytes for from.
+     */
+    com.google.protobuf.ByteString
+        getFromBytes();
+
+    /**
+     * <pre>
+     * 0 = set, 1 = delete.
+     * </pre>
+     *
+     * <code>uint32 action = 2 [json_name = "action"];</code>
+     * @return The action.
+     */
+    int getAction();
+
+    /**
+     * <pre>
+     * Required when action is set.
+     * </pre>
+     *
+     * <code>bytes root_hash = 3 [json_name = "rootHash"];</code>
+     * @return The rootHash.
+     */
+    com.google.protobuf.ByteString getRootHash();
+
+    /**
+     * <pre>
+     * Manifest URI. Ignored on delete.
+     * </pre>
+     *
+     * <code>string manifest_uri = 4 [json_name = "manifestUri"];</code>
+     * @return The manifestUri.
+     */
+    java.lang.String getManifestUri();
+    /**
+     * <pre>
+     * Manifest URI. Ignored on delete.
+     * </pre>
+     *
+     * <code>string manifest_uri = 4 [json_name = "manifestUri"];</code>
+     * @return The bytes for manifestUri.
+     */
+    com.google.protobuf.ByteString
+        getManifestUriBytes();
+
+    /**
+     * <pre>
+     * Anchor type byte. Ignored on delete.
+     * </pre>
+     *
+     * <code>uint32 anchor_type = 5 [json_name = "anchorType"];</code>
+     * @return The anchorType.
+     */
+    int getAnchorType();
+
+    /**
+     * <pre>
+     * Additional lock in NanoPAC. Must be 0 on delete.
+     * </pre>
+     *
+     * <code>int64 deposit = 6 [json_name = "deposit"];</code>
+     * @return The deposit.
+     */
+    long getDeposit();
+
+    /**
+     * <pre>
+     * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+     * </pre>
+     *
+     * <code>int64 fee = 7 [json_name = "fee"];</code>
+     * @return The fee.
+     */
+    long getFee();
+
+    /**
+     * <pre>
+     * A memo string for the transaction.
+     * </pre>
+     *
+     * <code>string memo = 8 [json_name = "memo"];</code>
+     * @return The memo.
+     */
+    java.lang.String getMemo();
+    /**
+     * <pre>
+     * A memo string for the transaction.
+     * </pre>
+     *
+     * <code>string memo = 8 [json_name = "memo"];</code>
+     * @return The bytes for memo.
+     */
+    com.google.protobuf.ByteString
+        getMemoBytes();
+
+    /**
+     * <pre>
+     * The lock time for the transaction. If not set, defaults to the last block height.
+     * </pre>
+     *
+     * <code>uint32 lock_time = 9 [json_name = "lockTime"];</code>
+     * @return The lockTime.
+     */
+    int getLockTime();
+  }
+  /**
+   * <pre>
+   * Request message for retrieving raw details of an anchor transaction.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.GetRawAnchorTransactionRequest}
+   */
+  public static final class GetRawAnchorTransactionRequest extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:pactus.GetRawAnchorTransactionRequest)
+      GetRawAnchorTransactionRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 33,
+        /* patch= */ 2,
+        /* suffix= */ "",
+        "GetRawAnchorTransactionRequest");
+    }
+    // Use GetRawAnchorTransactionRequest.newBuilder() to construct.
+    private GetRawAnchorTransactionRequest(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private GetRawAnchorTransactionRequest() {
+      from_ = "";
+      rootHash_ = com.google.protobuf.ByteString.EMPTY;
+      manifestUri_ = "";
+      memo_ = "";
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.TransactionOuterClass.internal_static_pactus_GetRawAnchorTransactionRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.TransactionOuterClass.internal_static_pactus_GetRawAnchorTransactionRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.TransactionOuterClass.GetRawAnchorTransactionRequest.class, pactus.TransactionOuterClass.GetRawAnchorTransactionRequest.Builder.class);
+    }
+
+    public static final int FROM_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object from_ = "";
+    /**
+     * <pre>
+     * The sender's account address.
+     * </pre>
+     *
+     * <code>string from = 1 [json_name = "from"];</code>
+     * @return The from.
+     */
+    @java.lang.Override
+    public java.lang.String getFrom() {
+      java.lang.Object ref = from_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        from_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The sender's account address.
+     * </pre>
+     *
+     * <code>string from = 1 [json_name = "from"];</code>
+     * @return The bytes for from.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getFromBytes() {
+      java.lang.Object ref = from_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        from_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ACTION_FIELD_NUMBER = 2;
+    private int action_ = 0;
+    /**
+     * <pre>
+     * 0 = set, 1 = delete.
+     * </pre>
+     *
+     * <code>uint32 action = 2 [json_name = "action"];</code>
+     * @return The action.
+     */
+    @java.lang.Override
+    public int getAction() {
+      return action_;
+    }
+
+    public static final int ROOT_HASH_FIELD_NUMBER = 3;
+    private com.google.protobuf.ByteString rootHash_ = com.google.protobuf.ByteString.EMPTY;
+    /**
+     * <pre>
+     * Required when action is set.
+     * </pre>
+     *
+     * <code>bytes root_hash = 3 [json_name = "rootHash"];</code>
+     * @return The rootHash.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getRootHash() {
+      return rootHash_;
+    }
+
+    public static final int MANIFEST_URI_FIELD_NUMBER = 4;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object manifestUri_ = "";
+    /**
+     * <pre>
+     * Manifest URI. Ignored on delete.
+     * </pre>
+     *
+     * <code>string manifest_uri = 4 [json_name = "manifestUri"];</code>
+     * @return The manifestUri.
+     */
+    @java.lang.Override
+    public java.lang.String getManifestUri() {
+      java.lang.Object ref = manifestUri_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        manifestUri_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Manifest URI. Ignored on delete.
+     * </pre>
+     *
+     * <code>string manifest_uri = 4 [json_name = "manifestUri"];</code>
+     * @return The bytes for manifestUri.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getManifestUriBytes() {
+      java.lang.Object ref = manifestUri_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        manifestUri_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ANCHOR_TYPE_FIELD_NUMBER = 5;
+    private int anchorType_ = 0;
+    /**
+     * <pre>
+     * Anchor type byte. Ignored on delete.
+     * </pre>
+     *
+     * <code>uint32 anchor_type = 5 [json_name = "anchorType"];</code>
+     * @return The anchorType.
+     */
+    @java.lang.Override
+    public int getAnchorType() {
+      return anchorType_;
+    }
+
+    public static final int DEPOSIT_FIELD_NUMBER = 6;
+    private long deposit_ = 0L;
+    /**
+     * <pre>
+     * Additional lock in NanoPAC. Must be 0 on delete.
+     * </pre>
+     *
+     * <code>int64 deposit = 6 [json_name = "deposit"];</code>
+     * @return The deposit.
+     */
+    @java.lang.Override
+    public long getDeposit() {
+      return deposit_;
+    }
+
+    public static final int FEE_FIELD_NUMBER = 7;
+    private long fee_ = 0L;
+    /**
+     * <pre>
+     * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+     * </pre>
+     *
+     * <code>int64 fee = 7 [json_name = "fee"];</code>
+     * @return The fee.
+     */
+    @java.lang.Override
+    public long getFee() {
+      return fee_;
+    }
+
+    public static final int MEMO_FIELD_NUMBER = 8;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object memo_ = "";
+    /**
+     * <pre>
+     * A memo string for the transaction.
+     * </pre>
+     *
+     * <code>string memo = 8 [json_name = "memo"];</code>
+     * @return The memo.
+     */
+    @java.lang.Override
+    public java.lang.String getMemo() {
+      java.lang.Object ref = memo_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        memo_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * A memo string for the transaction.
+     * </pre>
+     *
+     * <code>string memo = 8 [json_name = "memo"];</code>
+     * @return The bytes for memo.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getMemoBytes() {
+      java.lang.Object ref = memo_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        memo_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int LOCK_TIME_FIELD_NUMBER = 9;
+    private int lockTime_ = 0;
+    /**
+     * <pre>
+     * The lock time for the transaction. If not set, defaults to the last block height.
+     * </pre>
+     *
+     * <code>uint32 lock_time = 9 [json_name = "lockTime"];</code>
+     * @return The lockTime.
+     */
+    @java.lang.Override
+    public int getLockTime() {
+      return lockTime_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(from_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 1, from_);
+      }
+      if (action_ != 0) {
+        output.writeUInt32(2, action_);
+      }
+      if (!rootHash_.isEmpty()) {
+        output.writeBytes(3, rootHash_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(manifestUri_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 4, manifestUri_);
+      }
+      if (anchorType_ != 0) {
+        output.writeUInt32(5, anchorType_);
+      }
+      if (deposit_ != 0L) {
+        output.writeInt64(6, deposit_);
+      }
+      if (fee_ != 0L) {
+        output.writeInt64(7, fee_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(memo_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 8, memo_);
+      }
+      if (lockTime_ != 0) {
+        output.writeUInt32(9, lockTime_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(from_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(1, from_);
+      }
+      if (action_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(2, action_);
+      }
+      if (!rootHash_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(3, rootHash_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(manifestUri_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(4, manifestUri_);
+      }
+      if (anchorType_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(5, anchorType_);
+      }
+      if (deposit_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(6, deposit_);
+      }
+      if (fee_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(7, fee_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(memo_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(8, memo_);
+      }
+      if (lockTime_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(9, lockTime_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.TransactionOuterClass.GetRawAnchorTransactionRequest)) {
+        return super.equals(obj);
+      }
+      pactus.TransactionOuterClass.GetRawAnchorTransactionRequest other = (pactus.TransactionOuterClass.GetRawAnchorTransactionRequest) obj;
+
+      if (!getFrom()
+          .equals(other.getFrom())) return false;
+      if (getAction()
+          != other.getAction()) return false;
+      if (!getRootHash()
+          .equals(other.getRootHash())) return false;
+      if (!getManifestUri()
+          .equals(other.getManifestUri())) return false;
+      if (getAnchorType()
+          != other.getAnchorType()) return false;
+      if (getDeposit()
+          != other.getDeposit()) return false;
+      if (getFee()
+          != other.getFee()) return false;
+      if (!getMemo()
+          .equals(other.getMemo())) return false;
+      if (getLockTime()
+          != other.getLockTime()) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + FROM_FIELD_NUMBER;
+      hash = (53 * hash) + getFrom().hashCode();
+      hash = (37 * hash) + ACTION_FIELD_NUMBER;
+      hash = (53 * hash) + getAction();
+      hash = (37 * hash) + ROOT_HASH_FIELD_NUMBER;
+      hash = (53 * hash) + getRootHash().hashCode();
+      hash = (37 * hash) + MANIFEST_URI_FIELD_NUMBER;
+      hash = (53 * hash) + getManifestUri().hashCode();
+      hash = (37 * hash) + ANCHOR_TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getAnchorType();
+      hash = (37 * hash) + DEPOSIT_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getDeposit());
+      hash = (37 * hash) + FEE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getFee());
+      hash = (37 * hash) + MEMO_FIELD_NUMBER;
+      hash = (53 * hash) + getMemo().hashCode();
+      hash = (37 * hash) + LOCK_TIME_FIELD_NUMBER;
+      hash = (53 * hash) + getLockTime();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.TransactionOuterClass.GetRawAnchorTransactionRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.TransactionOuterClass.GetRawAnchorTransactionRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.TransactionOuterClass.GetRawAnchorTransactionRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.TransactionOuterClass.GetRawAnchorTransactionRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.TransactionOuterClass.GetRawAnchorTransactionRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.TransactionOuterClass.GetRawAnchorTransactionRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.TransactionOuterClass.GetRawAnchorTransactionRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.TransactionOuterClass.GetRawAnchorTransactionRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static pactus.TransactionOuterClass.GetRawAnchorTransactionRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static pactus.TransactionOuterClass.GetRawAnchorTransactionRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.TransactionOuterClass.GetRawAnchorTransactionRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.TransactionOuterClass.GetRawAnchorTransactionRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.TransactionOuterClass.GetRawAnchorTransactionRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Request message for retrieving raw details of an anchor transaction.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.GetRawAnchorTransactionRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.GetRawAnchorTransactionRequest)
+        pactus.TransactionOuterClass.GetRawAnchorTransactionRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.TransactionOuterClass.internal_static_pactus_GetRawAnchorTransactionRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.TransactionOuterClass.internal_static_pactus_GetRawAnchorTransactionRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.TransactionOuterClass.GetRawAnchorTransactionRequest.class, pactus.TransactionOuterClass.GetRawAnchorTransactionRequest.Builder.class);
+      }
+
+      // Construct using pactus.TransactionOuterClass.GetRawAnchorTransactionRequest.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        from_ = "";
+        action_ = 0;
+        rootHash_ = com.google.protobuf.ByteString.EMPTY;
+        manifestUri_ = "";
+        anchorType_ = 0;
+        deposit_ = 0L;
+        fee_ = 0L;
+        memo_ = "";
+        lockTime_ = 0;
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.TransactionOuterClass.internal_static_pactus_GetRawAnchorTransactionRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.TransactionOuterClass.GetRawAnchorTransactionRequest getDefaultInstanceForType() {
+        return pactus.TransactionOuterClass.GetRawAnchorTransactionRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.TransactionOuterClass.GetRawAnchorTransactionRequest build() {
+        pactus.TransactionOuterClass.GetRawAnchorTransactionRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.TransactionOuterClass.GetRawAnchorTransactionRequest buildPartial() {
+        pactus.TransactionOuterClass.GetRawAnchorTransactionRequest result = new pactus.TransactionOuterClass.GetRawAnchorTransactionRequest(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(pactus.TransactionOuterClass.GetRawAnchorTransactionRequest result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.from_ = from_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.action_ = action_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.rootHash_ = rootHash_;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.manifestUri_ = manifestUri_;
+        }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          result.anchorType_ = anchorType_;
+        }
+        if (((from_bitField0_ & 0x00000020) != 0)) {
+          result.deposit_ = deposit_;
+        }
+        if (((from_bitField0_ & 0x00000040) != 0)) {
+          result.fee_ = fee_;
+        }
+        if (((from_bitField0_ & 0x00000080) != 0)) {
+          result.memo_ = memo_;
+        }
+        if (((from_bitField0_ & 0x00000100) != 0)) {
+          result.lockTime_ = lockTime_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.TransactionOuterClass.GetRawAnchorTransactionRequest) {
+          return mergeFrom((pactus.TransactionOuterClass.GetRawAnchorTransactionRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.TransactionOuterClass.GetRawAnchorTransactionRequest other) {
+        if (other == pactus.TransactionOuterClass.GetRawAnchorTransactionRequest.getDefaultInstance()) return this;
+        if (!other.getFrom().isEmpty()) {
+          from_ = other.from_;
+          bitField0_ |= 0x00000001;
+          onChanged();
+        }
+        if (other.getAction() != 0) {
+          setAction(other.getAction());
+        }
+        if (!other.getRootHash().isEmpty()) {
+          setRootHash(other.getRootHash());
+        }
+        if (!other.getManifestUri().isEmpty()) {
+          manifestUri_ = other.manifestUri_;
+          bitField0_ |= 0x00000008;
+          onChanged();
+        }
+        if (other.getAnchorType() != 0) {
+          setAnchorType(other.getAnchorType());
+        }
+        if (other.getDeposit() != 0L) {
+          setDeposit(other.getDeposit());
+        }
+        if (other.getFee() != 0L) {
+          setFee(other.getFee());
+        }
+        if (!other.getMemo().isEmpty()) {
+          memo_ = other.memo_;
+          bitField0_ |= 0x00000080;
+          onChanged();
+        }
+        if (other.getLockTime() != 0) {
+          setLockTime(other.getLockTime());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                from_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 16: {
+                action_ = input.readUInt32();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 16
+              case 26: {
+                rootHash_ = input.readBytes();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
+              case 34: {
+                manifestUri_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 34
+              case 40: {
+                anchorType_ = input.readUInt32();
+                bitField0_ |= 0x00000010;
+                break;
+              } // case 40
+              case 48: {
+                deposit_ = input.readInt64();
+                bitField0_ |= 0x00000020;
+                break;
+              } // case 48
+              case 56: {
+                fee_ = input.readInt64();
+                bitField0_ |= 0x00000040;
+                break;
+              } // case 56
+              case 66: {
+                memo_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000080;
+                break;
+              } // case 66
+              case 72: {
+                lockTime_ = input.readUInt32();
+                bitField0_ |= 0x00000100;
+                break;
+              } // case 72
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object from_ = "";
+      /**
+       * <pre>
+       * The sender's account address.
+       * </pre>
+       *
+       * <code>string from = 1 [json_name = "from"];</code>
+       * @return The from.
+       */
+      public java.lang.String getFrom() {
+        java.lang.Object ref = from_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          from_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The sender's account address.
+       * </pre>
+       *
+       * <code>string from = 1 [json_name = "from"];</code>
+       * @return The bytes for from.
+       */
+      public com.google.protobuf.ByteString
+          getFromBytes() {
+        java.lang.Object ref = from_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          from_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The sender's account address.
+       * </pre>
+       *
+       * <code>string from = 1 [json_name = "from"];</code>
+       * @param value The from to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFrom(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        from_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The sender's account address.
+       * </pre>
+       *
+       * <code>string from = 1 [json_name = "from"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFrom() {
+        from_ = getDefaultInstance().getFrom();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The sender's account address.
+       * </pre>
+       *
+       * <code>string from = 1 [json_name = "from"];</code>
+       * @param value The bytes for from to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFromBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        from_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+
+      private int action_ ;
+      /**
+       * <pre>
+       * 0 = set, 1 = delete.
+       * </pre>
+       *
+       * <code>uint32 action = 2 [json_name = "action"];</code>
+       * @return The action.
+       */
+      @java.lang.Override
+      public int getAction() {
+        return action_;
+      }
+      /**
+       * <pre>
+       * 0 = set, 1 = delete.
+       * </pre>
+       *
+       * <code>uint32 action = 2 [json_name = "action"];</code>
+       * @param value The action to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAction(int value) {
+
+        action_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 0 = set, 1 = delete.
+       * </pre>
+       *
+       * <code>uint32 action = 2 [json_name = "action"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAction() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        action_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.ByteString rootHash_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <pre>
+       * Required when action is set.
+       * </pre>
+       *
+       * <code>bytes root_hash = 3 [json_name = "rootHash"];</code>
+       * @return The rootHash.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString getRootHash() {
+        return rootHash_;
+      }
+      /**
+       * <pre>
+       * Required when action is set.
+       * </pre>
+       *
+       * <code>bytes root_hash = 3 [json_name = "rootHash"];</code>
+       * @param value The rootHash to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRootHash(com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        rootHash_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Required when action is set.
+       * </pre>
+       *
+       * <code>bytes root_hash = 3 [json_name = "rootHash"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearRootHash() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        rootHash_ = getDefaultInstance().getRootHash();
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object manifestUri_ = "";
+      /**
+       * <pre>
+       * Manifest URI. Ignored on delete.
+       * </pre>
+       *
+       * <code>string manifest_uri = 4 [json_name = "manifestUri"];</code>
+       * @return The manifestUri.
+       */
+      public java.lang.String getManifestUri() {
+        java.lang.Object ref = manifestUri_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          manifestUri_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Manifest URI. Ignored on delete.
+       * </pre>
+       *
+       * <code>string manifest_uri = 4 [json_name = "manifestUri"];</code>
+       * @return The bytes for manifestUri.
+       */
+      public com.google.protobuf.ByteString
+          getManifestUriBytes() {
+        java.lang.Object ref = manifestUri_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          manifestUri_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Manifest URI. Ignored on delete.
+       * </pre>
+       *
+       * <code>string manifest_uri = 4 [json_name = "manifestUri"];</code>
+       * @param value The manifestUri to set.
+       * @return This builder for chaining.
+       */
+      public Builder setManifestUri(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        manifestUri_ = value;
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Manifest URI. Ignored on delete.
+       * </pre>
+       *
+       * <code>string manifest_uri = 4 [json_name = "manifestUri"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearManifestUri() {
+        manifestUri_ = getDefaultInstance().getManifestUri();
+        bitField0_ = (bitField0_ & ~0x00000008);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Manifest URI. Ignored on delete.
+       * </pre>
+       *
+       * <code>string manifest_uri = 4 [json_name = "manifestUri"];</code>
+       * @param value The bytes for manifestUri to set.
+       * @return This builder for chaining.
+       */
+      public Builder setManifestUriBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        manifestUri_ = value;
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+
+      private int anchorType_ ;
+      /**
+       * <pre>
+       * Anchor type byte. Ignored on delete.
+       * </pre>
+       *
+       * <code>uint32 anchor_type = 5 [json_name = "anchorType"];</code>
+       * @return The anchorType.
+       */
+      @java.lang.Override
+      public int getAnchorType() {
+        return anchorType_;
+      }
+      /**
+       * <pre>
+       * Anchor type byte. Ignored on delete.
+       * </pre>
+       *
+       * <code>uint32 anchor_type = 5 [json_name = "anchorType"];</code>
+       * @param value The anchorType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAnchorType(int value) {
+
+        anchorType_ = value;
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Anchor type byte. Ignored on delete.
+       * </pre>
+       *
+       * <code>uint32 anchor_type = 5 [json_name = "anchorType"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAnchorType() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        anchorType_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private long deposit_ ;
+      /**
+       * <pre>
+       * Additional lock in NanoPAC. Must be 0 on delete.
+       * </pre>
+       *
+       * <code>int64 deposit = 6 [json_name = "deposit"];</code>
+       * @return The deposit.
+       */
+      @java.lang.Override
+      public long getDeposit() {
+        return deposit_;
+      }
+      /**
+       * <pre>
+       * Additional lock in NanoPAC. Must be 0 on delete.
+       * </pre>
+       *
+       * <code>int64 deposit = 6 [json_name = "deposit"];</code>
+       * @param value The deposit to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDeposit(long value) {
+
+        deposit_ = value;
+        bitField0_ |= 0x00000020;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Additional lock in NanoPAC. Must be 0 on delete.
+       * </pre>
+       *
+       * <code>int64 deposit = 6 [json_name = "deposit"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDeposit() {
+        bitField0_ = (bitField0_ & ~0x00000020);
+        deposit_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long fee_ ;
+      /**
+       * <pre>
+       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+       * </pre>
+       *
+       * <code>int64 fee = 7 [json_name = "fee"];</code>
+       * @return The fee.
+       */
+      @java.lang.Override
+      public long getFee() {
+        return fee_;
+      }
+      /**
+       * <pre>
+       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+       * </pre>
+       *
+       * <code>int64 fee = 7 [json_name = "fee"];</code>
+       * @param value The fee to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFee(long value) {
+
+        fee_ = value;
+        bitField0_ |= 0x00000040;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+       * </pre>
+       *
+       * <code>int64 fee = 7 [json_name = "fee"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFee() {
+        bitField0_ = (bitField0_ & ~0x00000040);
+        fee_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object memo_ = "";
+      /**
+       * <pre>
+       * A memo string for the transaction.
+       * </pre>
+       *
+       * <code>string memo = 8 [json_name = "memo"];</code>
+       * @return The memo.
+       */
+      public java.lang.String getMemo() {
+        java.lang.Object ref = memo_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          memo_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * A memo string for the transaction.
+       * </pre>
+       *
+       * <code>string memo = 8 [json_name = "memo"];</code>
+       * @return The bytes for memo.
+       */
+      public com.google.protobuf.ByteString
+          getMemoBytes() {
+        java.lang.Object ref = memo_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          memo_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * A memo string for the transaction.
+       * </pre>
+       *
+       * <code>string memo = 8 [json_name = "memo"];</code>
+       * @param value The memo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMemo(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        memo_ = value;
+        bitField0_ |= 0x00000080;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * A memo string for the transaction.
+       * </pre>
+       *
+       * <code>string memo = 8 [json_name = "memo"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearMemo() {
+        memo_ = getDefaultInstance().getMemo();
+        bitField0_ = (bitField0_ & ~0x00000080);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * A memo string for the transaction.
+       * </pre>
+       *
+       * <code>string memo = 8 [json_name = "memo"];</code>
+       * @param value The bytes for memo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMemoBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        memo_ = value;
+        bitField0_ |= 0x00000080;
+        onChanged();
+        return this;
+      }
+
+      private int lockTime_ ;
+      /**
+       * <pre>
+       * The lock time for the transaction. If not set, defaults to the last block height.
+       * </pre>
+       *
+       * <code>uint32 lock_time = 9 [json_name = "lockTime"];</code>
+       * @return The lockTime.
+       */
+      @java.lang.Override
+      public int getLockTime() {
+        return lockTime_;
+      }
+      /**
+       * <pre>
+       * The lock time for the transaction. If not set, defaults to the last block height.
+       * </pre>
+       *
+       * <code>uint32 lock_time = 9 [json_name = "lockTime"];</code>
+       * @param value The lockTime to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLockTime(int value) {
+
+        lockTime_ = value;
+        bitField0_ |= 0x00000100;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The lock time for the transaction. If not set, defaults to the last block height.
+       * </pre>
+       *
+       * <code>uint32 lock_time = 9 [json_name = "lockTime"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearLockTime() {
+        bitField0_ = (bitField0_ & ~0x00000100);
+        lockTime_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:pactus.GetRawAnchorTransactionRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.GetRawAnchorTransactionRequest)
+    private static final pactus.TransactionOuterClass.GetRawAnchorTransactionRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.TransactionOuterClass.GetRawAnchorTransactionRequest();
+    }
+
+    public static pactus.TransactionOuterClass.GetRawAnchorTransactionRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<GetRawAnchorTransactionRequest>
+        PARSER = new com.google.protobuf.AbstractParser<GetRawAnchorTransactionRequest>() {
+      @java.lang.Override
+      public GetRawAnchorTransactionRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<GetRawAnchorTransactionRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GetRawAnchorTransactionRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.TransactionOuterClass.GetRawAnchorTransactionRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface GetRawTransactionResponseOrBuilder extends
       // @@protoc_insertion_point(interface_extends:pactus.GetRawTransactionResponse)
       com.google.protobuf.MessageOrBuilder {
@@ -16267,6 +17761,1114 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
 
   }
 
+  public interface PayloadAnchorOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.PayloadAnchor)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * The sender's address.
+     * </pre>
+     *
+     * <code>string from = 1 [json_name = "from"];</code>
+     * @return The from.
+     */
+    java.lang.String getFrom();
+    /**
+     * <pre>
+     * The sender's address.
+     * </pre>
+     *
+     * <code>string from = 1 [json_name = "from"];</code>
+     * @return The bytes for from.
+     */
+    com.google.protobuf.ByteString
+        getFromBytes();
+
+    /**
+     * <pre>
+     * 0 = set, 1 = delete.
+     * </pre>
+     *
+     * <code>uint32 action = 2 [json_name = "action"];</code>
+     * @return The action.
+     */
+    int getAction();
+
+    /**
+     * <pre>
+     * Empty when action is delete.
+     * </pre>
+     *
+     * <code>bytes root_hash = 3 [json_name = "rootHash"];</code>
+     * @return The rootHash.
+     */
+    com.google.protobuf.ByteString getRootHash();
+
+    /**
+     * <pre>
+     * Manifest URI.
+     * </pre>
+     *
+     * <code>string manifest_uri = 4 [json_name = "manifestUri"];</code>
+     * @return The manifestUri.
+     */
+    java.lang.String getManifestUri();
+    /**
+     * <pre>
+     * Manifest URI.
+     * </pre>
+     *
+     * <code>string manifest_uri = 4 [json_name = "manifestUri"];</code>
+     * @return The bytes for manifestUri.
+     */
+    com.google.protobuf.ByteString
+        getManifestUriBytes();
+
+    /**
+     * <pre>
+     * Anchor type byte.
+     * </pre>
+     *
+     * <code>uint32 anchor_type = 5 [json_name = "anchorType"];</code>
+     * @return The anchorType.
+     */
+    int getAnchorType();
+
+    /**
+     * <pre>
+     * Deposit in NanoPAC.
+     * </pre>
+     *
+     * <code>int64 deposit = 6 [json_name = "deposit"];</code>
+     * @return The deposit.
+     */
+    long getDeposit();
+  }
+  /**
+   * <pre>
+   * Payload for an anchor transaction.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.PayloadAnchor}
+   */
+  public static final class PayloadAnchor extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:pactus.PayloadAnchor)
+      PayloadAnchorOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 33,
+        /* patch= */ 2,
+        /* suffix= */ "",
+        "PayloadAnchor");
+    }
+    // Use PayloadAnchor.newBuilder() to construct.
+    private PayloadAnchor(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private PayloadAnchor() {
+      from_ = "";
+      rootHash_ = com.google.protobuf.ByteString.EMPTY;
+      manifestUri_ = "";
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.TransactionOuterClass.internal_static_pactus_PayloadAnchor_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.TransactionOuterClass.internal_static_pactus_PayloadAnchor_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.TransactionOuterClass.PayloadAnchor.class, pactus.TransactionOuterClass.PayloadAnchor.Builder.class);
+    }
+
+    public static final int FROM_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object from_ = "";
+    /**
+     * <pre>
+     * The sender's address.
+     * </pre>
+     *
+     * <code>string from = 1 [json_name = "from"];</code>
+     * @return The from.
+     */
+    @java.lang.Override
+    public java.lang.String getFrom() {
+      java.lang.Object ref = from_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        from_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The sender's address.
+     * </pre>
+     *
+     * <code>string from = 1 [json_name = "from"];</code>
+     * @return The bytes for from.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getFromBytes() {
+      java.lang.Object ref = from_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        from_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ACTION_FIELD_NUMBER = 2;
+    private int action_ = 0;
+    /**
+     * <pre>
+     * 0 = set, 1 = delete.
+     * </pre>
+     *
+     * <code>uint32 action = 2 [json_name = "action"];</code>
+     * @return The action.
+     */
+    @java.lang.Override
+    public int getAction() {
+      return action_;
+    }
+
+    public static final int ROOT_HASH_FIELD_NUMBER = 3;
+    private com.google.protobuf.ByteString rootHash_ = com.google.protobuf.ByteString.EMPTY;
+    /**
+     * <pre>
+     * Empty when action is delete.
+     * </pre>
+     *
+     * <code>bytes root_hash = 3 [json_name = "rootHash"];</code>
+     * @return The rootHash.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getRootHash() {
+      return rootHash_;
+    }
+
+    public static final int MANIFEST_URI_FIELD_NUMBER = 4;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object manifestUri_ = "";
+    /**
+     * <pre>
+     * Manifest URI.
+     * </pre>
+     *
+     * <code>string manifest_uri = 4 [json_name = "manifestUri"];</code>
+     * @return The manifestUri.
+     */
+    @java.lang.Override
+    public java.lang.String getManifestUri() {
+      java.lang.Object ref = manifestUri_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        manifestUri_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Manifest URI.
+     * </pre>
+     *
+     * <code>string manifest_uri = 4 [json_name = "manifestUri"];</code>
+     * @return The bytes for manifestUri.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getManifestUriBytes() {
+      java.lang.Object ref = manifestUri_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        manifestUri_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ANCHOR_TYPE_FIELD_NUMBER = 5;
+    private int anchorType_ = 0;
+    /**
+     * <pre>
+     * Anchor type byte.
+     * </pre>
+     *
+     * <code>uint32 anchor_type = 5 [json_name = "anchorType"];</code>
+     * @return The anchorType.
+     */
+    @java.lang.Override
+    public int getAnchorType() {
+      return anchorType_;
+    }
+
+    public static final int DEPOSIT_FIELD_NUMBER = 6;
+    private long deposit_ = 0L;
+    /**
+     * <pre>
+     * Deposit in NanoPAC.
+     * </pre>
+     *
+     * <code>int64 deposit = 6 [json_name = "deposit"];</code>
+     * @return The deposit.
+     */
+    @java.lang.Override
+    public long getDeposit() {
+      return deposit_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(from_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 1, from_);
+      }
+      if (action_ != 0) {
+        output.writeUInt32(2, action_);
+      }
+      if (!rootHash_.isEmpty()) {
+        output.writeBytes(3, rootHash_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(manifestUri_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 4, manifestUri_);
+      }
+      if (anchorType_ != 0) {
+        output.writeUInt32(5, anchorType_);
+      }
+      if (deposit_ != 0L) {
+        output.writeInt64(6, deposit_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(from_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(1, from_);
+      }
+      if (action_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(2, action_);
+      }
+      if (!rootHash_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(3, rootHash_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(manifestUri_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(4, manifestUri_);
+      }
+      if (anchorType_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(5, anchorType_);
+      }
+      if (deposit_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(6, deposit_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.TransactionOuterClass.PayloadAnchor)) {
+        return super.equals(obj);
+      }
+      pactus.TransactionOuterClass.PayloadAnchor other = (pactus.TransactionOuterClass.PayloadAnchor) obj;
+
+      if (!getFrom()
+          .equals(other.getFrom())) return false;
+      if (getAction()
+          != other.getAction()) return false;
+      if (!getRootHash()
+          .equals(other.getRootHash())) return false;
+      if (!getManifestUri()
+          .equals(other.getManifestUri())) return false;
+      if (getAnchorType()
+          != other.getAnchorType()) return false;
+      if (getDeposit()
+          != other.getDeposit()) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + FROM_FIELD_NUMBER;
+      hash = (53 * hash) + getFrom().hashCode();
+      hash = (37 * hash) + ACTION_FIELD_NUMBER;
+      hash = (53 * hash) + getAction();
+      hash = (37 * hash) + ROOT_HASH_FIELD_NUMBER;
+      hash = (53 * hash) + getRootHash().hashCode();
+      hash = (37 * hash) + MANIFEST_URI_FIELD_NUMBER;
+      hash = (53 * hash) + getManifestUri().hashCode();
+      hash = (37 * hash) + ANCHOR_TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getAnchorType();
+      hash = (37 * hash) + DEPOSIT_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getDeposit());
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.TransactionOuterClass.PayloadAnchor parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.TransactionOuterClass.PayloadAnchor parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.TransactionOuterClass.PayloadAnchor parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.TransactionOuterClass.PayloadAnchor parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.TransactionOuterClass.PayloadAnchor parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.TransactionOuterClass.PayloadAnchor parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.TransactionOuterClass.PayloadAnchor parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.TransactionOuterClass.PayloadAnchor parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static pactus.TransactionOuterClass.PayloadAnchor parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static pactus.TransactionOuterClass.PayloadAnchor parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.TransactionOuterClass.PayloadAnchor parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.TransactionOuterClass.PayloadAnchor parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.TransactionOuterClass.PayloadAnchor prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Payload for an anchor transaction.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.PayloadAnchor}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.PayloadAnchor)
+        pactus.TransactionOuterClass.PayloadAnchorOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.TransactionOuterClass.internal_static_pactus_PayloadAnchor_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.TransactionOuterClass.internal_static_pactus_PayloadAnchor_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.TransactionOuterClass.PayloadAnchor.class, pactus.TransactionOuterClass.PayloadAnchor.Builder.class);
+      }
+
+      // Construct using pactus.TransactionOuterClass.PayloadAnchor.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        from_ = "";
+        action_ = 0;
+        rootHash_ = com.google.protobuf.ByteString.EMPTY;
+        manifestUri_ = "";
+        anchorType_ = 0;
+        deposit_ = 0L;
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.TransactionOuterClass.internal_static_pactus_PayloadAnchor_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.TransactionOuterClass.PayloadAnchor getDefaultInstanceForType() {
+        return pactus.TransactionOuterClass.PayloadAnchor.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.TransactionOuterClass.PayloadAnchor build() {
+        pactus.TransactionOuterClass.PayloadAnchor result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.TransactionOuterClass.PayloadAnchor buildPartial() {
+        pactus.TransactionOuterClass.PayloadAnchor result = new pactus.TransactionOuterClass.PayloadAnchor(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(pactus.TransactionOuterClass.PayloadAnchor result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.from_ = from_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.action_ = action_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.rootHash_ = rootHash_;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.manifestUri_ = manifestUri_;
+        }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          result.anchorType_ = anchorType_;
+        }
+        if (((from_bitField0_ & 0x00000020) != 0)) {
+          result.deposit_ = deposit_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.TransactionOuterClass.PayloadAnchor) {
+          return mergeFrom((pactus.TransactionOuterClass.PayloadAnchor)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.TransactionOuterClass.PayloadAnchor other) {
+        if (other == pactus.TransactionOuterClass.PayloadAnchor.getDefaultInstance()) return this;
+        if (!other.getFrom().isEmpty()) {
+          from_ = other.from_;
+          bitField0_ |= 0x00000001;
+          onChanged();
+        }
+        if (other.getAction() != 0) {
+          setAction(other.getAction());
+        }
+        if (!other.getRootHash().isEmpty()) {
+          setRootHash(other.getRootHash());
+        }
+        if (!other.getManifestUri().isEmpty()) {
+          manifestUri_ = other.manifestUri_;
+          bitField0_ |= 0x00000008;
+          onChanged();
+        }
+        if (other.getAnchorType() != 0) {
+          setAnchorType(other.getAnchorType());
+        }
+        if (other.getDeposit() != 0L) {
+          setDeposit(other.getDeposit());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                from_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 16: {
+                action_ = input.readUInt32();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 16
+              case 26: {
+                rootHash_ = input.readBytes();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
+              case 34: {
+                manifestUri_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 34
+              case 40: {
+                anchorType_ = input.readUInt32();
+                bitField0_ |= 0x00000010;
+                break;
+              } // case 40
+              case 48: {
+                deposit_ = input.readInt64();
+                bitField0_ |= 0x00000020;
+                break;
+              } // case 48
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object from_ = "";
+      /**
+       * <pre>
+       * The sender's address.
+       * </pre>
+       *
+       * <code>string from = 1 [json_name = "from"];</code>
+       * @return The from.
+       */
+      public java.lang.String getFrom() {
+        java.lang.Object ref = from_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          from_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The sender's address.
+       * </pre>
+       *
+       * <code>string from = 1 [json_name = "from"];</code>
+       * @return The bytes for from.
+       */
+      public com.google.protobuf.ByteString
+          getFromBytes() {
+        java.lang.Object ref = from_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          from_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The sender's address.
+       * </pre>
+       *
+       * <code>string from = 1 [json_name = "from"];</code>
+       * @param value The from to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFrom(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        from_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The sender's address.
+       * </pre>
+       *
+       * <code>string from = 1 [json_name = "from"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFrom() {
+        from_ = getDefaultInstance().getFrom();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The sender's address.
+       * </pre>
+       *
+       * <code>string from = 1 [json_name = "from"];</code>
+       * @param value The bytes for from to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFromBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        from_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+
+      private int action_ ;
+      /**
+       * <pre>
+       * 0 = set, 1 = delete.
+       * </pre>
+       *
+       * <code>uint32 action = 2 [json_name = "action"];</code>
+       * @return The action.
+       */
+      @java.lang.Override
+      public int getAction() {
+        return action_;
+      }
+      /**
+       * <pre>
+       * 0 = set, 1 = delete.
+       * </pre>
+       *
+       * <code>uint32 action = 2 [json_name = "action"];</code>
+       * @param value The action to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAction(int value) {
+
+        action_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 0 = set, 1 = delete.
+       * </pre>
+       *
+       * <code>uint32 action = 2 [json_name = "action"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAction() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        action_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.ByteString rootHash_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <pre>
+       * Empty when action is delete.
+       * </pre>
+       *
+       * <code>bytes root_hash = 3 [json_name = "rootHash"];</code>
+       * @return The rootHash.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString getRootHash() {
+        return rootHash_;
+      }
+      /**
+       * <pre>
+       * Empty when action is delete.
+       * </pre>
+       *
+       * <code>bytes root_hash = 3 [json_name = "rootHash"];</code>
+       * @param value The rootHash to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRootHash(com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        rootHash_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Empty when action is delete.
+       * </pre>
+       *
+       * <code>bytes root_hash = 3 [json_name = "rootHash"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearRootHash() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        rootHash_ = getDefaultInstance().getRootHash();
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object manifestUri_ = "";
+      /**
+       * <pre>
+       * Manifest URI.
+       * </pre>
+       *
+       * <code>string manifest_uri = 4 [json_name = "manifestUri"];</code>
+       * @return The manifestUri.
+       */
+      public java.lang.String getManifestUri() {
+        java.lang.Object ref = manifestUri_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          manifestUri_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Manifest URI.
+       * </pre>
+       *
+       * <code>string manifest_uri = 4 [json_name = "manifestUri"];</code>
+       * @return The bytes for manifestUri.
+       */
+      public com.google.protobuf.ByteString
+          getManifestUriBytes() {
+        java.lang.Object ref = manifestUri_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          manifestUri_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Manifest URI.
+       * </pre>
+       *
+       * <code>string manifest_uri = 4 [json_name = "manifestUri"];</code>
+       * @param value The manifestUri to set.
+       * @return This builder for chaining.
+       */
+      public Builder setManifestUri(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        manifestUri_ = value;
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Manifest URI.
+       * </pre>
+       *
+       * <code>string manifest_uri = 4 [json_name = "manifestUri"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearManifestUri() {
+        manifestUri_ = getDefaultInstance().getManifestUri();
+        bitField0_ = (bitField0_ & ~0x00000008);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Manifest URI.
+       * </pre>
+       *
+       * <code>string manifest_uri = 4 [json_name = "manifestUri"];</code>
+       * @param value The bytes for manifestUri to set.
+       * @return This builder for chaining.
+       */
+      public Builder setManifestUriBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        manifestUri_ = value;
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+
+      private int anchorType_ ;
+      /**
+       * <pre>
+       * Anchor type byte.
+       * </pre>
+       *
+       * <code>uint32 anchor_type = 5 [json_name = "anchorType"];</code>
+       * @return The anchorType.
+       */
+      @java.lang.Override
+      public int getAnchorType() {
+        return anchorType_;
+      }
+      /**
+       * <pre>
+       * Anchor type byte.
+       * </pre>
+       *
+       * <code>uint32 anchor_type = 5 [json_name = "anchorType"];</code>
+       * @param value The anchorType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAnchorType(int value) {
+
+        anchorType_ = value;
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Anchor type byte.
+       * </pre>
+       *
+       * <code>uint32 anchor_type = 5 [json_name = "anchorType"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAnchorType() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        anchorType_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private long deposit_ ;
+      /**
+       * <pre>
+       * Deposit in NanoPAC.
+       * </pre>
+       *
+       * <code>int64 deposit = 6 [json_name = "deposit"];</code>
+       * @return The deposit.
+       */
+      @java.lang.Override
+      public long getDeposit() {
+        return deposit_;
+      }
+      /**
+       * <pre>
+       * Deposit in NanoPAC.
+       * </pre>
+       *
+       * <code>int64 deposit = 6 [json_name = "deposit"];</code>
+       * @param value The deposit to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDeposit(long value) {
+
+        deposit_ = value;
+        bitField0_ |= 0x00000020;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Deposit in NanoPAC.
+       * </pre>
+       *
+       * <code>int64 deposit = 6 [json_name = "deposit"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDeposit() {
+        bitField0_ = (bitField0_ & ~0x00000020);
+        deposit_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:pactus.PayloadAnchor)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.PayloadAnchor)
+    private static final pactus.TransactionOuterClass.PayloadAnchor DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.TransactionOuterClass.PayloadAnchor();
+    }
+
+    public static pactus.TransactionOuterClass.PayloadAnchor getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<PayloadAnchor>
+        PARSER = new com.google.protobuf.AbstractParser<PayloadAnchor>() {
+      @java.lang.Override
+      public PayloadAnchor parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<PayloadAnchor> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<PayloadAnchor> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.TransactionOuterClass.PayloadAnchor getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface PayloadBatchTransferOrBuilder extends
       // @@protoc_insertion_point(interface_extends:pactus.PayloadBatchTransfer)
       com.google.protobuf.MessageOrBuilder {
@@ -18225,6 +20827,33 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
 
     /**
      * <pre>
+     * Anchor transaction payload.
+     * </pre>
+     *
+     * <code>.pactus.PayloadAnchor anchor = 36 [json_name = "anchor"];</code>
+     * @return Whether the anchor field is set.
+     */
+    boolean hasAnchor();
+    /**
+     * <pre>
+     * Anchor transaction payload.
+     * </pre>
+     *
+     * <code>.pactus.PayloadAnchor anchor = 36 [json_name = "anchor"];</code>
+     * @return The anchor.
+     */
+    pactus.TransactionOuterClass.PayloadAnchor getAnchor();
+    /**
+     * <pre>
+     * Anchor transaction payload.
+     * </pre>
+     *
+     * <code>.pactus.PayloadAnchor anchor = 36 [json_name = "anchor"];</code>
+     */
+    pactus.TransactionOuterClass.PayloadAnchorOrBuilder getAnchorOrBuilder();
+
+    /**
+     * <pre>
      * A memo string for the transaction.
      * </pre>
      *
@@ -18376,6 +21005,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       UNBOND(33),
       WITHDRAW(34),
       BATCH_TRANSFER(35),
+      ANCHOR(36),
       PAYLOAD_NOT_SET(0);
       private final int value;
       private PayloadCase(int value) {
@@ -18399,6 +21029,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
           case 33: return UNBOND;
           case 34: return WITHDRAW;
           case 35: return BATCH_TRANSFER;
+          case 36: return ANCHOR;
           case 0: return PAYLOAD_NOT_SET;
           default: return null;
         }
@@ -18852,6 +21483,49 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       return pactus.TransactionOuterClass.PayloadBatchTransfer.getDefaultInstance();
     }
 
+    public static final int ANCHOR_FIELD_NUMBER = 36;
+    /**
+     * <pre>
+     * Anchor transaction payload.
+     * </pre>
+     *
+     * <code>.pactus.PayloadAnchor anchor = 36 [json_name = "anchor"];</code>
+     * @return Whether the anchor field is set.
+     */
+    @java.lang.Override
+    public boolean hasAnchor() {
+      return payloadCase_ == 36;
+    }
+    /**
+     * <pre>
+     * Anchor transaction payload.
+     * </pre>
+     *
+     * <code>.pactus.PayloadAnchor anchor = 36 [json_name = "anchor"];</code>
+     * @return The anchor.
+     */
+    @java.lang.Override
+    public pactus.TransactionOuterClass.PayloadAnchor getAnchor() {
+      if (payloadCase_ == 36) {
+         return (pactus.TransactionOuterClass.PayloadAnchor) payload_;
+      }
+      return pactus.TransactionOuterClass.PayloadAnchor.getDefaultInstance();
+    }
+    /**
+     * <pre>
+     * Anchor transaction payload.
+     * </pre>
+     *
+     * <code>.pactus.PayloadAnchor anchor = 36 [json_name = "anchor"];</code>
+     */
+    @java.lang.Override
+    public pactus.TransactionOuterClass.PayloadAnchorOrBuilder getAnchorOrBuilder() {
+      if (payloadCase_ == 36) {
+         return (pactus.TransactionOuterClass.PayloadAnchor) payload_;
+      }
+      return pactus.TransactionOuterClass.PayloadAnchor.getDefaultInstance();
+    }
+
     public static final int MEMO_FIELD_NUMBER = 8;
     @SuppressWarnings("serial")
     private volatile java.lang.Object memo_ = "";
@@ -19111,6 +21785,9 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       if (payloadCase_ == 35) {
         output.writeMessage(35, (pactus.TransactionOuterClass.PayloadBatchTransfer) payload_);
       }
+      if (payloadCase_ == 36) {
+        output.writeMessage(36, (pactus.TransactionOuterClass.PayloadAnchor) payload_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -19191,6 +21868,10 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(35, (pactus.TransactionOuterClass.PayloadBatchTransfer) payload_);
       }
+      if (payloadCase_ == 36) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(36, (pactus.TransactionOuterClass.PayloadAnchor) payload_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -19256,6 +21937,10 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
         case 35:
           if (!getBatchTransfer()
               .equals(other.getBatchTransfer())) return false;
+          break;
+        case 36:
+          if (!getAnchor()
+              .equals(other.getAnchor())) return false;
           break;
         case 0:
         default:
@@ -19324,6 +22009,10 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
         case 35:
           hash = (37 * hash) + BATCH_TRANSFER_FIELD_NUMBER;
           hash = (53 * hash) + getBatchTransfer().hashCode();
+          break;
+        case 36:
+          hash = (37 * hash) + ANCHOR_FIELD_NUMBER;
+          hash = (53 * hash) + getAnchor().hashCode();
           break;
         case 0:
         default:
@@ -19488,6 +22177,9 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
         if (batchTransferBuilder_ != null) {
           batchTransferBuilder_.clear();
         }
+        if (anchorBuilder_ != null) {
+          anchorBuilder_.clear();
+        }
         memo_ = "";
         publicKey_ = "";
         signature_ = "";
@@ -19551,22 +22243,22 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
         if (((from_bitField0_ & 0x00000040) != 0)) {
           result.payloadType_ = payloadType_;
         }
-        if (((from_bitField0_ & 0x00002000) != 0)) {
+        if (((from_bitField0_ & 0x00004000) != 0)) {
           result.memo_ = memo_;
         }
-        if (((from_bitField0_ & 0x00004000) != 0)) {
+        if (((from_bitField0_ & 0x00008000) != 0)) {
           result.publicKey_ = publicKey_;
         }
-        if (((from_bitField0_ & 0x00008000) != 0)) {
+        if (((from_bitField0_ & 0x00010000) != 0)) {
           result.signature_ = signature_;
         }
-        if (((from_bitField0_ & 0x00010000) != 0)) {
+        if (((from_bitField0_ & 0x00020000) != 0)) {
           result.blockHeight_ = blockHeight_;
         }
-        if (((from_bitField0_ & 0x00020000) != 0)) {
+        if (((from_bitField0_ & 0x00040000) != 0)) {
           result.confirmed_ = confirmed_;
         }
-        if (((from_bitField0_ & 0x00040000) != 0)) {
+        if (((from_bitField0_ & 0x00080000) != 0)) {
           result.confirmations_ = confirmations_;
         }
       }
@@ -19597,6 +22289,10 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
         if (payloadCase_ == 35 &&
             batchTransferBuilder_ != null) {
           result.payload_ = batchTransferBuilder_.build();
+        }
+        if (payloadCase_ == 36 &&
+            anchorBuilder_ != null) {
+          result.payload_ = anchorBuilder_.build();
         }
       }
 
@@ -19639,17 +22335,17 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
         }
         if (!other.getMemo().isEmpty()) {
           memo_ = other.memo_;
-          bitField0_ |= 0x00002000;
+          bitField0_ |= 0x00004000;
           onChanged();
         }
         if (!other.getPublicKey().isEmpty()) {
           publicKey_ = other.publicKey_;
-          bitField0_ |= 0x00004000;
+          bitField0_ |= 0x00008000;
           onChanged();
         }
         if (!other.getSignature().isEmpty()) {
           signature_ = other.signature_;
-          bitField0_ |= 0x00008000;
+          bitField0_ |= 0x00010000;
           onChanged();
         }
         if (other.getBlockHeight() != 0) {
@@ -19684,6 +22380,10 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
           }
           case BATCH_TRANSFER: {
             mergeBatchTransfer(other.getBatchTransfer());
+            break;
+          }
+          case ANCHOR: {
+            mergeAnchor(other.getAnchor());
             break;
           }
           case PAYLOAD_NOT_SET: {
@@ -19753,32 +22453,32 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
               } // case 56
               case 66: {
                 memo_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00002000;
+                bitField0_ |= 0x00004000;
                 break;
               } // case 66
               case 74: {
                 publicKey_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00004000;
+                bitField0_ |= 0x00008000;
                 break;
               } // case 74
               case 82: {
                 signature_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00008000;
+                bitField0_ |= 0x00010000;
                 break;
               } // case 82
               case 88: {
                 blockHeight_ = input.readUInt32();
-                bitField0_ |= 0x00010000;
+                bitField0_ |= 0x00020000;
                 break;
               } // case 88
               case 96: {
                 confirmed_ = input.readBool();
-                bitField0_ |= 0x00020000;
+                bitField0_ |= 0x00040000;
                 break;
               } // case 96
               case 104: {
                 confirmations_ = input.readInt32();
-                bitField0_ |= 0x00040000;
+                bitField0_ |= 0x00080000;
                 break;
               } // case 104
               case 242: {
@@ -19823,6 +22523,13 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
                 payloadCase_ = 35;
                 break;
               } // case 282
+              case 290: {
+                input.readMessage(
+                    internalGetAnchorFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                payloadCase_ = 36;
+                break;
+              } // case 290
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -21354,6 +24061,184 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
         return batchTransferBuilder_;
       }
 
+      private com.google.protobuf.SingleFieldBuilder<
+          pactus.TransactionOuterClass.PayloadAnchor, pactus.TransactionOuterClass.PayloadAnchor.Builder, pactus.TransactionOuterClass.PayloadAnchorOrBuilder> anchorBuilder_;
+      /**
+       * <pre>
+       * Anchor transaction payload.
+       * </pre>
+       *
+       * <code>.pactus.PayloadAnchor anchor = 36 [json_name = "anchor"];</code>
+       * @return Whether the anchor field is set.
+       */
+      @java.lang.Override
+      public boolean hasAnchor() {
+        return payloadCase_ == 36;
+      }
+      /**
+       * <pre>
+       * Anchor transaction payload.
+       * </pre>
+       *
+       * <code>.pactus.PayloadAnchor anchor = 36 [json_name = "anchor"];</code>
+       * @return The anchor.
+       */
+      @java.lang.Override
+      public pactus.TransactionOuterClass.PayloadAnchor getAnchor() {
+        if (anchorBuilder_ == null) {
+          if (payloadCase_ == 36) {
+            return (pactus.TransactionOuterClass.PayloadAnchor) payload_;
+          }
+          return pactus.TransactionOuterClass.PayloadAnchor.getDefaultInstance();
+        } else {
+          if (payloadCase_ == 36) {
+            return anchorBuilder_.getMessage();
+          }
+          return pactus.TransactionOuterClass.PayloadAnchor.getDefaultInstance();
+        }
+      }
+      /**
+       * <pre>
+       * Anchor transaction payload.
+       * </pre>
+       *
+       * <code>.pactus.PayloadAnchor anchor = 36 [json_name = "anchor"];</code>
+       */
+      public Builder setAnchor(pactus.TransactionOuterClass.PayloadAnchor value) {
+        if (anchorBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          payload_ = value;
+          onChanged();
+        } else {
+          anchorBuilder_.setMessage(value);
+        }
+        payloadCase_ = 36;
+        return this;
+      }
+      /**
+       * <pre>
+       * Anchor transaction payload.
+       * </pre>
+       *
+       * <code>.pactus.PayloadAnchor anchor = 36 [json_name = "anchor"];</code>
+       */
+      public Builder setAnchor(
+          pactus.TransactionOuterClass.PayloadAnchor.Builder builderForValue) {
+        if (anchorBuilder_ == null) {
+          payload_ = builderForValue.build();
+          onChanged();
+        } else {
+          anchorBuilder_.setMessage(builderForValue.build());
+        }
+        payloadCase_ = 36;
+        return this;
+      }
+      /**
+       * <pre>
+       * Anchor transaction payload.
+       * </pre>
+       *
+       * <code>.pactus.PayloadAnchor anchor = 36 [json_name = "anchor"];</code>
+       */
+      public Builder mergeAnchor(pactus.TransactionOuterClass.PayloadAnchor value) {
+        if (anchorBuilder_ == null) {
+          if (payloadCase_ == 36 &&
+              payload_ != pactus.TransactionOuterClass.PayloadAnchor.getDefaultInstance()) {
+            payload_ = pactus.TransactionOuterClass.PayloadAnchor.newBuilder((pactus.TransactionOuterClass.PayloadAnchor) payload_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            payload_ = value;
+          }
+          onChanged();
+        } else {
+          if (payloadCase_ == 36) {
+            anchorBuilder_.mergeFrom(value);
+          } else {
+            anchorBuilder_.setMessage(value);
+          }
+        }
+        payloadCase_ = 36;
+        return this;
+      }
+      /**
+       * <pre>
+       * Anchor transaction payload.
+       * </pre>
+       *
+       * <code>.pactus.PayloadAnchor anchor = 36 [json_name = "anchor"];</code>
+       */
+      public Builder clearAnchor() {
+        if (anchorBuilder_ == null) {
+          if (payloadCase_ == 36) {
+            payloadCase_ = 0;
+            payload_ = null;
+            onChanged();
+          }
+        } else {
+          if (payloadCase_ == 36) {
+            payloadCase_ = 0;
+            payload_ = null;
+          }
+          anchorBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * Anchor transaction payload.
+       * </pre>
+       *
+       * <code>.pactus.PayloadAnchor anchor = 36 [json_name = "anchor"];</code>
+       */
+      public pactus.TransactionOuterClass.PayloadAnchor.Builder getAnchorBuilder() {
+        return internalGetAnchorFieldBuilder().getBuilder();
+      }
+      /**
+       * <pre>
+       * Anchor transaction payload.
+       * </pre>
+       *
+       * <code>.pactus.PayloadAnchor anchor = 36 [json_name = "anchor"];</code>
+       */
+      @java.lang.Override
+      public pactus.TransactionOuterClass.PayloadAnchorOrBuilder getAnchorOrBuilder() {
+        if ((payloadCase_ == 36) && (anchorBuilder_ != null)) {
+          return anchorBuilder_.getMessageOrBuilder();
+        } else {
+          if (payloadCase_ == 36) {
+            return (pactus.TransactionOuterClass.PayloadAnchor) payload_;
+          }
+          return pactus.TransactionOuterClass.PayloadAnchor.getDefaultInstance();
+        }
+      }
+      /**
+       * <pre>
+       * Anchor transaction payload.
+       * </pre>
+       *
+       * <code>.pactus.PayloadAnchor anchor = 36 [json_name = "anchor"];</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          pactus.TransactionOuterClass.PayloadAnchor, pactus.TransactionOuterClass.PayloadAnchor.Builder, pactus.TransactionOuterClass.PayloadAnchorOrBuilder> 
+          internalGetAnchorFieldBuilder() {
+        if (anchorBuilder_ == null) {
+          if (!(payloadCase_ == 36)) {
+            payload_ = pactus.TransactionOuterClass.PayloadAnchor.getDefaultInstance();
+          }
+          anchorBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              pactus.TransactionOuterClass.PayloadAnchor, pactus.TransactionOuterClass.PayloadAnchor.Builder, pactus.TransactionOuterClass.PayloadAnchorOrBuilder>(
+                  (pactus.TransactionOuterClass.PayloadAnchor) payload_,
+                  getParentForChildren(),
+                  isClean());
+          payload_ = null;
+        }
+        payloadCase_ = 36;
+        onChanged();
+        return anchorBuilder_;
+      }
+
       private java.lang.Object memo_ = "";
       /**
        * <pre>
@@ -21409,7 +24294,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
           java.lang.String value) {
         if (value == null) { throw new NullPointerException(); }
         memo_ = value;
-        bitField0_ |= 0x00002000;
+        bitField0_ |= 0x00004000;
         onChanged();
         return this;
       }
@@ -21423,7 +24308,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
        */
       public Builder clearMemo() {
         memo_ = getDefaultInstance().getMemo();
-        bitField0_ = (bitField0_ & ~0x00002000);
+        bitField0_ = (bitField0_ & ~0x00004000);
         onChanged();
         return this;
       }
@@ -21441,7 +24326,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
         if (value == null) { throw new NullPointerException(); }
         checkByteStringIsUtf8(value);
         memo_ = value;
-        bitField0_ |= 0x00002000;
+        bitField0_ |= 0x00004000;
         onChanged();
         return this;
       }
@@ -21501,7 +24386,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
           java.lang.String value) {
         if (value == null) { throw new NullPointerException(); }
         publicKey_ = value;
-        bitField0_ |= 0x00004000;
+        bitField0_ |= 0x00008000;
         onChanged();
         return this;
       }
@@ -21515,7 +24400,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
        */
       public Builder clearPublicKey() {
         publicKey_ = getDefaultInstance().getPublicKey();
-        bitField0_ = (bitField0_ & ~0x00004000);
+        bitField0_ = (bitField0_ & ~0x00008000);
         onChanged();
         return this;
       }
@@ -21533,7 +24418,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
         if (value == null) { throw new NullPointerException(); }
         checkByteStringIsUtf8(value);
         publicKey_ = value;
-        bitField0_ |= 0x00004000;
+        bitField0_ |= 0x00008000;
         onChanged();
         return this;
       }
@@ -21593,7 +24478,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
           java.lang.String value) {
         if (value == null) { throw new NullPointerException(); }
         signature_ = value;
-        bitField0_ |= 0x00008000;
+        bitField0_ |= 0x00010000;
         onChanged();
         return this;
       }
@@ -21607,7 +24492,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
        */
       public Builder clearSignature() {
         signature_ = getDefaultInstance().getSignature();
-        bitField0_ = (bitField0_ & ~0x00008000);
+        bitField0_ = (bitField0_ & ~0x00010000);
         onChanged();
         return this;
       }
@@ -21625,7 +24510,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
         if (value == null) { throw new NullPointerException(); }
         checkByteStringIsUtf8(value);
         signature_ = value;
-        bitField0_ |= 0x00008000;
+        bitField0_ |= 0x00010000;
         onChanged();
         return this;
       }
@@ -21657,7 +24542,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       public Builder setBlockHeight(int value) {
 
         blockHeight_ = value;
-        bitField0_ |= 0x00010000;
+        bitField0_ |= 0x00020000;
         onChanged();
         return this;
       }
@@ -21671,7 +24556,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
        * @return This builder for chaining.
        */
       public Builder clearBlockHeight() {
-        bitField0_ = (bitField0_ & ~0x00010000);
+        bitField0_ = (bitField0_ & ~0x00020000);
         blockHeight_ = 0;
         onChanged();
         return this;
@@ -21702,7 +24587,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       public Builder setConfirmed(boolean value) {
 
         confirmed_ = value;
-        bitField0_ |= 0x00020000;
+        bitField0_ |= 0x00040000;
         onChanged();
         return this;
       }
@@ -21715,7 +24600,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
        * @return This builder for chaining.
        */
       public Builder clearConfirmed() {
-        bitField0_ = (bitField0_ & ~0x00020000);
+        bitField0_ = (bitField0_ & ~0x00040000);
         confirmed_ = false;
         onChanged();
         return this;
@@ -21748,7 +24633,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       public Builder setConfirmations(int value) {
 
         confirmations_ = value;
-        bitField0_ |= 0x00040000;
+        bitField0_ |= 0x00080000;
         onChanged();
         return this;
       }
@@ -21762,7 +24647,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
        * @return This builder for chaining.
        */
       public Builder clearConfirmations() {
-        bitField0_ = (bitField0_ & ~0x00040000);
+        bitField0_ = (bitField0_ & ~0x00080000);
         confirmations_ = 0;
         onChanged();
         return this;
@@ -24277,6 +27162,11 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_pactus_GetRawBatchTransferTransactionRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_GetRawAnchorTransactionRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pactus_GetRawAnchorTransactionRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_GetRawTransactionResponse_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -24306,6 +27196,11 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_pactus_PayloadWithdraw_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_PayloadAnchor_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pactus_PayloadAnchor_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_PayloadBatchTransfer_descriptor;
   private static final 
@@ -24392,89 +27287,105 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       "\001 \001(\rR\010lockTime\022\026\n\006sender\030\002 \001(\tR\006sender\022" +
       "1\n\nrecipients\030\003 \003(\0132\021.pactus.RecipientR\n" +
       "recipients\022\020\n\003fee\030\004 \001(\003R\003fee\022\022\n\004memo\030\005 \001" +
-      "(\tR\004memo\"T\n\031GetRawTransactionResponse\022\'\n" +
-      "\017raw_transaction\030\001 \001(\tR\016rawTransaction\022\016" +
-      "\n\002id\030\002 \001(\tR\002id\"]\n\017PayloadTransfer\022\026\n\006sen" +
-      "der\030\001 \001(\tR\006sender\022\032\n\010receiver\030\002 \001(\tR\010rec" +
-      "eiver\022\026\n\006amount\030\003 \001(\003R\006amount\"\220\002\n\013Payloa" +
-      "dBond\022\026\n\006sender\030\001 \001(\tR\006sender\022\032\n\010receive" +
-      "r\030\002 \001(\tR\010receiver\022\024\n\005stake\030\003 \001(\003R\005stake\022" +
-      "\035\n\npublic_key\030\004 \001(\tR\tpublicKey\022!\n\014is_del" +
-      "egated\030\005 \001(\010R\013isDelegated\022%\n\016delegate_ow" +
-      "ner\030\006 \001(\tR\rdelegateOwner\022%\n\016delegate_sha" +
-      "re\030\007 \001(\003R\rdelegateShare\022\'\n\017delegate_expi" +
-      "ry\030\010 \001(\rR\016delegateExpiry\"B\n\020PayloadSorti" +
-      "tion\022\030\n\007address\030\001 \001(\tR\007address\022\024\n\005proof\030" +
-      "\002 \001(\tR\005proof\"T\n\rPayloadUnbond\022\034\n\tvalidat" +
-      "or\030\001 \001(\tR\tvalidator\022%\n\016delegate_owner\030\002 " +
-      "\001(\tR\rdelegateOwner\"\177\n\017PayloadWithdraw\022+\n" +
-      "\021validator_address\030\001 \001(\tR\020validatorAddre" +
-      "ss\022\'\n\017account_address\030\002 \001(\tR\016accountAddr" +
-      "ess\022\026\n\006amount\030\003 \001(\003R\006amount\"a\n\024PayloadBa" +
-      "tchTransfer\022\026\n\006sender\030\001 \001(\tR\006sender\0221\n\nr" +
-      "ecipients\030\002 \003(\0132\021.pactus.RecipientR\nreci" +
-      "pients\"?\n\tRecipient\022\032\n\010receiver\030\001 \001(\tR\010r" +
-      "eceiver\022\026\n\006amount\030\002 \001(\003R\006amount\"\332\005\n\017Tran" +
-      "sactionInfo\022\016\n\002id\030\001 \001(\tR\002id\022\022\n\004data\030\002 \001(" +
-      "\tR\004data\022\030\n\007version\030\003 \001(\005R\007version\022\033\n\tloc" +
-      "k_time\030\004 \001(\rR\010lockTime\022\024\n\005value\030\005 \001(\003R\005v" +
-      "alue\022\020\n\003fee\030\006 \001(\003R\003fee\0226\n\014payload_type\030\007" +
-      " \001(\0162\023.pactus.PayloadTypeR\013payloadType\0225" +
-      "\n\010transfer\030\036 \001(\0132\027.pactus.PayloadTransfe" +
-      "rH\000R\010transfer\022)\n\004bond\030\037 \001(\0132\023.pactus.Pay" +
-      "loadBondH\000R\004bond\0228\n\tsortition\030  \001(\0132\030.pa" +
-      "ctus.PayloadSortitionH\000R\tsortition\022/\n\006un" +
-      "bond\030! \001(\0132\025.pactus.PayloadUnbondH\000R\006unb" +
-      "ond\0225\n\010withdraw\030\" \001(\0132\027.pactus.PayloadWi" +
-      "thdrawH\000R\010withdraw\022E\n\016batch_transfer\030# \001" +
-      "(\0132\034.pactus.PayloadBatchTransferH\000R\rbatc" +
-      "hTransfer\022\022\n\004memo\030\010 \001(\tR\004memo\022\035\n\npublic_" +
-      "key\030\t \001(\tR\tpublicKey\022\034\n\tsignature\030\n \001(\tR" +
-      "\tsignature\022!\n\014block_height\030\013 \001(\rR\013blockH" +
-      "eight\022\034\n\tconfirmed\030\014 \001(\010R\tconfirmed\022$\n\rc" +
-      "onfirmations\030\r \001(\005R\rconfirmationsB\t\n\007pay" +
-      "load\"F\n\033DecodeRawTransactionRequest\022\'\n\017r" +
-      "aw_transaction\030\001 \001(\tR\016rawTransaction\"Y\n\034" +
-      "DecodeRawTransactionResponse\0229\n\013transact" +
-      "ion\030\001 \001(\0132\027.pactus.TransactionInfoR\013tran" +
-      "saction\"B\n\027CheckTransactionRequest\022\'\n\017ra" +
-      "w_transaction\030\001 \001(\tR\016rawTransaction\"Z\n\030C" +
-      "heckTransactionResponse\022\031\n\010is_valid\030\001 \001(" +
-      "\010R\007isValid\022#\n\rerror_message\030\002 \001(\tR\014error" +
-      "Message*\316\001\n\013PayloadType\022\034\n\030PAYLOAD_TYPE_" +
-      "UNSPECIFIED\020\000\022\031\n\025PAYLOAD_TYPE_TRANSFER\020\001" +
-      "\022\025\n\021PAYLOAD_TYPE_BOND\020\002\022\032\n\026PAYLOAD_TYPE_" +
-      "SORTITION\020\003\022\027\n\023PAYLOAD_TYPE_UNBOND\020\004\022\031\n\025" +
-      "PAYLOAD_TYPE_WITHDRAW\020\005\022\037\n\033PAYLOAD_TYPE_" +
-      "BATCH_TRANSFER\020\006*V\n\024TransactionVerbosity" +
-      "\022\036\n\032TRANSACTION_VERBOSITY_DATA\020\000\022\036\n\032TRAN" +
-      "SACTION_VERBOSITY_INFO\020\0012\326\007\n\013Transaction" +
-      "\022O\n\016GetTransaction\022\035.pactus.GetTransacti" +
-      "onRequest\032\036.pactus.GetTransactionRespons" +
-      "e\022I\n\014CalculateFee\022\033.pactus.CalculateFeeR" +
-      "equest\032\034.pactus.CalculateFeeResponse\022a\n\024" +
-      "BroadcastTransaction\022#.pactus.BroadcastT" +
-      "ransactionRequest\032$.pactus.BroadcastTran" +
-      "sactionResponse\022h\n\031GetRawTransferTransac" +
-      "tion\022(.pactus.GetRawTransferTransactionR" +
-      "equest\032!.pactus.GetRawTransactionRespons" +
-      "e\022`\n\025GetRawBondTransaction\022$.pactus.GetR" +
-      "awBondTransactionRequest\032!.pactus.GetRaw" +
-      "TransactionResponse\022d\n\027GetRawUnbondTrans" +
-      "action\022&.pactus.GetRawUnbondTransactionR" +
-      "equest\032!.pactus.GetRawTransactionRespons" +
-      "e\022h\n\031GetRawWithdrawTransaction\022(.pactus." +
-      "GetRawWithdrawTransactionRequest\032!.pactu" +
-      "s.GetRawTransactionResponse\022r\n\036GetRawBat" +
-      "chTransferTransaction\022-.pactus.GetRawBat" +
-      "chTransferTransactionRequest\032!.pactus.Ge" +
-      "tRawTransactionResponse\022a\n\024DecodeRawTran" +
-      "saction\022#.pactus.DecodeRawTransactionReq" +
-      "uest\032$.pactus.DecodeRawTransactionRespon" +
-      "se\022U\n\020CheckTransaction\022\037.pactus.CheckTra" +
-      "nsactionRequest\032 .pactus.CheckTransactio" +
-      "nResponseB:\n\006pactusZ0github.com/pactus-p" +
-      "roject/pactus/www/grpc/pactusb\006proto3"
+      "(\tR\004memo\"\212\002\n\036GetRawAnchorTransactionRequ" +
+      "est\022\022\n\004from\030\001 \001(\tR\004from\022\026\n\006action\030\002 \001(\rR" +
+      "\006action\022\033\n\troot_hash\030\003 \001(\014R\010rootHash\022!\n\014" +
+      "manifest_uri\030\004 \001(\tR\013manifestUri\022\037\n\013ancho" +
+      "r_type\030\005 \001(\rR\nanchorType\022\030\n\007deposit\030\006 \001(" +
+      "\003R\007deposit\022\020\n\003fee\030\007 \001(\003R\003fee\022\022\n\004memo\030\010 \001" +
+      "(\tR\004memo\022\033\n\tlock_time\030\t \001(\rR\010lockTime\"T\n" +
+      "\031GetRawTransactionResponse\022\'\n\017raw_transa" +
+      "ction\030\001 \001(\tR\016rawTransaction\022\016\n\002id\030\002 \001(\tR" +
+      "\002id\"]\n\017PayloadTransfer\022\026\n\006sender\030\001 \001(\tR\006" +
+      "sender\022\032\n\010receiver\030\002 \001(\tR\010receiver\022\026\n\006am" +
+      "ount\030\003 \001(\003R\006amount\"\220\002\n\013PayloadBond\022\026\n\006se" +
+      "nder\030\001 \001(\tR\006sender\022\032\n\010receiver\030\002 \001(\tR\010re" +
+      "ceiver\022\024\n\005stake\030\003 \001(\003R\005stake\022\035\n\npublic_k" +
+      "ey\030\004 \001(\tR\tpublicKey\022!\n\014is_delegated\030\005 \001(" +
+      "\010R\013isDelegated\022%\n\016delegate_owner\030\006 \001(\tR\r" +
+      "delegateOwner\022%\n\016delegate_share\030\007 \001(\003R\rd" +
+      "elegateShare\022\'\n\017delegate_expiry\030\010 \001(\rR\016d" +
+      "elegateExpiry\"B\n\020PayloadSortition\022\030\n\007add" +
+      "ress\030\001 \001(\tR\007address\022\024\n\005proof\030\002 \001(\tR\005proo" +
+      "f\"T\n\rPayloadUnbond\022\034\n\tvalidator\030\001 \001(\tR\tv" +
+      "alidator\022%\n\016delegate_owner\030\002 \001(\tR\rdelega" +
+      "teOwner\"\177\n\017PayloadWithdraw\022+\n\021validator_" +
+      "address\030\001 \001(\tR\020validatorAddress\022\'\n\017accou" +
+      "nt_address\030\002 \001(\tR\016accountAddress\022\026\n\006amou" +
+      "nt\030\003 \001(\003R\006amount\"\266\001\n\rPayloadAnchor\022\022\n\004fr" +
+      "om\030\001 \001(\tR\004from\022\026\n\006action\030\002 \001(\rR\006action\022\033" +
+      "\n\troot_hash\030\003 \001(\014R\010rootHash\022!\n\014manifest_" +
+      "uri\030\004 \001(\tR\013manifestUri\022\037\n\013anchor_type\030\005 " +
+      "\001(\rR\nanchorType\022\030\n\007deposit\030\006 \001(\003R\007deposi" +
+      "t\"a\n\024PayloadBatchTransfer\022\026\n\006sender\030\001 \001(" +
+      "\tR\006sender\0221\n\nrecipients\030\002 \003(\0132\021.pactus.R" +
+      "ecipientR\nrecipients\"?\n\tRecipient\022\032\n\010rec" +
+      "eiver\030\001 \001(\tR\010receiver\022\026\n\006amount\030\002 \001(\003R\006a" +
+      "mount\"\213\006\n\017TransactionInfo\022\016\n\002id\030\001 \001(\tR\002i" +
+      "d\022\022\n\004data\030\002 \001(\tR\004data\022\030\n\007version\030\003 \001(\005R\007" +
+      "version\022\033\n\tlock_time\030\004 \001(\rR\010lockTime\022\024\n\005" +
+      "value\030\005 \001(\003R\005value\022\020\n\003fee\030\006 \001(\003R\003fee\0226\n\014" +
+      "payload_type\030\007 \001(\0162\023.pactus.PayloadTypeR" +
+      "\013payloadType\0225\n\010transfer\030\036 \001(\0132\027.pactus." +
+      "PayloadTransferH\000R\010transfer\022)\n\004bond\030\037 \001(" +
+      "\0132\023.pactus.PayloadBondH\000R\004bond\0228\n\tsortit" +
+      "ion\030  \001(\0132\030.pactus.PayloadSortitionH\000R\ts" +
+      "ortition\022/\n\006unbond\030! \001(\0132\025.pactus.Payloa" +
+      "dUnbondH\000R\006unbond\0225\n\010withdraw\030\" \001(\0132\027.pa" +
+      "ctus.PayloadWithdrawH\000R\010withdraw\022E\n\016batc" +
+      "h_transfer\030# \001(\0132\034.pactus.PayloadBatchTr" +
+      "ansferH\000R\rbatchTransfer\022/\n\006anchor\030$ \001(\0132" +
+      "\025.pactus.PayloadAnchorH\000R\006anchor\022\022\n\004memo" +
+      "\030\010 \001(\tR\004memo\022\035\n\npublic_key\030\t \001(\tR\tpublic" +
+      "Key\022\034\n\tsignature\030\n \001(\tR\tsignature\022!\n\014blo" +
+      "ck_height\030\013 \001(\rR\013blockHeight\022\034\n\tconfirme" +
+      "d\030\014 \001(\010R\tconfirmed\022$\n\rconfirmations\030\r \001(" +
+      "\005R\rconfirmationsB\t\n\007payload\"F\n\033DecodeRaw" +
+      "TransactionRequest\022\'\n\017raw_transaction\030\001 " +
+      "\001(\tR\016rawTransaction\"Y\n\034DecodeRawTransact" +
+      "ionResponse\0229\n\013transaction\030\001 \001(\0132\027.pactu" +
+      "s.TransactionInfoR\013transaction\"B\n\027CheckT" +
+      "ransactionRequest\022\'\n\017raw_transaction\030\001 \001" +
+      "(\tR\016rawTransaction\"Z\n\030CheckTransactionRe" +
+      "sponse\022\031\n\010is_valid\030\001 \001(\010R\007isValid\022#\n\rerr" +
+      "or_message\030\002 \001(\tR\014errorMessage*\347\001\n\013Paylo" +
+      "adType\022\034\n\030PAYLOAD_TYPE_UNSPECIFIED\020\000\022\031\n\025" +
+      "PAYLOAD_TYPE_TRANSFER\020\001\022\025\n\021PAYLOAD_TYPE_" +
+      "BOND\020\002\022\032\n\026PAYLOAD_TYPE_SORTITION\020\003\022\027\n\023PA" +
+      "YLOAD_TYPE_UNBOND\020\004\022\031\n\025PAYLOAD_TYPE_WITH" +
+      "DRAW\020\005\022\037\n\033PAYLOAD_TYPE_BATCH_TRANSFER\020\006\022" +
+      "\027\n\023PAYLOAD_TYPE_ANCHOR\020\007*V\n\024TransactionV" +
+      "erbosity\022\036\n\032TRANSACTION_VERBOSITY_DATA\020\000" +
+      "\022\036\n\032TRANSACTION_VERBOSITY_INFO\020\0012\274\010\n\013Tra" +
+      "nsaction\022O\n\016GetTransaction\022\035.pactus.GetT" +
+      "ransactionRequest\032\036.pactus.GetTransactio" +
+      "nResponse\022I\n\014CalculateFee\022\033.pactus.Calcu" +
+      "lateFeeRequest\032\034.pactus.CalculateFeeResp" +
+      "onse\022a\n\024BroadcastTransaction\022#.pactus.Br" +
+      "oadcastTransactionRequest\032$.pactus.Broad" +
+      "castTransactionResponse\022h\n\031GetRawTransfe" +
+      "rTransaction\022(.pactus.GetRawTransferTran" +
+      "sactionRequest\032!.pactus.GetRawTransactio" +
+      "nResponse\022`\n\025GetRawBondTransaction\022$.pac" +
+      "tus.GetRawBondTransactionRequest\032!.pactu" +
+      "s.GetRawTransactionResponse\022d\n\027GetRawUnb" +
+      "ondTransaction\022&.pactus.GetRawUnbondTran" +
+      "sactionRequest\032!.pactus.GetRawTransactio" +
+      "nResponse\022h\n\031GetRawWithdrawTransaction\022(" +
+      ".pactus.GetRawWithdrawTransactionRequest" +
+      "\032!.pactus.GetRawTransactionResponse\022r\n\036G" +
+      "etRawBatchTransferTransaction\022-.pactus.G" +
+      "etRawBatchTransferTransactionRequest\032!.p" +
+      "actus.GetRawTransactionResponse\022d\n\027GetRa" +
+      "wAnchorTransaction\022&.pactus.GetRawAnchor" +
+      "TransactionRequest\032!.pactus.GetRawTransa" +
+      "ctionResponse\022a\n\024DecodeRawTransaction\022#." +
+      "pactus.DecodeRawTransactionRequest\032$.pac" +
+      "tus.DecodeRawTransactionResponse\022U\n\020Chec" +
+      "kTransaction\022\037.pactus.CheckTransactionRe" +
+      "quest\032 .pactus.CheckTransactionResponseB" +
+      ":\n\006pactusZ0github.com/pactus-project/pac" +
+      "tus/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -24546,80 +27457,92 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetRawBatchTransferTransactionRequest_descriptor,
         new java.lang.String[] { "LockTime", "Sender", "Recipients", "Fee", "Memo", });
-    internal_static_pactus_GetRawTransactionResponse_descriptor =
+    internal_static_pactus_GetRawAnchorTransactionRequest_descriptor =
       getDescriptor().getMessageType(11);
+    internal_static_pactus_GetRawAnchorTransactionRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pactus_GetRawAnchorTransactionRequest_descriptor,
+        new java.lang.String[] { "From", "Action", "RootHash", "ManifestUri", "AnchorType", "Deposit", "Fee", "Memo", "LockTime", });
+    internal_static_pactus_GetRawTransactionResponse_descriptor =
+      getDescriptor().getMessageType(12);
     internal_static_pactus_GetRawTransactionResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetRawTransactionResponse_descriptor,
         new java.lang.String[] { "RawTransaction", "Id", });
     internal_static_pactus_PayloadTransfer_descriptor =
-      getDescriptor().getMessageType(12);
+      getDescriptor().getMessageType(13);
     internal_static_pactus_PayloadTransfer_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_PayloadTransfer_descriptor,
         new java.lang.String[] { "Sender", "Receiver", "Amount", });
     internal_static_pactus_PayloadBond_descriptor =
-      getDescriptor().getMessageType(13);
+      getDescriptor().getMessageType(14);
     internal_static_pactus_PayloadBond_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_PayloadBond_descriptor,
         new java.lang.String[] { "Sender", "Receiver", "Stake", "PublicKey", "IsDelegated", "DelegateOwner", "DelegateShare", "DelegateExpiry", });
     internal_static_pactus_PayloadSortition_descriptor =
-      getDescriptor().getMessageType(14);
+      getDescriptor().getMessageType(15);
     internal_static_pactus_PayloadSortition_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_PayloadSortition_descriptor,
         new java.lang.String[] { "Address", "Proof", });
     internal_static_pactus_PayloadUnbond_descriptor =
-      getDescriptor().getMessageType(15);
+      getDescriptor().getMessageType(16);
     internal_static_pactus_PayloadUnbond_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_PayloadUnbond_descriptor,
         new java.lang.String[] { "Validator", "DelegateOwner", });
     internal_static_pactus_PayloadWithdraw_descriptor =
-      getDescriptor().getMessageType(16);
+      getDescriptor().getMessageType(17);
     internal_static_pactus_PayloadWithdraw_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_PayloadWithdraw_descriptor,
         new java.lang.String[] { "ValidatorAddress", "AccountAddress", "Amount", });
+    internal_static_pactus_PayloadAnchor_descriptor =
+      getDescriptor().getMessageType(18);
+    internal_static_pactus_PayloadAnchor_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pactus_PayloadAnchor_descriptor,
+        new java.lang.String[] { "From", "Action", "RootHash", "ManifestUri", "AnchorType", "Deposit", });
     internal_static_pactus_PayloadBatchTransfer_descriptor =
-      getDescriptor().getMessageType(17);
+      getDescriptor().getMessageType(19);
     internal_static_pactus_PayloadBatchTransfer_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_PayloadBatchTransfer_descriptor,
         new java.lang.String[] { "Sender", "Recipients", });
     internal_static_pactus_Recipient_descriptor =
-      getDescriptor().getMessageType(18);
+      getDescriptor().getMessageType(20);
     internal_static_pactus_Recipient_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_Recipient_descriptor,
         new java.lang.String[] { "Receiver", "Amount", });
     internal_static_pactus_TransactionInfo_descriptor =
-      getDescriptor().getMessageType(19);
+      getDescriptor().getMessageType(21);
     internal_static_pactus_TransactionInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_TransactionInfo_descriptor,
-        new java.lang.String[] { "Id", "Data", "Version", "LockTime", "Value", "Fee", "PayloadType", "Transfer", "Bond", "Sortition", "Unbond", "Withdraw", "BatchTransfer", "Memo", "PublicKey", "Signature", "BlockHeight", "Confirmed", "Confirmations", "Payload", });
+        new java.lang.String[] { "Id", "Data", "Version", "LockTime", "Value", "Fee", "PayloadType", "Transfer", "Bond", "Sortition", "Unbond", "Withdraw", "BatchTransfer", "Anchor", "Memo", "PublicKey", "Signature", "BlockHeight", "Confirmed", "Confirmations", "Payload", });
     internal_static_pactus_DecodeRawTransactionRequest_descriptor =
-      getDescriptor().getMessageType(20);
+      getDescriptor().getMessageType(22);
     internal_static_pactus_DecodeRawTransactionRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_DecodeRawTransactionRequest_descriptor,
         new java.lang.String[] { "RawTransaction", });
     internal_static_pactus_DecodeRawTransactionResponse_descriptor =
-      getDescriptor().getMessageType(21);
+      getDescriptor().getMessageType(23);
     internal_static_pactus_DecodeRawTransactionResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_DecodeRawTransactionResponse_descriptor,
         new java.lang.String[] { "Transaction", });
     internal_static_pactus_CheckTransactionRequest_descriptor =
-      getDescriptor().getMessageType(22);
+      getDescriptor().getMessageType(24);
     internal_static_pactus_CheckTransactionRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_CheckTransactionRequest_descriptor,
         new java.lang.String[] { "RawTransaction", });
     internal_static_pactus_CheckTransactionResponse_descriptor =
-      getDescriptor().getMessageType(23);
+      getDescriptor().getMessageType(25);
     internal_static_pactus_CheckTransactionResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_CheckTransactionResponse_descriptor,

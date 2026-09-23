@@ -19417,6 +19417,5003 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
 
   }
 
+  public interface GetAnchorRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.GetAnchorRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * The address of the account.
+     * </pre>
+     *
+     * <code>string address = 1 [json_name = "address"];</code>
+     * @return The address.
+     */
+    java.lang.String getAddress();
+    /**
+     * <pre>
+     * The address of the account.
+     * </pre>
+     *
+     * <code>string address = 1 [json_name = "address"];</code>
+     * @return The bytes for address.
+     */
+    com.google.protobuf.ByteString
+        getAddressBytes();
+  }
+  /**
+   * <pre>
+   * Request message for retrieving the active anchor of an account.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.GetAnchorRequest}
+   */
+  public static final class GetAnchorRequest extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:pactus.GetAnchorRequest)
+      GetAnchorRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 33,
+        /* patch= */ 2,
+        /* suffix= */ "",
+        "GetAnchorRequest");
+    }
+    // Use GetAnchorRequest.newBuilder() to construct.
+    private GetAnchorRequest(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private GetAnchorRequest() {
+      address_ = "";
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetAnchorRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetAnchorRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.BlockchainOuterClass.GetAnchorRequest.class, pactus.BlockchainOuterClass.GetAnchorRequest.Builder.class);
+    }
+
+    public static final int ADDRESS_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object address_ = "";
+    /**
+     * <pre>
+     * The address of the account.
+     * </pre>
+     *
+     * <code>string address = 1 [json_name = "address"];</code>
+     * @return The address.
+     */
+    @java.lang.Override
+    public java.lang.String getAddress() {
+      java.lang.Object ref = address_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        address_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The address of the account.
+     * </pre>
+     *
+     * <code>string address = 1 [json_name = "address"];</code>
+     * @return The bytes for address.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getAddressBytes() {
+      java.lang.Object ref = address_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        address_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(address_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 1, address_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(address_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(1, address_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetAnchorRequest)) {
+        return super.equals(obj);
+      }
+      pactus.BlockchainOuterClass.GetAnchorRequest other = (pactus.BlockchainOuterClass.GetAnchorRequest) obj;
+
+      if (!getAddress()
+          .equals(other.getAddress())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ADDRESS_FIELD_NUMBER;
+      hash = (53 * hash) + getAddress().hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.BlockchainOuterClass.GetAnchorRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.BlockchainOuterClass.GetAnchorRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.GetAnchorRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.BlockchainOuterClass.GetAnchorRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.GetAnchorRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.BlockchainOuterClass.GetAnchorRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.GetAnchorRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.BlockchainOuterClass.GetAnchorRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static pactus.BlockchainOuterClass.GetAnchorRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static pactus.BlockchainOuterClass.GetAnchorRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.GetAnchorRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.BlockchainOuterClass.GetAnchorRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetAnchorRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Request message for retrieving the active anchor of an account.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.GetAnchorRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.GetAnchorRequest)
+        pactus.BlockchainOuterClass.GetAnchorRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetAnchorRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetAnchorRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.BlockchainOuterClass.GetAnchorRequest.class, pactus.BlockchainOuterClass.GetAnchorRequest.Builder.class);
+      }
+
+      // Construct using pactus.BlockchainOuterClass.GetAnchorRequest.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        address_ = "";
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetAnchorRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.BlockchainOuterClass.GetAnchorRequest getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetAnchorRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.BlockchainOuterClass.GetAnchorRequest build() {
+        pactus.BlockchainOuterClass.GetAnchorRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.BlockchainOuterClass.GetAnchorRequest buildPartial() {
+        pactus.BlockchainOuterClass.GetAnchorRequest result = new pactus.BlockchainOuterClass.GetAnchorRequest(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(pactus.BlockchainOuterClass.GetAnchorRequest result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.address_ = address_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.BlockchainOuterClass.GetAnchorRequest) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetAnchorRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetAnchorRequest other) {
+        if (other == pactus.BlockchainOuterClass.GetAnchorRequest.getDefaultInstance()) return this;
+        if (!other.getAddress().isEmpty()) {
+          address_ = other.address_;
+          bitField0_ |= 0x00000001;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                address_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object address_ = "";
+      /**
+       * <pre>
+       * The address of the account.
+       * </pre>
+       *
+       * <code>string address = 1 [json_name = "address"];</code>
+       * @return The address.
+       */
+      public java.lang.String getAddress() {
+        java.lang.Object ref = address_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          address_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The address of the account.
+       * </pre>
+       *
+       * <code>string address = 1 [json_name = "address"];</code>
+       * @return The bytes for address.
+       */
+      public com.google.protobuf.ByteString
+          getAddressBytes() {
+        java.lang.Object ref = address_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          address_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The address of the account.
+       * </pre>
+       *
+       * <code>string address = 1 [json_name = "address"];</code>
+       * @param value The address to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAddress(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        address_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The address of the account.
+       * </pre>
+       *
+       * <code>string address = 1 [json_name = "address"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAddress() {
+        address_ = getDefaultInstance().getAddress();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The address of the account.
+       * </pre>
+       *
+       * <code>string address = 1 [json_name = "address"];</code>
+       * @param value The bytes for address to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAddressBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        address_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:pactus.GetAnchorRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.GetAnchorRequest)
+    private static final pactus.BlockchainOuterClass.GetAnchorRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetAnchorRequest();
+    }
+
+    public static pactus.BlockchainOuterClass.GetAnchorRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<GetAnchorRequest>
+        PARSER = new com.google.protobuf.AbstractParser<GetAnchorRequest>() {
+      @java.lang.Override
+      public GetAnchorRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<GetAnchorRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GetAnchorRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.BlockchainOuterClass.GetAnchorRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface GetAnchorResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.GetAnchorResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * True when the account exists and has an anchor.
+     * </pre>
+     *
+     * <code>bool found = 1 [json_name = "found"];</code>
+     * @return The found.
+     */
+    boolean getFound();
+
+    /**
+     * <pre>
+     * The requested address.
+     * </pre>
+     *
+     * <code>string address = 2 [json_name = "address"];</code>
+     * @return The address.
+     */
+    java.lang.String getAddress();
+    /**
+     * <pre>
+     * The requested address.
+     * </pre>
+     *
+     * <code>string address = 2 [json_name = "address"];</code>
+     * @return The bytes for address.
+     */
+    com.google.protobuf.ByteString
+        getAddressBytes();
+
+    /**
+     * <pre>
+     * Set only when found is true.
+     * </pre>
+     *
+     * <code>.pactus.AnchorInfo anchor = 3 [json_name = "anchor"];</code>
+     * @return Whether the anchor field is set.
+     */
+    boolean hasAnchor();
+    /**
+     * <pre>
+     * Set only when found is true.
+     * </pre>
+     *
+     * <code>.pactus.AnchorInfo anchor = 3 [json_name = "anchor"];</code>
+     * @return The anchor.
+     */
+    pactus.BlockchainOuterClass.AnchorInfo getAnchor();
+    /**
+     * <pre>
+     * Set only when found is true.
+     * </pre>
+     *
+     * <code>.pactus.AnchorInfo anchor = 3 [json_name = "anchor"];</code>
+     */
+    pactus.BlockchainOuterClass.AnchorInfoOrBuilder getAnchorOrBuilder();
+  }
+  /**
+   * <pre>
+   * Response message contains the active anchor, when one exists.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.GetAnchorResponse}
+   */
+  public static final class GetAnchorResponse extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:pactus.GetAnchorResponse)
+      GetAnchorResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 33,
+        /* patch= */ 2,
+        /* suffix= */ "",
+        "GetAnchorResponse");
+    }
+    // Use GetAnchorResponse.newBuilder() to construct.
+    private GetAnchorResponse(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private GetAnchorResponse() {
+      address_ = "";
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetAnchorResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetAnchorResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.BlockchainOuterClass.GetAnchorResponse.class, pactus.BlockchainOuterClass.GetAnchorResponse.Builder.class);
+    }
+
+    private int bitField0_;
+    public static final int FOUND_FIELD_NUMBER = 1;
+    private boolean found_ = false;
+    /**
+     * <pre>
+     * True when the account exists and has an anchor.
+     * </pre>
+     *
+     * <code>bool found = 1 [json_name = "found"];</code>
+     * @return The found.
+     */
+    @java.lang.Override
+    public boolean getFound() {
+      return found_;
+    }
+
+    public static final int ADDRESS_FIELD_NUMBER = 2;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object address_ = "";
+    /**
+     * <pre>
+     * The requested address.
+     * </pre>
+     *
+     * <code>string address = 2 [json_name = "address"];</code>
+     * @return The address.
+     */
+    @java.lang.Override
+    public java.lang.String getAddress() {
+      java.lang.Object ref = address_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        address_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The requested address.
+     * </pre>
+     *
+     * <code>string address = 2 [json_name = "address"];</code>
+     * @return The bytes for address.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getAddressBytes() {
+      java.lang.Object ref = address_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        address_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ANCHOR_FIELD_NUMBER = 3;
+    private pactus.BlockchainOuterClass.AnchorInfo anchor_;
+    /**
+     * <pre>
+     * Set only when found is true.
+     * </pre>
+     *
+     * <code>.pactus.AnchorInfo anchor = 3 [json_name = "anchor"];</code>
+     * @return Whether the anchor field is set.
+     */
+    @java.lang.Override
+    public boolean hasAnchor() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     * <pre>
+     * Set only when found is true.
+     * </pre>
+     *
+     * <code>.pactus.AnchorInfo anchor = 3 [json_name = "anchor"];</code>
+     * @return The anchor.
+     */
+    @java.lang.Override
+    public pactus.BlockchainOuterClass.AnchorInfo getAnchor() {
+      return anchor_ == null ? pactus.BlockchainOuterClass.AnchorInfo.getDefaultInstance() : anchor_;
+    }
+    /**
+     * <pre>
+     * Set only when found is true.
+     * </pre>
+     *
+     * <code>.pactus.AnchorInfo anchor = 3 [json_name = "anchor"];</code>
+     */
+    @java.lang.Override
+    public pactus.BlockchainOuterClass.AnchorInfoOrBuilder getAnchorOrBuilder() {
+      return anchor_ == null ? pactus.BlockchainOuterClass.AnchorInfo.getDefaultInstance() : anchor_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (found_ != false) {
+        output.writeBool(1, found_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(address_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 2, address_);
+      }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        output.writeMessage(3, getAnchor());
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (found_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(1, found_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(address_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(2, address_);
+      }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, getAnchor());
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetAnchorResponse)) {
+        return super.equals(obj);
+      }
+      pactus.BlockchainOuterClass.GetAnchorResponse other = (pactus.BlockchainOuterClass.GetAnchorResponse) obj;
+
+      if (getFound()
+          != other.getFound()) return false;
+      if (!getAddress()
+          .equals(other.getAddress())) return false;
+      if (hasAnchor() != other.hasAnchor()) return false;
+      if (hasAnchor()) {
+        if (!getAnchor()
+            .equals(other.getAnchor())) return false;
+      }
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + FOUND_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getFound());
+      hash = (37 * hash) + ADDRESS_FIELD_NUMBER;
+      hash = (53 * hash) + getAddress().hashCode();
+      if (hasAnchor()) {
+        hash = (37 * hash) + ANCHOR_FIELD_NUMBER;
+        hash = (53 * hash) + getAnchor().hashCode();
+      }
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.BlockchainOuterClass.GetAnchorResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.BlockchainOuterClass.GetAnchorResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.GetAnchorResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.BlockchainOuterClass.GetAnchorResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.GetAnchorResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.BlockchainOuterClass.GetAnchorResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.GetAnchorResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.BlockchainOuterClass.GetAnchorResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static pactus.BlockchainOuterClass.GetAnchorResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static pactus.BlockchainOuterClass.GetAnchorResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.GetAnchorResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.BlockchainOuterClass.GetAnchorResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetAnchorResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Response message contains the active anchor, when one exists.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.GetAnchorResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.GetAnchorResponse)
+        pactus.BlockchainOuterClass.GetAnchorResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetAnchorResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetAnchorResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.BlockchainOuterClass.GetAnchorResponse.class, pactus.BlockchainOuterClass.GetAnchorResponse.Builder.class);
+      }
+
+      // Construct using pactus.BlockchainOuterClass.GetAnchorResponse.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage
+                .alwaysUseFieldBuilders) {
+          internalGetAnchorFieldBuilder();
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        found_ = false;
+        address_ = "";
+        anchor_ = null;
+        if (anchorBuilder_ != null) {
+          anchorBuilder_.dispose();
+          anchorBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetAnchorResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.BlockchainOuterClass.GetAnchorResponse getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetAnchorResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.BlockchainOuterClass.GetAnchorResponse build() {
+        pactus.BlockchainOuterClass.GetAnchorResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.BlockchainOuterClass.GetAnchorResponse buildPartial() {
+        pactus.BlockchainOuterClass.GetAnchorResponse result = new pactus.BlockchainOuterClass.GetAnchorResponse(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(pactus.BlockchainOuterClass.GetAnchorResponse result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.found_ = found_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.address_ = address_;
+        }
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.anchor_ = anchorBuilder_ == null
+              ? anchor_
+              : anchorBuilder_.build();
+          to_bitField0_ |= 0x00000001;
+        }
+        result.bitField0_ |= to_bitField0_;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.BlockchainOuterClass.GetAnchorResponse) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetAnchorResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetAnchorResponse other) {
+        if (other == pactus.BlockchainOuterClass.GetAnchorResponse.getDefaultInstance()) return this;
+        if (other.getFound() != false) {
+          setFound(other.getFound());
+        }
+        if (!other.getAddress().isEmpty()) {
+          address_ = other.address_;
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        if (other.hasAnchor()) {
+          mergeAnchor(other.getAnchor());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8: {
+                found_ = input.readBool();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 8
+              case 18: {
+                address_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 26: {
+                input.readMessage(
+                    internalGetAnchorFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private boolean found_ ;
+      /**
+       * <pre>
+       * True when the account exists and has an anchor.
+       * </pre>
+       *
+       * <code>bool found = 1 [json_name = "found"];</code>
+       * @return The found.
+       */
+      @java.lang.Override
+      public boolean getFound() {
+        return found_;
+      }
+      /**
+       * <pre>
+       * True when the account exists and has an anchor.
+       * </pre>
+       *
+       * <code>bool found = 1 [json_name = "found"];</code>
+       * @param value The found to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFound(boolean value) {
+
+        found_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * True when the account exists and has an anchor.
+       * </pre>
+       *
+       * <code>bool found = 1 [json_name = "found"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFound() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        found_ = false;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object address_ = "";
+      /**
+       * <pre>
+       * The requested address.
+       * </pre>
+       *
+       * <code>string address = 2 [json_name = "address"];</code>
+       * @return The address.
+       */
+      public java.lang.String getAddress() {
+        java.lang.Object ref = address_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          address_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The requested address.
+       * </pre>
+       *
+       * <code>string address = 2 [json_name = "address"];</code>
+       * @return The bytes for address.
+       */
+      public com.google.protobuf.ByteString
+          getAddressBytes() {
+        java.lang.Object ref = address_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          address_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The requested address.
+       * </pre>
+       *
+       * <code>string address = 2 [json_name = "address"];</code>
+       * @param value The address to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAddress(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        address_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The requested address.
+       * </pre>
+       *
+       * <code>string address = 2 [json_name = "address"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAddress() {
+        address_ = getDefaultInstance().getAddress();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The requested address.
+       * </pre>
+       *
+       * <code>string address = 2 [json_name = "address"];</code>
+       * @param value The bytes for address to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAddressBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        address_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      private pactus.BlockchainOuterClass.AnchorInfo anchor_;
+      private com.google.protobuf.SingleFieldBuilder<
+          pactus.BlockchainOuterClass.AnchorInfo, pactus.BlockchainOuterClass.AnchorInfo.Builder, pactus.BlockchainOuterClass.AnchorInfoOrBuilder> anchorBuilder_;
+      /**
+       * <pre>
+       * Set only when found is true.
+       * </pre>
+       *
+       * <code>.pactus.AnchorInfo anchor = 3 [json_name = "anchor"];</code>
+       * @return Whether the anchor field is set.
+       */
+      public boolean hasAnchor() {
+        return ((bitField0_ & 0x00000004) != 0);
+      }
+      /**
+       * <pre>
+       * Set only when found is true.
+       * </pre>
+       *
+       * <code>.pactus.AnchorInfo anchor = 3 [json_name = "anchor"];</code>
+       * @return The anchor.
+       */
+      public pactus.BlockchainOuterClass.AnchorInfo getAnchor() {
+        if (anchorBuilder_ == null) {
+          return anchor_ == null ? pactus.BlockchainOuterClass.AnchorInfo.getDefaultInstance() : anchor_;
+        } else {
+          return anchorBuilder_.getMessage();
+        }
+      }
+      /**
+       * <pre>
+       * Set only when found is true.
+       * </pre>
+       *
+       * <code>.pactus.AnchorInfo anchor = 3 [json_name = "anchor"];</code>
+       */
+      public Builder setAnchor(pactus.BlockchainOuterClass.AnchorInfo value) {
+        if (anchorBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          anchor_ = value;
+        } else {
+          anchorBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Set only when found is true.
+       * </pre>
+       *
+       * <code>.pactus.AnchorInfo anchor = 3 [json_name = "anchor"];</code>
+       */
+      public Builder setAnchor(
+          pactus.BlockchainOuterClass.AnchorInfo.Builder builderForValue) {
+        if (anchorBuilder_ == null) {
+          anchor_ = builderForValue.build();
+        } else {
+          anchorBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Set only when found is true.
+       * </pre>
+       *
+       * <code>.pactus.AnchorInfo anchor = 3 [json_name = "anchor"];</code>
+       */
+      public Builder mergeAnchor(pactus.BlockchainOuterClass.AnchorInfo value) {
+        if (anchorBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) != 0) &&
+            anchor_ != null &&
+            anchor_ != pactus.BlockchainOuterClass.AnchorInfo.getDefaultInstance()) {
+            getAnchorBuilder().mergeFrom(value);
+          } else {
+            anchor_ = value;
+          }
+        } else {
+          anchorBuilder_.mergeFrom(value);
+        }
+        if (anchor_ != null) {
+          bitField0_ |= 0x00000004;
+          onChanged();
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * Set only when found is true.
+       * </pre>
+       *
+       * <code>.pactus.AnchorInfo anchor = 3 [json_name = "anchor"];</code>
+       */
+      public Builder clearAnchor() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        anchor_ = null;
+        if (anchorBuilder_ != null) {
+          anchorBuilder_.dispose();
+          anchorBuilder_ = null;
+        }
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Set only when found is true.
+       * </pre>
+       *
+       * <code>.pactus.AnchorInfo anchor = 3 [json_name = "anchor"];</code>
+       */
+      public pactus.BlockchainOuterClass.AnchorInfo.Builder getAnchorBuilder() {
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return internalGetAnchorFieldBuilder().getBuilder();
+      }
+      /**
+       * <pre>
+       * Set only when found is true.
+       * </pre>
+       *
+       * <code>.pactus.AnchorInfo anchor = 3 [json_name = "anchor"];</code>
+       */
+      public pactus.BlockchainOuterClass.AnchorInfoOrBuilder getAnchorOrBuilder() {
+        if (anchorBuilder_ != null) {
+          return anchorBuilder_.getMessageOrBuilder();
+        } else {
+          return anchor_ == null ?
+              pactus.BlockchainOuterClass.AnchorInfo.getDefaultInstance() : anchor_;
+        }
+      }
+      /**
+       * <pre>
+       * Set only when found is true.
+       * </pre>
+       *
+       * <code>.pactus.AnchorInfo anchor = 3 [json_name = "anchor"];</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          pactus.BlockchainOuterClass.AnchorInfo, pactus.BlockchainOuterClass.AnchorInfo.Builder, pactus.BlockchainOuterClass.AnchorInfoOrBuilder> 
+          internalGetAnchorFieldBuilder() {
+        if (anchorBuilder_ == null) {
+          anchorBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              pactus.BlockchainOuterClass.AnchorInfo, pactus.BlockchainOuterClass.AnchorInfo.Builder, pactus.BlockchainOuterClass.AnchorInfoOrBuilder>(
+                  getAnchor(),
+                  getParentForChildren(),
+                  isClean());
+          anchor_ = null;
+        }
+        return anchorBuilder_;
+      }
+
+      // @@protoc_insertion_point(builder_scope:pactus.GetAnchorResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.GetAnchorResponse)
+    private static final pactus.BlockchainOuterClass.GetAnchorResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetAnchorResponse();
+    }
+
+    public static pactus.BlockchainOuterClass.GetAnchorResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<GetAnchorResponse>
+        PARSER = new com.google.protobuf.AbstractParser<GetAnchorResponse>() {
+      @java.lang.Override
+      public GetAnchorResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<GetAnchorResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GetAnchorResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.BlockchainOuterClass.GetAnchorResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ListAnchorsRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.ListAnchorsRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * Number of matching accounts to skip.
+     * </pre>
+     *
+     * <code>uint32 skip = 1 [json_name = "skip"];</code>
+     * @return The skip.
+     */
+    int getSkip();
+
+    /**
+     * <pre>
+     * Page size. 0 means 20. Maximum is 100.
+     * </pre>
+     *
+     * <code>uint32 count = 2 [json_name = "count"];</code>
+     * @return The count.
+     */
+    int getCount();
+  }
+  /**
+   * <pre>
+   * Request message for listing active anchors.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.ListAnchorsRequest}
+   */
+  public static final class ListAnchorsRequest extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:pactus.ListAnchorsRequest)
+      ListAnchorsRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 33,
+        /* patch= */ 2,
+        /* suffix= */ "",
+        "ListAnchorsRequest");
+    }
+    // Use ListAnchorsRequest.newBuilder() to construct.
+    private ListAnchorsRequest(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private ListAnchorsRequest() {
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.BlockchainOuterClass.internal_static_pactus_ListAnchorsRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.BlockchainOuterClass.internal_static_pactus_ListAnchorsRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.BlockchainOuterClass.ListAnchorsRequest.class, pactus.BlockchainOuterClass.ListAnchorsRequest.Builder.class);
+    }
+
+    public static final int SKIP_FIELD_NUMBER = 1;
+    private int skip_ = 0;
+    /**
+     * <pre>
+     * Number of matching accounts to skip.
+     * </pre>
+     *
+     * <code>uint32 skip = 1 [json_name = "skip"];</code>
+     * @return The skip.
+     */
+    @java.lang.Override
+    public int getSkip() {
+      return skip_;
+    }
+
+    public static final int COUNT_FIELD_NUMBER = 2;
+    private int count_ = 0;
+    /**
+     * <pre>
+     * Page size. 0 means 20. Maximum is 100.
+     * </pre>
+     *
+     * <code>uint32 count = 2 [json_name = "count"];</code>
+     * @return The count.
+     */
+    @java.lang.Override
+    public int getCount() {
+      return count_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (skip_ != 0) {
+        output.writeUInt32(1, skip_);
+      }
+      if (count_ != 0) {
+        output.writeUInt32(2, count_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (skip_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(1, skip_);
+      }
+      if (count_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(2, count_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.BlockchainOuterClass.ListAnchorsRequest)) {
+        return super.equals(obj);
+      }
+      pactus.BlockchainOuterClass.ListAnchorsRequest other = (pactus.BlockchainOuterClass.ListAnchorsRequest) obj;
+
+      if (getSkip()
+          != other.getSkip()) return false;
+      if (getCount()
+          != other.getCount()) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + SKIP_FIELD_NUMBER;
+      hash = (53 * hash) + getSkip();
+      hash = (37 * hash) + COUNT_FIELD_NUMBER;
+      hash = (53 * hash) + getCount();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.BlockchainOuterClass.ListAnchorsRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.BlockchainOuterClass.ListAnchorsRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.ListAnchorsRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.BlockchainOuterClass.ListAnchorsRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.ListAnchorsRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.BlockchainOuterClass.ListAnchorsRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.ListAnchorsRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.BlockchainOuterClass.ListAnchorsRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static pactus.BlockchainOuterClass.ListAnchorsRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static pactus.BlockchainOuterClass.ListAnchorsRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.ListAnchorsRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.BlockchainOuterClass.ListAnchorsRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.BlockchainOuterClass.ListAnchorsRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Request message for listing active anchors.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.ListAnchorsRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.ListAnchorsRequest)
+        pactus.BlockchainOuterClass.ListAnchorsRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.BlockchainOuterClass.internal_static_pactus_ListAnchorsRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.BlockchainOuterClass.internal_static_pactus_ListAnchorsRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.BlockchainOuterClass.ListAnchorsRequest.class, pactus.BlockchainOuterClass.ListAnchorsRequest.Builder.class);
+      }
+
+      // Construct using pactus.BlockchainOuterClass.ListAnchorsRequest.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        skip_ = 0;
+        count_ = 0;
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.BlockchainOuterClass.internal_static_pactus_ListAnchorsRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.BlockchainOuterClass.ListAnchorsRequest getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.ListAnchorsRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.BlockchainOuterClass.ListAnchorsRequest build() {
+        pactus.BlockchainOuterClass.ListAnchorsRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.BlockchainOuterClass.ListAnchorsRequest buildPartial() {
+        pactus.BlockchainOuterClass.ListAnchorsRequest result = new pactus.BlockchainOuterClass.ListAnchorsRequest(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(pactus.BlockchainOuterClass.ListAnchorsRequest result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.skip_ = skip_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.count_ = count_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.BlockchainOuterClass.ListAnchorsRequest) {
+          return mergeFrom((pactus.BlockchainOuterClass.ListAnchorsRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.BlockchainOuterClass.ListAnchorsRequest other) {
+        if (other == pactus.BlockchainOuterClass.ListAnchorsRequest.getDefaultInstance()) return this;
+        if (other.getSkip() != 0) {
+          setSkip(other.getSkip());
+        }
+        if (other.getCount() != 0) {
+          setCount(other.getCount());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8: {
+                skip_ = input.readUInt32();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 8
+              case 16: {
+                count_ = input.readUInt32();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 16
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private int skip_ ;
+      /**
+       * <pre>
+       * Number of matching accounts to skip.
+       * </pre>
+       *
+       * <code>uint32 skip = 1 [json_name = "skip"];</code>
+       * @return The skip.
+       */
+      @java.lang.Override
+      public int getSkip() {
+        return skip_;
+      }
+      /**
+       * <pre>
+       * Number of matching accounts to skip.
+       * </pre>
+       *
+       * <code>uint32 skip = 1 [json_name = "skip"];</code>
+       * @param value The skip to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSkip(int value) {
+
+        skip_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Number of matching accounts to skip.
+       * </pre>
+       *
+       * <code>uint32 skip = 1 [json_name = "skip"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearSkip() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        skip_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int count_ ;
+      /**
+       * <pre>
+       * Page size. 0 means 20. Maximum is 100.
+       * </pre>
+       *
+       * <code>uint32 count = 2 [json_name = "count"];</code>
+       * @return The count.
+       */
+      @java.lang.Override
+      public int getCount() {
+        return count_;
+      }
+      /**
+       * <pre>
+       * Page size. 0 means 20. Maximum is 100.
+       * </pre>
+       *
+       * <code>uint32 count = 2 [json_name = "count"];</code>
+       * @param value The count to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCount(int value) {
+
+        count_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Page size. 0 means 20. Maximum is 100.
+       * </pre>
+       *
+       * <code>uint32 count = 2 [json_name = "count"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearCount() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        count_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:pactus.ListAnchorsRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.ListAnchorsRequest)
+    private static final pactus.BlockchainOuterClass.ListAnchorsRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.ListAnchorsRequest();
+    }
+
+    public static pactus.BlockchainOuterClass.ListAnchorsRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ListAnchorsRequest>
+        PARSER = new com.google.protobuf.AbstractParser<ListAnchorsRequest>() {
+      @java.lang.Override
+      public ListAnchorsRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<ListAnchorsRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ListAnchorsRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.BlockchainOuterClass.ListAnchorsRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ListAnchorsResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.ListAnchorsResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * The page, ordered by account number.
+     * </pre>
+     *
+     * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+     */
+    java.util.List<pactus.BlockchainOuterClass.AnchorListItem> 
+        getItemsList();
+    /**
+     * <pre>
+     * The page, ordered by account number.
+     * </pre>
+     *
+     * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+     */
+    pactus.BlockchainOuterClass.AnchorListItem getItems(int index);
+    /**
+     * <pre>
+     * The page, ordered by account number.
+     * </pre>
+     *
+     * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+     */
+    int getItemsCount();
+    /**
+     * <pre>
+     * The page, ordered by account number.
+     * </pre>
+     *
+     * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+     */
+    java.util.List<? extends pactus.BlockchainOuterClass.AnchorListItemOrBuilder> 
+        getItemsOrBuilderList();
+    /**
+     * <pre>
+     * The page, ordered by account number.
+     * </pre>
+     *
+     * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+     */
+    pactus.BlockchainOuterClass.AnchorListItemOrBuilder getItemsOrBuilder(
+        int index);
+
+    /**
+     * <pre>
+     * Accounts that currently have an anchor.
+     * </pre>
+     *
+     * <code>uint32 total = 2 [json_name = "total"];</code>
+     * @return The total.
+     */
+    int getTotal();
+  }
+  /**
+   * <pre>
+   * Response message contains one page of active anchors.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.ListAnchorsResponse}
+   */
+  public static final class ListAnchorsResponse extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:pactus.ListAnchorsResponse)
+      ListAnchorsResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 33,
+        /* patch= */ 2,
+        /* suffix= */ "",
+        "ListAnchorsResponse");
+    }
+    // Use ListAnchorsResponse.newBuilder() to construct.
+    private ListAnchorsResponse(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private ListAnchorsResponse() {
+      items_ = java.util.Collections.emptyList();
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.BlockchainOuterClass.internal_static_pactus_ListAnchorsResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.BlockchainOuterClass.internal_static_pactus_ListAnchorsResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.BlockchainOuterClass.ListAnchorsResponse.class, pactus.BlockchainOuterClass.ListAnchorsResponse.Builder.class);
+    }
+
+    public static final int ITEMS_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
+    private java.util.List<pactus.BlockchainOuterClass.AnchorListItem> items_;
+    /**
+     * <pre>
+     * The page, ordered by account number.
+     * </pre>
+     *
+     * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+     */
+    @java.lang.Override
+    public java.util.List<pactus.BlockchainOuterClass.AnchorListItem> getItemsList() {
+      return items_;
+    }
+    /**
+     * <pre>
+     * The page, ordered by account number.
+     * </pre>
+     *
+     * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+     */
+    @java.lang.Override
+    public java.util.List<? extends pactus.BlockchainOuterClass.AnchorListItemOrBuilder> 
+        getItemsOrBuilderList() {
+      return items_;
+    }
+    /**
+     * <pre>
+     * The page, ordered by account number.
+     * </pre>
+     *
+     * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+     */
+    @java.lang.Override
+    public int getItemsCount() {
+      return items_.size();
+    }
+    /**
+     * <pre>
+     * The page, ordered by account number.
+     * </pre>
+     *
+     * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+     */
+    @java.lang.Override
+    public pactus.BlockchainOuterClass.AnchorListItem getItems(int index) {
+      return items_.get(index);
+    }
+    /**
+     * <pre>
+     * The page, ordered by account number.
+     * </pre>
+     *
+     * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+     */
+    @java.lang.Override
+    public pactus.BlockchainOuterClass.AnchorListItemOrBuilder getItemsOrBuilder(
+        int index) {
+      return items_.get(index);
+    }
+
+    public static final int TOTAL_FIELD_NUMBER = 2;
+    private int total_ = 0;
+    /**
+     * <pre>
+     * Accounts that currently have an anchor.
+     * </pre>
+     *
+     * <code>uint32 total = 2 [json_name = "total"];</code>
+     * @return The total.
+     */
+    @java.lang.Override
+    public int getTotal() {
+      return total_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      for (int i = 0; i < items_.size(); i++) {
+        output.writeMessage(1, items_.get(i));
+      }
+      if (total_ != 0) {
+        output.writeUInt32(2, total_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      for (int i = 0; i < items_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, items_.get(i));
+      }
+      if (total_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(2, total_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.BlockchainOuterClass.ListAnchorsResponse)) {
+        return super.equals(obj);
+      }
+      pactus.BlockchainOuterClass.ListAnchorsResponse other = (pactus.BlockchainOuterClass.ListAnchorsResponse) obj;
+
+      if (!getItemsList()
+          .equals(other.getItemsList())) return false;
+      if (getTotal()
+          != other.getTotal()) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getItemsCount() > 0) {
+        hash = (37 * hash) + ITEMS_FIELD_NUMBER;
+        hash = (53 * hash) + getItemsList().hashCode();
+      }
+      hash = (37 * hash) + TOTAL_FIELD_NUMBER;
+      hash = (53 * hash) + getTotal();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.BlockchainOuterClass.ListAnchorsResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.BlockchainOuterClass.ListAnchorsResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.ListAnchorsResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.BlockchainOuterClass.ListAnchorsResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.ListAnchorsResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.BlockchainOuterClass.ListAnchorsResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.ListAnchorsResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.BlockchainOuterClass.ListAnchorsResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static pactus.BlockchainOuterClass.ListAnchorsResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static pactus.BlockchainOuterClass.ListAnchorsResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.ListAnchorsResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.BlockchainOuterClass.ListAnchorsResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.BlockchainOuterClass.ListAnchorsResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Response message contains one page of active anchors.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.ListAnchorsResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.ListAnchorsResponse)
+        pactus.BlockchainOuterClass.ListAnchorsResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.BlockchainOuterClass.internal_static_pactus_ListAnchorsResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.BlockchainOuterClass.internal_static_pactus_ListAnchorsResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.BlockchainOuterClass.ListAnchorsResponse.class, pactus.BlockchainOuterClass.ListAnchorsResponse.Builder.class);
+      }
+
+      // Construct using pactus.BlockchainOuterClass.ListAnchorsResponse.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        if (itemsBuilder_ == null) {
+          items_ = java.util.Collections.emptyList();
+        } else {
+          items_ = null;
+          itemsBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000001);
+        total_ = 0;
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.BlockchainOuterClass.internal_static_pactus_ListAnchorsResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.BlockchainOuterClass.ListAnchorsResponse getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.ListAnchorsResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.BlockchainOuterClass.ListAnchorsResponse build() {
+        pactus.BlockchainOuterClass.ListAnchorsResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.BlockchainOuterClass.ListAnchorsResponse buildPartial() {
+        pactus.BlockchainOuterClass.ListAnchorsResponse result = new pactus.BlockchainOuterClass.ListAnchorsResponse(this);
+        buildPartialRepeatedFields(result);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartialRepeatedFields(pactus.BlockchainOuterClass.ListAnchorsResponse result) {
+        if (itemsBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            items_ = java.util.Collections.unmodifiableList(items_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.items_ = items_;
+        } else {
+          result.items_ = itemsBuilder_.build();
+        }
+      }
+
+      private void buildPartial0(pactus.BlockchainOuterClass.ListAnchorsResponse result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.total_ = total_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.BlockchainOuterClass.ListAnchorsResponse) {
+          return mergeFrom((pactus.BlockchainOuterClass.ListAnchorsResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.BlockchainOuterClass.ListAnchorsResponse other) {
+        if (other == pactus.BlockchainOuterClass.ListAnchorsResponse.getDefaultInstance()) return this;
+        if (itemsBuilder_ == null) {
+          if (!other.items_.isEmpty()) {
+            if (items_.isEmpty()) {
+              items_ = other.items_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureItemsIsMutable();
+              items_.addAll(other.items_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.items_.isEmpty()) {
+            if (itemsBuilder_.isEmpty()) {
+              itemsBuilder_.dispose();
+              itemsBuilder_ = null;
+              items_ = other.items_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              itemsBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   internalGetItemsFieldBuilder() : null;
+            } else {
+              itemsBuilder_.addAllMessages(other.items_);
+            }
+          }
+        }
+        if (other.getTotal() != 0) {
+          setTotal(other.getTotal());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                pactus.BlockchainOuterClass.AnchorListItem m =
+                    input.readMessage(
+                        pactus.BlockchainOuterClass.AnchorListItem.parser(),
+                        extensionRegistry);
+                if (itemsBuilder_ == null) {
+                  ensureItemsIsMutable();
+                  items_.add(m);
+                } else {
+                  itemsBuilder_.addMessage(m);
+                }
+                break;
+              } // case 10
+              case 16: {
+                total_ = input.readUInt32();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 16
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.util.List<pactus.BlockchainOuterClass.AnchorListItem> items_ =
+        java.util.Collections.emptyList();
+      private void ensureItemsIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          items_ = new java.util.ArrayList<pactus.BlockchainOuterClass.AnchorListItem>(items_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilder<
+          pactus.BlockchainOuterClass.AnchorListItem, pactus.BlockchainOuterClass.AnchorListItem.Builder, pactus.BlockchainOuterClass.AnchorListItemOrBuilder> itemsBuilder_;
+
+      /**
+       * <pre>
+       * The page, ordered by account number.
+       * </pre>
+       *
+       * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+       */
+      public java.util.List<pactus.BlockchainOuterClass.AnchorListItem> getItemsList() {
+        if (itemsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(items_);
+        } else {
+          return itemsBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <pre>
+       * The page, ordered by account number.
+       * </pre>
+       *
+       * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+       */
+      public int getItemsCount() {
+        if (itemsBuilder_ == null) {
+          return items_.size();
+        } else {
+          return itemsBuilder_.getCount();
+        }
+      }
+      /**
+       * <pre>
+       * The page, ordered by account number.
+       * </pre>
+       *
+       * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+       */
+      public pactus.BlockchainOuterClass.AnchorListItem getItems(int index) {
+        if (itemsBuilder_ == null) {
+          return items_.get(index);
+        } else {
+          return itemsBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <pre>
+       * The page, ordered by account number.
+       * </pre>
+       *
+       * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+       */
+      public Builder setItems(
+          int index, pactus.BlockchainOuterClass.AnchorListItem value) {
+        if (itemsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureItemsIsMutable();
+          items_.set(index, value);
+          onChanged();
+        } else {
+          itemsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The page, ordered by account number.
+       * </pre>
+       *
+       * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+       */
+      public Builder setItems(
+          int index, pactus.BlockchainOuterClass.AnchorListItem.Builder builderForValue) {
+        if (itemsBuilder_ == null) {
+          ensureItemsIsMutable();
+          items_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          itemsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The page, ordered by account number.
+       * </pre>
+       *
+       * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+       */
+      public Builder addItems(pactus.BlockchainOuterClass.AnchorListItem value) {
+        if (itemsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureItemsIsMutable();
+          items_.add(value);
+          onChanged();
+        } else {
+          itemsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The page, ordered by account number.
+       * </pre>
+       *
+       * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+       */
+      public Builder addItems(
+          int index, pactus.BlockchainOuterClass.AnchorListItem value) {
+        if (itemsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureItemsIsMutable();
+          items_.add(index, value);
+          onChanged();
+        } else {
+          itemsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The page, ordered by account number.
+       * </pre>
+       *
+       * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+       */
+      public Builder addItems(
+          pactus.BlockchainOuterClass.AnchorListItem.Builder builderForValue) {
+        if (itemsBuilder_ == null) {
+          ensureItemsIsMutable();
+          items_.add(builderForValue.build());
+          onChanged();
+        } else {
+          itemsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The page, ordered by account number.
+       * </pre>
+       *
+       * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+       */
+      public Builder addItems(
+          int index, pactus.BlockchainOuterClass.AnchorListItem.Builder builderForValue) {
+        if (itemsBuilder_ == null) {
+          ensureItemsIsMutable();
+          items_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          itemsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The page, ordered by account number.
+       * </pre>
+       *
+       * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+       */
+      public Builder addAllItems(
+          java.lang.Iterable<? extends pactus.BlockchainOuterClass.AnchorListItem> values) {
+        if (itemsBuilder_ == null) {
+          ensureItemsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, items_);
+          onChanged();
+        } else {
+          itemsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The page, ordered by account number.
+       * </pre>
+       *
+       * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+       */
+      public Builder clearItems() {
+        if (itemsBuilder_ == null) {
+          items_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          itemsBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The page, ordered by account number.
+       * </pre>
+       *
+       * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+       */
+      public Builder removeItems(int index) {
+        if (itemsBuilder_ == null) {
+          ensureItemsIsMutable();
+          items_.remove(index);
+          onChanged();
+        } else {
+          itemsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The page, ordered by account number.
+       * </pre>
+       *
+       * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+       */
+      public pactus.BlockchainOuterClass.AnchorListItem.Builder getItemsBuilder(
+          int index) {
+        return internalGetItemsFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <pre>
+       * The page, ordered by account number.
+       * </pre>
+       *
+       * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+       */
+      public pactus.BlockchainOuterClass.AnchorListItemOrBuilder getItemsOrBuilder(
+          int index) {
+        if (itemsBuilder_ == null) {
+          return items_.get(index);  } else {
+          return itemsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <pre>
+       * The page, ordered by account number.
+       * </pre>
+       *
+       * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+       */
+      public java.util.List<? extends pactus.BlockchainOuterClass.AnchorListItemOrBuilder> 
+           getItemsOrBuilderList() {
+        if (itemsBuilder_ != null) {
+          return itemsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(items_);
+        }
+      }
+      /**
+       * <pre>
+       * The page, ordered by account number.
+       * </pre>
+       *
+       * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+       */
+      public pactus.BlockchainOuterClass.AnchorListItem.Builder addItemsBuilder() {
+        return internalGetItemsFieldBuilder().addBuilder(
+            pactus.BlockchainOuterClass.AnchorListItem.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * The page, ordered by account number.
+       * </pre>
+       *
+       * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+       */
+      public pactus.BlockchainOuterClass.AnchorListItem.Builder addItemsBuilder(
+          int index) {
+        return internalGetItemsFieldBuilder().addBuilder(
+            index, pactus.BlockchainOuterClass.AnchorListItem.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * The page, ordered by account number.
+       * </pre>
+       *
+       * <code>repeated .pactus.AnchorListItem items = 1 [json_name = "items"];</code>
+       */
+      public java.util.List<pactus.BlockchainOuterClass.AnchorListItem.Builder> 
+           getItemsBuilderList() {
+        return internalGetItemsFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          pactus.BlockchainOuterClass.AnchorListItem, pactus.BlockchainOuterClass.AnchorListItem.Builder, pactus.BlockchainOuterClass.AnchorListItemOrBuilder> 
+          internalGetItemsFieldBuilder() {
+        if (itemsBuilder_ == null) {
+          itemsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              pactus.BlockchainOuterClass.AnchorListItem, pactus.BlockchainOuterClass.AnchorListItem.Builder, pactus.BlockchainOuterClass.AnchorListItemOrBuilder>(
+                  items_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          items_ = null;
+        }
+        return itemsBuilder_;
+      }
+
+      private int total_ ;
+      /**
+       * <pre>
+       * Accounts that currently have an anchor.
+       * </pre>
+       *
+       * <code>uint32 total = 2 [json_name = "total"];</code>
+       * @return The total.
+       */
+      @java.lang.Override
+      public int getTotal() {
+        return total_;
+      }
+      /**
+       * <pre>
+       * Accounts that currently have an anchor.
+       * </pre>
+       *
+       * <code>uint32 total = 2 [json_name = "total"];</code>
+       * @param value The total to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTotal(int value) {
+
+        total_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Accounts that currently have an anchor.
+       * </pre>
+       *
+       * <code>uint32 total = 2 [json_name = "total"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTotal() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        total_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:pactus.ListAnchorsResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.ListAnchorsResponse)
+    private static final pactus.BlockchainOuterClass.ListAnchorsResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.ListAnchorsResponse();
+    }
+
+    public static pactus.BlockchainOuterClass.ListAnchorsResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ListAnchorsResponse>
+        PARSER = new com.google.protobuf.AbstractParser<ListAnchorsResponse>() {
+      @java.lang.Override
+      public ListAnchorsResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<ListAnchorsResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ListAnchorsResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.BlockchainOuterClass.ListAnchorsResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface AnchorListItemOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.AnchorListItem)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * The account address.
+     * </pre>
+     *
+     * <code>string address = 1 [json_name = "address"];</code>
+     * @return The address.
+     */
+    java.lang.String getAddress();
+    /**
+     * <pre>
+     * The account address.
+     * </pre>
+     *
+     * <code>string address = 1 [json_name = "address"];</code>
+     * @return The bytes for address.
+     */
+    com.google.protobuf.ByteString
+        getAddressBytes();
+
+    /**
+     * <pre>
+     * The active anchor.
+     * </pre>
+     *
+     * <code>.pactus.AnchorInfo anchor = 2 [json_name = "anchor"];</code>
+     * @return Whether the anchor field is set.
+     */
+    boolean hasAnchor();
+    /**
+     * <pre>
+     * The active anchor.
+     * </pre>
+     *
+     * <code>.pactus.AnchorInfo anchor = 2 [json_name = "anchor"];</code>
+     * @return The anchor.
+     */
+    pactus.BlockchainOuterClass.AnchorInfo getAnchor();
+    /**
+     * <pre>
+     * The active anchor.
+     * </pre>
+     *
+     * <code>.pactus.AnchorInfo anchor = 2 [json_name = "anchor"];</code>
+     */
+    pactus.BlockchainOuterClass.AnchorInfoOrBuilder getAnchorOrBuilder();
+  }
+  /**
+   * <pre>
+   * One anchored account.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.AnchorListItem}
+   */
+  public static final class AnchorListItem extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:pactus.AnchorListItem)
+      AnchorListItemOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 33,
+        /* patch= */ 2,
+        /* suffix= */ "",
+        "AnchorListItem");
+    }
+    // Use AnchorListItem.newBuilder() to construct.
+    private AnchorListItem(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private AnchorListItem() {
+      address_ = "";
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.BlockchainOuterClass.internal_static_pactus_AnchorListItem_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.BlockchainOuterClass.internal_static_pactus_AnchorListItem_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.BlockchainOuterClass.AnchorListItem.class, pactus.BlockchainOuterClass.AnchorListItem.Builder.class);
+    }
+
+    private int bitField0_;
+    public static final int ADDRESS_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object address_ = "";
+    /**
+     * <pre>
+     * The account address.
+     * </pre>
+     *
+     * <code>string address = 1 [json_name = "address"];</code>
+     * @return The address.
+     */
+    @java.lang.Override
+    public java.lang.String getAddress() {
+      java.lang.Object ref = address_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        address_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The account address.
+     * </pre>
+     *
+     * <code>string address = 1 [json_name = "address"];</code>
+     * @return The bytes for address.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getAddressBytes() {
+      java.lang.Object ref = address_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        address_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ANCHOR_FIELD_NUMBER = 2;
+    private pactus.BlockchainOuterClass.AnchorInfo anchor_;
+    /**
+     * <pre>
+     * The active anchor.
+     * </pre>
+     *
+     * <code>.pactus.AnchorInfo anchor = 2 [json_name = "anchor"];</code>
+     * @return Whether the anchor field is set.
+     */
+    @java.lang.Override
+    public boolean hasAnchor() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     * <pre>
+     * The active anchor.
+     * </pre>
+     *
+     * <code>.pactus.AnchorInfo anchor = 2 [json_name = "anchor"];</code>
+     * @return The anchor.
+     */
+    @java.lang.Override
+    public pactus.BlockchainOuterClass.AnchorInfo getAnchor() {
+      return anchor_ == null ? pactus.BlockchainOuterClass.AnchorInfo.getDefaultInstance() : anchor_;
+    }
+    /**
+     * <pre>
+     * The active anchor.
+     * </pre>
+     *
+     * <code>.pactus.AnchorInfo anchor = 2 [json_name = "anchor"];</code>
+     */
+    @java.lang.Override
+    public pactus.BlockchainOuterClass.AnchorInfoOrBuilder getAnchorOrBuilder() {
+      return anchor_ == null ? pactus.BlockchainOuterClass.AnchorInfo.getDefaultInstance() : anchor_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(address_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 1, address_);
+      }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        output.writeMessage(2, getAnchor());
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(address_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(1, address_);
+      }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, getAnchor());
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.BlockchainOuterClass.AnchorListItem)) {
+        return super.equals(obj);
+      }
+      pactus.BlockchainOuterClass.AnchorListItem other = (pactus.BlockchainOuterClass.AnchorListItem) obj;
+
+      if (!getAddress()
+          .equals(other.getAddress())) return false;
+      if (hasAnchor() != other.hasAnchor()) return false;
+      if (hasAnchor()) {
+        if (!getAnchor()
+            .equals(other.getAnchor())) return false;
+      }
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ADDRESS_FIELD_NUMBER;
+      hash = (53 * hash) + getAddress().hashCode();
+      if (hasAnchor()) {
+        hash = (37 * hash) + ANCHOR_FIELD_NUMBER;
+        hash = (53 * hash) + getAnchor().hashCode();
+      }
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.BlockchainOuterClass.AnchorListItem parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.BlockchainOuterClass.AnchorListItem parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.AnchorListItem parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.BlockchainOuterClass.AnchorListItem parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.AnchorListItem parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.BlockchainOuterClass.AnchorListItem parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.AnchorListItem parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.BlockchainOuterClass.AnchorListItem parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static pactus.BlockchainOuterClass.AnchorListItem parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static pactus.BlockchainOuterClass.AnchorListItem parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.AnchorListItem parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.BlockchainOuterClass.AnchorListItem parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.BlockchainOuterClass.AnchorListItem prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * One anchored account.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.AnchorListItem}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.AnchorListItem)
+        pactus.BlockchainOuterClass.AnchorListItemOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.BlockchainOuterClass.internal_static_pactus_AnchorListItem_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.BlockchainOuterClass.internal_static_pactus_AnchorListItem_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.BlockchainOuterClass.AnchorListItem.class, pactus.BlockchainOuterClass.AnchorListItem.Builder.class);
+      }
+
+      // Construct using pactus.BlockchainOuterClass.AnchorListItem.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage
+                .alwaysUseFieldBuilders) {
+          internalGetAnchorFieldBuilder();
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        address_ = "";
+        anchor_ = null;
+        if (anchorBuilder_ != null) {
+          anchorBuilder_.dispose();
+          anchorBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.BlockchainOuterClass.internal_static_pactus_AnchorListItem_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.BlockchainOuterClass.AnchorListItem getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.AnchorListItem.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.BlockchainOuterClass.AnchorListItem build() {
+        pactus.BlockchainOuterClass.AnchorListItem result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.BlockchainOuterClass.AnchorListItem buildPartial() {
+        pactus.BlockchainOuterClass.AnchorListItem result = new pactus.BlockchainOuterClass.AnchorListItem(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(pactus.BlockchainOuterClass.AnchorListItem result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.address_ = address_;
+        }
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.anchor_ = anchorBuilder_ == null
+              ? anchor_
+              : anchorBuilder_.build();
+          to_bitField0_ |= 0x00000001;
+        }
+        result.bitField0_ |= to_bitField0_;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.BlockchainOuterClass.AnchorListItem) {
+          return mergeFrom((pactus.BlockchainOuterClass.AnchorListItem)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.BlockchainOuterClass.AnchorListItem other) {
+        if (other == pactus.BlockchainOuterClass.AnchorListItem.getDefaultInstance()) return this;
+        if (!other.getAddress().isEmpty()) {
+          address_ = other.address_;
+          bitField0_ |= 0x00000001;
+          onChanged();
+        }
+        if (other.hasAnchor()) {
+          mergeAnchor(other.getAnchor());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                address_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                input.readMessage(
+                    internalGetAnchorFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object address_ = "";
+      /**
+       * <pre>
+       * The account address.
+       * </pre>
+       *
+       * <code>string address = 1 [json_name = "address"];</code>
+       * @return The address.
+       */
+      public java.lang.String getAddress() {
+        java.lang.Object ref = address_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          address_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The account address.
+       * </pre>
+       *
+       * <code>string address = 1 [json_name = "address"];</code>
+       * @return The bytes for address.
+       */
+      public com.google.protobuf.ByteString
+          getAddressBytes() {
+        java.lang.Object ref = address_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          address_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The account address.
+       * </pre>
+       *
+       * <code>string address = 1 [json_name = "address"];</code>
+       * @param value The address to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAddress(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        address_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The account address.
+       * </pre>
+       *
+       * <code>string address = 1 [json_name = "address"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAddress() {
+        address_ = getDefaultInstance().getAddress();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The account address.
+       * </pre>
+       *
+       * <code>string address = 1 [json_name = "address"];</code>
+       * @param value The bytes for address to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAddressBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        address_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+
+      private pactus.BlockchainOuterClass.AnchorInfo anchor_;
+      private com.google.protobuf.SingleFieldBuilder<
+          pactus.BlockchainOuterClass.AnchorInfo, pactus.BlockchainOuterClass.AnchorInfo.Builder, pactus.BlockchainOuterClass.AnchorInfoOrBuilder> anchorBuilder_;
+      /**
+       * <pre>
+       * The active anchor.
+       * </pre>
+       *
+       * <code>.pactus.AnchorInfo anchor = 2 [json_name = "anchor"];</code>
+       * @return Whether the anchor field is set.
+       */
+      public boolean hasAnchor() {
+        return ((bitField0_ & 0x00000002) != 0);
+      }
+      /**
+       * <pre>
+       * The active anchor.
+       * </pre>
+       *
+       * <code>.pactus.AnchorInfo anchor = 2 [json_name = "anchor"];</code>
+       * @return The anchor.
+       */
+      public pactus.BlockchainOuterClass.AnchorInfo getAnchor() {
+        if (anchorBuilder_ == null) {
+          return anchor_ == null ? pactus.BlockchainOuterClass.AnchorInfo.getDefaultInstance() : anchor_;
+        } else {
+          return anchorBuilder_.getMessage();
+        }
+      }
+      /**
+       * <pre>
+       * The active anchor.
+       * </pre>
+       *
+       * <code>.pactus.AnchorInfo anchor = 2 [json_name = "anchor"];</code>
+       */
+      public Builder setAnchor(pactus.BlockchainOuterClass.AnchorInfo value) {
+        if (anchorBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          anchor_ = value;
+        } else {
+          anchorBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The active anchor.
+       * </pre>
+       *
+       * <code>.pactus.AnchorInfo anchor = 2 [json_name = "anchor"];</code>
+       */
+      public Builder setAnchor(
+          pactus.BlockchainOuterClass.AnchorInfo.Builder builderForValue) {
+        if (anchorBuilder_ == null) {
+          anchor_ = builderForValue.build();
+        } else {
+          anchorBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The active anchor.
+       * </pre>
+       *
+       * <code>.pactus.AnchorInfo anchor = 2 [json_name = "anchor"];</code>
+       */
+      public Builder mergeAnchor(pactus.BlockchainOuterClass.AnchorInfo value) {
+        if (anchorBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) != 0) &&
+            anchor_ != null &&
+            anchor_ != pactus.BlockchainOuterClass.AnchorInfo.getDefaultInstance()) {
+            getAnchorBuilder().mergeFrom(value);
+          } else {
+            anchor_ = value;
+          }
+        } else {
+          anchorBuilder_.mergeFrom(value);
+        }
+        if (anchor_ != null) {
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The active anchor.
+       * </pre>
+       *
+       * <code>.pactus.AnchorInfo anchor = 2 [json_name = "anchor"];</code>
+       */
+      public Builder clearAnchor() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        anchor_ = null;
+        if (anchorBuilder_ != null) {
+          anchorBuilder_.dispose();
+          anchorBuilder_ = null;
+        }
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The active anchor.
+       * </pre>
+       *
+       * <code>.pactus.AnchorInfo anchor = 2 [json_name = "anchor"];</code>
+       */
+      public pactus.BlockchainOuterClass.AnchorInfo.Builder getAnchorBuilder() {
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return internalGetAnchorFieldBuilder().getBuilder();
+      }
+      /**
+       * <pre>
+       * The active anchor.
+       * </pre>
+       *
+       * <code>.pactus.AnchorInfo anchor = 2 [json_name = "anchor"];</code>
+       */
+      public pactus.BlockchainOuterClass.AnchorInfoOrBuilder getAnchorOrBuilder() {
+        if (anchorBuilder_ != null) {
+          return anchorBuilder_.getMessageOrBuilder();
+        } else {
+          return anchor_ == null ?
+              pactus.BlockchainOuterClass.AnchorInfo.getDefaultInstance() : anchor_;
+        }
+      }
+      /**
+       * <pre>
+       * The active anchor.
+       * </pre>
+       *
+       * <code>.pactus.AnchorInfo anchor = 2 [json_name = "anchor"];</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          pactus.BlockchainOuterClass.AnchorInfo, pactus.BlockchainOuterClass.AnchorInfo.Builder, pactus.BlockchainOuterClass.AnchorInfoOrBuilder> 
+          internalGetAnchorFieldBuilder() {
+        if (anchorBuilder_ == null) {
+          anchorBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              pactus.BlockchainOuterClass.AnchorInfo, pactus.BlockchainOuterClass.AnchorInfo.Builder, pactus.BlockchainOuterClass.AnchorInfoOrBuilder>(
+                  getAnchor(),
+                  getParentForChildren(),
+                  isClean());
+          anchor_ = null;
+        }
+        return anchorBuilder_;
+      }
+
+      // @@protoc_insertion_point(builder_scope:pactus.AnchorListItem)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.AnchorListItem)
+    private static final pactus.BlockchainOuterClass.AnchorListItem DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.AnchorListItem();
+    }
+
+    public static pactus.BlockchainOuterClass.AnchorListItem getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<AnchorListItem>
+        PARSER = new com.google.protobuf.AbstractParser<AnchorListItem>() {
+      @java.lang.Override
+      public AnchorListItem parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<AnchorListItem> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<AnchorListItem> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.BlockchainOuterClass.AnchorListItem getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface AnchorInfoOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.AnchorInfo)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * Root hash bytes.
+     * </pre>
+     *
+     * <code>bytes root_hash = 1 [json_name = "rootHash"];</code>
+     * @return The rootHash.
+     */
+    com.google.protobuf.ByteString getRootHash();
+
+    /**
+     * <pre>
+     * Manifest URI.
+     * </pre>
+     *
+     * <code>string manifest_uri = 2 [json_name = "manifestUri"];</code>
+     * @return The manifestUri.
+     */
+    java.lang.String getManifestUri();
+    /**
+     * <pre>
+     * Manifest URI.
+     * </pre>
+     *
+     * <code>string manifest_uri = 2 [json_name = "manifestUri"];</code>
+     * @return The bytes for manifestUri.
+     */
+    com.google.protobuf.ByteString
+        getManifestUriBytes();
+
+    /**
+     * <pre>
+     * Anchor type byte.
+     * </pre>
+     *
+     * <code>uint32 anchor_type = 3 [json_name = "anchorType"];</code>
+     * @return The anchorType.
+     */
+    int getAnchorType();
+
+    /**
+     * <pre>
+     * Locked deposit in NanoPAC.
+     * </pre>
+     *
+     * <code>int64 locked_deposit = 4 [json_name = "lockedDeposit"];</code>
+     * @return The lockedDeposit.
+     */
+    long getLockedDeposit();
+
+    /**
+     * <pre>
+     * Height of the first set.
+     * </pre>
+     *
+     * <code>uint32 created_at_height = 5 [json_name = "createdAtHeight"];</code>
+     * @return The createdAtHeight.
+     */
+    int getCreatedAtHeight();
+
+    /**
+     * <pre>
+     * Unix time of the first set.
+     * </pre>
+     *
+     * <code>uint32 created_at_time = 6 [json_name = "createdAtTime"];</code>
+     * @return The createdAtTime.
+     */
+    int getCreatedAtTime();
+
+    /**
+     * <pre>
+     * Height of the latest set.
+     * </pre>
+     *
+     * <code>uint32 updated_at_height = 7 [json_name = "updatedAtHeight"];</code>
+     * @return The updatedAtHeight.
+     */
+    int getUpdatedAtHeight();
+
+    /**
+     * <pre>
+     * Unix time of the latest set.
+     * </pre>
+     *
+     * <code>uint32 updated_at_time = 8 [json_name = "updatedAtTime"];</code>
+     * @return The updatedAtTime.
+     */
+    int getUpdatedAtTime();
+  }
+  /**
+   * <pre>
+   * Active anchor stored on an account.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.AnchorInfo}
+   */
+  public static final class AnchorInfo extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:pactus.AnchorInfo)
+      AnchorInfoOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 33,
+        /* patch= */ 2,
+        /* suffix= */ "",
+        "AnchorInfo");
+    }
+    // Use AnchorInfo.newBuilder() to construct.
+    private AnchorInfo(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private AnchorInfo() {
+      rootHash_ = com.google.protobuf.ByteString.EMPTY;
+      manifestUri_ = "";
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.BlockchainOuterClass.internal_static_pactus_AnchorInfo_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.BlockchainOuterClass.internal_static_pactus_AnchorInfo_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.BlockchainOuterClass.AnchorInfo.class, pactus.BlockchainOuterClass.AnchorInfo.Builder.class);
+    }
+
+    public static final int ROOT_HASH_FIELD_NUMBER = 1;
+    private com.google.protobuf.ByteString rootHash_ = com.google.protobuf.ByteString.EMPTY;
+    /**
+     * <pre>
+     * Root hash bytes.
+     * </pre>
+     *
+     * <code>bytes root_hash = 1 [json_name = "rootHash"];</code>
+     * @return The rootHash.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getRootHash() {
+      return rootHash_;
+    }
+
+    public static final int MANIFEST_URI_FIELD_NUMBER = 2;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object manifestUri_ = "";
+    /**
+     * <pre>
+     * Manifest URI.
+     * </pre>
+     *
+     * <code>string manifest_uri = 2 [json_name = "manifestUri"];</code>
+     * @return The manifestUri.
+     */
+    @java.lang.Override
+    public java.lang.String getManifestUri() {
+      java.lang.Object ref = manifestUri_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        manifestUri_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Manifest URI.
+     * </pre>
+     *
+     * <code>string manifest_uri = 2 [json_name = "manifestUri"];</code>
+     * @return The bytes for manifestUri.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getManifestUriBytes() {
+      java.lang.Object ref = manifestUri_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        manifestUri_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ANCHOR_TYPE_FIELD_NUMBER = 3;
+    private int anchorType_ = 0;
+    /**
+     * <pre>
+     * Anchor type byte.
+     * </pre>
+     *
+     * <code>uint32 anchor_type = 3 [json_name = "anchorType"];</code>
+     * @return The anchorType.
+     */
+    @java.lang.Override
+    public int getAnchorType() {
+      return anchorType_;
+    }
+
+    public static final int LOCKED_DEPOSIT_FIELD_NUMBER = 4;
+    private long lockedDeposit_ = 0L;
+    /**
+     * <pre>
+     * Locked deposit in NanoPAC.
+     * </pre>
+     *
+     * <code>int64 locked_deposit = 4 [json_name = "lockedDeposit"];</code>
+     * @return The lockedDeposit.
+     */
+    @java.lang.Override
+    public long getLockedDeposit() {
+      return lockedDeposit_;
+    }
+
+    public static final int CREATED_AT_HEIGHT_FIELD_NUMBER = 5;
+    private int createdAtHeight_ = 0;
+    /**
+     * <pre>
+     * Height of the first set.
+     * </pre>
+     *
+     * <code>uint32 created_at_height = 5 [json_name = "createdAtHeight"];</code>
+     * @return The createdAtHeight.
+     */
+    @java.lang.Override
+    public int getCreatedAtHeight() {
+      return createdAtHeight_;
+    }
+
+    public static final int CREATED_AT_TIME_FIELD_NUMBER = 6;
+    private int createdAtTime_ = 0;
+    /**
+     * <pre>
+     * Unix time of the first set.
+     * </pre>
+     *
+     * <code>uint32 created_at_time = 6 [json_name = "createdAtTime"];</code>
+     * @return The createdAtTime.
+     */
+    @java.lang.Override
+    public int getCreatedAtTime() {
+      return createdAtTime_;
+    }
+
+    public static final int UPDATED_AT_HEIGHT_FIELD_NUMBER = 7;
+    private int updatedAtHeight_ = 0;
+    /**
+     * <pre>
+     * Height of the latest set.
+     * </pre>
+     *
+     * <code>uint32 updated_at_height = 7 [json_name = "updatedAtHeight"];</code>
+     * @return The updatedAtHeight.
+     */
+    @java.lang.Override
+    public int getUpdatedAtHeight() {
+      return updatedAtHeight_;
+    }
+
+    public static final int UPDATED_AT_TIME_FIELD_NUMBER = 8;
+    private int updatedAtTime_ = 0;
+    /**
+     * <pre>
+     * Unix time of the latest set.
+     * </pre>
+     *
+     * <code>uint32 updated_at_time = 8 [json_name = "updatedAtTime"];</code>
+     * @return The updatedAtTime.
+     */
+    @java.lang.Override
+    public int getUpdatedAtTime() {
+      return updatedAtTime_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!rootHash_.isEmpty()) {
+        output.writeBytes(1, rootHash_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(manifestUri_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 2, manifestUri_);
+      }
+      if (anchorType_ != 0) {
+        output.writeUInt32(3, anchorType_);
+      }
+      if (lockedDeposit_ != 0L) {
+        output.writeInt64(4, lockedDeposit_);
+      }
+      if (createdAtHeight_ != 0) {
+        output.writeUInt32(5, createdAtHeight_);
+      }
+      if (createdAtTime_ != 0) {
+        output.writeUInt32(6, createdAtTime_);
+      }
+      if (updatedAtHeight_ != 0) {
+        output.writeUInt32(7, updatedAtHeight_);
+      }
+      if (updatedAtTime_ != 0) {
+        output.writeUInt32(8, updatedAtTime_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!rootHash_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, rootHash_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(manifestUri_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(2, manifestUri_);
+      }
+      if (anchorType_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(3, anchorType_);
+      }
+      if (lockedDeposit_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(4, lockedDeposit_);
+      }
+      if (createdAtHeight_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(5, createdAtHeight_);
+      }
+      if (createdAtTime_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(6, createdAtTime_);
+      }
+      if (updatedAtHeight_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(7, updatedAtHeight_);
+      }
+      if (updatedAtTime_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(8, updatedAtTime_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.BlockchainOuterClass.AnchorInfo)) {
+        return super.equals(obj);
+      }
+      pactus.BlockchainOuterClass.AnchorInfo other = (pactus.BlockchainOuterClass.AnchorInfo) obj;
+
+      if (!getRootHash()
+          .equals(other.getRootHash())) return false;
+      if (!getManifestUri()
+          .equals(other.getManifestUri())) return false;
+      if (getAnchorType()
+          != other.getAnchorType()) return false;
+      if (getLockedDeposit()
+          != other.getLockedDeposit()) return false;
+      if (getCreatedAtHeight()
+          != other.getCreatedAtHeight()) return false;
+      if (getCreatedAtTime()
+          != other.getCreatedAtTime()) return false;
+      if (getUpdatedAtHeight()
+          != other.getUpdatedAtHeight()) return false;
+      if (getUpdatedAtTime()
+          != other.getUpdatedAtTime()) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ROOT_HASH_FIELD_NUMBER;
+      hash = (53 * hash) + getRootHash().hashCode();
+      hash = (37 * hash) + MANIFEST_URI_FIELD_NUMBER;
+      hash = (53 * hash) + getManifestUri().hashCode();
+      hash = (37 * hash) + ANCHOR_TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getAnchorType();
+      hash = (37 * hash) + LOCKED_DEPOSIT_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getLockedDeposit());
+      hash = (37 * hash) + CREATED_AT_HEIGHT_FIELD_NUMBER;
+      hash = (53 * hash) + getCreatedAtHeight();
+      hash = (37 * hash) + CREATED_AT_TIME_FIELD_NUMBER;
+      hash = (53 * hash) + getCreatedAtTime();
+      hash = (37 * hash) + UPDATED_AT_HEIGHT_FIELD_NUMBER;
+      hash = (53 * hash) + getUpdatedAtHeight();
+      hash = (37 * hash) + UPDATED_AT_TIME_FIELD_NUMBER;
+      hash = (53 * hash) + getUpdatedAtTime();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.BlockchainOuterClass.AnchorInfo parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.BlockchainOuterClass.AnchorInfo parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.AnchorInfo parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.BlockchainOuterClass.AnchorInfo parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.AnchorInfo parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.BlockchainOuterClass.AnchorInfo parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.AnchorInfo parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.BlockchainOuterClass.AnchorInfo parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static pactus.BlockchainOuterClass.AnchorInfo parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static pactus.BlockchainOuterClass.AnchorInfo parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.BlockchainOuterClass.AnchorInfo parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.BlockchainOuterClass.AnchorInfo parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.BlockchainOuterClass.AnchorInfo prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Active anchor stored on an account.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.AnchorInfo}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.AnchorInfo)
+        pactus.BlockchainOuterClass.AnchorInfoOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.BlockchainOuterClass.internal_static_pactus_AnchorInfo_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.BlockchainOuterClass.internal_static_pactus_AnchorInfo_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.BlockchainOuterClass.AnchorInfo.class, pactus.BlockchainOuterClass.AnchorInfo.Builder.class);
+      }
+
+      // Construct using pactus.BlockchainOuterClass.AnchorInfo.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        rootHash_ = com.google.protobuf.ByteString.EMPTY;
+        manifestUri_ = "";
+        anchorType_ = 0;
+        lockedDeposit_ = 0L;
+        createdAtHeight_ = 0;
+        createdAtTime_ = 0;
+        updatedAtHeight_ = 0;
+        updatedAtTime_ = 0;
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.BlockchainOuterClass.internal_static_pactus_AnchorInfo_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.BlockchainOuterClass.AnchorInfo getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.AnchorInfo.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.BlockchainOuterClass.AnchorInfo build() {
+        pactus.BlockchainOuterClass.AnchorInfo result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.BlockchainOuterClass.AnchorInfo buildPartial() {
+        pactus.BlockchainOuterClass.AnchorInfo result = new pactus.BlockchainOuterClass.AnchorInfo(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(pactus.BlockchainOuterClass.AnchorInfo result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.rootHash_ = rootHash_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.manifestUri_ = manifestUri_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.anchorType_ = anchorType_;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.lockedDeposit_ = lockedDeposit_;
+        }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          result.createdAtHeight_ = createdAtHeight_;
+        }
+        if (((from_bitField0_ & 0x00000020) != 0)) {
+          result.createdAtTime_ = createdAtTime_;
+        }
+        if (((from_bitField0_ & 0x00000040) != 0)) {
+          result.updatedAtHeight_ = updatedAtHeight_;
+        }
+        if (((from_bitField0_ & 0x00000080) != 0)) {
+          result.updatedAtTime_ = updatedAtTime_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.BlockchainOuterClass.AnchorInfo) {
+          return mergeFrom((pactus.BlockchainOuterClass.AnchorInfo)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.BlockchainOuterClass.AnchorInfo other) {
+        if (other == pactus.BlockchainOuterClass.AnchorInfo.getDefaultInstance()) return this;
+        if (!other.getRootHash().isEmpty()) {
+          setRootHash(other.getRootHash());
+        }
+        if (!other.getManifestUri().isEmpty()) {
+          manifestUri_ = other.manifestUri_;
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        if (other.getAnchorType() != 0) {
+          setAnchorType(other.getAnchorType());
+        }
+        if (other.getLockedDeposit() != 0L) {
+          setLockedDeposit(other.getLockedDeposit());
+        }
+        if (other.getCreatedAtHeight() != 0) {
+          setCreatedAtHeight(other.getCreatedAtHeight());
+        }
+        if (other.getCreatedAtTime() != 0) {
+          setCreatedAtTime(other.getCreatedAtTime());
+        }
+        if (other.getUpdatedAtHeight() != 0) {
+          setUpdatedAtHeight(other.getUpdatedAtHeight());
+        }
+        if (other.getUpdatedAtTime() != 0) {
+          setUpdatedAtTime(other.getUpdatedAtTime());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                rootHash_ = input.readBytes();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                manifestUri_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 24: {
+                anchorType_ = input.readUInt32();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 24
+              case 32: {
+                lockedDeposit_ = input.readInt64();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 32
+              case 40: {
+                createdAtHeight_ = input.readUInt32();
+                bitField0_ |= 0x00000010;
+                break;
+              } // case 40
+              case 48: {
+                createdAtTime_ = input.readUInt32();
+                bitField0_ |= 0x00000020;
+                break;
+              } // case 48
+              case 56: {
+                updatedAtHeight_ = input.readUInt32();
+                bitField0_ |= 0x00000040;
+                break;
+              } // case 56
+              case 64: {
+                updatedAtTime_ = input.readUInt32();
+                bitField0_ |= 0x00000080;
+                break;
+              } // case 64
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private com.google.protobuf.ByteString rootHash_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <pre>
+       * Root hash bytes.
+       * </pre>
+       *
+       * <code>bytes root_hash = 1 [json_name = "rootHash"];</code>
+       * @return The rootHash.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString getRootHash() {
+        return rootHash_;
+      }
+      /**
+       * <pre>
+       * Root hash bytes.
+       * </pre>
+       *
+       * <code>bytes root_hash = 1 [json_name = "rootHash"];</code>
+       * @param value The rootHash to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRootHash(com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        rootHash_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Root hash bytes.
+       * </pre>
+       *
+       * <code>bytes root_hash = 1 [json_name = "rootHash"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearRootHash() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        rootHash_ = getDefaultInstance().getRootHash();
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object manifestUri_ = "";
+      /**
+       * <pre>
+       * Manifest URI.
+       * </pre>
+       *
+       * <code>string manifest_uri = 2 [json_name = "manifestUri"];</code>
+       * @return The manifestUri.
+       */
+      public java.lang.String getManifestUri() {
+        java.lang.Object ref = manifestUri_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          manifestUri_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Manifest URI.
+       * </pre>
+       *
+       * <code>string manifest_uri = 2 [json_name = "manifestUri"];</code>
+       * @return The bytes for manifestUri.
+       */
+      public com.google.protobuf.ByteString
+          getManifestUriBytes() {
+        java.lang.Object ref = manifestUri_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          manifestUri_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Manifest URI.
+       * </pre>
+       *
+       * <code>string manifest_uri = 2 [json_name = "manifestUri"];</code>
+       * @param value The manifestUri to set.
+       * @return This builder for chaining.
+       */
+      public Builder setManifestUri(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        manifestUri_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Manifest URI.
+       * </pre>
+       *
+       * <code>string manifest_uri = 2 [json_name = "manifestUri"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearManifestUri() {
+        manifestUri_ = getDefaultInstance().getManifestUri();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Manifest URI.
+       * </pre>
+       *
+       * <code>string manifest_uri = 2 [json_name = "manifestUri"];</code>
+       * @param value The bytes for manifestUri to set.
+       * @return This builder for chaining.
+       */
+      public Builder setManifestUriBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        manifestUri_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      private int anchorType_ ;
+      /**
+       * <pre>
+       * Anchor type byte.
+       * </pre>
+       *
+       * <code>uint32 anchor_type = 3 [json_name = "anchorType"];</code>
+       * @return The anchorType.
+       */
+      @java.lang.Override
+      public int getAnchorType() {
+        return anchorType_;
+      }
+      /**
+       * <pre>
+       * Anchor type byte.
+       * </pre>
+       *
+       * <code>uint32 anchor_type = 3 [json_name = "anchorType"];</code>
+       * @param value The anchorType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAnchorType(int value) {
+
+        anchorType_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Anchor type byte.
+       * </pre>
+       *
+       * <code>uint32 anchor_type = 3 [json_name = "anchorType"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAnchorType() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        anchorType_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private long lockedDeposit_ ;
+      /**
+       * <pre>
+       * Locked deposit in NanoPAC.
+       * </pre>
+       *
+       * <code>int64 locked_deposit = 4 [json_name = "lockedDeposit"];</code>
+       * @return The lockedDeposit.
+       */
+      @java.lang.Override
+      public long getLockedDeposit() {
+        return lockedDeposit_;
+      }
+      /**
+       * <pre>
+       * Locked deposit in NanoPAC.
+       * </pre>
+       *
+       * <code>int64 locked_deposit = 4 [json_name = "lockedDeposit"];</code>
+       * @param value The lockedDeposit to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLockedDeposit(long value) {
+
+        lockedDeposit_ = value;
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Locked deposit in NanoPAC.
+       * </pre>
+       *
+       * <code>int64 locked_deposit = 4 [json_name = "lockedDeposit"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearLockedDeposit() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        lockedDeposit_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private int createdAtHeight_ ;
+      /**
+       * <pre>
+       * Height of the first set.
+       * </pre>
+       *
+       * <code>uint32 created_at_height = 5 [json_name = "createdAtHeight"];</code>
+       * @return The createdAtHeight.
+       */
+      @java.lang.Override
+      public int getCreatedAtHeight() {
+        return createdAtHeight_;
+      }
+      /**
+       * <pre>
+       * Height of the first set.
+       * </pre>
+       *
+       * <code>uint32 created_at_height = 5 [json_name = "createdAtHeight"];</code>
+       * @param value The createdAtHeight to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCreatedAtHeight(int value) {
+
+        createdAtHeight_ = value;
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Height of the first set.
+       * </pre>
+       *
+       * <code>uint32 created_at_height = 5 [json_name = "createdAtHeight"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearCreatedAtHeight() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        createdAtHeight_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int createdAtTime_ ;
+      /**
+       * <pre>
+       * Unix time of the first set.
+       * </pre>
+       *
+       * <code>uint32 created_at_time = 6 [json_name = "createdAtTime"];</code>
+       * @return The createdAtTime.
+       */
+      @java.lang.Override
+      public int getCreatedAtTime() {
+        return createdAtTime_;
+      }
+      /**
+       * <pre>
+       * Unix time of the first set.
+       * </pre>
+       *
+       * <code>uint32 created_at_time = 6 [json_name = "createdAtTime"];</code>
+       * @param value The createdAtTime to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCreatedAtTime(int value) {
+
+        createdAtTime_ = value;
+        bitField0_ |= 0x00000020;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Unix time of the first set.
+       * </pre>
+       *
+       * <code>uint32 created_at_time = 6 [json_name = "createdAtTime"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearCreatedAtTime() {
+        bitField0_ = (bitField0_ & ~0x00000020);
+        createdAtTime_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int updatedAtHeight_ ;
+      /**
+       * <pre>
+       * Height of the latest set.
+       * </pre>
+       *
+       * <code>uint32 updated_at_height = 7 [json_name = "updatedAtHeight"];</code>
+       * @return The updatedAtHeight.
+       */
+      @java.lang.Override
+      public int getUpdatedAtHeight() {
+        return updatedAtHeight_;
+      }
+      /**
+       * <pre>
+       * Height of the latest set.
+       * </pre>
+       *
+       * <code>uint32 updated_at_height = 7 [json_name = "updatedAtHeight"];</code>
+       * @param value The updatedAtHeight to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUpdatedAtHeight(int value) {
+
+        updatedAtHeight_ = value;
+        bitField0_ |= 0x00000040;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Height of the latest set.
+       * </pre>
+       *
+       * <code>uint32 updated_at_height = 7 [json_name = "updatedAtHeight"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearUpdatedAtHeight() {
+        bitField0_ = (bitField0_ & ~0x00000040);
+        updatedAtHeight_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int updatedAtTime_ ;
+      /**
+       * <pre>
+       * Unix time of the latest set.
+       * </pre>
+       *
+       * <code>uint32 updated_at_time = 8 [json_name = "updatedAtTime"];</code>
+       * @return The updatedAtTime.
+       */
+      @java.lang.Override
+      public int getUpdatedAtTime() {
+        return updatedAtTime_;
+      }
+      /**
+       * <pre>
+       * Unix time of the latest set.
+       * </pre>
+       *
+       * <code>uint32 updated_at_time = 8 [json_name = "updatedAtTime"];</code>
+       * @param value The updatedAtTime to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUpdatedAtTime(int value) {
+
+        updatedAtTime_ = value;
+        bitField0_ |= 0x00000080;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Unix time of the latest set.
+       * </pre>
+       *
+       * <code>uint32 updated_at_time = 8 [json_name = "updatedAtTime"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearUpdatedAtTime() {
+        bitField0_ = (bitField0_ & ~0x00000080);
+        updatedAtTime_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:pactus.AnchorInfo)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.AnchorInfo)
+    private static final pactus.BlockchainOuterClass.AnchorInfo DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.AnchorInfo();
+    }
+
+    public static pactus.BlockchainOuterClass.AnchorInfo getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<AnchorInfo>
+        PARSER = new com.google.protobuf.AbstractParser<AnchorInfo>() {
+      @java.lang.Override
+      public AnchorInfo parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<AnchorInfo> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<AnchorInfo> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.BlockchainOuterClass.AnchorInfo getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface AccountInfoOrBuilder extends
       // @@protoc_insertion_point(interface_extends:pactus.AccountInfo)
       com.google.protobuf.MessageOrBuilder {
@@ -19500,6 +24497,33 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
      */
     com.google.protobuf.ByteString
         getAddressBytes();
+
+    /**
+     * <pre>
+     * The active anchor. Unset when the account has none.
+     * </pre>
+     *
+     * <code>optional .pactus.AnchorInfo anchor = 6 [json_name = "anchor"];</code>
+     * @return Whether the anchor field is set.
+     */
+    boolean hasAnchor();
+    /**
+     * <pre>
+     * The active anchor. Unset when the account has none.
+     * </pre>
+     *
+     * <code>optional .pactus.AnchorInfo anchor = 6 [json_name = "anchor"];</code>
+     * @return The anchor.
+     */
+    pactus.BlockchainOuterClass.AnchorInfo getAnchor();
+    /**
+     * <pre>
+     * The active anchor. Unset when the account has none.
+     * </pre>
+     *
+     * <code>optional .pactus.AnchorInfo anchor = 6 [json_name = "anchor"];</code>
+     */
+    pactus.BlockchainOuterClass.AnchorInfoOrBuilder getAnchorOrBuilder();
   }
   /**
    * <pre>
@@ -19545,6 +24569,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
               pactus.BlockchainOuterClass.AccountInfo.class, pactus.BlockchainOuterClass.AccountInfo.Builder.class);
     }
 
+    private int bitField0_;
     public static final int HASH_FIELD_NUMBER = 1;
     @SuppressWarnings("serial")
     private volatile java.lang.Object hash_ = "";
@@ -19716,6 +24741,44 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       }
     }
 
+    public static final int ANCHOR_FIELD_NUMBER = 6;
+    private pactus.BlockchainOuterClass.AnchorInfo anchor_;
+    /**
+     * <pre>
+     * The active anchor. Unset when the account has none.
+     * </pre>
+     *
+     * <code>optional .pactus.AnchorInfo anchor = 6 [json_name = "anchor"];</code>
+     * @return Whether the anchor field is set.
+     */
+    @java.lang.Override
+    public boolean hasAnchor() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     * <pre>
+     * The active anchor. Unset when the account has none.
+     * </pre>
+     *
+     * <code>optional .pactus.AnchorInfo anchor = 6 [json_name = "anchor"];</code>
+     * @return The anchor.
+     */
+    @java.lang.Override
+    public pactus.BlockchainOuterClass.AnchorInfo getAnchor() {
+      return anchor_ == null ? pactus.BlockchainOuterClass.AnchorInfo.getDefaultInstance() : anchor_;
+    }
+    /**
+     * <pre>
+     * The active anchor. Unset when the account has none.
+     * </pre>
+     *
+     * <code>optional .pactus.AnchorInfo anchor = 6 [json_name = "anchor"];</code>
+     */
+    @java.lang.Override
+    public pactus.BlockchainOuterClass.AnchorInfoOrBuilder getAnchorOrBuilder() {
+      return anchor_ == null ? pactus.BlockchainOuterClass.AnchorInfo.getDefaultInstance() : anchor_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -19745,6 +24808,9 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(address_)) {
         com.google.protobuf.GeneratedMessage.writeString(output, 5, address_);
       }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        output.writeMessage(6, getAnchor());
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -19771,6 +24837,10 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(address_)) {
         size += com.google.protobuf.GeneratedMessage.computeStringSize(5, address_);
       }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(6, getAnchor());
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -19796,6 +24866,11 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
           != other.getBalance()) return false;
       if (!getAddress()
           .equals(other.getAddress())) return false;
+      if (hasAnchor() != other.hasAnchor()) return false;
+      if (hasAnchor()) {
+        if (!getAnchor()
+            .equals(other.getAnchor())) return false;
+      }
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -19818,6 +24893,10 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
           getBalance());
       hash = (37 * hash) + ADDRESS_FIELD_NUMBER;
       hash = (53 * hash) + getAddress().hashCode();
+      if (hasAnchor()) {
+        hash = (37 * hash) + ANCHOR_FIELD_NUMBER;
+        hash = (53 * hash) + getAnchor().hashCode();
+      }
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -19941,13 +25020,19 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
 
       // Construct using pactus.BlockchainOuterClass.AccountInfo.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessage.BuilderParent parent) {
         super(parent);
-
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage
+                .alwaysUseFieldBuilders) {
+          internalGetAnchorFieldBuilder();
+        }
       }
       @java.lang.Override
       public Builder clear() {
@@ -19958,6 +25043,11 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         number_ = 0;
         balance_ = 0L;
         address_ = "";
+        anchor_ = null;
+        if (anchorBuilder_ != null) {
+          anchorBuilder_.dispose();
+          anchorBuilder_ = null;
+        }
         return this;
       }
 
@@ -20006,6 +25096,14 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         if (((from_bitField0_ & 0x00000010) != 0)) {
           result.address_ = address_;
         }
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000020) != 0)) {
+          result.anchor_ = anchorBuilder_ == null
+              ? anchor_
+              : anchorBuilder_.build();
+          to_bitField0_ |= 0x00000001;
+        }
+        result.bitField0_ |= to_bitField0_;
       }
 
       @java.lang.Override
@@ -20040,6 +25138,9 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
           address_ = other.address_;
           bitField0_ |= 0x00000010;
           onChanged();
+        }
+        if (other.hasAnchor()) {
+          mergeAnchor(other.getAnchor());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -20092,6 +25193,13 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
                 bitField0_ |= 0x00000010;
                 break;
               } // case 42
+              case 50: {
+                input.readMessage(
+                    internalGetAnchorFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                bitField0_ |= 0x00000020;
+                break;
+              } // case 50
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -20471,6 +25579,163 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
         bitField0_ |= 0x00000010;
         onChanged();
         return this;
+      }
+
+      private pactus.BlockchainOuterClass.AnchorInfo anchor_;
+      private com.google.protobuf.SingleFieldBuilder<
+          pactus.BlockchainOuterClass.AnchorInfo, pactus.BlockchainOuterClass.AnchorInfo.Builder, pactus.BlockchainOuterClass.AnchorInfoOrBuilder> anchorBuilder_;
+      /**
+       * <pre>
+       * The active anchor. Unset when the account has none.
+       * </pre>
+       *
+       * <code>optional .pactus.AnchorInfo anchor = 6 [json_name = "anchor"];</code>
+       * @return Whether the anchor field is set.
+       */
+      public boolean hasAnchor() {
+        return ((bitField0_ & 0x00000020) != 0);
+      }
+      /**
+       * <pre>
+       * The active anchor. Unset when the account has none.
+       * </pre>
+       *
+       * <code>optional .pactus.AnchorInfo anchor = 6 [json_name = "anchor"];</code>
+       * @return The anchor.
+       */
+      public pactus.BlockchainOuterClass.AnchorInfo getAnchor() {
+        if (anchorBuilder_ == null) {
+          return anchor_ == null ? pactus.BlockchainOuterClass.AnchorInfo.getDefaultInstance() : anchor_;
+        } else {
+          return anchorBuilder_.getMessage();
+        }
+      }
+      /**
+       * <pre>
+       * The active anchor. Unset when the account has none.
+       * </pre>
+       *
+       * <code>optional .pactus.AnchorInfo anchor = 6 [json_name = "anchor"];</code>
+       */
+      public Builder setAnchor(pactus.BlockchainOuterClass.AnchorInfo value) {
+        if (anchorBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          anchor_ = value;
+        } else {
+          anchorBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000020;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The active anchor. Unset when the account has none.
+       * </pre>
+       *
+       * <code>optional .pactus.AnchorInfo anchor = 6 [json_name = "anchor"];</code>
+       */
+      public Builder setAnchor(
+          pactus.BlockchainOuterClass.AnchorInfo.Builder builderForValue) {
+        if (anchorBuilder_ == null) {
+          anchor_ = builderForValue.build();
+        } else {
+          anchorBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000020;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The active anchor. Unset when the account has none.
+       * </pre>
+       *
+       * <code>optional .pactus.AnchorInfo anchor = 6 [json_name = "anchor"];</code>
+       */
+      public Builder mergeAnchor(pactus.BlockchainOuterClass.AnchorInfo value) {
+        if (anchorBuilder_ == null) {
+          if (((bitField0_ & 0x00000020) != 0) &&
+            anchor_ != null &&
+            anchor_ != pactus.BlockchainOuterClass.AnchorInfo.getDefaultInstance()) {
+            getAnchorBuilder().mergeFrom(value);
+          } else {
+            anchor_ = value;
+          }
+        } else {
+          anchorBuilder_.mergeFrom(value);
+        }
+        if (anchor_ != null) {
+          bitField0_ |= 0x00000020;
+          onChanged();
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The active anchor. Unset when the account has none.
+       * </pre>
+       *
+       * <code>optional .pactus.AnchorInfo anchor = 6 [json_name = "anchor"];</code>
+       */
+      public Builder clearAnchor() {
+        bitField0_ = (bitField0_ & ~0x00000020);
+        anchor_ = null;
+        if (anchorBuilder_ != null) {
+          anchorBuilder_.dispose();
+          anchorBuilder_ = null;
+        }
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The active anchor. Unset when the account has none.
+       * </pre>
+       *
+       * <code>optional .pactus.AnchorInfo anchor = 6 [json_name = "anchor"];</code>
+       */
+      public pactus.BlockchainOuterClass.AnchorInfo.Builder getAnchorBuilder() {
+        bitField0_ |= 0x00000020;
+        onChanged();
+        return internalGetAnchorFieldBuilder().getBuilder();
+      }
+      /**
+       * <pre>
+       * The active anchor. Unset when the account has none.
+       * </pre>
+       *
+       * <code>optional .pactus.AnchorInfo anchor = 6 [json_name = "anchor"];</code>
+       */
+      public pactus.BlockchainOuterClass.AnchorInfoOrBuilder getAnchorOrBuilder() {
+        if (anchorBuilder_ != null) {
+          return anchorBuilder_.getMessageOrBuilder();
+        } else {
+          return anchor_ == null ?
+              pactus.BlockchainOuterClass.AnchorInfo.getDefaultInstance() : anchor_;
+        }
+      }
+      /**
+       * <pre>
+       * The active anchor. Unset when the account has none.
+       * </pre>
+       *
+       * <code>optional .pactus.AnchorInfo anchor = 6 [json_name = "anchor"];</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          pactus.BlockchainOuterClass.AnchorInfo, pactus.BlockchainOuterClass.AnchorInfo.Builder, pactus.BlockchainOuterClass.AnchorInfoOrBuilder> 
+          internalGetAnchorFieldBuilder() {
+        if (anchorBuilder_ == null) {
+          anchorBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              pactus.BlockchainOuterClass.AnchorInfo, pactus.BlockchainOuterClass.AnchorInfo.Builder, pactus.BlockchainOuterClass.AnchorInfoOrBuilder>(
+                  getAnchor(),
+                  getParentForChildren(),
+                  isClean());
+          anchor_ = null;
+        }
+        return anchorBuilder_;
       }
 
       // @@protoc_insertion_point(builder_scope:pactus.AccountInfo)
@@ -26561,6 +31826,36 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_pactus_ValidatorInfo_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_GetAnchorRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pactus_GetAnchorRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_GetAnchorResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pactus_GetAnchorResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_ListAnchorsRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pactus_ListAnchorsRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_ListAnchorsResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pactus_ListAnchorsResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_AnchorListItem_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pactus_AnchorListItem_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_AnchorInfo_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pactus_AnchorInfo_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_AccountInfo_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -26674,66 +31969,89 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       "gated\030\014 \001(\010R\013isDelegated\022%\n\016delegate_own" +
       "er\030\r \001(\tR\rdelegateOwner\022%\n\016delegate_shar" +
       "e\030\016 \001(\003R\rdelegateShare\022\'\n\017delegate_expir" +
-      "y\030\017 \001(\rR\016delegateExpiry\"\201\001\n\013AccountInfo\022" +
-      "\022\n\004hash\030\001 \001(\tR\004hash\022\022\n\004data\030\002 \001(\tR\004data\022" +
-      "\026\n\006number\030\003 \001(\005R\006number\022\030\n\007balance\030\004 \001(\003" +
-      "R\007balance\022\030\n\007address\030\005 \001(\tR\007address\"\304\001\n\017" +
-      "BlockHeaderInfo\022\030\n\007version\030\001 \001(\005R\007versio" +
-      "n\022&\n\017prev_block_hash\030\002 \001(\tR\rprevBlockHas" +
-      "h\022\035\n\nstate_root\030\003 \001(\tR\tstateRoot\022%\n\016sort" +
-      "ition_seed\030\004 \001(\tR\rsortitionSeed\022)\n\020propo" +
-      "ser_address\030\005 \001(\tR\017proposerAddress\"\227\001\n\017C" +
-      "ertificateInfo\022\022\n\004hash\030\001 \001(\tR\004hash\022\024\n\005ro" +
-      "und\030\002 \001(\005R\005round\022\036\n\ncommitters\030\003 \003(\005R\nco" +
-      "mmitters\022\034\n\tabsentees\030\004 \003(\005R\tabsentees\022\034" +
-      "\n\tsignature\030\005 \001(\tR\tsignature\"\261\001\n\010VoteInf" +
-      "o\022$\n\004type\030\001 \001(\0162\020.pactus.VoteTypeR\004type\022" +
-      "\024\n\005voter\030\002 \001(\tR\005voter\022\035\n\nblock_hash\030\003 \001(" +
-      "\tR\tblockHash\022\024\n\005round\030\004 \001(\005R\005round\022\031\n\010cp" +
-      "_round\030\005 \001(\005R\007cpRound\022\031\n\010cp_value\030\006 \001(\005R" +
-      "\007cpValue\"\227\001\n\rConsensusInfo\022\030\n\007address\030\001 " +
-      "\001(\tR\007address\022\026\n\006active\030\002 \001(\010R\006active\022\026\n\006" +
-      "height\030\003 \001(\rR\006height\022\024\n\005round\030\004 \001(\005R\005rou" +
-      "nd\022&\n\005votes\030\005 \003(\0132\020.pactus.VoteInfoR\005vot" +
-      "es\"y\n\014ProposalInfo\022\026\n\006height\030\001 \001(\rR\006heig" +
-      "ht\022\024\n\005round\030\002 \001(\005R\005round\022\035\n\nblock_data\030\003" +
-      " \001(\tR\tblockData\022\034\n\tsignature\030\004 \001(\tR\tsign" +
-      "ature*T\n\tChainType\022\026\n\022CHAIN_TYPE_MAINNET" +
-      "\020\000\022\026\n\022CHAIN_TYPE_TESTNET\020\001\022\027\n\023CHAIN_TYPE" +
-      "_LOCALNET\020\002*f\n\016BlockVerbosity\022\030\n\024BLOCK_V" +
-      "ERBOSITY_DATA\020\000\022\030\n\024BLOCK_VERBOSITY_INFO\020" +
-      "\001\022 \n\034BLOCK_VERBOSITY_TRANSACTIONS\020\002*\246\001\n\010" +
-      "VoteType\022\031\n\025VOTE_TYPE_UNSPECIFIED\020\000\022\025\n\021V" +
-      "OTE_TYPE_PREPARE\020\001\022\027\n\023VOTE_TYPE_PRECOMMI" +
-      "T\020\002\022\031\n\025VOTE_TYPE_CP_PRE_VOTE\020\003\022\032\n\026VOTE_T" +
-      "YPE_CP_MAIN_VOTE\020\004\022\030\n\024VOTE_TYPE_CP_DECID" +
-      "ED\020\0052\342\007\n\nBlockchain\022=\n\010GetBlock\022\027.pactus" +
-      ".GetBlockRequest\032\030.pactus.GetBlockRespon" +
-      "se\022I\n\014GetBlockHash\022\033.pactus.GetBlockHash" +
-      "Request\032\034.pactus.GetBlockHashResponse\022O\n" +
-      "\016GetBlockHeight\022\035.pactus.GetBlockHeightR" +
-      "equest\032\036.pactus.GetBlockHeightResponse\022X" +
-      "\n\021GetBlockchainInfo\022 .pactus.GetBlockcha" +
-      "inInfoRequest\032!.pactus.GetBlockchainInfo" +
-      "Response\022U\n\020GetCommitteeInfo\022\037.pactus.Ge" +
-      "tCommitteeInfoRequest\032 .pactus.GetCommit" +
-      "teeInfoResponse\022U\n\020GetConsensusInfo\022\037.pa" +
-      "ctus.GetConsensusInfoRequest\032 .pactus.Ge" +
-      "tConsensusInfoResponse\022C\n\nGetAccount\022\031.p" +
-      "actus.GetAccountRequest\032\032.pactus.GetAcco" +
-      "untResponse\022I\n\014GetValidator\022\033.pactus.Get" +
-      "ValidatorRequest\032\034.pactus.GetValidatorRe" +
-      "sponse\022Y\n\024GetValidatorByNumber\022#.pactus." +
-      "GetValidatorByNumberRequest\032\034.pactus.Get" +
-      "ValidatorResponse\022d\n\025GetValidatorAddress" +
-      "es\022$.pactus.GetValidatorAddressesRequest" +
-      "\032%.pactus.GetValidatorAddressesResponse\022" +
-      "I\n\014GetPublicKey\022\033.pactus.GetPublicKeyReq" +
-      "uest\032\034.pactus.GetPublicKeyResponse\022U\n\020Ge" +
-      "tTxPoolContent\022\037.pactus.GetTxPoolContent" +
-      "Request\032 .pactus.GetTxPoolContentRespons" +
-      "eB:\n\006pactusZ0github.com/pactus-project/p" +
-      "actus/www/grpc/pactusb\006proto3"
+      "y\030\017 \001(\rR\016delegateExpiry\",\n\020GetAnchorRequ" +
+      "est\022\030\n\007address\030\001 \001(\tR\007address\"o\n\021GetAnch" +
+      "orResponse\022\024\n\005found\030\001 \001(\010R\005found\022\030\n\007addr" +
+      "ess\030\002 \001(\tR\007address\022*\n\006anchor\030\003 \001(\0132\022.pac" +
+      "tus.AnchorInfoR\006anchor\">\n\022ListAnchorsReq" +
+      "uest\022\022\n\004skip\030\001 \001(\rR\004skip\022\024\n\005count\030\002 \001(\rR" +
+      "\005count\"Y\n\023ListAnchorsResponse\022,\n\005items\030\001" +
+      " \003(\0132\026.pactus.AnchorListItemR\005items\022\024\n\005t" +
+      "otal\030\002 \001(\rR\005total\"V\n\016AnchorListItem\022\030\n\007a" +
+      "ddress\030\001 \001(\tR\007address\022*\n\006anchor\030\002 \001(\0132\022." +
+      "pactus.AnchorInfoR\006anchor\"\274\002\n\nAnchorInfo" +
+      "\022\033\n\troot_hash\030\001 \001(\014R\010rootHash\022!\n\014manifes" +
+      "t_uri\030\002 \001(\tR\013manifestUri\022\037\n\013anchor_type\030" +
+      "\003 \001(\rR\nanchorType\022%\n\016locked_deposit\030\004 \001(" +
+      "\003R\rlockedDeposit\022*\n\021created_at_height\030\005 " +
+      "\001(\rR\017createdAtHeight\022&\n\017created_at_time\030" +
+      "\006 \001(\rR\rcreatedAtTime\022*\n\021updated_at_heigh" +
+      "t\030\007 \001(\rR\017updatedAtHeight\022&\n\017updated_at_t" +
+      "ime\030\010 \001(\rR\rupdatedAtTime\"\275\001\n\013AccountInfo" +
+      "\022\022\n\004hash\030\001 \001(\tR\004hash\022\022\n\004data\030\002 \001(\tR\004data" +
+      "\022\026\n\006number\030\003 \001(\005R\006number\022\030\n\007balance\030\004 \001(" +
+      "\003R\007balance\022\030\n\007address\030\005 \001(\tR\007address\022/\n\006" +
+      "anchor\030\006 \001(\0132\022.pactus.AnchorInfoH\000R\006anch" +
+      "or\210\001\001B\t\n\007_anchor\"\304\001\n\017BlockHeaderInfo\022\030\n\007" +
+      "version\030\001 \001(\005R\007version\022&\n\017prev_block_has" +
+      "h\030\002 \001(\tR\rprevBlockHash\022\035\n\nstate_root\030\003 \001" +
+      "(\tR\tstateRoot\022%\n\016sortition_seed\030\004 \001(\tR\rs" +
+      "ortitionSeed\022)\n\020proposer_address\030\005 \001(\tR\017" +
+      "proposerAddress\"\227\001\n\017CertificateInfo\022\022\n\004h" +
+      "ash\030\001 \001(\tR\004hash\022\024\n\005round\030\002 \001(\005R\005round\022\036\n" +
+      "\ncommitters\030\003 \003(\005R\ncommitters\022\034\n\tabsente" +
+      "es\030\004 \003(\005R\tabsentees\022\034\n\tsignature\030\005 \001(\tR\t" +
+      "signature\"\261\001\n\010VoteInfo\022$\n\004type\030\001 \001(\0162\020.p" +
+      "actus.VoteTypeR\004type\022\024\n\005voter\030\002 \001(\tR\005vot" +
+      "er\022\035\n\nblock_hash\030\003 \001(\tR\tblockHash\022\024\n\005rou" +
+      "nd\030\004 \001(\005R\005round\022\031\n\010cp_round\030\005 \001(\005R\007cpRou" +
+      "nd\022\031\n\010cp_value\030\006 \001(\005R\007cpValue\"\227\001\n\rConsen" +
+      "susInfo\022\030\n\007address\030\001 \001(\tR\007address\022\026\n\006act" +
+      "ive\030\002 \001(\010R\006active\022\026\n\006height\030\003 \001(\rR\006heigh" +
+      "t\022\024\n\005round\030\004 \001(\005R\005round\022&\n\005votes\030\005 \003(\0132\020" +
+      ".pactus.VoteInfoR\005votes\"y\n\014ProposalInfo\022" +
+      "\026\n\006height\030\001 \001(\rR\006height\022\024\n\005round\030\002 \001(\005R\005" +
+      "round\022\035\n\nblock_data\030\003 \001(\tR\tblockData\022\034\n\t" +
+      "signature\030\004 \001(\tR\tsignature*T\n\tChainType\022" +
+      "\026\n\022CHAIN_TYPE_MAINNET\020\000\022\026\n\022CHAIN_TYPE_TE" +
+      "STNET\020\001\022\027\n\023CHAIN_TYPE_LOCALNET\020\002*f\n\016Bloc" +
+      "kVerbosity\022\030\n\024BLOCK_VERBOSITY_DATA\020\000\022\030\n\024" +
+      "BLOCK_VERBOSITY_INFO\020\001\022 \n\034BLOCK_VERBOSIT" +
+      "Y_TRANSACTIONS\020\002*\246\001\n\010VoteType\022\031\n\025VOTE_TY" +
+      "PE_UNSPECIFIED\020\000\022\025\n\021VOTE_TYPE_PREPARE\020\001\022" +
+      "\027\n\023VOTE_TYPE_PRECOMMIT\020\002\022\031\n\025VOTE_TYPE_CP" +
+      "_PRE_VOTE\020\003\022\032\n\026VOTE_TYPE_CP_MAIN_VOTE\020\004\022" +
+      "\030\n\024VOTE_TYPE_CP_DECIDED\020\0052\354\010\n\nBlockchain" +
+      "\022=\n\010GetBlock\022\027.pactus.GetBlockRequest\032\030." +
+      "pactus.GetBlockResponse\022I\n\014GetBlockHash\022" +
+      "\033.pactus.GetBlockHashRequest\032\034.pactus.Ge" +
+      "tBlockHashResponse\022O\n\016GetBlockHeight\022\035.p" +
+      "actus.GetBlockHeightRequest\032\036.pactus.Get" +
+      "BlockHeightResponse\022X\n\021GetBlockchainInfo" +
+      "\022 .pactus.GetBlockchainInfoRequest\032!.pac" +
+      "tus.GetBlockchainInfoResponse\022U\n\020GetComm" +
+      "itteeInfo\022\037.pactus.GetCommitteeInfoReque" +
+      "st\032 .pactus.GetCommitteeInfoResponse\022U\n\020" +
+      "GetConsensusInfo\022\037.pactus.GetConsensusIn" +
+      "foRequest\032 .pactus.GetConsensusInfoRespo" +
+      "nse\022C\n\nGetAccount\022\031.pactus.GetAccountReq" +
+      "uest\032\032.pactus.GetAccountResponse\022@\n\tGetA" +
+      "nchor\022\030.pactus.GetAnchorRequest\032\031.pactus" +
+      ".GetAnchorResponse\022F\n\013ListAnchors\022\032.pact" +
+      "us.ListAnchorsRequest\032\033.pactus.ListAncho" +
+      "rsResponse\022I\n\014GetValidator\022\033.pactus.GetV" +
+      "alidatorRequest\032\034.pactus.GetValidatorRes" +
+      "ponse\022Y\n\024GetValidatorByNumber\022#.pactus.G" +
+      "etValidatorByNumberRequest\032\034.pactus.GetV" +
+      "alidatorResponse\022d\n\025GetValidatorAddresse" +
+      "s\022$.pactus.GetValidatorAddressesRequest\032" +
+      "%.pactus.GetValidatorAddressesResponse\022I" +
+      "\n\014GetPublicKey\022\033.pactus.GetPublicKeyRequ" +
+      "est\032\034.pactus.GetPublicKeyResponse\022U\n\020Get" +
+      "TxPoolContent\022\037.pactus.GetTxPoolContentR" +
+      "equest\032 .pactus.GetTxPoolContentResponse" +
+      "B:\n\006pactusZ0github.com/pactus-project/pa" +
+      "ctus/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -26890,38 +32208,74 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_ValidatorInfo_descriptor,
         new java.lang.String[] { "Hash", "Data", "PublicKey", "Number", "Stake", "LastBondingHeight", "LastSortitionHeight", "UnbondingHeight", "Address", "AvailabilityScore", "ProtocolVersion", "IsDelegated", "DelegateOwner", "DelegateShare", "DelegateExpiry", });
-    internal_static_pactus_AccountInfo_descriptor =
+    internal_static_pactus_GetAnchorRequest_descriptor =
       getDescriptor().getMessageType(24);
+    internal_static_pactus_GetAnchorRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pactus_GetAnchorRequest_descriptor,
+        new java.lang.String[] { "Address", });
+    internal_static_pactus_GetAnchorResponse_descriptor =
+      getDescriptor().getMessageType(25);
+    internal_static_pactus_GetAnchorResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pactus_GetAnchorResponse_descriptor,
+        new java.lang.String[] { "Found", "Address", "Anchor", });
+    internal_static_pactus_ListAnchorsRequest_descriptor =
+      getDescriptor().getMessageType(26);
+    internal_static_pactus_ListAnchorsRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pactus_ListAnchorsRequest_descriptor,
+        new java.lang.String[] { "Skip", "Count", });
+    internal_static_pactus_ListAnchorsResponse_descriptor =
+      getDescriptor().getMessageType(27);
+    internal_static_pactus_ListAnchorsResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pactus_ListAnchorsResponse_descriptor,
+        new java.lang.String[] { "Items", "Total", });
+    internal_static_pactus_AnchorListItem_descriptor =
+      getDescriptor().getMessageType(28);
+    internal_static_pactus_AnchorListItem_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pactus_AnchorListItem_descriptor,
+        new java.lang.String[] { "Address", "Anchor", });
+    internal_static_pactus_AnchorInfo_descriptor =
+      getDescriptor().getMessageType(29);
+    internal_static_pactus_AnchorInfo_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pactus_AnchorInfo_descriptor,
+        new java.lang.String[] { "RootHash", "ManifestUri", "AnchorType", "LockedDeposit", "CreatedAtHeight", "CreatedAtTime", "UpdatedAtHeight", "UpdatedAtTime", });
+    internal_static_pactus_AccountInfo_descriptor =
+      getDescriptor().getMessageType(30);
     internal_static_pactus_AccountInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_AccountInfo_descriptor,
-        new java.lang.String[] { "Hash", "Data", "Number", "Balance", "Address", });
+        new java.lang.String[] { "Hash", "Data", "Number", "Balance", "Address", "Anchor", });
     internal_static_pactus_BlockHeaderInfo_descriptor =
-      getDescriptor().getMessageType(25);
+      getDescriptor().getMessageType(31);
     internal_static_pactus_BlockHeaderInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_BlockHeaderInfo_descriptor,
         new java.lang.String[] { "Version", "PrevBlockHash", "StateRoot", "SortitionSeed", "ProposerAddress", });
     internal_static_pactus_CertificateInfo_descriptor =
-      getDescriptor().getMessageType(26);
+      getDescriptor().getMessageType(32);
     internal_static_pactus_CertificateInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_CertificateInfo_descriptor,
         new java.lang.String[] { "Hash", "Round", "Committers", "Absentees", "Signature", });
     internal_static_pactus_VoteInfo_descriptor =
-      getDescriptor().getMessageType(27);
+      getDescriptor().getMessageType(33);
     internal_static_pactus_VoteInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_VoteInfo_descriptor,
         new java.lang.String[] { "Type", "Voter", "BlockHash", "Round", "CpRound", "CpValue", });
     internal_static_pactus_ConsensusInfo_descriptor =
-      getDescriptor().getMessageType(28);
+      getDescriptor().getMessageType(34);
     internal_static_pactus_ConsensusInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_ConsensusInfo_descriptor,
         new java.lang.String[] { "Address", "Active", "Height", "Round", "Votes", });
     internal_static_pactus_ProposalInfo_descriptor =
-      getDescriptor().getMessageType(29);
+      getDescriptor().getMessageType(35);
     internal_static_pactus_ProposalInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_ProposalInfo_descriptor,

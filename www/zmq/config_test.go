@@ -15,6 +15,7 @@ func TestDefaultConfig(t *testing.T) {
 	assert.Empty(t, cfg.ZmqPubTxInfo, "ZmqPubTxInfo should be empty")
 	assert.Empty(t, cfg.ZmqPubRawBlock, "ZmqPubRawBlock should be empty")
 	assert.Empty(t, cfg.ZmqPubRawTx, "ZmqPubRawTx should be empty")
+	assert.Empty(t, cfg.ZmqPubAnchorInfo, "ZmqPubAnchorInfo should be empty")
 	assert.Equal(t, 1000, cfg.ZmqPubHWM, "ZmqPubHWM should default to 1000")
 }
 

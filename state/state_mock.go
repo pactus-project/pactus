@@ -57,6 +57,22 @@ func (m *MockState) EXPECT() *MockStateMockRecorder {
 }
 
 // AccountByAddress mocks base method.
+func (m *MockState) ListAnchors(skip, count uint32) ([]AnchorAccount, uint32) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListAnchors", skip, count)
+	ret0, _ := ret[0].([]AnchorAccount)
+	ret1, _ := ret[1].(uint32)
+
+	return ret0, ret1
+}
+
+// ListAnchors indicates an expected call of ListAnchors.
+func (mr *MockStateMockRecorder) ListAnchors(skip, count any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListAnchors", reflect.TypeOf((*MockState)(nil).ListAnchors), skip, count)
+}
+
 func (m *MockState) AccountByAddress(addr crypto.Address) (*account.Account, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AccountByAddress", addr)

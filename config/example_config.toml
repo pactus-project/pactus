@@ -277,6 +277,11 @@
   # Default is '', meaning the topic is disabled
   zmqpubrawtx = ''
 
+  # `zmqpubanchorinfo` specifies the address for publishing anchor notifications.
+  # Example: 'tcp://127.0.0.1:28336'
+  # Default is '', meaning the topic is disabled
+  zmqpubanchorinfo = ''
+
   # `zmqpubhwm` defines the High Watermark (HWM) for ZeroMQ message pipes.
   # This parameter determines the maximum number of messages ZeroMQ can buffer before blocking the publishing of further messages.
   # The watermark is applied uniformly to all active topics.

@@ -103,6 +103,8 @@ func TestPublisherOnSameSockets(t *testing.T) {
 			require.Equal(t, blk.Header().ProposerAddress().Bytes(), proposerBytes)
 			require.Equal(t, blk.Header().UnixTime(), timestamp)
 			require.Equal(t, uint16(len(blk.Transactions())), txCount)
+		case TopicAnchorInfo:
+			require.Equal(t, TopicAnchorInfo, topic)
 		}
 	}
 

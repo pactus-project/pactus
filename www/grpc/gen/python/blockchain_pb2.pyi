@@ -266,6 +266,66 @@ class ValidatorInfo(_message.Message):
     delegate_expiry: int
     def __init__(self, hash: _Optional[str] = ..., data: _Optional[str] = ..., public_key: _Optional[str] = ..., number: _Optional[int] = ..., stake: _Optional[int] = ..., last_bonding_height: _Optional[int] = ..., last_sortition_height: _Optional[int] = ..., unbonding_height: _Optional[int] = ..., address: _Optional[str] = ..., availability_score: _Optional[float] = ..., protocol_version: _Optional[int] = ..., is_delegated: _Optional[bool] = ..., delegate_owner: _Optional[str] = ..., delegate_share: _Optional[int] = ..., delegate_expiry: _Optional[int] = ...) -> None: ...
 
+class GetAnchorRequest(_message.Message):
+    __slots__ = ()
+    ADDRESS_FIELD_NUMBER: _ClassVar[int]
+    address: str
+    def __init__(self, address: _Optional[str] = ...) -> None: ...
+
+class GetAnchorResponse(_message.Message):
+    __slots__ = ()
+    FOUND_FIELD_NUMBER: _ClassVar[int]
+    ADDRESS_FIELD_NUMBER: _ClassVar[int]
+    ANCHOR_FIELD_NUMBER: _ClassVar[int]
+    found: bool
+    address: str
+    anchor: AnchorInfo
+    def __init__(self, found: _Optional[bool] = ..., address: _Optional[str] = ..., anchor: _Optional[_Union[AnchorInfo, _Mapping]] = ...) -> None: ...
+
+class ListAnchorsRequest(_message.Message):
+    __slots__ = ()
+    SKIP_FIELD_NUMBER: _ClassVar[int]
+    COUNT_FIELD_NUMBER: _ClassVar[int]
+    skip: int
+    count: int
+    def __init__(self, skip: _Optional[int] = ..., count: _Optional[int] = ...) -> None: ...
+
+class ListAnchorsResponse(_message.Message):
+    __slots__ = ()
+    ITEMS_FIELD_NUMBER: _ClassVar[int]
+    TOTAL_FIELD_NUMBER: _ClassVar[int]
+    items: _containers.RepeatedCompositeFieldContainer[AnchorListItem]
+    total: int
+    def __init__(self, items: _Optional[_Iterable[_Union[AnchorListItem, _Mapping]]] = ..., total: _Optional[int] = ...) -> None: ...
+
+class AnchorListItem(_message.Message):
+    __slots__ = ()
+    ADDRESS_FIELD_NUMBER: _ClassVar[int]
+    ANCHOR_FIELD_NUMBER: _ClassVar[int]
+    address: str
+    anchor: AnchorInfo
+    def __init__(self, address: _Optional[str] = ..., anchor: _Optional[_Union[AnchorInfo, _Mapping]] = ...) -> None: ...
+
+class AnchorInfo(_message.Message):
+    __slots__ = ()
+    ROOT_HASH_FIELD_NUMBER: _ClassVar[int]
+    MANIFEST_URI_FIELD_NUMBER: _ClassVar[int]
+    ANCHOR_TYPE_FIELD_NUMBER: _ClassVar[int]
+    LOCKED_DEPOSIT_FIELD_NUMBER: _ClassVar[int]
+    CREATED_AT_HEIGHT_FIELD_NUMBER: _ClassVar[int]
+    CREATED_AT_TIME_FIELD_NUMBER: _ClassVar[int]
+    UPDATED_AT_HEIGHT_FIELD_NUMBER: _ClassVar[int]
+    UPDATED_AT_TIME_FIELD_NUMBER: _ClassVar[int]
+    root_hash: bytes
+    manifest_uri: str
+    anchor_type: int
+    locked_deposit: int
+    created_at_height: int
+    created_at_time: int
+    updated_at_height: int
+    updated_at_time: int
+    def __init__(self, root_hash: _Optional[bytes] = ..., manifest_uri: _Optional[str] = ..., anchor_type: _Optional[int] = ..., locked_deposit: _Optional[int] = ..., created_at_height: _Optional[int] = ..., created_at_time: _Optional[int] = ..., updated_at_height: _Optional[int] = ..., updated_at_time: _Optional[int] = ...) -> None: ...
+
 class AccountInfo(_message.Message):
     __slots__ = ()
     HASH_FIELD_NUMBER: _ClassVar[int]
@@ -273,12 +333,14 @@ class AccountInfo(_message.Message):
     NUMBER_FIELD_NUMBER: _ClassVar[int]
     BALANCE_FIELD_NUMBER: _ClassVar[int]
     ADDRESS_FIELD_NUMBER: _ClassVar[int]
+    ANCHOR_FIELD_NUMBER: _ClassVar[int]
     hash: str
     data: str
     number: int
     balance: int
     address: str
-    def __init__(self, hash: _Optional[str] = ..., data: _Optional[str] = ..., number: _Optional[int] = ..., balance: _Optional[int] = ..., address: _Optional[str] = ...) -> None: ...
+    anchor: AnchorInfo
+    def __init__(self, hash: _Optional[str] = ..., data: _Optional[str] = ..., number: _Optional[int] = ..., balance: _Optional[int] = ..., address: _Optional[str] = ..., anchor: _Optional[_Union[AnchorInfo, _Mapping]] = ...) -> None: ...
 
 class BlockHeaderInfo(_message.Message):
     __slots__ = ()

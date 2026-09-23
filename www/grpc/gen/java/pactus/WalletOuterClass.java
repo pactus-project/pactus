@@ -5397,7 +5397,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         walletName_ = s;
@@ -5417,7 +5417,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
         getWalletNameBytes() {
       java.lang.Object ref = walletName_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         walletName_ = b;
@@ -5758,7 +5758,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
           getWalletNameBytes() {
         java.lang.Object ref = walletName_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           walletName_ = b;
@@ -5951,7 +5951,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         walletName_ = s;
@@ -5971,7 +5971,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
         getWalletNameBytes() {
       java.lang.Object ref = walletName_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         walletName_ = b;
@@ -6312,7 +6312,7 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
           getWalletNameBytes() {
         java.lang.Object ref = walletName_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           walletName_ = b;
@@ -35886,12 +35886,12 @@ public final class WalletOuterClass extends com.google.protobuf.GeneratedFile {
       internal_static_pactus_RestoreWalletResponse_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_MigrateWalletRequest_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_pactus_MigrateWalletRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_MigrateWalletResponse_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_pactus_MigrateWalletResponse_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor

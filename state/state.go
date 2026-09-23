@@ -710,6 +710,13 @@ func (st *state) AccountByAddress(addr crypto.Address) (*account.Account, error)
 	return st.store.Account(addr)
 }
 
+func (st *state) ListAnchors(skip, count uint32) ([]AnchorAccount, uint32) {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
+	return pageAnchors(gatherAnchors(st.store.IterateAccounts), skip, count)
+}
+
 func (st *state) ValidatorAddresses() []crypto.Address {
 	return st.store.ValidatorAddresses()
 }

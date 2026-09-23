@@ -55,6 +55,11 @@ class TransactionStub:
                 request_serializer=transaction__pb2.GetRawBatchTransferTransactionRequest.SerializeToString,
                 response_deserializer=transaction__pb2.GetRawTransactionResponse.FromString,
                 _registered_method=True)
+        self.GetRawAnchorTransaction = channel.unary_unary(
+                '/pactus.Transaction/GetRawAnchorTransaction',
+                request_serializer=transaction__pb2.GetRawAnchorTransactionRequest.SerializeToString,
+                response_deserializer=transaction__pb2.GetRawTransactionResponse.FromString,
+                _registered_method=True)
         self.DecodeRawTransaction = channel.unary_unary(
                 '/pactus.Transaction/DecodeRawTransaction',
                 request_serializer=transaction__pb2.DecodeRawTransactionRequest.SerializeToString,
@@ -127,6 +132,13 @@ class TransactionServicer:
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetRawAnchorTransaction(self, request, context):
+        """GetRawAnchorTransaction retrieves raw details of an anchor transaction.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def DecodeRawTransaction(self, request, context):
         """DecodeRawTransaction accepts raw transaction and returns decoded transaction.
         """
@@ -182,6 +194,11 @@ def add_TransactionServicer_to_server(servicer, server):
             'GetRawBatchTransferTransaction': grpc.unary_unary_rpc_method_handler(
                     servicer.GetRawBatchTransferTransaction,
                     request_deserializer=transaction__pb2.GetRawBatchTransferTransactionRequest.FromString,
+                    response_serializer=transaction__pb2.GetRawTransactionResponse.SerializeToString,
+            ),
+            'GetRawAnchorTransaction': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetRawAnchorTransaction,
+                    request_deserializer=transaction__pb2.GetRawAnchorTransactionRequest.FromString,
                     response_serializer=transaction__pb2.GetRawTransactionResponse.SerializeToString,
             ),
             'DecodeRawTransaction': grpc.unary_unary_rpc_method_handler(
@@ -411,6 +428,33 @@ class Transaction:
             target,
             '/pactus.Transaction/GetRawBatchTransferTransaction',
             transaction__pb2.GetRawBatchTransferTransactionRequest.SerializeToString,
+            transaction__pb2.GetRawTransactionResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetRawAnchorTransaction(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/pactus.Transaction/GetRawAnchorTransaction',
+            transaction__pb2.GetRawAnchorTransactionRequest.SerializeToString,
             transaction__pb2.GetRawTransactionResponse.FromString,
             options,
             channel_credentials,

@@ -16,6 +16,7 @@ class PayloadType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     PAYLOAD_TYPE_UNBOND: _ClassVar[PayloadType]
     PAYLOAD_TYPE_WITHDRAW: _ClassVar[PayloadType]
     PAYLOAD_TYPE_BATCH_TRANSFER: _ClassVar[PayloadType]
+    PAYLOAD_TYPE_ANCHOR: _ClassVar[PayloadType]
 
 class TransactionVerbosity(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
@@ -28,6 +29,7 @@ PAYLOAD_TYPE_SORTITION: PayloadType
 PAYLOAD_TYPE_UNBOND: PayloadType
 PAYLOAD_TYPE_WITHDRAW: PayloadType
 PAYLOAD_TYPE_BATCH_TRANSFER: PayloadType
+PAYLOAD_TYPE_ANCHOR: PayloadType
 TRANSACTION_VERBOSITY_DATA: TransactionVerbosity
 TRANSACTION_VERBOSITY_INFO: TransactionVerbosity
 
@@ -161,6 +163,27 @@ class GetRawBatchTransferTransactionRequest(_message.Message):
     memo: str
     def __init__(self, lock_time: _Optional[int] = ..., sender: _Optional[str] = ..., recipients: _Optional[_Iterable[_Union[Recipient, _Mapping]]] = ..., fee: _Optional[int] = ..., memo: _Optional[str] = ...) -> None: ...
 
+class GetRawAnchorTransactionRequest(_message.Message):
+    __slots__ = ()
+    FROM_FIELD_NUMBER: _ClassVar[int]
+    ACTION_FIELD_NUMBER: _ClassVar[int]
+    ROOT_HASH_FIELD_NUMBER: _ClassVar[int]
+    MANIFEST_URI_FIELD_NUMBER: _ClassVar[int]
+    ANCHOR_TYPE_FIELD_NUMBER: _ClassVar[int]
+    DEPOSIT_FIELD_NUMBER: _ClassVar[int]
+    FEE_FIELD_NUMBER: _ClassVar[int]
+    MEMO_FIELD_NUMBER: _ClassVar[int]
+    LOCK_TIME_FIELD_NUMBER: _ClassVar[int]
+    action: int
+    root_hash: bytes
+    manifest_uri: str
+    anchor_type: int
+    deposit: int
+    fee: int
+    memo: str
+    lock_time: int
+    def __init__(self, action: _Optional[int] = ..., root_hash: _Optional[bytes] = ..., manifest_uri: _Optional[str] = ..., anchor_type: _Optional[int] = ..., deposit: _Optional[int] = ..., fee: _Optional[int] = ..., memo: _Optional[str] = ..., lock_time: _Optional[int] = ..., **kwargs) -> None: ...
+
 class GetRawTransactionResponse(_message.Message):
     __slots__ = ()
     RAW_TRANSACTION_FIELD_NUMBER: _ClassVar[int]
@@ -225,6 +248,21 @@ class PayloadWithdraw(_message.Message):
     amount: int
     def __init__(self, validator_address: _Optional[str] = ..., account_address: _Optional[str] = ..., amount: _Optional[int] = ...) -> None: ...
 
+class PayloadAnchor(_message.Message):
+    __slots__ = ()
+    FROM_FIELD_NUMBER: _ClassVar[int]
+    ACTION_FIELD_NUMBER: _ClassVar[int]
+    ROOT_HASH_FIELD_NUMBER: _ClassVar[int]
+    MANIFEST_URI_FIELD_NUMBER: _ClassVar[int]
+    ANCHOR_TYPE_FIELD_NUMBER: _ClassVar[int]
+    DEPOSIT_FIELD_NUMBER: _ClassVar[int]
+    action: int
+    root_hash: bytes
+    manifest_uri: str
+    anchor_type: int
+    deposit: int
+    def __init__(self, action: _Optional[int] = ..., root_hash: _Optional[bytes] = ..., manifest_uri: _Optional[str] = ..., anchor_type: _Optional[int] = ..., deposit: _Optional[int] = ..., **kwargs) -> None: ...
+
 class PayloadBatchTransfer(_message.Message):
     __slots__ = ()
     SENDER_FIELD_NUMBER: _ClassVar[int]
@@ -256,6 +294,7 @@ class TransactionInfo(_message.Message):
     UNBOND_FIELD_NUMBER: _ClassVar[int]
     WITHDRAW_FIELD_NUMBER: _ClassVar[int]
     BATCH_TRANSFER_FIELD_NUMBER: _ClassVar[int]
+    ANCHOR_FIELD_NUMBER: _ClassVar[int]
     MEMO_FIELD_NUMBER: _ClassVar[int]
     PUBLIC_KEY_FIELD_NUMBER: _ClassVar[int]
     SIGNATURE_FIELD_NUMBER: _ClassVar[int]
@@ -275,13 +314,14 @@ class TransactionInfo(_message.Message):
     unbond: PayloadUnbond
     withdraw: PayloadWithdraw
     batch_transfer: PayloadBatchTransfer
+    anchor: PayloadAnchor
     memo: str
     public_key: str
     signature: str
     block_height: int
     confirmed: bool
     confirmations: int
-    def __init__(self, id: _Optional[str] = ..., data: _Optional[str] = ..., version: _Optional[int] = ..., lock_time: _Optional[int] = ..., value: _Optional[int] = ..., fee: _Optional[int] = ..., payload_type: _Optional[_Union[PayloadType, str]] = ..., transfer: _Optional[_Union[PayloadTransfer, _Mapping]] = ..., bond: _Optional[_Union[PayloadBond, _Mapping]] = ..., sortition: _Optional[_Union[PayloadSortition, _Mapping]] = ..., unbond: _Optional[_Union[PayloadUnbond, _Mapping]] = ..., withdraw: _Optional[_Union[PayloadWithdraw, _Mapping]] = ..., batch_transfer: _Optional[_Union[PayloadBatchTransfer, _Mapping]] = ..., memo: _Optional[str] = ..., public_key: _Optional[str] = ..., signature: _Optional[str] = ..., block_height: _Optional[int] = ..., confirmed: _Optional[bool] = ..., confirmations: _Optional[int] = ...) -> None: ...
+    def __init__(self, id: _Optional[str] = ..., data: _Optional[str] = ..., version: _Optional[int] = ..., lock_time: _Optional[int] = ..., value: _Optional[int] = ..., fee: _Optional[int] = ..., payload_type: _Optional[_Union[PayloadType, str]] = ..., transfer: _Optional[_Union[PayloadTransfer, _Mapping]] = ..., bond: _Optional[_Union[PayloadBond, _Mapping]] = ..., sortition: _Optional[_Union[PayloadSortition, _Mapping]] = ..., unbond: _Optional[_Union[PayloadUnbond, _Mapping]] = ..., withdraw: _Optional[_Union[PayloadWithdraw, _Mapping]] = ..., batch_transfer: _Optional[_Union[PayloadBatchTransfer, _Mapping]] = ..., anchor: _Optional[_Union[PayloadAnchor, _Mapping]] = ..., memo: _Optional[str] = ..., public_key: _Optional[str] = ..., signature: _Optional[str] = ..., block_height: _Optional[int] = ..., confirmed: _Optional[bool] = ..., confirmations: _Optional[int] = ...) -> None: ...
 
 class DecodeRawTransactionRequest(_message.Message):
     __slots__ = ()

@@ -12,6 +12,7 @@ const (
 	TopicTransactionInfo Topic = 0x0002
 	TopicRawBlock        Topic = 0x0003
 	TopicRawTransaction  Topic = 0x0004
+	TopicAnchorInfo      Topic = 0x0005
 )
 
 func (t Topic) String() string {
@@ -27,6 +28,9 @@ func (t Topic) String() string {
 
 	case TopicRawTransaction:
 		return "raw_transaction"
+
+	case TopicAnchorInfo:
+		return "anchor_info"
 
 	default:
 		return fmt.Sprintf("topic-%d", t)

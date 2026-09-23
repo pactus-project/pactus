@@ -180,7 +180,7 @@ func _WalletLoadWalletCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("LoadWallet"),
 		Short: "LoadWallet RPC client",
-		Long:  "LoadWallet loads an existing wallet with the given name.\n deprecated: It will be removed in a future version.",
+		Long:  "LoadWallet loads an existing wallet with the given name.\r\n deprecated: It will be removed in a future version.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
@@ -222,7 +222,7 @@ func _WalletUnloadWalletCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("UnloadWallet"),
 		Short: "UnloadWallet RPC client",
-		Long:  "UnloadWallet unloads a currently loaded wallet with the specified name.\n deprecated: It will be removed in a future version.",
+		Long:  "UnloadWallet unloads a currently loaded wallet with the specified name.\r\n deprecated: It will be removed in a future version.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
@@ -474,7 +474,7 @@ func _WalletGetValidatorAddressCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetValidatorAddress"),
 		Short: "GetValidatorAddress RPC client",
-		Long:  "GetValidatorAddress retrieves the validator address associated with a public key.\n Deprecated: Will move into utils.",
+		Long:  "GetValidatorAddress retrieves the validator address associated with a public key.\r\n Deprecated: Will move into utils.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
@@ -783,7 +783,7 @@ func _WalletListTransactionsCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("ListTransactions"),
 		Short: "ListTransactions RPC client",
-		Long:  "ListTransactions returns a list of transactions for a wallet,\n optionally filtered by a specific address, with pagination support.",
+		Long:  "ListTransactions returns a list of transactions for a wallet,\r\n optionally filtered by a specific address, with pagination support.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
@@ -815,10 +815,10 @@ func _WalletListTransactionsCommand(cfg *client.Config) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "The name of the wallet to query transactions for.")
-	cmd.PersistentFlags().StringVar(&req.Address, cfg.FlagNamer("Address"), "", "Optional: The address to filter transactions.\n If empty or set to '*', transactions for all addresses in the wallet are included.")
-	flag.EnumVar(cmd.PersistentFlags(), &req.Direction, cfg.FlagNamer("Direction"), "Filter transactions by direction relative to the wallet.\n Defaults to any direction if not set.")
-	cmd.PersistentFlags().Int32Var(&req.Count, cfg.FlagNamer("Count"), 0, "Optional: The maximum number of transactions to return.\n Defaults to 10 if not set.")
-	cmd.PersistentFlags().Int32Var(&req.Skip, cfg.FlagNamer("Skip"), 0, "Optional: The number of transactions to skip (for pagination).\n Defaults to 0 if not set.")
+	cmd.PersistentFlags().StringVar(&req.Address, cfg.FlagNamer("Address"), "", "Optional: The address to filter transactions.\r\n If empty or set to '*', transactions for all addresses in the wallet are included.")
+	flag.EnumVar(cmd.PersistentFlags(), &req.Direction, cfg.FlagNamer("Direction"), "Filter transactions by direction relative to the wallet.\r\n Defaults to any direction if not set.")
+	cmd.PersistentFlags().Int32Var(&req.Count, cfg.FlagNamer("Count"), 0, "Optional: The maximum number of transactions to return.\r\n Defaults to 10 if not set.")
+	cmd.PersistentFlags().Int32Var(&req.Skip, cfg.FlagNamer("Skip"), 0, "Optional: The number of transactions to skip (for pagination).\r\n Defaults to 0 if not set.")
 
 	return cmd
 }

@@ -1092,6 +1092,170 @@ class GetRawBatchTransferTransactionRequest extends $pb.GeneratedMessage {
   void clearMemo() => $_clearField(5);
 }
 
+/// Request message for retrieving raw details of an anchor transaction.
+class GetRawAnchorTransactionRequest extends $pb.GeneratedMessage {
+  factory GetRawAnchorTransactionRequest({
+    $core.String? from,
+    $core.int? action,
+    $core.List<$core.int>? rootHash,
+    $core.String? manifestUri,
+    $core.int? anchorType,
+    $fixnum.Int64? deposit,
+    $fixnum.Int64? fee,
+    $core.String? memo,
+    $core.int? lockTime,
+  }) {
+    final result = create();
+    if (from != null) result.from = from;
+    if (action != null) result.action = action;
+    if (rootHash != null) result.rootHash = rootHash;
+    if (manifestUri != null) result.manifestUri = manifestUri;
+    if (anchorType != null) result.anchorType = anchorType;
+    if (deposit != null) result.deposit = deposit;
+    if (fee != null) result.fee = fee;
+    if (memo != null) result.memo = memo;
+    if (lockTime != null) result.lockTime = lockTime;
+    return result;
+  }
+
+  GetRawAnchorTransactionRequest._();
+
+  factory GetRawAnchorTransactionRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetRawAnchorTransactionRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetRawAnchorTransactionRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'from')
+    ..aI(2, _omitFieldNames ? '' : 'action', fieldType: $pb.PbFieldType.OU3)
+    ..a<$core.List<$core.int>>(
+        3, _omitFieldNames ? '' : 'rootHash', $pb.PbFieldType.OY)
+    ..aOS(4, _omitFieldNames ? '' : 'manifestUri')
+    ..aI(5, _omitFieldNames ? '' : 'anchorType', fieldType: $pb.PbFieldType.OU3)
+    ..aInt64(6, _omitFieldNames ? '' : 'deposit')
+    ..aInt64(7, _omitFieldNames ? '' : 'fee')
+    ..aOS(8, _omitFieldNames ? '' : 'memo')
+    ..aI(9, _omitFieldNames ? '' : 'lockTime', fieldType: $pb.PbFieldType.OU3)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetRawAnchorTransactionRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetRawAnchorTransactionRequest copyWith(
+          void Function(GetRawAnchorTransactionRequest) updates) =>
+      super.copyWith(
+              (message) => updates(message as GetRawAnchorTransactionRequest))
+          as GetRawAnchorTransactionRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetRawAnchorTransactionRequest create() =>
+      GetRawAnchorTransactionRequest._();
+  @$core.override
+  GetRawAnchorTransactionRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static GetRawAnchorTransactionRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetRawAnchorTransactionRequest>(create);
+  static GetRawAnchorTransactionRequest? _defaultInstance;
+
+  /// The sender's account address.
+  @$pb.TagNumber(1)
+  $core.String get from => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set from($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasFrom() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearFrom() => $_clearField(1);
+
+  /// 0 = set, 1 = delete.
+  @$pb.TagNumber(2)
+  $core.int get action => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set action($core.int value) => $_setUnsignedInt32(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasAction() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearAction() => $_clearField(2);
+
+  /// Required when action is set.
+  @$pb.TagNumber(3)
+  $core.List<$core.int> get rootHash => $_getN(2);
+  @$pb.TagNumber(3)
+  set rootHash($core.List<$core.int> value) => $_setBytes(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasRootHash() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearRootHash() => $_clearField(3);
+
+  /// Manifest URI. Ignored on delete.
+  @$pb.TagNumber(4)
+  $core.String get manifestUri => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set manifestUri($core.String value) => $_setString(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasManifestUri() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearManifestUri() => $_clearField(4);
+
+  /// Anchor type byte. Ignored on delete.
+  @$pb.TagNumber(5)
+  $core.int get anchorType => $_getIZ(4);
+  @$pb.TagNumber(5)
+  set anchorType($core.int value) => $_setUnsignedInt32(4, value);
+  @$pb.TagNumber(5)
+  $core.bool hasAnchorType() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearAnchorType() => $_clearField(5);
+
+  /// Additional lock in NanoPAC. Must be 0 on delete.
+  @$pb.TagNumber(6)
+  $fixnum.Int64 get deposit => $_getI64(5);
+  @$pb.TagNumber(6)
+  set deposit($fixnum.Int64 value) => $_setInt64(5, value);
+  @$pb.TagNumber(6)
+  $core.bool hasDeposit() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearDeposit() => $_clearField(6);
+
+  /// The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+  @$pb.TagNumber(7)
+  $fixnum.Int64 get fee => $_getI64(6);
+  @$pb.TagNumber(7)
+  set fee($fixnum.Int64 value) => $_setInt64(6, value);
+  @$pb.TagNumber(7)
+  $core.bool hasFee() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearFee() => $_clearField(7);
+
+  /// A memo string for the transaction.
+  @$pb.TagNumber(8)
+  $core.String get memo => $_getSZ(7);
+  @$pb.TagNumber(8)
+  set memo($core.String value) => $_setString(7, value);
+  @$pb.TagNumber(8)
+  $core.bool hasMemo() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearMemo() => $_clearField(8);
+
+  /// The lock time for the transaction. If not set, defaults to the last block height.
+  @$pb.TagNumber(9)
+  $core.int get lockTime => $_getIZ(8);
+  @$pb.TagNumber(9)
+  set lockTime($core.int value) => $_setUnsignedInt32(8, value);
+  @$pb.TagNumber(9)
+  $core.bool hasLockTime() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearLockTime() => $_clearField(9);
+}
+
 /// Response message contains raw transaction data.
 class GetRawTransactionResponse extends $pb.GeneratedMessage {
   factory GetRawTransactionResponse({
@@ -1617,6 +1781,128 @@ class PayloadWithdraw extends $pb.GeneratedMessage {
   void clearAmount() => $_clearField(3);
 }
 
+/// Payload for an anchor transaction.
+class PayloadAnchor extends $pb.GeneratedMessage {
+  factory PayloadAnchor({
+    $core.String? from,
+    $core.int? action,
+    $core.List<$core.int>? rootHash,
+    $core.String? manifestUri,
+    $core.int? anchorType,
+    $fixnum.Int64? deposit,
+  }) {
+    final result = create();
+    if (from != null) result.from = from;
+    if (action != null) result.action = action;
+    if (rootHash != null) result.rootHash = rootHash;
+    if (manifestUri != null) result.manifestUri = manifestUri;
+    if (anchorType != null) result.anchorType = anchorType;
+    if (deposit != null) result.deposit = deposit;
+    return result;
+  }
+
+  PayloadAnchor._();
+
+  factory PayloadAnchor.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory PayloadAnchor.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'PayloadAnchor',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'from')
+    ..aI(2, _omitFieldNames ? '' : 'action', fieldType: $pb.PbFieldType.OU3)
+    ..a<$core.List<$core.int>>(
+        3, _omitFieldNames ? '' : 'rootHash', $pb.PbFieldType.OY)
+    ..aOS(4, _omitFieldNames ? '' : 'manifestUri')
+    ..aI(5, _omitFieldNames ? '' : 'anchorType', fieldType: $pb.PbFieldType.OU3)
+    ..aInt64(6, _omitFieldNames ? '' : 'deposit')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  PayloadAnchor clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  PayloadAnchor copyWith(void Function(PayloadAnchor) updates) =>
+      super.copyWith((message) => updates(message as PayloadAnchor))
+          as PayloadAnchor;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static PayloadAnchor create() => PayloadAnchor._();
+  @$core.override
+  PayloadAnchor createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static PayloadAnchor getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<PayloadAnchor>(create);
+  static PayloadAnchor? _defaultInstance;
+
+  /// The sender's address.
+  @$pb.TagNumber(1)
+  $core.String get from => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set from($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasFrom() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearFrom() => $_clearField(1);
+
+  /// 0 = set, 1 = delete.
+  @$pb.TagNumber(2)
+  $core.int get action => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set action($core.int value) => $_setUnsignedInt32(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasAction() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearAction() => $_clearField(2);
+
+  /// Empty when action is delete.
+  @$pb.TagNumber(3)
+  $core.List<$core.int> get rootHash => $_getN(2);
+  @$pb.TagNumber(3)
+  set rootHash($core.List<$core.int> value) => $_setBytes(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasRootHash() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearRootHash() => $_clearField(3);
+
+  /// Manifest URI.
+  @$pb.TagNumber(4)
+  $core.String get manifestUri => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set manifestUri($core.String value) => $_setString(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasManifestUri() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearManifestUri() => $_clearField(4);
+
+  /// Anchor type byte.
+  @$pb.TagNumber(5)
+  $core.int get anchorType => $_getIZ(4);
+  @$pb.TagNumber(5)
+  set anchorType($core.int value) => $_setUnsignedInt32(4, value);
+  @$pb.TagNumber(5)
+  $core.bool hasAnchorType() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearAnchorType() => $_clearField(5);
+
+  /// Deposit in NanoPAC.
+  @$pb.TagNumber(6)
+  $fixnum.Int64 get deposit => $_getI64(5);
+  @$pb.TagNumber(6)
+  set deposit($fixnum.Int64 value) => $_setInt64(5, value);
+  @$pb.TagNumber(6)
+  $core.bool hasDeposit() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearDeposit() => $_clearField(6);
+}
+
 /// Payload for a batch transfer transaction.
 class PayloadBatchTransfer extends $pb.GeneratedMessage {
   factory PayloadBatchTransfer({
@@ -1756,6 +2042,7 @@ enum TransactionInfo_Payload {
   unbond,
   withdraw,
   batchTransfer,
+  anchor,
   notSet
 }
 
@@ -1781,6 +2068,7 @@ class TransactionInfo extends $pb.GeneratedMessage {
     PayloadUnbond? unbond,
     PayloadWithdraw? withdraw,
     PayloadBatchTransfer? batchTransfer,
+    PayloadAnchor? anchor,
   }) {
     final result = create();
     if (id != null) result.id = id;
@@ -1802,6 +2090,7 @@ class TransactionInfo extends $pb.GeneratedMessage {
     if (unbond != null) result.unbond = unbond;
     if (withdraw != null) result.withdraw = withdraw;
     if (batchTransfer != null) result.batchTransfer = batchTransfer;
+    if (anchor != null) result.anchor = anchor;
     return result;
   }
 
@@ -1822,13 +2111,14 @@ class TransactionInfo extends $pb.GeneratedMessage {
     33: TransactionInfo_Payload.unbond,
     34: TransactionInfo_Payload.withdraw,
     35: TransactionInfo_Payload.batchTransfer,
+    36: TransactionInfo_Payload.anchor,
     0: TransactionInfo_Payload.notSet
   };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'TransactionInfo',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
-    ..oo(0, [30, 31, 32, 33, 34, 35])
+    ..oo(0, [30, 31, 32, 33, 34, 35, 36])
     ..aOS(1, _omitFieldNames ? '' : 'id')
     ..aOS(2, _omitFieldNames ? '' : 'data')
     ..aI(3, _omitFieldNames ? '' : 'version')
@@ -1856,6 +2146,8 @@ class TransactionInfo extends $pb.GeneratedMessage {
         subBuilder: PayloadWithdraw.create)
     ..aOM<PayloadBatchTransfer>(35, _omitFieldNames ? '' : 'batchTransfer',
         subBuilder: PayloadBatchTransfer.create)
+    ..aOM<PayloadAnchor>(36, _omitFieldNames ? '' : 'anchor',
+        subBuilder: PayloadAnchor.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1883,6 +2175,7 @@ class TransactionInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(33)
   @$pb.TagNumber(34)
   @$pb.TagNumber(35)
+  @$pb.TagNumber(36)
   TransactionInfo_Payload whichPayload() =>
       _TransactionInfo_PayloadByTag[$_whichOneof(0)]!;
   @$pb.TagNumber(30)
@@ -1891,6 +2184,7 @@ class TransactionInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(33)
   @$pb.TagNumber(34)
   @$pb.TagNumber(35)
+  @$pb.TagNumber(36)
   void clearPayload() => $_clearField($_whichOneof(0));
 
   /// The unique ID of the transaction.
@@ -2096,6 +2390,18 @@ class TransactionInfo extends $pb.GeneratedMessage {
   void clearBatchTransfer() => $_clearField(35);
   @$pb.TagNumber(35)
   PayloadBatchTransfer ensureBatchTransfer() => $_ensure(18);
+
+  /// Anchor transaction payload.
+  @$pb.TagNumber(36)
+  PayloadAnchor get anchor => $_getN(19);
+  @$pb.TagNumber(36)
+  set anchor(PayloadAnchor value) => $_setField(36, value);
+  @$pb.TagNumber(36)
+  $core.bool hasAnchor() => $_has(19);
+  @$pb.TagNumber(36)
+  void clearAnchor() => $_clearField(36);
+  @$pb.TagNumber(36)
+  PayloadAnchor ensureAnchor() => $_ensure(19);
 }
 
 /// Request message for decoding a raw transaction.
@@ -2405,6 +2711,12 @@ class TransactionApi {
           'GetRawBatchTransferTransaction',
           request,
           GetRawTransactionResponse());
+
+  /// GetRawAnchorTransaction retrieves raw details of an anchor transaction.
+  $async.Future<GetRawTransactionResponse> getRawAnchorTransaction(
+          $pb.ClientContext? ctx, GetRawAnchorTransactionRequest request) =>
+      _client.invoke<GetRawTransactionResponse>(ctx, 'Transaction',
+          'GetRawAnchorTransaction', request, GetRawTransactionResponse());
 
   /// DecodeRawTransaction accepts raw transaction and returns decoded transaction.
   $async.Future<DecodeRawTransactionResponse> decodeRawTransaction(

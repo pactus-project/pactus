@@ -258,6 +258,63 @@ func (s *blockchainServer) GetAccount(_ context.Context,
 	return res, nil
 }
 
+func (s *blockchainServer) GetAnchor(_ context.Context,
+	req *pactus.GetAnchorRequest,
+) (*pactus.GetAnchorResponse, error) {
+	addr, err := anchorAccountAddress(req.Address)
+	if err != nil {
+		return nil, err
+	}
+
+	acc, err := s.state.AccountByAddress(addr)
+	if err != nil {
+		acc = nil
+	}
+	if acc == nil || !acc.HasAnchor() {
+		return &pactus.GetAnchorResponse{
+			Found:   false,
+			Address: addr.String(),
+		}, nil
+	}
+
+	return &pactus.GetAnchorResponse{
+		Found:   true,
+		Address: addr.String(),
+		Anchor:  anchorToProto(acc),
+	}, nil
+}
+
+func (s *blockchainServer) ListAnchors(_ context.Context,
+	req *pactus.ListAnchorsRequest,
+) (*pactus.ListAnchorsResponse, error) {
+	const (
+		defaultPage uint32 = 20
+		maxPage     uint32 = 100
+	)
+	if req.Count > maxPage {
+		return nil, status.Errorf(codes.InvalidArgument, "count must be at most %d", maxPage)
+	}
+
+	count := req.Count
+	if count == 0 {
+		count = defaultPage
+	}
+
+	listed, total := s.state.ListAnchors(req.Skip, count)
+	items := make([]*pactus.AnchorListItem, 0, len(listed))
+	for _, item := range listed {
+		items = append(items, &pactus.AnchorListItem{
+			Address: item.Address.String(),
+			Anchor:  anchorToProto(item.Account),
+		})
+	}
+
+	return &pactus.ListAnchorsResponse{
+		Items: items,
+		Total: total,
+	}, nil
+}
+
 func (s *blockchainServer) GetValidatorByNumber(_ context.Context,
 	req *pactus.GetValidatorByNumberRequest,
 ) (*pactus.GetValidatorResponse, error) {
@@ -376,6 +433,41 @@ func (*blockchainServer) accountToProto(addr crypto.Address, acc *account.Accoun
 		Number:  acc.Number(),
 		Balance: acc.Balance().ToNanoPAC(),
 		Address: addr.String(),
+		Anchor:  anchorToProto(acc),
+	}
+}
+
+func anchorAccountAddress(text string) (crypto.Address, error) {
+	addr, err := crypto.AddressFromString(text)
+	if err != nil {
+		return crypto.Address{}, status.Errorf(codes.InvalidArgument, "invalid address: %v", err)
+	}
+	switch addr.Type() {
+	case crypto.AddressTypeBLSAccount,
+		crypto.AddressTypeEd25519Account,
+		crypto.AddressTypeSecp256k1Account:
+		return addr, nil
+	case crypto.AddressTypeTreasury, crypto.AddressTypeValidator:
+		return crypto.Address{}, status.Errorf(codes.InvalidArgument, "invalid address")
+	default:
+		return crypto.Address{}, status.Errorf(codes.InvalidArgument, "invalid address")
+	}
+}
+
+func anchorToProto(acc *account.Account) *pactus.AnchorInfo {
+	if !acc.HasAnchor() {
+		return nil
+	}
+
+	return &pactus.AnchorInfo{
+		RootHash:        acc.RootHash(),
+		ManifestUri:     acc.ManifestURI(),
+		AnchorType:      uint32(acc.AnchorType()),
+		LockedDeposit:   acc.LockedDeposit().ToNanoPAC(),
+		CreatedAtHeight: uint32(acc.CreatedAtHeight()),
+		CreatedAtTime:   acc.CreatedAtTime(),
+		UpdatedAtHeight: uint32(acc.UpdatedAtHeight()),
+		UpdatedAtTime:   acc.UpdatedAtTime(),
 	}
 }
 
