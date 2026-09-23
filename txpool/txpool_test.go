@@ -1,6 +1,7 @@
 package txpool
 
 import (
+	"bytes"
 	"errors"
 	"testing"
 	"time"
@@ -401,6 +402,10 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	withdrawTx := td.makeWithdrawTx(testsuite.TransactionWithSigner(prv3))
 	sortitionTx := td.makeSortitionTx(testsuite.TransactionWithSigner(prv4))
 	batchTransferTx := td.makeBatchTransferTx(testsuite.TransactionWithSigner(prv5))
+	anchorPub, anchorPrv := td.RandBLSKeyPair()
+	anchorTx := tx.NewAnchorTx(td.sbx.CurrentHeight(), anchorPub.AccountAddress(), payload.AnchorActionSet,
+		bytes.Repeat([]byte{0x11}, 32), "anchor", 0, 1, td.pool.config.fixedFee())
+	td.HelperSignTransaction(anchorPrv, anchorTx)
 
 	td.mockExecution(transferTx, nil)
 	td.mockExecution(unbondTx, nil)
@@ -408,7 +413,9 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	td.mockExecution(bondTx, nil)
 	td.mockExecution(sortitionTx, nil)
 	td.mockExecution(batchTransferTx, nil)
+	td.mockExecution(anchorTx, nil)
 
+	require.NoError(t, td.pool.AppendTx(anchorTx))
 	require.NoError(t, td.pool.AppendTx(transferTx))
 	require.NoError(t, td.pool.AppendTx(unbondTx))
 	require.NoError(t, td.pool.AppendTx(withdrawTx))
@@ -417,13 +424,14 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	require.NoError(t, td.pool.AppendTx(batchTransferTx))
 
 	trxs := td.pool.PrepareBlockTransactions()
-	assert.Len(t, trxs, 6)
+	assert.Len(t, trxs, 7)
 	assert.Equal(t, sortitionTx.ID(), trxs[0].ID())
 	assert.Equal(t, bondTx.ID(), trxs[1].ID())
 	assert.Equal(t, unbondTx.ID(), trxs[2].ID())
 	assert.Equal(t, withdrawTx.ID(), trxs[3].ID())
 	assert.Equal(t, transferTx.ID(), trxs[4].ID())
 	assert.Equal(t, batchTransferTx.ID(), trxs[5].ID())
+	assert.Equal(t, anchorTx.ID(), trxs[6].ID())
 }
 
 func TestRecheckTransactions(t *testing.T) {
@@ -520,4 +528,5 @@ func TestEstimatedFee(t *testing.T) {
 
 	estimatedFee := td.pool.EstimatedFee(td.RandAmount(), payload.TypeTransfer)
 	assert.Equal(t, td.pool.config.fixedFee(), estimatedFee)
+	assert.Equal(t, estimatedFee, td.pool.EstimatedFee(td.RandAmount(), payload.TypeAnchor))
 }

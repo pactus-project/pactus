@@ -84,6 +84,10 @@ func (conf *Config) transferPoolSize() int {
 	return int(float32(conf.MaxSize) * 0.5)
 }
 
+func (conf *Config) anchorPoolSize() int {
+	return conf.transferPoolSize()
+}
+
 func (conf *Config) batchTransferPoolSize() int {
 	return int(float32(conf.MaxSize) * 0.1)
 }
