@@ -55,9 +55,9 @@ jobs:
         name: [linux-amd64, linux-arm64]
         include:
           - name: linux-amd64
-            runner: ubuntu-24.04
+            runner: ubuntu-26.04
           - name: linux-arm64
-            runner: ubuntu-24.04-arm
+            runner: ubuntu-26.04-arm
 
     steps:
       - uses: actions/checkout@v7

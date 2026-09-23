@@ -19,7 +19,7 @@ jobs:
         # Default values for `defaults.run.shell`
         # https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#defaultsrunshell
         include:
-          - name: ubuntu-latest
+          - name: ubuntu-26.04
             shell: "bash -e {0}"
           - name: macos-latest
             shell: "bash -e {0}"
