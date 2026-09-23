@@ -87,6 +87,10 @@ func TestAnchorRoundTrip(t *testing.T) {
 			UpdatedAtHeight: 7,
 			UpdatedAtTime:   6,
 		},
+		{
+			RootHash:      bytes.Repeat([]byte{0x44}, 32),
+			LockedDeposit: 1,
+		},
 	}
 
 	for _, anchor := range cases {
@@ -257,6 +261,30 @@ func TestTimestampsRoundTripInPlace(t *testing.T) {
 	require.Equal(t, acc.CreatedAtHeight(), other.CreatedAtHeight())
 	require.Equal(t, acc.CreatedAtTime(), other.CreatedAtTime())
 	require.Equal(t, acc.UpdatedAtHeight(), other.UpdatedAtHeight())
+
+	for _, variant := range []account.AnchorData{
+		{
+			RootHash: anchor.RootHash, LockedDeposit: 1,
+			CreatedAtHeight: 12, CreatedAtTime: 22, UpdatedAtHeight: 33, UpdatedAtTime: 44,
+		},
+		{
+			RootHash: anchor.RootHash, LockedDeposit: 1,
+			CreatedAtHeight: 11, CreatedAtTime: 23, UpdatedAtHeight: 33, UpdatedAtTime: 44,
+		},
+		{
+			RootHash: anchor.RootHash, LockedDeposit: 1,
+			CreatedAtHeight: 11, CreatedAtTime: 22, UpdatedAtHeight: 34, UpdatedAtTime: 44,
+		},
+		{
+			RootHash: anchor.RootHash, LockedDeposit: 1,
+			CreatedAtHeight: 11, CreatedAtTime: 22, UpdatedAtHeight: 33, UpdatedAtTime: 45,
+		},
+	} {
+		changedOne := account.NewAccount(4)
+		changedOne.AddToBalance(5)
+		require.NoError(t, changedOne.SetAnchor(variant))
+		require.NotEqual(t, acc.Hash(), changedOne.Hash())
+	}
 }
 
 func TestBalanceDoesNotIncludeLockedDeposit(t *testing.T) {

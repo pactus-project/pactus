@@ -50,4 +50,27 @@ func TestDecodedAccountsDoNotShareRootHash(t *testing.T) {
 
 	encoded[14] ^= 0xFF
 	require.Equal(t, byte(0xCD), second.RootHash()[0])
+	require.Len(t, second.data.Anchor.RootHash, 32)
+	require.Equal(t, 32, cap(second.data.Anchor.RootHash))
+}
+
+func TestAnchorHashDoesNotKeepCallerCapacity(t *testing.T) {
+	backing := make([]byte, 1<<20)
+	for i := range 32 {
+		backing[i] = 0xAB
+	}
+	window := backing[:32]
+	require.Greater(t, cap(window), len(window))
+
+	acc := NewAccount(1)
+	require.NoError(t, acc.SetAnchor(AnchorData{
+		RootHash:      window,
+		LockedDeposit: 1,
+	}))
+	require.Len(t, acc.data.Anchor.RootHash, 32)
+	require.Equal(t, 32, cap(acc.data.Anchor.RootHash))
+	require.Equal(t, 32, cap(acc.RootHash()))
+
+	cloned := acc.Clone()
+	require.Equal(t, 32, cap(cloned.data.Anchor.RootHash))
 }

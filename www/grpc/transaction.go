@@ -400,6 +400,10 @@ func transactionToProto(trx *tx.Tx, blockHeight types.Height, confirmations int)
 				Recipients: recipients,
 			},
 		}
+
+	case payload.TypeAnchor:
+		logger.Error("payload type not defined", "type", trx.Payload().Type())
+
 	default:
 		logger.Error("payload type not defined", "type", trx.Payload().Type())
 	}

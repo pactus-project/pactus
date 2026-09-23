@@ -180,6 +180,9 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 	case payload.TypeBatchTransfer:
 		return nil, errors.New("BatchTransfer is not implemented yet")
 
+	case payload.TypeAnchor:
+		return nil, errors.New("anchor transaction is not implemented yet")
+
 	case payload.TypeSortition:
 		return nil, errors.New("unable to build sortition transactions")
 	}

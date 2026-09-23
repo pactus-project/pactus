@@ -86,6 +86,9 @@ func FromBytes(bs []byte) (*Tx, error) {
 	if err := trx.Decode(r); err != nil {
 		return nil, err
 	}
+	if err := trx.rejectAnchorTrailing(r); err != nil {
+		return nil, err
+	}
 
 	return trx, nil
 }
@@ -259,8 +262,11 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 		return err
 	}
 	buf := bytes.NewBuffer(data)
+	if err := tx.Decode(buf); err != nil {
+		return err
+	}
 
-	return tx.Decode(buf)
+	return tx.rejectAnchorTrailing(buf)
 }
 
 // SerializeSize returns the number of bytes it would take to serialize the transaction.
@@ -407,6 +413,8 @@ func (tx *Tx) Decode(r io.Reader) error {
 		tx.data.Payload = new(payload.SortitionPayload)
 	case payload.TypeBatchTransfer:
 		tx.data.Payload = new(payload.BatchTransferPayload)
+	case payload.TypeAnchor:
+		tx.data.Payload = new(payload.AnchorPayload)
 
 	default:
 		return InvalidPayloadTypeError{
@@ -443,6 +451,19 @@ func (tx *Tx) Decode(r io.Reader) error {
 	tx.data.PublicKey = pub
 
 	return nil
+}
+
+// rejectAnchorTrailing rejects leftover bytes on a standalone anchor.
+// Block decoding does not call this.
+func (tx *Tx) rejectAnchorTrailing(r interface{ Len() int }) error {
+	if tx.data.Payload == nil || tx.data.Payload.Type() != payload.TypeAnchor {
+		return nil
+	}
+	if r.Len() == 0 {
+		return nil
+	}
+
+	return ErrTrailingBytes
 }
 
 func (tx *Tx) decodeSignature(r io.Reader) (crypto.Signature, error) {

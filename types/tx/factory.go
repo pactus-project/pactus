@@ -21,6 +21,23 @@ func NewSubsidyTx(lockTime types.Height,
 	)
 }
 
+//revive:disable-next-line:argument-limit
+func NewAnchorTx(lockTime types.Height, from crypto.Address, action uint8,
+	rootHash []byte, manifestURI string, anchorType uint8,
+	deposit, fee amount.Amount, opts ...TxOption,
+) *Tx {
+	pld := &payload.AnchorPayload{
+		From:        from,
+		Action:      action,
+		RootHash:    append([]byte(nil), rootHash...),
+		ManifestURI: manifestURI,
+		AnchorType:  anchorType,
+		Deposit:     deposit,
+	}
+
+	return newTx(lockTime, pld, fee, opts...)
+}
+
 func NewTransferTx(lockTime types.Height,
 	sender, receiver crypto.Address,
 	amt, fee amount.Amount, opts ...TxOption,
