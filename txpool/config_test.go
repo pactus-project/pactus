@@ -18,7 +18,7 @@ func TestDefaultConfig(t *testing.T) {
 	assert.Equal(t, 100, conf.withdrawPoolSize())
 	assert.Equal(t, 100, conf.sortitionPoolSize())
 	assert.Equal(t, 100, conf.batchTransferPoolSize())
-	assert.Equal(t, conf.transferPoolSize(), conf.anchorPoolSize())
+	assert.Equal(t, 100, conf.anchorPoolSize())
 	assert.Equal(t, amount.Amount(0.01e9), conf.fixedFee())
 
 	assert.Equal(t,
@@ -28,13 +28,16 @@ func TestDefaultConfig(t *testing.T) {
 			conf.withdrawPoolSize()+
 			conf.sortitionPoolSize()+
 			conf.batchTransferPoolSize(), conf.MaxSize)
+
+	// The anchor pool is bounded on its own, on top of MaxSize (PIP-50).
+	assert.Equal(t, conf.MaxSize/10, conf.anchorPoolSize())
 }
 
 func TestAnchorPoolSize(t *testing.T) {
 	for _, maxSize := range []int{10, 11, 1000} {
 		conf := DefaultConfig()
 		conf.MaxSize = maxSize
-		assert.Equal(t, conf.transferPoolSize(), conf.anchorPoolSize(), maxSize)
+		assert.Equal(t, conf.batchTransferPoolSize(), conf.anchorPoolSize(), maxSize)
 	}
 }
 

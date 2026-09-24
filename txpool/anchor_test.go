@@ -1014,7 +1014,7 @@ func TestAnchorRealSandbox(t *testing.T) {
 
 func TestAnchorSandboxOutlivesTheQueue(t *testing.T) {
 	conf := testDefaultConfig()
-	conf.MaxSize = 10
+	conf.MaxSize = 30 // three anchor slots, so the queue keeps more than one tx
 	lab := newAnchorLab(t, protocol.ProtocolVersion5, conf)
 	count := lab.pool.config.anchorPoolSize() + 1
 	addr, prv, acc := lab.fund(executor.MinAnchorDeposit + amount.Amount(count) + lab.fee()*amount.Amount(count))
