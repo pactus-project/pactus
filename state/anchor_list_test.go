@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/require"
 )
 
@@ -117,6 +118,25 @@ func TestListAnchorsStopsAtTheEnd(t *testing.T) {
 	got, total = td.state.ListAnchors(2, math.MaxUint32)
 	require.Equal(t, uint32(5), total)
 	require.Equal(t, []int32{2, 3, 4}, numbers(got))
+}
+
+// An anchor can be deleted between reading the index and reading the account.
+// Such accounts are skipped, and the total still comes from the index.
+func TestListAnchorsSkipsChangedAccounts(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+	reader := store.NewMockReader(ts.MockController())
+	kept, cleared, gone := ts.RandAccAddress(), ts.RandAccAddress(), ts.RandAccAddress()
+
+	reader.EXPECT().AnchorAddresses(uint32(0), uint32(3)).
+		Return([]crypto.Address{kept, cleared, gone}, uint32(3))
+	reader.EXPECT().Account(kept).Return(anchored(t, 1, 0x01), nil)
+	reader.EXPECT().Account(cleared).Return(account.NewAccount(2), nil)
+	reader.EXPECT().Account(gone).Return(nil, store.ErrNotFound)
+
+	items, total := listAnchors(reader, 0, 3)
+	require.Equal(t, uint32(3), total)
+	require.Len(t, items, 1)
+	require.Equal(t, kept, items[0].Address)
 }
 
 func filledAddress(fill byte) crypto.Address {

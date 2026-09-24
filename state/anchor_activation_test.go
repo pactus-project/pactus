@@ -17,6 +17,7 @@ import (
 	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/types/validator"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )
@@ -449,6 +450,95 @@ func TestAnchorCommitIgnoresLaterBan(t *testing.T) {
 	require.True(t, anchored.HasAnchor())
 	require.Equal(t, root, anchored.RootHash())
 	require.Equal(t, executor.MinAnchorDeposit, anchored.LockedDeposit())
+}
+
+// Anchor clocks come from the header of the block that carries the
+// transaction, and anchors never mint or burn coins (PIP-50 tests 20, 21, 26).
+func TestAnchorLifecycleAcrossBlocks(t *testing.T) {
+	td := setupWithVersion(t, protocol.ProtocolVersion5)
+	td.fakeTxPool.EXPECT().AppendTxAndBroadcast(gomock.Any()).Return(nil).AnyTimes()
+	sender := td.sender()
+	supply := td.totalCoins(t)
+
+	createBlk := td.propose(t, block.Txs{
+		td.anchor(td.nextHeight(), payload.AnchorActionSet, bytes.Repeat([]byte{0x41}, 32), "create",
+			executor.MinAnchorDeposit, 1),
+	})
+	td.commit(t, createBlk)
+	created := td.mustAccount(t, sender)
+	require.Equal(t, createBlk.Height(), created.CreatedAtHeight())
+	require.Equal(t, createBlk.Header().UnixTime(), created.CreatedAtTime())
+	require.Equal(t, createBlk.Height(), created.UpdatedAtHeight())
+	require.Equal(t, createBlk.Header().UnixTime(), created.UpdatedAtTime())
+	require.Equal(t, supply, td.totalCoins(t))
+
+	rootB := bytes.Repeat([]byte{0x42}, 64)
+	updateBlk := td.propose(t, block.Txs{
+		td.anchor(td.nextHeight(), payload.AnchorActionSet, rootB, "update", 0, 1),
+	})
+	td.commit(t, updateBlk)
+	updated := td.mustAccount(t, sender)
+	require.Equal(t, rootB, updated.RootHash())
+	require.Equal(t, executor.MinAnchorDeposit, updated.LockedDeposit())
+	require.Equal(t, createBlk.Height(), updated.CreatedAtHeight())
+	require.Equal(t, createBlk.Header().UnixTime(), updated.CreatedAtTime())
+	require.Equal(t, updateBlk.Height(), updated.UpdatedAtHeight())
+	require.Equal(t, updateBlk.Header().UnixTime(), updated.UpdatedAtTime())
+	require.Equal(t, supply, td.totalCoins(t))
+
+	deleteBlk := td.propose(t, block.Txs{
+		td.anchor(td.nextHeight(), payload.AnchorActionDelete, nil, "", 0, 1),
+	})
+	td.commit(t, deleteBlk)
+	require.False(t, td.mustAccount(t, sender).HasAnchor())
+	require.Len(t, td.accountBytes(t, sender), 12)
+	require.Equal(t, supply, td.totalCoins(t))
+}
+
+// A certified block is trusted. If it still carries an anchor that cannot be
+// stored, the node stops instead of crediting a fee that was never debited.
+func TestCommitStopsOnUnstorableAnchor(t *testing.T) {
+	td := setupWithVersion(t, protocol.ProtocolVersion5)
+	td.fakeTxPool.EXPECT().AppendTxAndBroadcast(gomock.Any()).Return(nil).AnyTimes()
+
+	template := td.proposeEmpty(t)
+	empty := td.anchor(template.Height(), payload.AnchorActionSet, bytes.Repeat([]byte{0x51}, 32), "empty", 0, 0)
+	blk := rebuildBlock(template, protocol.ProtocolVersion5, appendTxs(template.Transactions(), empty))
+	require.ErrorIs(t, td.state.ValidateBlock(blk, 0), executor.ErrAnchorDepositTooSmall)
+
+	cert := td.makeCertificateAndSign(t, blk.Hash(), 0)
+	require.Panics(t, func() {
+		_ = td.state.CommitBlock(blk, cert)
+	})
+}
+
+func TestConcreteSandboxUsesNextBlockTime(t *testing.T) {
+	td := setupWithVersion(t, protocol.ProtocolVersion5)
+
+	sbx := td.state.concreteSandbox()
+	next := td.state.lastInfo.BlockTime().Add(td.state.params.BlockInterval())
+	require.Equal(t, td.state.params.BlockVersion, sbx.BlockVersion())
+	require.Equal(t, uint32(next.Unix()), sbx.CurrentUnixTime())
+	require.NotZero(t, sbx.CurrentUnixTime())
+}
+
+// totalCoins sums spendable balances, locked anchor deposits and stakes.
+func (td *testData) totalCoins(t *testing.T) amount.Amount {
+	t.Helper()
+
+	total := amount.Amount(0)
+	td.state.store.IterateAccounts(func(_ crypto.Address, acc *account.Account) bool {
+		total += acc.Balance() + acc.LockedDeposit()
+
+		return false
+	})
+	td.state.store.IterateValidators(func(val *validator.Validator) bool {
+		total += val.Stake()
+
+		return false
+	})
+
+	return total
 }
 
 func (td *testData) requireProposed(t *testing.T, want protocol.Version) {

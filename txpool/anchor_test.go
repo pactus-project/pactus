@@ -596,6 +596,27 @@ func TestAnchorRejectionsLeaveThePool(t *testing.T) {
 	require.False(t, lab.pool.HasTx(expired.ID()))
 }
 
+// PIP-50 section 7: anchors come after all other transactions in the block
+// template, so they are the first left out of a full block.
+func TestAnchorsComeLastInTheBlockTemplate(t *testing.T) {
+	lab := newAnchorLab(t, protocol.ProtocolVersion5, nil)
+	addr, prv, _ := lab.fund(executor.MinAnchorDeposit + lab.fee())
+
+	anchorTx := lab.setTx(addr, prv, executor.MinAnchorDeposit, lab.fee(), anchorRoot(0x61, 32),
+		"first in", 0, lab.height, "")
+	require.NoError(t, lab.pool.AppendTx(anchorTx))
+	transfer := lab.GenerateTestTransferTx(
+		testsuite.TransactionWithLockTime(lab.height),
+		testsuite.TransactionWithFee(lab.fee()),
+	)
+	require.NoError(t, lab.pool.AppendTx(transfer))
+
+	prepared := lab.pool.PrepareBlockTransactions()
+	require.Len(t, prepared, 2)
+	require.Equal(t, transfer.ID(), prepared[0].ID())
+	require.Equal(t, anchorTx.ID(), prepared[1].ID())
+}
+
 func TestAnchorPoolLimits(t *testing.T) {
 	conf := testDefaultConfig()
 	conf.MaxSize = 10

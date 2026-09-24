@@ -220,9 +220,9 @@ func TestAnchorPayloadCarriesNoTimestamp(t *testing.T) {
 	inserted = append(inserted, bytes.Repeat([]byte{0xAB}, 16)...)
 	inserted = append(inserted, signed[cut:]...)
 	forged, err := tx.FromBytes(inserted)
-	if err == nil {
-		require.Error(t, forged.BasicCheck())
-	}
+	require.NoError(t, err)
+	require.Equal(t, setTx.Payload(), forged.Payload(), "inserted bytes must not reach the payload")
+	require.Error(t, forged.BasicCheck(), "they shift the signature, so verification fails")
 
 	delegated := append([]byte{}, signed...)
 	delegated[0] |= 0x04

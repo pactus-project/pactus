@@ -851,6 +851,20 @@ func TestAnchorAbsurdPayloads(t *testing.T) {
 		requireUnchanged(t, acc, before)
 	})
 
+	t.Run("execute panics on an anchor it cannot store", func(t *testing.T) {
+		td := setup(t)
+		td.useAnchor(1)
+		acc, addr := td.addTestAccount(t, testsuite.AccountWithBalance(10*MinAnchorDeposit))
+		before := accountBytes(t, acc)
+		exe, err := MakeExecutor(td.setAnchorTx(addr, root, "", 0, 0, 1), td.sbx)
+		require.NoError(t, err)
+		require.ErrorIs(t, exe.Check(td.sbx, true), ErrAnchorDepositTooSmall)
+		require.Panics(t, func() {
+			exe.Execute(td.sbx)
+		})
+		requireUnchanged(t, acc, before)
+	})
+
 	t.Run("check rejects what execute would wrap", func(t *testing.T) {
 		maxAmt := amount.Amount(amount.MaxNanoPAC)
 		td := setup(t)

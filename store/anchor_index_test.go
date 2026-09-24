@@ -60,6 +60,20 @@ func TestAnchorIndex(t *testing.T) {
 		require.Empty(t, addrs)
 	})
 
+	t.Run("rewriting an anchored account keeps one entry", func(t *testing.T) {
+		require.NoError(t, acc1.SetAnchor(account.AnchorData{
+			RootHash:      bytes.Repeat([]byte{0x77}, 64),
+			LockedDeposit: 2,
+		}))
+		td.store.UpdateAccount(addr1, acc1)
+		td.store.UpdateAccount(addr1, acc1)
+		require.NoError(t, td.store.WriteBatch())
+
+		addrs, total := td.store.AnchorAddresses(0, 10)
+		require.Equal(t, uint32(3), total)
+		require.Equal(t, []crypto.Address{addr1, addr2, addr3}, addrs)
+	})
+
 	t.Run("updates keep the index in sync", func(t *testing.T) {
 		acc2.ClearAnchor()
 		td.store.UpdateAccount(addr2, acc2)

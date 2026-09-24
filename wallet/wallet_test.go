@@ -929,6 +929,19 @@ func TestMakeAnchorTx(t *testing.T) {
 		assert.Equal(t, testHeight+1, trx.LockTime())
 	})
 
+	t.Run("update without a new deposit", func(t *testing.T) {
+		trx, err := td.wallet.MakeAnchorSetTx(sender.String(), root, "", 0, 0, OptionLockTime(7))
+		require.NoError(t, err)
+		require.NoError(t, trx.Payload().BasicCheck())
+		assert.Zero(t, trx.Payload().Value())
+	})
+
+	t.Run("manifest uri too long", func(t *testing.T) {
+		_, err := td.wallet.MakeAnchorSetTx(sender.String(), root, strings.Repeat("u", 129), 0,
+			anchorDeposit, OptionLockTime(7))
+		require.Error(t, err)
+	})
+
 	t.Run("invalid root hash", func(t *testing.T) {
 		_, err := td.wallet.MakeAnchorSetTx(sender.String(), bytesOf(0x51, 31), "", 0,
 			anchorDeposit, OptionLockTime(7))
