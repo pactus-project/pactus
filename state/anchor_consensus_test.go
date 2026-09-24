@@ -94,14 +94,14 @@ func requireSameAnchors(t *testing.T, left, right *state, addrs ...crypto.Addres
 }
 
 // totalCoinsOf sums spendable balances, locked anchor deposits and stakes.
-func totalCoinsOf(st *state) amount.Amount {
+func totalCoinsOf(chain *state) amount.Amount {
 	total := amount.Amount(0)
-	st.store.IterateAccounts(func(_ crypto.Address, acc *account.Account) bool {
+	chain.store.IterateAccounts(func(_ crypto.Address, acc *account.Account) bool {
 		total += acc.Balance() + acc.LockedDeposit()
 
 		return false
 	})
-	st.store.IterateValidators(func(val *validator.Validator) bool {
+	chain.store.IterateValidators(func(val *validator.Validator) bool {
 		total += val.Stake()
 
 		return false
