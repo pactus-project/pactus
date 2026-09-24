@@ -391,13 +391,15 @@ func TestAnchorParserAttacks(t *testing.T) {
 	longHash := setPayload(blsAddr(), 32, "", 0, 1)
 	longHash.RootHash = bytes.Repeat([]byte{0x11}, 300)
 	buf := bytes.NewBuffer(nil)
-	require.Error(t, longHash.Encode(buf))
-	require.Len(t, buf.Bytes(), 22)
+	require.ErrorIs(t, longHash.Encode(buf), payload.ErrAnchorFieldTooLong)
+	require.Empty(t, buf.Bytes())
+	require.Error(t, longHash.BasicCheck())
 
 	longURI := setPayload(blsAddr(), 32, strings.Repeat("a", 300), 0, 1)
 	buf.Reset()
-	require.Error(t, longURI.Encode(buf))
-	require.Len(t, buf.Bytes(), 22)
+	require.ErrorIs(t, longURI.Encode(buf), payload.ErrAnchorFieldTooLong)
+	require.Empty(t, buf.Bytes())
+	require.Error(t, longURI.BasicCheck())
 }
 
 func TestAnchorDecodeEveryByte(t *testing.T) {
@@ -568,8 +570,8 @@ func TestAnchorEncodeMatchesDecode(t *testing.T) {
 	}
 	for _, pld := range rejected {
 		buf := bytes.NewBuffer(nil)
-		require.Error(t, pld.Encode(buf))
-		require.Len(t, buf.Bytes(), 22)
+		require.NoError(t, pld.Encode(buf))
+		require.Len(t, buf.Bytes(), pld.SerializeSize())
 		got := &payload.AnchorPayload{}
 		require.Error(t, got.Decode(payload.DecodeContext{}, bytes.NewReader(buf.Bytes())))
 		require.Error(t, got.BasicCheck())

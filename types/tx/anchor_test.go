@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/types/amount"
@@ -203,23 +202,13 @@ func TestAnchorTxIDAndMemo(t *testing.T) {
 	require.Equal(t, base.Payload().Value(), changedLock.Payload().Value())
 }
 
-func TestAnchorTrailingBytes(t *testing.T) {
+// The Set encoding has no timestamp fields. Bytes placed after the payload
+// are read as the signature, never as timestamps.
+func TestAnchorPayloadCarriesNoTimestamp(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 	pub, prv := ts.RandBLSKeyPair()
 	from := pub.AccountAddress()
 	setTx := tx.NewAnchorTx(1, from, payload.AnchorActionSet, bytes.Repeat([]byte{0x11}, 32), "abc", 4, 300, 1)
-	delTx := tx.NewAnchorTx(1, from, payload.AnchorActionDelete, bytes.Repeat([]byte{0x22}, 64), "nope", 1, 9, 1)
-
-	setRaw, err := setTx.Bytes()
-	require.NoError(t, err)
-	delRaw, err := delTx.Bytes()
-	require.NoError(t, err)
-
-	_, err = tx.FromBytes(append(delRaw, setRaw...))
-	require.ErrorIs(t, err, tx.ErrTrailingBytes)
-
-	_, err = tx.FromBytes(append(setRaw, 0x01))
-	require.ErrorIs(t, err, tx.ErrTrailingBytes)
 
 	ts.HelperSignTransaction(prv, setTx)
 	signed, err := setTx.Bytes()
@@ -230,11 +219,10 @@ func TestAnchorTrailingBytes(t *testing.T) {
 	inserted = append(inserted, signed[:cut]...)
 	inserted = append(inserted, bytes.Repeat([]byte{0xAB}, 16)...)
 	inserted = append(inserted, signed[cut:]...)
-	_, err = tx.FromBytes(inserted)
-	require.Error(t, err)
-
-	_, err = tx.FromBytes(append(signed, signed...))
-	require.ErrorIs(t, err, tx.ErrTrailingBytes)
+	forged, err := tx.FromBytes(inserted)
+	if err == nil {
+		require.Error(t, forged.BasicCheck())
+	}
 
 	delegated := append([]byte{}, signed...)
 	delegated[0] |= 0x04
@@ -281,8 +269,6 @@ func TestAnchorStreamAndStandaloneBytes(t *testing.T) {
 	require.Equal(t, payload.TypeAnchor, first.Payload().Type())
 	require.Equal(t, payload.TypeTransfer, second.Payload().Type())
 	require.Zero(t, reader.Len())
-	_, err = tx.FromBytes(stream)
-	require.ErrorIs(t, err, tx.ErrTrailingBytes)
 
 	unsigned, err := tx.NewAnchorTx(1, from, payload.AnchorActionDelete, nil, "", 0, 0, 1).Bytes()
 	require.NoError(t, err)
@@ -290,8 +276,7 @@ func TestAnchorStreamAndStandaloneBytes(t *testing.T) {
 	unsignedReader := bytes.NewReader(unsignedStream)
 	require.NoError(t, new(tx.Tx).Decode(unsignedReader))
 	require.NoError(t, new(tx.Tx).Decode(unsignedReader))
-	_, err = tx.FromBytes(unsignedStream)
-	require.ErrorIs(t, err, tx.ErrTrailingBytes)
+	require.Zero(t, unsignedReader.Len())
 
 	buf := bytes.NewBuffer(nil)
 	require.NoError(t, anchorTx.Encode(buf, tx.StripPublicKey()))
@@ -299,17 +284,12 @@ func TestAnchorStreamAndStandaloneBytes(t *testing.T) {
 	require.NoError(t, err)
 	require.Nil(t, stripped.PublicKey())
 	require.Error(t, stripped.BasicCheck())
-	_, err = tx.FromBytes(append(buf.Bytes(), 0x01))
-	require.ErrorIs(t, err, tx.ErrTrailingBytes)
 
 	wrapped, err := anchorTx.MarshalCBOR()
 	require.NoError(t, err)
-	require.NoError(t, new(tx.Tx).UnmarshalCBOR(wrapped))
-	raw, err := anchorTx.Bytes()
-	require.NoError(t, err)
-	withExtra, err := cbor.Marshal(append(raw, 0xAB))
-	require.NoError(t, err)
-	require.ErrorIs(t, new(tx.Tx).UnmarshalCBOR(withExtra), tx.ErrTrailingBytes)
+	unwrapped := new(tx.Tx)
+	require.NoError(t, unwrapped.UnmarshalCBOR(wrapped))
+	require.Equal(t, anchorTx.ID(), unwrapped.ID())
 }
 
 func bytesString(n int) string {

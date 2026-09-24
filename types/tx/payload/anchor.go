@@ -1,8 +1,10 @@
 package payload
 
 import (
+	"errors"
 	"fmt"
 	"io"
+	"math"
 	"unicode/utf8"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -20,6 +22,9 @@ const (
 	maxAnchorHashLen = 64
 	maxAnchorURILen  = 128
 )
+
+// ErrAnchorFieldTooLong is returned when a hash or URI cannot fit its one-byte length prefix.
+var ErrAnchorFieldTooLong = errors.New("anchor field too long to encode")
 
 // AnchorPayload is a state anchor (PIP-50).
 type AnchorPayload struct {
@@ -61,7 +66,7 @@ func PreparedAnchor(action uint8, root []byte, uri string, kind uint8, deposit a
 
 // BasicCheck performs basic checks on the anchor payload.
 func (p *AnchorPayload) BasicCheck() error {
-	if !isAnchorAccount(p.From) {
+	if !IsAnchorOwner(p.From) {
 		return BasicCheckError{
 			Reason: "sender is not an account address: " + p.From.String(),
 		}
@@ -89,23 +94,23 @@ func (p *AnchorPayload) SerializeSize() int {
 		encoding.VarIntSerializeSize(uint64(p.Deposit))
 }
 
+// Encode writes the payload as SerializeSize describes it.
+// It does not validate the content; BasicCheck and Decode do.
+// It only refuses lengths that do not fit in their one-byte prefix,
+// and it does so before writing anything.
 func (p *AnchorPayload) Encode(w io.Writer) error {
+	if p.Action == AnchorActionSet &&
+		(len(p.RootHash) > math.MaxUint8 || len(p.ManifestURI) > math.MaxUint8) {
+		return ErrAnchorFieldTooLong
+	}
 	if err := p.From.Encode(w); err != nil {
 		return err
 	}
 	if err := encoding.WriteElement(w, p.Action); err != nil {
 		return err
 	}
-	if p.Action == AnchorActionDelete {
-		return nil
-	}
 	if p.Action != AnchorActionSet {
-		return BasicCheckError{
-			Reason: "invalid anchor action",
-		}
-	}
-	if err := p.checkSet(); err != nil {
-		return err
+		return nil
 	}
 	if err := encoding.WriteElement(w, uint8(len(p.RootHash))); err != nil {
 		return err
@@ -254,16 +259,8 @@ func readAnchorSet(r io.Reader, decoded *AnchorPayload) error {
 	return nil
 }
 
-func isAnchorAccount(addr crypto.Address) bool {
-	switch addr.Type() {
-	case crypto.AddressTypeBLSAccount,
-		crypto.AddressTypeEd25519Account,
-		crypto.AddressTypeSecp256k1Account:
-		return true
-	case crypto.AddressTypeTreasury,
-		crypto.AddressTypeValidator:
-		return false
-	default:
-		return false
-	}
+// IsAnchorOwner reports whether the address can own an anchor.
+// Only user accounts can; the treasury and validators cannot.
+func IsAnchorOwner(addr crypto.Address) bool {
+	return addr.IsAccountAddress() && !addr.IsTreasuryAddress()
 }

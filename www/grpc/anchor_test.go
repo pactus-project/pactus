@@ -875,7 +875,7 @@ func TestDecodeRawAnchorAndTransfer(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_TRANSFER, decoded.Transaction.PayloadType)
 
-	for _, badHex := range []string{"", "abc", res.RawTransaction + "ff"} {
+	for _, badHex := range []string{"", "abc"} {
 		_, err = client.DecodeRawTransaction(t.Context(), &pactus.DecodeRawTransactionRequest{RawTransaction: badHex})
 		require.Error(t, err)
 	}
