@@ -2,10 +2,12 @@ package tx_test
 
 import (
 	"bytes"
+	"strings"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -290,6 +292,76 @@ func TestAnchorStreamAndStandaloneBytes(t *testing.T) {
 	unwrapped := new(tx.Tx)
 	require.NoError(t, unwrapped.UnmarshalCBOR(wrapped))
 	require.Equal(t, anchorTx.ID(), unwrapped.ID())
+}
+
+// FuzzAnchorTx decodes arbitrary bytes as a transaction. Decoding must never
+// panic. A decoded anchor transaction must re-encode to the exact bytes it was
+// read from, keep its ID, and pass the payload checks unless its signer cannot
+// own an anchor.
+func FuzzAnchorTx(f *testing.F) {
+	blsPrv, err := bls.PrivateKeyFromString("SECRET1PQQQSYQCYQ5RQWZQFPG9SCRGWPUGPZYSNZS23V9CCRYDPK8QARC0SEZYD4L")
+	require.NoError(f, err)
+	edPrv, err := ed25519.PrivateKeyFromString("SECRET1RQQQSYQCYQ5RQWZQFPG9SCRGWPUGPZYSNZS23V9CCRYDPK8QARC0SW5D8X2")
+	require.NoError(f, err)
+
+	sign := func(prv crypto.PrivateKey, trx *tx.Tx) []byte {
+		trx.SetSignature(prv.Sign(trx.SignBytes()))
+		trx.SetPublicKey(prv.PublicKey())
+		raw, err := trx.Bytes()
+		require.NoError(f, err)
+
+		return raw
+	}
+	blsFrom := blsPrv.PublicKeyNative().AccountAddress()
+	edFrom := edPrv.PublicKeyNative().AccountAddress()
+
+	setRaw := sign(blsPrv, tx.NewAnchorTx(7, blsFrom, payload.AnchorActionSet,
+		bytes.Repeat([]byte{0x11}, 32), "ipfs://manifest", 2, 1e9, 1e7, tx.WithMemo("stamp")))
+	delRaw := sign(edPrv, tx.NewAnchorTx(7, edFrom, payload.AnchorActionDelete, nil, "", 0, 0, 1e7))
+	unsigned, err := tx.NewAnchorTx(7, blsFrom, payload.AnchorActionSet,
+		bytes.Repeat([]byte{0x22}, 64), strings.Repeat("u", 128), 0xFF, 1, 0).Bytes()
+	require.NoError(f, err)
+	cut := len(setRaw) - bls.SignatureSize - bls.PublicKeySize
+	inserted := append(append(bytes.Clone(setRaw[:cut]), bytes.Repeat([]byte{0xAB}, 16)...), setRaw[cut:]...)
+
+	f.Add(setRaw)
+	f.Add(delRaw)
+	f.Add(unsigned)
+	f.Add(setRaw[:len(setRaw)/2])
+	f.Add(inserted)
+	f.Add(append(bytes.Clone(delRaw), setRaw...))
+
+	f.Fuzz(func(t *testing.T, data []byte) {
+		trx, err := tx.FromBytes(data)
+		if err != nil || trx.Payload().Type() != payload.TypeAnchor {
+			return
+		}
+
+		encoded, err := trx.Bytes()
+		require.NoError(t, err)
+		require.Len(t, encoded, trx.SerializeSize())
+		// Decoding ignores unknown flag bits, the delegation flag on a payload
+		// that is not delegated, and the stripped-key flag on an unsigned
+		// transaction; Encode recomputes the flags. This is true for every
+		// transaction type, not only anchors. Every byte after the flags must
+		// match.
+		const stripedPublicKey, notSigned = 0x01, 0x02
+		wantFlags := data[0] & (stripedPublicKey | notSigned)
+		if wantFlags&notSigned != 0 {
+			wantFlags = notSigned // an unsigned transaction has no public key to strip
+		}
+		require.Equal(t, wantFlags, encoded[0])
+		require.Equal(t, data[1:len(encoded)], encoded[1:], "decoding must read a canonical prefix")
+
+		again, err := tx.FromBytes(encoded)
+		require.NoError(t, err)
+		require.Equal(t, trx.ID(), again.ID())
+
+		pld := trx.Payload().(*payload.AnchorPayload)
+		if err := pld.BasicCheck(); err != nil {
+			require.False(t, payload.IsAnchorOwner(pld.From), "a decoded anchor only fails on its signer: %v", err)
+		}
+	})
 }
 
 func bytesString(n int) string {
