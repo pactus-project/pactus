@@ -531,7 +531,7 @@
     },
     "/pactus/blockchain/get_validator_addresses": {
       "get": {
-        "summary": "GetValidatorAddresses retrieves a list of all validator addresses.\r\ndeprecated: It will be removed in a future version.",
+        "summary": "GetValidatorAddresses retrieves a list of all validator addresses.\ndeprecated: It will be removed in a future version.",
         "operationId": "Blockchain_GetValidatorAddresses",
         "responses": {
           "200": {
@@ -1250,7 +1250,7 @@
     },
     "/pactus/wallet/get_validator_address": {
       "get": {
-        "summary": "GetValidatorAddress retrieves the validator address associated with a public key.\r\nDeprecated: Will move into utils.",
+        "summary": "GetValidatorAddress retrieves the validator address associated with a public key.\nDeprecated: Will move into utils.",
         "operationId": "Wallet_GetValidatorAddress",
         "responses": {
           "200": {
@@ -1340,7 +1340,7 @@
           },
           {
             "name": "addressTypes",
-            "description": "Filter addresses by their types. If empty, all address types are included.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\r\nShould NOT be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type used for validator nodes.\n - ADDRESS_TYPE_BLS: Address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519: Address type with Ed25519 signature scheme.\n - ADDRESS_TYPE_SECP256K1: Address type with SECP256K1 signature scheme.",
+            "description": "Filter addresses by their types. If empty, all address types are included.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould NOT be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type used for validator nodes.\n - ADDRESS_TYPE_BLS: Address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519: Address type with Ed25519 signature scheme.\n - ADDRESS_TYPE_SECP256K1: Address type with SECP256K1 signature scheme.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1378,7 +1378,7 @@
     },
     "/pactus/wallet/list_transactions": {
       "get": {
-        "summary": "ListTransactions returns a list of transactions for a wallet,\r\noptionally filtered by a specific address, with pagination support.",
+        "summary": "ListTransactions returns a list of transactions for a wallet,\noptionally filtered by a specific address, with pagination support.",
         "operationId": "Wallet_ListTransactions",
         "responses": {
           "200": {
@@ -1404,14 +1404,14 @@
           },
           {
             "name": "address",
-            "description": "Optional: The address to filter transactions.\r\nIf empty or set to '*', transactions for all addresses in the wallet are included.",
+            "description": "Optional: The address to filter transactions.\nIf empty or set to '*', transactions for all addresses in the wallet are included.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "direction",
-            "description": "Filter transactions by direction relative to the wallet.\r\nDefaults to any direction if not set.\n\n - TX_DIRECTION_ANY: include both incoming and outgoing transactions.\n - TX_DIRECTION_INCOMING: Include only incoming transactions where the wallet receives funds.\n - TX_DIRECTION_OUTGOING: Include only outgoing transactions where the wallet sends funds.",
+            "description": "Filter transactions by direction relative to the wallet.\nDefaults to any direction if not set.\n\n - TX_DIRECTION_ANY: include both incoming and outgoing transactions.\n - TX_DIRECTION_INCOMING: Include only incoming transactions where the wallet receives funds.\n - TX_DIRECTION_OUTGOING: Include only outgoing transactions where the wallet sends funds.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -1424,7 +1424,7 @@
           },
           {
             "name": "count",
-            "description": "Optional: The maximum number of transactions to return.\r\nDefaults to 10 if not set.",
+            "description": "Optional: The maximum number of transactions to return.\nDefaults to 10 if not set.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1432,7 +1432,7 @@
           },
           {
             "name": "skip",
-            "description": "Optional: The number of transactions to skip (for pagination).\r\nDefaults to 0 if not set.",
+            "description": "Optional: The number of transactions to skip (for pagination).\nDefaults to 0 if not set.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1469,7 +1469,7 @@
     },
     "/pactus/wallet/load_wallet": {
       "post": {
-        "summary": "LoadWallet loads an existing wallet with the given name.\r\ndeprecated: It will be removed in a future version.",
+        "summary": "LoadWallet loads an existing wallet with the given name.\ndeprecated: It will be removed in a future version.",
         "operationId": "Wallet_LoadWallet",
         "responses": {
           "200": {
@@ -1488,7 +1488,7 @@
         "parameters": [
           {
             "name": "body",
-            "description": "Request message for loading an existing wallet.\r\nDeprecated: It will be removed in a future version.",
+            "description": "Request message for loading an existing wallet.\nDeprecated: It will be removed in a future version.",
             "in": "body",
             "required": true,
             "schema": {
@@ -1692,7 +1692,7 @@
     },
     "/pactus/wallet/unload_wallet": {
       "post": {
-        "summary": "UnloadWallet unloads a currently loaded wallet with the specified name.\r\ndeprecated: It will be removed in a future version.",
+        "summary": "UnloadWallet unloads a currently loaded wallet with the specified name.\ndeprecated: It will be removed in a future version.",
         "operationId": "Wallet_UnloadWallet",
         "responses": {
           "200": {
@@ -1711,7 +1711,7 @@
         "parameters": [
           {
             "name": "body",
-            "description": "Request message for unloading a wallet.\r\nDeprecated: It will be removed in a future version.",
+            "description": "Request message for unloading a wallet.\nDeprecated: It will be removed in a future version.",
             "in": "body",
             "required": true,
             "schema": {
@@ -1838,7 +1838,7 @@
         "ADDRESS_TYPE_SECP256K1"
       ],
       "default": "ADDRESS_TYPE_TREASURY",
-      "description": "AddressType defines different types of blockchain addresses.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\r\nShould NOT be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type used for validator nodes.\n - ADDRESS_TYPE_BLS: Address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519: Address type with Ed25519 signature scheme.\n - ADDRESS_TYPE_SECP256K1: Address type with SECP256K1 signature scheme."
+      "description": "AddressType defines different types of blockchain addresses.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould NOT be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type used for validator nodes.\n - ADDRESS_TYPE_BLS: Address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519: Address type with Ed25519 signature scheme.\n - ADDRESS_TYPE_SECP256K1: Address type with SECP256K1 signature scheme."
     },
     "pactusAnchorInfo": {
       "type": "object",
@@ -2261,7 +2261,7 @@
             "type": "object",
             "$ref": "#/definitions/pactusTransactionInfo"
           },
-          "description": "List of transactions in the block, available when verbosity level is set to\r\nBLOCK_VERBOSITY_TRANSACTIONS."
+          "description": "List of transactions in the block, available when verbosity level is set to\nBLOCK_VERBOSITY_TRANSACTIONS."
         }
       },
       "description": "Response message contains block information."
@@ -2319,7 +2319,7 @@
         },
         "inCommittee": {
           "type": "boolean",
-          "description": "Indicates whether this node participates in consensus: true if at least one\r\nof its running validators is a member of the current committee."
+          "description": "Indicates whether this node participates in consensus: true if at least one\nof its running validators is a member of the current committee."
         },
         "committeeSize": {
           "type": "integer",
@@ -2647,7 +2647,7 @@
         },
         "publicKey": {
           "type": "string",
-          "title": "The public key of the validator.\r\nOptional, but required when registering a new validator.;"
+          "title": "The public key of the validator.\nOptional, but required when registering a new validator.;"
         },
         "fee": {
           "type": "string",
@@ -2660,17 +2660,17 @@
         },
         "delegateOwner": {
           "type": "string",
-          "title": "The address of the delegate owner.\r\nOptional, but required when registering a new validator with delegation.;"
+          "title": "The address of the delegate owner.\nOptional, but required when registering a new validator with delegation.;"
         },
         "delegateShare": {
           "type": "string",
           "format": "int64",
-          "description": "The share percentage for the delegate owner.\r\nOptional, but required when registering a new validator with delegation.;\r\nMust be between 0 and 0.7 PAC in nano PAC."
+          "description": "The share percentage for the delegate owner.\nOptional, but required when registering a new validator with delegation.;\nMust be between 0 and 0.7 PAC in nano PAC."
         },
         "delegateExpiry": {
           "type": "integer",
           "format": "int64",
-          "title": "The expiry height for the delegate relationship.\r\nOptional, but required when registering a new validator with delegation.;"
+          "title": "The expiry height for the delegate relationship.\nOptional, but required when registering a new validator with delegation.;"
         }
       },
       "description": "Request message for retrieving raw details of a bond transaction."
@@ -2740,7 +2740,7 @@
         },
         "delegateOwner": {
           "type": "string",
-          "title": "The address of the delegate owner.\r\nOptional, but required when the validator is a delegated validator.;"
+          "title": "The address of the delegate owner.\nOptional, but required when the validator is a delegated validator.;"
         }
       },
       "description": "Request message for retrieving raw details of an unbond transaction."
@@ -3010,7 +3010,7 @@
           "description": "The name of the wallet to load."
         }
       },
-      "description": "Request message for loading an existing wallet.\r\nDeprecated: It will be removed in a future version."
+      "description": "Request message for loading an existing wallet.\nDeprecated: It will be removed in a future version."
     },
     "pactusLoadWalletResponse": {
       "type": "object",
@@ -3020,7 +3020,7 @@
           "description": "The name of the loaded wallet."
         }
       },
-      "description": "Response message confirming wallet loaded.\r\nDeprecated: It will be removed in a future version."
+      "description": "Response message confirming wallet loaded.\nDeprecated: It will be removed in a future version."
     },
     "pactusMetricInfo": {
       "type": "object",
@@ -3152,17 +3152,17 @@
         },
         "delegateOwner": {
           "type": "string",
-          "title": "The address of the delegate owner.\r\nOptional, but required when registering a new validator with delegation.;"
+          "title": "The address of the delegate owner.\nOptional, but required when registering a new validator with delegation.;"
         },
         "delegateShare": {
           "type": "string",
           "format": "int64",
-          "description": "The share percentage for the delegate owner.\r\nOptional, but required when registering a new validator with delegation.;\r\nMust be between 0 and 0.7 PAC in nano PAC."
+          "description": "The share percentage for the delegate owner.\nOptional, but required when registering a new validator with delegation.;\nMust be between 0 and 0.7 PAC in nano PAC."
         },
         "delegateExpiry": {
           "type": "integer",
           "format": "int64",
-          "title": "The expiry height for the delegate relationship.\r\nOptional, but required when registering a new validator with delegation.;"
+          "title": "The expiry height for the delegate relationship.\nOptional, but required when registering a new validator with delegation.;"
         }
       },
       "description": "Payload for a bond transaction."
@@ -3224,7 +3224,7 @@
         },
         "delegateOwner": {
           "type": "string",
-          "title": "The address of the delegate owner.\r\nOptional, but required when the validator is a delegated validator.;"
+          "title": "The address of the delegate owner.\nOptional, but required when the validator is a delegated validator.;"
         }
       },
       "description": "Payload for an unbond transaction."
@@ -3647,7 +3647,7 @@
         "blockHeight": {
           "type": "integer",
           "format": "int64",
-          "description": "The block height containing the transaction.\r\nA value of zero means the transaction is unconfirmed and may still in the transaction pool."
+          "description": "The block height containing the transaction.\nA value of zero means the transaction is unconfirmed and may still in the transaction pool."
         },
         "confirmed": {
           "type": "boolean",
@@ -3656,7 +3656,7 @@
         "confirmations": {
           "type": "integer",
           "format": "int32",
-          "description": "The number of blocks that have been added to the chain after this transaction was included in a block.\r\nA value of zero means the transaction is unconfirmed and may still in the transaction pool."
+          "description": "The number of blocks that have been added to the chain after this transaction was included in a block.\nA value of zero means the transaction is unconfirmed and may still in the transaction pool."
         }
       },
       "description": "Information about a transaction."
@@ -3698,7 +3698,7 @@
           "description": "The name of the wallet to unload."
         }
       },
-      "description": "Request message for unloading a wallet.\r\nDeprecated: It will be removed in a future version."
+      "description": "Request message for unloading a wallet.\nDeprecated: It will be removed in a future version."
     },
     "pactusUnloadWalletResponse": {
       "type": "object",
@@ -3708,7 +3708,7 @@
           "description": "The name of the unloaded wallet."
         }
       },
-      "description": "Response message confirming wallet unloading.\r\nDeprecated: It will be removed in a future version."
+      "description": "Response message confirming wallet unloading.\nDeprecated: It will be removed in a future version."
     },
     "pactusUpdatePasswordRequest": {
       "type": "object",
@@ -3974,7 +3974,7 @@
         "hwm": {
           "type": "integer",
           "format": "int32",
-          "description": "The high-water mark (HWM) for the publisher, indicating the\r\nmaximum number of messages to queue before dropping older ones."
+          "description": "The high-water mark (HWM) for the publisher, indicating the\nmaximum number of messages to queue before dropping older ones."
         }
       },
       "description": "ZMQPublisherInfo contains information about a ZeroMQ publisher."
