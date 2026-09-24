@@ -837,7 +837,7 @@ func TestInvalidProposal(t *testing.T) {
 	assert.Nil(t, td.consP.Proposal())
 }
 
-// TestCases runs some special cases to test the consensus algorithm.
+// TestCasesNormal runs some special cases to test the consensus algorithm.
 func TestCasesNormal(t *testing.T) {
 	tests := []struct {
 		seed        int64
