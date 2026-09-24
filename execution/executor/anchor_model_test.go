@@ -150,6 +150,13 @@ func (m *anchorModel) setOp() modelOp {
 	root, uri := m.randomRoot(), m.randomURI()
 	kind := uint8(m.td.RandIntMax(256))
 	fee := m.randomFee()
+	if m.td.RandIntMax(2) == 0 {
+		// Half of the Set operations are well formed, so the random part
+		// exercises deposits, balances and anchor state rather than BasicCheck.
+		root = m.td.RandBytes(32 + m.td.RandIntMax(33))
+		uri = "ipfs://manifest"
+		fee = amount.Amount(m.td.RandInt64Max(1e7))
+	}
 
 	var balance amount.Amount
 	acc := m.accounts[from]
@@ -319,7 +326,8 @@ func (m *anchorModel) requireMatchesModel(t *testing.T) {
 func TestAnchorModelRandomSequences(t *testing.T) {
 	sequences, steps := 300, 40
 	if testing.Short() {
-		sequences, steps = 30, 20
+		// Long enough sequences to chain create, update and delete.
+		sequences, steps = 20, 60
 	}
 
 	td := setup(t)
