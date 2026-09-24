@@ -47,6 +47,18 @@ func (p *AnchorPayload) Value() amount.Amount {
 	return p.Deposit
 }
 
+// PreparedAnchor returns the hash, URI, type, and deposit to store.
+// A delete stores none of them.
+func PreparedAnchor(action uint8, root []byte, uri string, kind uint8, deposit amount.Amount) (
+	[]byte, string, uint8, amount.Amount,
+) {
+	if action == AnchorActionDelete {
+		return nil, "", 0, 0
+	}
+
+	return root, uri, kind, deposit
+}
+
 // BasicCheck performs basic checks on the anchor payload.
 func (p *AnchorPayload) BasicCheck() error {
 	if !isAnchorAccount(p.From) {

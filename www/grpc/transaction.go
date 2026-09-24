@@ -299,15 +299,8 @@ func (s *transactionServer) GetRawAnchorTransaction(_ context.Context,
 	deposit := amount.Amount(req.Deposit)
 	fee := s.getFee(req.Fee, deposit, payload.TypeAnchor)
 	lockTime := s.getLockTime(req.LockTime)
-	root := req.RootHash
-	uri := req.ManifestUri
-	anchorType := uint8(req.AnchorType)
-	if req.Action == uint32(payload.AnchorActionDelete) {
-		root = nil
-		uri = ""
-		anchorType = 0
-		deposit = 0
-	}
+	root, uri, anchorType, deposit := payload.PreparedAnchor(
+		uint8(req.Action), req.RootHash, req.ManifestUri, uint8(req.AnchorType), deposit)
 
 	anchorTx := tx.NewAnchorTx(lockTime, sender, uint8(req.Action), root, uri, anchorType, deposit, fee,
 		tx.WithMemo(req.Memo))

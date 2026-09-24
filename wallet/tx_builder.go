@@ -185,18 +185,10 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 		return nil, errors.New("BatchTransfer is not implemented yet")
 
 	case payload.TypeAnchor:
-		root := m.anchorRoot
-		uri := m.anchorURI
-		kind := m.anchorType
-		deposit := m.amount
-		action := m.anchorAction
-		if action == payload.AnchorActionDelete {
-			root = nil
-			uri = ""
-			kind = 0
-			deposit = 0
-		}
-		trx = tx.NewAnchorTx(m.lockTime, *m.sender, action, root, uri, kind, deposit, m.fee, tx.WithMemo(m.memo))
+		root, uri, kind, deposit := payload.PreparedAnchor(
+			m.anchorAction, m.anchorRoot, m.anchorURI, m.anchorType, m.amount)
+		trx = tx.NewAnchorTx(m.lockTime, *m.sender, m.anchorAction, root, uri, kind, deposit, m.fee,
+			tx.WithMemo(m.memo))
 		if err := trx.Payload().BasicCheck(); err != nil {
 			return nil, err
 		}

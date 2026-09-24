@@ -181,6 +181,22 @@ func TestAnchorFrozenWire(t *testing.T) {
 	require.Equal(t, payload.AnchorActionDelete, delRaw[21])
 }
 
+func TestPreparedAnchorClearsDelete(t *testing.T) {
+	root := bytes.Repeat([]byte{0x11}, 32)
+	gotRoot, uri, kind, deposit := payload.PreparedAnchor(payload.AnchorActionDelete, root, "uri", 4, 9)
+	require.Nil(t, gotRoot)
+	require.Empty(t, uri)
+	require.Equal(t, uint8(0), kind)
+	require.Equal(t, amount.Amount(0), deposit)
+	require.Equal(t, root, bytes.Repeat([]byte{0x11}, 32))
+
+	gotRoot, uri, kind, deposit = payload.PreparedAnchor(payload.AnchorActionSet, root, "uri", 4, 9)
+	require.Equal(t, root, gotRoot)
+	require.Equal(t, "uri", uri)
+	require.Equal(t, uint8(4), kind)
+	require.Equal(t, amount.Amount(9), deposit)
+}
+
 func TestAnchorDeleteDropsSetFields(t *testing.T) {
 	pld := &payload.AnchorPayload{
 		From:        blsAddr(),
