@@ -957,6 +957,15 @@ func TestMakeAnchorTx(t *testing.T) {
 	t.Run("invalid sender address", func(t *testing.T) {
 		_, err := td.wallet.MakeAnchorDeleteTx("invalid_addr_string", OptionLockTime(7))
 		require.Error(t, err)
+		_, err = td.wallet.MakeAnchorSetTx("invalid_addr_string", root, "", 0, anchorDeposit, OptionLockTime(7))
+		require.Error(t, err)
+	})
+
+	t.Run("invalid option", func(t *testing.T) {
+		_, err := td.wallet.MakeAnchorSetTx(sender.String(), root, "", 0, anchorDeposit, OptionFee("not-a-fee"))
+		require.Error(t, err)
+		_, err = td.wallet.MakeAnchorDeleteTx(sender.String(), OptionFee("not-a-fee"))
+		require.Error(t, err)
 	})
 }
 

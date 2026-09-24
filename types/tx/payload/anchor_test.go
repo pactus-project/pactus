@@ -12,6 +12,7 @@ import (
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/require"
@@ -554,6 +555,21 @@ func TestAnchorDecodeStoresTightHash(t *testing.T) {
 	require.NoError(t, decoded.Decode(payload.DecodeContext{}, bytes.NewReader(backing[:len(body)])))
 	require.Len(t, decoded.RootHash, 64)
 	require.Equal(t, 64, cap(decoded.RootHash))
+}
+
+// Encode must return the writer's error at every field, whatever byte fails.
+func TestAnchorEncodeWriteErrors(t *testing.T) {
+	payloads := []*payload.AnchorPayload{
+		setPayload(blsAddr(), 64, "ipfs://manifest", 3, 300),
+		{From: blsAddr(), Action: payload.AnchorActionDelete},
+	}
+	for _, pld := range payloads {
+		size := pld.SerializeSize()
+		for limit := 0; limit < size; limit++ {
+			require.Error(t, pld.Encode(util.NewFixedWriter(limit)), "action %d, limit %d", pld.Action, limit)
+		}
+		require.NoError(t, pld.Encode(util.NewFixedWriter(size)))
+	}
 }
 
 func TestAnchorEncodeMatchesDecode(t *testing.T) {

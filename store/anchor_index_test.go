@@ -125,6 +125,23 @@ func TestNewStorePanicsOnCorruptAnchorRecord(t *testing.T) {
 	})
 }
 
+// Only a missing key is ErrNotFound. A record that does not decode, or a
+// closed database, is a real error.
+func TestAccountReadErrors(t *testing.T) {
+	td := setup(t, nil)
+
+	short := td.RandAccAddress()
+	require.NoError(t, td.store.db.Put(accountKey(short), []byte{0x01, 0x02, 0x03}, nil))
+	_, err := td.store.Account(short)
+	require.Error(t, err)
+	require.NotErrorIs(t, err, ErrNotFound)
+
+	td.store.Close()
+	_, err = td.store.Account(td.RandAccAddress())
+	require.Error(t, err)
+	require.NotErrorIs(t, err, ErrNotFound)
+}
+
 func TestAccountNotFound(t *testing.T) {
 	td := setup(t, nil)
 

@@ -712,6 +712,18 @@ func TestGetRawAnchorTransaction(t *testing.T) {
 	require.Equal(t, raw.Signature().Bytes(), again.Signature().Bytes())
 }
 
+func TestGetRawAnchorRejectsBadSender(t *testing.T) {
+	td := setup(t, nil)
+	client := td.transactionClient(t)
+
+	for _, from := range []string{"", "not-an-address"} {
+		_, err := client.GetRawAnchorTransaction(t.Context(), &pactus.GetRawAnchorTransactionRequest{
+			From: from, RootHash: bytesRepeat(0x11, 32), Deposit: 5, Fee: 1,
+		})
+		require.Equal(t, codes.InvalidArgument, status.Code(err), from)
+	}
+}
+
 func TestGetRawAnchorRejectsWideAnchorType(t *testing.T) {
 	td := setup(t, nil)
 	client := td.transactionClient(t)
