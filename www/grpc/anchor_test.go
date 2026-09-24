@@ -672,6 +672,35 @@ func TestGetRawAnchorTransaction(t *testing.T) {
 	require.Equal(t, raw.Signature().Bytes(), again.Signature().Bytes())
 }
 
+func TestGetRawAnchorRejectsWideAnchorType(t *testing.T) {
+	td := setup(t, nil)
+	client := td.transactionClient(t)
+	from := td.RandAccAddress().String()
+	root := bytesRepeat(0x11, 32)
+
+	for _, anchorType := range []uint32{256, 300, math.MaxUint32} {
+		_, err := client.GetRawAnchorTransaction(t.Context(), &pactus.GetRawAnchorTransactionRequest{
+			From:       from,
+			RootHash:   root,
+			AnchorType: anchorType,
+			Deposit:    5,
+			Fee:        1,
+		})
+		require.Equal(t, codes.InvalidArgument, status.Code(err), anchorType)
+	}
+
+	res, err := client.GetRawAnchorTransaction(t.Context(), &pactus.GetRawAnchorTransactionRequest{
+		From:       from,
+		RootHash:   root,
+		AnchorType: math.MaxUint8,
+		Deposit:    5,
+		Fee:        1,
+	})
+	require.NoError(t, err)
+	decoded := decodeAnchor(t, client, res.RawTransaction)
+	require.Equal(t, uint32(math.MaxUint8), decoded.GetAnchor().AnchorType)
+}
+
 func TestGetRawAnchorFeeAndLockTime(t *testing.T) {
 	td := setup(t, nil)
 	client := td.transactionClient(t)

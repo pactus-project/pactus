@@ -3,11 +3,14 @@ package grpc
 import (
 	"context"
 	"encoding/hex"
+	"errors"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -267,8 +270,8 @@ func (s *blockchainServer) GetAnchor(_ context.Context,
 	}
 
 	acc, err := s.state.AccountByAddress(addr)
-	if err != nil {
-		acc = nil
+	if err != nil && !errors.Is(err, store.ErrNotFound) {
+		return nil, status.Errorf(codes.Internal, "unable to read account: %v", err)
 	}
 	if acc == nil || !acc.HasAnchor() {
 		return &pactus.GetAnchorResponse{
@@ -442,16 +445,11 @@ func anchorAccountAddress(text string) (crypto.Address, error) {
 	if err != nil {
 		return crypto.Address{}, status.Errorf(codes.InvalidArgument, "invalid address: %v", err)
 	}
-	switch addr.Type() {
-	case crypto.AddressTypeBLSAccount,
-		crypto.AddressTypeEd25519Account,
-		crypto.AddressTypeSecp256k1Account:
-		return addr, nil
-	case crypto.AddressTypeTreasury, crypto.AddressTypeValidator:
-		return crypto.Address{}, status.Errorf(codes.InvalidArgument, "invalid address")
-	default:
+	if !payload.IsAnchorOwner(addr) {
 		return crypto.Address{}, status.Errorf(codes.InvalidArgument, "invalid address")
 	}
+
+	return addr, nil
 }
 
 func anchorToProto(acc *account.Account) *pactus.AnchorInfo {

@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"encoding/hex"
+	"math"
 
 	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/pactus/crypto"
@@ -294,6 +295,9 @@ func (s *transactionServer) GetRawAnchorTransaction(_ context.Context,
 		}
 	} else if req.Action != uint32(payload.AnchorActionSet) {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid anchor action")
+	}
+	if req.AnchorType > math.MaxUint8 {
+		return nil, status.Errorf(codes.InvalidArgument, "anchor type must be at most %d", math.MaxUint8)
 	}
 
 	deposit := amount.Amount(req.Deposit)
