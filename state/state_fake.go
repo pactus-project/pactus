@@ -206,7 +206,7 @@ func NewFakeState(ts *testsuite.TestSuite) *FakeState {
 
 	mock.EXPECT().ListAnchors(gomock.Any(), gomock.Any()).DoAndReturn(
 		func(skip, count uint32) ([]AnchorAccount, uint32) {
-			return pageAnchors(gatherAnchors(fake.FakeStore.IterateAccounts), skip, count)
+			return listAnchors(fake.FakeStore, skip, count)
 		},
 	).AnyTimes()
 

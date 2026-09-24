@@ -1,10 +1,8 @@
 package state
 
 import (
-	"cmp"
-	"slices"
-
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
 )
 
@@ -14,32 +12,18 @@ type AnchorAccount struct {
 	Account *account.Account
 }
 
-func gatherAnchors(iter func(func(crypto.Address, *account.Account) bool)) []AnchorAccount {
-	items := make([]AnchorAccount, 0)
-	iter(func(addr crypto.Address, acc *account.Account) bool {
-		if acc.HasAnchor() {
-			items = append(items, AnchorAccount{Address: addr, Account: acc})
+// listAnchors reads one page of anchor holders through the store's anchor index.
+// An anchor deleted between the two reads is skipped.
+func listAnchors(reader store.Reader, skip, count uint32) ([]AnchorAccount, uint32) {
+	addrs, total := reader.AnchorAddresses(skip, count)
+	items := make([]AnchorAccount, 0, len(addrs))
+	for _, addr := range addrs {
+		acc, err := reader.Account(addr)
+		if err != nil || !acc.HasAnchor() {
+			continue
 		}
-
-		return false
-	})
-	slices.SortFunc(items, func(left, right AnchorAccount) int {
-		return cmp.Compare(left.Account.Number(), right.Account.Number())
-	})
-
-	return items
-}
-
-func pageAnchors(items []AnchorAccount, skip, count uint32) ([]AnchorAccount, uint32) {
-	total := uint32(len(items))
-	if skip >= total || count == 0 {
-		return nil, total
+		items = append(items, AnchorAccount{Address: addr, Account: acc})
 	}
 
-	end := skip + count
-	if end < skip || end > total {
-		end = total
-	}
-
-	return items[skip:end], total
+	return items, total
 }

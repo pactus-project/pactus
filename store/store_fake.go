@@ -1,6 +1,9 @@
 package store
 
 import (
+	"cmp"
+	"slices"
+
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
@@ -197,6 +200,23 @@ func NewFakeStore(ts *testsuite.TestSuite) *FakeStore {
 					return
 				}
 			}
+		},
+	).AnyTimes()
+
+	fake.EXPECT().AnchorAddresses(gomock.Any(), gomock.Any()).DoAndReturn(
+		func(skip, count uint32) ([]crypto.Address, uint32) {
+			anchors := make([]anchorEntry, 0)
+			for addr, acc := range fake.FakeAccounts {
+				if acc.HasAnchor() {
+					anchors = append(anchors, anchorEntry{number: acc.Number(), addr: addr})
+				}
+			}
+			slices.SortFunc(anchors, func(left, right anchorEntry) int {
+				return cmp.Compare(left.number, right.number)
+			})
+			index := &accountStore{anchors: anchors}
+
+			return index.anchorAddresses(skip, count)
 		},
 	).AnyTimes()
 

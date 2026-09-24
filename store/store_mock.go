@@ -78,6 +78,21 @@ func (mr *MockReaderMockRecorder) ActiveValidators() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ActiveValidators", reflect.TypeOf((*MockReader)(nil).ActiveValidators))
 }
 
+// AnchorAddresses mocks base method.
+func (m *MockReader) AnchorAddresses(skip, count uint32) ([]crypto.Address, uint32) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AnchorAddresses", skip, count)
+	ret0, _ := ret[0].([]crypto.Address)
+	ret1, _ := ret[1].(uint32)
+	return ret0, ret1
+}
+
+// AnchorAddresses indicates an expected call of AnchorAddresses.
+func (mr *MockReaderMockRecorder) AnchorAddresses(skip, count any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AnchorAddresses", reflect.TypeOf((*MockReader)(nil).AnchorAddresses), skip, count)
+}
+
 // Block mocks base method.
 func (m *MockReader) Block(height types.Height) (*CommittedBlock, error) {
 	m.ctrl.T.Helper()
@@ -424,6 +439,21 @@ func (m *MockStore) ActiveValidators() int32 {
 func (mr *MockStoreMockRecorder) ActiveValidators() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ActiveValidators", reflect.TypeOf((*MockStore)(nil).ActiveValidators))
+}
+
+// AnchorAddresses mocks base method.
+func (m *MockStore) AnchorAddresses(skip, count uint32) ([]crypto.Address, uint32) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AnchorAddresses", skip, count)
+	ret0, _ := ret[0].([]crypto.Address)
+	ret1, _ := ret[1].(uint32)
+	return ret0, ret1
+}
+
+// AnchorAddresses indicates an expected call of AnchorAddresses.
+func (mr *MockStoreMockRecorder) AnchorAddresses(skip, count any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AnchorAddresses", reflect.TypeOf((*MockStore)(nil).AnchorAddresses), skip, count)
 }
 
 // Block mocks base method.

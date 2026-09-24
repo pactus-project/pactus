@@ -62,13 +62,13 @@ func TestListAnchorsSignedOrderAndMutation(t *testing.T) {
 	require.Equal(t, []int32{-1, 0, math.MaxInt32}, numbers(items))
 
 	kept := items[0].Address
-	items[1].Account.ClearAnchor()
+	fakeStore.FakeAccounts[items[1].Address].ClearAnchor()
 	items, total = td.state.ListAnchors(0, 20)
 	require.Equal(t, uint32(2), total)
 	require.Equal(t, kept, items[0].Address)
 	require.NotEqual(t, items[0].Address, items[1].Address)
 
-	require.NoError(t, items[0].Account.SetAnchor(account.AnchorData{
+	require.NoError(t, fakeStore.FakeAccounts[items[0].Address].SetAnchor(account.AnchorData{
 		RootHash:      bytesRepeat(0x44, 32),
 		LockedDeposit: 1,
 	}))
@@ -99,21 +99,22 @@ func numbers(items []AnchorAccount) []int32 {
 	return out
 }
 
-func TestPageAnchorsStopsAtTheEnd(t *testing.T) {
-	items := make([]AnchorAccount, 5)
-	for i := range items {
-		items[i] = AnchorAccount{Account: account.NewAccount(int32(i))}
+func TestListAnchorsStopsAtTheEnd(t *testing.T) {
+	td := setup(t)
+	fakeStore := td.state.store.(*store.FakeStore)
+	for number := int32(0); number < 5; number++ {
+		fakeStore.FakeAccounts[td.RandAccAddress()] = anchored(t, number, byte(number))
 	}
 
-	got, total := pageAnchors(items, 2, 2)
+	got, total := td.state.ListAnchors(2, 2)
 	require.Equal(t, uint32(5), total)
 	require.Equal(t, []int32{2, 3}, numbers(got))
 
-	got, total = pageAnchors(items, 2, 50)
+	got, total = td.state.ListAnchors(2, 50)
 	require.Equal(t, uint32(5), total)
 	require.Equal(t, []int32{2, 3, 4}, numbers(got))
 
-	got, total = pageAnchors(items, 2, math.MaxUint32)
+	got, total = td.state.ListAnchors(2, math.MaxUint32)
 	require.Equal(t, uint32(5), total)
 	require.Equal(t, []int32{2, 3, 4}, numbers(got))
 }
