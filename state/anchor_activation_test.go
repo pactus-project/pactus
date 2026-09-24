@@ -17,7 +17,6 @@ import (
 	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
-	"github.com/pactus-project/pactus/types/validator"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )
@@ -526,19 +525,7 @@ func TestConcreteSandboxUsesNextBlockTime(t *testing.T) {
 func (td *testData) totalCoins(t *testing.T) amount.Amount {
 	t.Helper()
 
-	total := amount.Amount(0)
-	td.state.store.IterateAccounts(func(_ crypto.Address, acc *account.Account) bool {
-		total += acc.Balance() + acc.LockedDeposit()
-
-		return false
-	})
-	td.state.store.IterateValidators(func(val *validator.Validator) bool {
-		total += val.Stake()
-
-		return false
-	})
-
-	return total
+	return totalCoinsOf(td.state)
 }
 
 func (td *testData) requireProposed(t *testing.T, want protocol.Version) {

@@ -108,6 +108,23 @@ func TestAnchorIndex(t *testing.T) {
 	})
 }
 
+// The anchor index is built from the stored accounts at startup. A record
+// longer than a plain account that does not decode must stop the node.
+func TestNewStorePanicsOnCorruptAnchorRecord(t *testing.T) {
+	td := setup(t, nil)
+
+	addr, acc := anchoredAccount(t, td, 5)
+	raw, err := acc.Bytes()
+	require.NoError(t, err)
+	raw[12] = 0x02 // the anchor flag must be 1
+	require.NoError(t, td.store.db.Put(accountKey(addr), raw, nil))
+	td.store.Close()
+
+	require.Panics(t, func() {
+		_, _ = NewStore(td.store.config)
+	})
+}
+
 func TestAccountNotFound(t *testing.T) {
 	td := setup(t, nil)
 
