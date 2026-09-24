@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
@@ -20,13 +21,6 @@ type AnchorExecutor struct {
 	acc *account.Account
 }
 
-type anchorChange struct {
-	spend  amount.Amount
-	refund amount.Amount
-	remove bool
-	anchor account.AnchorData
-}
-
 func newAnchorExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*AnchorExecutor, error) {
 	pld := trx.Payload().(*payload.AnchorPayload)
 
@@ -42,116 +36,103 @@ func newAnchorExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*AnchorExecutor, error)
 	}, nil
 }
 
-func (e *AnchorExecutor) Check(sbx sandbox.SandboxReader, _ bool) error {
-	_, err := e.prepare(sbx)
-
-	return err
-}
-
-func (e *AnchorExecutor) Execute(sbx sandbox.Sandbox) {
-	change, err := e.prepare(sbx)
-	if err != nil {
-		return
+func (e *AnchorExecutor) Check(_ sandbox.SandboxReader, _ bool) error {
+	if err := e.pld.BasicCheck(); err != nil {
+		return err
+	}
+	if e.fee < 0 || e.fee > amount.MaxNanoPAC {
+		return ErrAmountOverflow
 	}
 
-	if change.remove {
+	if e.pld.Action == payload.AnchorActionDelete {
+		return e.checkDelete()
+	}
+
+	return e.checkSet()
+}
+
+// Execute applies the anchor without validating it.
+// The caller must run Check first, or trust a certified block.
+func (e *AnchorExecutor) Execute(sbx sandbox.Sandbox) {
+	if e.pld.Action == payload.AnchorActionDelete {
+		refund := e.acc.LockedDeposit() - e.fee
 		e.acc.ClearAnchor()
-		e.acc.AddToBalance(change.refund)
+		e.acc.AddToBalance(refund)
 		sbx.UpdateAccount(e.pld.From, e.acc)
 
 		return
 	}
 
-	if err := e.acc.SetAnchor(change.anchor); err != nil {
-		return
+	if err := e.acc.SetAnchor(e.nextAnchor(sbx)); err != nil {
+		logger.Panic("anchor executed without a valid check", "error", err)
 	}
-
-	e.acc.SubtractFromBalance(change.spend)
+	e.acc.SubtractFromBalance(e.pld.Deposit + e.fee)
 	sbx.UpdateAccount(e.pld.From, e.acc)
 }
 
-func (e *AnchorExecutor) prepare(sbx sandbox.SandboxReader) (*anchorChange, error) {
-	if err := e.pld.BasicCheck(); err != nil {
-		return nil, err
-	}
-	if e.fee < 0 || e.fee > amount.MaxNanoPAC {
-		return nil, ErrAmountOverflow
-	}
-
-	if e.pld.Action == payload.AnchorActionDelete {
-		return e.prepareDelete()
-	}
-
-	return e.prepareSet(sbx)
-}
-
-func (e *AnchorExecutor) prepareSet(sbx sandbox.SandboxReader) (*anchorChange, error) {
+func (e *AnchorExecutor) checkSet() error {
 	deposit := e.pld.Deposit
-	if deposit < 0 || deposit > amount.MaxNanoPAC {
-		return nil, ErrAmountOverflow
-	}
 	if deposit > amount.MaxNanoPAC-e.fee {
-		return nil, ErrAmountOverflow
+		return ErrAmountOverflow
 	}
-
-	cost := deposit + e.fee
-	if e.acc.Balance() < cost {
-		return nil, ErrInsufficientFunds
+	if e.acc.Balance() < deposit+e.fee {
+		return ErrInsufficientFunds
 	}
 
 	locked := e.acc.LockedDeposit()
 	if locked < 0 || locked > amount.MaxNanoPAC {
-		return nil, ErrAmountOverflow
+		return ErrAmountOverflow
 	}
-	if deposit > 0 && locked > amount.MaxNanoPAC-deposit {
-		return nil, ErrAmountOverflow
+	if locked > amount.MaxNanoPAC-deposit {
+		return ErrAmountOverflow
 	}
-
-	newLocked := locked + deposit
-	createdHeight := sbx.CurrentHeight()
-	createdTime := sbx.CurrentUnixTime()
-	if e.acc.HasAnchor() {
-		createdHeight = e.acc.CreatedAtHeight()
-		createdTime = e.acc.CreatedAtTime()
-	} else if newLocked < MinAnchorDeposit {
-		return nil, ErrAnchorDepositTooSmall
+	if !e.acc.HasAnchor() && deposit < MinAnchorDeposit {
+		return ErrAnchorDepositTooSmall
 	}
 
-	return &anchorChange{
-		spend: cost,
-		anchor: account.AnchorData{
-			RootHash:        e.pld.RootHash,
-			ManifestURI:     e.pld.ManifestURI,
-			AnchorType:      e.pld.AnchorType,
-			LockedDeposit:   newLocked,
-			CreatedAtHeight: createdHeight,
-			CreatedAtTime:   createdTime,
-			UpdatedAtHeight: sbx.CurrentHeight(),
-			UpdatedAtTime:   sbx.CurrentUnixTime(),
-		},
-	}, nil
+	return nil
 }
 
-func (e *AnchorExecutor) prepareDelete() (*anchorChange, error) {
+func (e *AnchorExecutor) checkDelete() error {
 	if !e.acc.HasAnchor() {
-		return nil, ErrAnchorNotFound
+		return ErrAnchorNotFound
 	}
 
 	locked := e.acc.LockedDeposit()
 	if locked < 0 || locked > amount.MaxNanoPAC {
-		return nil, ErrAmountOverflow
+		return ErrAmountOverflow
 	}
 	if locked < e.fee {
-		return nil, ErrInsufficientFunds
+		return ErrInsufficientFunds
 	}
 
 	refund := locked - e.fee
-	if refund > 0 && e.acc.Balance() > amount.MaxNanoPAC-refund {
-		return nil, ErrAmountOverflow
+	if e.acc.Balance() > amount.MaxNanoPAC-refund {
+		return ErrAmountOverflow
 	}
 
-	return &anchorChange{
-		refund: refund,
-		remove: true,
-	}, nil
+	return nil
+}
+
+// nextAnchor builds the anchor a Set stores. It does not validate anything.
+func (e *AnchorExecutor) nextAnchor(sbx sandbox.SandboxReader) account.AnchorData {
+	height := sbx.CurrentHeight()
+	unixTime := sbx.CurrentUnixTime()
+
+	createdHeight, createdTime := height, unixTime
+	if e.acc.HasAnchor() {
+		createdHeight = e.acc.CreatedAtHeight()
+		createdTime = e.acc.CreatedAtTime()
+	}
+
+	return account.AnchorData{
+		RootHash:        e.pld.RootHash,
+		ManifestURI:     e.pld.ManifestURI,
+		AnchorType:      e.pld.AnchorType,
+		LockedDeposit:   e.acc.LockedDeposit() + e.pld.Deposit,
+		CreatedAtHeight: createdHeight,
+		CreatedAtTime:   createdTime,
+		UpdatedAtHeight: height,
+		UpdatedAtTime:   unixTime,
+	}
 }

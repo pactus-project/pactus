@@ -565,9 +565,6 @@ func TestAnchorDelete(t *testing.T) {
 		before := accountBytes(t, td.sbx.Account(addr))
 		trx := td.deleteAnchorTx(addr, 0)
 		td.check(t, trx, true, ErrAmountOverflow)
-		exe, err := MakeExecutor(trx, td.sbx)
-		require.NoError(t, err)
-		exe.Execute(td.sbx)
 		requireUnchanged(t, td.sbx.Account(addr), before)
 		require.True(t, td.sbx.Account(addr).HasAnchor())
 	})
@@ -793,7 +790,6 @@ func TestAnchorAbsurdPayloads(t *testing.T) {
 			exe, err := MakeExecutor(trx, td.sbx)
 			require.NoError(t, err)
 			require.Error(t, exe.Check(td.sbx, true))
-			exe.Execute(td.sbx)
 			requireUnchanged(t, acc, before)
 		}
 	})
@@ -808,7 +804,6 @@ func TestAnchorAbsurdPayloads(t *testing.T) {
 		exe, err := MakeExecutor(trx, td.sbx)
 		require.NoError(t, err)
 		require.Error(t, exe.Check(td.sbx, true))
-		exe.Execute(td.sbx)
 		requireUnchanged(t, treasury, before)
 
 		valAddr := td.RandValAddress()
@@ -819,7 +814,6 @@ func TestAnchorAbsurdPayloads(t *testing.T) {
 		exe, err = MakeExecutor(trx, td.sbx)
 		require.NoError(t, err)
 		require.Error(t, exe.Check(td.sbx, true))
-		exe.Execute(td.sbx)
 		requireUnchanged(t, valAcc, before)
 	})
 
@@ -834,11 +828,10 @@ func TestAnchorAbsurdPayloads(t *testing.T) {
 		before := accountBytes(t, acc)
 		require.Error(t, exe.Check(td.sbx, true))
 		require.Error(t, exe.Check(td.sbx, false))
-		exe.Execute(td.sbx)
 		requireUnchanged(t, acc, before)
 
 		trx.Payload().(*payload.AnchorPayload).Action = 0xFF
-		exe.Execute(td.sbx)
+		require.Error(t, exe.Check(td.sbx, true))
 		requireUnchanged(t, acc, before)
 	})
 
@@ -850,36 +843,24 @@ func TestAnchorAbsurdPayloads(t *testing.T) {
 		td.check(t, td.setAnchorTx(addr, root, "", 0, MinAnchorDeposit, -1), true, ErrAmountOverflow)
 		td.check(t, td.setAnchorTx(addr, root, "", 0, MinAnchorDeposit,
 			amount.Amount(amount.MaxNanoPAC)+1), true, ErrAmountOverflow)
-		td.execute(t, td.setAnchorTx(addr, root, "", 0, MinAnchorDeposit, -1))
 		requireUnchanged(t, acc, before)
 
 		td.execute(t, td.setAnchorTx(addr, root, "", 0, MinAnchorDeposit, 0))
 		before = accountBytes(t, acc)
-		balance := acc.Balance()
 		td.check(t, td.deleteAnchorTx(addr, -1), true, ErrAmountOverflow)
-		exe, err := MakeExecutor(td.deleteAnchorTx(addr, -1), td.sbx)
-		require.NoError(t, err)
-		exe.Execute(td.sbx)
-		require.Equal(t, balance, acc.Balance())
 		requireUnchanged(t, acc, before)
 	})
 
-	t.Run("execute alone does not wrap", func(t *testing.T) {
+	t.Run("check rejects what execute would wrap", func(t *testing.T) {
 		maxAmt := amount.Amount(amount.MaxNanoPAC)
 		td := setup(t)
 		td.useAnchor(1)
 		acc, addr := td.addTestAccount(t, testsuite.AccountWithBalance(1))
 		before := accountBytes(t, acc)
-		exe, err := MakeExecutor(td.setAnchorTx(addr, root, "", 0, maxAmt, 1), td.sbx)
-		require.NoError(t, err)
-		exe.Execute(td.sbx)
+		td.check(t, td.setAnchorTx(addr, root, "", 0, maxAmt, 1), true, ErrAmountOverflow)
+		td.check(t, td.deleteAnchorTx(addr, 1), true, ErrAnchorNotFound)
 		requireUnchanged(t, acc, before)
 		require.Equal(t, amount.Amount(1), acc.Balance())
-
-		exe, err = MakeExecutor(td.deleteAnchorTx(addr, 1), td.sbx)
-		require.NoError(t, err)
-		exe.Execute(td.sbx)
-		requireUnchanged(t, acc, before)
 	})
 }
 

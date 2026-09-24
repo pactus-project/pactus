@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/execution/executor"
+	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
@@ -256,14 +257,13 @@ func TestAnchorActivation(t *testing.T) {
 	for _, item := range rejected {
 		blk := rebuildBlock(badTemplate, protocol.ProtocolVersion5, appendTxs(badTemplate.Transactions(), item.trx))
 		require.ErrorIs(t, td.state.ValidateBlock(blk, 0), item.wantErr, item.name)
-		td.mustNotCommit(t, blk, item.wantErr)
 		require.Equal(t, plain, td.accountBytes(t, sender), item.name)
 		require.Equal(t, stateRoot, td.state.stateRoot(), item.name)
 		require.Len(t, td.accountBytes(t, sender), 12, item.name)
 	}
 
-	// The subsidy is raised by the anchor fee. Without the commit-time check
-	// the fee would be credited to the treasury and the block would pass.
+	// The subsidy is raised by the fee of an invalid anchor. Validation must
+	// reject the block, so the fee never reaches the treasury.
 	fee := amount.Amount(7)
 	padded := td.anchor(badTemplate.Height(), payload.AnchorActionSet, root, "padded",
 		executor.MinAnchorDeposit-1, fee)
@@ -272,7 +272,6 @@ func TestAnchorActivation(t *testing.T) {
 		subsidyPlus(badTemplate.Transactions().Subsidy(), fee), padded,
 	})
 	require.ErrorIs(t, td.state.ValidateBlock(paddedBlk, 0), executor.ErrAnchorDepositTooSmall)
-	td.mustNotCommit(t, paddedBlk, executor.ErrAnchorDepositTooSmall)
 	require.Equal(t, treasury, td.mustAccount(t, crypto.TreasuryAddress).Balance())
 	require.Equal(t, balance, td.mustAccount(t, sender).Balance())
 	require.Len(t, td.accountBytes(t, sender), 12)
@@ -281,7 +280,7 @@ func TestAnchorActivation(t *testing.T) {
 		executor.MinAnchorDeposit, 0)
 	dupBlk := rebuildBlock(badTemplate, protocol.ProtocolVersion5,
 		appendTxs(badTemplate.Transactions(), twice, twice))
-	td.mustNotCommit(t, dupBlk, execution.TransactionCommittedError{ID: twice.ID()})
+	require.ErrorIs(t, td.state.ValidateBlock(dupBlk, 0), execution.TransactionCommittedError{ID: twice.ID()})
 	require.False(t, td.mustAccount(t, sender).HasAnchor())
 	require.Equal(t, plain, td.accountBytes(t, sender))
 	require.Equal(t, stateRoot, td.state.stateRoot())
@@ -338,7 +337,7 @@ func TestAnchorActivation(t *testing.T) {
 	next := td.propose(t, block.Txs{set2})
 	require.False(t, blockHasTx(next, set2.ID()))
 	forced := rebuildBlock(next, next.Header().Version(), appendTxs(next.Transactions(), set2))
-	td.mustNotCommit(t, forced, execution.TransactionCommittedError{ID: set2.ID()})
+	require.ErrorIs(t, td.state.ValidateBlock(forced, 0), execution.TransactionCommittedError{ID: set2.ID()})
 	require.Equal(t, replayRoot, td.state.stateRoot())
 	require.Equal(t, lock, td.mustAccount(t, sender).LockedDeposit())
 	require.Equal(t, balance, td.mustAccount(t, sender).Balance())
@@ -416,6 +415,40 @@ func TestAnchorActivation(t *testing.T) {
 	td.mustNotCommit(t, oldAnchor, InvalidBlockVersionError{Version: protocol.ProtocolVersion4})
 	require.Equal(t, currentRoot, td.state.stateRoot())
 	require.Equal(t, currentBytes, td.accountBytes(t, sender))
+}
+
+// bannedStore reports one address as banned, like a newer banned list would.
+type bannedStore struct {
+	store.Store
+
+	banned crypto.Address
+}
+
+func (s bannedStore) IsBanned(addr crypto.Address) bool {
+	return addr == s.banned
+}
+
+// A certified block must commit even if its anchor signer is banned later.
+// Commit trusts the certificate and must not re-check anchors.
+func TestAnchorCommitIgnoresLaterBan(t *testing.T) {
+	td := setupWithVersion(t, protocol.ProtocolVersion5)
+	td.fakeTxPool.EXPECT().AppendTxAndBroadcast(gomock.Any()).Return(nil).AnyTimes()
+	sender := td.sender()
+
+	root := bytes.Repeat([]byte{0x31}, 32)
+	set := td.anchor(td.nextHeight(), payload.AnchorActionSet, root, "banned later", executor.MinAnchorDeposit, 1)
+	blk := td.propose(t, block.Txs{set})
+	require.True(t, blockHasTx(blk, set.ID()))
+	require.NoError(t, td.state.ValidateBlock(blk, 0))
+
+	td.state.store = bannedStore{Store: td.state.store, banned: sender}
+	require.ErrorIs(t, td.state.ValidateBlock(blk, 0), execution.SignerBannedError{Address: sender})
+
+	td.commit(t, blk)
+	anchored := td.mustAccount(t, sender)
+	require.True(t, anchored.HasAnchor())
+	require.Equal(t, root, anchored.RootHash())
+	require.Equal(t, executor.MinAnchorDeposit, anchored.LockedDeposit())
 }
 
 func (td *testData) requireProposed(t *testing.T, want protocol.Version) {
