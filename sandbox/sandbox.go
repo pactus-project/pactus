@@ -50,8 +50,10 @@ type sandboxAccount struct {
 	updated bool
 }
 
-func NewSandbox(height types.Height, store store.Reader, params *param.Params,
-	committee committee.Reader, totalPower int64,
+// NewSandbox creates a sandbox for the block after the given height.
+// The block version and Unix time describe that block.
+func NewSandbox(height types.Height, blockVersion protocol.Version, unixTime uint32,
+	store store.Reader, params *param.Params, committee committee.Reader, totalPower int64,
 ) Sandbox {
 	sbx := &sandbox{
 		height:       height,
@@ -59,7 +61,8 @@ func NewSandbox(height types.Height, store store.Reader, params *param.Params,
 		committee:    committee,
 		totalPower:   totalPower,
 		params:       params,
-		blockVersion: params.BlockVersion,
+		blockVersion: blockVersion,
+		unixTime:     unixTime,
 	}
 
 	sbx.accounts = make(map[crypto.Address]*sandboxAccount)
@@ -255,14 +258,6 @@ func (sb *sandbox) CurrentUnixTime() uint32 {
 	defer sb.lk.RUnlock()
 
 	return sb.unixTime
-}
-
-func (sb *sandbox) SetBlockContext(version protocol.Version, unixTime uint32) {
-	sb.lk.Lock()
-	defer sb.lk.Unlock()
-
-	sb.blockVersion = version
-	sb.unixTime = unixTime
 }
 
 func (sb *sandbox) IterateAccounts(

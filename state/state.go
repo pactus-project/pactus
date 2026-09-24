@@ -145,8 +145,17 @@ func LoadOrNewState(
 	return state, nil
 }
 
+// concreteSandbox returns a sandbox for checking transactions outside a block.
+// It uses the current block version and the expected time of the next block.
 func (st *state) concreteSandbox() sandbox.Sandbox {
-	return sandbox.NewSandbox(st.lastInfo.BlockHeight(),
+	nextBlockTime := st.lastInfo.BlockTime().Add(st.params.BlockInterval())
+
+	return st.makeSandbox(st.params.BlockVersion, uint32(nextBlockTime.Unix()))
+}
+
+// makeSandbox returns a sandbox for executing a block with the given version and time.
+func (st *state) makeSandbox(blockVersion protocol.Version, unixTime uint32) sandbox.Sandbox {
+	return sandbox.NewSandbox(st.lastInfo.BlockHeight(), blockVersion, unixTime,
 		st.store, st.params, st.committee, st.totalPower)
 }
 
@@ -363,10 +372,9 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 	defer st.lk.Unlock()
 
 	// Create new sandbox and execute transactions
-	sbx := st.concreteSandbox()
 	blockVersion := st.proposeBlockVersion()
 	blockTime := st.proposeNextBlockTime()
-	sbx.SetBlockContext(blockVersion, uint32(blockTime.Unix()))
+	sbx := st.makeSandbox(blockVersion, uint32(blockTime.Unix()))
 
 	// Re-check all transactions strictly and remove invalid ones
 	txs := st.txPool.PrepareBlockTransactions()
@@ -432,7 +440,7 @@ func (st *state) ValidateBlock(blk *block.Block, round types.Round) error {
 		return err
 	}
 
-	sb := st.concreteSandbox()
+	sb := st.makeSandbox(blk.Header().Version(), blk.Header().UnixTime())
 
 	return st.executeBlock(blk, sb, true)
 }
@@ -483,7 +491,7 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 
 	// -----------------------------------
 	// Execute block
-	sbx := st.concreteSandbox()
+	sbx := st.makeSandbox(blk.Header().Version(), blk.Header().UnixTime())
 	if err := st.executeBlock(blk, sbx, false); err != nil {
 		return err
 	}

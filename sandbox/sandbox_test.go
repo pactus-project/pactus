@@ -37,7 +37,8 @@ func setup(t *testing.T) *testData {
 	totalPower := ts.RandInt64()
 	fakeHeight := ts.RandHeight()
 
-	sbx := NewSandbox(fakeHeight, fakeStore, fakeParams, fakeCommittee, totalPower).(*sandbox)
+	sbx := NewSandbox(fakeHeight, fakeParams.BlockVersion, 0,
+		fakeStore, fakeParams, fakeCommittee, totalPower).(*sandbox)
 	assert.Equal(t, fakeHeight+1, sbx.CurrentHeight())
 	assert.Equal(t, fakeParams, sbx.Params())
 
@@ -406,7 +407,8 @@ func TestBlockContext(t *testing.T) {
 	assert.Equal(t, td.fakeParams.BlockVersion, td.sbx.BlockVersion())
 	assert.Equal(t, uint32(0), td.sbx.CurrentUnixTime())
 
-	td.sbx.SetBlockContext(protocol.Version(5), 1_700_000_000)
-	assert.Equal(t, protocol.Version(5), td.sbx.BlockVersion())
-	assert.Equal(t, uint32(1_700_000_000), td.sbx.CurrentUnixTime())
+	sbx := NewSandbox(td.RandHeight(), protocol.Version(5), 1_700_000_000,
+		td.fakeStore, td.fakeParams, committee.NewFakeCommittee(td.TestSuite), 0)
+	assert.Equal(t, protocol.Version(5), sbx.BlockVersion())
+	assert.Equal(t, uint32(1_700_000_000), sbx.CurrentUnixTime())
 }

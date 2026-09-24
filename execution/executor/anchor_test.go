@@ -872,12 +872,8 @@ func TestAnchorOnRealSandbox(t *testing.T) {
 	addr, acc := ts.GenerateTestAccount(testsuite.AccountWithBalance(10 * MinAnchorDeposit))
 	fakeStore.FakeAccounts[addr] = acc
 
-	sbx := sandbox.NewSandbox(10, fakeStore, params, reader, 0)
-	require.Equal(t, params.BlockVersion, sbx.BlockVersion())
-	require.Equal(t, uint32(0), sbx.CurrentUnixTime())
-
 	const unixTime = uint32(1_700_000_000)
-	sbx.SetBlockContext(protocol.Version(5), unixTime)
+	sbx := sandbox.NewSandbox(10, protocol.Version(5), unixTime, fakeStore, params, reader, 0)
 	require.Equal(t, protocol.Version(5), sbx.BlockVersion())
 	require.Equal(t, unixTime, sbx.CurrentUnixTime())
 

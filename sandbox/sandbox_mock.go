@@ -23,7 +23,7 @@ import (
 	protocol "github.com/pactus-project/pactus/types/protocol"
 	tx "github.com/pactus-project/pactus/types/tx"
 	validator "github.com/pactus-project/pactus/types/validator"
-	gomock "go.uber.org/mock/gomock"
+	"go.uber.org/mock/gomock"
 )
 
 // MockSandboxReader is a mock of SandboxReader interface.
@@ -508,18 +508,6 @@ func (m *MockSandbox) RecentTransaction(txID tx.ID) bool {
 func (mr *MockSandboxMockRecorder) RecentTransaction(txID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RecentTransaction", reflect.TypeOf((*MockSandbox)(nil).RecentTransaction), txID)
-}
-
-// SetBlockContext mocks base method.
-func (m *MockSandbox) SetBlockContext(arg0 protocol.Version, arg1 uint32) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SetBlockContext", arg0, arg1)
-}
-
-// SetBlockContext indicates an expected call of SetBlockContext.
-func (mr *MockSandboxMockRecorder) SetBlockContext(arg0, arg1 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetBlockContext", reflect.TypeOf((*MockSandbox)(nil).SetBlockContext), arg0, arg1)
 }
 
 // UpdateAccount mocks base method.

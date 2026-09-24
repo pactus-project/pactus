@@ -48,5 +48,4 @@ type Sandbox interface {
 	UpdateValidator(*validator.Validator)
 	JoinToCommittee(crypto.Address)
 	UpdatePowerDelta(delta int64)
-	SetBlockContext(protocol.Version, uint32)
 }

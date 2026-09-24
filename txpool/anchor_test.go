@@ -958,7 +958,7 @@ func TestAnchorRealSandbox(t *testing.T) {
 	})
 	executor.DefaultFactory = executor.MakeExecutorImpl
 
-	sbx := sandbox.NewSandbox(anchorTestHeight-1, fakeStore, params, nil, 0)
+	sbx := sandbox.NewSandbox(anchorTestHeight-1, params.BlockVersion, 0, fakeStore, params, nil, 0)
 	broadcast := pipeline.New[message.Message](t.Context())
 	events := pipeline.New[any](t.Context())
 	pool := NewTxPool(t.Context(), testDefaultConfig(), fakeStore, broadcast, events).(*txPool)
