@@ -34,13 +34,13 @@ func setupAnchorHTTP(t *testing.T) *testData {
 	ts := testsuite.NewTestSuite(t)
 	gRPCServer := fake.NewFakeGRPCServer(t, ts, &grpc.Config{
 		Enable: true,
-		Listen: "[::]:0",
+		Listen: "127.0.0.1:0",
 	})
 	require.NoError(t, gRPCServer.Server.StartServer())
 
 	conf := DefaultConfig()
 	conf.Enable = true
-	conf.Listen = "[::]:0"
+	conf.Listen = "127.0.0.1:0"
 	srv := NewServer(t.Context(), conf)
 	require.NoError(t, srv.StartServer(gRPCServer.Server.Address()))
 	t.Cleanup(srv.StopServer)
