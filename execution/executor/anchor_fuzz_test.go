@@ -50,6 +50,9 @@ func FuzzAnchorCheckExecute(f *testing.F) {
 	add(1, 0, 0, 0, 0, -1, 0, minDeposit, 5, 50)
 	add(2, 32, 0, 0, minDeposit, 1, 10*minDeposit, 0, 5, 50)
 	add(0, 31, 129, 0, minDeposit, 1, 10*minDeposit, 0, 5, 50)
+	add(0, 32, 0, 0, minDeposit, 1, 10*minDeposit, minDeposit, 9, 90) // top-up, same content
+	add(0, 32, 0, 0, 0, 1, 10*minDeposit, minDeposit, 9, 90)          // same content, no deposit
+	add(0, 32, 0, 2, 0, 1, 10*minDeposit, minDeposit, 9, 90)          // only the type changes
 
 	f.Fuzz(func(t *testing.T, action, hashLen, uriLen, anchorType uint8,
 		deposit, fee, balance, locked int64, height, unixTime uint32,
@@ -59,9 +62,11 @@ func FuzzAnchorCheckExecute(f *testing.F) {
 		td.sbx.FakeHeight = types.Height(height)
 
 		acc, addr := td.addTestAccount(t, testsuite.AccountWithBalance(clampAmount(balance)))
+		// The existing anchor holds the content a Set with hashLen 32, an empty
+		// URI and type 0 would write, so the fuzzer reaches deposit top-ups.
 		if locked > 0 {
 			require.NoError(t, acc.SetAnchor(account.AnchorData{
-				RootHash:      bytes.Repeat([]byte{0x5A}, 32),
+				RootHash:      bytes.Repeat([]byte{0xAB}, 32),
 				LockedDeposit: amount.Amount((locked-1)%amount.MaxNanoPAC + 1), // in [1, MaxNanoPAC]
 			}))
 		}
@@ -77,7 +82,9 @@ func FuzzAnchorCheckExecute(f *testing.F) {
 		oldLocked := acc.LockedDeposit()
 		oldTotal := acc.Balance() + oldLocked
 		oldCreatedH, oldCreatedT := acc.CreatedAtHeight(), acc.CreatedAtTime()
+		oldUpdatedH, oldUpdatedT := acc.UpdatedAtHeight(), acc.UpdatedAtTime()
 		hadAnchor := acc.HasAnchor()
+		keepsContent := hadAnchor && hashLen == 32 && uriLen == 0 && anchorType == 0
 		before := accountBytes(t, acc)
 
 		exe, err := MakeExecutor(trx, td.sbx)
@@ -105,8 +112,14 @@ func FuzzAnchorCheckExecute(f *testing.F) {
 		case payload.AnchorActionSet:
 			require.True(t, got.HasAnchor())
 			require.Equal(t, oldLocked+amount.Amount(deposit), got.LockedDeposit())
-			require.Equal(t, types.Height(height), got.UpdatedAtHeight())
-			require.Equal(t, unixTime, got.UpdatedAtTime())
+			if keepsContent {
+				// Same content: the date of the current digest does not move.
+				require.Equal(t, oldUpdatedH, got.UpdatedAtHeight())
+				require.Equal(t, oldUpdatedT, got.UpdatedAtTime())
+			} else {
+				require.Equal(t, types.Height(height), got.UpdatedAtHeight())
+				require.Equal(t, unixTime, got.UpdatedAtTime())
+			}
 			if hadAnchor {
 				// An existing anchor stays valid below the minimum (PIP-50 section 3).
 				require.Equal(t, oldCreatedH, got.CreatedAtHeight())

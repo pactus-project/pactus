@@ -1,6 +1,8 @@
 package executor
 
 import (
+	"bytes"
+
 	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/account"
@@ -115,14 +117,23 @@ func (e *AnchorExecutor) checkDelete() error {
 }
 
 // nextAnchor builds the anchor a Set stores. It does not validate anything.
+//
+// CreatedAt is the block that created the slot. UpdatedAt is the block that set
+// the current content (root hash, manifest URI and anchor type), so a Set that
+// only adds deposit keeps the date the current digest was attested.
 func (e *AnchorExecutor) nextAnchor(sbx sandbox.SandboxReader) account.AnchorData {
 	height := sbx.CurrentHeight()
 	unixTime := sbx.CurrentUnixTime()
 
 	createdHeight, createdTime := height, unixTime
+	updatedHeight, updatedTime := height, unixTime
 	if e.acc.HasAnchor() {
 		createdHeight = e.acc.CreatedAtHeight()
 		createdTime = e.acc.CreatedAtTime()
+		if e.keepsContent() {
+			updatedHeight = e.acc.UpdatedAtHeight()
+			updatedTime = e.acc.UpdatedAtTime()
+		}
 	}
 
 	return account.AnchorData{
@@ -132,7 +143,14 @@ func (e *AnchorExecutor) nextAnchor(sbx sandbox.SandboxReader) account.AnchorDat
 		LockedDeposit:   e.acc.LockedDeposit() + e.pld.Deposit,
 		CreatedAtHeight: createdHeight,
 		CreatedAtTime:   createdTime,
-		UpdatedAtHeight: height,
-		UpdatedAtTime:   unixTime,
+		UpdatedAtHeight: updatedHeight,
+		UpdatedAtTime:   updatedTime,
 	}
+}
+
+// keepsContent reports whether the Set stores the content the anchor already has.
+func (e *AnchorExecutor) keepsContent() bool {
+	return bytes.Equal(e.acc.RootHash(), e.pld.RootHash) &&
+		e.acc.ManifestURI() == e.pld.ManifestURI &&
+		e.acc.AnchorType() == e.pld.AnchorType
 }

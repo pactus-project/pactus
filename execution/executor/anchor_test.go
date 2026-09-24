@@ -403,42 +403,94 @@ func TestAnchorUpdate(t *testing.T) {
 		require.Equal(t, "one", acc.ManifestURI())
 	})
 
-	t.Run("same hash still costs a fee and refreshes the time", func(t *testing.T) {
+	t.Run("same content costs a fee and keeps the content date", func(t *testing.T) {
 		td := setup(t)
 		td.useAnchor(10)
 		td.sbx.FakeHeight = 1
 		root := bytes.Repeat([]byte{0x11}, 32)
-		acc, addr := td.addTestAccount(t, testsuite.AccountWithBalance(MinAnchorDeposit+2))
+		acc, addr := td.addTestAccount(t, testsuite.AccountWithBalance(MinAnchorDeposit+10))
 		td.execute(t, td.setAnchorTx(addr, root, "abc", 1, MinAnchorDeposit, 1))
 		td.sbx.FakeHeight = 2
 		td.sbx.FakeUnixTime = 11
-		before := acc.Hash()
+		balance := acc.Balance()
+
 		td.execute(t, td.setAnchorTx(addr, root, "abc", 1, 0, 1))
-		require.NotEqual(t, before, acc.Hash())
-		require.Equal(t, types.Height(1), acc.CreatedAtHeight())
-		require.Equal(t, types.Height(2), acc.UpdatedAtHeight())
-		require.Equal(t, uint32(11), acc.UpdatedAtTime())
+		require.Equal(t, balance-1, acc.Balance())
 		require.Equal(t, MinAnchorDeposit, acc.LockedDeposit())
+		require.Equal(t, types.Height(1), acc.CreatedAtHeight())
+		require.Equal(t, types.Height(1), acc.UpdatedAtHeight())
+		require.Equal(t, uint32(10), acc.UpdatedAtTime())
+	})
+
+	t.Run("a deposit top-up keeps the content date", func(t *testing.T) {
+		td := setup(t)
+		td.useAnchor(10)
+		td.sbx.FakeHeight = 1
+		root := bytes.Repeat([]byte{0x11}, 32)
+		acc, addr := td.addTestAccount(t, testsuite.AccountWithBalance(3*MinAnchorDeposit))
+		td.execute(t, td.setAnchorTx(addr, root, "abc", 1, MinAnchorDeposit, 1))
+		td.sbx.FakeHeight = 5
+		td.sbx.FakeUnixTime = 50
+
+		td.execute(t, td.setAnchorTx(addr, root, "abc", 1, MinAnchorDeposit, 1))
+		require.Equal(t, 2*MinAnchorDeposit, acc.LockedDeposit())
+		require.Equal(t, types.Height(1), acc.UpdatedAtHeight())
+		require.Equal(t, uint32(10), acc.UpdatedAtTime())
+	})
+
+	t.Run("any content change moves the content date", func(t *testing.T) {
+		root := bytes.Repeat([]byte{0x11}, 32)
+		changes := []struct {
+			name string
+			root []byte
+			uri  string
+			kind uint8
+		}{
+			{"root hash", bytes.Repeat([]byte{0x12}, 32), "abc", 1},
+			{"longer root hash", bytes.Repeat([]byte{0x11}, 33), "abc", 1},
+			{"manifest uri", root, "abd", 1},
+			{"empty manifest uri", root, "", 1},
+			{"anchor type", root, "abc", 2},
+		}
+		for _, change := range changes {
+			td := setup(t)
+			td.useAnchor(10)
+			td.sbx.FakeHeight = 1
+			acc, addr := td.addTestAccount(t, testsuite.AccountWithBalance(2*MinAnchorDeposit))
+			td.execute(t, td.setAnchorTx(addr, root, "abc", 1, MinAnchorDeposit, 1))
+			td.sbx.FakeHeight = 7
+			td.sbx.FakeUnixTime = 70
+
+			td.execute(t, td.setAnchorTx(addr, change.root, change.uri, change.kind, 0, 1))
+			require.Equal(t, types.Height(1), acc.CreatedAtHeight(), change.name)
+			require.Equal(t, uint32(10), acc.CreatedAtTime(), change.name)
+			require.Equal(t, types.Height(7), acc.UpdatedAtHeight(), change.name)
+			require.Equal(t, uint32(70), acc.UpdatedAtTime(), change.name)
+		}
 	})
 
 	t.Run("changing only one clock changes the hash", func(t *testing.T) {
 		td := setup(t)
-		td.useAnchor(10)
-		td.sbx.FakeHeight = 1
-		root := bytes.Repeat([]byte{0x11}, 32)
-		acc, addr := td.addTestAccount(t, testsuite.AccountWithBalance(MinAnchorDeposit+3))
-		td.execute(t, td.setAnchorTx(addr, root, "", 0, MinAnchorDeposit, 0))
+		_, acc := td.GenerateTestAccount()
+		anchor := account.AnchorData{
+			RootHash:        bytes.Repeat([]byte{0x11}, 32),
+			LockedDeposit:   MinAnchorDeposit,
+			CreatedAtHeight: 1,
+			CreatedAtTime:   10,
+			UpdatedAtHeight: 1,
+			UpdatedAtTime:   10,
+		}
+		require.NoError(t, acc.SetAnchor(anchor))
 		first := acc.Hash()
 
-		td.sbx.FakeHeight = 2
-		td.execute(t, td.setAnchorTx(addr, root, "", 0, 0, 1))
-		require.NotEqual(t, first, acc.Hash())
+		anchor.UpdatedAtHeight = 2
+		require.NoError(t, acc.SetAnchor(anchor))
 		heightHash := acc.Hash()
+		require.NotEqual(t, first, heightHash)
 
-		td.sbx.FakeUnixTime = 11
-		td.execute(t, td.setAnchorTx(addr, root, "", 0, 0, 1))
+		anchor.UpdatedAtTime = 11
+		require.NoError(t, acc.SetAnchor(anchor))
 		require.NotEqual(t, heightHash, acc.Hash())
-		require.Equal(t, types.Height(1), acc.CreatedAtHeight())
 	})
 
 	t.Run("shorter replacement drops the old tail", func(t *testing.T) {

@@ -485,6 +485,18 @@ func TestAnchorLifecycleAcrossBlocks(t *testing.T) {
 	require.Equal(t, updateBlk.Header().UnixTime(), updated.UpdatedAtTime())
 	require.Equal(t, supply, td.totalCoins(t))
 
+	// A top-up with the same content keeps the date of the current digest.
+	topUpBlk := td.propose(t, block.Txs{
+		td.anchor(td.nextHeight(), payload.AnchorActionSet, rootB, "update", 3, 1),
+	})
+	td.commit(t, topUpBlk)
+	toppedUp := td.mustAccount(t, sender)
+	require.Equal(t, executor.MinAnchorDeposit+3, toppedUp.LockedDeposit())
+	require.Equal(t, updateBlk.Height(), toppedUp.UpdatedAtHeight())
+	require.Equal(t, updateBlk.Header().UnixTime(), toppedUp.UpdatedAtTime())
+	require.Equal(t, createBlk.Height(), toppedUp.CreatedAtHeight())
+	require.Equal(t, supply, td.totalCoins(t))
+
 	deleteBlk := td.propose(t, block.Txs{
 		td.anchor(td.nextHeight(), payload.AnchorActionDelete, nil, "", 0, 1),
 	})

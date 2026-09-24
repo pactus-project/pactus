@@ -101,9 +101,9 @@ func (m *anchorModel) randomURI() string {
 	uris := []string{
 		"",
 		"ipfs://manifest",
-		strings.Repeat("é", 64),              // 128 bytes, valid
-		strings.Repeat("a", 129),             // one byte too long
-		string([]byte{0xC3}),                 // truncated UTF-8
+		strings.Repeat("é", 64),             // 128 bytes, valid
+		strings.Repeat("a", 129),            // one byte too long
+		string([]byte{0xC3}),                // truncated UTF-8
 		"https://x/" + string([]byte{0xFF}), // invalid UTF-8
 	}
 
@@ -150,12 +150,21 @@ func (m *anchorModel) setOp() modelOp {
 	root, uri := m.randomRoot(), m.randomURI()
 	kind := uint8(m.td.RandIntMax(256))
 	fee := m.randomFee()
-	if m.td.RandIntMax(2) == 0 {
-		// Half of the Set operations are well formed, so the random part
-		// exercises deposits, balances and anchor state rather than BasicCheck.
+	switch m.td.RandIntMax(3) {
+	case 0:
+		// Well formed, so the random part exercises deposits, balances and
+		// anchor state rather than BasicCheck.
 		root = m.td.RandBytes(32 + m.td.RandIntMax(33))
 		uri = "ipfs://manifest"
 		fee = amount.Amount(m.td.RandInt64Max(1e7))
+	case 1:
+		// Keep the current content, as a deposit top-up does.
+		if acc := m.accounts[from]; acc != nil && acc.anchor != nil {
+			root = bytes.Clone(acc.anchor.root)
+			uri = acc.anchor.uri
+			kind = acc.anchor.kind
+			fee = amount.Amount(m.td.RandInt64Max(1e7))
+		}
 	}
 
 	var balance amount.Amount
@@ -169,8 +178,11 @@ func (m *anchorModel) setOp() modelOp {
 
 	trx := tx.NewAnchorTx(m.td.sbx.CurrentHeight(), from, payload.AnchorActionSet, root, uri, kind, deposit, fee)
 	result := modelOp{kind: "update", trx: trx}
-	if acc == nil || acc.anchor == nil {
+	switch {
+	case acc == nil || acc.anchor == nil:
 		result.kind = "create"
+	case bytes.Equal(acc.anchor.root, root) && acc.anchor.uri == uri && acc.anchor.kind == kind:
+		result.kind = "keep content"
 	}
 
 	switch {
@@ -196,6 +208,10 @@ func (m *anchorModel) setOp() modelOp {
 		result.apply = func() {
 			acc.balance -= deposit + fee
 			m.fees += fee
+			// PIP-50 section 6.1: the content date moves only when the
+			// root hash, the manifest URI or the anchor type changes.
+			contentChanged := acc.anchor == nil ||
+				!bytes.Equal(acc.anchor.root, root) || acc.anchor.uri != uri || acc.anchor.kind != kind
 			if acc.anchor == nil {
 				acc.anchor = &modelAnchor{createdH: height, createdT: unixTime}
 			}
@@ -203,8 +219,10 @@ func (m *anchorModel) setOp() modelOp {
 			acc.anchor.uri = uri
 			acc.anchor.kind = kind
 			acc.anchor.locked += deposit
-			acc.anchor.updatedH = height
-			acc.anchor.updatedT = unixTime
+			if contentChanged {
+				acc.anchor.updatedH = height
+				acc.anchor.updatedT = unixTime
+			}
 		}
 	}
 
@@ -327,7 +345,7 @@ func TestAnchorModelRandomSequences(t *testing.T) {
 	sequences, steps := 300, 40
 	if testing.Short() {
 		// Long enough sequences to chain create, update and delete.
-		sequences, steps = 20, 60
+		sequences, steps = 30, 60
 	}
 
 	td := setup(t)
@@ -362,7 +380,7 @@ func TestAnchorModelRandomSequences(t *testing.T) {
 		}
 	}
 
-	for _, kind := range []string{"create", "update", "delete", "transfer"} {
+	for _, kind := range []string{"create", "update", "keep content", "delete", "transfer"} {
 		require.Positive(t, accepted[kind], "no accepted %s", kind)
 	}
 	require.Positive(t, rejected)
