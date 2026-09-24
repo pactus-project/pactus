@@ -15,19 +15,24 @@
   },
   "tags": [
     {
-      "name": "Transaction"
+      "name": "Transaction",
+      "description": "Transaction service defines various RPC methods for interacting with transactions."
     },
     {
-      "name": "Blockchain"
+      "name": "Blockchain",
+      "description": "Blockchain service defines RPC methods for interacting with the blockchain."
     },
     {
-      "name": "Network"
+      "name": "Network",
+      "description": "Network service provides RPCs for retrieving information about the network."
     },
     {
-      "name": "Utils"
+      "name": "Utils",
+      "description": "Utils service defines RPC methods for utility functions such as message\nsigning, verification, and other cryptographic operations."
     },
     {
-      "name": "Wallet"
+      "name": "Wallet",
+      "description": "Wallet service provides RPC methods for wallet management operations."
     }
   ],
   "basePath": "/http/api",

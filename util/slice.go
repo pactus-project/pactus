@@ -274,7 +274,7 @@ func Trim[T any](slice []T, newLength int) []T {
 
 // Shuffle randomly permutes the elements of slice in place.
 func Shuffle[T any](slice []T) {
-	rand.Shuffle(len(slice), func(i, j int) {
+	rand.Shuffle(len(slice), func(i, j int) { //nolint:gosec // not used for security-sensitive purposes.
 		slice[i], slice[j] = slice[j], slice[i]
 	})
 }

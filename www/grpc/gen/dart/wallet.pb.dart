@@ -34,7 +34,7 @@ class AddressInfo extends $pb.GeneratedMessage {
     $fixnum.Int64? balance,
     $fixnum.Int64? stake,
   }) {
-    final result = create();
+    final result = AddressInfo._();
     if (address != null) result.address = address;
     if (publicKey != null) result.publicKey = publicKey;
     if (label != null) result.label = label;
@@ -49,15 +49,15 @@ class AddressInfo extends $pb.GeneratedMessage {
 
   factory AddressInfo.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      AddressInfo()..mergeFromBuffer(data, registry);
   factory AddressInfo.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      AddressInfo()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'AddressInfo',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: AddressInfo.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'address')
     ..aOS(2, _omitFieldNames ? '' : 'publicKey')
     ..aOS(3, _omitFieldNames ? '' : 'label')
@@ -79,12 +79,15 @@ class AddressInfo extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use AddressInfo() / AddressInfo.new instead')
   static AddressInfo create() => AddressInfo._();
+  static $pb.GeneratedMessage $_createMessage() => AddressInfo._();
   @$core.override
-  AddressInfo createEmptyInstance() => create();
+  AddressInfo createEmptyInstance() => AddressInfo._();
   @$core.pragma('dart2js:noInline')
-  static AddressInfo getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<AddressInfo>(create);
+  static AddressInfo getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AddressInfo>(
+          AddressInfo.$_createMessage);
   static AddressInfo? _defaultInstance;
 
   /// The address string.
@@ -166,7 +169,7 @@ class GetNewAddressRequest extends $pb.GeneratedMessage {
     $core.String? label,
     $core.String? password,
   }) {
-    final result = create();
+    final result = GetNewAddressRequest._();
     if (walletName != null) result.walletName = walletName;
     if (addressType != null) result.addressType = addressType;
     if (label != null) result.label = label;
@@ -178,15 +181,15 @@ class GetNewAddressRequest extends $pb.GeneratedMessage {
 
   factory GetNewAddressRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetNewAddressRequest()..mergeFromBuffer(data, registry);
   factory GetNewAddressRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetNewAddressRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetNewAddressRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetNewAddressRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..aE<AddressType>(2, _omitFieldNames ? '' : 'addressType',
         enumValues: AddressType.values)
@@ -205,12 +208,16 @@ class GetNewAddressRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetNewAddressRequest() / GetNewAddressRequest.new instead')
   static GetNewAddressRequest create() => GetNewAddressRequest._();
+  static $pb.GeneratedMessage $_createMessage() => GetNewAddressRequest._();
   @$core.override
-  GetNewAddressRequest createEmptyInstance() => create();
+  GetNewAddressRequest createEmptyInstance() => GetNewAddressRequest._();
   @$core.pragma('dart2js:noInline')
   static GetNewAddressRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetNewAddressRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetNewAddressRequest>(
+          GetNewAddressRequest.$_createMessage);
   static GetNewAddressRequest? _defaultInstance;
 
   /// The name of the wallet to generate a new address.
@@ -260,7 +267,7 @@ class GetNewAddressResponse extends $pb.GeneratedMessage {
     $core.String? walletName,
     AddressInfo? addr,
   }) {
-    final result = create();
+    final result = GetNewAddressResponse._();
     if (walletName != null) result.walletName = walletName;
     if (addr != null) result.addr = addr;
     return result;
@@ -270,18 +277,18 @@ class GetNewAddressResponse extends $pb.GeneratedMessage {
 
   factory GetNewAddressResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetNewAddressResponse()..mergeFromBuffer(data, registry);
   factory GetNewAddressResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetNewAddressResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetNewAddressResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetNewAddressResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..aOM<AddressInfo>(2, _omitFieldNames ? '' : 'addr',
-        subBuilder: AddressInfo.create)
+        subBuilder: AddressInfo.$_createMessage)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -296,12 +303,16 @@ class GetNewAddressResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetNewAddressResponse() / GetNewAddressResponse.new instead')
   static GetNewAddressResponse create() => GetNewAddressResponse._();
+  static $pb.GeneratedMessage $_createMessage() => GetNewAddressResponse._();
   @$core.override
-  GetNewAddressResponse createEmptyInstance() => create();
+  GetNewAddressResponse createEmptyInstance() => GetNewAddressResponse._();
   @$core.pragma('dart2js:noInline')
   static GetNewAddressResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetNewAddressResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetNewAddressResponse>(
+          GetNewAddressResponse.$_createMessage);
   static GetNewAddressResponse? _defaultInstance;
 
   /// The name of the wallet where address was generated.
@@ -334,7 +345,7 @@ class RestoreWalletRequest extends $pb.GeneratedMessage {
     $core.String? mnemonic,
     $core.String? password,
   }) {
-    final result = create();
+    final result = RestoreWalletRequest._();
     if (walletName != null) result.walletName = walletName;
     if (mnemonic != null) result.mnemonic = mnemonic;
     if (password != null) result.password = password;
@@ -345,15 +356,15 @@ class RestoreWalletRequest extends $pb.GeneratedMessage {
 
   factory RestoreWalletRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      RestoreWalletRequest()..mergeFromBuffer(data, registry);
   factory RestoreWalletRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      RestoreWalletRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'RestoreWalletRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: RestoreWalletRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..aOS(2, _omitFieldNames ? '' : 'mnemonic')
     ..aOS(3, _omitFieldNames ? '' : 'password')
@@ -370,12 +381,16 @@ class RestoreWalletRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use RestoreWalletRequest() / RestoreWalletRequest.new instead')
   static RestoreWalletRequest create() => RestoreWalletRequest._();
+  static $pb.GeneratedMessage $_createMessage() => RestoreWalletRequest._();
   @$core.override
-  RestoreWalletRequest createEmptyInstance() => create();
+  RestoreWalletRequest createEmptyInstance() => RestoreWalletRequest._();
   @$core.pragma('dart2js:noInline')
   static RestoreWalletRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<RestoreWalletRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<RestoreWalletRequest>(
+          RestoreWalletRequest.$_createMessage);
   static RestoreWalletRequest? _defaultInstance;
 
   /// The name for the restored wallet.
@@ -414,7 +429,7 @@ class RestoreWalletResponse extends $pb.GeneratedMessage {
   factory RestoreWalletResponse({
     $core.String? walletName,
   }) {
-    final result = create();
+    final result = RestoreWalletResponse._();
     if (walletName != null) result.walletName = walletName;
     return result;
   }
@@ -423,15 +438,15 @@ class RestoreWalletResponse extends $pb.GeneratedMessage {
 
   factory RestoreWalletResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      RestoreWalletResponse()..mergeFromBuffer(data, registry);
   factory RestoreWalletResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      RestoreWalletResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'RestoreWalletResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: RestoreWalletResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..hasRequiredFields = false;
 
@@ -447,12 +462,16 @@ class RestoreWalletResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use RestoreWalletResponse() / RestoreWalletResponse.new instead')
   static RestoreWalletResponse create() => RestoreWalletResponse._();
+  static $pb.GeneratedMessage $_createMessage() => RestoreWalletResponse._();
   @$core.override
-  RestoreWalletResponse createEmptyInstance() => create();
+  RestoreWalletResponse createEmptyInstance() => RestoreWalletResponse._();
   @$core.pragma('dart2js:noInline')
   static RestoreWalletResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<RestoreWalletResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<RestoreWalletResponse>(
+          RestoreWalletResponse.$_createMessage);
   static RestoreWalletResponse? _defaultInstance;
 
   /// The name of the restored wallet.
@@ -471,7 +490,7 @@ class MigrateWalletRequest extends $pb.GeneratedMessage {
   factory MigrateWalletRequest({
     $core.String? walletName,
   }) {
-    final result = create();
+    final result = MigrateWalletRequest._();
     if (walletName != null) result.walletName = walletName;
     return result;
   }
@@ -480,15 +499,15 @@ class MigrateWalletRequest extends $pb.GeneratedMessage {
 
   factory MigrateWalletRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      MigrateWalletRequest()..mergeFromBuffer(data, registry);
   factory MigrateWalletRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      MigrateWalletRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'MigrateWalletRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: MigrateWalletRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..hasRequiredFields = false;
 
@@ -503,12 +522,16 @@ class MigrateWalletRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use MigrateWalletRequest() / MigrateWalletRequest.new instead')
   static MigrateWalletRequest create() => MigrateWalletRequest._();
+  static $pb.GeneratedMessage $_createMessage() => MigrateWalletRequest._();
   @$core.override
-  MigrateWalletRequest createEmptyInstance() => create();
+  MigrateWalletRequest createEmptyInstance() => MigrateWalletRequest._();
   @$core.pragma('dart2js:noInline')
   static MigrateWalletRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<MigrateWalletRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<MigrateWalletRequest>(
+          MigrateWalletRequest.$_createMessage);
   static MigrateWalletRequest? _defaultInstance;
 
   /// The name of the wallet to migrate.
@@ -527,7 +550,7 @@ class MigrateWalletResponse extends $pb.GeneratedMessage {
   factory MigrateWalletResponse({
     $core.String? walletName,
   }) {
-    final result = create();
+    final result = MigrateWalletResponse._();
     if (walletName != null) result.walletName = walletName;
     return result;
   }
@@ -536,15 +559,15 @@ class MigrateWalletResponse extends $pb.GeneratedMessage {
 
   factory MigrateWalletResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      MigrateWalletResponse()..mergeFromBuffer(data, registry);
   factory MigrateWalletResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      MigrateWalletResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'MigrateWalletResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: MigrateWalletResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..hasRequiredFields = false;
 
@@ -560,12 +583,16 @@ class MigrateWalletResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use MigrateWalletResponse() / MigrateWalletResponse.new instead')
   static MigrateWalletResponse create() => MigrateWalletResponse._();
+  static $pb.GeneratedMessage $_createMessage() => MigrateWalletResponse._();
   @$core.override
-  MigrateWalletResponse createEmptyInstance() => create();
+  MigrateWalletResponse createEmptyInstance() => MigrateWalletResponse._();
   @$core.pragma('dart2js:noInline')
   static MigrateWalletResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<MigrateWalletResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<MigrateWalletResponse>(
+          MigrateWalletResponse.$_createMessage);
   static MigrateWalletResponse? _defaultInstance;
 
   /// The name of the migrated wallet.
@@ -585,7 +612,7 @@ class CreateWalletRequest extends $pb.GeneratedMessage {
     $core.String? walletName,
     $core.String? password,
   }) {
-    final result = create();
+    final result = CreateWalletRequest._();
     if (walletName != null) result.walletName = walletName;
     if (password != null) result.password = password;
     return result;
@@ -595,15 +622,15 @@ class CreateWalletRequest extends $pb.GeneratedMessage {
 
   factory CreateWalletRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      CreateWalletRequest()..mergeFromBuffer(data, registry);
   factory CreateWalletRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      CreateWalletRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'CreateWalletRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: CreateWalletRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..aOS(2, _omitFieldNames ? '' : 'password')
     ..hasRequiredFields = false;
@@ -619,12 +646,16 @@ class CreateWalletRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core
+      .Deprecated('Use CreateWalletRequest() / CreateWalletRequest.new instead')
   static CreateWalletRequest create() => CreateWalletRequest._();
+  static $pb.GeneratedMessage $_createMessage() => CreateWalletRequest._();
   @$core.override
-  CreateWalletRequest createEmptyInstance() => create();
+  CreateWalletRequest createEmptyInstance() => CreateWalletRequest._();
   @$core.pragma('dart2js:noInline')
   static CreateWalletRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<CreateWalletRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<CreateWalletRequest>(
+          CreateWalletRequest.$_createMessage);
   static CreateWalletRequest? _defaultInstance;
 
   /// The name for the new wallet.
@@ -654,7 +685,7 @@ class CreateWalletResponse extends $pb.GeneratedMessage {
     $core.String? walletName,
     $core.String? mnemonic,
   }) {
-    final result = create();
+    final result = CreateWalletResponse._();
     if (walletName != null) result.walletName = walletName;
     if (mnemonic != null) result.mnemonic = mnemonic;
     return result;
@@ -664,15 +695,15 @@ class CreateWalletResponse extends $pb.GeneratedMessage {
 
   factory CreateWalletResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      CreateWalletResponse()..mergeFromBuffer(data, registry);
   factory CreateWalletResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      CreateWalletResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'CreateWalletResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: CreateWalletResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..aOS(2, _omitFieldNames ? '' : 'mnemonic')
     ..hasRequiredFields = false;
@@ -688,12 +719,16 @@ class CreateWalletResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use CreateWalletResponse() / CreateWalletResponse.new instead')
   static CreateWalletResponse create() => CreateWalletResponse._();
+  static $pb.GeneratedMessage $_createMessage() => CreateWalletResponse._();
   @$core.override
-  CreateWalletResponse createEmptyInstance() => create();
+  CreateWalletResponse createEmptyInstance() => CreateWalletResponse._();
   @$core.pragma('dart2js:noInline')
   static CreateWalletResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<CreateWalletResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<CreateWalletResponse>(
+          CreateWalletResponse.$_createMessage);
   static CreateWalletResponse? _defaultInstance;
 
   /// The name for the new wallet.
@@ -723,7 +758,7 @@ class LoadWalletRequest extends $pb.GeneratedMessage {
   factory LoadWalletRequest({
     $core.String? walletName,
   }) {
-    final result = create();
+    final result = LoadWalletRequest._();
     if (walletName != null) result.walletName = walletName;
     return result;
   }
@@ -732,15 +767,15 @@ class LoadWalletRequest extends $pb.GeneratedMessage {
 
   factory LoadWalletRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      LoadWalletRequest()..mergeFromBuffer(data, registry);
   factory LoadWalletRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      LoadWalletRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'LoadWalletRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: LoadWalletRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..hasRequiredFields = false;
 
@@ -755,12 +790,15 @@ class LoadWalletRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use LoadWalletRequest() / LoadWalletRequest.new instead')
   static LoadWalletRequest create() => LoadWalletRequest._();
+  static $pb.GeneratedMessage $_createMessage() => LoadWalletRequest._();
   @$core.override
-  LoadWalletRequest createEmptyInstance() => create();
+  LoadWalletRequest createEmptyInstance() => LoadWalletRequest._();
   @$core.pragma('dart2js:noInline')
-  static LoadWalletRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<LoadWalletRequest>(create);
+  static LoadWalletRequest getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<LoadWalletRequest>(
+          LoadWalletRequest.$_createMessage);
   static LoadWalletRequest? _defaultInstance;
 
   /// The name of the wallet to load.
@@ -780,7 +818,7 @@ class LoadWalletResponse extends $pb.GeneratedMessage {
   factory LoadWalletResponse({
     $core.String? walletName,
   }) {
-    final result = create();
+    final result = LoadWalletResponse._();
     if (walletName != null) result.walletName = walletName;
     return result;
   }
@@ -789,15 +827,15 @@ class LoadWalletResponse extends $pb.GeneratedMessage {
 
   factory LoadWalletResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      LoadWalletResponse()..mergeFromBuffer(data, registry);
   factory LoadWalletResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      LoadWalletResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'LoadWalletResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: LoadWalletResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..hasRequiredFields = false;
 
@@ -812,12 +850,15 @@ class LoadWalletResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use LoadWalletResponse() / LoadWalletResponse.new instead')
   static LoadWalletResponse create() => LoadWalletResponse._();
+  static $pb.GeneratedMessage $_createMessage() => LoadWalletResponse._();
   @$core.override
-  LoadWalletResponse createEmptyInstance() => create();
+  LoadWalletResponse createEmptyInstance() => LoadWalletResponse._();
   @$core.pragma('dart2js:noInline')
   static LoadWalletResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<LoadWalletResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<LoadWalletResponse>(
+          LoadWalletResponse.$_createMessage);
   static LoadWalletResponse? _defaultInstance;
 
   /// The name of the loaded wallet.
@@ -837,7 +878,7 @@ class UnloadWalletRequest extends $pb.GeneratedMessage {
   factory UnloadWalletRequest({
     $core.String? walletName,
   }) {
-    final result = create();
+    final result = UnloadWalletRequest._();
     if (walletName != null) result.walletName = walletName;
     return result;
   }
@@ -846,15 +887,15 @@ class UnloadWalletRequest extends $pb.GeneratedMessage {
 
   factory UnloadWalletRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      UnloadWalletRequest()..mergeFromBuffer(data, registry);
   factory UnloadWalletRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      UnloadWalletRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'UnloadWalletRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: UnloadWalletRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..hasRequiredFields = false;
 
@@ -869,12 +910,16 @@ class UnloadWalletRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core
+      .Deprecated('Use UnloadWalletRequest() / UnloadWalletRequest.new instead')
   static UnloadWalletRequest create() => UnloadWalletRequest._();
+  static $pb.GeneratedMessage $_createMessage() => UnloadWalletRequest._();
   @$core.override
-  UnloadWalletRequest createEmptyInstance() => create();
+  UnloadWalletRequest createEmptyInstance() => UnloadWalletRequest._();
   @$core.pragma('dart2js:noInline')
   static UnloadWalletRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<UnloadWalletRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<UnloadWalletRequest>(
+          UnloadWalletRequest.$_createMessage);
   static UnloadWalletRequest? _defaultInstance;
 
   /// The name of the wallet to unload.
@@ -894,7 +939,7 @@ class UnloadWalletResponse extends $pb.GeneratedMessage {
   factory UnloadWalletResponse({
     $core.String? walletName,
   }) {
-    final result = create();
+    final result = UnloadWalletResponse._();
     if (walletName != null) result.walletName = walletName;
     return result;
   }
@@ -903,15 +948,15 @@ class UnloadWalletResponse extends $pb.GeneratedMessage {
 
   factory UnloadWalletResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      UnloadWalletResponse()..mergeFromBuffer(data, registry);
   factory UnloadWalletResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      UnloadWalletResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'UnloadWalletResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: UnloadWalletResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..hasRequiredFields = false;
 
@@ -926,12 +971,16 @@ class UnloadWalletResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use UnloadWalletResponse() / UnloadWalletResponse.new instead')
   static UnloadWalletResponse create() => UnloadWalletResponse._();
+  static $pb.GeneratedMessage $_createMessage() => UnloadWalletResponse._();
   @$core.override
-  UnloadWalletResponse createEmptyInstance() => create();
+  UnloadWalletResponse createEmptyInstance() => UnloadWalletResponse._();
   @$core.pragma('dart2js:noInline')
   static UnloadWalletResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<UnloadWalletResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<UnloadWalletResponse>(
+          UnloadWalletResponse.$_createMessage);
   static UnloadWalletResponse? _defaultInstance;
 
   /// The name of the unloaded wallet.
@@ -950,7 +999,7 @@ class GetValidatorAddressRequest extends $pb.GeneratedMessage {
   factory GetValidatorAddressRequest({
     $core.String? publicKey,
   }) {
-    final result = create();
+    final result = GetValidatorAddressRequest._();
     if (publicKey != null) result.publicKey = publicKey;
     return result;
   }
@@ -959,15 +1008,15 @@ class GetValidatorAddressRequest extends $pb.GeneratedMessage {
 
   factory GetValidatorAddressRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetValidatorAddressRequest()..mergeFromBuffer(data, registry);
   factory GetValidatorAddressRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetValidatorAddressRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetValidatorAddressRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetValidatorAddressRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'publicKey')
     ..hasRequiredFields = false;
 
@@ -984,12 +1033,18 @@ class GetValidatorAddressRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetValidatorAddressRequest() / GetValidatorAddressRequest.new instead')
   static GetValidatorAddressRequest create() => GetValidatorAddressRequest._();
+  static $pb.GeneratedMessage $_createMessage() =>
+      GetValidatorAddressRequest._();
   @$core.override
-  GetValidatorAddressRequest createEmptyInstance() => create();
+  GetValidatorAddressRequest createEmptyInstance() =>
+      GetValidatorAddressRequest._();
   @$core.pragma('dart2js:noInline')
   static GetValidatorAddressRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetValidatorAddressRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetValidatorAddressRequest>(
+          GetValidatorAddressRequest.$_createMessage);
   static GetValidatorAddressRequest? _defaultInstance;
 
   /// The public key of the validator.
@@ -1008,7 +1063,7 @@ class GetValidatorAddressResponse extends $pb.GeneratedMessage {
   factory GetValidatorAddressResponse({
     $core.String? address,
   }) {
-    final result = create();
+    final result = GetValidatorAddressResponse._();
     if (address != null) result.address = address;
     return result;
   }
@@ -1017,15 +1072,15 @@ class GetValidatorAddressResponse extends $pb.GeneratedMessage {
 
   factory GetValidatorAddressResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetValidatorAddressResponse()..mergeFromBuffer(data, registry);
   factory GetValidatorAddressResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetValidatorAddressResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetValidatorAddressResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetValidatorAddressResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'address')
     ..hasRequiredFields = false;
 
@@ -1042,13 +1097,19 @@ class GetValidatorAddressResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetValidatorAddressResponse() / GetValidatorAddressResponse.new instead')
   static GetValidatorAddressResponse create() =>
       GetValidatorAddressResponse._();
+  static $pb.GeneratedMessage $_createMessage() =>
+      GetValidatorAddressResponse._();
   @$core.override
-  GetValidatorAddressResponse createEmptyInstance() => create();
+  GetValidatorAddressResponse createEmptyInstance() =>
+      GetValidatorAddressResponse._();
   @$core.pragma('dart2js:noInline')
   static GetValidatorAddressResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetValidatorAddressResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetValidatorAddressResponse>(
+          GetValidatorAddressResponse.$_createMessage);
   static GetValidatorAddressResponse? _defaultInstance;
 
   /// The validator address associated with the public key.
@@ -1069,7 +1130,7 @@ class SignRawTransactionRequest extends $pb.GeneratedMessage {
     $core.String? rawTransaction,
     $core.String? password,
   }) {
-    final result = create();
+    final result = SignRawTransactionRequest._();
     if (walletName != null) result.walletName = walletName;
     if (rawTransaction != null) result.rawTransaction = rawTransaction;
     if (password != null) result.password = password;
@@ -1080,15 +1141,15 @@ class SignRawTransactionRequest extends $pb.GeneratedMessage {
 
   factory SignRawTransactionRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      SignRawTransactionRequest()..mergeFromBuffer(data, registry);
   factory SignRawTransactionRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      SignRawTransactionRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'SignRawTransactionRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: SignRawTransactionRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..aOS(2, _omitFieldNames ? '' : 'rawTransaction')
     ..aOS(3, _omitFieldNames ? '' : 'password')
@@ -1106,12 +1167,18 @@ class SignRawTransactionRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use SignRawTransactionRequest() / SignRawTransactionRequest.new instead')
   static SignRawTransactionRequest create() => SignRawTransactionRequest._();
+  static $pb.GeneratedMessage $_createMessage() =>
+      SignRawTransactionRequest._();
   @$core.override
-  SignRawTransactionRequest createEmptyInstance() => create();
+  SignRawTransactionRequest createEmptyInstance() =>
+      SignRawTransactionRequest._();
   @$core.pragma('dart2js:noInline')
   static SignRawTransactionRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<SignRawTransactionRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<SignRawTransactionRequest>(
+          SignRawTransactionRequest.$_createMessage);
   static SignRawTransactionRequest? _defaultInstance;
 
   /// The name of the wallet used for signing.
@@ -1151,7 +1218,7 @@ class SignRawTransactionResponse extends $pb.GeneratedMessage {
     $core.String? transactionId,
     $core.String? signedRawTransaction,
   }) {
-    final result = create();
+    final result = SignRawTransactionResponse._();
     if (transactionId != null) result.transactionId = transactionId;
     if (signedRawTransaction != null)
       result.signedRawTransaction = signedRawTransaction;
@@ -1162,15 +1229,15 @@ class SignRawTransactionResponse extends $pb.GeneratedMessage {
 
   factory SignRawTransactionResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      SignRawTransactionResponse()..mergeFromBuffer(data, registry);
   factory SignRawTransactionResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      SignRawTransactionResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'SignRawTransactionResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: SignRawTransactionResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'transactionId')
     ..aOS(2, _omitFieldNames ? '' : 'signedRawTransaction')
     ..hasRequiredFields = false;
@@ -1188,12 +1255,18 @@ class SignRawTransactionResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use SignRawTransactionResponse() / SignRawTransactionResponse.new instead')
   static SignRawTransactionResponse create() => SignRawTransactionResponse._();
+  static $pb.GeneratedMessage $_createMessage() =>
+      SignRawTransactionResponse._();
   @$core.override
-  SignRawTransactionResponse createEmptyInstance() => create();
+  SignRawTransactionResponse createEmptyInstance() =>
+      SignRawTransactionResponse._();
   @$core.pragma('dart2js:noInline')
   static SignRawTransactionResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<SignRawTransactionResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<SignRawTransactionResponse>(
+          SignRawTransactionResponse.$_createMessage);
   static SignRawTransactionResponse? _defaultInstance;
 
   /// The ID of the signed transaction.
@@ -1222,7 +1295,7 @@ class GetTotalBalanceRequest extends $pb.GeneratedMessage {
   factory GetTotalBalanceRequest({
     $core.String? walletName,
   }) {
-    final result = create();
+    final result = GetTotalBalanceRequest._();
     if (walletName != null) result.walletName = walletName;
     return result;
   }
@@ -1231,15 +1304,15 @@ class GetTotalBalanceRequest extends $pb.GeneratedMessage {
 
   factory GetTotalBalanceRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetTotalBalanceRequest()..mergeFromBuffer(data, registry);
   factory GetTotalBalanceRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetTotalBalanceRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetTotalBalanceRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetTotalBalanceRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..hasRequiredFields = false;
 
@@ -1255,12 +1328,16 @@ class GetTotalBalanceRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetTotalBalanceRequest() / GetTotalBalanceRequest.new instead')
   static GetTotalBalanceRequest create() => GetTotalBalanceRequest._();
+  static $pb.GeneratedMessage $_createMessage() => GetTotalBalanceRequest._();
   @$core.override
-  GetTotalBalanceRequest createEmptyInstance() => create();
+  GetTotalBalanceRequest createEmptyInstance() => GetTotalBalanceRequest._();
   @$core.pragma('dart2js:noInline')
   static GetTotalBalanceRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetTotalBalanceRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetTotalBalanceRequest>(
+          GetTotalBalanceRequest.$_createMessage);
   static GetTotalBalanceRequest? _defaultInstance;
 
   /// The name of the wallet to get the total balance.
@@ -1280,7 +1357,7 @@ class GetTotalBalanceResponse extends $pb.GeneratedMessage {
     $core.String? walletName,
     $fixnum.Int64? totalBalance,
   }) {
-    final result = create();
+    final result = GetTotalBalanceResponse._();
     if (walletName != null) result.walletName = walletName;
     if (totalBalance != null) result.totalBalance = totalBalance;
     return result;
@@ -1290,15 +1367,15 @@ class GetTotalBalanceResponse extends $pb.GeneratedMessage {
 
   factory GetTotalBalanceResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetTotalBalanceResponse()..mergeFromBuffer(data, registry);
   factory GetTotalBalanceResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetTotalBalanceResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetTotalBalanceResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetTotalBalanceResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..aInt64(2, _omitFieldNames ? '' : 'totalBalance')
     ..hasRequiredFields = false;
@@ -1315,12 +1392,16 @@ class GetTotalBalanceResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetTotalBalanceResponse() / GetTotalBalanceResponse.new instead')
   static GetTotalBalanceResponse create() => GetTotalBalanceResponse._();
+  static $pb.GeneratedMessage $_createMessage() => GetTotalBalanceResponse._();
   @$core.override
-  GetTotalBalanceResponse createEmptyInstance() => create();
+  GetTotalBalanceResponse createEmptyInstance() => GetTotalBalanceResponse._();
   @$core.pragma('dart2js:noInline')
   static GetTotalBalanceResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetTotalBalanceResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetTotalBalanceResponse>(
+          GetTotalBalanceResponse.$_createMessage);
   static GetTotalBalanceResponse? _defaultInstance;
 
   /// The name of the queried wallet.
@@ -1352,7 +1433,7 @@ class SignMessageRequest extends $pb.GeneratedMessage {
     $core.String? address,
     $core.String? message,
   }) {
-    final result = create();
+    final result = SignMessageRequest._();
     if (walletName != null) result.walletName = walletName;
     if (password != null) result.password = password;
     if (address != null) result.address = address;
@@ -1364,15 +1445,15 @@ class SignMessageRequest extends $pb.GeneratedMessage {
 
   factory SignMessageRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      SignMessageRequest()..mergeFromBuffer(data, registry);
   factory SignMessageRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      SignMessageRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'SignMessageRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: SignMessageRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..aOS(2, _omitFieldNames ? '' : 'password')
     ..aOS(3, _omitFieldNames ? '' : 'address')
@@ -1390,12 +1471,15 @@ class SignMessageRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use SignMessageRequest() / SignMessageRequest.new instead')
   static SignMessageRequest create() => SignMessageRequest._();
+  static $pb.GeneratedMessage $_createMessage() => SignMessageRequest._();
   @$core.override
-  SignMessageRequest createEmptyInstance() => create();
+  SignMessageRequest createEmptyInstance() => SignMessageRequest._();
   @$core.pragma('dart2js:noInline')
   static SignMessageRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<SignMessageRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<SignMessageRequest>(
+          SignMessageRequest.$_createMessage);
   static SignMessageRequest? _defaultInstance;
 
   /// The name of the wallet to sign with.
@@ -1444,7 +1528,7 @@ class SignMessageResponse extends $pb.GeneratedMessage {
   factory SignMessageResponse({
     $core.String? signature,
   }) {
-    final result = create();
+    final result = SignMessageResponse._();
     if (signature != null) result.signature = signature;
     return result;
   }
@@ -1453,15 +1537,15 @@ class SignMessageResponse extends $pb.GeneratedMessage {
 
   factory SignMessageResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      SignMessageResponse()..mergeFromBuffer(data, registry);
   factory SignMessageResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      SignMessageResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'SignMessageResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: SignMessageResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'signature')
     ..hasRequiredFields = false;
 
@@ -1476,12 +1560,16 @@ class SignMessageResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core
+      .Deprecated('Use SignMessageResponse() / SignMessageResponse.new instead')
   static SignMessageResponse create() => SignMessageResponse._();
+  static $pb.GeneratedMessage $_createMessage() => SignMessageResponse._();
   @$core.override
-  SignMessageResponse createEmptyInstance() => create();
+  SignMessageResponse createEmptyInstance() => SignMessageResponse._();
   @$core.pragma('dart2js:noInline')
   static SignMessageResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<SignMessageResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<SignMessageResponse>(
+          SignMessageResponse.$_createMessage);
   static SignMessageResponse? _defaultInstance;
 
   /// The signature in hexadecimal format.
@@ -1500,7 +1588,7 @@ class GetTotalStakeRequest extends $pb.GeneratedMessage {
   factory GetTotalStakeRequest({
     $core.String? walletName,
   }) {
-    final result = create();
+    final result = GetTotalStakeRequest._();
     if (walletName != null) result.walletName = walletName;
     return result;
   }
@@ -1509,15 +1597,15 @@ class GetTotalStakeRequest extends $pb.GeneratedMessage {
 
   factory GetTotalStakeRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetTotalStakeRequest()..mergeFromBuffer(data, registry);
   factory GetTotalStakeRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetTotalStakeRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetTotalStakeRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetTotalStakeRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..hasRequiredFields = false;
 
@@ -1532,12 +1620,16 @@ class GetTotalStakeRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetTotalStakeRequest() / GetTotalStakeRequest.new instead')
   static GetTotalStakeRequest create() => GetTotalStakeRequest._();
+  static $pb.GeneratedMessage $_createMessage() => GetTotalStakeRequest._();
   @$core.override
-  GetTotalStakeRequest createEmptyInstance() => create();
+  GetTotalStakeRequest createEmptyInstance() => GetTotalStakeRequest._();
   @$core.pragma('dart2js:noInline')
   static GetTotalStakeRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetTotalStakeRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetTotalStakeRequest>(
+          GetTotalStakeRequest.$_createMessage);
   static GetTotalStakeRequest? _defaultInstance;
 
   /// The name of the wallet to get the total stake.
@@ -1557,7 +1649,7 @@ class GetTotalStakeResponse extends $pb.GeneratedMessage {
     $core.String? walletName,
     $fixnum.Int64? totalStake,
   }) {
-    final result = create();
+    final result = GetTotalStakeResponse._();
     if (walletName != null) result.walletName = walletName;
     if (totalStake != null) result.totalStake = totalStake;
     return result;
@@ -1567,15 +1659,15 @@ class GetTotalStakeResponse extends $pb.GeneratedMessage {
 
   factory GetTotalStakeResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetTotalStakeResponse()..mergeFromBuffer(data, registry);
   factory GetTotalStakeResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetTotalStakeResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetTotalStakeResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetTotalStakeResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..aInt64(2, _omitFieldNames ? '' : 'totalStake')
     ..hasRequiredFields = false;
@@ -1592,12 +1684,16 @@ class GetTotalStakeResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetTotalStakeResponse() / GetTotalStakeResponse.new instead')
   static GetTotalStakeResponse create() => GetTotalStakeResponse._();
+  static $pb.GeneratedMessage $_createMessage() => GetTotalStakeResponse._();
   @$core.override
-  GetTotalStakeResponse createEmptyInstance() => create();
+  GetTotalStakeResponse createEmptyInstance() => GetTotalStakeResponse._();
   @$core.pragma('dart2js:noInline')
   static GetTotalStakeResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetTotalStakeResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetTotalStakeResponse>(
+          GetTotalStakeResponse.$_createMessage);
   static GetTotalStakeResponse? _defaultInstance;
 
   /// The name of the queried wallet.
@@ -1627,7 +1723,7 @@ class GetAddressInfoRequest extends $pb.GeneratedMessage {
     $core.String? walletName,
     $core.String? address,
   }) {
-    final result = create();
+    final result = GetAddressInfoRequest._();
     if (walletName != null) result.walletName = walletName;
     if (address != null) result.address = address;
     return result;
@@ -1637,15 +1733,15 @@ class GetAddressInfoRequest extends $pb.GeneratedMessage {
 
   factory GetAddressInfoRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetAddressInfoRequest()..mergeFromBuffer(data, registry);
   factory GetAddressInfoRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetAddressInfoRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetAddressInfoRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetAddressInfoRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..aOS(2, _omitFieldNames ? '' : 'address')
     ..hasRequiredFields = false;
@@ -1662,12 +1758,16 @@ class GetAddressInfoRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetAddressInfoRequest() / GetAddressInfoRequest.new instead')
   static GetAddressInfoRequest create() => GetAddressInfoRequest._();
+  static $pb.GeneratedMessage $_createMessage() => GetAddressInfoRequest._();
   @$core.override
-  GetAddressInfoRequest createEmptyInstance() => create();
+  GetAddressInfoRequest createEmptyInstance() => GetAddressInfoRequest._();
   @$core.pragma('dart2js:noInline')
   static GetAddressInfoRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetAddressInfoRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetAddressInfoRequest>(
+          GetAddressInfoRequest.$_createMessage);
   static GetAddressInfoRequest? _defaultInstance;
 
   /// The name of the wallet containing the address.
@@ -1697,7 +1797,7 @@ class GetAddressInfoResponse extends $pb.GeneratedMessage {
     $core.String? walletName,
     AddressInfo? addr,
   }) {
-    final result = create();
+    final result = GetAddressInfoResponse._();
     if (walletName != null) result.walletName = walletName;
     if (addr != null) result.addr = addr;
     return result;
@@ -1707,18 +1807,18 @@ class GetAddressInfoResponse extends $pb.GeneratedMessage {
 
   factory GetAddressInfoResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetAddressInfoResponse()..mergeFromBuffer(data, registry);
   factory GetAddressInfoResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetAddressInfoResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetAddressInfoResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetAddressInfoResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..aOM<AddressInfo>(2, _omitFieldNames ? '' : 'addr',
-        subBuilder: AddressInfo.create)
+        subBuilder: AddressInfo.$_createMessage)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1733,12 +1833,16 @@ class GetAddressInfoResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetAddressInfoResponse() / GetAddressInfoResponse.new instead')
   static GetAddressInfoResponse create() => GetAddressInfoResponse._();
+  static $pb.GeneratedMessage $_createMessage() => GetAddressInfoResponse._();
   @$core.override
-  GetAddressInfoResponse createEmptyInstance() => create();
+  GetAddressInfoResponse createEmptyInstance() => GetAddressInfoResponse._();
   @$core.pragma('dart2js:noInline')
   static GetAddressInfoResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetAddressInfoResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetAddressInfoResponse>(
+          GetAddressInfoResponse.$_createMessage);
   static GetAddressInfoResponse? _defaultInstance;
 
   /// The name of the wallet containing the address.
@@ -1772,7 +1876,7 @@ class SetAddressLabelRequest extends $pb.GeneratedMessage {
     $core.String? address,
     $core.String? label,
   }) {
-    final result = create();
+    final result = SetAddressLabelRequest._();
     if (walletName != null) result.walletName = walletName;
     if (password != null) result.password = password;
     if (address != null) result.address = address;
@@ -1784,15 +1888,15 @@ class SetAddressLabelRequest extends $pb.GeneratedMessage {
 
   factory SetAddressLabelRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      SetAddressLabelRequest()..mergeFromBuffer(data, registry);
   factory SetAddressLabelRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      SetAddressLabelRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'SetAddressLabelRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: SetAddressLabelRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..aOS(2, _omitFieldNames ? '' : 'password')
     ..aOS(3, _omitFieldNames ? '' : 'address')
@@ -1811,12 +1915,16 @@ class SetAddressLabelRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use SetAddressLabelRequest() / SetAddressLabelRequest.new instead')
   static SetAddressLabelRequest create() => SetAddressLabelRequest._();
+  static $pb.GeneratedMessage $_createMessage() => SetAddressLabelRequest._();
   @$core.override
-  SetAddressLabelRequest createEmptyInstance() => create();
+  SetAddressLabelRequest createEmptyInstance() => SetAddressLabelRequest._();
   @$core.pragma('dart2js:noInline')
   static SetAddressLabelRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<SetAddressLabelRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<SetAddressLabelRequest>(
+          SetAddressLabelRequest.$_createMessage);
   static SetAddressLabelRequest? _defaultInstance;
 
   /// The name of the wallet containing the address.
@@ -1867,7 +1975,7 @@ class SetAddressLabelResponse extends $pb.GeneratedMessage {
     $core.String? address,
     $core.String? label,
   }) {
-    final result = create();
+    final result = SetAddressLabelResponse._();
     if (walletName != null) result.walletName = walletName;
     if (address != null) result.address = address;
     if (label != null) result.label = label;
@@ -1878,15 +1986,15 @@ class SetAddressLabelResponse extends $pb.GeneratedMessage {
 
   factory SetAddressLabelResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      SetAddressLabelResponse()..mergeFromBuffer(data, registry);
   factory SetAddressLabelResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      SetAddressLabelResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'SetAddressLabelResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: SetAddressLabelResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..aOS(2, _omitFieldNames ? '' : 'address')
     ..aOS(3, _omitFieldNames ? '' : 'label')
@@ -1904,12 +2012,16 @@ class SetAddressLabelResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use SetAddressLabelResponse() / SetAddressLabelResponse.new instead')
   static SetAddressLabelResponse create() => SetAddressLabelResponse._();
+  static $pb.GeneratedMessage $_createMessage() => SetAddressLabelResponse._();
   @$core.override
-  SetAddressLabelResponse createEmptyInstance() => create();
+  SetAddressLabelResponse createEmptyInstance() => SetAddressLabelResponse._();
   @$core.pragma('dart2js:noInline')
   static SetAddressLabelResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<SetAddressLabelResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<SetAddressLabelResponse>(
+          SetAddressLabelResponse.$_createMessage);
   static SetAddressLabelResponse? _defaultInstance;
 
   /// The name of the wallet where the address label was updated.
@@ -1945,21 +2057,21 @@ class SetAddressLabelResponse extends $pb.GeneratedMessage {
 
 /// Request message for listing wallets.
 class ListWalletsRequest extends $pb.GeneratedMessage {
-  factory ListWalletsRequest() => create();
+  factory ListWalletsRequest() => ListWalletsRequest._();
 
   ListWalletsRequest._();
 
   factory ListWalletsRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      ListWalletsRequest()..mergeFromBuffer(data, registry);
   factory ListWalletsRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      ListWalletsRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'ListWalletsRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: ListWalletsRequest.$_createMessage)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1973,12 +2085,15 @@ class ListWalletsRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use ListWalletsRequest() / ListWalletsRequest.new instead')
   static ListWalletsRequest create() => ListWalletsRequest._();
+  static $pb.GeneratedMessage $_createMessage() => ListWalletsRequest._();
   @$core.override
-  ListWalletsRequest createEmptyInstance() => create();
+  ListWalletsRequest createEmptyInstance() => ListWalletsRequest._();
   @$core.pragma('dart2js:noInline')
   static ListWalletsRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<ListWalletsRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<ListWalletsRequest>(
+          ListWalletsRequest.$_createMessage);
   static ListWalletsRequest? _defaultInstance;
 }
 
@@ -1987,7 +2102,7 @@ class ListWalletsResponse extends $pb.GeneratedMessage {
   factory ListWalletsResponse({
     $core.Iterable<$core.String>? wallets,
   }) {
-    final result = create();
+    final result = ListWalletsResponse._();
     if (wallets != null) result.wallets.addAll(wallets);
     return result;
   }
@@ -1996,15 +2111,15 @@ class ListWalletsResponse extends $pb.GeneratedMessage {
 
   factory ListWalletsResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      ListWalletsResponse()..mergeFromBuffer(data, registry);
   factory ListWalletsResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      ListWalletsResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'ListWalletsResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: ListWalletsResponse.$_createMessage)
     ..pPS(1, _omitFieldNames ? '' : 'wallets')
     ..hasRequiredFields = false;
 
@@ -2019,12 +2134,16 @@ class ListWalletsResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core
+      .Deprecated('Use ListWalletsResponse() / ListWalletsResponse.new instead')
   static ListWalletsResponse create() => ListWalletsResponse._();
+  static $pb.GeneratedMessage $_createMessage() => ListWalletsResponse._();
   @$core.override
-  ListWalletsResponse createEmptyInstance() => create();
+  ListWalletsResponse createEmptyInstance() => ListWalletsResponse._();
   @$core.pragma('dart2js:noInline')
   static ListWalletsResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<ListWalletsResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<ListWalletsResponse>(
+          ListWalletsResponse.$_createMessage);
   static ListWalletsResponse? _defaultInstance;
 
   /// Array of wallet names.
@@ -2037,7 +2156,7 @@ class GetWalletInfoRequest extends $pb.GeneratedMessage {
   factory GetWalletInfoRequest({
     $core.String? walletName,
   }) {
-    final result = create();
+    final result = GetWalletInfoRequest._();
     if (walletName != null) result.walletName = walletName;
     return result;
   }
@@ -2046,15 +2165,15 @@ class GetWalletInfoRequest extends $pb.GeneratedMessage {
 
   factory GetWalletInfoRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetWalletInfoRequest()..mergeFromBuffer(data, registry);
   factory GetWalletInfoRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetWalletInfoRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetWalletInfoRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetWalletInfoRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..hasRequiredFields = false;
 
@@ -2069,12 +2188,16 @@ class GetWalletInfoRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetWalletInfoRequest() / GetWalletInfoRequest.new instead')
   static GetWalletInfoRequest create() => GetWalletInfoRequest._();
+  static $pb.GeneratedMessage $_createMessage() => GetWalletInfoRequest._();
   @$core.override
-  GetWalletInfoRequest createEmptyInstance() => create();
+  GetWalletInfoRequest createEmptyInstance() => GetWalletInfoRequest._();
   @$core.pragma('dart2js:noInline')
   static GetWalletInfoRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetWalletInfoRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetWalletInfoRequest>(
+          GetWalletInfoRequest.$_createMessage);
   static GetWalletInfoRequest? _defaultInstance;
 
   /// The name of the wallet to query.
@@ -2101,7 +2224,7 @@ class GetWalletInfoResponse extends $pb.GeneratedMessage {
     $core.String? driver,
     $core.String? path,
   }) {
-    final result = create();
+    final result = GetWalletInfoResponse._();
     if (walletName != null) result.walletName = walletName;
     if (version != null) result.version = version;
     if (network != null) result.network = network;
@@ -2118,15 +2241,15 @@ class GetWalletInfoResponse extends $pb.GeneratedMessage {
 
   factory GetWalletInfoResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetWalletInfoResponse()..mergeFromBuffer(data, registry);
   factory GetWalletInfoResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetWalletInfoResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetWalletInfoResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetWalletInfoResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..aI(2, _omitFieldNames ? '' : 'version')
     ..aOS(3, _omitFieldNames ? '' : 'network')
@@ -2150,12 +2273,16 @@ class GetWalletInfoResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetWalletInfoResponse() / GetWalletInfoResponse.new instead')
   static GetWalletInfoResponse create() => GetWalletInfoResponse._();
+  static $pb.GeneratedMessage $_createMessage() => GetWalletInfoResponse._();
   @$core.override
-  GetWalletInfoResponse createEmptyInstance() => create();
+  GetWalletInfoResponse createEmptyInstance() => GetWalletInfoResponse._();
   @$core.pragma('dart2js:noInline')
   static GetWalletInfoResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetWalletInfoResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetWalletInfoResponse>(
+          GetWalletInfoResponse.$_createMessage);
   static GetWalletInfoResponse? _defaultInstance;
 
   /// The name of the wallet.
@@ -2257,7 +2384,7 @@ class ListAddressesRequest extends $pb.GeneratedMessage {
     $core.bool? includeBalance,
     $core.bool? includeStake,
   }) {
-    final result = create();
+    final result = ListAddressesRequest._();
     if (walletName != null) result.walletName = walletName;
     if (addressTypes != null) result.addressTypes.addAll(addressTypes);
     if (includeBalance != null) result.includeBalance = includeBalance;
@@ -2269,15 +2396,15 @@ class ListAddressesRequest extends $pb.GeneratedMessage {
 
   factory ListAddressesRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      ListAddressesRequest()..mergeFromBuffer(data, registry);
   factory ListAddressesRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      ListAddressesRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'ListAddressesRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: ListAddressesRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..pc<AddressType>(
         2, _omitFieldNames ? '' : 'addressTypes', $pb.PbFieldType.KE,
@@ -2299,12 +2426,16 @@ class ListAddressesRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use ListAddressesRequest() / ListAddressesRequest.new instead')
   static ListAddressesRequest create() => ListAddressesRequest._();
+  static $pb.GeneratedMessage $_createMessage() => ListAddressesRequest._();
   @$core.override
-  ListAddressesRequest createEmptyInstance() => create();
+  ListAddressesRequest createEmptyInstance() => ListAddressesRequest._();
   @$core.pragma('dart2js:noInline')
   static ListAddressesRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<ListAddressesRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<ListAddressesRequest>(
+          ListAddressesRequest.$_createMessage);
   static ListAddressesRequest? _defaultInstance;
 
   /// The name of the queried wallet.
@@ -2348,7 +2479,7 @@ class ListAddressesResponse extends $pb.GeneratedMessage {
     $core.String? walletName,
     $core.Iterable<AddressInfo>? addrs,
   }) {
-    final result = create();
+    final result = ListAddressesResponse._();
     if (walletName != null) result.walletName = walletName;
     if (addrs != null) result.addrs.addAll(addrs);
     return result;
@@ -2358,18 +2489,18 @@ class ListAddressesResponse extends $pb.GeneratedMessage {
 
   factory ListAddressesResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      ListAddressesResponse()..mergeFromBuffer(data, registry);
   factory ListAddressesResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      ListAddressesResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'ListAddressesResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: ListAddressesResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..pPM<AddressInfo>(2, _omitFieldNames ? '' : 'addrs',
-        subBuilder: AddressInfo.create)
+        subBuilder: AddressInfo.$_createMessage)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -2384,12 +2515,16 @@ class ListAddressesResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use ListAddressesResponse() / ListAddressesResponse.new instead')
   static ListAddressesResponse create() => ListAddressesResponse._();
+  static $pb.GeneratedMessage $_createMessage() => ListAddressesResponse._();
   @$core.override
-  ListAddressesResponse createEmptyInstance() => create();
+  ListAddressesResponse createEmptyInstance() => ListAddressesResponse._();
   @$core.pragma('dart2js:noInline')
   static ListAddressesResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<ListAddressesResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<ListAddressesResponse>(
+          ListAddressesResponse.$_createMessage);
   static ListAddressesResponse? _defaultInstance;
 
   /// The name of the queried wallet.
@@ -2414,7 +2549,7 @@ class UpdatePasswordRequest extends $pb.GeneratedMessage {
     $core.String? oldPassword,
     $core.String? newPassword,
   }) {
-    final result = create();
+    final result = UpdatePasswordRequest._();
     if (walletName != null) result.walletName = walletName;
     if (oldPassword != null) result.oldPassword = oldPassword;
     if (newPassword != null) result.newPassword = newPassword;
@@ -2425,15 +2560,15 @@ class UpdatePasswordRequest extends $pb.GeneratedMessage {
 
   factory UpdatePasswordRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      UpdatePasswordRequest()..mergeFromBuffer(data, registry);
   factory UpdatePasswordRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      UpdatePasswordRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'UpdatePasswordRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: UpdatePasswordRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..aOS(2, _omitFieldNames ? '' : 'oldPassword')
     ..aOS(3, _omitFieldNames ? '' : 'newPassword')
@@ -2451,12 +2586,16 @@ class UpdatePasswordRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use UpdatePasswordRequest() / UpdatePasswordRequest.new instead')
   static UpdatePasswordRequest create() => UpdatePasswordRequest._();
+  static $pb.GeneratedMessage $_createMessage() => UpdatePasswordRequest._();
   @$core.override
-  UpdatePasswordRequest createEmptyInstance() => create();
+  UpdatePasswordRequest createEmptyInstance() => UpdatePasswordRequest._();
   @$core.pragma('dart2js:noInline')
   static UpdatePasswordRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<UpdatePasswordRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<UpdatePasswordRequest>(
+          UpdatePasswordRequest.$_createMessage);
   static UpdatePasswordRequest? _defaultInstance;
 
   /// The name of the wallet whose password will be updated.
@@ -2495,7 +2634,7 @@ class UpdatePasswordResponse extends $pb.GeneratedMessage {
   factory UpdatePasswordResponse({
     $core.String? walletName,
   }) {
-    final result = create();
+    final result = UpdatePasswordResponse._();
     if (walletName != null) result.walletName = walletName;
     return result;
   }
@@ -2504,15 +2643,15 @@ class UpdatePasswordResponse extends $pb.GeneratedMessage {
 
   factory UpdatePasswordResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      UpdatePasswordResponse()..mergeFromBuffer(data, registry);
   factory UpdatePasswordResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      UpdatePasswordResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'UpdatePasswordResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: UpdatePasswordResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..hasRequiredFields = false;
 
@@ -2528,12 +2667,16 @@ class UpdatePasswordResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use UpdatePasswordResponse() / UpdatePasswordResponse.new instead')
   static UpdatePasswordResponse create() => UpdatePasswordResponse._();
+  static $pb.GeneratedMessage $_createMessage() => UpdatePasswordResponse._();
   @$core.override
-  UpdatePasswordResponse createEmptyInstance() => create();
+  UpdatePasswordResponse createEmptyInstance() => UpdatePasswordResponse._();
   @$core.pragma('dart2js:noInline')
   static UpdatePasswordResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<UpdatePasswordResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<UpdatePasswordResponse>(
+          UpdatePasswordResponse.$_createMessage);
   static UpdatePasswordResponse? _defaultInstance;
 
   /// The name of the wallet whose password was updated.
@@ -2566,7 +2709,7 @@ class WalletTransactionInfo extends $pb.GeneratedMessage {
     $fixnum.Int64? createdAt,
     $fixnum.Int64? updatedAt,
   }) {
-    final result = create();
+    final result = WalletTransactionInfo._();
     if (no != null) result.no = no;
     if (txId != null) result.txId = txId;
     if (sender != null) result.sender = sender;
@@ -2589,15 +2732,15 @@ class WalletTransactionInfo extends $pb.GeneratedMessage {
 
   factory WalletTransactionInfo.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      WalletTransactionInfo()..mergeFromBuffer(data, registry);
   factory WalletTransactionInfo.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      WalletTransactionInfo()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'WalletTransactionInfo',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: WalletTransactionInfo.$_createMessage)
     ..aInt64(1, _omitFieldNames ? '' : 'no')
     ..aOS(2, _omitFieldNames ? '' : 'txId')
     ..aOS(3, _omitFieldNames ? '' : 'sender')
@@ -2632,12 +2775,16 @@ class WalletTransactionInfo extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use WalletTransactionInfo() / WalletTransactionInfo.new instead')
   static WalletTransactionInfo create() => WalletTransactionInfo._();
+  static $pb.GeneratedMessage $_createMessage() => WalletTransactionInfo._();
   @$core.override
-  WalletTransactionInfo createEmptyInstance() => create();
+  WalletTransactionInfo createEmptyInstance() => WalletTransactionInfo._();
   @$core.pragma('dart2js:noInline')
   static WalletTransactionInfo getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<WalletTransactionInfo>(create);
+      $pb.GeneratedMessage.$_defaultFor<WalletTransactionInfo>(
+          WalletTransactionInfo.$_createMessage);
   static WalletTransactionInfo? _defaultInstance;
 
   /// A sequence number for the transaction in the wallet.
@@ -2800,7 +2947,7 @@ class ListTransactionsRequest extends $pb.GeneratedMessage {
     $core.int? count,
     $core.int? skip,
   }) {
-    final result = create();
+    final result = ListTransactionsRequest._();
     if (walletName != null) result.walletName = walletName;
     if (address != null) result.address = address;
     if (direction != null) result.direction = direction;
@@ -2813,15 +2960,15 @@ class ListTransactionsRequest extends $pb.GeneratedMessage {
 
   factory ListTransactionsRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      ListTransactionsRequest()..mergeFromBuffer(data, registry);
   factory ListTransactionsRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      ListTransactionsRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'ListTransactionsRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: ListTransactionsRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..aOS(2, _omitFieldNames ? '' : 'address')
     ..aE<TxDirection>(3, _omitFieldNames ? '' : 'direction',
@@ -2842,12 +2989,16 @@ class ListTransactionsRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use ListTransactionsRequest() / ListTransactionsRequest.new instead')
   static ListTransactionsRequest create() => ListTransactionsRequest._();
+  static $pb.GeneratedMessage $_createMessage() => ListTransactionsRequest._();
   @$core.override
-  ListTransactionsRequest createEmptyInstance() => create();
+  ListTransactionsRequest createEmptyInstance() => ListTransactionsRequest._();
   @$core.pragma('dart2js:noInline')
   static ListTransactionsRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<ListTransactionsRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<ListTransactionsRequest>(
+          ListTransactionsRequest.$_createMessage);
   static ListTransactionsRequest? _defaultInstance;
 
   /// The name of the wallet to query transactions for.
@@ -2911,7 +3062,7 @@ class ListTransactionsResponse extends $pb.GeneratedMessage {
     $core.String? walletName,
     $core.Iterable<WalletTransactionInfo>? txs,
   }) {
-    final result = create();
+    final result = ListTransactionsResponse._();
     if (walletName != null) result.walletName = walletName;
     if (txs != null) result.txs.addAll(txs);
     return result;
@@ -2921,18 +3072,18 @@ class ListTransactionsResponse extends $pb.GeneratedMessage {
 
   factory ListTransactionsResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      ListTransactionsResponse()..mergeFromBuffer(data, registry);
   factory ListTransactionsResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      ListTransactionsResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'ListTransactionsResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: ListTransactionsResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..pPM<WalletTransactionInfo>(2, _omitFieldNames ? '' : 'txs',
-        subBuilder: WalletTransactionInfo.create)
+        subBuilder: WalletTransactionInfo.$_createMessage)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -2947,12 +3098,17 @@ class ListTransactionsResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use ListTransactionsResponse() / ListTransactionsResponse.new instead')
   static ListTransactionsResponse create() => ListTransactionsResponse._();
+  static $pb.GeneratedMessage $_createMessage() => ListTransactionsResponse._();
   @$core.override
-  ListTransactionsResponse createEmptyInstance() => create();
+  ListTransactionsResponse createEmptyInstance() =>
+      ListTransactionsResponse._();
   @$core.pragma('dart2js:noInline')
   static ListTransactionsResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<ListTransactionsResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<ListTransactionsResponse>(
+          ListTransactionsResponse.$_createMessage);
   static ListTransactionsResponse? _defaultInstance;
 
   /// The name of the wallet queried.
@@ -2976,7 +3132,7 @@ class SetDefaultFeeRequest extends $pb.GeneratedMessage {
     $core.String? walletName,
     $fixnum.Int64? amount,
   }) {
-    final result = create();
+    final result = SetDefaultFeeRequest._();
     if (walletName != null) result.walletName = walletName;
     if (amount != null) result.amount = amount;
     return result;
@@ -2986,15 +3142,15 @@ class SetDefaultFeeRequest extends $pb.GeneratedMessage {
 
   factory SetDefaultFeeRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      SetDefaultFeeRequest()..mergeFromBuffer(data, registry);
   factory SetDefaultFeeRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      SetDefaultFeeRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'SetDefaultFeeRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: SetDefaultFeeRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..aInt64(2, _omitFieldNames ? '' : 'amount')
     ..hasRequiredFields = false;
@@ -3010,12 +3166,16 @@ class SetDefaultFeeRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use SetDefaultFeeRequest() / SetDefaultFeeRequest.new instead')
   static SetDefaultFeeRequest create() => SetDefaultFeeRequest._();
+  static $pb.GeneratedMessage $_createMessage() => SetDefaultFeeRequest._();
   @$core.override
-  SetDefaultFeeRequest createEmptyInstance() => create();
+  SetDefaultFeeRequest createEmptyInstance() => SetDefaultFeeRequest._();
   @$core.pragma('dart2js:noInline')
   static SetDefaultFeeRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<SetDefaultFeeRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<SetDefaultFeeRequest>(
+          SetDefaultFeeRequest.$_createMessage);
   static SetDefaultFeeRequest? _defaultInstance;
 
   /// The name of the wallet to set the default fee.
@@ -3044,7 +3204,7 @@ class SetDefaultFeeResponse extends $pb.GeneratedMessage {
   factory SetDefaultFeeResponse({
     $core.String? walletName,
   }) {
-    final result = create();
+    final result = SetDefaultFeeResponse._();
     if (walletName != null) result.walletName = walletName;
     return result;
   }
@@ -3053,15 +3213,15 @@ class SetDefaultFeeResponse extends $pb.GeneratedMessage {
 
   factory SetDefaultFeeResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      SetDefaultFeeResponse()..mergeFromBuffer(data, registry);
   factory SetDefaultFeeResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      SetDefaultFeeResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'SetDefaultFeeResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: SetDefaultFeeResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..hasRequiredFields = false;
 
@@ -3077,12 +3237,16 @@ class SetDefaultFeeResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use SetDefaultFeeResponse() / SetDefaultFeeResponse.new instead')
   static SetDefaultFeeResponse create() => SetDefaultFeeResponse._();
+  static $pb.GeneratedMessage $_createMessage() => SetDefaultFeeResponse._();
   @$core.override
-  SetDefaultFeeResponse createEmptyInstance() => create();
+  SetDefaultFeeResponse createEmptyInstance() => SetDefaultFeeResponse._();
   @$core.pragma('dart2js:noInline')
   static SetDefaultFeeResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<SetDefaultFeeResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<SetDefaultFeeResponse>(
+          SetDefaultFeeResponse.$_createMessage);
   static SetDefaultFeeResponse? _defaultInstance;
 
   /// The name of the wallet where the default fee was updated.
@@ -3102,7 +3266,7 @@ class GetMnemonicRequest extends $pb.GeneratedMessage {
     $core.String? walletName,
     $core.String? password,
   }) {
-    final result = create();
+    final result = GetMnemonicRequest._();
     if (walletName != null) result.walletName = walletName;
     if (password != null) result.password = password;
     return result;
@@ -3112,15 +3276,15 @@ class GetMnemonicRequest extends $pb.GeneratedMessage {
 
   factory GetMnemonicRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetMnemonicRequest()..mergeFromBuffer(data, registry);
   factory GetMnemonicRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetMnemonicRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetMnemonicRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetMnemonicRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..aOS(2, _omitFieldNames ? '' : 'password')
     ..hasRequiredFields = false;
@@ -3136,12 +3300,15 @@ class GetMnemonicRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use GetMnemonicRequest() / GetMnemonicRequest.new instead')
   static GetMnemonicRequest create() => GetMnemonicRequest._();
+  static $pb.GeneratedMessage $_createMessage() => GetMnemonicRequest._();
   @$core.override
-  GetMnemonicRequest createEmptyInstance() => create();
+  GetMnemonicRequest createEmptyInstance() => GetMnemonicRequest._();
   @$core.pragma('dart2js:noInline')
   static GetMnemonicRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetMnemonicRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetMnemonicRequest>(
+          GetMnemonicRequest.$_createMessage);
   static GetMnemonicRequest? _defaultInstance;
 
   /// The name of the wallet to get the mnemonic.
@@ -3170,7 +3337,7 @@ class GetMnemonicResponse extends $pb.GeneratedMessage {
   factory GetMnemonicResponse({
     $core.String? mnemonic,
   }) {
-    final result = create();
+    final result = GetMnemonicResponse._();
     if (mnemonic != null) result.mnemonic = mnemonic;
     return result;
   }
@@ -3179,15 +3346,15 @@ class GetMnemonicResponse extends $pb.GeneratedMessage {
 
   factory GetMnemonicResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetMnemonicResponse()..mergeFromBuffer(data, registry);
   factory GetMnemonicResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetMnemonicResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetMnemonicResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetMnemonicResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'mnemonic')
     ..hasRequiredFields = false;
 
@@ -3202,12 +3369,16 @@ class GetMnemonicResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core
+      .Deprecated('Use GetMnemonicResponse() / GetMnemonicResponse.new instead')
   static GetMnemonicResponse create() => GetMnemonicResponse._();
+  static $pb.GeneratedMessage $_createMessage() => GetMnemonicResponse._();
   @$core.override
-  GetMnemonicResponse createEmptyInstance() => create();
+  GetMnemonicResponse createEmptyInstance() => GetMnemonicResponse._();
   @$core.pragma('dart2js:noInline')
   static GetMnemonicResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetMnemonicResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetMnemonicResponse>(
+          GetMnemonicResponse.$_createMessage);
   static GetMnemonicResponse? _defaultInstance;
 
   /// The mnemonic (seed phrase).
@@ -3228,7 +3399,7 @@ class GetPrivateKeyRequest extends $pb.GeneratedMessage {
     $core.String? password,
     $core.String? address,
   }) {
-    final result = create();
+    final result = GetPrivateKeyRequest._();
     if (walletName != null) result.walletName = walletName;
     if (password != null) result.password = password;
     if (address != null) result.address = address;
@@ -3239,15 +3410,15 @@ class GetPrivateKeyRequest extends $pb.GeneratedMessage {
 
   factory GetPrivateKeyRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetPrivateKeyRequest()..mergeFromBuffer(data, registry);
   factory GetPrivateKeyRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetPrivateKeyRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetPrivateKeyRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetPrivateKeyRequest.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..aOS(2, _omitFieldNames ? '' : 'password')
     ..aOS(3, _omitFieldNames ? '' : 'address')
@@ -3264,12 +3435,16 @@ class GetPrivateKeyRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetPrivateKeyRequest() / GetPrivateKeyRequest.new instead')
   static GetPrivateKeyRequest create() => GetPrivateKeyRequest._();
+  static $pb.GeneratedMessage $_createMessage() => GetPrivateKeyRequest._();
   @$core.override
-  GetPrivateKeyRequest createEmptyInstance() => create();
+  GetPrivateKeyRequest createEmptyInstance() => GetPrivateKeyRequest._();
   @$core.pragma('dart2js:noInline')
   static GetPrivateKeyRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetPrivateKeyRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetPrivateKeyRequest>(
+          GetPrivateKeyRequest.$_createMessage);
   static GetPrivateKeyRequest? _defaultInstance;
 
   /// The name of the wallet containing the address.
@@ -3308,7 +3483,7 @@ class GetPrivateKeyResponse extends $pb.GeneratedMessage {
   factory GetPrivateKeyResponse({
     $core.String? privateKey,
   }) {
-    final result = create();
+    final result = GetPrivateKeyResponse._();
     if (privateKey != null) result.privateKey = privateKey;
     return result;
   }
@@ -3317,15 +3492,15 @@ class GetPrivateKeyResponse extends $pb.GeneratedMessage {
 
   factory GetPrivateKeyResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetPrivateKeyResponse()..mergeFromBuffer(data, registry);
   factory GetPrivateKeyResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetPrivateKeyResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetPrivateKeyResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetPrivateKeyResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'privateKey')
     ..hasRequiredFields = false;
 
@@ -3341,12 +3516,16 @@ class GetPrivateKeyResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetPrivateKeyResponse() / GetPrivateKeyResponse.new instead')
   static GetPrivateKeyResponse create() => GetPrivateKeyResponse._();
+  static $pb.GeneratedMessage $_createMessage() => GetPrivateKeyResponse._();
   @$core.override
-  GetPrivateKeyResponse createEmptyInstance() => create();
+  GetPrivateKeyResponse createEmptyInstance() => GetPrivateKeyResponse._();
   @$core.pragma('dart2js:noInline')
   static GetPrivateKeyResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetPrivateKeyResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetPrivateKeyResponse>(
+          GetPrivateKeyResponse.$_createMessage);
   static GetPrivateKeyResponse? _defaultInstance;
 
   /// The private key in hexadecimal format.

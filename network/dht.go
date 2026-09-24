@@ -34,7 +34,7 @@ func newDHTService(ctx context.Context, host lp2phost.Host, conf *Config,
 		lp2pdht.BootstrapPeers(conf.BootstrapAddrInfos()...),
 	}
 
-	kademlia, err := lp2pdht.New(ctx, host, opts...)
+	kademlia, err := lp2pdht.New(host, opts...)
 	if err != nil {
 		panic(err)
 	}

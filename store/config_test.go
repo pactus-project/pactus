@@ -18,7 +18,7 @@ func TestConfigBasicCheck(t *testing.T) {
 		{
 			name: "Invalid Path",
 			expectedErr: ConfigError{
-				Reason: "path is not valid",
+				Reason: "path is invalid or inaccessible: /invalid:path/\x00*folder?\\CON",
 			},
 			updateFn: func(c *Config) {
 				c.Path = "/invalid:path/\x00*folder?\\CON"

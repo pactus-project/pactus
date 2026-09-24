@@ -24,21 +24,21 @@ export 'network.pbenum.dart';
 
 /// Request message for retrieving overall network information.
 class GetNetworkInfoRequest extends $pb.GeneratedMessage {
-  factory GetNetworkInfoRequest() => create();
+  factory GetNetworkInfoRequest() => GetNetworkInfoRequest._();
 
   GetNetworkInfoRequest._();
 
   factory GetNetworkInfoRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetNetworkInfoRequest()..mergeFromBuffer(data, registry);
   factory GetNetworkInfoRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetNetworkInfoRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetNetworkInfoRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetNetworkInfoRequest.$_createMessage)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -53,12 +53,16 @@ class GetNetworkInfoRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetNetworkInfoRequest() / GetNetworkInfoRequest.new instead')
   static GetNetworkInfoRequest create() => GetNetworkInfoRequest._();
+  static $pb.GeneratedMessage $_createMessage() => GetNetworkInfoRequest._();
   @$core.override
-  GetNetworkInfoRequest createEmptyInstance() => create();
+  GetNetworkInfoRequest createEmptyInstance() => GetNetworkInfoRequest._();
   @$core.pragma('dart2js:noInline')
   static GetNetworkInfoRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetNetworkInfoRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetNetworkInfoRequest>(
+          GetNetworkInfoRequest.$_createMessage);
   static GetNetworkInfoRequest? _defaultInstance;
 }
 
@@ -69,7 +73,7 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
     $core.int? connectedPeersCount,
     MetricInfo? metricInfo,
   }) {
-    final result = create();
+    final result = GetNetworkInfoResponse._();
     if (networkName != null) result.networkName = networkName;
     if (connectedPeersCount != null)
       result.connectedPeersCount = connectedPeersCount;
@@ -81,20 +85,20 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
 
   factory GetNetworkInfoResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetNetworkInfoResponse()..mergeFromBuffer(data, registry);
   factory GetNetworkInfoResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetNetworkInfoResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetNetworkInfoResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetNetworkInfoResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'networkName')
     ..aI(2, _omitFieldNames ? '' : 'connectedPeersCount',
         fieldType: $pb.PbFieldType.OU3)
     ..aOM<MetricInfo>(4, _omitFieldNames ? '' : 'metricInfo',
-        subBuilder: MetricInfo.create)
+        subBuilder: MetricInfo.$_createMessage)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -109,12 +113,16 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use GetNetworkInfoResponse() / GetNetworkInfoResponse.new instead')
   static GetNetworkInfoResponse create() => GetNetworkInfoResponse._();
+  static $pb.GeneratedMessage $_createMessage() => GetNetworkInfoResponse._();
   @$core.override
-  GetNetworkInfoResponse createEmptyInstance() => create();
+  GetNetworkInfoResponse createEmptyInstance() => GetNetworkInfoResponse._();
   @$core.pragma('dart2js:noInline')
   static GetNetworkInfoResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetNetworkInfoResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetNetworkInfoResponse>(
+          GetNetworkInfoResponse.$_createMessage);
   static GetNetworkInfoResponse? _defaultInstance;
 
   /// Name of the P2P network.
@@ -155,7 +163,7 @@ class ListPeersRequest extends $pb.GeneratedMessage {
   factory ListPeersRequest({
     $core.bool? includeDisconnected,
   }) {
-    final result = create();
+    final result = ListPeersRequest._();
     if (includeDisconnected != null)
       result.includeDisconnected = includeDisconnected;
     return result;
@@ -165,15 +173,15 @@ class ListPeersRequest extends $pb.GeneratedMessage {
 
   factory ListPeersRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      ListPeersRequest()..mergeFromBuffer(data, registry);
   factory ListPeersRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      ListPeersRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'ListPeersRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: ListPeersRequest.$_createMessage)
     ..aOB(1, _omitFieldNames ? '' : 'includeDisconnected')
     ..hasRequiredFields = false;
 
@@ -188,12 +196,15 @@ class ListPeersRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use ListPeersRequest() / ListPeersRequest.new instead')
   static ListPeersRequest create() => ListPeersRequest._();
+  static $pb.GeneratedMessage $_createMessage() => ListPeersRequest._();
   @$core.override
-  ListPeersRequest createEmptyInstance() => create();
+  ListPeersRequest createEmptyInstance() => ListPeersRequest._();
   @$core.pragma('dart2js:noInline')
-  static ListPeersRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<ListPeersRequest>(create);
+  static ListPeersRequest getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ListPeersRequest>(
+          ListPeersRequest.$_createMessage);
   static ListPeersRequest? _defaultInstance;
 
   /// If true, includes disconnected peers (default: connected peers only).
@@ -212,7 +223,7 @@ class ListPeersResponse extends $pb.GeneratedMessage {
   factory ListPeersResponse({
     $core.Iterable<PeerInfo>? peers,
   }) {
-    final result = create();
+    final result = ListPeersResponse._();
     if (peers != null) result.peers.addAll(peers);
     return result;
   }
@@ -221,17 +232,17 @@ class ListPeersResponse extends $pb.GeneratedMessage {
 
   factory ListPeersResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      ListPeersResponse()..mergeFromBuffer(data, registry);
   factory ListPeersResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      ListPeersResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'ListPeersResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: ListPeersResponse.$_createMessage)
     ..pPM<PeerInfo>(1, _omitFieldNames ? '' : 'peers',
-        subBuilder: PeerInfo.create)
+        subBuilder: PeerInfo.$_createMessage)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -245,12 +256,15 @@ class ListPeersResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use ListPeersResponse() / ListPeersResponse.new instead')
   static ListPeersResponse create() => ListPeersResponse._();
+  static $pb.GeneratedMessage $_createMessage() => ListPeersResponse._();
   @$core.override
-  ListPeersResponse createEmptyInstance() => create();
+  ListPeersResponse createEmptyInstance() => ListPeersResponse._();
   @$core.pragma('dart2js:noInline')
-  static ListPeersResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<ListPeersResponse>(create);
+  static ListPeersResponse getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ListPeersResponse>(
+          ListPeersResponse.$_createMessage);
   static ListPeersResponse? _defaultInstance;
 
   /// List of peers.
@@ -260,21 +274,21 @@ class ListPeersResponse extends $pb.GeneratedMessage {
 
 /// Request message for retrieving information of the node.
 class GetNodeInfoRequest extends $pb.GeneratedMessage {
-  factory GetNodeInfoRequest() => create();
+  factory GetNodeInfoRequest() => GetNodeInfoRequest._();
 
   GetNodeInfoRequest._();
 
   factory GetNodeInfoRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetNodeInfoRequest()..mergeFromBuffer(data, registry);
   factory GetNodeInfoRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetNodeInfoRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetNodeInfoRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetNodeInfoRequest.$_createMessage)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -288,12 +302,15 @@ class GetNodeInfoRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use GetNodeInfoRequest() / GetNodeInfoRequest.new instead')
   static GetNodeInfoRequest create() => GetNodeInfoRequest._();
+  static $pb.GeneratedMessage $_createMessage() => GetNodeInfoRequest._();
   @$core.override
-  GetNodeInfoRequest createEmptyInstance() => create();
+  GetNodeInfoRequest createEmptyInstance() => GetNodeInfoRequest._();
   @$core.pragma('dart2js:noInline')
   static GetNodeInfoRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetNodeInfoRequest>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetNodeInfoRequest>(
+          GetNodeInfoRequest.$_createMessage);
   static GetNodeInfoRequest? _defaultInstance;
 }
 
@@ -315,7 +332,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     $fixnum.Int64? currentTime,
     $core.String? networkName,
   }) {
-    final result = create();
+    final result = GetNodeInfoResponse._();
     if (moniker != null) result.moniker = moniker;
     if (agent != null) result.agent = agent;
     if (peerId != null) result.peerId = peerId;
@@ -337,15 +354,15 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
 
   factory GetNodeInfoResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      GetNodeInfoResponse()..mergeFromBuffer(data, registry);
   factory GetNodeInfoResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      GetNodeInfoResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'GetNodeInfoResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: GetNodeInfoResponse.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'moniker')
     ..aOS(2, _omitFieldNames ? '' : 'agent')
     ..aOS(3, _omitFieldNames ? '' : 'peerId')
@@ -359,9 +376,9 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     ..pPS(9, _omitFieldNames ? '' : 'protocols')
     ..aD(13, _omitFieldNames ? '' : 'clockOffset')
     ..aOM<ConnectionInfo>(14, _omitFieldNames ? '' : 'connectionInfo',
-        subBuilder: ConnectionInfo.create)
+        subBuilder: ConnectionInfo.$_createMessage)
     ..pPM<ZMQPublisherInfo>(15, _omitFieldNames ? '' : 'zmqPublishers',
-        subBuilder: ZMQPublisherInfo.create)
+        subBuilder: ZMQPublisherInfo.$_createMessage)
     ..a<$fixnum.Int64>(
         16, _omitFieldNames ? '' : 'currentTime', $pb.PbFieldType.OU6,
         defaultOrMaker: $fixnum.Int64.ZERO)
@@ -379,12 +396,16 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core
+      .Deprecated('Use GetNodeInfoResponse() / GetNodeInfoResponse.new instead')
   static GetNodeInfoResponse create() => GetNodeInfoResponse._();
+  static $pb.GeneratedMessage $_createMessage() => GetNodeInfoResponse._();
   @$core.override
-  GetNodeInfoResponse createEmptyInstance() => create();
+  GetNodeInfoResponse createEmptyInstance() => GetNodeInfoResponse._();
   @$core.pragma('dart2js:noInline')
   static GetNodeInfoResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<GetNodeInfoResponse>(create);
+      $pb.GeneratedMessage.$_defaultFor<GetNodeInfoResponse>(
+          GetNodeInfoResponse.$_createMessage);
   static GetNodeInfoResponse? _defaultInstance;
 
   /// Moniker or Human-readable name identifying this node in the network.
@@ -519,7 +540,7 @@ class ZMQPublisherInfo extends $pb.GeneratedMessage {
     $core.String? address,
     $core.int? hwm,
   }) {
-    final result = create();
+    final result = ZMQPublisherInfo._();
     if (topic != null) result.topic = topic;
     if (address != null) result.address = address;
     if (hwm != null) result.hwm = hwm;
@@ -530,15 +551,15 @@ class ZMQPublisherInfo extends $pb.GeneratedMessage {
 
   factory ZMQPublisherInfo.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      ZMQPublisherInfo()..mergeFromBuffer(data, registry);
   factory ZMQPublisherInfo.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      ZMQPublisherInfo()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'ZMQPublisherInfo',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: ZMQPublisherInfo.$_createMessage)
     ..aOS(1, _omitFieldNames ? '' : 'topic')
     ..aOS(2, _omitFieldNames ? '' : 'address')
     ..aI(3, _omitFieldNames ? '' : 'hwm')
@@ -555,12 +576,15 @@ class ZMQPublisherInfo extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use ZMQPublisherInfo() / ZMQPublisherInfo.new instead')
   static ZMQPublisherInfo create() => ZMQPublisherInfo._();
+  static $pb.GeneratedMessage $_createMessage() => ZMQPublisherInfo._();
   @$core.override
-  ZMQPublisherInfo createEmptyInstance() => create();
+  ZMQPublisherInfo createEmptyInstance() => ZMQPublisherInfo._();
   @$core.pragma('dart2js:noInline')
-  static ZMQPublisherInfo getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<ZMQPublisherInfo>(create);
+  static ZMQPublisherInfo getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ZMQPublisherInfo>(
+          ZMQPublisherInfo.$_createMessage);
   static ZMQPublisherInfo? _defaultInstance;
 
   /// The topic associated with the publisher.
@@ -617,7 +641,7 @@ class PeerInfo extends $pb.GeneratedMessage {
     MetricInfo? metricInfo,
     $core.bool? outboundHelloSent,
   }) {
-    final result = create();
+    final result = PeerInfo._();
     if (status != null) result.status = status;
     if (moniker != null) result.moniker = moniker;
     if (agent != null) result.agent = agent;
@@ -644,15 +668,15 @@ class PeerInfo extends $pb.GeneratedMessage {
 
   factory PeerInfo.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      PeerInfo()..mergeFromBuffer(data, registry);
   factory PeerInfo.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      PeerInfo()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'PeerInfo',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: PeerInfo.$_createMessage)
     ..aI(1, _omitFieldNames ? '' : 'status')
     ..aOS(2, _omitFieldNames ? '' : 'moniker')
     ..aOS(3, _omitFieldNames ? '' : 'agent')
@@ -671,7 +695,7 @@ class PeerInfo extends $pb.GeneratedMessage {
     ..aI(15, _omitFieldNames ? '' : 'totalSessions')
     ..aI(16, _omitFieldNames ? '' : 'completedSessions')
     ..aOM<MetricInfo>(17, _omitFieldNames ? '' : 'metricInfo',
-        subBuilder: MetricInfo.create)
+        subBuilder: MetricInfo.$_createMessage)
     ..aOB(18, _omitFieldNames ? '' : 'outboundHelloSent')
     ..hasRequiredFields = false;
 
@@ -685,12 +709,14 @@ class PeerInfo extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use PeerInfo() / PeerInfo.new instead')
   static PeerInfo create() => PeerInfo._();
+  static $pb.GeneratedMessage $_createMessage() => PeerInfo._();
   @$core.override
-  PeerInfo createEmptyInstance() => create();
+  PeerInfo createEmptyInstance() => PeerInfo._();
   @$core.pragma('dart2js:noInline')
-  static PeerInfo getDefault() =>
-      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PeerInfo>(create);
+  static PeerInfo getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<PeerInfo>(PeerInfo.$_createMessage);
   static PeerInfo? _defaultInstance;
 
   /// Current status of the peer (e.g., connected, disconnected).
@@ -865,7 +891,7 @@ class ConnectionInfo extends $pb.GeneratedMessage {
     $fixnum.Int64? inboundConnections,
     $fixnum.Int64? outboundConnections,
   }) {
-    final result = create();
+    final result = ConnectionInfo._();
     if (connections != null) result.connections = connections;
     if (inboundConnections != null)
       result.inboundConnections = inboundConnections;
@@ -878,15 +904,15 @@ class ConnectionInfo extends $pb.GeneratedMessage {
 
   factory ConnectionInfo.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      ConnectionInfo()..mergeFromBuffer(data, registry);
   factory ConnectionInfo.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      ConnectionInfo()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'ConnectionInfo',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: ConnectionInfo.$_createMessage)
     ..a<$fixnum.Int64>(
         1, _omitFieldNames ? '' : 'connections', $pb.PbFieldType.OU6,
         defaultOrMaker: $fixnum.Int64.ZERO)
@@ -909,12 +935,15 @@ class ConnectionInfo extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use ConnectionInfo() / ConnectionInfo.new instead')
   static ConnectionInfo create() => ConnectionInfo._();
+  static $pb.GeneratedMessage $_createMessage() => ConnectionInfo._();
   @$core.override
-  ConnectionInfo createEmptyInstance() => create();
+  ConnectionInfo createEmptyInstance() => ConnectionInfo._();
   @$core.pragma('dart2js:noInline')
-  static ConnectionInfo getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<ConnectionInfo>(create);
+  static ConnectionInfo getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ConnectionInfo>(
+          ConnectionInfo.$_createMessage);
   static ConnectionInfo? _defaultInstance;
 
   /// Total number of connections.
@@ -957,7 +986,7 @@ class MetricInfo extends $pb.GeneratedMessage {
     $core.Iterable<$core.MapEntry<$core.int, CounterInfo>>? messageSent,
     $core.Iterable<$core.MapEntry<$core.int, CounterInfo>>? messageReceived,
   }) {
-    final result = create();
+    final result = MetricInfo._();
     if (totalInvalid != null) result.totalInvalid = totalInvalid;
     if (totalSent != null) result.totalSent = totalSent;
     if (totalReceived != null) result.totalReceived = totalReceived;
@@ -971,33 +1000,33 @@ class MetricInfo extends $pb.GeneratedMessage {
 
   factory MetricInfo.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      MetricInfo()..mergeFromBuffer(data, registry);
   factory MetricInfo.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      MetricInfo()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'MetricInfo',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: MetricInfo.$_createMessage)
     ..aOM<CounterInfo>(1, _omitFieldNames ? '' : 'totalInvalid',
-        subBuilder: CounterInfo.create)
+        subBuilder: CounterInfo.$_createMessage)
     ..aOM<CounterInfo>(2, _omitFieldNames ? '' : 'totalSent',
-        subBuilder: CounterInfo.create)
+        subBuilder: CounterInfo.$_createMessage)
     ..aOM<CounterInfo>(3, _omitFieldNames ? '' : 'totalReceived',
-        subBuilder: CounterInfo.create)
+        subBuilder: CounterInfo.$_createMessage)
     ..m<$core.int, CounterInfo>(4, _omitFieldNames ? '' : 'messageSent',
         entryClassName: 'MetricInfo.MessageSentEntry',
         keyFieldType: $pb.PbFieldType.O3,
         valueFieldType: $pb.PbFieldType.OM,
-        valueCreator: CounterInfo.create,
+        valueCreator: CounterInfo.$_createMessage,
         valueDefaultOrMaker: CounterInfo.getDefault,
         packageName: const $pb.PackageName('pactus'))
     ..m<$core.int, CounterInfo>(5, _omitFieldNames ? '' : 'messageReceived',
         entryClassName: 'MetricInfo.MessageReceivedEntry',
         keyFieldType: $pb.PbFieldType.O3,
         valueFieldType: $pb.PbFieldType.OM,
-        valueCreator: CounterInfo.create,
+        valueCreator: CounterInfo.$_createMessage,
         valueDefaultOrMaker: CounterInfo.getDefault,
         packageName: const $pb.PackageName('pactus'))
     ..hasRequiredFields = false;
@@ -1012,12 +1041,14 @@ class MetricInfo extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use MetricInfo() / MetricInfo.new instead')
   static MetricInfo create() => MetricInfo._();
+  static $pb.GeneratedMessage $_createMessage() => MetricInfo._();
   @$core.override
-  MetricInfo createEmptyInstance() => create();
+  MetricInfo createEmptyInstance() => MetricInfo._();
   @$core.pragma('dart2js:noInline')
   static MetricInfo getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<MetricInfo>(create);
+      $pb.GeneratedMessage.$_defaultFor<MetricInfo>(MetricInfo.$_createMessage);
   static MetricInfo? _defaultInstance;
 
   /// Total number of invalid bundles.
@@ -1071,7 +1102,7 @@ class CounterInfo extends $pb.GeneratedMessage {
     $fixnum.Int64? bytes,
     $fixnum.Int64? bundles,
   }) {
-    final result = create();
+    final result = CounterInfo._();
     if (bytes != null) result.bytes = bytes;
     if (bundles != null) result.bundles = bundles;
     return result;
@@ -1081,15 +1112,15 @@ class CounterInfo extends $pb.GeneratedMessage {
 
   factory CounterInfo.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      CounterInfo()..mergeFromBuffer(data, registry);
   factory CounterInfo.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      CounterInfo()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'CounterInfo',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: CounterInfo.$_createMessage)
     ..a<$fixnum.Int64>(1, _omitFieldNames ? '' : 'bytes', $pb.PbFieldType.OU6,
         defaultOrMaker: $fixnum.Int64.ZERO)
     ..a<$fixnum.Int64>(2, _omitFieldNames ? '' : 'bundles', $pb.PbFieldType.OU6,
@@ -1107,12 +1138,15 @@ class CounterInfo extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use CounterInfo() / CounterInfo.new instead')
   static CounterInfo create() => CounterInfo._();
+  static $pb.GeneratedMessage $_createMessage() => CounterInfo._();
   @$core.override
-  CounterInfo createEmptyInstance() => create();
+  CounterInfo createEmptyInstance() => CounterInfo._();
   @$core.pragma('dart2js:noInline')
-  static CounterInfo getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<CounterInfo>(create);
+  static CounterInfo getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<CounterInfo>(
+          CounterInfo.$_createMessage);
   static CounterInfo? _defaultInstance;
 
   /// Total number of bytes.
@@ -1138,21 +1172,21 @@ class CounterInfo extends $pb.GeneratedMessage {
 
 /// Request message for ping - intentionally empty for measuring round-trip time.
 class PingRequest extends $pb.GeneratedMessage {
-  factory PingRequest() => create();
+  factory PingRequest() => PingRequest._();
 
   PingRequest._();
 
   factory PingRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      PingRequest()..mergeFromBuffer(data, registry);
   factory PingRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      PingRequest()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'PingRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: PingRequest.$_createMessage)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1166,32 +1200,35 @@ class PingRequest extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use PingRequest() / PingRequest.new instead')
   static PingRequest create() => PingRequest._();
+  static $pb.GeneratedMessage $_createMessage() => PingRequest._();
   @$core.override
-  PingRequest createEmptyInstance() => create();
+  PingRequest createEmptyInstance() => PingRequest._();
   @$core.pragma('dart2js:noInline')
-  static PingRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<PingRequest>(create);
+  static PingRequest getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PingRequest>(
+          PingRequest.$_createMessage);
   static PingRequest? _defaultInstance;
 }
 
 /// Response message for ping - intentionally empty for measuring round-trip time.
 class PingResponse extends $pb.GeneratedMessage {
-  factory PingResponse() => create();
+  factory PingResponse() => PingResponse._();
 
   PingResponse._();
 
   factory PingResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
+      PingResponse()..mergeFromBuffer(data, registry);
   factory PingResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+      PingResponse()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'PingResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
-      createEmptyInstance: create)
+      createEmptyInstance: PingResponse.$_createMessage)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1205,12 +1242,15 @@ class PingResponse extends $pb.GeneratedMessage {
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use PingResponse() / PingResponse.new instead')
   static PingResponse create() => PingResponse._();
+  static $pb.GeneratedMessage $_createMessage() => PingResponse._();
   @$core.override
-  PingResponse createEmptyInstance() => create();
+  PingResponse createEmptyInstance() => PingResponse._();
   @$core.pragma('dart2js:noInline')
-  static PingResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<PingResponse>(create);
+  static PingResponse getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PingResponse>(
+          PingResponse.$_createMessage);
   static PingResponse? _defaultInstance;
 }
 
