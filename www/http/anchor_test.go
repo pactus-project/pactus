@@ -75,6 +75,51 @@ func TestGatewayGetAnchor(t *testing.T) {
 	}
 }
 
+// The HTTP gateway writes the protobuf message with protojson: int64 fields
+// are JSON strings, so a locked deposit above 2^53 keeps its exact digits;
+// uint32 fields are JSON numbers and bytes are base64.
+func TestGatewayAnchorBoundaryValues(t *testing.T) {
+	td := setupAnchorHTTP(t)
+	want := testsuite.BoundaryAnchor()
+	addr, acc := td.GenerateTestAccount(testsuite.AccountWithNumber(1), testsuite.AccountWithAnchor(want))
+	td.fake.FakeState.AddTestAccount(addr, acc)
+	query := "?address=" + url.QueryEscape(addr.String())
+
+	body := getJSONExact(t, td, "/pactus/blockchain/get_anchor"+query)
+	require.Equal(t, true, body["found"])
+	anchor := objectField(t, body, "anchor")
+
+	digits := func(value int64) json.Number {
+		return json.Number(strconv.FormatInt(value, 10))
+	}
+	require.Equal(t, strconv.FormatInt(int64(want.LockedDeposit), 10),
+		anyField(t, anchor, "lockedDeposit", "locked_deposit"), "int64 is a JSON string")
+	require.Equal(t, digits(int64(want.AnchorType)), anyField(t, anchor, "anchorType", "anchor_type"))
+	require.Equal(t, digits(int64(want.CreatedAtHeight)), anyField(t, anchor, "createdAtHeight", "created_at_height"))
+	require.Equal(t, digits(int64(want.CreatedAtTime)), anyField(t, anchor, "createdAtTime", "created_at_time"))
+	require.Equal(t, digits(int64(want.UpdatedAtHeight)), anyField(t, anchor, "updatedAtHeight", "updated_at_height"))
+	require.Equal(t, digits(int64(want.UpdatedAtTime)), anyField(t, anchor, "updatedAtTime", "updated_at_time"))
+	require.Equal(t, base64.StdEncoding.EncodeToString(want.RootHash), stringField(t, anchor, "rootHash", "root_hash"))
+	require.Equal(t, want.ManifestURI, stringField(t, anchor, "manifestUri", "manifest_uri"))
+
+	account := getJSONExact(t, td, "/pactus/blockchain/get_account"+query)
+	require.Equal(t, anchor, objectField(t, objectField(t, account, "account"), "anchor"))
+
+	list := getJSONExact(t, td, "/pactus/blockchain/list_anchors?count=100")
+	items, ok := list["items"].([]any)
+	require.True(t, ok)
+	found := false
+	for _, raw := range items {
+		item, isObject := raw.(map[string]any)
+		require.True(t, isObject)
+		if item["address"] == addr.String() {
+			require.Equal(t, anchor, item["anchor"])
+			found = true
+		}
+	}
+	require.True(t, found)
+}
+
 func TestGatewayGetAccount(t *testing.T) {
 	td := setupAnchorHTTP(t)
 	root := bytesFill(0x21)
@@ -237,6 +282,42 @@ func doJSON(t *testing.T, req *http.Request) (int, map[string]any) {
 	require.NoError(t, json.Unmarshal(raw, &body), string(raw))
 
 	return resp.StatusCode, body
+}
+
+// getJSONExact decodes numbers as json.Number, so no digit is lost to float64.
+func getJSONExact(t *testing.T, td *testData, path string) map[string]any {
+	t.Helper()
+
+	req, err := http.NewRequestWithContext(t.Context(), http.MethodGet, td.endpoint(path), http.NoBody)
+	require.NoError(t, err)
+	resp, err := http.DefaultClient.Do(req)
+	require.NoError(t, err)
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	raw, err := io.ReadAll(resp.Body)
+	require.NoError(t, err)
+	require.Equal(t, http.StatusOK, resp.StatusCode, string(raw))
+
+	decoder := json.NewDecoder(bytes.NewReader(raw))
+	decoder.UseNumber()
+	var body map[string]any
+	require.NoError(t, decoder.Decode(&body), string(raw))
+
+	return body
+}
+
+func anyField(t *testing.T, body map[string]any, keys ...string) any {
+	t.Helper()
+
+	for _, key := range keys {
+		if value, ok := body[key]; ok {
+			return value
+		}
+	}
+	require.Failf(t, "missing field", "%v in %v", keys, body)
+
+	return nil
 }
 
 func objectField(t *testing.T, body map[string]any, key string) map[string]any {

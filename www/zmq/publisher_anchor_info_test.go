@@ -200,6 +200,29 @@ func TestAnchorInfoInterleavedSenders(t *testing.T) {
 	require.NoError(t, sub.Close())
 }
 
+// A block near the top of the height range must put the four height bytes
+// in big-endian order, next to a full 64-byte root.
+func TestAnchorInfoAtMaximumHeight(t *testing.T) {
+	td, sub := subscribeAnchor(t)
+	signer, _ := td.RandBLSKeyPair()
+	root := testsuite.BoundaryAnchor().RootHash
+	trx := anchorTx(signer.AccountAddress(), payload.AnchorActionSet, root)
+
+	height := types.Height(0xFFFFFFFE)
+	blk, _ := td.GenerateTestBlock(height, testsuite.BlockWithTransactions(block.Txs{trx}))
+	require.Equal(t, height, blk.Height())
+	td.pipe.Send(blk)
+
+	msg := mustRecv(t, sub)
+	require.Equal(t, TopicAnchorInfo.Bytes(), msg[:2])
+	require.Equal(t, signer.AccountAddress().Bytes(), msg[2:23])
+	require.Equal(t, payload.AnchorActionSet, msg[23])
+	require.Equal(t, []byte{0xFF, 0xFF, 0xFF, 0xFE}, msg[24:28])
+	require.Equal(t, byte(64), msg[28])
+	require.Equal(t, root, msg[29:93])
+	require.Len(t, msg, 97)
+}
+
 func subscribeAnchor(t *testing.T) (*testData, zmq4.Socket) {
 	t.Helper()
 

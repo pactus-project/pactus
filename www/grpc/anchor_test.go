@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"math"
+	"slices"
 	"strings"
 	"testing"
 
@@ -20,6 +21,7 @@ import (
 	"go.uber.org/mock/gomock"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
 )
 
 func TestGetAccountWithoutAnchor(t *testing.T) {
@@ -44,6 +46,44 @@ func TestGetAccountWithoutAnchor(t *testing.T) {
 	require.False(t, got.Found)
 	require.Nil(t, got.Anchor)
 	require.Equal(t, addr.String(), got.Address)
+}
+
+// The same anchor, with every field at an edge of its range, must come out
+// identical from GetAnchor, GetAccount and ListAnchors.
+func TestAnchorBoundaryValuesGRPC(t *testing.T) {
+	td := setup(t, nil)
+	client := td.blockchainClient(t)
+	want := testsuite.BoundaryAnchor()
+	addr, acc := td.GenerateTestAccount(testsuite.AccountWithAnchor(want))
+	td.FakeState.AddTestAccount(addr, acc)
+
+	expected := &pactus.AnchorInfo{
+		RootHash:        want.RootHash,
+		ManifestUri:     want.ManifestURI,
+		AnchorType:      uint32(want.AnchorType),
+		LockedDeposit:   want.LockedDeposit.ToNanoPAC(),
+		CreatedAtHeight: uint32(want.CreatedAtHeight),
+		CreatedAtTime:   want.CreatedAtTime,
+		UpdatedAtHeight: uint32(want.UpdatedAtHeight),
+		UpdatedAtTime:   want.UpdatedAtTime,
+	}
+
+	anchorRes, err := client.GetAnchor(t.Context(), &pactus.GetAnchorRequest{Address: addr.String()})
+	require.NoError(t, err)
+	require.True(t, anchorRes.Found)
+	require.True(t, proto.Equal(expected, anchorRes.Anchor), "GetAnchor: %v", anchorRes.Anchor)
+
+	accountRes, err := client.GetAccount(t.Context(), &pactus.GetAccountRequest{Address: addr.String()})
+	require.NoError(t, err)
+	require.True(t, proto.Equal(expected, accountRes.Account.Anchor), "GetAccount: %v", accountRes.Account.Anchor)
+
+	listRes, err := client.ListAnchors(t.Context(), &pactus.ListAnchorsRequest{Count: 100})
+	require.NoError(t, err)
+	index := slices.IndexFunc(listRes.Items, func(item *pactus.AnchorListItem) bool {
+		return item.Address == addr.String()
+	})
+	require.GreaterOrEqual(t, index, 0)
+	require.True(t, proto.Equal(expected, listRes.Items[index].Anchor), "ListAnchors: %v", listRes.Items[index].Anchor)
 }
 
 func TestGetAccountAnchorFields(t *testing.T) {

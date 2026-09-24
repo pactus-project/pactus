@@ -54,6 +54,73 @@ func TestJSONRPCAccountAnchor(t *testing.T) {
 	require.Nil(t, clearedAccount["anchor"])
 }
 
+// JSON-RPC writes the protobuf message with encoding/json: int64 and uint32
+// fields are JSON numbers with every digit, bytes are base64, and zero fields
+// are omitted. A locked deposit above 2^53 must keep its exact digits.
+func TestJSONRPCAnchorBoundaryValues(t *testing.T) {
+	td := setup(t)
+	want := testsuite.BoundaryAnchor()
+	require.Greater(t, int64(want.LockedDeposit), int64(1)<<53, "the fixture must not fit a float64")
+	addr, acc := td.GenerateTestAccount(testsuite.AccountWithNumber(1), testsuite.AccountWithAnchor(want))
+	td.gRPCServer.FakeState.AddTestAccount(addr, acc)
+
+	res := callJSONRPCExact(t, td, "pactus.blockchain.get_anchor", map[string]any{"address": addr.String()})
+	require.Equal(t, true, res["found"])
+	anchor := objectField(t, res, "anchor")
+
+	digits := func(value int64) json.Number {
+		return json.Number(strconv.FormatInt(value, 10))
+	}
+	require.Equal(t, digits(int64(want.LockedDeposit)), field(t, anchor, "locked_deposit", "lockedDeposit"))
+	require.Equal(t, digits(int64(want.AnchorType)), field(t, anchor, "anchor_type", "anchorType"))
+	require.Equal(t, digits(int64(want.CreatedAtHeight)), field(t, anchor, "created_at_height", "createdAtHeight"))
+	require.Equal(t, digits(int64(want.CreatedAtTime)), field(t, anchor, "created_at_time", "createdAtTime"))
+	require.Equal(t, digits(int64(want.UpdatedAtHeight)), field(t, anchor, "updated_at_height", "updatedAtHeight"))
+	require.Equal(t, digits(int64(want.UpdatedAtTime)), field(t, anchor, "updated_at_time", "updatedAtTime"))
+	require.Equal(t, base64.StdEncoding.EncodeToString(want.RootHash), stringField(t, anchor, "root_hash", "rootHash"))
+	require.Equal(t, want.ManifestURI, stringField(t, anchor, "manifest_uri", "manifestUri"))
+
+	accountRes := callJSONRPCExact(t, td, "pactus.blockchain.get_account", map[string]any{"address": addr.String()})
+	require.Equal(t, anchor, objectField(t, objectField(t, accountRes, "account"), "anchor"))
+
+	listRes := callJSONRPCExact(t, td, "pactus.blockchain.list_anchors", map[string]any{"count": 100})
+	items, ok := listRes["items"].([]any)
+	require.True(t, ok)
+	found := false
+	for _, raw := range items {
+		item, isObject := raw.(map[string]any)
+		require.True(t, isObject)
+		if item["address"] == addr.String() {
+			require.Equal(t, anchor, item["anchor"])
+			found = true
+		}
+	}
+	require.True(t, found)
+}
+
+// Zero-valued fields are omitted from JSON-RPC answers; clients must read a
+// missing anchor_type or height as zero.
+func TestJSONRPCAnchorOmitsZeroFields(t *testing.T) {
+	td := setup(t)
+	addr, acc := td.GenerateTestAccount(testsuite.AccountWithAnchor(account.AnchorData{
+		RootHash:      bytesFill(0x01),
+		LockedDeposit: 1,
+	}))
+	td.gRPCServer.FakeState.AddTestAccount(addr, acc)
+
+	res := callJSONRPCExact(t, td, "pactus.blockchain.get_anchor", map[string]any{"address": addr.String()})
+	anchor := objectField(t, res, "anchor")
+	require.Equal(t, json.Number("1"), field(t, anchor, "locked_deposit", "lockedDeposit"))
+	omitted := []string{
+		"anchor_type", "manifest_uri",
+		"created_at_height", "created_at_time",
+		"updated_at_height", "updated_at_time",
+	}
+	for _, key := range omitted {
+		require.NotContains(t, anchor, key)
+	}
+}
+
 func TestJSONRPCGetAnchorMissing(t *testing.T) {
 	td := setup(t)
 	result := callJSONRPC(t, td, "pactus.blockchain.get_anchor", map[string]any{
@@ -123,6 +190,19 @@ func TestJSONRPCRawAnchor(t *testing.T) {
 func callJSONRPC(t *testing.T, td *testData, method string, params map[string]any) map[string]any {
 	t.Helper()
 
+	return decodeJSONRPCResult(t, postJSONRPC(t, td, method, params), false)
+}
+
+// callJSONRPCExact decodes numbers as json.Number, so no digit is lost to float64.
+func callJSONRPCExact(t *testing.T, td *testData, method string, params map[string]any) map[string]any {
+	t.Helper()
+
+	return decodeJSONRPCResult(t, postJSONRPC(t, td, method, params), true)
+}
+
+func postJSONRPC(t *testing.T, td *testData, method string, params map[string]any) []byte {
+	t.Helper()
+
 	requestBody, err := json.Marshal(map[string]any{
 		"jsonrpc": "2.0",
 		"id":      "1",
@@ -147,8 +227,19 @@ func callJSONRPC(t *testing.T, td *testData, method string, params map[string]an
 
 	raw, err := io.ReadAll(resp.Body)
 	require.NoError(t, err)
+
+	return raw
+}
+
+func decodeJSONRPCResult(t *testing.T, raw []byte, exactNumbers bool) map[string]any {
+	t.Helper()
+
+	decoder := json.NewDecoder(bytes.NewReader(raw))
+	if exactNumbers {
+		decoder.UseNumber()
+	}
 	var response map[string]any
-	require.NoError(t, json.Unmarshal(raw, &response), string(raw))
+	require.NoError(t, decoder.Decode(&response), string(raw))
 	require.NotContains(t, response, "error", string(raw))
 	result, ok := response["result"].(map[string]any)
 	require.Truef(t, ok, "body %s", raw)

@@ -3,6 +3,7 @@ package html_test
 import (
 	"bytes"
 	"encoding/hex"
+	"html"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -62,6 +63,24 @@ func TestAccountAnchorRows(t *testing.T) {
 	cleared := accountPage(t, td, addr.String())
 	require.NotContains(t, cleared, "Anchor Type")
 	require.NotContains(t, cleared, "Locked Deposit")
+}
+
+// The account page shows the whole 64-byte root, escapes the URI, and prints
+// the largest type, deposit and heights without loss.
+func TestAccountAnchorBoundaryValues(t *testing.T) {
+	td := setup(t)
+	want := testsuite.BoundaryAnchor()
+	addr, acc := td.GenerateTestAccount(testsuite.AccountWithAnchor(want))
+	td.gRPCServer.FakeState.AddTestAccount(addr, acc)
+
+	body := accountPage(t, td, addr.String())
+	require.Contains(t, body, hex.EncodeToString(want.RootHash))
+	require.Contains(t, body, html.EscapeString(want.ManifestURI))
+	require.NotContains(t, body, "<script>", "the URI must be escaped")
+	require.Contains(t, body, "<td>Anchor Type</td><td>255</td>")
+	require.Contains(t, body, want.LockedDeposit.String())
+	require.Contains(t, body, "<td>Created Height</td><td>4294967294</td>")
+	require.Contains(t, body, "<td>Updated Height</td><td>4294967295</td>")
 }
 
 func TestTransactionAnchorRows(t *testing.T) {
