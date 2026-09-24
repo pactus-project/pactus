@@ -323,6 +323,31 @@ func (w *Wallet) TotalBalance() (amount.Amount, error) {
 	return totalBalance, nil
 }
 
+// LockedDeposit returns the anchor deposit locked by the account (PIP-50).
+// It is not part of the balance.
+func (w *Wallet) LockedDeposit(addrStr string) (amount.Amount, error) {
+	acc, err := w.provider.GetAccount(addrStr)
+	if err != nil {
+		return 0, err
+	}
+
+	return acc.LockedDeposit(), nil
+}
+
+// TotalLockedDeposit returns the anchor deposits locked by all accounts of the wallet.
+func (w *Wallet) TotalLockedDeposit() (amount.Amount, error) {
+	totalLocked := amount.Amount(0)
+	infos := w.ListAddresses(OnlyAccountAddresses())
+	for _, info := range infos {
+		acc, err := w.provider.GetAccount(info.Address)
+		if err == nil {
+			totalLocked += acc.LockedDeposit()
+		}
+	}
+
+	return totalLocked, nil
+}
+
 // TotalStake return total available stake of the wallet.
 func (w *Wallet) TotalStake() (amount.Amount, error) {
 	totalStake := amount.Amount(0)
@@ -430,6 +455,46 @@ func (w *Wallet) MakeWithdrawTx(sender, receiver string, amt amount.Amount,
 	}
 	maker.amount = amt
 	maker.typ = payload.TypeWithdraw
+
+	return maker.build()
+}
+
+// MakeAnchorSetTx creates a transaction that creates or replaces the sender's anchor (PIP-50).
+// The deposit is added to the amount already locked by the anchor.
+func (w *Wallet) MakeAnchorSetTx(sender string, rootHash []byte, manifestURI string,
+	anchorType uint8, deposit amount.Amount, options ...TxOption,
+) (*tx.Tx, error) {
+	maker, err := w.makeTxBuilder(options...)
+	if err != nil {
+		return nil, err
+	}
+	err = maker.setSenderAddr(sender)
+	if err != nil {
+		return nil, err
+	}
+	maker.anchorAction = payload.AnchorActionSet
+	maker.anchorRoot = rootHash
+	maker.anchorURI = manifestURI
+	maker.anchorType = anchorType
+	maker.amount = deposit
+	maker.typ = payload.TypeAnchor
+
+	return maker.build()
+}
+
+// MakeAnchorDeleteTx creates a transaction that deletes the sender's anchor
+// and refunds its deposit, minus the fee (PIP-50).
+func (w *Wallet) MakeAnchorDeleteTx(sender string, options ...TxOption) (*tx.Tx, error) {
+	maker, err := w.makeTxBuilder(options...)
+	if err != nil {
+		return nil, err
+	}
+	err = maker.setSenderAddr(sender)
+	if err != nil {
+		return nil, err
+	}
+	maker.anchorAction = payload.AnchorActionDelete
+	maker.typ = payload.TypeAnchor
 
 	return maker.build()
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types"
+	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -840,19 +841,11 @@ func TestSignAnchorTransaction(t *testing.T) {
 	require.NoError(t, err)
 
 	root := bytesOf(0x41, 32)
-	builder := &txBuilder{
-		typ:        payload.TypeAnchor,
-		lockTime:   4,
-		sender:     &from,
-		anchorRoot: root,
-		anchorURI:  "uri",
-		anchorType: 0,
-		amount:     3,
-		fee:        4,
-		memo:       "note",
-	}
-	trx, err := builder.build()
+	td.mockStorage.EXPECT().WalletInfo().Return(&wtypes.WalletInfo{DefaultFee: td.RandFee()}).AnyTimes()
+	trx, err := td.wallet.MakeAnchorSetTx(senderInfo.Address, root, "uri", 0, 3,
+		OptionLockTime(4), OptionFee(amount.Amount(4).String()), OptionMemo("note"))
 	require.NoError(t, err)
+	require.Equal(t, from, trx.Payload().Signer())
 	raw, err := trx.Bytes()
 	require.NoError(t, err)
 	unsigned, err := tx.FromBytes(raw)
@@ -889,4 +882,110 @@ func TestSignAnchorTransaction(t *testing.T) {
 	wrong.SetSignature(other.Sign(wrong.SignBytes()))
 	wrong.SetPublicKey(other.PublicKey())
 	require.Error(t, wrong.BasicCheck())
+}
+
+// anchorDeposit is the PIP-50 minimum anchor deposit (1 PAC).
+const anchorDeposit = amount.Amount(1e9)
+
+func TestMakeAnchorTx(t *testing.T) {
+	td := setup(t)
+
+	sender := td.RandAccAddress()
+	root := bytesOf(0x51, 32)
+	defaultFee := td.RandFee()
+	td.mockStorage.EXPECT().WalletInfo().Return(&wtypes.WalletInfo{DefaultFee: defaultFee}).AnyTimes()
+
+	t.Run("set", func(t *testing.T) {
+		trx, err := td.wallet.MakeAnchorSetTx(sender.String(), root, "ipfs://manifest", 0x02,
+			anchorDeposit, OptionLockTime(7), OptionMemo("stamp"))
+		require.NoError(t, err)
+		require.NoError(t, trx.Payload().BasicCheck())
+
+		pld := trx.Payload().(*payload.AnchorPayload)
+		assert.Equal(t, sender, pld.From)
+		assert.Equal(t, payload.AnchorActionSet, pld.Action)
+		assert.Equal(t, root, pld.RootHash)
+		assert.Equal(t, "ipfs://manifest", pld.ManifestURI)
+		assert.Equal(t, uint8(0x02), pld.AnchorType)
+		assert.Equal(t, anchorDeposit, pld.Deposit)
+		assert.Equal(t, defaultFee, trx.Fee())
+		assert.Equal(t, types.Height(7), trx.LockTime())
+		assert.Equal(t, "stamp", trx.Memo())
+	})
+
+	t.Run("delete", func(t *testing.T) {
+		testHeight := td.RandHeight()
+		td.mockProvider.EXPECT().LastBlockHeight().Return(testHeight, nil)
+
+		trx, err := td.wallet.MakeAnchorDeleteTx(sender.String())
+		require.NoError(t, err)
+		require.NoError(t, trx.Payload().BasicCheck())
+
+		pld := trx.Payload().(*payload.AnchorPayload)
+		assert.Equal(t, sender, pld.From)
+		assert.Equal(t, payload.AnchorActionDelete, pld.Action)
+		assert.Empty(t, pld.RootHash)
+		assert.Zero(t, pld.Deposit)
+		assert.Equal(t, testHeight+1, trx.LockTime())
+	})
+
+	t.Run("invalid root hash", func(t *testing.T) {
+		_, err := td.wallet.MakeAnchorSetTx(sender.String(), bytesOf(0x51, 31), "", 0,
+			anchorDeposit, OptionLockTime(7))
+		require.Error(t, err)
+	})
+
+	t.Run("validator cannot own an anchor", func(t *testing.T) {
+		_, err := td.wallet.MakeAnchorSetTx(td.RandValAddress().String(), root, "", 0,
+			anchorDeposit, OptionLockTime(7))
+		require.Error(t, err)
+	})
+
+	t.Run("invalid sender address", func(t *testing.T) {
+		_, err := td.wallet.MakeAnchorDeleteTx("invalid_addr_string", OptionLockTime(7))
+		require.Error(t, err)
+	})
+}
+
+func TestLockedDeposit(t *testing.T) {
+	td := setup(t)
+
+	accInfo1, _ := td.testVault.NewBLSAccountAddress("anchored")
+	accInfo2, _ := td.testVault.NewBLSAccountAddress("plain")
+	accInfo3, _ := td.testVault.NewBLSAccountAddress("missing")
+
+	addr1, err := crypto.AddressFromString(accInfo1.Address)
+	require.NoError(t, err)
+	addr2, err := crypto.AddressFromString(accInfo2.Address)
+	require.NoError(t, err)
+
+	_, acc1 := td.GenerateTestAccount(testsuite.AccountWithAddress(addr1))
+	require.NoError(t, acc1.SetAnchor(account.AnchorData{
+		RootHash:      bytesOf(0x61, 32),
+		LockedDeposit: anchorDeposit,
+	}))
+	_, acc2 := td.GenerateTestAccount(testsuite.AccountWithAddress(addr2))
+
+	t.Run("one account", func(t *testing.T) {
+		td.mockProvider.EXPECT().GetAccount(accInfo1.Address).Return(acc1, nil)
+		locked, err := td.wallet.LockedDeposit(accInfo1.Address)
+		require.NoError(t, err)
+		assert.Equal(t, anchorDeposit, locked)
+
+		td.mockProvider.EXPECT().GetAccount(accInfo3.Address).Return(nil, errors.New("not found"))
+		locked, err = td.wallet.LockedDeposit(accInfo3.Address)
+		require.Error(t, err)
+		assert.Zero(t, locked)
+	})
+
+	t.Run("whole wallet", func(t *testing.T) {
+		td.mockStorage.EXPECT().AllAddresses().Return([]*wtypes.AddressInfo{accInfo1, accInfo2, accInfo3})
+		td.mockProvider.EXPECT().GetAccount(accInfo1.Address).Return(acc1, nil)
+		td.mockProvider.EXPECT().GetAccount(accInfo2.Address).Return(acc2, nil)
+		td.mockProvider.EXPECT().GetAccount(accInfo3.Address).Return(nil, errors.New("not found"))
+
+		total, err := td.wallet.TotalLockedDeposit()
+		require.NoError(t, err)
+		assert.Equal(t, anchorDeposit, total)
+	})
 }
