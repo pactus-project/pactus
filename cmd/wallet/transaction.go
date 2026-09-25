@@ -25,7 +25,7 @@ func buildTransactionCmd(parentCmd *cobra.Command) {
 	buildTransactionListCmd(transactionCmd)
 }
 
-// buildTransactionsAddCmd builds the command for adding a transaction to the wallet.
+// buildTransactionAddCmd builds the command for adding a transaction to the wallet.
 func buildTransactionAddCmd(parentCmd *cobra.Command) {
 	addCmd := &cobra.Command{
 		Use:   "add [flags] <ID>",
