@@ -719,8 +719,13 @@ func (st *state) AccountByAddress(addr crypto.Address) (*account.Account, error)
 }
 
 // ListAnchors returns one page of anchor holders, ordered by account number.
-// It reads the store's anchor index and does not take the state lock.
+// It holds the state lock, so a page never mixes the states before and after a
+// block: CommitBlock keeps the lock until the block is written. A page costs at
+// most count account reads, so the lock is held briefly.
 func (st *state) ListAnchors(skip, count uint32) ([]AnchorAccount, uint32) {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
 	return listAnchors(st.store, skip, count)
 }
 

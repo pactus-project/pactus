@@ -3,7 +3,10 @@ package state
 import (
 	"bytes"
 	"slices"
+	"sync"
+	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/pactus-project/gopkg/pipeline"
 	"github.com/pactus-project/pactus/crypto"
@@ -330,4 +333,73 @@ func TestAnchorPoolAdmissionFollowsActivation(t *testing.T) {
 	require.Equal(t, protocol.ProtocolVersion5, td.state.params.BlockVersion)
 
 	require.NoError(t, td.state.CheckTransaction(anchorTx))
+}
+
+// A listing must not run in the middle of a commit, or its total and its items
+// could describe two different states.
+func TestListAnchorsWaitsForCommit(t *testing.T) {
+	td := setup(t)
+
+	td.state.lk.Lock() // what CommitBlock holds until the block is written
+	done := make(chan struct{})
+	go func() {
+		td.state.ListAnchors(0, 10)
+		close(done)
+	}()
+
+	select {
+	case <-done:
+		td.state.lk.Unlock()
+		require.Fail(t, "ListAnchors ran while a commit held the state lock")
+	case <-time.After(50 * time.Millisecond):
+	}
+	td.state.lk.Unlock()
+	<-done
+}
+
+// Blocks create and delete an anchor while other goroutines list anchors.
+// Every page must be consistent: its items match its total.
+func TestListAnchorsConsistentDuringCommits(t *testing.T) {
+	td := setupWithVersion(t, protocol.ProtocolVersion5)
+	td.fakeTxPool.EXPECT().AppendTxAndBroadcast(gomock.Any()).Return(nil).AnyTimes()
+
+	stop := make(chan struct{})
+	var inconsistent atomic.Int32
+	var readers sync.WaitGroup
+	for range 4 {
+		readers.Add(1)
+		go func() {
+			defer readers.Done()
+			for {
+				select {
+				case <-stop:
+					return
+				default:
+				}
+				items, total := td.state.ListAnchors(0, 100)
+				if len(items) != int(total) {
+					inconsistent.Add(1)
+				}
+				for _, item := range items {
+					if !item.Account.HasAnchor() {
+						inconsistent.Add(1)
+					}
+				}
+			}
+		}()
+	}
+
+	for i := 0; i < 20; i++ {
+		// Even blocks create an anchor, odd blocks delete it.
+		trx := td.anchor(td.nextHeight(), payload.AnchorActionSet,
+			bytes.Repeat([]byte{byte(0xA1 + i)}, 32), "", executor.MinAnchorDeposit, 1)
+		if i%2 == 1 {
+			trx = td.anchor(td.nextHeight(), payload.AnchorActionDelete, nil, "", 0, 1)
+		}
+		td.commit(t, td.propose(t, block.Txs{trx}))
+	}
+	close(stop)
+	readers.Wait()
+
+	require.Zero(t, inconsistent.Load(), "a page mixed two states")
 }
