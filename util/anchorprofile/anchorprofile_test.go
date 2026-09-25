@@ -285,3 +285,140 @@ func FuzzVerify(f *testing.F) {
 		require.Equal(t, honest, Verify(root, item, changed))
 	})
 }
+
+// The proof of b.txt in the three-file test vector. The JSON was produced by an
+// independent implementation written from the formulas.
+func TestProofDocumentVector(t *testing.T) {
+	items := []Item{
+		NewItem("a.txt", []byte("hello")),
+		NewItem("b.txt", []byte("world")),
+		NewItem("c.txt", []byte("!")),
+	}
+	root, err := Root(items)
+	require.NoError(t, err)
+	proof, err := Prove(items, "b.txt")
+	require.NoError(t, err)
+
+	raw, err := json.Marshal(NewProofDocument("", items[1], proof))
+	require.NoError(t, err)
+	require.JSONEq(t, `{
+		"v": 1,
+		"alg": "blake2b-256",
+		"item": {"name": "b.txt", "hash": "9a3440c9d1529b122faceef33739b6e814616658d53faaf6e4f129fb20edfb13"},
+		"index": 1,
+		"size": 3,
+		"path": [
+			"26bb722ed5fac59aaa2de435d19877b74be151b15bffbe62296ba2168b7e6805",
+			"427a194a554ee2fa4dd1c53edc68c8ad515ad8780c0b1d6941ab367f6da476b2"
+		]
+	}`, string(raw))
+	require.NotContains(t, string(raw), "address", "an empty address is left out")
+
+	var decoded ProofDocument
+	require.NoError(t, json.Unmarshal(raw, &decoded))
+	require.True(t, decoded.Verify(root))
+}
+
+func TestProofDocumentRoundTrip(t *testing.T) {
+	for count := 1; count <= 20; count++ {
+		items := namedItems(count)
+		root, err := Root(items)
+		require.NoError(t, err)
+
+		for _, item := range items {
+			proof, err := Prove(items, item.Name)
+			require.NoError(t, err)
+
+			raw, err := json.Marshal(NewProofDocument("pc1zexample", item, proof))
+			require.NoError(t, err)
+			require.Contains(t, string(raw), `"address":"pc1zexample"`)
+			if count == 1 {
+				require.Contains(t, string(raw), `"path":[]`, "a one-item proof has an empty path, not null")
+			}
+
+			var decoded ProofDocument
+			require.NoError(t, json.Unmarshal(raw, &decoded))
+			require.True(t, decoded.Verify(root), "%s in %d items", item.Name, count)
+
+			gotItem, gotProof, err := decoded.Decode()
+			require.NoError(t, err)
+			require.Equal(t, item, gotItem)
+			require.Equal(t, proof.Index, gotProof.Index)
+			require.Equal(t, proof.Size, gotProof.Size)
+			require.True(t, slices.Equal(proof.Path, gotProof.Path), "path of %s in %d items", item.Name, count)
+		}
+	}
+}
+
+func TestProofDocumentRejects(t *testing.T) {
+	items := namedItems(5)
+	root, err := Root(items)
+	require.NoError(t, err)
+	proof, err := Prove(items, items[2].Name)
+	require.NoError(t, err)
+	valid := NewProofDocument("", items[2], proof)
+	require.True(t, valid.Verify(root))
+
+	change := func(edit func(*ProofDocument)) ProofDocument {
+		doc := valid
+		doc.Path = slices.Clone(valid.Path)
+		edit(&doc)
+
+		return doc
+	}
+	bad := map[string]ProofDocument{
+		"version":         change(func(d *ProofDocument) { d.Version = 2 }),
+		"algorithm":       change(func(d *ProofDocument) { d.Alg = "sha256" }),
+		"empty name":      change(func(d *ProofDocument) { d.Item.Name = "" }),
+		"item hash":       change(func(d *ProofDocument) { d.Item.Hash = "zz" }),
+		"short item hash": change(func(d *ProofDocument) { d.Item.Hash = d.Item.Hash[:62] }),
+		"path hash":       change(func(d *ProofDocument) { d.Path[0] = "not-hex" }),
+		"negative index":  change(func(d *ProofDocument) { d.Index = -1 }),
+		"index too large": change(func(d *ProofDocument) { d.Index = d.Size }),
+		"no item":         change(func(d *ProofDocument) { d.Size = 0 }),
+		"path too long": change(func(d *ProofDocument) {
+			d.Path = slices.Repeat([]string{d.Path[0]}, maxPathLen+1)
+		}),
+	}
+	for name, doc := range bad {
+		_, _, err := doc.Decode()
+		require.ErrorIs(t, err, ErrInvalidProof, name)
+		require.False(t, doc.Verify(root), name)
+	}
+}
+
+// FuzzProofDocument feeds arbitrary JSON to a verifier. It must never panic, and
+// it may only accept a document for a real item at its real position.
+func FuzzProofDocument(f *testing.F) {
+	items := namedItems(7)
+	root, err := Root(items)
+	require.NoError(f, err)
+	for _, item := range items[:3] {
+		proof, err := Prove(items, item.Name)
+		require.NoError(f, err)
+		raw, err := json.Marshal(NewProofDocument("pc1zexample", item, proof))
+		require.NoError(f, err)
+		f.Add(raw)
+	}
+	f.Add([]byte(`{"v":1,"alg":"blake2b-256","item":{"name":"x","hash":"00"},"index":0,"size":1,"path":[]}`))
+	f.Add([]byte(`{"v":1,"index":-1,"size":-1,"path":null}`))
+	f.Add([]byte(`not json`))
+
+	f.Fuzz(func(t *testing.T, data []byte) {
+		var doc ProofDocument
+		if json.Unmarshal(data, &doc) != nil {
+			return
+		}
+		if !doc.Verify(root) {
+			return
+		}
+
+		item, proof, err := doc.Decode()
+		require.NoError(t, err)
+		genuine, err := Prove(items, item.Name)
+		require.NoError(t, err, "accepted an item that is not in the tree")
+		require.Contains(t, items, item)
+		require.Equal(t, genuine.Index, proof.Index)
+		require.Equal(t, genuine.Size, proof.Size)
+	})
+}

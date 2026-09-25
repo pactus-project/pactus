@@ -40,9 +40,13 @@ const (
 	// MaxNameLen is the longest item name, in bytes.
 	MaxNameLen = math.MaxUint16
 
-	// ManifestVersion and ManifestAlg are the values a PAC-ANCHOR-1 manifest carries.
+	// ManifestVersion and ManifestAlg are the values a PAC-ANCHOR-1 manifest and
+	// proof document carry.
 	ManifestVersion = 1
 	ManifestAlg     = "blake2b-256"
+
+	// maxPathLen bounds a proof path: a tree of up to 2^64 items is at most 64 deep.
+	maxPathLen = 64
 )
 
 var (
@@ -60,6 +64,9 @@ var (
 
 	// ErrInvalidManifest is returned when a manifest does not follow PAC-ANCHOR-1.
 	ErrInvalidManifest = errors.New("invalid manifest")
+
+	// ErrInvalidProof is returned when a proof document does not follow PAC-ANCHOR-1.
+	ErrInvalidProof = errors.New("invalid proof document")
 )
 
 // BlobRoot returns the root hash that commits to a single file.
@@ -297,4 +304,77 @@ func (m *Manifest) Root() (hash.Hash, error) {
 	}
 
 	return Root(items)
+}
+
+// ProofDocument is the JSON form of an inclusion proof, for exchanging proofs
+// between applications. It deliberately carries no root: a verifier reads the
+// root hash from the anchor on chain (Address, when given, says which anchor)
+// and never trusts a root that travels with the proof.
+type ProofDocument struct {
+	Version int          `json:"v"`
+	Alg     string       `json:"alg"`
+	Address string       `json:"address,omitempty"`
+	Item    ManifestItem `json:"item"`
+	Index   int          `json:"index"`
+	Size    int          `json:"size"`
+	Path    []string     `json:"path"` // hex sibling hashes, from the leaf up
+}
+
+// NewProofDocument returns the document of a proof. The address is optional.
+func NewProofDocument(address string, item Item, proof Proof) ProofDocument {
+	path := make([]string, 0, len(proof.Path))
+	for _, sibling := range proof.Path {
+		path = append(path, sibling.String())
+	}
+
+	return ProofDocument{
+		Version: ManifestVersion,
+		Alg:     ManifestAlg,
+		Address: address,
+		Item:    ManifestItem{Name: item.Name, Hash: item.Hash.String()},
+		Index:   proof.Index,
+		Size:    proof.Size,
+		Path:    path,
+	}
+}
+
+// Decode returns the item and the proof, checking the version, the algorithm,
+// the name, every hash and the index range.
+func (d *ProofDocument) Decode() (Item, Proof, error) {
+	switch {
+	case d.Version != ManifestVersion || d.Alg != ManifestAlg:
+		return Item{}, Proof{}, fmt.Errorf("%w: version %d, algorithm %q", ErrInvalidProof, d.Version, d.Alg)
+	case !validName(d.Item.Name):
+		return Item{}, Proof{}, fmt.Errorf("%w: item name %q", ErrInvalidProof, d.Item.Name)
+	case d.Size < 1 || d.Index < 0 || d.Index >= d.Size:
+		return Item{}, Proof{}, fmt.Errorf("%w: index %d of %d items", ErrInvalidProof, d.Index, d.Size)
+	case len(d.Path) > maxPathLen:
+		return Item{}, Proof{}, fmt.Errorf("%w: path of %d hashes", ErrInvalidProof, len(d.Path))
+	}
+
+	digest, err := hash.FromString(d.Item.Hash)
+	if err != nil {
+		return Item{}, Proof{}, fmt.Errorf("%w: item hash: %w", ErrInvalidProof, err)
+	}
+	path := make([]hash.Hash, 0, len(d.Path))
+	for i, sibling := range d.Path {
+		node, err := hash.FromString(sibling)
+		if err != nil {
+			return Item{}, Proof{}, fmt.Errorf("%w: path[%d]: %w", ErrInvalidProof, i, err)
+		}
+		path = append(path, node)
+	}
+
+	return Item{Name: d.Item.Name, Hash: digest}, Proof{Index: d.Index, Size: d.Size, Path: path}, nil
+}
+
+// Verify reports whether the document proves its item against the root read
+// from the chain. A malformed document never verifies.
+func (d *ProofDocument) Verify(root hash.Hash) bool {
+	item, proof, err := d.Decode()
+	if err != nil {
+		return false
+	}
+
+	return Verify(root, item, proof)
 }
