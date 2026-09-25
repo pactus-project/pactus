@@ -69,10 +69,16 @@ func TestGatewayGetAnchor(t *testing.T) {
 	require.NotEqual(t, true, body["found"])
 	require.Nil(t, body["anchor"])
 
+	// Validators and the treasury cannot hold an anchor: not found, not an error.
 	for _, address := range []string{crypto.TreasuryAddress.String(), td.RandValAddress().String()} {
-		status, _ = getJSON(t, td, "/pactus/blockchain/get_anchor?address="+url.QueryEscape(address))
-		require.Equal(t, http.StatusBadRequest, status, address)
+		status, body = getJSON(t, td, "/pactus/blockchain/get_anchor?address="+url.QueryEscape(address))
+		require.Equal(t, http.StatusOK, status, address)
+		require.NotEqual(t, true, body["found"], address)
+		require.Nil(t, body["anchor"], address)
 	}
+
+	status, _ = getJSON(t, td, "/pactus/blockchain/get_anchor?address=not-an-address")
+	require.Equal(t, http.StatusBadRequest, status)
 }
 
 // The HTTP gateway writes the protobuf message with protojson: int64 fields

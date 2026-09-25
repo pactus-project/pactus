@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -123,11 +124,19 @@ func TestJSONRPCAnchorOmitsZeroFields(t *testing.T) {
 
 func TestJSONRPCGetAnchorMissing(t *testing.T) {
 	td := setup(t)
-	result := callJSONRPC(t, td, "pactus.blockchain.get_anchor", map[string]any{
-		"address": td.RandAccAddress().String(),
-	})
-	require.NotEqual(t, true, result["found"])
-	require.Nil(t, result["anchor"])
+	// An account without anchor, a validator and the treasury are all "not found".
+	addresses := []string{
+		td.RandAccAddress().String(),
+		td.RandValAddress().String(),
+		crypto.TreasuryAddress.String(),
+	}
+	for _, address := range addresses {
+		result := callJSONRPC(t, td, "pactus.blockchain.get_anchor", map[string]any{
+			"address": address,
+		})
+		require.NotEqual(t, true, result["found"], address)
+		require.Nil(t, result["anchor"], address)
+	}
 }
 
 func TestJSONRPCListAnchors(t *testing.T) {

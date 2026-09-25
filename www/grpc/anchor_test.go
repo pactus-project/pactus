@@ -476,7 +476,10 @@ func TestGetAnchorMissingAccount(t *testing.T) {
 	require.Len(t, td.FakeState.FakeStore.FakeAccounts, before)
 }
 
-func TestGetAnchorRejectsBadAddress(t *testing.T) {
+// Only a malformed address is an error. Validators and the treasury cannot hold
+// an anchor, so GetAnchor answers found=false for them, as for any account
+// without one (PIP-50 section 9.2).
+func TestGetAnchorAddresses(t *testing.T) {
 	td := setup(t, nil)
 	client := td.blockchainClient(t)
 	before := len(td.FakeState.FakeStore.FakeAccounts)
@@ -492,8 +495,11 @@ func TestGetAnchorRejectsBadAddress(t *testing.T) {
 	val := td.RandValAddress().String()
 	_, err := client.GetAccount(t.Context(), &pactus.GetAccountRequest{Address: val})
 	require.Equal(t, codes.NotFound, status.Code(err))
-	_, err = client.GetAnchor(t.Context(), &pactus.GetAnchorRequest{Address: val})
-	require.Equal(t, codes.InvalidArgument, status.Code(err))
+	valAnchor, err := client.GetAnchor(t.Context(), &pactus.GetAnchorRequest{Address: val})
+	require.NoError(t, err)
+	require.False(t, valAnchor.Found)
+	require.Equal(t, val, valAnchor.Address)
+	require.Nil(t, valAnchor.Anchor)
 
 	treasury := account.NewAccount(0)
 	treasury.AddToBalance(5)
@@ -504,10 +510,12 @@ func TestGetAnchorRejectsBadAddress(t *testing.T) {
 	require.NoError(t, err)
 	require.Nil(t, acc.Account.Anchor)
 	require.Equal(t, int64(5), acc.Account.Balance)
-	_, err = client.GetAnchor(t.Context(), &pactus.GetAnchorRequest{
+	treasuryAnchor, err := client.GetAnchor(t.Context(), &pactus.GetAnchorRequest{
 		Address: crypto.TreasuryAddress.String(),
 	})
-	require.Equal(t, codes.InvalidArgument, status.Code(err))
+	require.NoError(t, err)
+	require.False(t, treasuryAnchor.Found)
+	require.Nil(t, treasuryAnchor.Anchor)
 	require.Len(t, td.FakeState.FakeStore.FakeAccounts, before+1)
 }
 

@@ -264,9 +264,18 @@ func (s *blockchainServer) GetAccount(_ context.Context,
 func (s *blockchainServer) GetAnchor(_ context.Context,
 	req *pactus.GetAnchorRequest,
 ) (*pactus.GetAnchorResponse, error) {
-	addr, err := anchorAccountAddress(req.Address)
+	addr, err := crypto.AddressFromString(req.Address)
 	if err != nil {
-		return nil, err
+		return nil, status.Errorf(codes.InvalidArgument, "invalid address: %v", err)
+	}
+
+	// PIP-50: an anchor is found iff the account exists and holds one. Validators
+	// and the treasury can never hold one, so they are simply not found.
+	if !payload.IsAnchorOwner(addr) {
+		return &pactus.GetAnchorResponse{
+			Found:   false,
+			Address: addr.String(),
+		}, nil
 	}
 
 	acc, err := s.state.AccountByAddress(addr)
@@ -438,18 +447,6 @@ func (*blockchainServer) accountToProto(addr crypto.Address, acc *account.Accoun
 		Address: addr.String(),
 		Anchor:  anchorToProto(acc),
 	}
-}
-
-func anchorAccountAddress(text string) (crypto.Address, error) {
-	addr, err := crypto.AddressFromString(text)
-	if err != nil {
-		return crypto.Address{}, status.Errorf(codes.InvalidArgument, "invalid address: %v", err)
-	}
-	if !payload.IsAnchorOwner(addr) {
-		return crypto.Address{}, status.Errorf(codes.InvalidArgument, "invalid address")
-	}
-
-	return addr, nil
 }
 
 func anchorToProto(acc *account.Account) *pactus.AnchorInfo {
