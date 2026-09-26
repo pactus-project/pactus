@@ -119,8 +119,8 @@ func (e *AnchorExecutor) checkDelete() error {
 // nextAnchor builds the anchor a Set stores. It does not validate anything.
 //
 // CreatedAt is the block that created the slot. UpdatedAt is the block that set
-// the current content (root hash, manifest URI and anchor type), so a Set that
-// only adds deposit keeps the date the current digest was attested.
+// the current root hash: it is the date the current digest was attested, so a Set
+// that adds deposit, moves the manifest or changes the anchor type keeps it.
 func (e *AnchorExecutor) nextAnchor(sbx sandbox.SandboxReader) account.AnchorData {
 	height := sbx.CurrentHeight()
 	unixTime := sbx.CurrentUnixTime()
@@ -130,7 +130,7 @@ func (e *AnchorExecutor) nextAnchor(sbx sandbox.SandboxReader) account.AnchorDat
 	if e.acc.HasAnchor() {
 		createdHeight = e.acc.CreatedAtHeight()
 		createdTime = e.acc.CreatedAtTime()
-		if e.keepsContent() {
+		if e.keepsRootHash() {
 			updatedHeight = e.acc.UpdatedAtHeight()
 			updatedTime = e.acc.UpdatedAtTime()
 		}
@@ -148,9 +148,7 @@ func (e *AnchorExecutor) nextAnchor(sbx sandbox.SandboxReader) account.AnchorDat
 	}
 }
 
-// keepsContent reports whether the Set stores the content the anchor already has.
-func (e *AnchorExecutor) keepsContent() bool {
-	return bytes.Equal(e.acc.RootHash(), e.pld.RootHash) &&
-		e.acc.ManifestURI() == e.pld.ManifestURI &&
-		e.acc.AnchorType() == e.pld.AnchorType
+// keepsRootHash reports whether the Set stores the root hash the anchor already has.
+func (e *AnchorExecutor) keepsRootHash() bool {
+	return bytes.Equal(e.acc.RootHash(), e.pld.RootHash)
 }

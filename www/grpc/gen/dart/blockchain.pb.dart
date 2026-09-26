@@ -2428,7 +2428,7 @@ class AnchorInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(4)
   void clearLockedDeposit() => $_clearField(4);
 
-  /// Height of the first set.
+  /// Height of the block that created the anchor.
   @$pb.TagNumber(5)
   $core.int get createdAtHeight => $_getIZ(4);
   @$pb.TagNumber(5)
@@ -2438,7 +2438,7 @@ class AnchorInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(5)
   void clearCreatedAtHeight() => $_clearField(5);
 
-  /// Unix time of the first set.
+  /// Unix time of the block that created the anchor.
   @$pb.TagNumber(6)
   $core.int get createdAtTime => $_getIZ(5);
   @$pb.TagNumber(6)
@@ -2448,7 +2448,7 @@ class AnchorInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(6)
   void clearCreatedAtTime() => $_clearField(6);
 
-  /// Height of the latest set.
+  /// Height of the block that set the current root hash.
   @$pb.TagNumber(7)
   $core.int get updatedAtHeight => $_getIZ(6);
   @$pb.TagNumber(7)
@@ -2458,7 +2458,7 @@ class AnchorInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(7)
   void clearUpdatedAtHeight() => $_clearField(7);
 
-  /// Unix time of the latest set.
+  /// Unix time of the block that set the current root hash.
   @$pb.TagNumber(8)
   $core.int get updatedAtTime => $_getIZ(7);
   @$pb.TagNumber(8)

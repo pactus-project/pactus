@@ -23436,7 +23436,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
 
     /**
      * <pre>
-     * Height of the first set.
+     * Height of the block that created the anchor.
      * </pre>
      *
      * <code>uint32 created_at_height = 5 [json_name = "createdAtHeight"];</code>
@@ -23446,7 +23446,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
 
     /**
      * <pre>
-     * Unix time of the first set.
+     * Unix time of the block that created the anchor.
      * </pre>
      *
      * <code>uint32 created_at_time = 6 [json_name = "createdAtTime"];</code>
@@ -23456,7 +23456,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
 
     /**
      * <pre>
-     * Height of the latest set.
+     * Height of the block that set the current root hash.
      * </pre>
      *
      * <code>uint32 updated_at_height = 7 [json_name = "updatedAtHeight"];</code>
@@ -23466,7 +23466,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
 
     /**
      * <pre>
-     * Unix time of the latest set.
+     * Unix time of the block that set the current root hash.
      * </pre>
      *
      * <code>uint32 updated_at_time = 8 [json_name = "updatedAtTime"];</code>
@@ -23618,7 +23618,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
     private int createdAtHeight_ = 0;
     /**
      * <pre>
-     * Height of the first set.
+     * Height of the block that created the anchor.
      * </pre>
      *
      * <code>uint32 created_at_height = 5 [json_name = "createdAtHeight"];</code>
@@ -23633,7 +23633,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
     private int createdAtTime_ = 0;
     /**
      * <pre>
-     * Unix time of the first set.
+     * Unix time of the block that created the anchor.
      * </pre>
      *
      * <code>uint32 created_at_time = 6 [json_name = "createdAtTime"];</code>
@@ -23648,7 +23648,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
     private int updatedAtHeight_ = 0;
     /**
      * <pre>
-     * Height of the latest set.
+     * Height of the block that set the current root hash.
      * </pre>
      *
      * <code>uint32 updated_at_height = 7 [json_name = "updatedAtHeight"];</code>
@@ -23663,7 +23663,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
     private int updatedAtTime_ = 0;
     /**
      * <pre>
-     * Unix time of the latest set.
+     * Unix time of the block that set the current root hash.
      * </pre>
      *
      * <code>uint32 updated_at_time = 8 [json_name = "updatedAtTime"];</code>
@@ -24363,7 +24363,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       private int createdAtHeight_ ;
       /**
        * <pre>
-       * Height of the first set.
+       * Height of the block that created the anchor.
        * </pre>
        *
        * <code>uint32 created_at_height = 5 [json_name = "createdAtHeight"];</code>
@@ -24375,7 +24375,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       }
       /**
        * <pre>
-       * Height of the first set.
+       * Height of the block that created the anchor.
        * </pre>
        *
        * <code>uint32 created_at_height = 5 [json_name = "createdAtHeight"];</code>
@@ -24391,7 +24391,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       }
       /**
        * <pre>
-       * Height of the first set.
+       * Height of the block that created the anchor.
        * </pre>
        *
        * <code>uint32 created_at_height = 5 [json_name = "createdAtHeight"];</code>
@@ -24407,7 +24407,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       private int createdAtTime_ ;
       /**
        * <pre>
-       * Unix time of the first set.
+       * Unix time of the block that created the anchor.
        * </pre>
        *
        * <code>uint32 created_at_time = 6 [json_name = "createdAtTime"];</code>
@@ -24419,7 +24419,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       }
       /**
        * <pre>
-       * Unix time of the first set.
+       * Unix time of the block that created the anchor.
        * </pre>
        *
        * <code>uint32 created_at_time = 6 [json_name = "createdAtTime"];</code>
@@ -24435,7 +24435,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       }
       /**
        * <pre>
-       * Unix time of the first set.
+       * Unix time of the block that created the anchor.
        * </pre>
        *
        * <code>uint32 created_at_time = 6 [json_name = "createdAtTime"];</code>
@@ -24451,7 +24451,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       private int updatedAtHeight_ ;
       /**
        * <pre>
-       * Height of the latest set.
+       * Height of the block that set the current root hash.
        * </pre>
        *
        * <code>uint32 updated_at_height = 7 [json_name = "updatedAtHeight"];</code>
@@ -24463,7 +24463,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       }
       /**
        * <pre>
-       * Height of the latest set.
+       * Height of the block that set the current root hash.
        * </pre>
        *
        * <code>uint32 updated_at_height = 7 [json_name = "updatedAtHeight"];</code>
@@ -24479,7 +24479,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       }
       /**
        * <pre>
-       * Height of the latest set.
+       * Height of the block that set the current root hash.
        * </pre>
        *
        * <code>uint32 updated_at_height = 7 [json_name = "updatedAtHeight"];</code>
@@ -24495,7 +24495,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       private int updatedAtTime_ ;
       /**
        * <pre>
-       * Unix time of the latest set.
+       * Unix time of the block that set the current root hash.
        * </pre>
        *
        * <code>uint32 updated_at_time = 8 [json_name = "updatedAtTime"];</code>
@@ -24507,7 +24507,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       }
       /**
        * <pre>
-       * Unix time of the latest set.
+       * Unix time of the block that set the current root hash.
        * </pre>
        *
        * <code>uint32 updated_at_time = 8 [json_name = "updatedAtTime"];</code>
@@ -24523,7 +24523,7 @@ public final class BlockchainOuterClass extends com.google.protobuf.GeneratedFil
       }
       /**
        * <pre>
-       * Unix time of the latest set.
+       * Unix time of the block that set the current root hash.
        * </pre>
        *
        * <code>uint32 updated_at_time = 8 [json_name = "updatedAtTime"];</code>

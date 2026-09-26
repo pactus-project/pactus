@@ -145,12 +145,12 @@ func TestAnchors(t *testing.T) {
 		})
 	})
 
-	t.Run("a top-up keeps the content date", func(t *testing.T) {
+	t.Run("a top-up that moves the manifest keeps the content date", func(t *testing.T) {
 		broadcastAnchor(t, owner, &pactus.GetRawAnchorTransactionRequest{
 			From:        ownerAddr.String(),
 			Action:      uint32(payload.AnchorActionSet),
 			RootHash:    root,
-			ManifestUri: "ipfs://integration",
+			ManifestUri: "ipfs://moved",
 			AnchorType:  2,
 			Deposit:     deposit.ToNanoPAC(),
 		})
@@ -161,6 +161,7 @@ func TestAnchors(t *testing.T) {
 		})
 
 		toppedUp := getAnchor(t, ownerAddr).Anchor
+		require.Equal(t, "ipfs://moved", toppedUp.ManifestUri)
 		require.Equal(t, created.CreatedAtHeight, toppedUp.CreatedAtHeight)
 		require.Equal(t, created.UpdatedAtHeight, toppedUp.UpdatedAtHeight)
 		require.Equal(t, created.UpdatedAtTime, toppedUp.UpdatedAtTime)

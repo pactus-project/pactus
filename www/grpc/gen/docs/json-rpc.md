@@ -2754,25 +2754,25 @@ Parameters has no fields.
     <td class="fw-bold">account.anchor.created_at_height</td>
     <td> numeric</td>
     <td>
-  Height of the first set.
+  Height of the block that created the anchor.
     </td>
   </tr><tr>
     <td class="fw-bold">account.anchor.created_at_time</td>
     <td> numeric</td>
     <td>
-  Unix time of the first set.
+  Unix time of the block that created the anchor.
     </td>
   </tr><tr>
     <td class="fw-bold">account.anchor.updated_at_height</td>
     <td> numeric</td>
     <td>
-  Height of the latest set.
+  Height of the block that set the current root hash.
     </td>
   </tr><tr>
     <td class="fw-bold">account.anchor.updated_at_time</td>
     <td> numeric</td>
     <td>
-  Unix time of the latest set.
+  Unix time of the block that set the current root hash.
     </td>
   </tr></tbody>
 </table>
@@ -2855,28 +2855,28 @@ Parameters has no fields.
     <td class="fw-bold">anchor.created_at_height</td>
     <td> numeric</td>
     <td>
-  Height of the first set.
+  Height of the block that created the anchor.
     </td>
   </tr>
    <tr>
     <td class="fw-bold">anchor.created_at_time</td>
     <td> numeric</td>
     <td>
-  Unix time of the first set.
+  Unix time of the block that created the anchor.
     </td>
   </tr>
    <tr>
     <td class="fw-bold">anchor.updated_at_height</td>
     <td> numeric</td>
     <td>
-  Height of the latest set.
+  Height of the block that set the current root hash.
     </td>
   </tr>
    <tr>
     <td class="fw-bold">anchor.updated_at_time</td>
     <td> numeric</td>
     <td>
-  Unix time of the latest set.
+  Unix time of the block that set the current root hash.
     </td>
   </tr>
    </tbody>
@@ -2963,25 +2963,25 @@ Parameters has no fields.
     <td class="fw-bold">items[].anchor.created_at_height</td>
     <td> numeric</td>
     <td>
-  Height of the first set.
+  Height of the block that created the anchor.
     </td>
   </tr><tr>
     <td class="fw-bold">items[].anchor.created_at_time</td>
     <td> numeric</td>
     <td>
-  Unix time of the first set.
+  Unix time of the block that created the anchor.
     </td>
   </tr><tr>
     <td class="fw-bold">items[].anchor.updated_at_height</td>
     <td> numeric</td>
     <td>
-  Height of the latest set.
+  Height of the block that set the current root hash.
     </td>
   </tr><tr>
     <td class="fw-bold">items[].anchor.updated_at_time</td>
     <td> numeric</td>
     <td>
-  Unix time of the latest set.
+  Unix time of the block that set the current root hash.
     </td>
   </tr><tr>
     <td class="fw-bold">total</td>

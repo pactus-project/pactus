@@ -438,19 +438,22 @@ func TestAnchorUpdate(t *testing.T) {
 		require.Equal(t, uint32(10), acc.UpdatedAtTime())
 	})
 
-	t.Run("any content change moves the content date", func(t *testing.T) {
+	t.Run("only a root hash change moves the content date", func(t *testing.T) {
 		root := bytes.Repeat([]byte{0x11}, 32)
 		changes := []struct {
-			name string
-			root []byte
-			uri  string
-			kind uint8
+			name  string
+			root  []byte
+			uri   string
+			kind  uint8
+			moves bool
 		}{
-			{"root hash", bytes.Repeat([]byte{0x12}, 32), "abc", 1},
-			{"longer root hash", bytes.Repeat([]byte{0x11}, 33), "abc", 1},
-			{"manifest uri", root, "abd", 1},
-			{"empty manifest uri", root, "", 1},
-			{"anchor type", root, "abc", 2},
+			{"root hash", bytes.Repeat([]byte{0x12}, 32), "abc", 1, true},
+			{"longer root hash", bytes.Repeat([]byte{0x11}, 33), "abc", 1, true},
+			{"root hash and manifest", bytes.Repeat([]byte{0x12}, 32), "abd", 2, true},
+			{"manifest uri", root, "abd", 1, false},
+			{"empty manifest uri", root, "", 1, false},
+			{"anchor type", root, "abc", 2, false},
+			{"manifest uri and anchor type", root, "abd", 2, false},
 		}
 		for _, change := range changes {
 			td := setup(t)
@@ -462,10 +465,17 @@ func TestAnchorUpdate(t *testing.T) {
 			td.sbx.FakeUnixTime = 70
 
 			td.execute(t, td.setAnchorTx(addr, change.root, change.uri, change.kind, 0, 1))
+			require.Equal(t, change.root, acc.RootHash(), change.name)
+			require.Equal(t, change.uri, acc.ManifestURI(), change.name)
+			require.Equal(t, change.kind, acc.AnchorType(), change.name)
 			require.Equal(t, types.Height(1), acc.CreatedAtHeight(), change.name)
 			require.Equal(t, uint32(10), acc.CreatedAtTime(), change.name)
-			require.Equal(t, types.Height(7), acc.UpdatedAtHeight(), change.name)
-			require.Equal(t, uint32(70), acc.UpdatedAtTime(), change.name)
+			wantHeight, wantTime := types.Height(1), uint32(10)
+			if change.moves {
+				wantHeight, wantTime = 7, 70
+			}
+			require.Equal(t, wantHeight, acc.UpdatedAtHeight(), change.name)
+			require.Equal(t, wantTime, acc.UpdatedAtTime(), change.name)
 		}
 	})
 

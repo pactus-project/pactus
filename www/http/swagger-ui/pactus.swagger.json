@@ -1870,22 +1870,22 @@
         "createdAtHeight": {
           "type": "integer",
           "format": "int64",
-          "description": "Height of the first set."
+          "description": "Height of the block that created the anchor."
         },
         "createdAtTime": {
           "type": "integer",
           "format": "int64",
-          "description": "Unix time of the first set."
+          "description": "Unix time of the block that created the anchor."
         },
         "updatedAtHeight": {
           "type": "integer",
           "format": "int64",
-          "description": "Height of the latest set."
+          "description": "Height of the block that set the current root hash."
         },
         "updatedAtTime": {
           "type": "integer",
           "format": "int64",
-          "description": "Unix time of the latest set."
+          "description": "Unix time of the block that set the current root hash."
         }
       },
       "description": "Active anchor stored on an account."

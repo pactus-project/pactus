@@ -877,16 +877,16 @@ pub struct AnchorInfo {
     /// Locked deposit in NanoPAC.
     #[prost(int64, tag="4")]
     pub locked_deposit: i64,
-    /// Height of the first set.
+    /// Height of the block that created the anchor.
     #[prost(uint32, tag="5")]
     pub created_at_height: u32,
-    /// Unix time of the first set.
+    /// Unix time of the block that created the anchor.
     #[prost(uint32, tag="6")]
     pub created_at_time: u32,
-    /// Height of the latest set.
+    /// Height of the block that set the current root hash.
     #[prost(uint32, tag="7")]
     pub updated_at_height: u32,
-    /// Unix time of the latest set.
+    /// Unix time of the block that set the current root hash.
     #[prost(uint32, tag="8")]
     pub updated_at_time: u32,
 }

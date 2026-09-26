@@ -318,13 +318,13 @@ message AnchorInfo {
   uint32 anchor_type = 3;
   // Locked deposit in NanoPAC.
   int64 locked_deposit = 4;
-  // Height of the first set.
+  // Height of the block that created the anchor.
   uint32 created_at_height = 5;
-  // Unix time of the first set.
+  // Unix time of the block that created the anchor.
   uint32 created_at_time = 6;
-  // Height of the latest set.
+  // Height of the block that set the current root hash.
   uint32 updated_at_height = 7;
-  // Unix time of the latest set.
+  // Unix time of the block that set the current root hash.
   uint32 updated_at_time = 8;
 }
 

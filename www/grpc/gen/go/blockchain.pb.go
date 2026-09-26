@@ -1917,13 +1917,13 @@ type AnchorInfo struct {
 	AnchorType uint32 `protobuf:"varint,3,opt,name=anchor_type,json=anchorType,proto3" json:"anchor_type,omitempty"`
 	// Locked deposit in NanoPAC.
 	LockedDeposit int64 `protobuf:"varint,4,opt,name=locked_deposit,json=lockedDeposit,proto3" json:"locked_deposit,omitempty"`
-	// Height of the first set.
+	// Height of the block that created the anchor.
 	CreatedAtHeight uint32 `protobuf:"varint,5,opt,name=created_at_height,json=createdAtHeight,proto3" json:"created_at_height,omitempty"`
-	// Unix time of the first set.
+	// Unix time of the block that created the anchor.
 	CreatedAtTime uint32 `protobuf:"varint,6,opt,name=created_at_time,json=createdAtTime,proto3" json:"created_at_time,omitempty"`
-	// Height of the latest set.
+	// Height of the block that set the current root hash.
 	UpdatedAtHeight uint32 `protobuf:"varint,7,opt,name=updated_at_height,json=updatedAtHeight,proto3" json:"updated_at_height,omitempty"`
-	// Unix time of the latest set.
+	// Unix time of the block that set the current root hash.
 	UpdatedAtTime uint32 `protobuf:"varint,8,opt,name=updated_at_time,json=updatedAtTime,proto3" json:"updated_at_time,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

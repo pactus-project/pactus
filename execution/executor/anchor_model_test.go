@@ -158,11 +158,16 @@ func (m *anchorModel) setOp() modelOp {
 		uri = "ipfs://manifest"
 		fee = amount.Amount(m.td.RandInt64Max(1e7))
 	case 1:
-		// Keep the current content, as a deposit top-up does.
+		// Keep the current root hash, as a deposit top-up does. Half of the
+		// time the manifest and the type change too, which keeps the date.
 		if acc := m.accounts[from]; acc != nil && acc.anchor != nil {
 			root = bytes.Clone(acc.anchor.root)
 			uri = acc.anchor.uri
 			kind = acc.anchor.kind
+			if m.td.RandIntMax(2) == 0 {
+				uri = "ipfs://moved"
+				kind = uint8(m.td.RandIntMax(256))
+			}
 			fee = amount.Amount(m.td.RandInt64Max(1e7))
 		}
 	}
@@ -181,8 +186,8 @@ func (m *anchorModel) setOp() modelOp {
 	switch {
 	case acc == nil || acc.anchor == nil:
 		result.kind = "create"
-	case bytes.Equal(acc.anchor.root, root) && acc.anchor.uri == uri && acc.anchor.kind == kind:
-		result.kind = "keep content"
+	case bytes.Equal(acc.anchor.root, root):
+		result.kind = "keep root"
 	}
 
 	switch {
@@ -209,9 +214,8 @@ func (m *anchorModel) setOp() modelOp {
 			acc.balance -= deposit + fee
 			m.fees += fee
 			// PIP-50 section 6.1: the content date moves only when the
-			// root hash, the manifest URI or the anchor type changes.
-			contentChanged := acc.anchor == nil ||
-				!bytes.Equal(acc.anchor.root, root) || acc.anchor.uri != uri || acc.anchor.kind != kind
+			// root hash changes.
+			rootChanged := acc.anchor == nil || !bytes.Equal(acc.anchor.root, root)
 			if acc.anchor == nil {
 				acc.anchor = &modelAnchor{createdH: height, createdT: unixTime}
 			}
@@ -219,7 +223,7 @@ func (m *anchorModel) setOp() modelOp {
 			acc.anchor.uri = uri
 			acc.anchor.kind = kind
 			acc.anchor.locked += deposit
-			if contentChanged {
+			if rootChanged {
 				acc.anchor.updatedH = height
 				acc.anchor.updatedT = unixTime
 			}
@@ -380,7 +384,7 @@ func TestAnchorModelRandomSequences(t *testing.T) {
 		}
 	}
 
-	for _, kind := range []string{"create", "update", "keep content", "delete", "transfer"} {
+	for _, kind := range []string{"create", "update", "keep root", "delete", "transfer"} {
 		require.Positive(t, accepted[kind], "no accepted %s", kind)
 	}
 	require.Positive(t, rejected)
