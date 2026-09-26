@@ -507,6 +507,40 @@ func TestAnchorLifecycleAcrossBlocks(t *testing.T) {
 	require.Equal(t, supply, td.totalCoins(t))
 }
 
+// An executed Delete can never run again: its ID stays in the recent transaction
+// cache for as long as its lock time is valid. So replaying it after the owner
+// created a new slot cannot delete that slot (PIP-50, Replay).
+func TestAnchorDeleteReplayAfterRecreate(t *testing.T) {
+	td := setupWithVersion(t, protocol.ProtocolVersion5)
+	td.fakeTxPool.EXPECT().AppendTxAndBroadcast(gomock.Any()).Return(nil).AnyTimes()
+	sender := td.sender()
+
+	td.commit(t, td.propose(t, block.Txs{
+		td.anchor(td.nextHeight(), payload.AnchorActionSet, bytes.Repeat([]byte{0x61}, 32), "first",
+			executor.MinAnchorDeposit, 1),
+	}))
+	deleted := td.anchor(td.nextHeight(), payload.AnchorActionDelete, nil, "", 0, 1)
+	td.commit(t, td.propose(t, block.Txs{deleted}))
+	require.False(t, td.mustAccount(t, sender).HasAnchor())
+
+	rootB := bytes.Repeat([]byte{0x62}, 32)
+	td.commit(t, td.propose(t, block.Txs{
+		td.anchor(td.nextHeight(), payload.AnchorActionSet, rootB, "second", executor.MinAnchorDeposit, 1),
+	}))
+	recreated := td.mustAccount(t, sender)
+	stateRoot := td.state.stateRoot()
+
+	next := td.propose(t, block.Txs{deleted})
+	require.False(t, blockHasTx(next, deleted.ID()))
+	forced := rebuildBlock(next, next.Header().Version(), appendTxs(next.Transactions(), deleted))
+	require.ErrorIs(t, td.state.ValidateBlock(forced, 0), execution.TransactionCommittedError{ID: deleted.ID()})
+	require.Equal(t, stateRoot, td.state.stateRoot())
+
+	td.commit(t, next)
+	require.Equal(t, recreated.Hash(), td.mustAccount(t, sender).Hash())
+	require.Equal(t, rootB, td.mustAccount(t, sender).RootHash())
+}
+
 // A certified block is trusted. If it still carries an anchor that cannot be
 // stored, the node stops instead of crediting a fee that was never debited.
 func TestCommitStopsOnUnstorableAnchor(t *testing.T) {
