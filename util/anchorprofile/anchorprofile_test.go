@@ -217,18 +217,29 @@ func TestManifestRoundTrip(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, want, fromManifest)
 
-	bad := []Manifest{
-		{Version: 2, Alg: ManifestAlg, Items: decoded.Items},
-		{Version: 1, Alg: "sha256", Items: decoded.Items},
-		{Version: 1, Alg: ManifestAlg, Items: []ManifestItem{{Name: "a", Hash: "zz"}}},
+	swapped := slices.Clone(decoded.Items)
+	swapped[0], swapped[1] = swapped[1], swapped[0]
+	repeated := slices.Clone(decoded.Items)
+	repeated[1] = repeated[0]
+	bad := map[string]Manifest{
+		"version":       {Version: 2, Alg: ManifestAlg, Items: decoded.Items},
+		"algorithm":     {Version: 1, Alg: "sha256", Items: decoded.Items},
+		"hash":          {Version: 1, Alg: ManifestAlg, Items: []ManifestItem{{Name: "a", Hash: "zz"}}},
+		"no item":       {Version: 1, Alg: ManifestAlg},
+		"empty name":    {Version: 1, Alg: ManifestAlg, Items: []ManifestItem{{Name: "", Hash: decoded.Items[0].Hash}}},
+		"invalid utf-8": {Version: 1, Alg: ManifestAlg, Items: []ManifestItem{{Name: "\xff", Hash: decoded.Items[0].Hash}}},
+		"out of order":  {Version: 1, Alg: ManifestAlg, Items: swapped},
+		"duplicate":     {Version: 1, Alg: ManifestAlg, Items: repeated},
 	}
-	for _, manifest := range bad {
+	for name, manifest := range bad {
 		_, err := manifest.Root()
-		require.ErrorIs(t, err, ErrInvalidManifest)
+		require.ErrorIs(t, err, ErrInvalidManifest, name)
 	}
-	empty := Manifest{Version: 1, Alg: ManifestAlg}
-	_, err = empty.Root()
+	noItem, duplicate := bad["no item"], bad["duplicate"]
+	_, err = noItem.Root()
 	require.ErrorIs(t, err, ErrNoItem)
+	_, err = duplicate.Root()
+	require.ErrorIs(t, err, ErrDuplicateName)
 }
 
 // Test vectors published in PIP-50 for other implementations. They were
@@ -376,6 +387,7 @@ func TestProofDocumentRejects(t *testing.T) {
 		"negative index":  change(func(d *ProofDocument) { d.Index = -1 }),
 		"index too large": change(func(d *ProofDocument) { d.Index = d.Size }),
 		"no item":         change(func(d *ProofDocument) { d.Size = 0 }),
+		"size too large":  change(func(d *ProofDocument) { d.Size = MaxProofSize + 1 }),
 		"path too long": change(func(d *ProofDocument) {
 			d.Path = slices.Repeat([]string{d.Path[0]}, maxPathLen+1)
 		}),
@@ -385,6 +397,11 @@ func TestProofDocumentRejects(t *testing.T) {
 		require.ErrorIs(t, err, ErrInvalidProof, name)
 		require.False(t, doc.Verify(root), name)
 	}
+
+	largest := change(func(d *ProofDocument) { d.Size = MaxProofSize })
+	_, _, err = largest.Decode()
+	require.NoError(t, err, "the largest size decodes, it just does not verify here")
+	require.False(t, largest.Verify(root))
 }
 
 // FuzzProofDocument feeds arbitrary JSON to a verifier. It must never panic, and

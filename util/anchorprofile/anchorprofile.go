@@ -45,6 +45,10 @@ const (
 	ManifestVersion = 1
 	ManifestAlg     = "blake2b-256"
 
+	// MaxProofSize is the largest item count a proof document may claim: the
+	// largest integer every JSON client reads exactly (2^53 - 1).
+	MaxProofSize = 1<<53 - 1
+
 	// maxPathLen bounds a proof path: a tree of up to 2^64 items is at most 64 deep.
 	maxPathLen = 64
 )
@@ -277,15 +281,27 @@ func NewManifest(items []Item) (*Manifest, error) {
 	return manifest, nil
 }
 
-// Entries returns the manifest items, checking the version, the algorithm and
-// every hash.
+// Entries returns the manifest items, checking the version, the algorithm, every
+// name and every hash. The items must be in strict name order, so a manifest has
+// one form only and a duplicate name is rejected.
 func (m *Manifest) Entries() ([]Item, error) {
 	if m.Version != ManifestVersion || m.Alg != ManifestAlg {
 		return nil, fmt.Errorf("%w: version %d, algorithm %q", ErrInvalidManifest, m.Version, m.Alg)
 	}
+	if len(m.Items) == 0 {
+		return nil, fmt.Errorf("%w: %w", ErrInvalidManifest, ErrNoItem)
+	}
 
 	items := make([]Item, 0, len(m.Items))
-	for _, entry := range m.Items {
+	for i, entry := range m.Items {
+		switch {
+		case !validName(entry.Name):
+			return nil, fmt.Errorf("%w: %w: %q", ErrInvalidManifest, ErrInvalidName, entry.Name)
+		case i > 0 && entry.Name == m.Items[i-1].Name:
+			return nil, fmt.Errorf("%w: %w: %q", ErrInvalidManifest, ErrDuplicateName, entry.Name)
+		case i > 0 && entry.Name < m.Items[i-1].Name:
+			return nil, fmt.Errorf("%w: %q is not in name order", ErrInvalidManifest, entry.Name)
+		}
 		digest, err := hash.FromString(entry.Hash)
 		if err != nil {
 			return nil, fmt.Errorf("%w: item %q: %w", ErrInvalidManifest, entry.Name, err)
@@ -339,14 +355,14 @@ func NewProofDocument(address string, item Item, proof Proof) ProofDocument {
 }
 
 // Decode returns the item and the proof, checking the version, the algorithm,
-// the name, every hash and the index range.
+// the name, every hash, the index range and the size limit.
 func (d *ProofDocument) Decode() (Item, Proof, error) {
 	switch {
 	case d.Version != ManifestVersion || d.Alg != ManifestAlg:
 		return Item{}, Proof{}, fmt.Errorf("%w: version %d, algorithm %q", ErrInvalidProof, d.Version, d.Alg)
 	case !validName(d.Item.Name):
 		return Item{}, Proof{}, fmt.Errorf("%w: item name %q", ErrInvalidProof, d.Item.Name)
-	case d.Size < 1 || d.Index < 0 || d.Index >= d.Size:
+	case d.Size < 1 || d.Size > MaxProofSize || d.Index < 0 || d.Index >= d.Size:
 		return Item{}, Proof{}, fmt.Errorf("%w: index %d of %d items", ErrInvalidProof, d.Index, d.Size)
 	case len(d.Path) > maxPathLen:
 		return Item{}, Proof{}, fmt.Errorf("%w: path of %d hashes", ErrInvalidProof, len(d.Path))
