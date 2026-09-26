@@ -14,7 +14,8 @@ import (
 
 const anchorProtocolVersion = protocol.Version(5)
 
-// MinAnchorDeposit is the minimum locked deposit for a new anchor.
+// MinAnchorDeposit is the minimum locked deposit for a new anchor. It is the
+// initial value of PIP-50; a later PIP may change it with a new protocol version.
 const MinAnchorDeposit amount.Amount = 1_000_000_000
 
 type AnchorExecutor struct {

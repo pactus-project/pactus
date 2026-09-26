@@ -115,7 +115,9 @@
 # `tx_pool` contains configuration options for the transaction pool module.
 [tx_pool]
 
-  # `max_size` indicates the maximum number of unconfirmed transactions inside the pool.
+  # `max_size` sets the size of the transaction pool. Each transaction type has its own
+  # share of it: transfers 50%, anchors, batch transfers, bonds, unbonds, withdraws and
+  # sortitions 10% each, so the pool holds at most 1.1 times `max_size` transactions.
   # Default is `1000`.
   max_size = 1000
 
