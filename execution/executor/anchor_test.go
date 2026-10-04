@@ -656,8 +656,10 @@ func TestAnchorDelete(t *testing.T) {
 			td.execute(t, del)
 			require.False(t, acc.HasAnchor())
 			require.Equal(t, 2*MinAnchorDeposit-fee, acc.Balance())
-			require.Len(t, accountBytes(t, acc), 12)
-			require.False(t, bytes.Contains(accountBytes(t, acc), []byte{0xAB}))
+			// The record is exactly a plain account: no byte of the payload leaks into it.
+			plain := account.NewAccount(acc.Number())
+			plain.AddToBalance(2*MinAnchorDeposit - fee)
+			require.Equal(t, accountBytes(t, plain), accountBytes(t, acc))
 		}
 	})
 
