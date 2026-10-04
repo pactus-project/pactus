@@ -34,5 +34,7 @@ func NewWalletPasswordDialogView() *WalletPasswordDialogView {
 
 	gtkutil.DialogSetup(view.Window)
 
+	view.Window.SetFocus(view.PasswordEntry)
+
 	return view
 }
