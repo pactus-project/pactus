@@ -198,6 +198,30 @@ func TestInvalidInput(t *testing.T) {
 	require.False(t, Verify(LeafHash(item), item, Proof{Index: -1, Size: 1}))
 }
 
+// Root, Prove and NewManifest reject the same invalid sets, so an application
+// cannot build a proof or a manifest for a set that has no root.
+func TestInvalidSetsRejectedEverywhere(t *testing.T) {
+	valid := namedItems(3)
+	bad := map[string]struct {
+		items []Item
+		want  error
+	}{
+		"no item":        {nil, ErrNoItem},
+		"empty name":     {append(slices.Clone(valid), Item{Name: ""}), ErrInvalidName},
+		"invalid utf-8":  {append(slices.Clone(valid), Item{Name: string([]byte{0xFF})}), ErrInvalidName},
+		"name too long":  {append(slices.Clone(valid), Item{Name: strings.Repeat("n", MaxNameLen+1)}), ErrInvalidName},
+		"duplicate name": {append(slices.Clone(valid), valid[1]), ErrDuplicateName},
+	}
+	for name, set := range bad {
+		_, err := Root(set.items)
+		require.ErrorIs(t, err, set.want, name)
+		_, err = Prove(set.items, valid[0].Name)
+		require.ErrorIs(t, err, set.want, name)
+		_, err = NewManifest(set.items)
+		require.ErrorIs(t, err, set.want, name)
+	}
+}
+
 func TestManifestRoundTrip(t *testing.T) {
 	items := namedItems(6)
 	slices.Reverse(items)
