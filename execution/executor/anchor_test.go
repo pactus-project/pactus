@@ -986,3 +986,36 @@ func TestAnchorOnRealSandbox(t *testing.T) {
 	require.Equal(t, 10*MinAnchorDeposit-2, after.Balance())
 	require.Equal(t, int64(0), sbx.PowerDelta())
 }
+
+// A later PIP that changes the minimum deposit applies only to blocks of its
+// version: blocks of earlier versions keep validating with the PIP-50 value.
+// This simulates such a PIP with a step at a hypothetical version 6.
+func TestMinAnchorDepositFollowsBlockVersion(t *testing.T) {
+	future := anchorProtocolVersion + 1
+	saved := minAnchorDeposits
+	minAnchorDeposits = append(append([]anchorDepositStep(nil), saved...),
+		anchorDepositStep{from: future, deposit: 2 * MinAnchorDeposit})
+	t.Cleanup(func() { minAnchorDeposits = saved })
+
+	require.Equal(t, MinAnchorDeposit, minAnchorDeposit(anchorProtocolVersion))
+	require.Equal(t, 2*MinAnchorDeposit, minAnchorDeposit(future))
+	require.Equal(t, 2*MinAnchorDeposit, minAnchorDeposit(future+1))
+
+	cases := []struct {
+		version protocol.Version
+		deposit amount.Amount
+		want    error
+	}{
+		{anchorProtocolVersion, MinAnchorDeposit, nil},
+		{future, MinAnchorDeposit, ErrAnchorDepositTooSmall},
+		{future, 2 * MinAnchorDeposit, nil},
+	}
+	for _, step := range cases {
+		td := setup(t)
+		td.useAnchor(1)
+		td.sbx.FakeBlockVersion = step.version
+		_, addr := td.addTestAccount(t, testsuite.AccountWithBalance(3*MinAnchorDeposit))
+		trx := td.setAnchorTx(addr, bytes.Repeat([]byte{0x31}, 32), "", 0, step.deposit, 1)
+		td.check(t, trx, true, step.want)
+	}
+}

@@ -14,9 +14,35 @@ import (
 
 const anchorProtocolVersion = protocol.Version(5)
 
-// MinAnchorDeposit is the minimum locked deposit for a new anchor. It is the
-// initial value of PIP-50; a later PIP may change it with a new protocol version.
+// MinAnchorDeposit is the minimum locked deposit for a new anchor set by PIP-50,
+// from protocol version 5.
 const MinAnchorDeposit amount.Amount = 1_000_000_000
+
+// anchorDepositStep is the minimum deposit for a new anchor from a protocol version on.
+type anchorDepositStep struct {
+	from    protocol.Version
+	deposit amount.Amount
+}
+
+// minAnchorDeposits is the schedule of the minimum deposit, by protocol version.
+// A later PIP that changes the deposit appends a step for its version, so blocks
+// of earlier versions keep validating with the value they had.
+var minAnchorDeposits = []anchorDepositStep{
+	{from: anchorProtocolVersion, deposit: MinAnchorDeposit},
+}
+
+// minAnchorDeposit returns the minimum deposit for a new anchor in a block of
+// the given version.
+func minAnchorDeposit(blockVersion protocol.Version) amount.Amount {
+	deposit := minAnchorDeposits[0].deposit
+	for _, step := range minAnchorDeposits {
+		if blockVersion >= step.from {
+			deposit = step.deposit
+		}
+	}
+
+	return deposit
+}
 
 type AnchorExecutor struct {
 	pld *payload.AnchorPayload
@@ -39,7 +65,7 @@ func newAnchorExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*AnchorExecutor, error)
 	}, nil
 }
 
-func (e *AnchorExecutor) Check(_ sandbox.SandboxReader, _ bool) error {
+func (e *AnchorExecutor) Check(sbx sandbox.SandboxReader, _ bool) error {
 	if err := e.pld.BasicCheck(); err != nil {
 		return err
 	}
@@ -51,7 +77,7 @@ func (e *AnchorExecutor) Check(_ sandbox.SandboxReader, _ bool) error {
 		return e.checkDelete()
 	}
 
-	return e.checkSet()
+	return e.checkSet(sbx.BlockVersion())
 }
 
 // Execute applies the anchor without validating it.
@@ -73,7 +99,7 @@ func (e *AnchorExecutor) Execute(sbx sandbox.Sandbox) {
 	sbx.UpdateAccount(e.pld.From, e.acc)
 }
 
-func (e *AnchorExecutor) checkSet() error {
+func (e *AnchorExecutor) checkSet(blockVersion protocol.Version) error {
 	deposit := e.pld.Deposit
 	if deposit > amount.MaxNanoPAC-e.fee {
 		return ErrAmountOverflow
@@ -89,7 +115,7 @@ func (e *AnchorExecutor) checkSet() error {
 	if locked > amount.MaxNanoPAC-deposit {
 		return ErrAmountOverflow
 	}
-	if !e.acc.HasAnchor() && deposit < MinAnchorDeposit {
+	if !e.acc.HasAnchor() && deposit < minAnchorDeposit(blockVersion) {
 		return ErrAnchorDepositTooSmall
 	}
 
