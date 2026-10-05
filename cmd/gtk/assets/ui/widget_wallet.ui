@@ -36,6 +36,13 @@
           </object>
         </child>
         <child>
+          <object class="GtkButton" id="id_button_upgrade_wallet">
+            <property name="css-classes">suggested-action</property>
+            <property name="valign">center</property>
+            <property name="visible">False</property>
+          </object>
+        </child>
+        <child>
           <object class="GtkButton" id="id_button_new_address">
             <property name="css-classes">suggested-action</property>
             <property name="valign">center</property>
