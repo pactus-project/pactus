@@ -1,6 +1,5 @@
 //go:build gtk
 
-//nolint:staticcheck // Using depreciated widgets
 package main
 
 import (
@@ -197,7 +196,7 @@ func main() {
 					if err != nil {
 						gtkutil.ShowErrorDialog(splash.Window(),
 							fmt.Sprintf("Aborted! Unable to acquire file lock. %v", err),
-							func(_ gtk.ResponseType) {
+							func(_ int) {
 								splash.Destroy()
 							})
 
@@ -207,7 +206,7 @@ func main() {
 					if !locked {
 						gtkutil.ShowErrorDialog(splash.Window(),
 							fmt.Sprintf("Could not lock '%s', another instance is running?", lockFilePath),
-							func(_ gtk.ResponseType) {
+							func(_ int) {
 								splash.Destroy()
 							})
 
@@ -220,7 +219,7 @@ func main() {
 					guiNode, err = newNode(ctx, workingDir, notify)
 					if err != nil {
 						gtkutil.ShowWarningDialog(splash.Window(), err.Error(),
-							func(_ gtk.ResponseType) {
+							func(_ int) {
 								splash.Destroy()
 							})
 
@@ -240,7 +239,7 @@ func main() {
 				grpcConn, err = newRemoteGRPCConn(grpcAddr, grpcInsecure)
 				if err != nil {
 					gtkutil.ShowErrorDialog(splash.Window(), err.Error(),
-						func(_ gtk.ResponseType) {
+						func(_ int) {
 							splash.Destroy()
 						})
 
@@ -261,7 +260,7 @@ func main() {
 				gui, err = gtkapp.Run(ctx, grpcConn, app, notify,
 					connectionLabel, connectionValue, workingDir, isLocal)
 				if err != nil {
-					gtkutil.ShowErrorDialog(splash.Window(), err.Error(), func(_ gtk.ResponseType) {
+					gtkutil.ShowErrorDialog(splash.Window(), err.Error(), func(_ int) {
 						splash.Destroy()
 					})
 

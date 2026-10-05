@@ -1,11 +1,9 @@
 //go:build gtk
 
-//nolint:staticcheck // Using depreciated widgets
 package assets
 
 import (
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"
-	"github.com/diamondburned/gotk4/pkg/gdkpixbuf/v2"
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
 )
 
@@ -14,17 +12,24 @@ func InitAssets() {
 	initImages()
 }
 
-// missingTexture creates a Picture widget that displays a solid gray square
-// as a placeholder for a missing image. It returns nil if the pixbuf cannot be created.
+// missingTexture creates a solid gray square texture used as a placeholder for a
+// missing image. It returns nil if size is not positive.
 func missingTexture(size int) *gdk.Texture {
-	// Create a gray square pixbuf
-	pixbuf := gdkpixbuf.NewPixbuf(gdkpixbuf.ColorspaceRGB, true, 8, size, size)
-	if pixbuf == nil {
+	if size <= 0 {
 		return nil
 	}
-	pixbuf.Fill(0xeeeeee)
 
-	return gdk.NewTextureForPixbuf(pixbuf)
+	// A memory texture needs raw pixel data. Build an opaque gray square using
+	// the R8G8B8 format (three bytes per pixel).
+	pixels := make([]byte, size*size*3)
+	for i := range pixels {
+		pixels[i] = 0xee
+	}
+
+	texture := gdk.NewMemoryTexture(size, size, gdk.MemoryR8G8B8,
+		glib.NewBytes(pixels), uint(size*3))
+
+	return &texture.Texture
 }
 
 func TextureFromBytes(data []byte) *gdk.Texture {
