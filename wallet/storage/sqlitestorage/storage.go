@@ -261,7 +261,7 @@ func (s *Storage) loadWalletInfo() error {
 
 	s.info = &wtypes.WalletInfo{
 		Path:       s.path,
-		Driver:     "SQLite",
+		Driver:     wtypes.DriverSQLite,
 		Version:    version,
 		Network:    network,
 		DefaultFee: defaultFee,

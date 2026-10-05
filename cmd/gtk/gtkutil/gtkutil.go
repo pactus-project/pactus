@@ -162,6 +162,11 @@ func SetMainWindow(win *gtk.Window) {
 	mainWindow = win
 }
 
+// MainWindow returns the registered main window, or nil if it has not been set.
+func MainWindow() *gtk.Window {
+	return mainWindow
+}
+
 // parentForDialog makes the dialog transient for the main window so it opens
 // centered over it. It reports whether a parent was set; when it was not (for
 // example dialogs shown during startup before the main window exists), the

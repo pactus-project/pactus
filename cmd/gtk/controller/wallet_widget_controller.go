@@ -20,6 +20,13 @@ import (
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
+const (
+	upgradeWalletConfirm = "This wallet is stored in the legacy JSON format. " +
+		"Upgrade it to the SQLite format?\n\n" +
+		"The wallet file will be migrated in place. Please make sure you have a backup."
+	upgradeWalletDone = "The wallet was upgraded to the SQLite format."
+)
+
 // addressRow wraps the model addressRow for display purposes.
 type addressRow struct {
 	no   int
@@ -128,7 +135,6 @@ func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) 
 	gtkutil.IdleAddSync(func() {
 		if err == nil {
 			c.view.LabelName.SetText(c.model.WalletName())
-			c.view.LabelDriver.SetText(info.Driver)
 			c.view.LabelCreatedAt.SetText(time.Unix(info.CreatedAt, 0).Format(time.RFC1123))
 			c.view.LabelLocation.SetText(info.Path)
 		}
@@ -138,6 +144,7 @@ func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) 
 		gtkutil.ConnectButtonSignal(c.view.BtnChangePassword, nav.ShowWalletChangePassword)
 		gtkutil.ConnectButtonSignal(c.view.BtnSetDefaultFee, nav.ShowWalletSetDefaultFee)
 		gtkutil.ConnectButtonSignal(c.view.BtnRefreshAddresses, c.RefreshAddresses)
+		gtkutil.ConnectButtonSignal(c.view.BtnUpgradeWallet, c.upgradeWallet)
 
 		gtkutil.ConnectButtonSignal(c.view.BtnTxRefresh, c.RefreshTransactions)
 		gtkutil.ConnectButtonSignal(c.view.BtnTxNext, c.nextTransactionsPage)
@@ -212,11 +219,35 @@ func (c *WalletWidgetController) RefreshInfo() {
 	}
 
 	gtkutil.IdleAddSync(func() {
+		c.view.LabelDriver.SetText(info.Driver)
+		c.view.BtnUpgradeWallet.SetVisible(types.IsLegacyDriver(info.Driver))
 		c.view.LabelEncrypted.SetText(gtkutil.YesNo(info.Encrypted))
 		c.view.LabelEncrypted.SetText(gtkutil.YesNo(info.Encrypted))
 		c.view.LabelTotalBalance.SetText(balanceStr)
 		c.view.LabelTotalStake.SetText(stakeStr)
 		c.view.LabelDefaultFee.SetText(amount.Amount(info.DefaultFee).String())
+	})
+}
+
+// upgradeWallet migrates a legacy JSON wallet to the SQLite format.
+func (c *WalletWidgetController) upgradeWallet() {
+	parent := gtkutil.MainWindow()
+
+	gtkutil.ShowQuestionDialog(parent, upgradeWalletConfirm, func(res int) {
+		if res != int(gtk.ResponseYes) {
+			return
+		}
+
+		go func() {
+			if err := c.model.MigrateWallet(); err != nil {
+				gtkutil.ShowErrorDialog(parent, err.Error(), nil)
+
+				return
+			}
+
+			gtkutil.ShowInfoDialog(parent, upgradeWalletDone, nil)
+			c.RefreshInfo()
+		}()
 	})
 }
 

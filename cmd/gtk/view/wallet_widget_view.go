@@ -32,6 +32,7 @@ type WalletWidgetView struct {
 	BtnSetDefaultFee    *gtk.Button
 	BtnChangePassword   *gtk.Button
 	BtnShowSeed         *gtk.Button
+	BtnUpgradeWallet    *gtk.Button
 	BtnTxRefresh        *gtk.Button
 	BtnTxPrev           *gtk.Button
 	BtnTxNext           *gtk.Button
@@ -64,6 +65,7 @@ func NewWalletWidgetView() *WalletWidgetView {
 		BtnSetDefaultFee:    builder.GetButtonObj("id_button_set_default_fee"),
 		BtnChangePassword:   builder.GetButtonObj("id_button_change_password"),
 		BtnShowSeed:         builder.GetButtonObj("id_button_show_seed"),
+		BtnUpgradeWallet:    builder.GetButtonObj("id_button_upgrade_wallet"),
 		BtnTxRefresh:        builder.GetButtonObj("id_button_tx_refresh"),
 		BtnTxPrev:           builder.GetButtonObj("id_button_tx_prev"),
 		BtnTxNext:           builder.GetButtonObj("id_button_tx_next"),
@@ -82,6 +84,8 @@ func NewWalletWidgetView() *WalletWidgetView {
 		"Change the wallet password", assets.IconPasswordTexture)
 	gtkutil.ExtendImageButton(view.BtnShowSeed, "Show _Seed",
 		"Display the wallet seed phrase", assets.IconSeedTexture)
+	gtkutil.ExtendImageButton(view.BtnUpgradeWallet, "_Upgrade",
+		"Upgrade this legacy wallet to the SQLite format", nil)
 	gtkutil.ExtendImageButton(view.BtnTxRefresh, "_Refresh",
 		"Refresh transaction list", assets.IconRefreshTexture)
 	gtkutil.ExtendImageButton(view.BtnTxPrev, "_Previous",
