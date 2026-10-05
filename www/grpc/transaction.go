@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"encoding/hex"
+	"math"
 
 	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/pactus/crypto"
@@ -112,7 +113,7 @@ func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 	}
 
 	amt := amount.Amount(req.Amount)
-	fee := s.getFee(req.Fee, amt)
+	fee := s.getFee(req.Fee, amt, payload.TypeTransfer)
 	lockTime := s.getLockTime(req.LockTime)
 
 	transferTx := tx.NewTransferTx(lockTime, sender, receiver, amt, fee, tx.WithMemo(req.Memo))
@@ -150,7 +151,7 @@ func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 	}
 
 	amt := amount.Amount(req.Stake)
-	fee := s.getFee(req.Fee, amt)
+	fee := s.getFee(req.Fee, amt, payload.TypeBond)
 	lockTime := s.getLockTime(req.LockTime)
 
 	bondTx := tx.NewBondTx(lockTime, sender, receiver, publicKey, amt, fee, tx.WithMemo(req.Memo))
@@ -220,7 +221,7 @@ func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 	}
 
 	amt := amount.Amount(req.Amount)
-	fee := s.getFee(req.Fee, amt)
+	fee := s.getFee(req.Fee, amt, payload.TypeWithdraw)
 	lockTime := s.getLockTime(req.LockTime)
 
 	withdrawTx := tx.NewWithdrawTx(lockTime, validatorAddr, accountAddr, amt, fee, tx.WithMemo(req.Memo))
@@ -261,7 +262,7 @@ func (s *transactionServer) GetRawBatchTransferTransaction(_ context.Context,
 		totalAmount += amt
 	}
 
-	fee := s.getFee(req.Fee, totalAmount)
+	fee := s.getFee(req.Fee, totalAmount, payload.TypeBatchTransfer)
 	lockTime := s.getLockTime(req.LockTime)
 
 	batchTransferTx := tx.NewBatchTransferTx(lockTime, sender, recipients, fee, tx.WithMemo(req.Memo))
@@ -275,10 +276,56 @@ func (s *transactionServer) GetRawBatchTransferTransaction(_ context.Context,
 	}, nil
 }
 
-func (s *transactionServer) getFee(f int64, amt amount.Amount) amount.Amount {
+func (s *transactionServer) GetRawAnchorTransaction(_ context.Context,
+	req *pactus.GetRawAnchorTransactionRequest,
+) (*pactus.GetRawTransactionResponse, error) {
+	sender, err := crypto.AddressFromString(req.From)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid address: %v", err)
+	}
+	if len(req.Memo) > 64 {
+		return nil, status.Errorf(codes.InvalidArgument, "memo length exceeded")
+	}
+	if req.Fee < 0 || req.Fee > amount.MaxNanoPAC {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid fee")
+	}
+	if req.Action == uint32(payload.AnchorActionDelete) {
+		if req.Deposit != 0 || len(req.RootHash) != 0 {
+			return nil, status.Errorf(codes.InvalidArgument, "delete carries a deposit or a hash")
+		}
+	} else if req.Action != uint32(payload.AnchorActionSet) {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid anchor action")
+	}
+	if req.AnchorType > math.MaxUint8 {
+		return nil, status.Errorf(codes.InvalidArgument, "anchor type must be at most %d", math.MaxUint8)
+	}
+
+	deposit := amount.Amount(req.Deposit)
+	fee := s.getFee(req.Fee, deposit, payload.TypeAnchor)
+	lockTime := s.getLockTime(req.LockTime)
+	root, uri, anchorType, deposit := payload.PreparedAnchor(
+		uint8(req.Action), req.RootHash, req.ManifestUri, uint8(req.AnchorType), deposit)
+
+	anchorTx := tx.NewAnchorTx(lockTime, sender, uint8(req.Action), root, uri, anchorType, deposit, fee,
+		tx.WithMemo(req.Memo))
+	if err := anchorTx.Payload().BasicCheck(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	rawTx, err := anchorTx.Bytes()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pactus.GetRawTransactionResponse{
+		RawTransaction: hex.EncodeToString(rawTx),
+	}, nil
+}
+
+func (s *transactionServer) getFee(f int64, amt amount.Amount, payloadType payload.Type) amount.Amount {
 	fee := amount.Amount(f)
 	if fee == 0 {
-		fee = s.state.CalculateFee(amt, payload.TypeTransfer)
+		fee = s.state.CalculateFee(amt, payloadType)
 	}
 
 	return fee
@@ -400,6 +447,20 @@ func transactionToProto(trx *tx.Tx, blockHeight types.Height, confirmations int)
 				Recipients: recipients,
 			},
 		}
+
+	case payload.TypeAnchor:
+		pld := trx.Payload().(*payload.AnchorPayload)
+		trxInfo.Payload = &pactus.TransactionInfo_Anchor{
+			Anchor: &pactus.PayloadAnchor{
+				From:        pld.From.String(),
+				Action:      uint32(pld.Action),
+				RootHash:    append([]byte(nil), pld.RootHash...),
+				ManifestUri: pld.ManifestURI,
+				AnchorType:  uint32(pld.AnchorType),
+				Deposit:     pld.Deposit.ToNanoPAC(),
+			},
+		}
+
 	default:
 		logger.Error("payload type not defined", "type", trx.Payload().Type())
 	}

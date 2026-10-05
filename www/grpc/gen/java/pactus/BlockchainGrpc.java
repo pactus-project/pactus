@@ -232,6 +232,68 @@ public final class BlockchainGrpc {
     return getGetAccountMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pactus.BlockchainOuterClass.GetAnchorRequest,
+      pactus.BlockchainOuterClass.GetAnchorResponse> getGetAnchorMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetAnchor",
+      requestType = pactus.BlockchainOuterClass.GetAnchorRequest.class,
+      responseType = pactus.BlockchainOuterClass.GetAnchorResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.BlockchainOuterClass.GetAnchorRequest,
+      pactus.BlockchainOuterClass.GetAnchorResponse> getGetAnchorMethod() {
+    io.grpc.MethodDescriptor<pactus.BlockchainOuterClass.GetAnchorRequest, pactus.BlockchainOuterClass.GetAnchorResponse> getGetAnchorMethod;
+    if ((getGetAnchorMethod = BlockchainGrpc.getGetAnchorMethod) == null) {
+      synchronized (BlockchainGrpc.class) {
+        if ((getGetAnchorMethod = BlockchainGrpc.getGetAnchorMethod) == null) {
+          BlockchainGrpc.getGetAnchorMethod = getGetAnchorMethod =
+              io.grpc.MethodDescriptor.<pactus.BlockchainOuterClass.GetAnchorRequest, pactus.BlockchainOuterClass.GetAnchorResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetAnchor"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.BlockchainOuterClass.GetAnchorRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.BlockchainOuterClass.GetAnchorResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new BlockchainMethodDescriptorSupplier("GetAnchor"))
+              .build();
+        }
+      }
+    }
+    return getGetAnchorMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<pactus.BlockchainOuterClass.ListAnchorsRequest,
+      pactus.BlockchainOuterClass.ListAnchorsResponse> getListAnchorsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ListAnchors",
+      requestType = pactus.BlockchainOuterClass.ListAnchorsRequest.class,
+      responseType = pactus.BlockchainOuterClass.ListAnchorsResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.BlockchainOuterClass.ListAnchorsRequest,
+      pactus.BlockchainOuterClass.ListAnchorsResponse> getListAnchorsMethod() {
+    io.grpc.MethodDescriptor<pactus.BlockchainOuterClass.ListAnchorsRequest, pactus.BlockchainOuterClass.ListAnchorsResponse> getListAnchorsMethod;
+    if ((getListAnchorsMethod = BlockchainGrpc.getListAnchorsMethod) == null) {
+      synchronized (BlockchainGrpc.class) {
+        if ((getListAnchorsMethod = BlockchainGrpc.getListAnchorsMethod) == null) {
+          BlockchainGrpc.getListAnchorsMethod = getListAnchorsMethod =
+              io.grpc.MethodDescriptor.<pactus.BlockchainOuterClass.ListAnchorsRequest, pactus.BlockchainOuterClass.ListAnchorsResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "ListAnchors"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.BlockchainOuterClass.ListAnchorsRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.BlockchainOuterClass.ListAnchorsResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new BlockchainMethodDescriptorSupplier("ListAnchors"))
+              .build();
+        }
+      }
+    }
+    return getListAnchorsMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<pactus.BlockchainOuterClass.GetValidatorRequest,
       pactus.BlockchainOuterClass.GetValidatorResponse> getGetValidatorMethod;
 
@@ -525,6 +587,26 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
+     * GetAnchor retrieves the active anchor for an account, if any.
+     * </pre>
+     */
+    default void getAnchor(pactus.BlockchainOuterClass.GetAnchorRequest request,
+        io.grpc.stub.StreamObserver<pactus.BlockchainOuterClass.GetAnchorResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetAnchorMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * ListAnchors lists accounts that currently have an anchor, ordered by account number.
+     * </pre>
+     */
+    default void listAnchors(pactus.BlockchainOuterClass.ListAnchorsRequest request,
+        io.grpc.stub.StreamObserver<pactus.BlockchainOuterClass.ListAnchorsResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getListAnchorsMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
      * GetValidator retrieves information about a validator based on the provided address.
      * </pre>
      */
@@ -687,6 +769,28 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
+     * GetAnchor retrieves the active anchor for an account, if any.
+     * </pre>
+     */
+    public void getAnchor(pactus.BlockchainOuterClass.GetAnchorRequest request,
+        io.grpc.stub.StreamObserver<pactus.BlockchainOuterClass.GetAnchorResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetAnchorMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * ListAnchors lists accounts that currently have an anchor, ordered by account number.
+     * </pre>
+     */
+    public void listAnchors(pactus.BlockchainOuterClass.ListAnchorsRequest request,
+        io.grpc.stub.StreamObserver<pactus.BlockchainOuterClass.ListAnchorsResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getListAnchorsMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
      * GetValidator retrieves information about a validator based on the provided address.
      * </pre>
      */
@@ -833,6 +937,26 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
+     * GetAnchor retrieves the active anchor for an account, if any.
+     * </pre>
+     */
+    public pactus.BlockchainOuterClass.GetAnchorResponse getAnchor(pactus.BlockchainOuterClass.GetAnchorRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getGetAnchorMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * ListAnchors lists accounts that currently have an anchor, ordered by account number.
+     * </pre>
+     */
+    public pactus.BlockchainOuterClass.ListAnchorsResponse listAnchors(pactus.BlockchainOuterClass.ListAnchorsRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getListAnchorsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
      * GetValidator retrieves information about a validator based on the provided address.
      * </pre>
      */
@@ -970,6 +1094,26 @@ public final class BlockchainGrpc {
     public pactus.BlockchainOuterClass.GetAccountResponse getAccount(pactus.BlockchainOuterClass.GetAccountRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetAccountMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * GetAnchor retrieves the active anchor for an account, if any.
+     * </pre>
+     */
+    public pactus.BlockchainOuterClass.GetAnchorResponse getAnchor(pactus.BlockchainOuterClass.GetAnchorRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetAnchorMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * ListAnchors lists accounts that currently have an anchor, ordered by account number.
+     * </pre>
+     */
+    public pactus.BlockchainOuterClass.ListAnchorsResponse listAnchors(pactus.BlockchainOuterClass.ListAnchorsRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getListAnchorsMethod(), getCallOptions(), request);
     }
 
     /**
@@ -1122,6 +1266,28 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
+     * GetAnchor retrieves the active anchor for an account, if any.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.BlockchainOuterClass.GetAnchorResponse> getAnchor(
+        pactus.BlockchainOuterClass.GetAnchorRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetAnchorMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     * ListAnchors lists accounts that currently have an anchor, ordered by account number.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.BlockchainOuterClass.ListAnchorsResponse> listAnchors(
+        pactus.BlockchainOuterClass.ListAnchorsRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getListAnchorsMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
      * GetValidator retrieves information about a validator based on the provided address.
      * </pre>
      */
@@ -1184,11 +1350,13 @@ public final class BlockchainGrpc {
   private static final int METHODID_GET_COMMITTEE_INFO = 4;
   private static final int METHODID_GET_CONSENSUS_INFO = 5;
   private static final int METHODID_GET_ACCOUNT = 6;
-  private static final int METHODID_GET_VALIDATOR = 7;
-  private static final int METHODID_GET_VALIDATOR_BY_NUMBER = 8;
-  private static final int METHODID_GET_VALIDATOR_ADDRESSES = 9;
-  private static final int METHODID_GET_PUBLIC_KEY = 10;
-  private static final int METHODID_GET_TX_POOL_CONTENT = 11;
+  private static final int METHODID_GET_ANCHOR = 7;
+  private static final int METHODID_LIST_ANCHORS = 8;
+  private static final int METHODID_GET_VALIDATOR = 9;
+  private static final int METHODID_GET_VALIDATOR_BY_NUMBER = 10;
+  private static final int METHODID_GET_VALIDATOR_ADDRESSES = 11;
+  private static final int METHODID_GET_PUBLIC_KEY = 12;
+  private static final int METHODID_GET_TX_POOL_CONTENT = 13;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1234,6 +1402,14 @@ public final class BlockchainGrpc {
         case METHODID_GET_ACCOUNT:
           serviceImpl.getAccount((pactus.BlockchainOuterClass.GetAccountRequest) request,
               (io.grpc.stub.StreamObserver<pactus.BlockchainOuterClass.GetAccountResponse>) responseObserver);
+          break;
+        case METHODID_GET_ANCHOR:
+          serviceImpl.getAnchor((pactus.BlockchainOuterClass.GetAnchorRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.BlockchainOuterClass.GetAnchorResponse>) responseObserver);
+          break;
+        case METHODID_LIST_ANCHORS:
+          serviceImpl.listAnchors((pactus.BlockchainOuterClass.ListAnchorsRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.BlockchainOuterClass.ListAnchorsResponse>) responseObserver);
           break;
         case METHODID_GET_VALIDATOR:
           serviceImpl.getValidator((pactus.BlockchainOuterClass.GetValidatorRequest) request,
@@ -1322,6 +1498,20 @@ public final class BlockchainGrpc {
               pactus.BlockchainOuterClass.GetAccountRequest,
               pactus.BlockchainOuterClass.GetAccountResponse>(
                 service, METHODID_GET_ACCOUNT)))
+        .addMethod(
+          getGetAnchorMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              pactus.BlockchainOuterClass.GetAnchorRequest,
+              pactus.BlockchainOuterClass.GetAnchorResponse>(
+                service, METHODID_GET_ANCHOR)))
+        .addMethod(
+          getListAnchorsMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              pactus.BlockchainOuterClass.ListAnchorsRequest,
+              pactus.BlockchainOuterClass.ListAnchorsResponse>(
+                service, METHODID_LIST_ANCHORS)))
         .addMethod(
           getGetValidatorMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -1412,6 +1602,8 @@ public final class BlockchainGrpc {
               .addMethod(getGetCommitteeInfoMethod())
               .addMethod(getGetConsensusInfoMethod())
               .addMethod(getGetAccountMethod())
+              .addMethod(getGetAnchorMethod())
+              .addMethod(getListAnchorsMethod())
               .addMethod(getGetValidatorMethod())
               .addMethod(getGetValidatorByNumberMethod())
               .addMethod(getGetValidatorAddressesMethod())

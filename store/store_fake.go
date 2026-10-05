@@ -1,6 +1,9 @@
 package store
 
 import (
+	"cmp"
+	"slices"
+
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
@@ -22,6 +25,7 @@ type FakeStore struct {
 	FakeCertificates map[types.Height]*certificate.Certificate
 	FakeAccounts     map[crypto.Address]*account.Account
 	FakeValidators   map[crypto.Address]*validator.Validator
+	RecentTxs        map[tx.ID]struct{}
 }
 
 func NewFakeStore(ts *testsuite.TestSuite) *FakeStore {
@@ -31,6 +35,7 @@ func NewFakeStore(ts *testsuite.TestSuite) *FakeStore {
 		FakeCertificates: make(map[types.Height]*certificate.Certificate),
 		FakeAccounts:     make(map[crypto.Address]*account.Account),
 		FakeValidators:   make(map[crypto.Address]*validator.Validator),
+		RecentTxs:        make(map[tx.ID]struct{}),
 	}
 
 	fake.EXPECT().LastCertificate().DoAndReturn(
@@ -198,6 +203,23 @@ func NewFakeStore(ts *testsuite.TestSuite) *FakeStore {
 		},
 	).AnyTimes()
 
+	fake.EXPECT().AnchorAddresses(gomock.Any(), gomock.Any()).DoAndReturn(
+		func(skip, count uint32) ([]crypto.Address, uint32) {
+			anchors := make([]anchorEntry, 0)
+			for addr, acc := range fake.FakeAccounts {
+				if acc.HasAnchor() {
+					anchors = append(anchors, anchorEntry{number: acc.Number(), addr: addr})
+				}
+			}
+			slices.SortFunc(anchors, func(left, right anchorEntry) int {
+				return cmp.Compare(left.number, right.number)
+			})
+			index := &accountStore{anchors: anchors}
+
+			return index.anchorAddresses(skip, count)
+		},
+	).AnyTimes()
+
 	fake.EXPECT().TotalValidators().DoAndReturn(
 		func() int32 {
 			return int32(len(fake.FakeValidators))
@@ -228,6 +250,9 @@ func NewFakeStore(ts *testsuite.TestSuite) *FakeStore {
 		func(blk *block.Block, cert *certificate.Certificate) {
 			fake.FakeBlocks[blk.Height()] = blk
 			fake.FakeCertificates[cert.Height()] = cert
+			for _, trx := range blk.Transactions() {
+				fake.RecentTxs[trx.ID()] = struct{}{}
+			}
 		},
 	).AnyTimes()
 

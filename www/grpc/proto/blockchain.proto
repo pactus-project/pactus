@@ -29,6 +29,12 @@ service Blockchain {
   // GetAccount retrieves information about an account based on the provided address.
   rpc GetAccount(GetAccountRequest) returns (GetAccountResponse);
 
+  // GetAnchor retrieves the active anchor for an account, if any.
+  rpc GetAnchor(GetAnchorRequest) returns (GetAnchorResponse);
+
+  // ListAnchors lists accounts that currently have an anchor, ordered by account number.
+  rpc ListAnchors(ListAnchorsRequest) returns (ListAnchorsResponse);
+
   // GetValidator retrieves information about a validator based on the provided address.
   rpc GetValidator(GetValidatorRequest) returns (GetValidatorResponse);
 
@@ -262,6 +268,66 @@ message ValidatorInfo {
   uint32 delegate_expiry = 15;
 }
 
+// Request message for retrieving the active anchor of an account.
+message GetAnchorRequest {
+  // The address of the account.
+  string address = 1;
+}
+
+// Response message contains the active anchor, when one exists.
+message GetAnchorResponse {
+  // True when the account exists and has an anchor.
+  bool found = 1;
+  // The requested address.
+  string address = 2;
+  // Set only when found is true.
+  AnchorInfo anchor = 3;
+}
+
+// Request message for listing active anchors.
+message ListAnchorsRequest {
+  // Number of matching accounts to skip.
+  uint32 skip = 1;
+  // Page size. 0 means 20. Maximum is 100.
+  uint32 count = 2;
+}
+
+// Response message contains one page of active anchors.
+message ListAnchorsResponse {
+  // The page, ordered by account number.
+  repeated AnchorListItem items = 1;
+  // Accounts that currently have an anchor.
+  uint32 total = 2;
+}
+
+// One anchored account.
+message AnchorListItem {
+  // The account address.
+  string address = 1;
+  // The active anchor.
+  AnchorInfo anchor = 2;
+}
+
+// Active anchor stored on an account.
+message AnchorInfo {
+  // Root hash bytes.
+  bytes root_hash = 1;
+  // Manifest URI.
+  string manifest_uri = 2;
+  // Anchor type byte.
+  uint32 anchor_type = 3;
+  // Locked deposit in NanoPAC.
+  int64 locked_deposit = 4;
+  // Height of the block that created the anchor.
+  uint32 created_at_height = 5;
+  // Unix time of the block that created the anchor.
+  uint32 created_at_time = 6;
+  // Height of the block that set the current root hash.
+  uint32 updated_at_height = 7;
+  // Unix time of the block that set the current root hash.
+  uint32 updated_at_time = 8;
+}
+
 // Message contains information about an account.
 message AccountInfo {
   // The hash of the account.
@@ -274,6 +340,8 @@ message AccountInfo {
   int64 balance = 4;
   // The address of the account.
   string address = 5;
+  // The active anchor. Unset when the account has none.
+  optional AnchorInfo anchor = 6;
 }
 
 // Message contains information about the header of a block.

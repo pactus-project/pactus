@@ -115,7 +115,9 @@
 # `tx_pool` contains configuration options for the transaction pool module.
 [tx_pool]
 
-  # `max_size` indicates the maximum number of unconfirmed transactions inside the pool.
+  # `max_size` sets the size of the transaction pool. Each transaction type has its own
+  # share of it: transfers 50%, anchors, batch transfers, bonds, unbonds, withdraws and
+  # sortitions 10% each, so the pool holds at most 1.1 times `max_size` transactions.
   # Default is `1000`.
   max_size = 1000
 
@@ -276,6 +278,11 @@
   # Example: 'tcp://127.0.0.1:28332'
   # Default is '', meaning the topic is disabled
   zmqpubrawtx = ''
+
+  # `zmqpubanchorinfo` specifies the address for publishing anchor notifications.
+  # Example: 'tcp://127.0.0.1:28336'
+  # Default is '', meaning the topic is disabled
+  zmqpubanchorinfo = ''
 
   # `zmqpubhwm` defines the High Watermark (HWM) for ZeroMQ message pipes.
   # This parameter determines the maximum number of messages ZeroMQ can buffer before blocking the publishing of further messages.

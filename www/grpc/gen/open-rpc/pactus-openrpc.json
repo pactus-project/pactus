@@ -23,7 +23,7 @@
         "schema": {
           "type": "object","required": ["block_height","block_time","transaction"],
           "properties": {"block_height": { "type": "integer" },"block_time": { "type": "integer" },"transaction": {
-  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","memo","public_key","signature","block_height","confirmed","confirmations"],
+  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","anchor","memo","public_key","signature","block_height","confirmed","confirmations"],
   "properties": {"id": { "type": "string" },"data": { "type": "string" },"version": { "type": "integer" },"lock_time": { "type": "integer" },"value": { "type": "integer" },"fee": { "type": "integer" },"payload_type": { "type": "integer" },"transfer": {
   "type": "object","required": ["sender","receiver","amount"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
@@ -48,6 +48,9 @@
   "properties": {"receiver": { "type": "string" },"amount": { "type": "integer" }}
 }
 }}
+},"anchor": {
+  "type": "object","required": ["from","action","root_hash","manifest_uri","anchor_type","deposit"],
+  "properties": {"from": { "type": "string" },"action": { "type": "integer" },"root_hash": { "type": "string" },"manifest_uri": { "type": "string" },"anchor_type": { "type": "integer" },"deposit": { "type": "integer" }}
 },"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" },"block_height": { "type": "integer" },"confirmed": { "type": "boolean" },"confirmations": { "type": "integer" }}
 }}
           }
@@ -290,6 +293,55 @@
           }
         }
       },{
+      "name": "pactus.transaction.get_raw_anchor_transaction",
+      "description": "GetRawAnchorTransaction retrieves raw details of an anchor transaction.",
+      "tags": [{ "name": "transaction"}],
+      "paramStructure": "by-name",
+      "params": [{
+          "name": "from",
+          "description": "The sender's account address.",
+          "schema": { "type": "string" }
+        },{
+          "name": "action",
+          "description": "0 = set, 1 = delete.",
+          "schema": { "type": "integer" }
+        },{
+          "name": "root_hash",
+          "description": "Required when action is set.",
+          "schema": { "type": "string" }
+        },{
+          "name": "manifest_uri",
+          "description": "Manifest URI. Ignored on delete.",
+          "schema": { "type": "string" }
+        },{
+          "name": "anchor_type",
+          "description": "Anchor type byte. Ignored on delete.",
+          "schema": { "type": "integer" }
+        },{
+          "name": "deposit",
+          "description": "Additional lock in NanoPAC. Must be 0 on delete.",
+          "schema": { "type": "integer" }
+        },{
+          "name": "fee",
+          "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.",
+          "schema": { "type": "integer" }
+        },{
+          "name": "memo",
+          "description": "A memo string for the transaction.",
+          "schema": { "type": "string" }
+        },{
+          "name": "lock_time",
+          "description": "The lock time for the transaction. If not set, defaults to the last block height.",
+          "schema": { "type": "integer" }
+        }],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object","required": ["raw_transaction","id"],
+          "properties": {"raw_transaction": { "type": "string" },"id": { "type": "string" }}
+          }
+        }
+      },{
       "name": "pactus.transaction.decode_raw_transaction",
       "description": "DecodeRawTransaction accepts raw transaction and returns decoded transaction.",
       "tags": [{ "name": "transaction"}],
@@ -304,7 +356,7 @@
         "schema": {
           "type": "object","required": ["transaction"],
           "properties": {"transaction": {
-  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","memo","public_key","signature","block_height","confirmed","confirmations"],
+  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","anchor","memo","public_key","signature","block_height","confirmed","confirmations"],
   "properties": {"id": { "type": "string" },"data": { "type": "string" },"version": { "type": "integer" },"lock_time": { "type": "integer" },"value": { "type": "integer" },"fee": { "type": "integer" },"payload_type": { "type": "integer" },"transfer": {
   "type": "object","required": ["sender","receiver","amount"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
@@ -329,6 +381,9 @@
   "properties": {"receiver": { "type": "string" },"amount": { "type": "integer" }}
 }
 }}
+},"anchor": {
+  "type": "object","required": ["from","action","root_hash","manifest_uri","anchor_type","deposit"],
+  "properties": {"from": { "type": "string" },"action": { "type": "integer" },"root_hash": { "type": "string" },"manifest_uri": { "type": "string" },"anchor_type": { "type": "integer" },"deposit": { "type": "integer" }}
 },"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" },"block_height": { "type": "integer" },"confirmed": { "type": "boolean" },"confirmations": { "type": "integer" }}
 }}
           }
@@ -383,7 +438,7 @@
 },"txs": {
   "type": "array",
   "items": {
-  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","memo","public_key","signature","block_height","confirmed","confirmations"],
+  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","anchor","memo","public_key","signature","block_height","confirmed","confirmations"],
   "properties": {"id": { "type": "string" },"data": { "type": "string" },"version": { "type": "integer" },"lock_time": { "type": "integer" },"value": { "type": "integer" },"fee": { "type": "integer" },"payload_type": { "type": "integer" },"transfer": {
   "type": "object","required": ["sender","receiver","amount"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
@@ -408,6 +463,9 @@
   "properties": {"receiver": { "type": "string" },"amount": { "type": "integer" }}
 }
 }}
+},"anchor": {
+  "type": "object","required": ["from","action","root_hash","manifest_uri","anchor_type","deposit"],
+  "properties": {"from": { "type": "string" },"action": { "type": "integer" },"root_hash": { "type": "string" },"manifest_uri": { "type": "string" },"anchor_type": { "type": "integer" },"deposit": { "type": "integer" }}
 },"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" },"block_height": { "type": "integer" },"confirmed": { "type": "boolean" },"confirmations": { "type": "integer" }}
 }
 }}
@@ -524,9 +582,62 @@
         "schema": {
           "type": "object","required": ["account"],
           "properties": {"account": {
-  "type": "object","required": ["hash","data","number","balance","address"],
-  "properties": {"hash": { "type": "string" },"data": { "type": "string" },"number": { "type": "integer" },"balance": { "type": "integer" },"address": { "type": "string" }}
+  "type": "object","required": ["hash","data","number","balance","address","anchor"],
+  "properties": {"hash": { "type": "string" },"data": { "type": "string" },"number": { "type": "integer" },"balance": { "type": "integer" },"address": { "type": "string" },"anchor": {
+  "type": "object","required": ["root_hash","manifest_uri","anchor_type","locked_deposit","created_at_height","created_at_time","updated_at_height","updated_at_time"],
+  "properties": {"root_hash": { "type": "string" },"manifest_uri": { "type": "string" },"anchor_type": { "type": "integer" },"locked_deposit": { "type": "integer" },"created_at_height": { "type": "integer" },"created_at_time": { "type": "integer" },"updated_at_height": { "type": "integer" },"updated_at_time": { "type": "integer" }}
 }}
+}}
+          }
+        }
+      },{
+      "name": "pactus.blockchain.get_anchor",
+      "description": "GetAnchor retrieves the active anchor for an account, if any.",
+      "tags": [{ "name": "blockchain"}],
+      "paramStructure": "by-name",
+      "params": [{
+          "name": "address",
+          "description": "The address of the account.",
+          "schema": { "type": "string" }
+        }],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object","required": ["found","address","anchor"],
+          "properties": {"found": { "type": "boolean" },"address": { "type": "string" },"anchor": {
+  "type": "object","required": ["root_hash","manifest_uri","anchor_type","locked_deposit","created_at_height","created_at_time","updated_at_height","updated_at_time"],
+  "properties": {"root_hash": { "type": "string" },"manifest_uri": { "type": "string" },"anchor_type": { "type": "integer" },"locked_deposit": { "type": "integer" },"created_at_height": { "type": "integer" },"created_at_time": { "type": "integer" },"updated_at_height": { "type": "integer" },"updated_at_time": { "type": "integer" }}
+}}
+          }
+        }
+      },{
+      "name": "pactus.blockchain.list_anchors",
+      "description": "ListAnchors lists accounts that currently have an anchor, ordered by account number.",
+      "tags": [{ "name": "blockchain"}],
+      "paramStructure": "by-name",
+      "params": [{
+          "name": "skip",
+          "description": "Number of matching accounts to skip.",
+          "schema": { "type": "integer" }
+        },{
+          "name": "count",
+          "description": "Page size. 0 means 20. Maximum is 100.",
+          "schema": { "type": "integer" }
+        }],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object","required": ["items","total"],
+          "properties": {"items": {
+  "type": "array",
+  "items": {
+  "type": "object","required": ["address","anchor"],
+  "properties": {"address": { "type": "string" },"anchor": {
+  "type": "object","required": ["root_hash","manifest_uri","anchor_type","locked_deposit","created_at_height","created_at_time","updated_at_height","updated_at_time"],
+  "properties": {"root_hash": { "type": "string" },"manifest_uri": { "type": "string" },"anchor_type": { "type": "integer" },"locked_deposit": { "type": "integer" },"created_at_height": { "type": "integer" },"created_at_time": { "type": "integer" },"updated_at_height": { "type": "integer" },"updated_at_time": { "type": "integer" }}
+}}
+}
+},"total": { "type": "integer" }}
           }
         }
       },{
@@ -619,7 +730,7 @@
           "properties": {"txs": {
   "type": "array",
   "items": {
-  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","memo","public_key","signature","block_height","confirmed","confirmations"],
+  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","anchor","memo","public_key","signature","block_height","confirmed","confirmations"],
   "properties": {"id": { "type": "string" },"data": { "type": "string" },"version": { "type": "integer" },"lock_time": { "type": "integer" },"value": { "type": "integer" },"fee": { "type": "integer" },"payload_type": { "type": "integer" },"transfer": {
   "type": "object","required": ["sender","receiver","amount"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
@@ -644,6 +755,9 @@
   "properties": {"receiver": { "type": "string" },"amount": { "type": "integer" }}
 }
 }}
+},"anchor": {
+  "type": "object","required": ["from","action","root_hash","manifest_uri","anchor_type","deposit"],
+  "properties": {"from": { "type": "string" },"action": { "type": "integer" },"root_hash": { "type": "string" },"manifest_uri": { "type": "string" },"anchor_type": { "type": "integer" },"deposit": { "type": "integer" }}
 },"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" },"block_height": { "type": "integer" },"confirmed": { "type": "boolean" },"confirmations": { "type": "integer" }}
 }
 }}

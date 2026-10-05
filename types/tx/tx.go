@@ -407,6 +407,8 @@ func (tx *Tx) Decode(r io.Reader) error {
 		tx.data.Payload = new(payload.SortitionPayload)
 	case payload.TypeBatchTransfer:
 		tx.data.Payload = new(payload.BatchTransferPayload)
+	case payload.TypeAnchor:
+		tx.data.Payload = new(payload.AnchorPayload)
 
 	default:
 		return InvalidPayloadTypeError{

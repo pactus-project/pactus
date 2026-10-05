@@ -44,6 +44,10 @@ class PayloadType extends $pb.ProtobufEnum {
   static const PayloadType PAYLOAD_TYPE_BATCH_TRANSFER =
       PayloadType._(6, _omitEnumNames ? '' : 'PAYLOAD_TYPE_BATCH_TRANSFER');
 
+  /// Anchor payload type.
+  static const PayloadType PAYLOAD_TYPE_ANCHOR =
+      PayloadType._(7, _omitEnumNames ? '' : 'PAYLOAD_TYPE_ANCHOR');
+
   static const $core.List<PayloadType> values = <PayloadType>[
     PAYLOAD_TYPE_UNSPECIFIED,
     PAYLOAD_TYPE_TRANSFER,
@@ -52,10 +56,11 @@ class PayloadType extends $pb.ProtobufEnum {
     PAYLOAD_TYPE_UNBOND,
     PAYLOAD_TYPE_WITHDRAW,
     PAYLOAD_TYPE_BATCH_TRANSFER,
+    PAYLOAD_TYPE_ANCHOR,
   ];
 
   static final $core.List<PayloadType?> _byValue =
-      $pb.ProtobufEnum.$_initByValueList(values, 6);
+      $pb.ProtobufEnum.$_initByValueList(values, 7);
   static PayloadType? valueOf($core.int value) =>
       value < 0 || value >= _byValue.length ? null : _byValue[value];
 

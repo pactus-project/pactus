@@ -3,6 +3,7 @@ package block_test
 import (
 	"encoding/hex"
 	"testing"
+	"time"
 	"unsafe"
 
 	"github.com/fxamacker/cbor/v2"
@@ -241,7 +242,7 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		str := "04" + // Version (ProtocolVersionLatest = 4, PIP-55)
+		str := "04" + // Version (ProtocolVersion4, PIP-55)
 			"00000000" + // UnixTime
 			"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
 			"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" + // StateRoot
@@ -268,7 +269,7 @@ func TestBasicCheck(t *testing.T) {
 		blk, _ := block.FromString(str)
 		require.NoError(t, blk.BasicCheck())
 		assert.Zero(t, blk.Header().UnixTime())
-		assert.Equal(t, protocol.ProtocolVersionLatest, blk.Header().Version())
+		assert.Equal(t, protocol.ProtocolVersion4, blk.Header().Version())
 	})
 }
 
@@ -403,4 +404,19 @@ func TestBlockHeight(t *testing.T) {
 
 	assert.Equal(t, types.Height(1), blk1.Height())
 	assert.Equal(t, types.Height(2), blk2.Height())
+}
+
+func TestVersion5Header(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	header := block.NewHeader(protocol.ProtocolVersion5, time.Unix(1, 0),
+		ts.RandHash(), ts.RandHash(), ts.RandSeed(), ts.RandValAddress())
+	require.NoError(t, header.BasicCheck())
+	assert.Equal(t, protocol.ProtocolVersion5, header.Version())
+
+	zero := block.NewHeader(protocol.ProtocolVersionUnknown, time.Unix(1, 0),
+		ts.RandHash(), ts.RandHash(), ts.RandSeed(), ts.RandValAddress())
+	require.ErrorIs(t, zero.BasicCheck(), block.BasicCheckError{
+		Reason: "invalid block version: 0",
+	})
 }

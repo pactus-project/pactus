@@ -321,6 +321,15 @@ func (s *store) IterateAccounts(consumer func(crypto.Address, *account.Account) 
 	s.accountStore.iterateAccounts(consumer)
 }
 
+// AnchorAddresses returns a page of addresses that hold an anchor, ordered by
+// account number, and the total number of such addresses.
+func (s *store) AnchorAddresses(skip, count uint32) ([]crypto.Address, uint32) {
+	s.lk.RLock()
+	defer s.lk.RUnlock()
+
+	return s.accountStore.anchorAddresses(skip, count)
+}
+
 func (s *store) UpdateAccount(addr crypto.Address, acc *account.Account) {
 	s.lk.Lock()
 	defer s.lk.Unlock()

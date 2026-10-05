@@ -204,6 +204,12 @@ func NewFakeState(ts *testsuite.TestSuite) *FakeState {
 		},
 	).AnyTimes()
 
+	mock.EXPECT().ListAnchors(gomock.Any(), gomock.Any()).DoAndReturn(
+		func(skip, count uint32) ([]AnchorAccount, uint32) {
+			return listAnchors(fake.FakeStore, skip, count)
+		},
+	).AnyTimes()
+
 	mock.EXPECT().ValidatorByAddress(gomock.Any()).DoAndReturn(
 		func(addr crypto.Address) (*validator.Validator, error) {
 			return fake.FakeStore.Validator(addr)

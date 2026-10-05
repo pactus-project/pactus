@@ -565,6 +565,67 @@ proto.pactus.TransactionPromiseClient.prototype.getRawBatchTransferTransaction =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.GetRawAnchorTransactionRequest,
+ *   !proto.pactus.GetRawTransactionResponse>}
+ */
+const methodDescriptor_Transaction_GetRawAnchorTransaction = new grpc.web.MethodDescriptor(
+  '/pactus.Transaction/GetRawAnchorTransaction',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.GetRawAnchorTransactionRequest,
+  proto.pactus.GetRawTransactionResponse,
+  /**
+   * @param {!proto.pactus.GetRawAnchorTransactionRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.GetRawTransactionResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.GetRawAnchorTransactionRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.GetRawTransactionResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.GetRawTransactionResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.TransactionClient.prototype.getRawAnchorTransaction =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Transaction/GetRawAnchorTransaction',
+      request,
+      metadata || {},
+      methodDescriptor_Transaction_GetRawAnchorTransaction,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.GetRawAnchorTransactionRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.GetRawTransactionResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.TransactionPromiseClient.prototype.getRawAnchorTransaction =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Transaction/GetRawAnchorTransaction',
+      request,
+      metadata || {},
+      methodDescriptor_Transaction_GetRawAnchorTransaction);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.pactus.DecodeRawTransactionRequest,
  *   !proto.pactus.DecodeRawTransactionResponse>}
  */

@@ -39,6 +39,8 @@ const (
 	PayloadType_PAYLOAD_TYPE_WITHDRAW PayloadType = 5
 	// Batch transfer payload type.
 	PayloadType_PAYLOAD_TYPE_BATCH_TRANSFER PayloadType = 6
+	// Anchor payload type.
+	PayloadType_PAYLOAD_TYPE_ANCHOR PayloadType = 7
 )
 
 // Enum value maps for PayloadType.
@@ -51,6 +53,7 @@ var (
 		4: "PAYLOAD_TYPE_UNBOND",
 		5: "PAYLOAD_TYPE_WITHDRAW",
 		6: "PAYLOAD_TYPE_BATCH_TRANSFER",
+		7: "PAYLOAD_TYPE_ANCHOR",
 	}
 	PayloadType_value = map[string]int32{
 		"PAYLOAD_TYPE_UNSPECIFIED":    0,
@@ -60,6 +63,7 @@ var (
 		"PAYLOAD_TYPE_UNBOND":         4,
 		"PAYLOAD_TYPE_WITHDRAW":       5,
 		"PAYLOAD_TYPE_BATCH_TRANSFER": 6,
+		"PAYLOAD_TYPE_ANCHOR":         7,
 	}
 )
 
@@ -939,6 +943,124 @@ func (x *GetRawBatchTransferTransactionRequest) GetMemo() string {
 	return ""
 }
 
+// Request message for retrieving raw details of an anchor transaction.
+type GetRawAnchorTransactionRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The sender's account address.
+	From string `protobuf:"bytes,1,opt,name=from,proto3" json:"from,omitempty"`
+	// 0 = set, 1 = delete.
+	Action uint32 `protobuf:"varint,2,opt,name=action,proto3" json:"action,omitempty"`
+	// Required when action is set.
+	RootHash []byte `protobuf:"bytes,3,opt,name=root_hash,json=rootHash,proto3" json:"root_hash,omitempty"`
+	// Manifest URI. Ignored on delete.
+	ManifestUri string `protobuf:"bytes,4,opt,name=manifest_uri,json=manifestUri,proto3" json:"manifest_uri,omitempty"`
+	// Anchor type byte. Ignored on delete.
+	AnchorType uint32 `protobuf:"varint,5,opt,name=anchor_type,json=anchorType,proto3" json:"anchor_type,omitempty"`
+	// Additional lock in NanoPAC. Must be 0 on delete.
+	Deposit int64 `protobuf:"varint,6,opt,name=deposit,proto3" json:"deposit,omitempty"`
+	// The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+	Fee int64 `protobuf:"varint,7,opt,name=fee,proto3" json:"fee,omitempty"`
+	// A memo string for the transaction.
+	Memo string `protobuf:"bytes,8,opt,name=memo,proto3" json:"memo,omitempty"`
+	// The lock time for the transaction. If not set, defaults to the last block height.
+	LockTime      uint32 `protobuf:"varint,9,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRawAnchorTransactionRequest) Reset() {
+	*x = GetRawAnchorTransactionRequest{}
+	mi := &file_transaction_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRawAnchorTransactionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRawAnchorTransactionRequest) ProtoMessage() {}
+
+func (x *GetRawAnchorTransactionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_transaction_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRawAnchorTransactionRequest.ProtoReflect.Descriptor instead.
+func (*GetRawAnchorTransactionRequest) Descriptor() ([]byte, []int) {
+	return file_transaction_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *GetRawAnchorTransactionRequest) GetFrom() string {
+	if x != nil {
+		return x.From
+	}
+	return ""
+}
+
+func (x *GetRawAnchorTransactionRequest) GetAction() uint32 {
+	if x != nil {
+		return x.Action
+	}
+	return 0
+}
+
+func (x *GetRawAnchorTransactionRequest) GetRootHash() []byte {
+	if x != nil {
+		return x.RootHash
+	}
+	return nil
+}
+
+func (x *GetRawAnchorTransactionRequest) GetManifestUri() string {
+	if x != nil {
+		return x.ManifestUri
+	}
+	return ""
+}
+
+func (x *GetRawAnchorTransactionRequest) GetAnchorType() uint32 {
+	if x != nil {
+		return x.AnchorType
+	}
+	return 0
+}
+
+func (x *GetRawAnchorTransactionRequest) GetDeposit() int64 {
+	if x != nil {
+		return x.Deposit
+	}
+	return 0
+}
+
+func (x *GetRawAnchorTransactionRequest) GetFee() int64 {
+	if x != nil {
+		return x.Fee
+	}
+	return 0
+}
+
+func (x *GetRawAnchorTransactionRequest) GetMemo() string {
+	if x != nil {
+		return x.Memo
+	}
+	return ""
+}
+
+func (x *GetRawAnchorTransactionRequest) GetLockTime() uint32 {
+	if x != nil {
+		return x.LockTime
+	}
+	return 0
+}
+
 // Response message contains raw transaction data.
 type GetRawTransactionResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -952,7 +1074,7 @@ type GetRawTransactionResponse struct {
 
 func (x *GetRawTransactionResponse) Reset() {
 	*x = GetRawTransactionResponse{}
-	mi := &file_transaction_proto_msgTypes[11]
+	mi := &file_transaction_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -964,7 +1086,7 @@ func (x *GetRawTransactionResponse) String() string {
 func (*GetRawTransactionResponse) ProtoMessage() {}
 
 func (x *GetRawTransactionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_transaction_proto_msgTypes[11]
+	mi := &file_transaction_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -977,7 +1099,7 @@ func (x *GetRawTransactionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRawTransactionResponse.ProtoReflect.Descriptor instead.
 func (*GetRawTransactionResponse) Descriptor() ([]byte, []int) {
-	return file_transaction_proto_rawDescGZIP(), []int{11}
+	return file_transaction_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *GetRawTransactionResponse) GetRawTransaction() string {
@@ -1009,7 +1131,7 @@ type PayloadTransfer struct {
 
 func (x *PayloadTransfer) Reset() {
 	*x = PayloadTransfer{}
-	mi := &file_transaction_proto_msgTypes[12]
+	mi := &file_transaction_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1021,7 +1143,7 @@ func (x *PayloadTransfer) String() string {
 func (*PayloadTransfer) ProtoMessage() {}
 
 func (x *PayloadTransfer) ProtoReflect() protoreflect.Message {
-	mi := &file_transaction_proto_msgTypes[12]
+	mi := &file_transaction_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1034,7 +1156,7 @@ func (x *PayloadTransfer) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PayloadTransfer.ProtoReflect.Descriptor instead.
 func (*PayloadTransfer) Descriptor() ([]byte, []int) {
-	return file_transaction_proto_rawDescGZIP(), []int{12}
+	return file_transaction_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *PayloadTransfer) GetSender() string {
@@ -1087,7 +1209,7 @@ type PayloadBond struct {
 
 func (x *PayloadBond) Reset() {
 	*x = PayloadBond{}
-	mi := &file_transaction_proto_msgTypes[13]
+	mi := &file_transaction_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1099,7 +1221,7 @@ func (x *PayloadBond) String() string {
 func (*PayloadBond) ProtoMessage() {}
 
 func (x *PayloadBond) ProtoReflect() protoreflect.Message {
-	mi := &file_transaction_proto_msgTypes[13]
+	mi := &file_transaction_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1112,7 +1234,7 @@ func (x *PayloadBond) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PayloadBond.ProtoReflect.Descriptor instead.
 func (*PayloadBond) Descriptor() ([]byte, []int) {
-	return file_transaction_proto_rawDescGZIP(), []int{13}
+	return file_transaction_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *PayloadBond) GetSender() string {
@@ -1184,7 +1306,7 @@ type PayloadSortition struct {
 
 func (x *PayloadSortition) Reset() {
 	*x = PayloadSortition{}
-	mi := &file_transaction_proto_msgTypes[14]
+	mi := &file_transaction_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1196,7 +1318,7 @@ func (x *PayloadSortition) String() string {
 func (*PayloadSortition) ProtoMessage() {}
 
 func (x *PayloadSortition) ProtoReflect() protoreflect.Message {
-	mi := &file_transaction_proto_msgTypes[14]
+	mi := &file_transaction_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1209,7 +1331,7 @@ func (x *PayloadSortition) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PayloadSortition.ProtoReflect.Descriptor instead.
 func (*PayloadSortition) Descriptor() ([]byte, []int) {
-	return file_transaction_proto_rawDescGZIP(), []int{14}
+	return file_transaction_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *PayloadSortition) GetAddress() string {
@@ -1240,7 +1362,7 @@ type PayloadUnbond struct {
 
 func (x *PayloadUnbond) Reset() {
 	*x = PayloadUnbond{}
-	mi := &file_transaction_proto_msgTypes[15]
+	mi := &file_transaction_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1252,7 +1374,7 @@ func (x *PayloadUnbond) String() string {
 func (*PayloadUnbond) ProtoMessage() {}
 
 func (x *PayloadUnbond) ProtoReflect() protoreflect.Message {
-	mi := &file_transaction_proto_msgTypes[15]
+	mi := &file_transaction_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1265,7 +1387,7 @@ func (x *PayloadUnbond) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PayloadUnbond.ProtoReflect.Descriptor instead.
 func (*PayloadUnbond) Descriptor() ([]byte, []int) {
-	return file_transaction_proto_rawDescGZIP(), []int{15}
+	return file_transaction_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *PayloadUnbond) GetValidator() string {
@@ -1297,7 +1419,7 @@ type PayloadWithdraw struct {
 
 func (x *PayloadWithdraw) Reset() {
 	*x = PayloadWithdraw{}
-	mi := &file_transaction_proto_msgTypes[16]
+	mi := &file_transaction_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1309,7 +1431,7 @@ func (x *PayloadWithdraw) String() string {
 func (*PayloadWithdraw) ProtoMessage() {}
 
 func (x *PayloadWithdraw) ProtoReflect() protoreflect.Message {
-	mi := &file_transaction_proto_msgTypes[16]
+	mi := &file_transaction_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1322,7 +1444,7 @@ func (x *PayloadWithdraw) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PayloadWithdraw.ProtoReflect.Descriptor instead.
 func (*PayloadWithdraw) Descriptor() ([]byte, []int) {
-	return file_transaction_proto_rawDescGZIP(), []int{16}
+	return file_transaction_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *PayloadWithdraw) GetValidatorAddress() string {
@@ -1346,6 +1468,97 @@ func (x *PayloadWithdraw) GetAmount() int64 {
 	return 0
 }
 
+// Payload for an anchor transaction.
+type PayloadAnchor struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The sender's address.
+	From string `protobuf:"bytes,1,opt,name=from,proto3" json:"from,omitempty"`
+	// 0 = set, 1 = delete.
+	Action uint32 `protobuf:"varint,2,opt,name=action,proto3" json:"action,omitempty"`
+	// Empty when action is delete.
+	RootHash []byte `protobuf:"bytes,3,opt,name=root_hash,json=rootHash,proto3" json:"root_hash,omitempty"`
+	// Manifest URI.
+	ManifestUri string `protobuf:"bytes,4,opt,name=manifest_uri,json=manifestUri,proto3" json:"manifest_uri,omitempty"`
+	// Anchor type byte.
+	AnchorType uint32 `protobuf:"varint,5,opt,name=anchor_type,json=anchorType,proto3" json:"anchor_type,omitempty"`
+	// Deposit in NanoPAC.
+	Deposit       int64 `protobuf:"varint,6,opt,name=deposit,proto3" json:"deposit,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PayloadAnchor) Reset() {
+	*x = PayloadAnchor{}
+	mi := &file_transaction_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PayloadAnchor) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PayloadAnchor) ProtoMessage() {}
+
+func (x *PayloadAnchor) ProtoReflect() protoreflect.Message {
+	mi := &file_transaction_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PayloadAnchor.ProtoReflect.Descriptor instead.
+func (*PayloadAnchor) Descriptor() ([]byte, []int) {
+	return file_transaction_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *PayloadAnchor) GetFrom() string {
+	if x != nil {
+		return x.From
+	}
+	return ""
+}
+
+func (x *PayloadAnchor) GetAction() uint32 {
+	if x != nil {
+		return x.Action
+	}
+	return 0
+}
+
+func (x *PayloadAnchor) GetRootHash() []byte {
+	if x != nil {
+		return x.RootHash
+	}
+	return nil
+}
+
+func (x *PayloadAnchor) GetManifestUri() string {
+	if x != nil {
+		return x.ManifestUri
+	}
+	return ""
+}
+
+func (x *PayloadAnchor) GetAnchorType() uint32 {
+	if x != nil {
+		return x.AnchorType
+	}
+	return 0
+}
+
+func (x *PayloadAnchor) GetDeposit() int64 {
+	if x != nil {
+		return x.Deposit
+	}
+	return 0
+}
+
 // Payload for a batch transfer transaction.
 type PayloadBatchTransfer struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -1359,7 +1572,7 @@ type PayloadBatchTransfer struct {
 
 func (x *PayloadBatchTransfer) Reset() {
 	*x = PayloadBatchTransfer{}
-	mi := &file_transaction_proto_msgTypes[17]
+	mi := &file_transaction_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1371,7 +1584,7 @@ func (x *PayloadBatchTransfer) String() string {
 func (*PayloadBatchTransfer) ProtoMessage() {}
 
 func (x *PayloadBatchTransfer) ProtoReflect() protoreflect.Message {
-	mi := &file_transaction_proto_msgTypes[17]
+	mi := &file_transaction_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1384,7 +1597,7 @@ func (x *PayloadBatchTransfer) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PayloadBatchTransfer.ProtoReflect.Descriptor instead.
 func (*PayloadBatchTransfer) Descriptor() ([]byte, []int) {
-	return file_transaction_proto_rawDescGZIP(), []int{17}
+	return file_transaction_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *PayloadBatchTransfer) GetSender() string {
@@ -1414,7 +1627,7 @@ type Recipient struct {
 
 func (x *Recipient) Reset() {
 	*x = Recipient{}
-	mi := &file_transaction_proto_msgTypes[18]
+	mi := &file_transaction_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1426,7 +1639,7 @@ func (x *Recipient) String() string {
 func (*Recipient) ProtoMessage() {}
 
 func (x *Recipient) ProtoReflect() protoreflect.Message {
-	mi := &file_transaction_proto_msgTypes[18]
+	mi := &file_transaction_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1439,7 +1652,7 @@ func (x *Recipient) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Recipient.ProtoReflect.Descriptor instead.
 func (*Recipient) Descriptor() ([]byte, []int) {
-	return file_transaction_proto_rawDescGZIP(), []int{18}
+	return file_transaction_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *Recipient) GetReceiver() string {
@@ -1483,6 +1696,7 @@ type TransactionInfo struct {
 	//	*TransactionInfo_Unbond
 	//	*TransactionInfo_Withdraw
 	//	*TransactionInfo_BatchTransfer
+	//	*TransactionInfo_Anchor
 	Payload isTransactionInfo_Payload `protobuf_oneof:"payload"`
 	// A memo string for the transaction.
 	Memo string `protobuf:"bytes,8,opt,name=memo,proto3" json:"memo,omitempty"`
@@ -1504,7 +1718,7 @@ type TransactionInfo struct {
 
 func (x *TransactionInfo) Reset() {
 	*x = TransactionInfo{}
-	mi := &file_transaction_proto_msgTypes[19]
+	mi := &file_transaction_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1516,7 +1730,7 @@ func (x *TransactionInfo) String() string {
 func (*TransactionInfo) ProtoMessage() {}
 
 func (x *TransactionInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_transaction_proto_msgTypes[19]
+	mi := &file_transaction_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1529,7 +1743,7 @@ func (x *TransactionInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TransactionInfo.ProtoReflect.Descriptor instead.
 func (*TransactionInfo) Descriptor() ([]byte, []int) {
-	return file_transaction_proto_rawDescGZIP(), []int{19}
+	return file_transaction_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *TransactionInfo) GetId() string {
@@ -1642,6 +1856,15 @@ func (x *TransactionInfo) GetBatchTransfer() *PayloadBatchTransfer {
 	return nil
 }
 
+func (x *TransactionInfo) GetAnchor() *PayloadAnchor {
+	if x != nil {
+		if x, ok := x.Payload.(*TransactionInfo_Anchor); ok {
+			return x.Anchor
+		}
+	}
+	return nil
+}
+
 func (x *TransactionInfo) GetMemo() string {
 	if x != nil {
 		return x.Memo
@@ -1718,6 +1941,11 @@ type TransactionInfo_BatchTransfer struct {
 	BatchTransfer *PayloadBatchTransfer `protobuf:"bytes,35,opt,name=batch_transfer,json=batchTransfer,proto3,oneof"`
 }
 
+type TransactionInfo_Anchor struct {
+	// Anchor transaction payload.
+	Anchor *PayloadAnchor `protobuf:"bytes,36,opt,name=anchor,proto3,oneof"`
+}
+
 func (*TransactionInfo_Transfer) isTransactionInfo_Payload() {}
 
 func (*TransactionInfo_Bond) isTransactionInfo_Payload() {}
@@ -1730,6 +1958,8 @@ func (*TransactionInfo_Withdraw) isTransactionInfo_Payload() {}
 
 func (*TransactionInfo_BatchTransfer) isTransactionInfo_Payload() {}
 
+func (*TransactionInfo_Anchor) isTransactionInfo_Payload() {}
+
 // Request message for decoding a raw transaction.
 type DecodeRawTransactionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -1741,7 +1971,7 @@ type DecodeRawTransactionRequest struct {
 
 func (x *DecodeRawTransactionRequest) Reset() {
 	*x = DecodeRawTransactionRequest{}
-	mi := &file_transaction_proto_msgTypes[20]
+	mi := &file_transaction_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1753,7 +1983,7 @@ func (x *DecodeRawTransactionRequest) String() string {
 func (*DecodeRawTransactionRequest) ProtoMessage() {}
 
 func (x *DecodeRawTransactionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_transaction_proto_msgTypes[20]
+	mi := &file_transaction_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1766,7 +1996,7 @@ func (x *DecodeRawTransactionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DecodeRawTransactionRequest.ProtoReflect.Descriptor instead.
 func (*DecodeRawTransactionRequest) Descriptor() ([]byte, []int) {
-	return file_transaction_proto_rawDescGZIP(), []int{20}
+	return file_transaction_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *DecodeRawTransactionRequest) GetRawTransaction() string {
@@ -1787,7 +2017,7 @@ type DecodeRawTransactionResponse struct {
 
 func (x *DecodeRawTransactionResponse) Reset() {
 	*x = DecodeRawTransactionResponse{}
-	mi := &file_transaction_proto_msgTypes[21]
+	mi := &file_transaction_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1799,7 +2029,7 @@ func (x *DecodeRawTransactionResponse) String() string {
 func (*DecodeRawTransactionResponse) ProtoMessage() {}
 
 func (x *DecodeRawTransactionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_transaction_proto_msgTypes[21]
+	mi := &file_transaction_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1812,7 +2042,7 @@ func (x *DecodeRawTransactionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DecodeRawTransactionResponse.ProtoReflect.Descriptor instead.
 func (*DecodeRawTransactionResponse) Descriptor() ([]byte, []int) {
-	return file_transaction_proto_rawDescGZIP(), []int{21}
+	return file_transaction_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *DecodeRawTransactionResponse) GetTransaction() *TransactionInfo {
@@ -1833,7 +2063,7 @@ type CheckTransactionRequest struct {
 
 func (x *CheckTransactionRequest) Reset() {
 	*x = CheckTransactionRequest{}
-	mi := &file_transaction_proto_msgTypes[22]
+	mi := &file_transaction_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1845,7 +2075,7 @@ func (x *CheckTransactionRequest) String() string {
 func (*CheckTransactionRequest) ProtoMessage() {}
 
 func (x *CheckTransactionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_transaction_proto_msgTypes[22]
+	mi := &file_transaction_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1858,7 +2088,7 @@ func (x *CheckTransactionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckTransactionRequest.ProtoReflect.Descriptor instead.
 func (*CheckTransactionRequest) Descriptor() ([]byte, []int) {
-	return file_transaction_proto_rawDescGZIP(), []int{22}
+	return file_transaction_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *CheckTransactionRequest) GetRawTransaction() string {
@@ -1882,7 +2112,7 @@ type CheckTransactionResponse struct {
 
 func (x *CheckTransactionResponse) Reset() {
 	*x = CheckTransactionResponse{}
-	mi := &file_transaction_proto_msgTypes[23]
+	mi := &file_transaction_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1894,7 +2124,7 @@ func (x *CheckTransactionResponse) String() string {
 func (*CheckTransactionResponse) ProtoMessage() {}
 
 func (x *CheckTransactionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_transaction_proto_msgTypes[23]
+	mi := &file_transaction_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1907,7 +2137,7 @@ func (x *CheckTransactionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckTransactionResponse.ProtoReflect.Descriptor instead.
 func (*CheckTransactionResponse) Descriptor() ([]byte, []int) {
-	return file_transaction_proto_rawDescGZIP(), []int{23}
+	return file_transaction_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *CheckTransactionResponse) GetIsValid() bool {
@@ -1987,7 +2217,18 @@ const file_transaction_proto_rawDesc = "" +
 	"recipients\x18\x03 \x03(\v2\x11.pactus.RecipientR\n" +
 	"recipients\x12\x10\n" +
 	"\x03fee\x18\x04 \x01(\x03R\x03fee\x12\x12\n" +
-	"\x04memo\x18\x05 \x01(\tR\x04memo\"T\n" +
+	"\x04memo\x18\x05 \x01(\tR\x04memo\"\x8a\x02\n" +
+	"\x1eGetRawAnchorTransactionRequest\x12\x12\n" +
+	"\x04from\x18\x01 \x01(\tR\x04from\x12\x16\n" +
+	"\x06action\x18\x02 \x01(\rR\x06action\x12\x1b\n" +
+	"\troot_hash\x18\x03 \x01(\fR\brootHash\x12!\n" +
+	"\fmanifest_uri\x18\x04 \x01(\tR\vmanifestUri\x12\x1f\n" +
+	"\vanchor_type\x18\x05 \x01(\rR\n" +
+	"anchorType\x12\x18\n" +
+	"\adeposit\x18\x06 \x01(\x03R\adeposit\x12\x10\n" +
+	"\x03fee\x18\a \x01(\x03R\x03fee\x12\x12\n" +
+	"\x04memo\x18\b \x01(\tR\x04memo\x12\x1b\n" +
+	"\tlock_time\x18\t \x01(\rR\blockTime\"T\n" +
 	"\x19GetRawTransactionResponse\x12'\n" +
 	"\x0fraw_transaction\x18\x01 \x01(\tR\x0erawTransaction\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\"]\n" +
@@ -2014,7 +2255,15 @@ const file_transaction_proto_rawDesc = "" +
 	"\x0fPayloadWithdraw\x12+\n" +
 	"\x11validator_address\x18\x01 \x01(\tR\x10validatorAddress\x12'\n" +
 	"\x0faccount_address\x18\x02 \x01(\tR\x0eaccountAddress\x12\x16\n" +
-	"\x06amount\x18\x03 \x01(\x03R\x06amount\"a\n" +
+	"\x06amount\x18\x03 \x01(\x03R\x06amount\"\xb6\x01\n" +
+	"\rPayloadAnchor\x12\x12\n" +
+	"\x04from\x18\x01 \x01(\tR\x04from\x12\x16\n" +
+	"\x06action\x18\x02 \x01(\rR\x06action\x12\x1b\n" +
+	"\troot_hash\x18\x03 \x01(\fR\brootHash\x12!\n" +
+	"\fmanifest_uri\x18\x04 \x01(\tR\vmanifestUri\x12\x1f\n" +
+	"\vanchor_type\x18\x05 \x01(\rR\n" +
+	"anchorType\x12\x18\n" +
+	"\adeposit\x18\x06 \x01(\x03R\adeposit\"a\n" +
 	"\x14PayloadBatchTransfer\x12\x16\n" +
 	"\x06sender\x18\x01 \x01(\tR\x06sender\x121\n" +
 	"\n" +
@@ -2022,7 +2271,7 @@ const file_transaction_proto_rawDesc = "" +
 	"recipients\"?\n" +
 	"\tRecipient\x12\x1a\n" +
 	"\breceiver\x18\x01 \x01(\tR\breceiver\x12\x16\n" +
-	"\x06amount\x18\x02 \x01(\x03R\x06amount\"\xda\x05\n" +
+	"\x06amount\x18\x02 \x01(\x03R\x06amount\"\x8b\x06\n" +
 	"\x0fTransactionInfo\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04data\x18\x02 \x01(\tR\x04data\x12\x18\n" +
@@ -2036,7 +2285,8 @@ const file_transaction_proto_rawDesc = "" +
 	"\tsortition\x18  \x01(\v2\x18.pactus.PayloadSortitionH\x00R\tsortition\x12/\n" +
 	"\x06unbond\x18! \x01(\v2\x15.pactus.PayloadUnbondH\x00R\x06unbond\x125\n" +
 	"\bwithdraw\x18\" \x01(\v2\x17.pactus.PayloadWithdrawH\x00R\bwithdraw\x12E\n" +
-	"\x0ebatch_transfer\x18# \x01(\v2\x1c.pactus.PayloadBatchTransferH\x00R\rbatchTransfer\x12\x12\n" +
+	"\x0ebatch_transfer\x18# \x01(\v2\x1c.pactus.PayloadBatchTransferH\x00R\rbatchTransfer\x12/\n" +
+	"\x06anchor\x18$ \x01(\v2\x15.pactus.PayloadAnchorH\x00R\x06anchor\x12\x12\n" +
 	"\x04memo\x18\b \x01(\tR\x04memo\x12\x1d\n" +
 	"\n" +
 	"public_key\x18\t \x01(\tR\tpublicKey\x12\x1c\n" +
@@ -2054,7 +2304,7 @@ const file_transaction_proto_rawDesc = "" +
 	"\x0fraw_transaction\x18\x01 \x01(\tR\x0erawTransaction\"Z\n" +
 	"\x18CheckTransactionResponse\x12\x19\n" +
 	"\bis_valid\x18\x01 \x01(\bR\aisValid\x12#\n" +
-	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage*\xce\x01\n" +
+	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage*\xe7\x01\n" +
 	"\vPayloadType\x12\x1c\n" +
 	"\x18PAYLOAD_TYPE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15PAYLOAD_TYPE_TRANSFER\x10\x01\x12\x15\n" +
@@ -2062,10 +2312,11 @@ const file_transaction_proto_rawDesc = "" +
 	"\x16PAYLOAD_TYPE_SORTITION\x10\x03\x12\x17\n" +
 	"\x13PAYLOAD_TYPE_UNBOND\x10\x04\x12\x19\n" +
 	"\x15PAYLOAD_TYPE_WITHDRAW\x10\x05\x12\x1f\n" +
-	"\x1bPAYLOAD_TYPE_BATCH_TRANSFER\x10\x06*V\n" +
+	"\x1bPAYLOAD_TYPE_BATCH_TRANSFER\x10\x06\x12\x17\n" +
+	"\x13PAYLOAD_TYPE_ANCHOR\x10\a*V\n" +
 	"\x14TransactionVerbosity\x12\x1e\n" +
 	"\x1aTRANSACTION_VERBOSITY_DATA\x10\x00\x12\x1e\n" +
-	"\x1aTRANSACTION_VERBOSITY_INFO\x10\x012\xd6\a\n" +
+	"\x1aTRANSACTION_VERBOSITY_INFO\x10\x012\xbc\b\n" +
 	"\vTransaction\x12O\n" +
 	"\x0eGetTransaction\x12\x1d.pactus.GetTransactionRequest\x1a\x1e.pactus.GetTransactionResponse\x12I\n" +
 	"\fCalculateFee\x12\x1b.pactus.CalculateFeeRequest\x1a\x1c.pactus.CalculateFeeResponse\x12a\n" +
@@ -2074,7 +2325,8 @@ const file_transaction_proto_rawDesc = "" +
 	"\x15GetRawBondTransaction\x12$.pactus.GetRawBondTransactionRequest\x1a!.pactus.GetRawTransactionResponse\x12d\n" +
 	"\x17GetRawUnbondTransaction\x12&.pactus.GetRawUnbondTransactionRequest\x1a!.pactus.GetRawTransactionResponse\x12h\n" +
 	"\x19GetRawWithdrawTransaction\x12(.pactus.GetRawWithdrawTransactionRequest\x1a!.pactus.GetRawTransactionResponse\x12r\n" +
-	"\x1eGetRawBatchTransferTransaction\x12-.pactus.GetRawBatchTransferTransactionRequest\x1a!.pactus.GetRawTransactionResponse\x12a\n" +
+	"\x1eGetRawBatchTransferTransaction\x12-.pactus.GetRawBatchTransferTransactionRequest\x1a!.pactus.GetRawTransactionResponse\x12d\n" +
+	"\x17GetRawAnchorTransaction\x12&.pactus.GetRawAnchorTransactionRequest\x1a!.pactus.GetRawTransactionResponse\x12a\n" +
 	"\x14DecodeRawTransaction\x12#.pactus.DecodeRawTransactionRequest\x1a$.pactus.DecodeRawTransactionResponse\x12U\n" +
 	"\x10CheckTransaction\x12\x1f.pactus.CheckTransactionRequest\x1a .pactus.CheckTransactionResponseB:\n" +
 	"\x06pactusZ0github.com/pactus-project/pactus/www/grpc/pactusb\x06proto3"
@@ -2092,7 +2344,7 @@ func file_transaction_proto_rawDescGZIP() []byte {
 }
 
 var file_transaction_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_transaction_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
+var file_transaction_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
 var file_transaction_proto_goTypes = []any{
 	(PayloadType)(0),                              // 0: pactus.PayloadType
 	(TransactionVerbosity)(0),                     // 1: pactus.TransactionVerbosity
@@ -2107,59 +2359,64 @@ var file_transaction_proto_goTypes = []any{
 	(*GetRawUnbondTransactionRequest)(nil),        // 10: pactus.GetRawUnbondTransactionRequest
 	(*GetRawWithdrawTransactionRequest)(nil),      // 11: pactus.GetRawWithdrawTransactionRequest
 	(*GetRawBatchTransferTransactionRequest)(nil), // 12: pactus.GetRawBatchTransferTransactionRequest
-	(*GetRawTransactionResponse)(nil),             // 13: pactus.GetRawTransactionResponse
-	(*PayloadTransfer)(nil),                       // 14: pactus.PayloadTransfer
-	(*PayloadBond)(nil),                           // 15: pactus.PayloadBond
-	(*PayloadSortition)(nil),                      // 16: pactus.PayloadSortition
-	(*PayloadUnbond)(nil),                         // 17: pactus.PayloadUnbond
-	(*PayloadWithdraw)(nil),                       // 18: pactus.PayloadWithdraw
-	(*PayloadBatchTransfer)(nil),                  // 19: pactus.PayloadBatchTransfer
-	(*Recipient)(nil),                             // 20: pactus.Recipient
-	(*TransactionInfo)(nil),                       // 21: pactus.TransactionInfo
-	(*DecodeRawTransactionRequest)(nil),           // 22: pactus.DecodeRawTransactionRequest
-	(*DecodeRawTransactionResponse)(nil),          // 23: pactus.DecodeRawTransactionResponse
-	(*CheckTransactionRequest)(nil),               // 24: pactus.CheckTransactionRequest
-	(*CheckTransactionResponse)(nil),              // 25: pactus.CheckTransactionResponse
+	(*GetRawAnchorTransactionRequest)(nil),        // 13: pactus.GetRawAnchorTransactionRequest
+	(*GetRawTransactionResponse)(nil),             // 14: pactus.GetRawTransactionResponse
+	(*PayloadTransfer)(nil),                       // 15: pactus.PayloadTransfer
+	(*PayloadBond)(nil),                           // 16: pactus.PayloadBond
+	(*PayloadSortition)(nil),                      // 17: pactus.PayloadSortition
+	(*PayloadUnbond)(nil),                         // 18: pactus.PayloadUnbond
+	(*PayloadWithdraw)(nil),                       // 19: pactus.PayloadWithdraw
+	(*PayloadAnchor)(nil),                         // 20: pactus.PayloadAnchor
+	(*PayloadBatchTransfer)(nil),                  // 21: pactus.PayloadBatchTransfer
+	(*Recipient)(nil),                             // 22: pactus.Recipient
+	(*TransactionInfo)(nil),                       // 23: pactus.TransactionInfo
+	(*DecodeRawTransactionRequest)(nil),           // 24: pactus.DecodeRawTransactionRequest
+	(*DecodeRawTransactionResponse)(nil),          // 25: pactus.DecodeRawTransactionResponse
+	(*CheckTransactionRequest)(nil),               // 26: pactus.CheckTransactionRequest
+	(*CheckTransactionResponse)(nil),              // 27: pactus.CheckTransactionResponse
 }
 var file_transaction_proto_depIdxs = []int32{
 	1,  // 0: pactus.GetTransactionRequest.verbosity:type_name -> pactus.TransactionVerbosity
-	21, // 1: pactus.GetTransactionResponse.transaction:type_name -> pactus.TransactionInfo
+	23, // 1: pactus.GetTransactionResponse.transaction:type_name -> pactus.TransactionInfo
 	0,  // 2: pactus.CalculateFeeRequest.payload_type:type_name -> pactus.PayloadType
-	20, // 3: pactus.GetRawBatchTransferTransactionRequest.recipients:type_name -> pactus.Recipient
-	20, // 4: pactus.PayloadBatchTransfer.recipients:type_name -> pactus.Recipient
+	22, // 3: pactus.GetRawBatchTransferTransactionRequest.recipients:type_name -> pactus.Recipient
+	22, // 4: pactus.PayloadBatchTransfer.recipients:type_name -> pactus.Recipient
 	0,  // 5: pactus.TransactionInfo.payload_type:type_name -> pactus.PayloadType
-	14, // 6: pactus.TransactionInfo.transfer:type_name -> pactus.PayloadTransfer
-	15, // 7: pactus.TransactionInfo.bond:type_name -> pactus.PayloadBond
-	16, // 8: pactus.TransactionInfo.sortition:type_name -> pactus.PayloadSortition
-	17, // 9: pactus.TransactionInfo.unbond:type_name -> pactus.PayloadUnbond
-	18, // 10: pactus.TransactionInfo.withdraw:type_name -> pactus.PayloadWithdraw
-	19, // 11: pactus.TransactionInfo.batch_transfer:type_name -> pactus.PayloadBatchTransfer
-	21, // 12: pactus.DecodeRawTransactionResponse.transaction:type_name -> pactus.TransactionInfo
-	2,  // 13: pactus.Transaction.GetTransaction:input_type -> pactus.GetTransactionRequest
-	4,  // 14: pactus.Transaction.CalculateFee:input_type -> pactus.CalculateFeeRequest
-	6,  // 15: pactus.Transaction.BroadcastTransaction:input_type -> pactus.BroadcastTransactionRequest
-	8,  // 16: pactus.Transaction.GetRawTransferTransaction:input_type -> pactus.GetRawTransferTransactionRequest
-	9,  // 17: pactus.Transaction.GetRawBondTransaction:input_type -> pactus.GetRawBondTransactionRequest
-	10, // 18: pactus.Transaction.GetRawUnbondTransaction:input_type -> pactus.GetRawUnbondTransactionRequest
-	11, // 19: pactus.Transaction.GetRawWithdrawTransaction:input_type -> pactus.GetRawWithdrawTransactionRequest
-	12, // 20: pactus.Transaction.GetRawBatchTransferTransaction:input_type -> pactus.GetRawBatchTransferTransactionRequest
-	22, // 21: pactus.Transaction.DecodeRawTransaction:input_type -> pactus.DecodeRawTransactionRequest
-	24, // 22: pactus.Transaction.CheckTransaction:input_type -> pactus.CheckTransactionRequest
-	3,  // 23: pactus.Transaction.GetTransaction:output_type -> pactus.GetTransactionResponse
-	5,  // 24: pactus.Transaction.CalculateFee:output_type -> pactus.CalculateFeeResponse
-	7,  // 25: pactus.Transaction.BroadcastTransaction:output_type -> pactus.BroadcastTransactionResponse
-	13, // 26: pactus.Transaction.GetRawTransferTransaction:output_type -> pactus.GetRawTransactionResponse
-	13, // 27: pactus.Transaction.GetRawBondTransaction:output_type -> pactus.GetRawTransactionResponse
-	13, // 28: pactus.Transaction.GetRawUnbondTransaction:output_type -> pactus.GetRawTransactionResponse
-	13, // 29: pactus.Transaction.GetRawWithdrawTransaction:output_type -> pactus.GetRawTransactionResponse
-	13, // 30: pactus.Transaction.GetRawBatchTransferTransaction:output_type -> pactus.GetRawTransactionResponse
-	23, // 31: pactus.Transaction.DecodeRawTransaction:output_type -> pactus.DecodeRawTransactionResponse
-	25, // 32: pactus.Transaction.CheckTransaction:output_type -> pactus.CheckTransactionResponse
-	23, // [23:33] is the sub-list for method output_type
-	13, // [13:23] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	15, // 6: pactus.TransactionInfo.transfer:type_name -> pactus.PayloadTransfer
+	16, // 7: pactus.TransactionInfo.bond:type_name -> pactus.PayloadBond
+	17, // 8: pactus.TransactionInfo.sortition:type_name -> pactus.PayloadSortition
+	18, // 9: pactus.TransactionInfo.unbond:type_name -> pactus.PayloadUnbond
+	19, // 10: pactus.TransactionInfo.withdraw:type_name -> pactus.PayloadWithdraw
+	21, // 11: pactus.TransactionInfo.batch_transfer:type_name -> pactus.PayloadBatchTransfer
+	20, // 12: pactus.TransactionInfo.anchor:type_name -> pactus.PayloadAnchor
+	23, // 13: pactus.DecodeRawTransactionResponse.transaction:type_name -> pactus.TransactionInfo
+	2,  // 14: pactus.Transaction.GetTransaction:input_type -> pactus.GetTransactionRequest
+	4,  // 15: pactus.Transaction.CalculateFee:input_type -> pactus.CalculateFeeRequest
+	6,  // 16: pactus.Transaction.BroadcastTransaction:input_type -> pactus.BroadcastTransactionRequest
+	8,  // 17: pactus.Transaction.GetRawTransferTransaction:input_type -> pactus.GetRawTransferTransactionRequest
+	9,  // 18: pactus.Transaction.GetRawBondTransaction:input_type -> pactus.GetRawBondTransactionRequest
+	10, // 19: pactus.Transaction.GetRawUnbondTransaction:input_type -> pactus.GetRawUnbondTransactionRequest
+	11, // 20: pactus.Transaction.GetRawWithdrawTransaction:input_type -> pactus.GetRawWithdrawTransactionRequest
+	12, // 21: pactus.Transaction.GetRawBatchTransferTransaction:input_type -> pactus.GetRawBatchTransferTransactionRequest
+	13, // 22: pactus.Transaction.GetRawAnchorTransaction:input_type -> pactus.GetRawAnchorTransactionRequest
+	24, // 23: pactus.Transaction.DecodeRawTransaction:input_type -> pactus.DecodeRawTransactionRequest
+	26, // 24: pactus.Transaction.CheckTransaction:input_type -> pactus.CheckTransactionRequest
+	3,  // 25: pactus.Transaction.GetTransaction:output_type -> pactus.GetTransactionResponse
+	5,  // 26: pactus.Transaction.CalculateFee:output_type -> pactus.CalculateFeeResponse
+	7,  // 27: pactus.Transaction.BroadcastTransaction:output_type -> pactus.BroadcastTransactionResponse
+	14, // 28: pactus.Transaction.GetRawTransferTransaction:output_type -> pactus.GetRawTransactionResponse
+	14, // 29: pactus.Transaction.GetRawBondTransaction:output_type -> pactus.GetRawTransactionResponse
+	14, // 30: pactus.Transaction.GetRawUnbondTransaction:output_type -> pactus.GetRawTransactionResponse
+	14, // 31: pactus.Transaction.GetRawWithdrawTransaction:output_type -> pactus.GetRawTransactionResponse
+	14, // 32: pactus.Transaction.GetRawBatchTransferTransaction:output_type -> pactus.GetRawTransactionResponse
+	14, // 33: pactus.Transaction.GetRawAnchorTransaction:output_type -> pactus.GetRawTransactionResponse
+	25, // 34: pactus.Transaction.DecodeRawTransaction:output_type -> pactus.DecodeRawTransactionResponse
+	27, // 35: pactus.Transaction.CheckTransaction:output_type -> pactus.CheckTransactionResponse
+	25, // [25:36] is the sub-list for method output_type
+	14, // [14:25] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_transaction_proto_init() }
@@ -2167,13 +2424,14 @@ func file_transaction_proto_init() {
 	if File_transaction_proto != nil {
 		return
 	}
-	file_transaction_proto_msgTypes[19].OneofWrappers = []any{
+	file_transaction_proto_msgTypes[21].OneofWrappers = []any{
 		(*TransactionInfo_Transfer)(nil),
 		(*TransactionInfo_Bond)(nil),
 		(*TransactionInfo_Sortition)(nil),
 		(*TransactionInfo_Unbond)(nil),
 		(*TransactionInfo_Withdraw)(nil),
 		(*TransactionInfo_BatchTransfer)(nil),
+		(*TransactionInfo_Anchor)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -2181,7 +2439,7 @@ func file_transaction_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_transaction_proto_rawDesc), len(file_transaction_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   24,
+			NumMessages:   26,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

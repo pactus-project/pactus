@@ -248,4 +248,19 @@ func TestRejectV3BlockAfterHalving(t *testing.T) {
 	require.ErrorIs(t, err, InvalidBlockVersionError{
 		Version: protocol.ProtocolVersion3,
 	})
+
+	passed := block.MakeBlock(
+		protocol.ProtocolVersion5,
+		blk.Header().Time(),
+		blk.Transactions(),
+		blk.Header().PrevBlockHash(),
+		blk.Header().StateRoot(),
+		highCert,
+		blk.Header().SortitionSeed(),
+		blk.Header().ProposerAddress(),
+	)
+	err = td.state.validateBlock(passed, 0)
+	require.NotErrorIs(t, err, InvalidBlockVersionError{
+		Version: protocol.ProtocolVersion5,
+	})
 }

@@ -3,11 +3,14 @@ package grpc
 import (
 	"context"
 	"encoding/hex"
+	"errors"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -258,6 +261,72 @@ func (s *blockchainServer) GetAccount(_ context.Context,
 	return res, nil
 }
 
+func (s *blockchainServer) GetAnchor(_ context.Context,
+	req *pactus.GetAnchorRequest,
+) (*pactus.GetAnchorResponse, error) {
+	addr, err := crypto.AddressFromString(req.Address)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid address: %v", err)
+	}
+
+	// PIP-50: an anchor is found iff the account exists and holds one. Validators
+	// and the treasury can never hold one, so they are simply not found.
+	if !payload.IsAnchorOwner(addr) {
+		return &pactus.GetAnchorResponse{
+			Found:   false,
+			Address: addr.String(),
+		}, nil
+	}
+
+	acc, err := s.state.AccountByAddress(addr)
+	if err != nil && !errors.Is(err, store.ErrNotFound) {
+		return nil, status.Errorf(codes.Internal, "unable to read account: %v", err)
+	}
+	if acc == nil || !acc.HasAnchor() {
+		return &pactus.GetAnchorResponse{
+			Found:   false,
+			Address: addr.String(),
+		}, nil
+	}
+
+	return &pactus.GetAnchorResponse{
+		Found:   true,
+		Address: addr.String(),
+		Anchor:  anchorToProto(acc),
+	}, nil
+}
+
+func (s *blockchainServer) ListAnchors(_ context.Context,
+	req *pactus.ListAnchorsRequest,
+) (*pactus.ListAnchorsResponse, error) {
+	const (
+		defaultPage uint32 = 20
+		maxPage     uint32 = 100
+	)
+	if req.Count > maxPage {
+		return nil, status.Errorf(codes.InvalidArgument, "count must be at most %d", maxPage)
+	}
+
+	count := req.Count
+	if count == 0 {
+		count = defaultPage
+	}
+
+	listed, total := s.state.ListAnchors(req.Skip, count)
+	items := make([]*pactus.AnchorListItem, 0, len(listed))
+	for _, item := range listed {
+		items = append(items, &pactus.AnchorListItem{
+			Address: item.Address.String(),
+			Anchor:  anchorToProto(item.Account),
+		})
+	}
+
+	return &pactus.ListAnchorsResponse{
+		Items: items,
+		Total: total,
+	}, nil
+}
+
 func (s *blockchainServer) GetValidatorByNumber(_ context.Context,
 	req *pactus.GetValidatorByNumberRequest,
 ) (*pactus.GetValidatorResponse, error) {
@@ -376,6 +445,24 @@ func (*blockchainServer) accountToProto(addr crypto.Address, acc *account.Accoun
 		Number:  acc.Number(),
 		Balance: acc.Balance().ToNanoPAC(),
 		Address: addr.String(),
+		Anchor:  anchorToProto(acc),
+	}
+}
+
+func anchorToProto(acc *account.Account) *pactus.AnchorInfo {
+	if !acc.HasAnchor() {
+		return nil
+	}
+
+	return &pactus.AnchorInfo{
+		RootHash:        acc.RootHash(),
+		ManifestUri:     acc.ManifestURI(),
+		AnchorType:      uint32(acc.AnchorType()),
+		LockedDeposit:   acc.LockedDeposit().ToNanoPAC(),
+		CreatedAtHeight: uint32(acc.CreatedAtHeight()),
+		CreatedAtTime:   acc.CreatedAtTime(),
+		UpdatedAtHeight: uint32(acc.UpdatedAtHeight()),
+		UpdatedAtTime:   acc.UpdatedAtTime(),
 	}
 }
 

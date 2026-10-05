@@ -37,6 +37,8 @@ abstract class TransactionServiceBase extends $pb.GeneratedService {
       $pb.ServerContext ctx, $0.GetRawWithdrawTransactionRequest request);
   $async.Future<$0.GetRawTransactionResponse> getRawBatchTransferTransaction(
       $pb.ServerContext ctx, $0.GetRawBatchTransferTransactionRequest request);
+  $async.Future<$0.GetRawTransactionResponse> getRawAnchorTransaction(
+      $pb.ServerContext ctx, $0.GetRawAnchorTransactionRequest request);
   $async.Future<$0.DecodeRawTransactionResponse> decodeRawTransaction(
       $pb.ServerContext ctx, $0.DecodeRawTransactionRequest request);
   $async.Future<$0.CheckTransactionResponse> checkTransaction(
@@ -60,6 +62,8 @@ abstract class TransactionServiceBase extends $pb.GeneratedService {
         return $0.GetRawWithdrawTransactionRequest();
       case 'GetRawBatchTransferTransaction':
         return $0.GetRawBatchTransferTransactionRequest();
+      case 'GetRawAnchorTransaction':
+        return $0.GetRawAnchorTransactionRequest();
       case 'DecodeRawTransaction':
         return $0.DecodeRawTransactionRequest();
       case 'CheckTransaction':
@@ -94,6 +98,9 @@ abstract class TransactionServiceBase extends $pb.GeneratedService {
       case 'GetRawBatchTransferTransaction':
         return getRawBatchTransferTransaction(
             ctx, request as $0.GetRawBatchTransferTransactionRequest);
+      case 'GetRawAnchorTransaction':
+        return getRawAnchorTransaction(
+            ctx, request as $0.GetRawAnchorTransactionRequest);
       case 'DecodeRawTransaction':
         return decodeRawTransaction(
             ctx, request as $0.DecodeRawTransactionRequest);
