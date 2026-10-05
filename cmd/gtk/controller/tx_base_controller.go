@@ -1,5 +1,6 @@
 //go:build gtk
 
+//nolint:staticcheck // Using depreciated widgets
 package controller
 
 import (
