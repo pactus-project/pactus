@@ -23,7 +23,7 @@ import (
 )
 
 func ShowQuestionDialog(parent *gtk.Window, msg string,
-	onClone func(res gtk.ResponseType),
+	onClone func(res int),
 ) {
 	IdleAddSync(func() {
 		dlg := gtk.NewMessageDialog(parent,
@@ -33,7 +33,7 @@ func ShowQuestionDialog(parent *gtk.Window, msg string,
 	})
 }
 
-func ShowInfoDialog(parent *gtk.Window, msg string, onClone func(res gtk.ResponseType)) {
+func ShowInfoDialog(parent *gtk.Window, msg string, onClone func(res int)) {
 	IdleAddSync(func() {
 		dlg := gtk.NewMessageDialog(parent,
 			gtk.DialogModal, gtk.MessageInfo, gtk.ButtonsOK)
@@ -41,7 +41,7 @@ func ShowInfoDialog(parent *gtk.Window, msg string, onClone func(res gtk.Respons
 	})
 }
 
-func ShowWarningDialog(parent *gtk.Window, msg string, onClone func(res gtk.ResponseType)) {
+func ShowWarningDialog(parent *gtk.Window, msg string, onClone func(res int)) {
 	IdleAddSync(func() {
 		dlg := gtk.NewMessageDialog(parent,
 			gtk.DialogModal, gtk.MessageWarning, gtk.ButtonsOK)
@@ -49,7 +49,7 @@ func ShowWarningDialog(parent *gtk.Window, msg string, onClone func(res gtk.Resp
 	})
 }
 
-func ShowErrorDialog(parent *gtk.Window, msg string, onClone func(res gtk.ResponseType)) {
+func ShowErrorDialog(parent *gtk.Window, msg string, onClone func(res int)) {
 	Logf("an error occurred: %s", msg)
 
 	IdleAddSync(func() {
@@ -59,7 +59,7 @@ func ShowErrorDialog(parent *gtk.Window, msg string, onClone func(res gtk.Respon
 	})
 }
 
-func showMessageDialog(dlg *gtk.MessageDialog, title, msg string, onClose func(res gtk.ResponseType)) {
+func showMessageDialog(dlg *gtk.MessageDialog, title, msg string, onClose func(res int)) {
 	dlg.SetMarkup(fmt.Sprintf("<b>%s</b>", title))
 	dlg.SetObjectProperty("secondary-use-markup", true)
 	dlg.SetObjectProperty("secondary-text", msg)
@@ -68,7 +68,7 @@ func showMessageDialog(dlg *gtk.MessageDialog, title, msg string, onClose func(r
 		dlg.Destroy()
 
 		if onClose != nil {
-			onClose(gtk.ResponseType(responseID))
+			onClose(responseID)
 		}
 	})
 
