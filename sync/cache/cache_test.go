@@ -93,6 +93,52 @@ func TestAddAgain(t *testing.T) {
 	assert.Equal(t, secondBlk, cache.GetBlock(height))
 }
 
+// The certificate that comes with a block is not verified.
+// It must not replace the certificate that is cached already,
+// otherwise a block of the next height can poison the certificate of the current one.
+func TestAddBlockDoesNotReplaceCertificate(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	cache, _ := NewCache(10)
+
+	height := ts.RandHeight()
+	cert := ts.GenerateTestCertificate(height - 1)
+	cache.AddCertificate(cert)
+
+	blk, _ := ts.GenerateTestBlock(height)
+	require.NotEqual(t, cert, blk.PrevCertificate())
+
+	cache.AddBlock(blk)
+
+	assert.Equal(t, blk, cache.GetBlock(height))
+	assert.Equal(t, cert, cache.GetCertificate(height-1), "the cached certificate should be kept")
+}
+
+// A certificate can be replaced explicitly, for example by a verified one.
+func TestAddCertificateReplaces(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	cache, _ := NewCache(10)
+
+	height := ts.RandHeight()
+	blk, _ := ts.GenerateTestBlock(height)
+	cache.AddBlock(blk)
+	require.Equal(t, blk.PrevCertificate(), cache.GetCertificate(height-1))
+
+	verified := ts.GenerateTestCertificate(height - 1)
+	cache.AddCertificate(verified)
+
+	assert.Equal(t, verified, cache.GetCertificate(height-1))
+}
+
+func TestAddNilCertificate(t *testing.T) {
+	cache, _ := NewCache(10)
+
+	cache.AddCertificate(nil)
+
+	assert.Equal(t, 0, cache.Len())
+}
+
 func TestRemoveBlock(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 

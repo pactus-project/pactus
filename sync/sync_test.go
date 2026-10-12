@@ -437,11 +437,14 @@ func TestAllBlocksInCache(t *testing.T) {
 
 func TestCommitMissedBlock(t *testing.T) {
 	td := setup(t, nil)
+	keys := td.setupCommittee()
 
 	pid := td.RandPeerID()
 	lastHeight := td.state.LastBlockHeight()
 
-	blk1, cert1 := td.GenerateTestBlock(lastHeight + 1)
+	// The certificate of the next block is verified, so it should be made by the committee.
+	blk1, _ := td.GenerateTestBlock(lastHeight + 1)
+	cert1 := td.certifyBlock(blk1, lastHeight+1, keys)
 	msg1 := message.NewBlockAnnounceMessage(blk1, cert1, nil)
 
 	blk2, cert2 := td.GenerateTestBlock(lastHeight + 2)
