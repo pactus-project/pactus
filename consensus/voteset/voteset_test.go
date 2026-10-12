@@ -402,3 +402,14 @@ func TestDecidedVoteset(t *testing.T) {
 	assert.True(t, voteSet.HasAnyVoteFor(0, vote.CPValueYes))
 	assert.False(t, voteSet.HasAnyVoteFor(0, vote.CPValueNo))
 }
+
+func TestRoundAndIneligibleVoterError(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	round := ts.RandRound()
+	voteSet := NewPrepareVoteSet(round, 0, map[crypto.Address]*validator.Validator{})
+	assert.Equal(t, round, voteSet.Round())
+
+	addr := ts.RandValAddress()
+	assert.Contains(t, IneligibleVoterError{Address: addr}.Error(), addr.String())
+}
