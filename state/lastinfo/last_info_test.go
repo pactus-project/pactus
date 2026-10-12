@@ -142,3 +142,40 @@ func TestRestoreFailed(t *testing.T) {
 		require.Error(t, err)
 	})
 }
+
+// A corrupted database can return truncated data for the last block.
+type truncatedBlockStore struct {
+	*store.FakeStore
+}
+
+func (s *truncatedBlockStore) Block(height types.Height) (*store.CommittedBlock, error) {
+	cBlk, err := s.FakeStore.Block(height)
+	if err == nil {
+		cBlk.Data = cBlk.Data[:10]
+	}
+
+	return cBlk, err
+}
+
+func TestRestoreCorruptedData(t *testing.T) {
+	t.Run("Last block is corrupted", func(t *testing.T) {
+		td := setup(t)
+		li := NewLastInfo()
+
+		_, _, err := li.RestoreLastInfo(&truncatedBlockStore{FakeStore: td.fakeStore}, 4)
+		require.Error(t, err)
+	})
+
+	t.Run("A committer of the last certificate is unknown", func(t *testing.T) {
+		td := setup(t)
+		lastInfo := NewLastInfo()
+
+		// Validator 4 joins the committee with the last block, but validator 0 is a committer.
+		val0, err := td.fakeStore.ValidatorByNumber(0)
+		require.NoError(t, err)
+		delete(td.fakeStore.FakeValidators, val0.Address())
+
+		_, _, err = lastInfo.RestoreLastInfo(td.fakeStore, 4)
+		require.ErrorIs(t, err, store.ErrNotFound)
+	})
+}
