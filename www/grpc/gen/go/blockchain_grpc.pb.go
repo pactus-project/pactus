@@ -26,6 +26,8 @@ const (
 	Blockchain_GetCommitteeInfo_FullMethodName      = "/pactus.Blockchain/GetCommitteeInfo"
 	Blockchain_GetConsensusInfo_FullMethodName      = "/pactus.Blockchain/GetConsensusInfo"
 	Blockchain_GetAccount_FullMethodName            = "/pactus.Blockchain/GetAccount"
+	Blockchain_GetAnchor_FullMethodName             = "/pactus.Blockchain/GetAnchor"
+	Blockchain_ListAnchors_FullMethodName           = "/pactus.Blockchain/ListAnchors"
 	Blockchain_GetValidator_FullMethodName          = "/pactus.Blockchain/GetValidator"
 	Blockchain_GetValidatorByNumber_FullMethodName  = "/pactus.Blockchain/GetValidatorByNumber"
 	Blockchain_GetValidatorAddresses_FullMethodName = "/pactus.Blockchain/GetValidatorAddresses"
@@ -53,6 +55,10 @@ type BlockchainClient interface {
 	GetConsensusInfo(ctx context.Context, in *GetConsensusInfoRequest, opts ...grpc.CallOption) (*GetConsensusInfoResponse, error)
 	// GetAccount retrieves information about an account based on the provided address.
 	GetAccount(ctx context.Context, in *GetAccountRequest, opts ...grpc.CallOption) (*GetAccountResponse, error)
+	// GetAnchor retrieves the active anchor for an account, if any.
+	GetAnchor(ctx context.Context, in *GetAnchorRequest, opts ...grpc.CallOption) (*GetAnchorResponse, error)
+	// ListAnchors lists accounts that currently have an anchor, ordered by account number.
+	ListAnchors(ctx context.Context, in *ListAnchorsRequest, opts ...grpc.CallOption) (*ListAnchorsResponse, error)
 	// GetValidator retrieves information about a validator based on the provided address.
 	GetValidator(ctx context.Context, in *GetValidatorRequest, opts ...grpc.CallOption) (*GetValidatorResponse, error)
 	// GetValidatorByNumber retrieves information about a validator based on the provided number.
@@ -144,6 +150,26 @@ func (c *blockchainClient) GetAccount(ctx context.Context, in *GetAccountRequest
 	return out, nil
 }
 
+func (c *blockchainClient) GetAnchor(ctx context.Context, in *GetAnchorRequest, opts ...grpc.CallOption) (*GetAnchorResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAnchorResponse)
+	err := c.cc.Invoke(ctx, Blockchain_GetAnchor_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *blockchainClient) ListAnchors(ctx context.Context, in *ListAnchorsRequest, opts ...grpc.CallOption) (*ListAnchorsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListAnchorsResponse)
+	err := c.cc.Invoke(ctx, Blockchain_ListAnchors_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *blockchainClient) GetValidator(ctx context.Context, in *GetValidatorRequest, opts ...grpc.CallOption) (*GetValidatorResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetValidatorResponse)
@@ -214,6 +240,10 @@ type BlockchainServer interface {
 	GetConsensusInfo(context.Context, *GetConsensusInfoRequest) (*GetConsensusInfoResponse, error)
 	// GetAccount retrieves information about an account based on the provided address.
 	GetAccount(context.Context, *GetAccountRequest) (*GetAccountResponse, error)
+	// GetAnchor retrieves the active anchor for an account, if any.
+	GetAnchor(context.Context, *GetAnchorRequest) (*GetAnchorResponse, error)
+	// ListAnchors lists accounts that currently have an anchor, ordered by account number.
+	ListAnchors(context.Context, *ListAnchorsRequest) (*ListAnchorsResponse, error)
 	// GetValidator retrieves information about a validator based on the provided address.
 	GetValidator(context.Context, *GetValidatorRequest) (*GetValidatorResponse, error)
 	// GetValidatorByNumber retrieves information about a validator based on the provided number.
@@ -254,6 +284,12 @@ func (UnimplementedBlockchainServer) GetConsensusInfo(context.Context, *GetConse
 }
 func (UnimplementedBlockchainServer) GetAccount(context.Context, *GetAccountRequest) (*GetAccountResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetAccount not implemented")
+}
+func (UnimplementedBlockchainServer) GetAnchor(context.Context, *GetAnchorRequest) (*GetAnchorResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAnchor not implemented")
+}
+func (UnimplementedBlockchainServer) ListAnchors(context.Context, *ListAnchorsRequest) (*ListAnchorsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListAnchors not implemented")
 }
 func (UnimplementedBlockchainServer) GetValidator(context.Context, *GetValidatorRequest) (*GetValidatorResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetValidator not implemented")
@@ -416,6 +452,42 @@ func _Blockchain_GetAccount_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Blockchain_GetAnchor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAnchorRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockchainServer).GetAnchor(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Blockchain_GetAnchor_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockchainServer).GetAnchor(ctx, req.(*GetAnchorRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Blockchain_ListAnchors_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAnchorsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockchainServer).ListAnchors(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Blockchain_ListAnchors_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockchainServer).ListAnchors(ctx, req.(*ListAnchorsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Blockchain_GetValidator_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetValidatorRequest)
 	if err := dec(in); err != nil {
@@ -540,6 +612,14 @@ var Blockchain_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAccount",
 			Handler:    _Blockchain_GetAccount_Handler,
+		},
+		{
+			MethodName: "GetAnchor",
+			Handler:    _Blockchain_GetAnchor_Handler,
+		},
+		{
+			MethodName: "ListAnchors",
+			Handler:    _Blockchain_ListAnchors_Handler,
 		},
 		{
 			MethodName: "GetValidator",

@@ -77,6 +77,7 @@ func (td *testData) checkTotalCoin(t *testing.T, fee amount.Amount) {
 	total := amount.Amount(0)
 	for _, acc := range td.sbx.FakeAccounts {
 		total += acc.Balance()
+		total += acc.LockedDeposit()
 	}
 
 	for _, val := range td.sbx.FakeValidators {

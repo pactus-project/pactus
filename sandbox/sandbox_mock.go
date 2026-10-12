@@ -20,6 +20,7 @@ import (
 	types "github.com/pactus-project/pactus/types"
 	account "github.com/pactus-project/pactus/types/account"
 	amount "github.com/pactus-project/pactus/types/amount"
+	protocol "github.com/pactus-project/pactus/types/protocol"
 	tx "github.com/pactus-project/pactus/types/tx"
 	validator "github.com/pactus-project/pactus/types/validator"
 	"go.uber.org/mock/gomock"
@@ -77,6 +78,20 @@ func (mr *MockSandboxReaderMockRecorder) AccumulatedFee() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AccumulatedFee", reflect.TypeOf((*MockSandboxReader)(nil).AccumulatedFee))
 }
 
+// BlockVersion mocks base method.
+func (m *MockSandboxReader) BlockVersion() protocol.Version {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "BlockVersion")
+	ret0, _ := ret[0].(protocol.Version)
+	return ret0
+}
+
+// BlockVersion indicates an expected call of BlockVersion.
+func (mr *MockSandboxReaderMockRecorder) BlockVersion() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BlockVersion", reflect.TypeOf((*MockSandboxReader)(nil).BlockVersion))
+}
+
 // Committee mocks base method.
 func (m *MockSandboxReader) Committee() committee.Reader {
 	m.ctrl.T.Helper()
@@ -103,6 +118,20 @@ func (m *MockSandboxReader) CurrentHeight() types.Height {
 func (mr *MockSandboxReaderMockRecorder) CurrentHeight() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CurrentHeight", reflect.TypeOf((*MockSandboxReader)(nil).CurrentHeight))
+}
+
+// CurrentUnixTime mocks base method.
+func (m *MockSandboxReader) CurrentUnixTime() uint32 {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CurrentUnixTime")
+	ret0, _ := ret[0].(uint32)
+	return ret0
+}
+
+// CurrentUnixTime indicates an expected call of CurrentUnixTime.
+func (mr *MockSandboxReaderMockRecorder) CurrentUnixTime() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CurrentUnixTime", reflect.TypeOf((*MockSandboxReader)(nil).CurrentUnixTime))
 }
 
 // IsBanned mocks base method.
@@ -279,6 +308,20 @@ func (mr *MockSandboxMockRecorder) AccumulatedFee() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AccumulatedFee", reflect.TypeOf((*MockSandbox)(nil).AccumulatedFee))
 }
 
+// BlockVersion mocks base method.
+func (m *MockSandbox) BlockVersion() protocol.Version {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "BlockVersion")
+	ret0, _ := ret[0].(protocol.Version)
+	return ret0
+}
+
+// BlockVersion indicates an expected call of BlockVersion.
+func (mr *MockSandboxMockRecorder) BlockVersion() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BlockVersion", reflect.TypeOf((*MockSandbox)(nil).BlockVersion))
+}
+
 // CommitTransaction mocks base method.
 func (m *MockSandbox) CommitTransaction(trx *tx.Tx) {
 	m.ctrl.T.Helper()
@@ -317,6 +360,20 @@ func (m *MockSandbox) CurrentHeight() types.Height {
 func (mr *MockSandboxMockRecorder) CurrentHeight() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CurrentHeight", reflect.TypeOf((*MockSandbox)(nil).CurrentHeight))
+}
+
+// CurrentUnixTime mocks base method.
+func (m *MockSandbox) CurrentUnixTime() uint32 {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CurrentUnixTime")
+	ret0, _ := ret[0].(uint32)
+	return ret0
+}
+
+// CurrentUnixTime indicates an expected call of CurrentUnixTime.
+func (mr *MockSandboxMockRecorder) CurrentUnixTime() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CurrentUnixTime", reflect.TypeOf((*MockSandbox)(nil).CurrentUnixTime))
 }
 
 // IsBanned mocks base method.

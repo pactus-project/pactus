@@ -215,6 +215,38 @@
         ]
       }
     },
+    "/pactus/blockchain/get_anchor": {
+      "get": {
+        "summary": "GetAnchor retrieves the active anchor for an account, if any.",
+        "operationId": "Blockchain_GetAnchor",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetAnchorResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "description": "The address of the account.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
     "/pactus/blockchain/get_block": {
       "get": {
         "summary": "GetBlock retrieves information about a block based on the provided request parameters.",
@@ -448,7 +480,7 @@
         "parameters": [
           {
             "name": "payloadType",
-            "description": "The type of transactions to retrieve from the transaction pool. 0 means all types.\n\n - PAYLOAD_TYPE_UNSPECIFIED: Unspecified payload type.\n - PAYLOAD_TYPE_TRANSFER: Transfer payload type.\n - PAYLOAD_TYPE_BOND: Bond payload type.\n - PAYLOAD_TYPE_SORTITION: Sortition payload type.\n - PAYLOAD_TYPE_UNBOND: Unbond payload type.\n - PAYLOAD_TYPE_WITHDRAW: Withdraw payload type.\n - PAYLOAD_TYPE_BATCH_TRANSFER: Batch transfer payload type.",
+            "description": "The type of transactions to retrieve from the transaction pool. 0 means all types.\n\n - PAYLOAD_TYPE_UNSPECIFIED: Unspecified payload type.\n - PAYLOAD_TYPE_TRANSFER: Transfer payload type.\n - PAYLOAD_TYPE_BOND: Bond payload type.\n - PAYLOAD_TYPE_SORTITION: Sortition payload type.\n - PAYLOAD_TYPE_UNBOND: Unbond payload type.\n - PAYLOAD_TYPE_WITHDRAW: Withdraw payload type.\n - PAYLOAD_TYPE_BATCH_TRANSFER: Batch transfer payload type.\n - PAYLOAD_TYPE_ANCHOR: Anchor payload type.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -459,7 +491,8 @@
               "PAYLOAD_TYPE_SORTITION",
               "PAYLOAD_TYPE_UNBOND",
               "PAYLOAD_TYPE_WITHDRAW",
-              "PAYLOAD_TYPE_BATCH_TRANSFER"
+              "PAYLOAD_TYPE_BATCH_TRANSFER",
+              "PAYLOAD_TYPE_ANCHOR"
             ],
             "default": "PAYLOAD_TYPE_UNSPECIFIED"
           }
@@ -550,6 +583,47 @@
             "required": false,
             "type": "integer",
             "format": "int32"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/pactus/blockchain/list_anchors": {
+      "get": {
+        "summary": "ListAnchors lists accounts that currently have an anchor, ordered by account number.",
+        "operationId": "Blockchain_ListAnchors",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusListAnchorsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "skip",
+            "description": "Number of matching accounts to skip.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "count",
+            "description": "Page size. 0 means 20. Maximum is 100.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
           }
         ],
         "tags": [
@@ -752,6 +826,40 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/pactusDecodeRawTransactionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    },
+    "/pactus/transaction/get_raw_anchor_transaction": {
+      "post": {
+        "summary": "GetRawAnchorTransaction retrieves raw details of an anchor transaction.",
+        "operationId": "Transaction_GetRawAnchorTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetRawTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "Request message for retrieving raw details of an anchor transaction.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusGetRawAnchorTransactionRequest"
             }
           }
         ],
@@ -1681,6 +1789,10 @@
         "address": {
           "type": "string",
           "description": "The address of the account."
+        },
+        "anchor": {
+          "$ref": "#/definitions/pactusAnchorInfo",
+          "description": "The active anchor. Unset when the account has none."
         }
       },
       "description": "Message contains information about an account."
@@ -1732,6 +1844,65 @@
       ],
       "default": "ADDRESS_TYPE_TREASURY",
       "description": "AddressType defines different types of blockchain addresses.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould NOT be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type used for validator nodes.\n - ADDRESS_TYPE_BLS: Address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519: Address type with Ed25519 signature scheme.\n - ADDRESS_TYPE_SECP256K1: Address type with SECP256K1 signature scheme."
+    },
+    "pactusAnchorInfo": {
+      "type": "object",
+      "properties": {
+        "rootHash": {
+          "type": "string",
+          "format": "byte",
+          "description": "Root hash bytes."
+        },
+        "manifestUri": {
+          "type": "string",
+          "description": "Manifest URI."
+        },
+        "anchorType": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Anchor type byte."
+        },
+        "lockedDeposit": {
+          "type": "string",
+          "format": "int64",
+          "description": "Locked deposit in NanoPAC."
+        },
+        "createdAtHeight": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Height of the block that created the anchor."
+        },
+        "createdAtTime": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Unix time of the block that created the anchor."
+        },
+        "updatedAtHeight": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Height of the block that set the current root hash."
+        },
+        "updatedAtTime": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Unix time of the block that set the current root hash."
+        }
+      },
+      "description": "Active anchor stored on an account."
+    },
+    "pactusAnchorListItem": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string",
+          "description": "The account address."
+        },
+        "anchor": {
+          "$ref": "#/definitions/pactusAnchorInfo",
+          "description": "The active anchor."
+        }
+      },
+      "description": "One anchored account."
     },
     "pactusBlockHeaderInfo": {
       "type": "object",
@@ -2020,6 +2191,24 @@
         }
       },
       "description": "Response message contains address details."
+    },
+    "pactusGetAnchorResponse": {
+      "type": "object",
+      "properties": {
+        "found": {
+          "type": "boolean",
+          "description": "True when the account exists and has an anchor."
+        },
+        "address": {
+          "type": "string",
+          "description": "The requested address."
+        },
+        "anchor": {
+          "$ref": "#/definitions/pactusAnchorInfo",
+          "description": "Set only when found is true."
+        }
+      },
+      "description": "Response message contains the active anchor, when one exists."
     },
     "pactusGetBlockHashResponse": {
       "type": "object",
@@ -2359,6 +2548,54 @@
         }
       },
       "description": "Response message contains public key information."
+    },
+    "pactusGetRawAnchorTransactionRequest": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "The sender's account address."
+        },
+        "action": {
+          "type": "integer",
+          "format": "int64",
+          "description": "0 = set, 1 = delete."
+        },
+        "rootHash": {
+          "type": "string",
+          "format": "byte",
+          "description": "Required when action is set."
+        },
+        "manifestUri": {
+          "type": "string",
+          "description": "Manifest URI. Ignored on delete."
+        },
+        "anchorType": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Anchor type byte. Ignored on delete."
+        },
+        "deposit": {
+          "type": "string",
+          "format": "int64",
+          "description": "Additional lock in NanoPAC. Must be 0 on delete."
+        },
+        "fee": {
+          "type": "string",
+          "format": "int64",
+          "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee."
+        },
+        "memo": {
+          "type": "string",
+          "description": "A memo string for the transaction."
+        },
+        "lockTime": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The lock time for the transaction. If not set, defaults to the last block height."
+        }
+      },
+      "description": "Request message for retrieving raw details of an anchor transaction."
     },
     "pactusGetRawBatchTransferTransactionRequest": {
       "type": "object",
@@ -2706,6 +2943,25 @@
       },
       "description": "Response message contains wallet addresses."
     },
+    "pactusListAnchorsResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusAnchorListItem"
+          },
+          "description": "The page, ordered by account number."
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Accounts that currently have an anchor."
+        }
+      },
+      "description": "Response message contains one page of active anchors."
+    },
     "pactusListPeersResponse": {
       "type": "object",
       "properties": {
@@ -2823,6 +3079,40 @@
       },
       "description": "Response message confirming wallet migration."
     },
+    "pactusPayloadAnchor": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "The sender's address."
+        },
+        "action": {
+          "type": "integer",
+          "format": "int64",
+          "description": "0 = set, 1 = delete."
+        },
+        "rootHash": {
+          "type": "string",
+          "format": "byte",
+          "description": "Empty when action is delete."
+        },
+        "manifestUri": {
+          "type": "string",
+          "description": "Manifest URI."
+        },
+        "anchorType": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Anchor type byte."
+        },
+        "deposit": {
+          "type": "string",
+          "format": "int64",
+          "description": "Deposit in NanoPAC."
+        }
+      },
+      "description": "Payload for an anchor transaction."
+    },
     "pactusPayloadBatchTransfer": {
       "type": "object",
       "properties": {
@@ -2924,10 +3214,11 @@
         "PAYLOAD_TYPE_SORTITION",
         "PAYLOAD_TYPE_UNBOND",
         "PAYLOAD_TYPE_WITHDRAW",
-        "PAYLOAD_TYPE_BATCH_TRANSFER"
+        "PAYLOAD_TYPE_BATCH_TRANSFER",
+        "PAYLOAD_TYPE_ANCHOR"
       ],
       "default": "PAYLOAD_TYPE_UNSPECIFIED",
-      "description": "Enumeration for different types of transaction payloads.\n\n - PAYLOAD_TYPE_UNSPECIFIED: Unspecified payload type.\n - PAYLOAD_TYPE_TRANSFER: Transfer payload type.\n - PAYLOAD_TYPE_BOND: Bond payload type.\n - PAYLOAD_TYPE_SORTITION: Sortition payload type.\n - PAYLOAD_TYPE_UNBOND: Unbond payload type.\n - PAYLOAD_TYPE_WITHDRAW: Withdraw payload type.\n - PAYLOAD_TYPE_BATCH_TRANSFER: Batch transfer payload type."
+      "description": "Enumeration for different types of transaction payloads.\n\n - PAYLOAD_TYPE_UNSPECIFIED: Unspecified payload type.\n - PAYLOAD_TYPE_TRANSFER: Transfer payload type.\n - PAYLOAD_TYPE_BOND: Bond payload type.\n - PAYLOAD_TYPE_SORTITION: Sortition payload type.\n - PAYLOAD_TYPE_UNBOND: Unbond payload type.\n - PAYLOAD_TYPE_WITHDRAW: Withdraw payload type.\n - PAYLOAD_TYPE_BATCH_TRANSFER: Batch transfer payload type.\n - PAYLOAD_TYPE_ANCHOR: Anchor payload type."
     },
     "pactusPayloadUnbond": {
       "type": "object",
@@ -3341,6 +3632,10 @@
         "batchTransfer": {
           "$ref": "#/definitions/pactusPayloadBatchTransfer",
           "description": "Batch Transfer transaction payload."
+        },
+        "anchor": {
+          "$ref": "#/definitions/pactusPayloadAnchor",
+          "description": "Anchor transaction payload."
         },
         "memo": {
           "type": "string",

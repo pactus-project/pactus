@@ -16,6 +16,12 @@ http:
     - selector: pactus.Blockchain.GetAccount
       get: "/pactus/blockchain/get_account"
 
+    - selector: pactus.Blockchain.GetAnchor
+      get: "/pactus/blockchain/get_anchor"
+
+    - selector: pactus.Blockchain.ListAnchors
+      get: "/pactus/blockchain/list_anchors"
+
     - selector: pactus.Blockchain.GetValidator
       get: "/pactus/blockchain/get_validator"
 
@@ -74,6 +80,10 @@ http:
 
     - selector: pactus.Transaction.GetRawBatchTransferTransaction
       post: "/pactus/transaction/get_raw_batch_transfer_transaction"
+      body: "*"
+
+    - selector: pactus.Transaction.GetRawAnchorTransaction
+      post: "/pactus/transaction/get_raw_anchor_transaction"
       body: "*"
 
     # Network APIs

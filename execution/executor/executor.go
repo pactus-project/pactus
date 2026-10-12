@@ -28,6 +28,13 @@ func MakeExecutorImpl(trx *tx.Tx, sbx sandbox.Sandbox) (Executor, error) {
 		exe, err = newSortitionExecutor(trx, sbx)
 	case payload.TypeBatchTransfer:
 		exe, err = newBatchTransferExecutor(trx, sbx)
+	case payload.TypeAnchor:
+		if sbx.BlockVersion() < anchorProtocolVersion {
+			return nil, InvalidPayloadTypeError{
+				PayloadType: typ,
+			}
+		}
+		exe, err = newAnchorExecutor(trx, sbx)
 	default:
 		return nil, InvalidPayloadTypeError{
 			PayloadType: typ,

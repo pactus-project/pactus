@@ -27,6 +27,28 @@ function deserialize_pactus_GetAccountResponse(buffer_arg) {
   return blockchain_pb.GetAccountResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_GetAnchorRequest(arg) {
+  if (!(arg instanceof blockchain_pb.GetAnchorRequest)) {
+    throw new Error('Expected argument of type pactus.GetAnchorRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetAnchorRequest(buffer_arg) {
+  return blockchain_pb.GetAnchorRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_GetAnchorResponse(arg) {
+  if (!(arg instanceof blockchain_pb.GetAnchorResponse)) {
+    throw new Error('Expected argument of type pactus.GetAnchorResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetAnchorResponse(buffer_arg) {
+  return blockchain_pb.GetAnchorResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_GetBlockHashRequest(arg) {
   if (!(arg instanceof blockchain_pb.GetBlockHashRequest)) {
     throw new Error('Expected argument of type pactus.GetBlockHashRequest');
@@ -258,6 +280,28 @@ function deserialize_pactus_GetValidatorResponse(buffer_arg) {
   return blockchain_pb.GetValidatorResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_ListAnchorsRequest(arg) {
+  if (!(arg instanceof blockchain_pb.ListAnchorsRequest)) {
+    throw new Error('Expected argument of type pactus.ListAnchorsRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_ListAnchorsRequest(buffer_arg) {
+  return blockchain_pb.ListAnchorsRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_ListAnchorsResponse(arg) {
+  if (!(arg instanceof blockchain_pb.ListAnchorsResponse)) {
+    throw new Error('Expected argument of type pactus.ListAnchorsResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_ListAnchorsResponse(buffer_arg) {
+  return blockchain_pb.ListAnchorsResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 
 // Blockchain service defines RPC methods for interacting with the blockchain.
 var BlockchainService = exports.BlockchainService = {
@@ -344,6 +388,30 @@ getAccount: {
     requestDeserialize: deserialize_pactus_GetAccountRequest,
     responseSerialize: serialize_pactus_GetAccountResponse,
     responseDeserialize: deserialize_pactus_GetAccountResponse,
+  },
+  // GetAnchor retrieves the active anchor for an account, if any.
+getAnchor: {
+    path: '/pactus.Blockchain/GetAnchor',
+    requestStream: false,
+    responseStream: false,
+    requestType: blockchain_pb.GetAnchorRequest,
+    responseType: blockchain_pb.GetAnchorResponse,
+    requestSerialize: serialize_pactus_GetAnchorRequest,
+    requestDeserialize: deserialize_pactus_GetAnchorRequest,
+    responseSerialize: serialize_pactus_GetAnchorResponse,
+    responseDeserialize: deserialize_pactus_GetAnchorResponse,
+  },
+  // ListAnchors lists accounts that currently have an anchor, ordered by account number.
+listAnchors: {
+    path: '/pactus.Blockchain/ListAnchors',
+    requestStream: false,
+    responseStream: false,
+    requestType: blockchain_pb.ListAnchorsRequest,
+    responseType: blockchain_pb.ListAnchorsResponse,
+    requestSerialize: serialize_pactus_ListAnchorsRequest,
+    requestDeserialize: deserialize_pactus_ListAnchorsRequest,
+    responseSerialize: serialize_pactus_ListAnchorsResponse,
+    responseDeserialize: deserialize_pactus_ListAnchorsResponse,
   },
   // GetValidator retrieves information about a validator based on the provided address.
 getValidator: {

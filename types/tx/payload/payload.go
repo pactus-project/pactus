@@ -17,6 +17,7 @@ const (
 	TypeUnbond        = Type(4)
 	TypeWithdraw      = Type(5)
 	TypeBatchTransfer = Type(6)
+	TypeAnchor        = Type(7)
 )
 
 func (t Type) String() string {
@@ -33,6 +34,8 @@ func (t Type) String() string {
 		return "sortition"
 	case TypeBatchTransfer:
 		return "batch-transfer"
+	case TypeAnchor:
+		return "anchor"
 	}
 
 	return fmt.Sprintf("%d", t)

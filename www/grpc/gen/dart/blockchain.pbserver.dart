@@ -35,6 +35,10 @@ abstract class BlockchainServiceBase extends $pb.GeneratedService {
       $pb.ServerContext ctx, $1.GetConsensusInfoRequest request);
   $async.Future<$1.GetAccountResponse> getAccount(
       $pb.ServerContext ctx, $1.GetAccountRequest request);
+  $async.Future<$1.GetAnchorResponse> getAnchor(
+      $pb.ServerContext ctx, $1.GetAnchorRequest request);
+  $async.Future<$1.ListAnchorsResponse> listAnchors(
+      $pb.ServerContext ctx, $1.ListAnchorsRequest request);
   $async.Future<$1.GetValidatorResponse> getValidator(
       $pb.ServerContext ctx, $1.GetValidatorRequest request);
   $async.Future<$1.GetValidatorResponse> getValidatorByNumber(
@@ -62,6 +66,10 @@ abstract class BlockchainServiceBase extends $pb.GeneratedService {
         return $1.GetConsensusInfoRequest();
       case 'GetAccount':
         return $1.GetAccountRequest();
+      case 'GetAnchor':
+        return $1.GetAnchorRequest();
+      case 'ListAnchors':
+        return $1.ListAnchorsRequest();
       case 'GetValidator':
         return $1.GetValidatorRequest();
       case 'GetValidatorByNumber':
@@ -94,6 +102,10 @@ abstract class BlockchainServiceBase extends $pb.GeneratedService {
         return getConsensusInfo(ctx, request as $1.GetConsensusInfoRequest);
       case 'GetAccount':
         return getAccount(ctx, request as $1.GetAccountRequest);
+      case 'GetAnchor':
+        return getAnchor(ctx, request as $1.GetAnchorRequest);
+      case 'ListAnchors':
+        return listAnchors(ctx, request as $1.ListAnchorsRequest);
       case 'GetValidator':
         return getValidator(ctx, request as $1.GetValidatorRequest);
       case 'GetValidatorByNumber':

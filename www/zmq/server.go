@@ -76,6 +76,10 @@ func New(ctx context.Context, conf *Config, eventPipe pipeline.Pipeline[any]) (*
 		return nil, err
 	}
 
+	if err := makePublisher(conf.ZmqPubAnchorInfo, newAnchorInfoPub); err != nil {
+		return nil, err
+	}
+
 	server.eventPipe.RegisterReceiver(server.publishEvent)
 
 	return server, nil

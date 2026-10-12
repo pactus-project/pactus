@@ -60,6 +60,10 @@ For seamless integration with Pactus, you can use these client libraries:
           <span class="rpc-badge"></span>GetRawBatchTransferTransaction</a>
         </li>
         <li>
+          <a href="#pactus.Transaction.GetRawAnchorTransaction">
+          <span class="rpc-badge"></span>GetRawAnchorTransaction</a>
+        </li>
+        <li>
           <a href="#pactus.Transaction.DecodeRawTransaction">
           <span class="rpc-badge"></span>DecodeRawTransaction</a>
         </li>
@@ -98,6 +102,14 @@ For seamless integration with Pactus, you can use these client libraries:
         <li>
           <a href="#pactus.Blockchain.GetAccount">
           <span class="rpc-badge"></span>GetAccount</a>
+        </li>
+        <li>
+          <a href="#pactus.Blockchain.GetAnchor">
+          <span class="rpc-badge"></span>GetAnchor</a>
+        </li>
+        <li>
+          <a href="#pactus.Blockchain.ListAnchors">
+          <span class="rpc-badge"></span>ListAnchors</a>
         </li>
         <li>
           <a href="#pactus.Blockchain.GetValidator">
@@ -371,6 +383,7 @@ For seamless integration with Pactus, you can use these client libraries:
       <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
       <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
       <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
+      <li>PAYLOAD_TYPE_ANCHOR = 7 (Anchor payload type.)</li>
       </ul>
     </td>
   </tr>
@@ -542,6 +555,49 @@ Optional, but required when the validator is a delegated validator.;
   The list of recipients with their amounts.
     </td>
   </tr><tr>
+    <td class="fw-bold">transaction.anchor</td>
+    <td> PayloadAnchor</td>
+    <td>
+  (OneOf)Anchor transaction payload.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">transaction.anchor.from</td>
+    <td> string</td>
+    <td>
+  The sender's address.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">transaction.anchor.action</td>
+    <td> uint32</td>
+    <td>
+  0 = set, 1 = delete.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">transaction.anchor.root_hash</td>
+    <td> bytes</td>
+    <td>
+  Empty when action is delete.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">transaction.anchor.manifest_uri</td>
+    <td> string</td>
+    <td>
+  Manifest URI.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">transaction.anchor.anchor_type</td>
+    <td> uint32</td>
+    <td>
+  Anchor type byte.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">transaction.anchor.deposit</td>
+    <td> int64</td>
+    <td>
+  Deposit in NanoPAC.
+    </td>
+  </tr><tr>
     <td class="fw-bold">transaction.memo</td>
     <td> string</td>
     <td>
@@ -618,6 +674,7 @@ A value of zero means the transaction is unconfirmed and may still in the transa
       <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
       <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
       <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
+      <li>PAYLOAD_TYPE_ANCHOR = 7 (Anchor payload type.)</li>
       </ul>
     </td>
   </tr>
@@ -1093,6 +1150,105 @@ Optional, but required when the validator is a delegated validator.;
    </tbody>
 </table>
 
+#### GetRawAnchorTransaction <span id="pactus.Transaction.GetRawAnchorTransaction" class="rpc-badge"></span>
+
+<p>GetRawAnchorTransaction retrieves raw details of an anchor transaction.</p>
+
+<h4>GetRawAnchorTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">from</td>
+    <td> string</td>
+    <td>
+  The sender's account address.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">action</td>
+    <td> uint32</td>
+    <td>
+  0 = set, 1 = delete.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">root_hash</td>
+    <td> bytes</td>
+    <td>
+  Required when action is set.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">manifest_uri</td>
+    <td> string</td>
+    <td>
+  Manifest URI. Ignored on delete.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">anchor_type</td>
+    <td> uint32</td>
+    <td>
+  Anchor type byte. Ignored on delete.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">deposit</td>
+    <td> int64</td>
+    <td>
+  Additional lock in NanoPAC. Must be 0 on delete.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">fee</td>
+    <td> int64</td>
+    <td>
+  The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">memo</td>
+    <td> string</td>
+    <td>
+  A memo string for the transaction.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">lock_time</td>
+    <td> uint32</td>
+    <td>
+  The lock time for the transaction. If not set, defaults to the last block height.
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<h4>GetRawTransactionResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">raw_transaction</td>
+    <td> string</td>
+    <td>
+  The raw transaction data in hexadecimal format.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">id</td>
+    <td> string</td>
+    <td>
+  The unique ID of the transaction.
+    </td>
+  </tr>
+   </tbody>
+</table>
+
 #### DecodeRawTransaction <span id="pactus.Transaction.DecodeRawTransaction" class="rpc-badge"></span>
 
 <p>DecodeRawTransaction accepts raw transaction and returns decoded transaction.</p>
@@ -1181,6 +1337,7 @@ Optional, but required when the validator is a delegated validator.;
       <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
       <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
       <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
+      <li>PAYLOAD_TYPE_ANCHOR = 7 (Anchor payload type.)</li>
       </ul>
     </td>
   </tr>
@@ -1350,6 +1507,49 @@ Optional, but required when the validator is a delegated validator.;
     <td>repeated Recipient</td>
     <td>
   The list of recipients with their amounts.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">transaction.anchor</td>
+    <td> PayloadAnchor</td>
+    <td>
+  (OneOf)Anchor transaction payload.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">transaction.anchor.from</td>
+    <td> string</td>
+    <td>
+  The sender's address.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">transaction.anchor.action</td>
+    <td> uint32</td>
+    <td>
+  0 = set, 1 = delete.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">transaction.anchor.root_hash</td>
+    <td> bytes</td>
+    <td>
+  Empty when action is delete.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">transaction.anchor.manifest_uri</td>
+    <td> string</td>
+    <td>
+  Manifest URI.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">transaction.anchor.anchor_type</td>
+    <td> uint32</td>
+    <td>
+  Anchor type byte.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">transaction.anchor.deposit</td>
+    <td> int64</td>
+    <td>
+  Deposit in NanoPAC.
     </td>
   </tr><tr>
     <td class="fw-bold">transaction.memo</td>
@@ -1659,6 +1859,7 @@ BLOCK_VERBOSITY_TRANSACTIONS.
       <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
       <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
       <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
+      <li>PAYLOAD_TYPE_ANCHOR = 7 (Anchor payload type.)</li>
       </ul>
     </td>
   </tr>
@@ -1828,6 +2029,49 @@ Optional, but required when the validator is a delegated validator.;
     <td>repeated Recipient</td>
     <td>
   The list of recipients with their amounts.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">txs[].anchor</td>
+    <td> PayloadAnchor</td>
+    <td>
+  (OneOf)Anchor transaction payload.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">txs[].anchor.from</td>
+    <td> string</td>
+    <td>
+  The sender's address.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">txs[].anchor.action</td>
+    <td> uint32</td>
+    <td>
+  0 = set, 1 = delete.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">txs[].anchor.root_hash</td>
+    <td> bytes</td>
+    <td>
+  Empty when action is delete.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">txs[].anchor.manifest_uri</td>
+    <td> string</td>
+    <td>
+  Manifest URI.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">txs[].anchor.anchor_type</td>
+    <td> uint32</td>
+    <td>
+  Anchor type byte.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">txs[].anchor.deposit</td>
+    <td> int64</td>
+    <td>
+  Deposit in NanoPAC.
     </td>
   </tr><tr>
     <td class="fw-bold">txs[].memo</td>
@@ -2443,6 +2687,279 @@ Request Message has no fields.
   The address of the account.
     </td>
   </tr>
+   <tr>
+    <td class="fw-bold">account.anchor</td>
+    <td>optional AnchorInfo</td>
+    <td>
+  (OneOf)The active anchor. Unset when the account has none.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">account.anchor.root_hash</td>
+    <td> bytes</td>
+    <td>
+  Root hash bytes.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">account.anchor.manifest_uri</td>
+    <td> string</td>
+    <td>
+  Manifest URI.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">account.anchor.anchor_type</td>
+    <td> uint32</td>
+    <td>
+  Anchor type byte.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">account.anchor.locked_deposit</td>
+    <td> int64</td>
+    <td>
+  Locked deposit in NanoPAC.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">account.anchor.created_at_height</td>
+    <td> uint32</td>
+    <td>
+  Height of the block that created the anchor.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">account.anchor.created_at_time</td>
+    <td> uint32</td>
+    <td>
+  Unix time of the block that created the anchor.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">account.anchor.updated_at_height</td>
+    <td> uint32</td>
+    <td>
+  Height of the block that set the current root hash.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">account.anchor.updated_at_time</td>
+    <td> uint32</td>
+    <td>
+  Unix time of the block that set the current root hash.
+    </td>
+  </tr></tbody>
+</table>
+
+#### GetAnchor <span id="pactus.Blockchain.GetAnchor" class="rpc-badge"></span>
+
+<p>GetAnchor retrieves the active anchor for an account, if any.</p>
+
+<h4>GetAnchorRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">address</td>
+    <td> string</td>
+    <td>
+  The address of the account.
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<h4>GetAnchorResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">found</td>
+    <td> bool</td>
+    <td>
+  True when the account exists and has an anchor.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">address</td>
+    <td> string</td>
+    <td>
+  The requested address.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">anchor</td>
+    <td> AnchorInfo</td>
+    <td>
+  Set only when found is true.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">anchor.root_hash</td>
+    <td> bytes</td>
+    <td>
+  Root hash bytes.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">anchor.manifest_uri</td>
+    <td> string</td>
+    <td>
+  Manifest URI.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">anchor.anchor_type</td>
+    <td> uint32</td>
+    <td>
+  Anchor type byte.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">anchor.locked_deposit</td>
+    <td> int64</td>
+    <td>
+  Locked deposit in NanoPAC.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">anchor.created_at_height</td>
+    <td> uint32</td>
+    <td>
+  Height of the block that created the anchor.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">anchor.created_at_time</td>
+    <td> uint32</td>
+    <td>
+  Unix time of the block that created the anchor.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">anchor.updated_at_height</td>
+    <td> uint32</td>
+    <td>
+  Height of the block that set the current root hash.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">anchor.updated_at_time</td>
+    <td> uint32</td>
+    <td>
+  Unix time of the block that set the current root hash.
+    </td>
+  </tr>
+   </tbody>
+</table>
+
+#### ListAnchors <span id="pactus.Blockchain.ListAnchors" class="rpc-badge"></span>
+
+<p>ListAnchors lists accounts that currently have an anchor, ordered by account number.</p>
+
+<h4>ListAnchorsRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">skip</td>
+    <td> uint32</td>
+    <td>
+  Number of matching accounts to skip.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">count</td>
+    <td> uint32</td>
+    <td>
+  Page size. 0 means 20. Maximum is 100.
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<h4>ListAnchorsResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">items</td>
+    <td>repeated AnchorListItem</td>
+    <td>
+  The page, ordered by account number.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">items[].address</td>
+    <td> string</td>
+    <td>
+  The account address.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">items[].anchor</td>
+    <td> AnchorInfo</td>
+    <td>
+  The active anchor.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">items[].anchor.root_hash</td>
+    <td> bytes</td>
+    <td>
+  Root hash bytes.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">items[].anchor.manifest_uri</td>
+    <td> string</td>
+    <td>
+  Manifest URI.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">items[].anchor.anchor_type</td>
+    <td> uint32</td>
+    <td>
+  Anchor type byte.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">items[].anchor.locked_deposit</td>
+    <td> int64</td>
+    <td>
+  Locked deposit in NanoPAC.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">items[].anchor.created_at_height</td>
+    <td> uint32</td>
+    <td>
+  Height of the block that created the anchor.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">items[].anchor.created_at_time</td>
+    <td> uint32</td>
+    <td>
+  Unix time of the block that created the anchor.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">items[].anchor.updated_at_height</td>
+    <td> uint32</td>
+    <td>
+  Height of the block that set the current root hash.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">items[].anchor.updated_at_time</td>
+    <td> uint32</td>
+    <td>
+  Unix time of the block that set the current root hash.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">total</td>
+    <td> uint32</td>
+    <td>
+  Accounts that currently have an anchor.
+    </td>
+  </tr>
    </tbody>
 </table>
 
@@ -2811,6 +3328,7 @@ Request Message has no fields.
       <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
       <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
       <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
+      <li>PAYLOAD_TYPE_ANCHOR = 7 (Anchor payload type.)</li>
       </ul>
     </td>
   </tr>
@@ -2885,6 +3403,7 @@ Request Message has no fields.
       <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
       <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
       <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
+      <li>PAYLOAD_TYPE_ANCHOR = 7 (Anchor payload type.)</li>
       </ul>
     </td>
   </tr>
@@ -3054,6 +3573,49 @@ Optional, but required when the validator is a delegated validator.;
     <td>repeated Recipient</td>
     <td>
   The list of recipients with their amounts.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">txs[].anchor</td>
+    <td> PayloadAnchor</td>
+    <td>
+  (OneOf)Anchor transaction payload.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">txs[].anchor.from</td>
+    <td> string</td>
+    <td>
+  The sender's address.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">txs[].anchor.action</td>
+    <td> uint32</td>
+    <td>
+  0 = set, 1 = delete.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">txs[].anchor.root_hash</td>
+    <td> bytes</td>
+    <td>
+  Empty when action is delete.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">txs[].anchor.manifest_uri</td>
+    <td> string</td>
+    <td>
+  Manifest URI.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">txs[].anchor.anchor_type</td>
+    <td> uint32</td>
+    <td>
+  Anchor type byte.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">txs[].anchor.deposit</td>
+    <td> int64</td>
+    <td>
+  Deposit in NanoPAC.
     </td>
   </tr><tr>
     <td class="fw-bold">txs[].memo</td>
@@ -4978,6 +5540,7 @@ Defaults to 0 if not set.
       <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
       <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
       <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
+      <li>PAYLOAD_TYPE_ANCHOR = 7 (Anchor payload type.)</li>
       </ul>
     </td>
   </tr>

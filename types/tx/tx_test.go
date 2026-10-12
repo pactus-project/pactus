@@ -188,14 +188,14 @@ func TestInvalidPayloadType(t *testing.T) {
 		"01020300" + // LockTime
 		"01" + // Fee
 		"00" + // Memo
-		"07" + // PayloadType
+		"08" + // PayloadType
 		"00" + // Sender (treasury)
 		"012222222222222222222222222222222222222222" + // Receiver
 		"01" // Amount
 
 	_, err := tx.FromString(str)
 	require.ErrorIs(t, err, tx.InvalidPayloadTypeError{
-		PayloadType: payload.Type(7),
+		PayloadType: payload.Type(8),
 	})
 }
 

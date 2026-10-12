@@ -156,6 +156,40 @@ func (s *BlockchainJsonRPC) Methods() map[string]func(ctx context.Context, messa
 			return s.client.GetAccount(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
+		"pactus.blockchain.get_anchor": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(GetAnchorRequest)
+
+			var jrpcData paramsAndHeadersBlockchain
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.GetAnchor(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
+
+		"pactus.blockchain.list_anchors": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(ListAnchorsRequest)
+
+			var jrpcData paramsAndHeadersBlockchain
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.ListAnchors(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
+
 		"pactus.blockchain.get_validator": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetValidatorRequest)
 

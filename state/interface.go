@@ -75,6 +75,7 @@ type State interface {
 	BlockHash(height types.Height) hash.Hash
 	BlockHeight(h hash.Hash) types.Height
 	AccountByAddress(addr crypto.Address) (*account.Account, error)
+	ListAnchors(skip, count uint32) ([]AnchorAccount, uint32)
 	ValidatorByAddress(addr crypto.Address) (*validator.Validator, error)
 	ValidatorByNumber(number int32) (*validator.Validator, error)
 	ValidatorAddresses() []crypto.Address

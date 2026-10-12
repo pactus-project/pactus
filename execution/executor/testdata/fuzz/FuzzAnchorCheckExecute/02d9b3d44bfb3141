@@ -1,0 +1,11 @@
+go test fuzz v1
+byte('\x00')
+byte(' ')
+byte('\x00')
+byte('\x01')
+int64(0)
+int64(34)
+int64(74)
+int64(56)
+uint32(1)
+uint32(1)

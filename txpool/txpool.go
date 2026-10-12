@@ -48,6 +48,7 @@ func NewTxPool(ctx context.Context, conf *Config, storeReader store.Reader,
 	pools[payload.TypeWithdraw] = newPool(conf.withdrawPoolSize(), conf.fixedFee())
 	pools[payload.TypeSortition] = newPool(conf.sortitionPoolSize(), 0)
 	pools[payload.TypeBatchTransfer] = newPool(conf.batchTransferPoolSize(), conf.fixedFee())
+	pools[payload.TypeAnchor] = newPool(conf.anchorPoolSize(), conf.fixedFee())
 
 	pool := &txPool{
 		config:         conf,
@@ -158,6 +159,12 @@ func (p *txPool) checkTx(trx *tx.Tx) error {
 		p.logger.Debug("invalid transaction", "trx", trx, "error", err)
 
 		return err
+	}
+
+	if _, ok := p.pools[trx.Payload().Type()]; !ok {
+		p.logger.Debug("unsupported payload type", "trx", trx)
+
+		return ErrPayloadTypeNotSupported
 	}
 
 	if err := execution.CheckAndExecute(trx, p.sbx, false); err != nil {
@@ -305,6 +312,11 @@ func (p *txPool) PrepareBlockTransactions() block.Txs {
 		trxs = append(trxs, n.Data.Value)
 	}
 
+	poolAnchor := p.pools[payload.TypeAnchor]
+	for n := poolAnchor.list.HeadNode(); n != nil; n = n.Next {
+		trxs = append(trxs, n.Data.Value)
+	}
+
 	return trxs
 }
 
@@ -408,12 +420,13 @@ func (p *txPool) getPendingConsumption(signer crypto.Address) int {
 // LogString returns a concise string representation intended for use in logs.
 func (p *txPool) LogString() string {
 	return fmt.Sprintf(
-		"{💸 %v💸 %v 🔐 %v 🔓 %v 🎯 %v 🧾 %v}",
+		"{💸 %v💸 %v 🔐 %v 🔓 %v 🎯 %v 🧾 %v ⚓ %v}",
 		p.pools[payload.TypeTransfer].list.Size(),
 		p.pools[payload.TypeBatchTransfer].list.Size(),
 		p.pools[payload.TypeBond].list.Size(),
 		p.pools[payload.TypeUnbond].list.Size(),
 		p.pools[payload.TypeSortition].list.Size(),
 		p.pools[payload.TypeWithdraw].list.Size(),
+		p.pools[payload.TypeAnchor].list.Size(),
 	)
 }

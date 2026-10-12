@@ -22,6 +22,9 @@ impl serde::Serialize for AccountInfo {
         if !self.address.is_empty() {
             len += 1;
         }
+        if self.anchor.is_some() {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.AccountInfo", len)?;
         if !self.hash.is_empty() {
             struct_ser.serialize_field("hash", &self.hash)?;
@@ -40,6 +43,9 @@ impl serde::Serialize for AccountInfo {
         if !self.address.is_empty() {
             struct_ser.serialize_field("address", &self.address)?;
         }
+        if let Some(v) = self.anchor.as_ref() {
+            struct_ser.serialize_field("anchor", v)?;
+        }
         struct_ser.end()
     }
 }
@@ -55,6 +61,7 @@ impl<'de> serde::Deserialize<'de> for AccountInfo {
             "number",
             "balance",
             "address",
+            "anchor",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -64,6 +71,7 @@ impl<'de> serde::Deserialize<'de> for AccountInfo {
             Number,
             Balance,
             Address,
+            Anchor,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -90,6 +98,7 @@ impl<'de> serde::Deserialize<'de> for AccountInfo {
                             "number" => Ok(GeneratedField::Number),
                             "balance" => Ok(GeneratedField::Balance),
                             "address" => Ok(GeneratedField::Address),
+                            "anchor" => Ok(GeneratedField::Anchor),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -114,6 +123,7 @@ impl<'de> serde::Deserialize<'de> for AccountInfo {
                 let mut number__ = None;
                 let mut balance__ = None;
                 let mut address__ = None;
+                let mut anchor__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Hash => {
@@ -150,6 +160,12 @@ impl<'de> serde::Deserialize<'de> for AccountInfo {
                             }
                             address__ = Some(map_.next_value()?);
                         }
+                        GeneratedField::Anchor => {
+                            if anchor__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("anchor"));
+                            }
+                            anchor__ = map_.next_value()?;
+                        }
                     }
                 }
                 Ok(AccountInfo {
@@ -158,6 +174,7 @@ impl<'de> serde::Deserialize<'de> for AccountInfo {
                     number: number__.unwrap_or_default(),
                     balance: balance__.unwrap_or_default(),
                     address: address__.unwrap_or_default(),
+                    anchor: anchor__,
                 })
             }
         }
@@ -447,6 +464,350 @@ impl<'de> serde::Deserialize<'de> for AddressType {
             }
         }
         deserializer.deserialize_any(GeneratedVisitor)
+    }
+}
+impl serde::Serialize for AnchorInfo {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.root_hash.is_empty() {
+            len += 1;
+        }
+        if !self.manifest_uri.is_empty() {
+            len += 1;
+        }
+        if self.anchor_type != 0 {
+            len += 1;
+        }
+        if self.locked_deposit != 0 {
+            len += 1;
+        }
+        if self.created_at_height != 0 {
+            len += 1;
+        }
+        if self.created_at_time != 0 {
+            len += 1;
+        }
+        if self.updated_at_height != 0 {
+            len += 1;
+        }
+        if self.updated_at_time != 0 {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.AnchorInfo", len)?;
+        if !self.root_hash.is_empty() {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("rootHash", pbjson::private::base64::encode(&self.root_hash).as_str())?;
+        }
+        if !self.manifest_uri.is_empty() {
+            struct_ser.serialize_field("manifestUri", &self.manifest_uri)?;
+        }
+        if self.anchor_type != 0 {
+            struct_ser.serialize_field("anchorType", &self.anchor_type)?;
+        }
+        if self.locked_deposit != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("lockedDeposit", ToString::to_string(&self.locked_deposit).as_str())?;
+        }
+        if self.created_at_height != 0 {
+            struct_ser.serialize_field("createdAtHeight", &self.created_at_height)?;
+        }
+        if self.created_at_time != 0 {
+            struct_ser.serialize_field("createdAtTime", &self.created_at_time)?;
+        }
+        if self.updated_at_height != 0 {
+            struct_ser.serialize_field("updatedAtHeight", &self.updated_at_height)?;
+        }
+        if self.updated_at_time != 0 {
+            struct_ser.serialize_field("updatedAtTime", &self.updated_at_time)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for AnchorInfo {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "root_hash",
+            "rootHash",
+            "manifest_uri",
+            "manifestUri",
+            "anchor_type",
+            "anchorType",
+            "locked_deposit",
+            "lockedDeposit",
+            "created_at_height",
+            "createdAtHeight",
+            "created_at_time",
+            "createdAtTime",
+            "updated_at_height",
+            "updatedAtHeight",
+            "updated_at_time",
+            "updatedAtTime",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            RootHash,
+            ManifestUri,
+            AnchorType,
+            LockedDeposit,
+            CreatedAtHeight,
+            CreatedAtTime,
+            UpdatedAtHeight,
+            UpdatedAtTime,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "rootHash" | "root_hash" => Ok(GeneratedField::RootHash),
+                            "manifestUri" | "manifest_uri" => Ok(GeneratedField::ManifestUri),
+                            "anchorType" | "anchor_type" => Ok(GeneratedField::AnchorType),
+                            "lockedDeposit" | "locked_deposit" => Ok(GeneratedField::LockedDeposit),
+                            "createdAtHeight" | "created_at_height" => Ok(GeneratedField::CreatedAtHeight),
+                            "createdAtTime" | "created_at_time" => Ok(GeneratedField::CreatedAtTime),
+                            "updatedAtHeight" | "updated_at_height" => Ok(GeneratedField::UpdatedAtHeight),
+                            "updatedAtTime" | "updated_at_time" => Ok(GeneratedField::UpdatedAtTime),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = AnchorInfo;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.AnchorInfo")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<AnchorInfo, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut root_hash__ = None;
+                let mut manifest_uri__ = None;
+                let mut anchor_type__ = None;
+                let mut locked_deposit__ = None;
+                let mut created_at_height__ = None;
+                let mut created_at_time__ = None;
+                let mut updated_at_height__ = None;
+                let mut updated_at_time__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::RootHash => {
+                            if root_hash__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("rootHash"));
+                            }
+                            root_hash__ = 
+                                Some(map_.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::ManifestUri => {
+                            if manifest_uri__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("manifestUri"));
+                            }
+                            manifest_uri__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::AnchorType => {
+                            if anchor_type__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("anchorType"));
+                            }
+                            anchor_type__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::LockedDeposit => {
+                            if locked_deposit__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("lockedDeposit"));
+                            }
+                            locked_deposit__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::CreatedAtHeight => {
+                            if created_at_height__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("createdAtHeight"));
+                            }
+                            created_at_height__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::CreatedAtTime => {
+                            if created_at_time__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("createdAtTime"));
+                            }
+                            created_at_time__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::UpdatedAtHeight => {
+                            if updated_at_height__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("updatedAtHeight"));
+                            }
+                            updated_at_height__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::UpdatedAtTime => {
+                            if updated_at_time__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("updatedAtTime"));
+                            }
+                            updated_at_time__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                    }
+                }
+                Ok(AnchorInfo {
+                    root_hash: root_hash__.unwrap_or_default(),
+                    manifest_uri: manifest_uri__.unwrap_or_default(),
+                    anchor_type: anchor_type__.unwrap_or_default(),
+                    locked_deposit: locked_deposit__.unwrap_or_default(),
+                    created_at_height: created_at_height__.unwrap_or_default(),
+                    created_at_time: created_at_time__.unwrap_or_default(),
+                    updated_at_height: updated_at_height__.unwrap_or_default(),
+                    updated_at_time: updated_at_time__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.AnchorInfo", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for AnchorListItem {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.address.is_empty() {
+            len += 1;
+        }
+        if self.anchor.is_some() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.AnchorListItem", len)?;
+        if !self.address.is_empty() {
+            struct_ser.serialize_field("address", &self.address)?;
+        }
+        if let Some(v) = self.anchor.as_ref() {
+            struct_ser.serialize_field("anchor", v)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for AnchorListItem {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "address",
+            "anchor",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Address,
+            Anchor,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "address" => Ok(GeneratedField::Address),
+                            "anchor" => Ok(GeneratedField::Anchor),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = AnchorListItem;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.AnchorListItem")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<AnchorListItem, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut address__ = None;
+                let mut anchor__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::Address => {
+                            if address__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("address"));
+                            }
+                            address__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Anchor => {
+                            if anchor__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("anchor"));
+                            }
+                            anchor__ = map_.next_value()?;
+                        }
+                    }
+                }
+                Ok(AnchorListItem {
+                    address: address__.unwrap_or_default(),
+                    anchor: anchor__,
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.AnchorListItem", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for BlockHeaderInfo {
@@ -2854,6 +3215,222 @@ impl<'de> serde::Deserialize<'de> for GetAddressInfoResponse {
             }
         }
         deserializer.deserialize_struct("pactus.GetAddressInfoResponse", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for GetAnchorRequest {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.address.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.GetAnchorRequest", len)?;
+        if !self.address.is_empty() {
+            struct_ser.serialize_field("address", &self.address)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for GetAnchorRequest {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "address",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Address,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "address" => Ok(GeneratedField::Address),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = GetAnchorRequest;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.GetAnchorRequest")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetAnchorRequest, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut address__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::Address => {
+                            if address__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("address"));
+                            }
+                            address__ = Some(map_.next_value()?);
+                        }
+                    }
+                }
+                Ok(GetAnchorRequest {
+                    address: address__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.GetAnchorRequest", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for GetAnchorResponse {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.found {
+            len += 1;
+        }
+        if !self.address.is_empty() {
+            len += 1;
+        }
+        if self.anchor.is_some() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.GetAnchorResponse", len)?;
+        if self.found {
+            struct_ser.serialize_field("found", &self.found)?;
+        }
+        if !self.address.is_empty() {
+            struct_ser.serialize_field("address", &self.address)?;
+        }
+        if let Some(v) = self.anchor.as_ref() {
+            struct_ser.serialize_field("anchor", v)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for GetAnchorResponse {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "found",
+            "address",
+            "anchor",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Found,
+            Address,
+            Anchor,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "found" => Ok(GeneratedField::Found),
+                            "address" => Ok(GeneratedField::Address),
+                            "anchor" => Ok(GeneratedField::Anchor),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = GetAnchorResponse;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.GetAnchorResponse")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetAnchorResponse, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut found__ = None;
+                let mut address__ = None;
+                let mut anchor__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::Found => {
+                            if found__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("found"));
+                            }
+                            found__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Address => {
+                            if address__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("address"));
+                            }
+                            address__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Anchor => {
+                            if anchor__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("anchor"));
+                            }
+                            anchor__ = map_.next_value()?;
+                        }
+                    }
+                }
+                Ok(GetAnchorResponse {
+                    found: found__.unwrap_or_default(),
+                    address: address__.unwrap_or_default(),
+                    anchor: anchor__,
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.GetAnchorResponse", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for GetBlockHashRequest {
@@ -5887,6 +6464,255 @@ impl<'de> serde::Deserialize<'de> for GetPublicKeyResponse {
             }
         }
         deserializer.deserialize_struct("pactus.GetPublicKeyResponse", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for GetRawAnchorTransactionRequest {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.from.is_empty() {
+            len += 1;
+        }
+        if self.action != 0 {
+            len += 1;
+        }
+        if !self.root_hash.is_empty() {
+            len += 1;
+        }
+        if !self.manifest_uri.is_empty() {
+            len += 1;
+        }
+        if self.anchor_type != 0 {
+            len += 1;
+        }
+        if self.deposit != 0 {
+            len += 1;
+        }
+        if self.fee != 0 {
+            len += 1;
+        }
+        if !self.memo.is_empty() {
+            len += 1;
+        }
+        if self.lock_time != 0 {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.GetRawAnchorTransactionRequest", len)?;
+        if !self.from.is_empty() {
+            struct_ser.serialize_field("from", &self.from)?;
+        }
+        if self.action != 0 {
+            struct_ser.serialize_field("action", &self.action)?;
+        }
+        if !self.root_hash.is_empty() {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("rootHash", pbjson::private::base64::encode(&self.root_hash).as_str())?;
+        }
+        if !self.manifest_uri.is_empty() {
+            struct_ser.serialize_field("manifestUri", &self.manifest_uri)?;
+        }
+        if self.anchor_type != 0 {
+            struct_ser.serialize_field("anchorType", &self.anchor_type)?;
+        }
+        if self.deposit != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("deposit", ToString::to_string(&self.deposit).as_str())?;
+        }
+        if self.fee != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("fee", ToString::to_string(&self.fee).as_str())?;
+        }
+        if !self.memo.is_empty() {
+            struct_ser.serialize_field("memo", &self.memo)?;
+        }
+        if self.lock_time != 0 {
+            struct_ser.serialize_field("lockTime", &self.lock_time)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for GetRawAnchorTransactionRequest {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "from",
+            "action",
+            "root_hash",
+            "rootHash",
+            "manifest_uri",
+            "manifestUri",
+            "anchor_type",
+            "anchorType",
+            "deposit",
+            "fee",
+            "memo",
+            "lock_time",
+            "lockTime",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            From,
+            Action,
+            RootHash,
+            ManifestUri,
+            AnchorType,
+            Deposit,
+            Fee,
+            Memo,
+            LockTime,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "from" => Ok(GeneratedField::From),
+                            "action" => Ok(GeneratedField::Action),
+                            "rootHash" | "root_hash" => Ok(GeneratedField::RootHash),
+                            "manifestUri" | "manifest_uri" => Ok(GeneratedField::ManifestUri),
+                            "anchorType" | "anchor_type" => Ok(GeneratedField::AnchorType),
+                            "deposit" => Ok(GeneratedField::Deposit),
+                            "fee" => Ok(GeneratedField::Fee),
+                            "memo" => Ok(GeneratedField::Memo),
+                            "lockTime" | "lock_time" => Ok(GeneratedField::LockTime),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = GetRawAnchorTransactionRequest;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.GetRawAnchorTransactionRequest")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetRawAnchorTransactionRequest, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut from__ = None;
+                let mut action__ = None;
+                let mut root_hash__ = None;
+                let mut manifest_uri__ = None;
+                let mut anchor_type__ = None;
+                let mut deposit__ = None;
+                let mut fee__ = None;
+                let mut memo__ = None;
+                let mut lock_time__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::From => {
+                            if from__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("from"));
+                            }
+                            from__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Action => {
+                            if action__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("action"));
+                            }
+                            action__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::RootHash => {
+                            if root_hash__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("rootHash"));
+                            }
+                            root_hash__ = 
+                                Some(map_.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::ManifestUri => {
+                            if manifest_uri__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("manifestUri"));
+                            }
+                            manifest_uri__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::AnchorType => {
+                            if anchor_type__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("anchorType"));
+                            }
+                            anchor_type__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::Deposit => {
+                            if deposit__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("deposit"));
+                            }
+                            deposit__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::Fee => {
+                            if fee__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("fee"));
+                            }
+                            fee__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::Memo => {
+                            if memo__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("memo"));
+                            }
+                            memo__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::LockTime => {
+                            if lock_time__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("lockTime"));
+                            }
+                            lock_time__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                    }
+                }
+                Ok(GetRawAnchorTransactionRequest {
+                    from: from__.unwrap_or_default(),
+                    action: action__.unwrap_or_default(),
+                    root_hash: root_hash__.unwrap_or_default(),
+                    manifest_uri: manifest_uri__.unwrap_or_default(),
+                    anchor_type: anchor_type__.unwrap_or_default(),
+                    deposit: deposit__.unwrap_or_default(),
+                    fee: fee__.unwrap_or_default(),
+                    memo: memo__.unwrap_or_default(),
+                    lock_time: lock_time__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.GetRawAnchorTransactionRequest", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for GetRawBatchTransferTransactionRequest {
@@ -9001,6 +9827,228 @@ impl<'de> serde::Deserialize<'de> for ListAddressesResponse {
         deserializer.deserialize_struct("pactus.ListAddressesResponse", FIELDS, GeneratedVisitor)
     }
 }
+impl serde::Serialize for ListAnchorsRequest {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.skip != 0 {
+            len += 1;
+        }
+        if self.count != 0 {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.ListAnchorsRequest", len)?;
+        if self.skip != 0 {
+            struct_ser.serialize_field("skip", &self.skip)?;
+        }
+        if self.count != 0 {
+            struct_ser.serialize_field("count", &self.count)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for ListAnchorsRequest {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "skip",
+            "count",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Skip,
+            Count,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "skip" => Ok(GeneratedField::Skip),
+                            "count" => Ok(GeneratedField::Count),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = ListAnchorsRequest;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.ListAnchorsRequest")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListAnchorsRequest, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut skip__ = None;
+                let mut count__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::Skip => {
+                            if skip__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("skip"));
+                            }
+                            skip__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::Count => {
+                            if count__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("count"));
+                            }
+                            count__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                    }
+                }
+                Ok(ListAnchorsRequest {
+                    skip: skip__.unwrap_or_default(),
+                    count: count__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.ListAnchorsRequest", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for ListAnchorsResponse {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.items.is_empty() {
+            len += 1;
+        }
+        if self.total != 0 {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.ListAnchorsResponse", len)?;
+        if !self.items.is_empty() {
+            struct_ser.serialize_field("items", &self.items)?;
+        }
+        if self.total != 0 {
+            struct_ser.serialize_field("total", &self.total)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for ListAnchorsResponse {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "items",
+            "total",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Items,
+            Total,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "items" => Ok(GeneratedField::Items),
+                            "total" => Ok(GeneratedField::Total),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = ListAnchorsResponse;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.ListAnchorsResponse")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListAnchorsResponse, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut items__ = None;
+                let mut total__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::Items => {
+                            if items__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("items"));
+                            }
+                            items__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Total => {
+                            if total__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("total"));
+                            }
+                            total__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                    }
+                }
+                Ok(ListAnchorsResponse {
+                    items: items__.unwrap_or_default(),
+                    total: total__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.ListAnchorsResponse", FIELDS, GeneratedVisitor)
+    }
+}
 impl serde::Serialize for ListPeersRequest {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
@@ -10159,6 +11207,197 @@ impl<'de> serde::Deserialize<'de> for MigrateWalletResponse {
         deserializer.deserialize_struct("pactus.MigrateWalletResponse", FIELDS, GeneratedVisitor)
     }
 }
+impl serde::Serialize for PayloadAnchor {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.from.is_empty() {
+            len += 1;
+        }
+        if self.action != 0 {
+            len += 1;
+        }
+        if !self.root_hash.is_empty() {
+            len += 1;
+        }
+        if !self.manifest_uri.is_empty() {
+            len += 1;
+        }
+        if self.anchor_type != 0 {
+            len += 1;
+        }
+        if self.deposit != 0 {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.PayloadAnchor", len)?;
+        if !self.from.is_empty() {
+            struct_ser.serialize_field("from", &self.from)?;
+        }
+        if self.action != 0 {
+            struct_ser.serialize_field("action", &self.action)?;
+        }
+        if !self.root_hash.is_empty() {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("rootHash", pbjson::private::base64::encode(&self.root_hash).as_str())?;
+        }
+        if !self.manifest_uri.is_empty() {
+            struct_ser.serialize_field("manifestUri", &self.manifest_uri)?;
+        }
+        if self.anchor_type != 0 {
+            struct_ser.serialize_field("anchorType", &self.anchor_type)?;
+        }
+        if self.deposit != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("deposit", ToString::to_string(&self.deposit).as_str())?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for PayloadAnchor {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "from",
+            "action",
+            "root_hash",
+            "rootHash",
+            "manifest_uri",
+            "manifestUri",
+            "anchor_type",
+            "anchorType",
+            "deposit",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            From,
+            Action,
+            RootHash,
+            ManifestUri,
+            AnchorType,
+            Deposit,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "from" => Ok(GeneratedField::From),
+                            "action" => Ok(GeneratedField::Action),
+                            "rootHash" | "root_hash" => Ok(GeneratedField::RootHash),
+                            "manifestUri" | "manifest_uri" => Ok(GeneratedField::ManifestUri),
+                            "anchorType" | "anchor_type" => Ok(GeneratedField::AnchorType),
+                            "deposit" => Ok(GeneratedField::Deposit),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = PayloadAnchor;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.PayloadAnchor")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<PayloadAnchor, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut from__ = None;
+                let mut action__ = None;
+                let mut root_hash__ = None;
+                let mut manifest_uri__ = None;
+                let mut anchor_type__ = None;
+                let mut deposit__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::From => {
+                            if from__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("from"));
+                            }
+                            from__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Action => {
+                            if action__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("action"));
+                            }
+                            action__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::RootHash => {
+                            if root_hash__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("rootHash"));
+                            }
+                            root_hash__ = 
+                                Some(map_.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::ManifestUri => {
+                            if manifest_uri__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("manifestUri"));
+                            }
+                            manifest_uri__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::AnchorType => {
+                            if anchor_type__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("anchorType"));
+                            }
+                            anchor_type__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::Deposit => {
+                            if deposit__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("deposit"));
+                            }
+                            deposit__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                    }
+                }
+                Ok(PayloadAnchor {
+                    from: from__.unwrap_or_default(),
+                    action: action__.unwrap_or_default(),
+                    root_hash: root_hash__.unwrap_or_default(),
+                    manifest_uri: manifest_uri__.unwrap_or_default(),
+                    anchor_type: anchor_type__.unwrap_or_default(),
+                    deposit: deposit__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.PayloadAnchor", FIELDS, GeneratedVisitor)
+    }
+}
 impl serde::Serialize for PayloadBatchTransfer {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
@@ -10743,6 +11982,7 @@ impl serde::Serialize for PayloadType {
             Self::Unbond => "PAYLOAD_TYPE_UNBOND",
             Self::Withdraw => "PAYLOAD_TYPE_WITHDRAW",
             Self::BatchTransfer => "PAYLOAD_TYPE_BATCH_TRANSFER",
+            Self::Anchor => "PAYLOAD_TYPE_ANCHOR",
         };
         serializer.serialize_str(variant)
     }
@@ -10761,6 +12001,7 @@ impl<'de> serde::Deserialize<'de> for PayloadType {
             "PAYLOAD_TYPE_UNBOND",
             "PAYLOAD_TYPE_WITHDRAW",
             "PAYLOAD_TYPE_BATCH_TRANSFER",
+            "PAYLOAD_TYPE_ANCHOR",
         ];
 
         struct GeneratedVisitor;
@@ -10808,6 +12049,7 @@ impl<'de> serde::Deserialize<'de> for PayloadType {
                     "PAYLOAD_TYPE_UNBOND" => Ok(PayloadType::Unbond),
                     "PAYLOAD_TYPE_WITHDRAW" => Ok(PayloadType::Withdraw),
                     "PAYLOAD_TYPE_BATCH_TRANSFER" => Ok(PayloadType::BatchTransfer),
+                    "PAYLOAD_TYPE_ANCHOR" => Ok(PayloadType::Anchor),
                     _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),
                 }
             }
@@ -13728,6 +14970,9 @@ impl serde::Serialize for TransactionInfo {
                 transaction_info::Payload::BatchTransfer(v) => {
                     struct_ser.serialize_field("batchTransfer", v)?;
                 }
+                transaction_info::Payload::Anchor(v) => {
+                    struct_ser.serialize_field("anchor", v)?;
+                }
             }
         }
         struct_ser.end()
@@ -13764,6 +15009,7 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
             "withdraw",
             "batch_transfer",
             "batchTransfer",
+            "anchor",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -13787,6 +15033,7 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
             Unbond,
             Withdraw,
             BatchTransfer,
+            Anchor,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -13827,6 +15074,7 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
                             "unbond" => Ok(GeneratedField::Unbond),
                             "withdraw" => Ok(GeneratedField::Withdraw),
                             "batchTransfer" | "batch_transfer" => Ok(GeneratedField::BatchTransfer),
+                            "anchor" => Ok(GeneratedField::Anchor),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -13992,6 +15240,13 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
                                 return Err(serde::de::Error::duplicate_field("batchTransfer"));
                             }
                             payload__ = map_.next_value::<::std::option::Option<_>>()?.map(transaction_info::Payload::BatchTransfer)
+;
+                        }
+                        GeneratedField::Anchor => {
+                            if payload__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("anchor"));
+                            }
+                            payload__ = map_.next_value::<::std::option::Option<_>>()?.map(transaction_info::Payload::Anchor)
 ;
                         }
                     }

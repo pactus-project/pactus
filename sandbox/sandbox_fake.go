@@ -18,11 +18,13 @@ type FakeSandbox struct {
 	*MockSandbox
 	*testsuite.TestSuite
 
-	FakeParams     *param.Params
-	FakeCommittee  *committee.MockCommittee
-	FakeHeight     types.Height
-	FakeAccounts   map[crypto.Address]*account.Account
-	FakeValidators map[crypto.Address]*validator.Validator
+	FakeParams       *param.Params
+	FakeCommittee    *committee.MockCommittee
+	FakeHeight       types.Height
+	FakeBlockVersion protocol.Version
+	FakeUnixTime     uint32
+	FakeAccounts     map[crypto.Address]*account.Account
+	FakeValidators   map[crypto.Address]*validator.Validator
 }
 
 func NewFakeSandbox(ts *testsuite.TestSuite) *FakeSandbox {
@@ -36,13 +38,14 @@ func NewFakeSandbox(ts *testsuite.TestSuite) *FakeSandbox {
 	validators := make(map[crypto.Address]*validator.Validator)
 
 	fake := &FakeSandbox{
-		MockSandbox:    mock,
-		TestSuite:      ts,
-		FakeAccounts:   accounts,
-		FakeValidators: validators,
-		FakeCommittee:  committee,
-		FakeParams:     params,
-		FakeHeight:     ts.RandHeight(),
+		MockSandbox:      mock,
+		TestSuite:        ts,
+		FakeAccounts:     accounts,
+		FakeValidators:   validators,
+		FakeCommittee:    committee,
+		FakeParams:       params,
+		FakeHeight:       ts.RandHeight(),
+		FakeBlockVersion: params.BlockVersion,
 	}
 
 	fake.EXPECT().Account(gomock.Any()).DoAndReturn(
@@ -72,6 +75,18 @@ func NewFakeSandbox(ts *testsuite.TestSuite) *FakeSandbox {
 	fake.EXPECT().CurrentHeight().DoAndReturn(
 		func() types.Height {
 			return fake.FakeHeight
+		},
+	).AnyTimes()
+
+	fake.EXPECT().BlockVersion().DoAndReturn(
+		func() protocol.Version {
+			return fake.FakeBlockVersion
+		},
+	).AnyTimes()
+
+	fake.EXPECT().CurrentUnixTime().DoAndReturn(
+		func() uint32 {
+			return fake.FakeUnixTime
 		},
 	).AnyTimes()
 

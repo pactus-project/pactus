@@ -295,6 +295,32 @@ pub mod transaction_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        pub async fn get_raw_anchor_transaction(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetRawAnchorTransactionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetRawTransactionResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pactus.Transaction/GetRawAnchorTransaction",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pactus.Transaction", "GetRawAnchorTransaction"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
         pub async fn decode_raw_transaction(
             &mut self,
             request: impl tonic::IntoRequest<super::DecodeRawTransactionRequest>,
@@ -410,6 +436,13 @@ pub mod transaction_server {
         async fn get_raw_batch_transfer_transaction(
             &self,
             request: tonic::Request<super::GetRawBatchTransferTransactionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetRawTransactionResponse>,
+            tonic::Status,
+        >;
+        async fn get_raw_anchor_transaction(
+            &self,
+            request: tonic::Request<super::GetRawAnchorTransactionRequest>,
         ) -> std::result::Result<
             tonic::Response<super::GetRawTransactionResponse>,
             tonic::Status,
@@ -897,6 +930,57 @@ pub mod transaction_server {
                     };
                     Box::pin(fut)
                 }
+                "/pactus.Transaction/GetRawAnchorTransaction" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetRawAnchorTransactionSvc<T: Transaction>(pub Arc<T>);
+                    impl<
+                        T: Transaction,
+                    > tonic::server::UnaryService<super::GetRawAnchorTransactionRequest>
+                    for GetRawAnchorTransactionSvc<T> {
+                        type Response = super::GetRawTransactionResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::GetRawAnchorTransactionRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Transaction>::get_raw_anchor_transaction(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetRawAnchorTransactionSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
                 "/pactus.Transaction/DecodeRawTransaction" => {
                     #[allow(non_camel_case_types)]
                     struct DecodeRawTransactionSvc<T: Transaction>(pub Arc<T>);
@@ -1287,6 +1371,54 @@ pub mod blockchain_client {
                 .insert(GrpcMethod::new("pactus.Blockchain", "GetAccount"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn get_anchor(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetAnchorRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetAnchorResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pactus.Blockchain/GetAnchor",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pactus.Blockchain", "GetAnchor"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn list_anchors(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListAnchorsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListAnchorsResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pactus.Blockchain/ListAnchors",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pactus.Blockchain", "ListAnchors"));
+            self.inner.unary(req, path, codec).await
+        }
         pub async fn get_validator(
             &mut self,
             request: impl tonic::IntoRequest<super::GetValidatorRequest>,
@@ -1469,6 +1601,20 @@ pub mod blockchain_server {
             request: tonic::Request<super::GetAccountRequest>,
         ) -> std::result::Result<
             tonic::Response<super::GetAccountResponse>,
+            tonic::Status,
+        >;
+        async fn get_anchor(
+            &self,
+            request: tonic::Request<super::GetAnchorRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetAnchorResponse>,
+            tonic::Status,
+        >;
+        async fn list_anchors(
+            &self,
+            request: tonic::Request<super::ListAnchorsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListAnchorsResponse>,
             tonic::Status,
         >;
         async fn get_validator(
@@ -1884,6 +2030,96 @@ pub mod blockchain_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = GetAccountSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pactus.Blockchain/GetAnchor" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetAnchorSvc<T: Blockchain>(pub Arc<T>);
+                    impl<
+                        T: Blockchain,
+                    > tonic::server::UnaryService<super::GetAnchorRequest>
+                    for GetAnchorSvc<T> {
+                        type Response = super::GetAnchorResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetAnchorRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Blockchain>::get_anchor(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetAnchorSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pactus.Blockchain/ListAnchors" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListAnchorsSvc<T: Blockchain>(pub Arc<T>);
+                    impl<
+                        T: Blockchain,
+                    > tonic::server::UnaryService<super::ListAnchorsRequest>
+                    for ListAnchorsSvc<T> {
+                        type Response = super::ListAnchorsResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListAnchorsRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Blockchain>::list_anchors(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListAnchorsSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

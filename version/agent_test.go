@@ -3,6 +3,7 @@ package version_test
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/version"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -61,4 +62,9 @@ func TestParseAgent(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestNodeAgentAnnouncesLatest(t *testing.T) {
+	assert.Equal(t, protocol.ProtocolVersionLatest, version.NodeAgent.ProtocolVersion)
+	assert.Equal(t, protocol.ProtocolVersion5, version.NodeAgent.ProtocolVersion)
 }

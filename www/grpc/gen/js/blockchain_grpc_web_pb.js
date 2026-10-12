@@ -506,6 +506,128 @@ proto.pactus.BlockchainPromiseClient.prototype.getAccount =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.GetAnchorRequest,
+ *   !proto.pactus.GetAnchorResponse>}
+ */
+const methodDescriptor_Blockchain_GetAnchor = new grpc.web.MethodDescriptor(
+  '/pactus.Blockchain/GetAnchor',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.GetAnchorRequest,
+  proto.pactus.GetAnchorResponse,
+  /**
+   * @param {!proto.pactus.GetAnchorRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.GetAnchorResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.GetAnchorRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.GetAnchorResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.GetAnchorResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.BlockchainClient.prototype.getAnchor =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Blockchain/GetAnchor',
+      request,
+      metadata || {},
+      methodDescriptor_Blockchain_GetAnchor,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.GetAnchorRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.GetAnchorResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.BlockchainPromiseClient.prototype.getAnchor =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Blockchain/GetAnchor',
+      request,
+      metadata || {},
+      methodDescriptor_Blockchain_GetAnchor);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.ListAnchorsRequest,
+ *   !proto.pactus.ListAnchorsResponse>}
+ */
+const methodDescriptor_Blockchain_ListAnchors = new grpc.web.MethodDescriptor(
+  '/pactus.Blockchain/ListAnchors',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.ListAnchorsRequest,
+  proto.pactus.ListAnchorsResponse,
+  /**
+   * @param {!proto.pactus.ListAnchorsRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.ListAnchorsResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.ListAnchorsRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.ListAnchorsResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.ListAnchorsResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.BlockchainClient.prototype.listAnchors =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Blockchain/ListAnchors',
+      request,
+      metadata || {},
+      methodDescriptor_Blockchain_ListAnchors,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.ListAnchorsRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.ListAnchorsResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.BlockchainPromiseClient.prototype.listAnchors =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Blockchain/ListAnchors',
+      request,
+      metadata || {},
+      methodDescriptor_Blockchain_ListAnchors);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.pactus.GetValidatorRequest,
  *   !proto.pactus.GetValidatorResponse>}
  */

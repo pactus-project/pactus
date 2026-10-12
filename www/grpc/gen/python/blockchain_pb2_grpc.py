@@ -50,6 +50,16 @@ class BlockchainStub:
                 request_serializer=blockchain__pb2.GetAccountRequest.SerializeToString,
                 response_deserializer=blockchain__pb2.GetAccountResponse.FromString,
                 _registered_method=True)
+        self.GetAnchor = channel.unary_unary(
+                '/pactus.Blockchain/GetAnchor',
+                request_serializer=blockchain__pb2.GetAnchorRequest.SerializeToString,
+                response_deserializer=blockchain__pb2.GetAnchorResponse.FromString,
+                _registered_method=True)
+        self.ListAnchors = channel.unary_unary(
+                '/pactus.Blockchain/ListAnchors',
+                request_serializer=blockchain__pb2.ListAnchorsRequest.SerializeToString,
+                response_deserializer=blockchain__pb2.ListAnchorsResponse.FromString,
+                _registered_method=True)
         self.GetValidator = channel.unary_unary(
                 '/pactus.Blockchain/GetValidator',
                 request_serializer=blockchain__pb2.GetValidatorRequest.SerializeToString,
@@ -130,6 +140,20 @@ class BlockchainServicer:
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetAnchor(self, request, context):
+        """GetAnchor retrieves the active anchor for an account, if any.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ListAnchors(self, request, context):
+        """ListAnchors lists accounts that currently have an anchor, ordered by account number.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def GetValidator(self, request, context):
         """GetValidator retrieves information about a validator based on the provided address.
         """
@@ -203,6 +227,16 @@ def add_BlockchainServicer_to_server(servicer, server):
                     servicer.GetAccount,
                     request_deserializer=blockchain__pb2.GetAccountRequest.FromString,
                     response_serializer=blockchain__pb2.GetAccountResponse.SerializeToString,
+            ),
+            'GetAnchor': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAnchor,
+                    request_deserializer=blockchain__pb2.GetAnchorRequest.FromString,
+                    response_serializer=blockchain__pb2.GetAnchorResponse.SerializeToString,
+            ),
+            'ListAnchors': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListAnchors,
+                    request_deserializer=blockchain__pb2.ListAnchorsRequest.FromString,
+                    response_serializer=blockchain__pb2.ListAnchorsResponse.SerializeToString,
             ),
             'GetValidator': grpc.unary_unary_rpc_method_handler(
                     servicer.GetValidator,
@@ -420,6 +454,60 @@ class Blockchain:
             '/pactus.Blockchain/GetAccount',
             blockchain__pb2.GetAccountRequest.SerializeToString,
             blockchain__pb2.GetAccountResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetAnchor(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/pactus.Blockchain/GetAnchor',
+            blockchain__pb2.GetAnchorRequest.SerializeToString,
+            blockchain__pb2.GetAnchorResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ListAnchors(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/pactus.Blockchain/ListAnchors',
+            blockchain__pb2.ListAnchorsRequest.SerializeToString,
+            blockchain__pb2.ListAnchorsResponse.FromString,
             options,
             channel_credentials,
             insecure,

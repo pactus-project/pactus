@@ -1,10 +1,14 @@
 package txpool
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/pactus-project/pactus/types/amount"
 )
+
+// ErrPayloadTypeNotSupported is returned when the pool has no queue for the payload.
+var ErrPayloadTypeNotSupported = errors.New("payload type is not supported")
 
 // ConfigError is returned when the transaction pool configuration is invalid.
 type ConfigError struct {

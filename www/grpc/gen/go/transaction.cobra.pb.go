@@ -28,6 +28,7 @@ func TransactionClientCommand(options ...client.Option) *cobra.Command {
 		_TransactionGetRawUnbondTransactionCommand(cfg),
 		_TransactionGetRawWithdrawTransactionCommand(cfg),
 		_TransactionGetRawBatchTransferTransactionCommand(cfg),
+		_TransactionGetRawAnchorTransactionCommand(cfg),
 		_TransactionDecodeRawTransactionCommand(cfg),
 		_TransactionCheckTransactionCommand(cfg),
 	)
@@ -395,6 +396,56 @@ func _TransactionGetRawBatchTransferTransactionCommand(cfg *client.Config) *cobr
 	flag.SliceVar(cmd.PersistentFlags(), flag.ParseMessageE[*Recipient], &req.Recipients, cfg.FlagNamer("Recipients"), "The list of recipients with their amounts. Minimum 2 recipients required.")
 	cmd.PersistentFlags().Int64Var(&req.Fee, cfg.FlagNamer("Fee"), 0, "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.")
 	cmd.PersistentFlags().StringVar(&req.Memo, cfg.FlagNamer("Memo"), "", "A memo string for the transaction.")
+
+	return cmd
+}
+
+func _TransactionGetRawAnchorTransactionCommand(cfg *client.Config) *cobra.Command {
+	req := &GetRawAnchorTransactionRequest{}
+
+	cmd := &cobra.Command{
+		Use:   cfg.CommandNamer("GetRawAnchorTransaction"),
+		Short: "GetRawAnchorTransaction RPC client",
+		Long:  "GetRawAnchorTransaction retrieves raw details of an anchor transaction.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction", "GetRawAnchorTransaction"); err != nil {
+					return err
+				}
+			}
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+				cli := NewTransactionClient(cc)
+				v := &GetRawAnchorTransactionRequest{}
+
+				if err := in(v); err != nil {
+					return err
+				}
+				proto.Merge(v, req)
+
+				res, err := cli.GetRawAnchorTransaction(cmd.Context(), v)
+
+				if err != nil {
+					return err
+				}
+
+				return out(res)
+
+			})
+		},
+	}
+
+	cmd.PersistentFlags().StringVar(&req.From, cfg.FlagNamer("From"), "", "The sender's account address.")
+	cmd.PersistentFlags().Uint32Var(&req.Action, cfg.FlagNamer("Action"), 0, "0 = set, 1 = delete.")
+	flag.BytesBase64Var(cmd.PersistentFlags(), &req.RootHash, cfg.FlagNamer("RootHash"), "Required when action is set.")
+	cmd.PersistentFlags().StringVar(&req.ManifestUri, cfg.FlagNamer("ManifestUri"), "", "Manifest URI. Ignored on delete.")
+	cmd.PersistentFlags().Uint32Var(&req.AnchorType, cfg.FlagNamer("AnchorType"), 0, "Anchor type byte. Ignored on delete.")
+	cmd.PersistentFlags().Int64Var(&req.Deposit, cfg.FlagNamer("Deposit"), 0, "Additional lock in NanoPAC. Must be 0 on delete.")
+	cmd.PersistentFlags().Int64Var(&req.Fee, cfg.FlagNamer("Fee"), 0, "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.")
+	cmd.PersistentFlags().StringVar(&req.Memo, cfg.FlagNamer("Memo"), "", "A memo string for the transaction.")
+	cmd.PersistentFlags().Uint32Var(&req.LockTime, cfg.FlagNamer("LockTime"), 0, "The lock time for the transaction. If not set, defaults to the last block height.")
 
 	return cmd
 }

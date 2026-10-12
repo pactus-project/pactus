@@ -30,6 +30,9 @@ service Transaction {
   // GetRawBatchTransferTransaction retrieves raw details of batch transfer transaction.
   rpc GetRawBatchTransferTransaction(GetRawBatchTransferTransactionRequest) returns (GetRawTransactionResponse);
 
+  // GetRawAnchorTransaction retrieves raw details of an anchor transaction.
+  rpc GetRawAnchorTransaction(GetRawAnchorTransactionRequest) returns (GetRawTransactionResponse);
+
   // DecodeRawTransaction accepts raw transaction and returns decoded transaction.
   rpc DecodeRawTransaction(DecodeRawTransactionRequest) returns (DecodeRawTransactionResponse);
 
@@ -173,6 +176,28 @@ message GetRawBatchTransferTransactionRequest {
   string memo = 5;
 }
 
+// Request message for retrieving raw details of an anchor transaction.
+message GetRawAnchorTransactionRequest {
+  // The sender's account address.
+  string from = 1;
+  // 0 = set, 1 = delete.
+  uint32 action = 2;
+  // Required when action is set.
+  bytes root_hash = 3;
+  // Manifest URI. Ignored on delete.
+  string manifest_uri = 4;
+  // Anchor type byte. Ignored on delete.
+  uint32 anchor_type = 5;
+  // Additional lock in NanoPAC. Must be 0 on delete.
+  int64 deposit = 6;
+  // The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+  int64 fee = 7;
+  // A memo string for the transaction.
+  string memo = 8;
+  // The lock time for the transaction. If not set, defaults to the last block height.
+  uint32 lock_time = 9;
+}
+
 // Response message contains raw transaction data.
 message GetRawTransactionResponse {
   // The raw transaction data in hexadecimal format.
@@ -243,6 +268,22 @@ message PayloadWithdraw {
   int64 amount = 3;
 }
 
+// Payload for an anchor transaction.
+message PayloadAnchor {
+  // The sender's address.
+  string from = 1;
+  // 0 = set, 1 = delete.
+  uint32 action = 2;
+  // Empty when action is delete.
+  bytes root_hash = 3;
+  // Manifest URI.
+  string manifest_uri = 4;
+  // Anchor type byte.
+  uint32 anchor_type = 5;
+  // Deposit in NanoPAC.
+  int64 deposit = 6;
+}
+
 // Payload for a batch transfer transaction.
 message PayloadBatchTransfer {
   // The sender's address.
@@ -289,6 +330,8 @@ message TransactionInfo {
     PayloadWithdraw withdraw = 34;
     // Batch Transfer transaction payload.
     PayloadBatchTransfer batch_transfer = 35;
+    // Anchor transaction payload.
+    PayloadAnchor anchor = 36;
   }
   // A memo string for the transaction.
   string memo = 8;
@@ -325,6 +368,8 @@ enum PayloadType {
   PAYLOAD_TYPE_WITHDRAW = 5;
   // Batch transfer payload type.
   PAYLOAD_TYPE_BATCH_TRANSFER = 6;
+  // Anchor payload type.
+  PAYLOAD_TYPE_ANCHOR = 7;
 }
 
 // Enumeration for verbosity levels when requesting transaction details.

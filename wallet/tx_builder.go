@@ -107,6 +107,10 @@ type txBuilder struct {
 	amount         amount.Amount
 	fee            amount.Amount
 	memo           string
+	anchorAction   uint8
+	anchorRoot     []byte
+	anchorURI      string
+	anchorType     uint8
 }
 
 // setSenderAddr sets the sender's address for the transaction.
@@ -179,6 +183,15 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 
 	case payload.TypeBatchTransfer:
 		return nil, errors.New("BatchTransfer is not implemented yet")
+
+	case payload.TypeAnchor:
+		root, uri, kind, deposit := payload.PreparedAnchor(
+			m.anchorAction, m.anchorRoot, m.anchorURI, m.anchorType, m.amount)
+		trx = tx.NewAnchorTx(m.lockTime, *m.sender, m.anchorAction, root, uri, kind, deposit, m.fee,
+			tx.WithMemo(m.memo))
+		if err := trx.Payload().BasicCheck(); err != nil {
+			return nil, err
+		}
 
 	case payload.TypeSortition:
 		return nil, errors.New("unable to build sortition transactions")

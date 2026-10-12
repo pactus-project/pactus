@@ -12,6 +12,15 @@ import (
 // ErrInsufficientFunds indicates that the balance is insufficient for the transaction.
 var ErrInsufficientFunds = errors.New("insufficient funds")
 
+// ErrAnchorNotFound indicates that the account has no anchor to delete.
+var ErrAnchorNotFound = errors.New("anchor not found")
+
+// ErrAnchorDepositTooSmall indicates that a new anchor lock is below the minimum.
+var ErrAnchorDepositTooSmall = errors.New("anchor deposit is too small")
+
+// ErrAmountOverflow indicates that a sum of amounts would exceed the maximum.
+var ErrAmountOverflow = errors.New("amount overflow")
+
 // ErrPublicKeyNotSet indicates that the public key is not set for the initial Bond transaction.
 var ErrPublicKeyNotSet = errors.New("public key is not set")
 

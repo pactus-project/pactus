@@ -4,7 +4,9 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"math"
 	"net"
+	"strings"
 	"testing"
 	"time"
 
@@ -350,6 +352,7 @@ type AccountMaker struct {
 	Number  int32
 	Balance amount.Amount
 	Address crypto.Address
+	Anchor  *account.AnchorData
 }
 
 type AccountMakerOption func(*AccountMaker)
@@ -384,6 +387,37 @@ func AccountWithBalance(balance amount.Amount) AccountMakerOption {
 	}
 }
 
+// AccountWithAnchor attaches an anchor (PIP-50) to the generated test account.
+func AccountWithAnchor(anchor account.AnchorData) AccountMakerOption {
+	return func(am *AccountMaker) {
+		am.Anchor = &anchor
+	}
+}
+
+// BoundaryAnchor returns an anchor with every field at an edge of its range,
+// to check that an API shows it without loss: a 64-byte root, a 128-byte
+// UTF-8 URI with characters that need escaping, type 0xFF, a locked deposit
+// that a float64 cannot hold exactly, and the largest heights and times.
+func BoundaryAnchor() account.AnchorData {
+	root := make([]byte, 64)
+	for i := range root {
+		root[i] = byte(i)
+	}
+	uri := "https://h/<script>&\"'\n\\é€😀"
+	uri += strings.Repeat("x", 128-len(uri))
+
+	return account.AnchorData{
+		RootHash:        root,
+		ManifestURI:     uri,
+		AnchorType:      math.MaxUint8,
+		LockedDeposit:   amount.Amount(amount.MaxNanoPAC - 1),
+		CreatedAtHeight: math.MaxUint32 - 1,
+		CreatedAtTime:   math.MaxUint32 - 1,
+		UpdatedAtHeight: math.MaxUint32,
+		UpdatedAtTime:   math.MaxUint32,
+	}
+}
+
 // GenerateTestAccount generates an account for testing purposes.
 func (ts *TestSuite) GenerateTestAccount(opts ...AccountMakerOption) (crypto.Address, *account.Account) {
 	amk := ts.NewAccountMaker()
@@ -392,6 +426,11 @@ func (ts *TestSuite) GenerateTestAccount(opts ...AccountMakerOption) (crypto.Add
 	}
 	acc := account.NewAccount(amk.Number)
 	acc.AddToBalance(amk.Balance)
+	if amk.Anchor != nil {
+		if err := acc.SetAnchor(*amk.Anchor); err != nil {
+			panic(err)
+		}
+	}
 
 	return amk.Address, acc
 }

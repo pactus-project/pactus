@@ -563,6 +563,132 @@ final $typed_data.Uint8List validatorInfoDescriptor = $convert.base64Decode(
     'GA0gASgJUg1kZWxlZ2F0ZU93bmVyEiUKDmRlbGVnYXRlX3NoYXJlGA4gASgDUg1kZWxlZ2F0ZV'
     'NoYXJlEicKD2RlbGVnYXRlX2V4cGlyeRgPIAEoDVIOZGVsZWdhdGVFeHBpcnk=');
 
+@$core.Deprecated('Use getAnchorRequestDescriptor instead')
+const GetAnchorRequest$json = {
+  '1': 'GetAnchorRequest',
+  '2': [
+    {'1': 'address', '3': 1, '4': 1, '5': 9, '10': 'address'},
+  ],
+};
+
+/// Descriptor for `GetAnchorRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getAnchorRequestDescriptor = $convert.base64Decode(
+    'ChBHZXRBbmNob3JSZXF1ZXN0EhgKB2FkZHJlc3MYASABKAlSB2FkZHJlc3M=');
+
+@$core.Deprecated('Use getAnchorResponseDescriptor instead')
+const GetAnchorResponse$json = {
+  '1': 'GetAnchorResponse',
+  '2': [
+    {'1': 'found', '3': 1, '4': 1, '5': 8, '10': 'found'},
+    {'1': 'address', '3': 2, '4': 1, '5': 9, '10': 'address'},
+    {
+      '1': 'anchor',
+      '3': 3,
+      '4': 1,
+      '5': 11,
+      '6': '.pactus.AnchorInfo',
+      '10': 'anchor'
+    },
+  ],
+};
+
+/// Descriptor for `GetAnchorResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getAnchorResponseDescriptor = $convert.base64Decode(
+    'ChFHZXRBbmNob3JSZXNwb25zZRIUCgVmb3VuZBgBIAEoCFIFZm91bmQSGAoHYWRkcmVzcxgCIA'
+    'EoCVIHYWRkcmVzcxIqCgZhbmNob3IYAyABKAsyEi5wYWN0dXMuQW5jaG9ySW5mb1IGYW5jaG9y');
+
+@$core.Deprecated('Use listAnchorsRequestDescriptor instead')
+const ListAnchorsRequest$json = {
+  '1': 'ListAnchorsRequest',
+  '2': [
+    {'1': 'skip', '3': 1, '4': 1, '5': 13, '10': 'skip'},
+    {'1': 'count', '3': 2, '4': 1, '5': 13, '10': 'count'},
+  ],
+};
+
+/// Descriptor for `ListAnchorsRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List listAnchorsRequestDescriptor = $convert.base64Decode(
+    'ChJMaXN0QW5jaG9yc1JlcXVlc3QSEgoEc2tpcBgBIAEoDVIEc2tpcBIUCgVjb3VudBgCIAEoDV'
+    'IFY291bnQ=');
+
+@$core.Deprecated('Use listAnchorsResponseDescriptor instead')
+const ListAnchorsResponse$json = {
+  '1': 'ListAnchorsResponse',
+  '2': [
+    {
+      '1': 'items',
+      '3': 1,
+      '4': 3,
+      '5': 11,
+      '6': '.pactus.AnchorListItem',
+      '10': 'items'
+    },
+    {'1': 'total', '3': 2, '4': 1, '5': 13, '10': 'total'},
+  ],
+};
+
+/// Descriptor for `ListAnchorsResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List listAnchorsResponseDescriptor = $convert.base64Decode(
+    'ChNMaXN0QW5jaG9yc1Jlc3BvbnNlEiwKBWl0ZW1zGAEgAygLMhYucGFjdHVzLkFuY2hvckxpc3'
+    'RJdGVtUgVpdGVtcxIUCgV0b3RhbBgCIAEoDVIFdG90YWw=');
+
+@$core.Deprecated('Use anchorListItemDescriptor instead')
+const AnchorListItem$json = {
+  '1': 'AnchorListItem',
+  '2': [
+    {'1': 'address', '3': 1, '4': 1, '5': 9, '10': 'address'},
+    {
+      '1': 'anchor',
+      '3': 2,
+      '4': 1,
+      '5': 11,
+      '6': '.pactus.AnchorInfo',
+      '10': 'anchor'
+    },
+  ],
+};
+
+/// Descriptor for `AnchorListItem`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List anchorListItemDescriptor = $convert.base64Decode(
+    'Cg5BbmNob3JMaXN0SXRlbRIYCgdhZGRyZXNzGAEgASgJUgdhZGRyZXNzEioKBmFuY2hvchgCIA'
+    'EoCzISLnBhY3R1cy5BbmNob3JJbmZvUgZhbmNob3I=');
+
+@$core.Deprecated('Use anchorInfoDescriptor instead')
+const AnchorInfo$json = {
+  '1': 'AnchorInfo',
+  '2': [
+    {'1': 'root_hash', '3': 1, '4': 1, '5': 12, '10': 'rootHash'},
+    {'1': 'manifest_uri', '3': 2, '4': 1, '5': 9, '10': 'manifestUri'},
+    {'1': 'anchor_type', '3': 3, '4': 1, '5': 13, '10': 'anchorType'},
+    {'1': 'locked_deposit', '3': 4, '4': 1, '5': 3, '10': 'lockedDeposit'},
+    {
+      '1': 'created_at_height',
+      '3': 5,
+      '4': 1,
+      '5': 13,
+      '10': 'createdAtHeight'
+    },
+    {'1': 'created_at_time', '3': 6, '4': 1, '5': 13, '10': 'createdAtTime'},
+    {
+      '1': 'updated_at_height',
+      '3': 7,
+      '4': 1,
+      '5': 13,
+      '10': 'updatedAtHeight'
+    },
+    {'1': 'updated_at_time', '3': 8, '4': 1, '5': 13, '10': 'updatedAtTime'},
+  ],
+};
+
+/// Descriptor for `AnchorInfo`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List anchorInfoDescriptor = $convert.base64Decode(
+    'CgpBbmNob3JJbmZvEhsKCXJvb3RfaGFzaBgBIAEoDFIIcm9vdEhhc2gSIQoMbWFuaWZlc3RfdX'
+    'JpGAIgASgJUgttYW5pZmVzdFVyaRIfCgthbmNob3JfdHlwZRgDIAEoDVIKYW5jaG9yVHlwZRIl'
+    'Cg5sb2NrZWRfZGVwb3NpdBgEIAEoA1INbG9ja2VkRGVwb3NpdBIqChFjcmVhdGVkX2F0X2hlaW'
+    'dodBgFIAEoDVIPY3JlYXRlZEF0SGVpZ2h0EiYKD2NyZWF0ZWRfYXRfdGltZRgGIAEoDVINY3Jl'
+    'YXRlZEF0VGltZRIqChF1cGRhdGVkX2F0X2hlaWdodBgHIAEoDVIPdXBkYXRlZEF0SGVpZ2h0Ei'
+    'YKD3VwZGF0ZWRfYXRfdGltZRgIIAEoDVINdXBkYXRlZEF0VGltZQ==');
+
 @$core.Deprecated('Use accountInfoDescriptor instead')
 const AccountInfo$json = {
   '1': 'AccountInfo',
@@ -572,6 +698,19 @@ const AccountInfo$json = {
     {'1': 'number', '3': 3, '4': 1, '5': 5, '10': 'number'},
     {'1': 'balance', '3': 4, '4': 1, '5': 3, '10': 'balance'},
     {'1': 'address', '3': 5, '4': 1, '5': 9, '10': 'address'},
+    {
+      '1': 'anchor',
+      '3': 6,
+      '4': 1,
+      '5': 11,
+      '6': '.pactus.AnchorInfo',
+      '9': 0,
+      '10': 'anchor',
+      '17': true
+    },
+  ],
+  '8': [
+    {'1': '_anchor'},
   ],
 };
 
@@ -579,7 +718,8 @@ const AccountInfo$json = {
 final $typed_data.Uint8List accountInfoDescriptor = $convert.base64Decode(
     'CgtBY2NvdW50SW5mbxISCgRoYXNoGAEgASgJUgRoYXNoEhIKBGRhdGEYAiABKAlSBGRhdGESFg'
     'oGbnVtYmVyGAMgASgFUgZudW1iZXISGAoHYmFsYW5jZRgEIAEoA1IHYmFsYW5jZRIYCgdhZGRy'
-    'ZXNzGAUgASgJUgdhZGRyZXNz');
+    'ZXNzGAUgASgJUgdhZGRyZXNzEi8KBmFuY2hvchgGIAEoCzISLnBhY3R1cy5BbmNob3JJbmZvSA'
+    'BSBmFuY2hvcogBAUIJCgdfYW5jaG9y');
 
 @$core.Deprecated('Use blockHeaderInfoDescriptor instead')
 const BlockHeaderInfo$json = {
@@ -726,6 +866,16 @@ const $core.Map<$core.String, $core.dynamic> BlockchainServiceBase$json = {
       '3': '.pactus.GetAccountResponse'
     },
     {
+      '1': 'GetAnchor',
+      '2': '.pactus.GetAnchorRequest',
+      '3': '.pactus.GetAnchorResponse'
+    },
+    {
+      '1': 'ListAnchors',
+      '2': '.pactus.ListAnchorsRequest',
+      '3': '.pactus.ListAnchorsResponse'
+    },
+    {
       '1': 'GetValidator',
       '2': '.pactus.GetValidatorRequest',
       '3': '.pactus.GetValidatorResponse'
@@ -768,6 +918,7 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>>
   '.pactus.PayloadWithdraw': $0.PayloadWithdraw$json,
   '.pactus.PayloadBatchTransfer': $0.PayloadBatchTransfer$json,
   '.pactus.Recipient': $0.Recipient$json,
+  '.pactus.PayloadAnchor': $0.PayloadAnchor$json,
   '.pactus.GetBlockHashRequest': GetBlockHashRequest$json,
   '.pactus.GetBlockHashResponse': GetBlockHashResponse$json,
   '.pactus.GetBlockHeightRequest': GetBlockHeightRequest$json,
@@ -787,6 +938,12 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>>
   '.pactus.GetAccountRequest': GetAccountRequest$json,
   '.pactus.GetAccountResponse': GetAccountResponse$json,
   '.pactus.AccountInfo': AccountInfo$json,
+  '.pactus.AnchorInfo': AnchorInfo$json,
+  '.pactus.GetAnchorRequest': GetAnchorRequest$json,
+  '.pactus.GetAnchorResponse': GetAnchorResponse$json,
+  '.pactus.ListAnchorsRequest': ListAnchorsRequest$json,
+  '.pactus.ListAnchorsResponse': ListAnchorsResponse$json,
+  '.pactus.AnchorListItem': AnchorListItem$json,
   '.pactus.GetValidatorRequest': GetValidatorRequest$json,
   '.pactus.GetValidatorResponse': GetValidatorResponse$json,
   '.pactus.GetValidatorByNumberRequest': GetValidatorByNumberRequest$json,
@@ -810,11 +967,14 @@ final $typed_data.Uint8List blockchainServiceDescriptor = $convert.base64Decode(
     '9tbWl0dGVlSW5mb1Jlc3BvbnNlElUKEEdldENvbnNlbnN1c0luZm8SHy5wYWN0dXMuR2V0Q29u'
     'c2Vuc3VzSW5mb1JlcXVlc3QaIC5wYWN0dXMuR2V0Q29uc2Vuc3VzSW5mb1Jlc3BvbnNlEkMKCk'
     'dldEFjY291bnQSGS5wYWN0dXMuR2V0QWNjb3VudFJlcXVlc3QaGi5wYWN0dXMuR2V0QWNjb3Vu'
-    'dFJlc3BvbnNlEkkKDEdldFZhbGlkYXRvchIbLnBhY3R1cy5HZXRWYWxpZGF0b3JSZXF1ZXN0Gh'
-    'wucGFjdHVzLkdldFZhbGlkYXRvclJlc3BvbnNlElkKFEdldFZhbGlkYXRvckJ5TnVtYmVyEiMu'
-    'cGFjdHVzLkdldFZhbGlkYXRvckJ5TnVtYmVyUmVxdWVzdBocLnBhY3R1cy5HZXRWYWxpZGF0b3'
-    'JSZXNwb25zZRJkChVHZXRWYWxpZGF0b3JBZGRyZXNzZXMSJC5wYWN0dXMuR2V0VmFsaWRhdG9y'
-    'QWRkcmVzc2VzUmVxdWVzdBolLnBhY3R1cy5HZXRWYWxpZGF0b3JBZGRyZXNzZXNSZXNwb25zZR'
-    'JJCgxHZXRQdWJsaWNLZXkSGy5wYWN0dXMuR2V0UHVibGljS2V5UmVxdWVzdBocLnBhY3R1cy5H'
-    'ZXRQdWJsaWNLZXlSZXNwb25zZRJVChBHZXRUeFBvb2xDb250ZW50Eh8ucGFjdHVzLkdldFR4UG'
-    '9vbENvbnRlbnRSZXF1ZXN0GiAucGFjdHVzLkdldFR4UG9vbENvbnRlbnRSZXNwb25zZQ==');
+    'dFJlc3BvbnNlEkAKCUdldEFuY2hvchIYLnBhY3R1cy5HZXRBbmNob3JSZXF1ZXN0GhkucGFjdH'
+    'VzLkdldEFuY2hvclJlc3BvbnNlEkYKC0xpc3RBbmNob3JzEhoucGFjdHVzLkxpc3RBbmNob3Jz'
+    'UmVxdWVzdBobLnBhY3R1cy5MaXN0QW5jaG9yc1Jlc3BvbnNlEkkKDEdldFZhbGlkYXRvchIbLn'
+    'BhY3R1cy5HZXRWYWxpZGF0b3JSZXF1ZXN0GhwucGFjdHVzLkdldFZhbGlkYXRvclJlc3BvbnNl'
+    'ElkKFEdldFZhbGlkYXRvckJ5TnVtYmVyEiMucGFjdHVzLkdldFZhbGlkYXRvckJ5TnVtYmVyUm'
+    'VxdWVzdBocLnBhY3R1cy5HZXRWYWxpZGF0b3JSZXNwb25zZRJkChVHZXRWYWxpZGF0b3JBZGRy'
+    'ZXNzZXMSJC5wYWN0dXMuR2V0VmFsaWRhdG9yQWRkcmVzc2VzUmVxdWVzdBolLnBhY3R1cy5HZX'
+    'RWYWxpZGF0b3JBZGRyZXNzZXNSZXNwb25zZRJJCgxHZXRQdWJsaWNLZXkSGy5wYWN0dXMuR2V0'
+    'UHVibGljS2V5UmVxdWVzdBocLnBhY3R1cy5HZXRQdWJsaWNLZXlSZXNwb25zZRJVChBHZXRUeF'
+    'Bvb2xDb250ZW50Eh8ucGFjdHVzLkdldFR4UG9vbENvbnRlbnRSZXF1ZXN0GiAucGFjdHVzLkdl'
+    'dFR4UG9vbENvbnRlbnRSZXNwb25zZQ==');

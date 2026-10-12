@@ -114,6 +114,8 @@ func TestAccount(t *testing.T) {
 
 		assert.Equal(t, 200, w.Code)
 		assert.Contains(t, w.Body.String(), acc.Balance().String())
+		assert.NotContains(t, w.Body.String(), "Anchor Type")
+		assert.NotContains(t, w.Body.String(), "Locked Deposit")
 		fmt.Println(w.Body)
 	})
 

@@ -246,6 +246,7 @@ func defaultConfigLocalnet() *Config {
 	conf.ZeroMq.ZmqPubTxInfo = "tcp://127.0.0.1:28333"
 	conf.ZeroMq.ZmqPubRawBlock = "tcp://127.0.0.1:28334"
 	conf.ZeroMq.ZmqPubRawTx = "tcp://127.0.0.1:28335"
+	conf.ZeroMq.ZmqPubAnchorInfo = "tcp://127.0.0.1:28336"
 	conf.ZeroMq.ZmqPubHWM = 1000
 
 	return conf

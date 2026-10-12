@@ -92,6 +92,17 @@ function deserialize_pactus_DecodeRawTransactionResponse(buffer_arg) {
   return transaction_pb.DecodeRawTransactionResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_GetRawAnchorTransactionRequest(arg) {
+  if (!(arg instanceof transaction_pb.GetRawAnchorTransactionRequest)) {
+    throw new Error('Expected argument of type pactus.GetRawAnchorTransactionRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetRawAnchorTransactionRequest(buffer_arg) {
+  return transaction_pb.GetRawAnchorTransactionRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_GetRawBatchTransferTransactionRequest(arg) {
   if (!(arg instanceof transaction_pb.GetRawBatchTransferTransactionRequest)) {
     throw new Error('Expected argument of type pactus.GetRawBatchTransferTransactionRequest');
@@ -276,6 +287,18 @@ getRawBatchTransferTransaction: {
     responseType: transaction_pb.GetRawTransactionResponse,
     requestSerialize: serialize_pactus_GetRawBatchTransferTransactionRequest,
     requestDeserialize: deserialize_pactus_GetRawBatchTransferTransactionRequest,
+    responseSerialize: serialize_pactus_GetRawTransactionResponse,
+    responseDeserialize: deserialize_pactus_GetRawTransactionResponse,
+  },
+  // GetRawAnchorTransaction retrieves raw details of an anchor transaction.
+getRawAnchorTransaction: {
+    path: '/pactus.Transaction/GetRawAnchorTransaction',
+    requestStream: false,
+    responseStream: false,
+    requestType: transaction_pb.GetRawAnchorTransactionRequest,
+    responseType: transaction_pb.GetRawTransactionResponse,
+    requestSerialize: serialize_pactus_GetRawAnchorTransactionRequest,
+    requestDeserialize: deserialize_pactus_GetRawAnchorTransactionRequest,
     responseSerialize: serialize_pactus_GetRawTransactionResponse,
     responseDeserialize: deserialize_pactus_GetRawTransactionResponse,
   },

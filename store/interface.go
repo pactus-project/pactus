@@ -95,6 +95,7 @@ type Reader interface {
 	ValidatorByNumber(num int32) (*validator.Validator, error)
 	IterateValidators(consumer func(*validator.Validator) (stop bool))
 	IterateAccounts(consumer func(crypto.Address, *account.Account) (stop bool))
+	AnchorAddresses(skip, count uint32) ([]crypto.Address, uint32)
 	TotalValidators() int32
 	ActiveValidators() int32
 	LastCertificate() *certificate.Certificate
