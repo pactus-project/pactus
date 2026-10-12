@@ -86,9 +86,15 @@ func (addr Address) String() string {
 	return str
 }
 
-// ShortString returns a shortened string representation of the hash.
+// ShortString returns a shortened string representation of the address.
 func (addr Address) ShortString() string {
 	str := addr.String()
+
+	// An address with an invalid type can't be encoded, and its string is empty.
+	// Such addresses can be received from the network, and they are used in the logs.
+	if len(str) < 13 {
+		return fmt.Sprintf("invalid-%x", addr[:4])
+	}
 
 	return fmt.Sprintf("%s-%s", str[:8], str[len(str)-5:])
 }

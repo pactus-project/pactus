@@ -306,3 +306,41 @@ func TestAddressTypeString(t *testing.T) {
 		}
 	})
 }
+
+// Addresses are received from the network, and the data that is decoded
+// from CBOR is not checked. They are printed in the logs, whatever their content.
+func TestShortStringOfInvalidAddress(t *testing.T) {
+	// The type of an address is encoded in 5 bits. Bigger types can't be encoded.
+	for _, typ := range []byte{32, 33, 100, 0xff} {
+		var addr crypto.Address
+		addr[0] = typ
+		for i := 1; i < len(addr); i++ {
+			addr[i] = byte(i)
+		}
+		require.Empty(t, addr.String(), "type %d", typ)
+
+		require.NotPanics(t, func() {
+			assert.Equal(t, "invalid-"+hex.EncodeToString(addr[:4]), addr.ShortString(), "type %d", typ)
+			assert.Equal(t, addr.ShortString(), addr.LogString())
+		}, "type %d", typ)
+	}
+
+	// Types that are not used yet, but can be encoded.
+	for _, typ := range []byte{6, 7, 31} {
+		var addr crypto.Address
+		addr[0] = typ
+
+		require.NotPanics(t, func() {
+			str := addr.String()
+			assert.Equal(t, str[:8]+"-"+str[len(str)-5:], addr.ShortString(), "type %d", typ)
+		}, "type %d", typ)
+	}
+
+	t.Run("valid addresses are not changed", func(t *testing.T) {
+		assert.Equal(t, "00000000-00000", crypto.TreasuryAddress.ShortString())
+
+		addr := crypto.NewAddress(crypto.AddressTypeBLSAccount, bytes.Repeat([]byte{7}, 20))
+		str := addr.String()
+		assert.Equal(t, str[:8]+"-"+str[len(str)-5:], addr.ShortString())
+	})
+}
