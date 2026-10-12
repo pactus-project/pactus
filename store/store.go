@@ -3,6 +3,7 @@ package store
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"sync"
 
 	"github.com/pactus-project/gopkg/logger"
@@ -99,6 +100,12 @@ func NewStore(conf *Config) (Store, error) {
 		isPruned:       false,
 	}
 
+	if err := store.checkLastInfo(); err != nil {
+		_ = db.Close()
+
+		return nil, fmt.Errorf("unable to read the last certificate: %w", err)
+	}
+
 	lastCert := store.lastCertificate()
 	if lastCert == nil {
 		return store, nil
@@ -119,10 +126,15 @@ func NewStore(conf *Config) (Store, error) {
 	for height := startHeight; height < currentHeight+1; height++ {
 		cBlk, err := store.block(height)
 		if err != nil {
+			// Release the database, otherwise it stays locked.
+			_ = db.Close()
+
 			return nil, err
 		}
 		blk, err := cBlk.ToBlock()
 		if err != nil {
+			_ = db.Close()
+
 			return nil, err
 		}
 
@@ -265,9 +277,10 @@ func (s *store) Transaction(txID tx.ID) (*CommittedTx, error) {
 	if err != nil {
 		return nil, err
 	}
-	start := pos.offset
-	end := pos.offset + pos.length
-	if end > uint32(len(data)) {
+	// The sum is calculated with 64 bits to avoid overflow of a corrupted index.
+	start := uint64(pos.offset)
+	end := start + uint64(pos.length)
+	if end > uint64(len(data)) || len(data) < hash.HashSize+5 {
 		return nil, ErrBadOffset
 	}
 	blockTime := util.BytesToUint32LE(data[hash.HashSize+1 : hash.HashSize+5])
@@ -415,19 +428,47 @@ func (s *store) lastCertificate() *certificate.Certificate {
 		// Genesis block
 		return nil
 	}
-	reader := bytes.NewReader(data)
-	version := int32(0)
-	cert := new(certificate.Certificate)
-	err := encoding.ReadElements(reader, &version)
-	if err != nil {
-		return nil
-	}
-	err = cert.Decode(reader)
+	cert, err := decodeLastInfo(data)
 	if err != nil {
 		return nil
 	}
 
 	return cert
+}
+
+func decodeLastInfo(data []byte) (*certificate.Certificate, error) {
+	reader := bytes.NewReader(data)
+	version := int32(0)
+	cert := new(certificate.Certificate)
+	err := encoding.ReadElements(reader, &version)
+	if err != nil {
+		return nil, err
+	}
+	err = cert.Decode(reader)
+	if err != nil {
+		return nil, err
+	}
+
+	return cert, nil
+}
+
+// checkLastInfo returns an error if the last certificate is saved in the database but can't be read.
+// `lastCertificate` returns nil in this case, and the store would be mistaken for an empty one
+// (at the genesis height) while it has blocks.
+func (s *store) checkLastInfo() error {
+	data, err := tryGet(s.db, lastInfoKey)
+	if err != nil {
+		if errors.Is(err, leveldb.ErrNotFound) {
+			// Genesis block
+			return nil
+		}
+
+		return err
+	}
+
+	_, err = decodeLastInfo(data)
+
+	return err
 }
 
 func (s *store) WriteBatch() error {
