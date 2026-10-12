@@ -112,10 +112,14 @@ func IsValidDirPath(path string) bool {
 	fi, err := os.Stat(path)
 	if err == nil {
 		if fi.IsDir() {
-			if err := os.WriteFile(path+"/test", []byte{}, 0o600); err != nil {
+			// A temporary file with a unique name checks that the directory is writable,
+			// without overwriting or removing the files of the user.
+			file, err := os.CreateTemp(path, ".write-check-*")
+			if err != nil {
 				return false
 			}
-			_ = os.Remove(path + "/test")
+			_ = file.Close()
+			_ = os.Remove(file.Name())
 
 			return true
 		}

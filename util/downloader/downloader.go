@@ -66,6 +66,10 @@ func (d *Downloader) Download(ctx context.Context) error {
 }
 
 func (d *Downloader) reportStats(context.Context) {
+	if d.statsCallback == nil {
+		return
+	}
+
 	d.mu.Lock()
 	percent := float64(0)
 	if d.fileSize > 0 {
@@ -222,6 +226,12 @@ func (d *Downloader) downloadChunk(ctx context.Context, out *os.File, chk *chunk
 			offset += int64(count)
 			d.downloaded += int64(count)
 			d.mu.Unlock()
+		}
+
+		if errors.Is(err, io.EOF) && offset <= chk.end {
+			// The server closed the response before sending the whole range.
+			// Without this check, reading the closed body never ends.
+			return &Error{Message: "response is shorter than the requested range", Reason: io.ErrUnexpectedEOF}
 		}
 	}
 
