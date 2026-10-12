@@ -2,6 +2,8 @@ package util
 
 import (
 	"math/big"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -227,5 +229,29 @@ func TestCalculateChecksum(t *testing.T) {
 		hash, err := CalculateChecksum(path)
 		require.NoError(t, err)
 		assert.Equal(t, "ad5aaa2ccddfad964ab54afb08495ed90b53a99e48f96e6a0afad32ec24c37a5", hash)
+	})
+}
+
+func TestCalculateChecksumErrors(t *testing.T) {
+	t.Run("file doesn't exist", func(t *testing.T) {
+		_, err := CalculateChecksum(filepath.Join(t.TempDir(), "missing"))
+
+		require.Error(t, err)
+	})
+
+	t.Run("path is a directory", func(t *testing.T) {
+		_, err := CalculateChecksum(t.TempDir())
+
+		require.Error(t, err, "a directory has no content to hash")
+	})
+
+	t.Run("empty file", func(t *testing.T) {
+		file := filepath.Join(t.TempDir(), "empty")
+		require.NoError(t, os.WriteFile(file, nil, 0o600))
+
+		sum, err := CalculateChecksum(file)
+
+		require.NoError(t, err)
+		assert.Equal(t, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", sum)
 	})
 }

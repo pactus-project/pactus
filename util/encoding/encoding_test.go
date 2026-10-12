@@ -427,3 +427,54 @@ func TestReadElements(t *testing.T) {
 	assert.Equal(t, uint32(3), el3)
 	assert.Equal(t, uint64(4), el4)
 }
+
+func TestWriteErrors(t *testing.T) {
+	t.Run("hash does not fit in the writer", func(t *testing.T) {
+		err := WriteElement(util.NewFixedWriter(10), hash.Hash{1})
+
+		require.ErrorIs(t, err, io.ErrShortWrite)
+	})
+
+	t.Run("variable length integer does not fit in the writer", func(t *testing.T) {
+		// 300 needs two bytes: the first one is written, but not the second one.
+		require.ErrorIs(t, WriteVarInt(util.NewFixedWriter(1), 300), io.ErrShortWrite)
+		require.ErrorIs(t, WriteVarInt(util.NewFixedWriter(0), 300), io.ErrShortWrite)
+		require.NoError(t, WriteVarInt(util.NewFixedWriter(2), 300))
+	})
+
+	t.Run("elements stop at the first error", func(t *testing.T) {
+		w := util.NewFixedWriter(5)
+
+		err := WriteElements(w, uint32(1), uint32(2), uint32(3))
+
+		require.ErrorIs(t, err, io.ErrShortWrite)
+		assert.Equal(t, []byte{1, 0, 0, 0, 0}, w.Bytes(), "the second element is not written partially")
+	})
+}
+
+func TestReadVarIntErrors(t *testing.T) {
+	t.Run("empty reader", func(t *testing.T) {
+		_, err := ReadVarInt(bytes.NewReader(nil))
+
+		require.ErrorIs(t, err, io.EOF)
+	})
+
+	t.Run("truncated number", func(t *testing.T) {
+		// The most significant bit says that another byte is expected.
+		_, err := ReadVarInt(bytes.NewReader([]byte{0xac}))
+
+		require.Error(t, err)
+	})
+
+	t.Run("round trip of the limits", func(t *testing.T) {
+		for _, val := range []uint64{0, 1, 127, 128, 255, 16383, 16384, 1<<32 - 1, 1 << 32, 1<<63 - 1, 1<<64 - 1} {
+			buf := new(bytes.Buffer)
+			require.NoError(t, WriteVarInt(buf, val))
+			assert.Equal(t, VarIntSerializeSize(val), buf.Len(), "value %d", val)
+
+			got, err := ReadVarInt(buf)
+			require.NoError(t, err, "value %d", val)
+			assert.Equal(t, val, got)
+		}
+	})
+}
