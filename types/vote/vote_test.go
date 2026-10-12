@@ -538,3 +538,41 @@ func TestCPInvalidJustType(t *testing.T) {
 	err := vte.UnmarshalCBOR(voteData)
 	require.Error(t, err)
 }
+
+func TestVoteTypeStrings(t *testing.T) {
+	assert.Equal(t, "PREPARE", vote.VoteTypePrepare.String())
+	assert.Equal(t, "PRECOMMIT", vote.VoteTypePrecommit.String())
+	assert.Equal(t, "PRE-VOTE", vote.VoteTypeCPPreVote.String())
+	assert.Equal(t, "MAIN-VOTE", vote.VoteTypeCPMainVote.String())
+	assert.Equal(t, "DECIDED", vote.VoteTypeCPDecided.String())
+	assert.Equal(t, "15", vote.Type(15).String())
+
+	for _, valid := range []vote.Type{
+		vote.VoteTypePrepare, vote.VoteTypePrecommit,
+		vote.VoteTypeCPPreVote, vote.VoteTypeCPMainVote, vote.VoteTypeCPDecided,
+	} {
+		assert.True(t, valid.IsValid(), valid.String())
+	}
+	for _, invalid := range []vote.Type{0, 6, 15, -1} {
+		assert.False(t, invalid.IsValid(), invalid.String())
+	}
+}
+
+func TestJustTypeStrings(t *testing.T) {
+	assert.Equal(t, "JustInitNo", vote.JustTypeInitNo.String())
+	assert.Equal(t, "JustMainVoteConflict", vote.JustTypeMainVoteConflict.String())
+	assert.Equal(t, "Unknown", vote.JustType(100).String())
+}
+
+func TestUnknownVoteTypeIsLoggedSafely(t *testing.T) {
+	// A vote of type 15, with an invalid signer: it comes from the network and it can be logged.
+	data, _ := hex.DecodeString("A7010F0218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
+		"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6")
+	invVote := new(vote.Vote)
+	require.NoError(t, invVote.UnmarshalCBOR(data))
+
+	require.NotPanics(t, func() {
+		assert.Equal(t, "unknown type", invVote.LogString())
+	})
+	require.Error(t, invVote.BasicCheck())
+}

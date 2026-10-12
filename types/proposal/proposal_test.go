@@ -6,6 +6,7 @@ import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -120,5 +121,68 @@ func TestBasicCheck(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
 		prop := ts.GenerateTestProposal(100, 0)
 		require.NoError(t, prop.BasicCheck())
+	})
+}
+
+// The signature of a proposal is bound to the block, the height and the round.
+// So it can't be replayed for another block, another height, or another round.
+func TestCheckSignatureIsBoundToTheProposal(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	valKey := ts.RandValKey()
+	otherKey := ts.RandValKey()
+	blockHash := ts.RandHash()
+	height := ts.RandHeight()
+	round := ts.RandRound()
+	sig := valKey.Sign(proposal.SignBytes(blockHash, height, round))
+
+	require.NoError(t, proposal.ChecKSignature(blockHash, height, round, sig, valKey.PublicKey()))
+
+	t.Run("another block", func(t *testing.T) {
+		require.Error(t, proposal.ChecKSignature(ts.RandHash(), height, round, sig, valKey.PublicKey()))
+	})
+
+	t.Run("another height", func(t *testing.T) {
+		require.Error(t, proposal.ChecKSignature(blockHash, height+1, round, sig, valKey.PublicKey()))
+	})
+
+	t.Run("another round", func(t *testing.T) {
+		require.Error(t, proposal.ChecKSignature(blockHash, height, round+1, sig, valKey.PublicKey()))
+	})
+
+	t.Run("another signer", func(t *testing.T) {
+		require.Error(t, proposal.ChecKSignature(blockHash, height, round, sig, otherKey.PublicKey()))
+	})
+}
+
+func TestProposalAccessors(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	prop := ts.GenerateTestProposal(ts.RandHeight(), ts.RandRound())
+
+	assert.NotNil(t, prop.Signature())
+	assert.Contains(t, prop.LogString(), prop.Block().LogString())
+}
+
+func TestProposalWithInvalidBlock(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	// A block without any transaction is not valid: it should have the subsidy transaction.
+	prop := ts.GenerateTestProposal(ts.RandHeight(), ts.RandRound())
+	invalidBlock := block.MakeBlock(prop.Block().Header().Version(), prop.Block().Header().Time(), block.Txs{},
+		prop.Block().Header().PrevBlockHash(), prop.Block().Header().StateRoot(), prop.Block().PrevCertificate(),
+		prop.Block().Header().SortitionSeed(), prop.Block().Header().ProposerAddress())
+	invalidProp := proposal.NewProposal(prop.Height(), prop.Round(), invalidBlock)
+	invalidProp.SetSignature(prop.Signature())
+
+	err := invalidProp.BasicCheck()
+
+	require.ErrorContains(t, err, "invalid block")
+	assert.Contains(t, invalidProp.LogString(), invalidBlock.LogString())
+
+	t.Run("proposal without block can be logged", func(t *testing.T) {
+		noBlock := &proposal.Proposal{}
+
+		assert.NotPanics(t, func() { _ = noBlock.LogString() })
 	})
 }

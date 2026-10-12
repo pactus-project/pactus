@@ -38,3 +38,19 @@ func TestRoundEncodeAsSlice(t *testing.T) {
 		assert.Equal(t, test.round, round)
 	}
 }
+
+func TestRoundSafeIncrease(t *testing.T) {
+	assert.Equal(t, types.Round(15), types.Round(10).SafeIncrease(5))
+	assert.Equal(t, types.Round(10), types.Round(10).SafeIncrease(0))
+	assert.Equal(t, types.Round(1), types.Round(0).SafeIncrease(1))
+}
+
+func TestRoundSafeDecrease(t *testing.T) {
+	assert.Equal(t, types.Round(5), types.Round(10).SafeDecrease(5))
+	assert.Equal(t, types.Round(10), types.Round(10).SafeDecrease(0))
+
+	// The result never goes below zero.
+	assert.Equal(t, types.Round(0), types.Round(10).SafeDecrease(10))
+	assert.Equal(t, types.Round(0), types.Round(10).SafeDecrease(11))
+	assert.Equal(t, types.Round(0), types.Round(0).SafeDecrease(1))
+}
