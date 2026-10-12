@@ -179,7 +179,16 @@ func (st *state) tryLoadLastInfo() error {
 }
 
 func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
+	if len(genDoc.Validators()) == 0 {
+		return ErrNoGenesisValidator
+	}
+
 	accs := genDoc.Accounts()
+	if len(accs) == 0 {
+		// The state root can't be calculated without accounts.
+		return ErrNoGenesisAccount
+	}
+
 	for addr, acc := range accs {
 		st.store.UpdateAccount(addr, acc)
 	}
@@ -277,6 +286,13 @@ func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
 	defer st.lk.Unlock()
 
 	lastCert := st.lastInfo.Certificate()
+	if lastCert == nil {
+		// Only the genesis block has no certificate.
+		return InvalidVoteForCertificateError{
+			Vote: vte,
+		}
+	}
+
 	if vte.Type() != vote.VoteTypePrecommit ||
 		vte.Height() != lastCert.Height() ||
 		vte.Round() != lastCert.Round() {
@@ -478,10 +494,17 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 	// tries to commit them.
 	// We should never have a fork in our blockchain.
 	// But if it happens, here we can catch it.
+	// The node is not stopped: it should be able to tell the problem and to keep running,
+	// while the block is not committed.
 	if blk.Header().PrevBlockHash() != st.lastInfo.BlockHash() {
-		st.logger.Panic("a possible fork is detected",
+		st.logger.Error("a possible fork is detected",
 			"our hash", st.lastInfo.BlockHash(),
 			"block hash", blk.Header().PrevBlockHash())
+
+		return ForkDetectedError{
+			Expected: st.lastInfo.BlockHash(),
+			Got:      blk.Header().PrevBlockHash(),
+		}
 	}
 
 	err = st.validateBlock(blk, cert.Round())
@@ -812,11 +835,16 @@ func (st *state) ChainInfo() *ChainInfo {
 	genTimeSec := st.genDoc.GenesisTime().Unix()
 
 	// Sync progress: fraction of expected blocks that have been synced, clamped to [0, 1].
-	syncProgress := float64(lastBlockTimeSec-genTimeSec) / float64(nowSec-genTimeSec)
+	// If the genesis time is not in the past yet, there is nothing to sync.
+	syncProgress := 1.0
+	if elapsedSec := nowSec - genTimeSec; elapsedSec > 0 {
+		syncProgress = min(max(float64(lastBlockTimeSec-genTimeSec)/float64(elapsedSec), 0), 1)
+	}
 
 	// Blocks remaining to reach the latest block.
+	// The last block time can be slightly ahead of the local clock.
 	blockInterval := int64(st.params.BlockIntervalInSecond)
-	blocksLeft := (nowSec - lastBlockTimeSec) / blockInterval
+	blocksLeft := max((nowSec-lastBlockTimeSec)/blockInterval, 0)
 
 	return &ChainInfo{
 		LastBlockHeight:  st.lastInfo.BlockHeight(),
