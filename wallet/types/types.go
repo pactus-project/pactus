@@ -12,6 +12,20 @@ import (
 	"github.com/pactus-project/pactus/types/tx/payload"
 )
 
+// Storage driver names reported by WalletInfo.Driver.
+const (
+	// DriverSQLite is the driver name for SQLite-based wallets.
+	DriverSQLite = "SQLite"
+	// DriverLegacyJSON is the driver name for legacy JSON wallets.
+	DriverLegacyJSON = "JSON (legacy)"
+)
+
+// IsLegacyDriver reports whether the given driver name refers to the legacy
+// JSON wallet format.
+func IsLegacyDriver(driver string) bool {
+	return driver == DriverLegacyJSON
+}
+
 // WalletInfo represents the information about the wallet.
 type WalletInfo struct {
 	Version    int

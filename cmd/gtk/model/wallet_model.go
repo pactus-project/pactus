@@ -63,6 +63,15 @@ func (model *WalletModel) WalletInfo() (*pactus.GetWalletInfoResponse, error) {
 	})
 }
 
+// MigrateWallet migrates a legacy JSON wallet to the SQLite format.
+func (model *WalletModel) MigrateWallet() error {
+	_, err := model.walletClient.MigrateWallet(model.ctx, &pactus.MigrateWalletRequest{
+		WalletName: model.walletName,
+	})
+
+	return err
+}
+
 func (model *WalletModel) TotalBalance() (amount.Amount, error) {
 	res, err := model.walletClient.GetTotalBalance(model.ctx, &pactus.GetTotalBalanceRequest{
 		WalletName: model.walletName,
