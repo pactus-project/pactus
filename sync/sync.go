@@ -393,12 +393,14 @@ func (sync *synchronizer) updateBlockchain() {
 	curTime := util.RoundNow(int(blockInterval.Seconds()))
 	lastBlockTime := sync.state.LastBlockTime()
 	diff := curTime.Sub(lastBlockTime)
-	numOfBlocks := uint32(diff.Seconds() / blockInterval.Seconds())
-
-	if numOfBlocks == 0 {
-		// We are synced: last block was committed within the current block slot
+	if diff < blockInterval {
+		// We are synced: last block was committed within the current block slot.
+		// The time of the last block can also be ahead of the local clock,
+		// and the difference is negative in this case.
 		return
 	}
+
+	numOfBlocks := uint32(diff.Seconds() / blockInterval.Seconds())
 
 	downloadHeight := sync.state.LastBlockHeight()
 	downloadHeight++
