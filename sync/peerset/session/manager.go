@@ -85,9 +85,11 @@ func (sm *Manager) UpdateSessionLastActivity(sid int) {
 	}
 }
 
+// SetExpiredSessionsAsUncompleted marks the open sessions without recent activity as uncompleted.
+// Completed sessions have downloaded their blocks, and they don't expire.
 func (sm *Manager) SetExpiredSessionsAsUncompleted() {
 	for _, ssn := range sm.sessions {
-		if sm.sessionTimeout < time.Since(ssn.LastActivity) {
+		if ssn.Status == Open && sm.sessionTimeout < time.Since(ssn.LastActivity) {
 			ssn.Status = Uncompleted
 		}
 	}

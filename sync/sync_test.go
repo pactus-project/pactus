@@ -440,3 +440,30 @@ func TestCommitMissedBlock(t *testing.T) {
 		assert.Equal(t, lastHeight+2, newHeight)
 	})
 }
+
+// The blocks of a completed session are already downloaded:
+// it must not be requested again while other sessions are still running.
+func TestCompletedSessionIsNotRequestedAgain(t *testing.T) {
+	conf := testConfig()
+	conf.SessionTimeoutStr = "50ms"
+	conf.MaxSessions = 32
+	td := setup(t, conf)
+
+	pidDone := td.addPeer(t, status.StatusKnown, service.New(service.FullNode))
+	pidBusy := td.addPeer(t, status.StatusKnown, service.New(service.FullNode))
+
+	sidDone := td.sync.peerSet.OpenSession(pidDone, 101, 10)
+	sidBusy := td.sync.peerSet.OpenSession(pidBusy, 111, 10)
+	td.sync.peerSet.SetSessionCompleted(sidDone)
+
+	// The second session is still running, and it is the only one that has recent activity.
+	time.Sleep(2 * conf.SessionTimeout())
+	td.sync.peerSet.UpdateSessionLastActivity(sidBusy)
+
+	td.sync.updateBlockchain()
+
+	td.shouldNotPublishAnyMessage(t)
+	assert.Equal(t, 2, td.sync.peerSet.NumberOfSessions(), "no new session should be opened")
+	assert.True(t, td.sync.peerSet.HasOpenSession(pidBusy))
+	assert.False(t, td.sync.peerSet.HasOpenSession(pidDone))
+}
