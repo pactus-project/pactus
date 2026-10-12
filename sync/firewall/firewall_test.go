@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -515,4 +516,38 @@ func TestAllowConsensusRequest(t *testing.T) {
 		assert.Equal(t, network.Propagate, td.firewall.AllowConsensusRequest(msg))
 		assert.Equal(t, network.DropButConsume, td.firewall.AllowConsensusRequest(msg))
 	})
+}
+
+func TestExpiredMessage(t *testing.T) {
+	td := setup(t, nil)
+	td.state.EXPECT().LastBlockHeight().Return(types.Height(100)).AnyTimes()
+
+	tests := []struct {
+		name    string
+		data    []byte
+		expired bool
+	}{
+		{"empty data", nil, true},
+		{"data is too short to have a consensus height", []byte{0, 0, 0, 100, 0}, true},
+		{"current height", makeTestGossipMessage(100).Data, false},
+		{"next height", makeTestGossipMessage(101).Data, false},
+		{"previous height", makeTestGossipMessage(99).Data, false},
+		{"two heights behind", makeTestGossipMessage(98).Data, true},
+		{"far behind", makeTestGossipMessage(1).Data, true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expired, td.firewall.isExpiredMessage(tt.data))
+		})
+	}
+}
+
+func TestExpiredMessageAtGenesis(t *testing.T) {
+	td := setup(t, nil)
+	td.state.EXPECT().LastBlockHeight().Return(types.Height(0)).AnyTimes()
+
+	// All the messages are fine, because the state has not any block.
+	assert.False(t, td.firewall.isExpiredMessage(makeTestGossipMessage(0).Data))
+	assert.False(t, td.firewall.isExpiredMessage(makeTestGossipMessage(50).Data))
 }

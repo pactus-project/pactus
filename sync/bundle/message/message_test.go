@@ -41,3 +41,43 @@ func TestInvalidMessageType(t *testing.T) {
 	_, err := MakeMessage(66)
 	require.ErrorIs(t, err, InvalidMessageTypeError{Type: 66})
 }
+
+func TestMessageTypeString(t *testing.T) {
+	tests := map[Type]string{
+		TypeHello:          "hello",
+		TypeHelloAck:       "hello-ack",
+		TypeTransaction:    "transaction",
+		TypeQueryProposal:  "query-proposal",
+		TypeProposal:       "proposal",
+		TypeQueryVote:      "query-vote",
+		TypeVote:           "vote",
+		TypeBlockAnnounce:  "block-announce",
+		TypeBlocksRequest:  "blocks-request",
+		TypeBlocksResponse: "blocks-response",
+		Type(1234):         "1234",
+	}
+
+	for msgType, name := range tests {
+		assert.Equal(t, name, msgType.String())
+	}
+}
+
+func TestResponseCodeString(t *testing.T) {
+	tests := map[ResponseCode]string{
+		ResponseCodeOK:           "ok",
+		ResponseCodeRejected:     "rejected",
+		ResponseCodeMoreBlocks:   "more-blocks",
+		ResponseCodeNoMoreBlocks: "no-more-blocks",
+		ResponseCodeSynced:       "synced",
+		ResponseCode(1234):       "1234",
+	}
+
+	for code, name := range tests {
+		assert.Equal(t, name, code.String())
+	}
+}
+
+func TestErrorMessages(t *testing.T) {
+	assert.Equal(t, "bad message", BasicCheckError{Reason: "bad message"}.Error())
+	assert.Equal(t, "invalid message type: 99", InvalidMessageTypeError{Type: 99}.Error())
+}

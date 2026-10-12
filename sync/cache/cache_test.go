@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAddBlockOne(t *testing.T) {
@@ -106,4 +107,13 @@ func TestRemoveBlock(t *testing.T) {
 	cache.RemoveBlock(height)
 	assert.Nil(t, cache.GetBlock(height))
 	assert.Nil(t, cache.GetCertificate(height))
+}
+
+func TestNewCacheWithInvalidSize(t *testing.T) {
+	for _, size := range []int{0, -1} {
+		c, err := NewCache(size)
+
+		require.Error(t, err, "size %d", size)
+		assert.Nil(t, c)
+	}
 }
