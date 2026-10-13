@@ -5,8 +5,10 @@ import (
 	"encoding/hex"
 	"testing"
 
+	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -128,4 +130,53 @@ func TestCBORLengthAttack(t *testing.T) {
 
 		assert.ErrorContains(t, err, tt.msg)
 	}
+}
+
+func TestCompressedBundle(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	msg := message.NewQueryProposalMessage(ts.RandHeight(), ts.RandRound(), ts.RandValAddress())
+	msgData, err := cbor.Marshal(msg)
+	require.NoError(t, err)
+
+	t.Run("compressed message is decoded", func(t *testing.T) {
+		compressed, err := util.CompressBuffer(msgData)
+		require.NoError(t, err)
+		data, err := cbor.Marshal(&_Bundle{
+			Flags:       BundleFlagCompressed,
+			MessageType: msg.Type(),
+			MessageData: compressed,
+		})
+		require.NoError(t, err)
+
+		bdl := new(Bundle)
+		_, err = bdl.Decode(bytes.NewReader(data))
+		require.NoError(t, err)
+		assert.Equal(t, msg, bdl.Message)
+	})
+
+	t.Run("message data is not compressed, but the flag is set", func(t *testing.T) {
+		data, err := cbor.Marshal(&_Bundle{
+			Flags:       BundleFlagCompressed,
+			MessageType: msg.Type(),
+			MessageData: msgData,
+		})
+		require.NoError(t, err)
+
+		bdl := new(Bundle)
+		_, err = bdl.Decode(bytes.NewReader(data))
+		require.Error(t, err)
+	})
+
+	t.Run("unknown message type", func(t *testing.T) {
+		data, err := cbor.Marshal(&_Bundle{
+			MessageType: message.Type(1000),
+			MessageData: msgData,
+		})
+		require.NoError(t, err)
+
+		bdl := new(Bundle)
+		_, err = bdl.Decode(bytes.NewReader(data))
+		require.Error(t, err)
+	})
 }

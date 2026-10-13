@@ -460,3 +460,16 @@ func TestMetricCopy(t *testing.T) {
 
 	assert.Equal(t, cloned, peerSet.metric)
 }
+
+func TestSessionStats(t *testing.T) {
+	peerSet := NewPeerSet(time.Minute)
+	assert.Equal(t, session.Stats{}, peerSet.SessionStats())
+
+	sid1 := peerSet.OpenSession("peer1", 100, 10)
+	sid2 := peerSet.OpenSession("peer2", 110, 10)
+	peerSet.OpenSession("peer3", 120, 10)
+	peerSet.SetSessionCompleted(sid1)
+	peerSet.SetSessionUncompleted(sid2)
+
+	assert.Equal(t, session.Stats{Total: 3, Open: 1, Completed: 1, Uncompleted: 1}, peerSet.SessionStats())
+}

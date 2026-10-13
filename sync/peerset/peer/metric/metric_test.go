@@ -44,3 +44,32 @@ func TestUpdateInvalidMetric(t *testing.T) {
 	assert.Equal(t, int64(1), metric.TotalInvalid.Bundles)
 	assert.Equal(t, int64(123), metric.TotalInvalid.Bytes)
 }
+
+func TestClone(t *testing.T) {
+	msgType1 := message.Type(1)
+	msgType2 := message.Type(2)
+
+	original := NewMetric()
+	original.UpdateSentMetric(msgType1, 100)
+	original.UpdateReceivedMetric(msgType2, 50)
+	original.UpdateInvalidMetric(7)
+
+	clone := original.Clone()
+	assert.Equal(t, original, clone)
+
+	// The clone doesn't share anything with the original metric.
+	clone.UpdateSentMetric(msgType1, 1)
+	clone.UpdateSentMetric(msgType2, 1)
+	clone.UpdateReceivedMetric(msgType2, 1)
+	clone.UpdateInvalidMetric(1)
+
+	assert.Equal(t, int64(1), original.TotalSent.Bundles)
+	assert.Equal(t, int64(100), original.MessageSent[msgType1].Bytes)
+	assert.NotContains(t, original.MessageSent, msgType2)
+	assert.Equal(t, int64(50), original.MessageReceived[msgType2].Bytes)
+	assert.Equal(t, int64(7), original.TotalInvalid.Bytes)
+
+	// And the original metric doesn't change the clone.
+	original.UpdateSentMetric(msgType1, 10)
+	assert.Equal(t, int64(101), clone.MessageSent[msgType1].Bytes)
+}

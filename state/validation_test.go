@@ -264,3 +264,26 @@ func TestRejectV3BlockAfterHalving(t *testing.T) {
 		Version: protocol.ProtocolVersion5,
 	})
 }
+
+// Only the first block has no certificate for its previous block.
+func TestBlockValidationWithoutPrevCertificate(t *testing.T) {
+	td := setup(t)
+
+	td.fakeTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).AnyTimes()
+
+	blk0, _ := td.makeBlockAndCertificate(t, 0)
+	blk := block.MakeBlock(
+		blk0.Header().Version(),
+		blk0.Header().Time(),
+		blk0.Transactions(),
+		blk0.Header().PrevBlockHash(),
+		blk0.Header().StateRoot(),
+		nil,
+		blk0.Header().SortitionSeed(),
+		blk0.Header().ProposerAddress(),
+	)
+	cert := td.makeCertificateAndSign(t, blk.Hash(), 0)
+
+	require.ErrorIs(t, td.state.ValidateBlock(blk, 0), ErrInvalidCertificate)
+	require.ErrorIs(t, td.state.CommitBlock(blk, cert), ErrInvalidCertificate)
+}
