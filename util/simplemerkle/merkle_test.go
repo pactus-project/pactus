@@ -55,6 +55,9 @@ func TestMerkleTreeDepth2(t *testing.T) {
 }
 
 func TestMerkleTree_Bitcoin_Block100000(t *testing.T) {
+	originalHasher := hasher
+	t.Cleanup(func() { hasher = originalHasher })
+
 	hasher = func(data []byte) hash.Hash {
 		first := sha256.Sum256(data)
 		second := sha256.Sum256(first[:])
@@ -83,6 +86,9 @@ func TestMerkleTree_Bitcoin_Block100000(t *testing.T) {
 }
 
 func TestMerkleTree_Bitcoin_Block153342(t *testing.T) {
+	originalHasher := hasher
+	t.Cleanup(func() { hasher = originalHasher })
+
 	hasher = func(data []byte) hash.Hash {
 		first := sha256.Sum256(data)
 		second := sha256.Sum256(first[:])
@@ -124,4 +130,47 @@ func TestMerkleTree_Bitcoin_Block153342(t *testing.T) {
 
 	root2 := HashMerkleBranches(&left, &right)
 	assert.Equal(t, root, *root2)
+}
+
+func TestEmptyTree(t *testing.T) {
+	tree := NewTreeFromHashes(nil)
+	assert.Nil(t, tree, "there is no tree without leaves")
+	assert.Equal(t, hash.UndefHash, tree.Root())
+	assert.Zero(t, tree.Depth())
+
+	assert.Nil(t, NewTreeFromSlices(nil))
+	assert.Empty(t, tree.ToString(), "printing an empty tree should not panic")
+	assert.Empty(t, (&Tree{}).ToString())
+}
+
+func TestSingleLeaf(t *testing.T) {
+	leaf := strToHash("a")
+
+	tree := NewTreeFromHashes([]hash.Hash{leaf})
+
+	assert.Equal(t, leaf, tree.Root(), "the root of a single leaf is the leaf itself")
+	assert.Zero(t, tree.Depth())
+}
+
+// The last leaf of a tree with an odd number of leaves is paired with itself.
+// So two different lists of leaves can have the same root.
+// The users of the tree should not rely on the root alone to identify the list.
+func TestOddNumberOfLeaves(t *testing.T) {
+	a, b, c := strToHash("a"), strToHash("b"), strToHash("c")
+
+	odd := NewTreeFromHashes([]hash.Hash{a, b, c})
+	duplicated := NewTreeFromHashes([]hash.Hash{a, b, c, c})
+	different := NewTreeFromHashes([]hash.Hash{a, b, strToHash("d")})
+
+	assert.Equal(t, odd.Root(), duplicated.Root())
+	assert.NotEqual(t, odd.Root(), different.Root())
+}
+
+func TestHashMerkleBranches(t *testing.T) {
+	left, right := strToHash("left"), strToHash("right")
+
+	data := append(left.Bytes(), right.Bytes()...)
+	assert.Equal(t, hash.CalcHash(data), *HashMerkleBranches(&left, &right))
+	assert.NotEqual(t, *HashMerkleBranches(&left, &right), *HashMerkleBranches(&right, &left),
+		"the order of the branches matters")
 }

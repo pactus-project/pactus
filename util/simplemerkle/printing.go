@@ -5,6 +5,10 @@ import (
 )
 
 func (tree *Tree) ToString() string {
+	if tree == nil {
+		return ""
+	}
+
 	nodes := tree.merkles
 	if len(nodes) == 0 {
 		return ""
