@@ -130,6 +130,18 @@ func TestTransactionIndexIsCorrupted(t *testing.T) {
 		})
 	})
 
+	t.Run("block record is shorter than the block header", func(t *testing.T) {
+		// The record has the hash of the block, but the version and the time of the header are cut.
+		height := lastHeight + 50
+		require.NoError(t, td.store.db.Put(blockKey(height), append(td.RandHash().Bytes(), 1, 2, 3), nil))
+		putTxIndex(t, td, txID, height, 0, 1)
+
+		require.NotPanics(t, func() {
+			_, err := td.store.Transaction(blk.Transactions()[0].ID())
+			require.ErrorIs(t, err, ErrBadOffset)
+		})
+	})
+
 	t.Run("block of the transaction doesn't exist", func(t *testing.T) {
 		putTxIndex(t, td, txID, lastHeight+100, 1, 1)
 
