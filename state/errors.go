@@ -24,6 +24,12 @@ var ErrInvalidSortitionSeed = errors.New("invalid sortition seed")
 // ErrInvalidCertificate indicates that the block certificate is invalid.
 var ErrInvalidCertificate = errors.New("invalid certificate")
 
+// ErrNoGenesisValidator indicates that the genesis doesn't have any validator.
+var ErrNoGenesisValidator = errors.New("genesis has no validator")
+
+// ErrNoGenesisAccount indicates that the genesis doesn't have any account.
+var ErrNoGenesisAccount = errors.New("genesis has no account")
+
 // InvalidBlockVersionError indicates that the block version is invalid.
 type InvalidBlockVersionError struct {
 	Version protocol.Version
@@ -84,4 +90,16 @@ type InvalidBlockTimeError struct {
 
 func (e InvalidBlockTimeError) Error() string {
 	return fmt.Sprintf("invalid block time: %s", e.Reason)
+}
+
+// ForkDetectedError is returned when a block that has a valid certificate doesn't follow the last block of the state.
+// The node and the committee are on different chains, and it can't commit the block.
+type ForkDetectedError struct {
+	Expected hash.Hash // The hash of the last block of the state
+	Got      hash.Hash // The previous block hash of the block
+}
+
+func (e ForkDetectedError) Error() string {
+	return fmt.Sprintf("a possible fork is detected, the last block hash is %s, but the block follows %s",
+		e.Expected, e.Got)
 }

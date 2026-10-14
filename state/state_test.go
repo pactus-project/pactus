@@ -34,6 +34,7 @@ type testData struct {
 	*testsuite.TestSuite
 
 	state      *state
+	fakeStore  *store.FakeStore
 	fakeTxPool *txpool.FakeTxPool
 	genValKeys []*bls.ValidatorKey
 	genAccKey  *ed25519.PrivateKey
@@ -54,6 +55,13 @@ func setupWithVersion(t *testing.T, blockVersion protocol.Version) *testData {
 func setupCommittee(t *testing.T, blockVersion protocol.Version) *testData {
 	t.Helper()
 
+	return setupWithBlocks(t, blockVersion, 7)
+}
+
+// setupWithBlocks creates a state and commits the given number of blocks on top of the genesis.
+func setupWithBlocks(t *testing.T, blockVersion protocol.Version, numBlocks types.Height) *testData {
+	t.Helper()
+
 	ts := testsuite.NewTestSuite(t)
 
 	genValNum := 4
@@ -67,7 +75,6 @@ func setupCommittee(t *testing.T, blockVersion protocol.Version) *testData {
 		genVals = append(genVals, val)
 	}
 
-	numBlocks := types.Height(7)
 	fakeTxPool := txpool.NewFakeTxPool(ts)
 	fakeTxPool.EXPECT().SetNewSandboxAndRecheck(gomock.Any()).Return().AnyTimes()
 	fakeTxPool.EXPECT().HandleCommittedBlock(gomock.Any()).Return().AnyTimes()
@@ -112,6 +119,7 @@ func setupCommittee(t *testing.T, blockVersion protocol.Version) *testData {
 	td := &testData{
 		TestSuite:  ts,
 		state:      state,
+		fakeStore:  fakeStore,
 		fakeTxPool: fakeTxPool,
 		genValKeys: genValKeys,
 		genAccKey:  genAccPrvKey,
@@ -549,22 +557,32 @@ func TestForkDetection(t *testing.T) {
 	t.Run("Two blocks with different previous block hashes", func(t *testing.T) {
 		td.fakeTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{}).Times(1)
 
-		assert.Panics(t, func() {
-			blk0, _ := td.makeBlockAndCertificate(t, 0)
-			blkFork := block.MakeBlock(
-				blk0.Header().Version(),
-				blk0.Header().Time(),
-				blk0.Transactions(),
-				td.RandHash(),
-				blk0.Header().StateRoot(),
-				blk0.PrevCertificate(),
-				blk0.Header().SortitionSeed(),
-				blk0.Header().ProposerAddress(),
-			)
-			certFork := td.makeCertificateAndSign(t, blkFork.Hash(), 0)
+		blk0, _ := td.makeBlockAndCertificate(t, 0)
+		forkHash := td.RandHash()
+		blkFork := block.MakeBlock(
+			blk0.Header().Version(),
+			blk0.Header().Time(),
+			blk0.Transactions(),
+			forkHash,
+			blk0.Header().StateRoot(),
+			blk0.PrevCertificate(),
+			blk0.Header().SortitionSeed(),
+			blk0.Header().ProposerAddress(),
+		)
+		certFork := td.makeCertificateAndSign(t, blkFork.Hash(), 0)
+		lastHeight := td.state.LastBlockHeight()
+		lastHash := td.state.LastBlockHash()
 
-			_ = td.state.CommitBlock(blkFork, certFork)
-		})
+		// The node doesn't stop, and its state is not changed.
+		var err error
+		require.NotPanics(t, func() { err = td.state.CommitBlock(blkFork, certFork) })
+		require.ErrorIs(t, err, ForkDetectedError{Expected: lastHash, Got: forkHash})
+		assert.Equal(t, lastHeight, td.state.LastBlockHeight())
+		assert.Equal(t, lastHash, td.state.LastBlockHash())
+
+		// The right block can be committed after the fork block.
+		require.NoError(t, td.state.CommitBlock(blk0, td.makeCertificateAndSign(t, blk0.Hash(), 0)))
+		assert.Equal(t, lastHeight+1, td.state.LastBlockHeight())
 	})
 }
 
