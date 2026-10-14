@@ -110,6 +110,8 @@ func (as *accountStore) account(addr crypto.Address) (*account.Account, error) {
 func (as *accountStore) iterateAccounts(consumer func(crypto.Address, *account.Account) (stop bool)) {
 	r := util.BytesPrefix(accountPrefix)
 	iter := as.db.NewIterator(r, nil)
+	defer iter.Release()
+
 	for iter.Next() {
 		key := iter.Key()
 		value := iter.Value()
@@ -127,7 +129,6 @@ func (as *accountStore) iterateAccounts(consumer func(crypto.Address, *account.A
 			return
 		}
 	}
-	iter.Release()
 }
 
 // This function takes ownership of the account pointer.
