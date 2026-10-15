@@ -163,7 +163,8 @@ jobs:
         with:
           msystem: UCRT64
           update: true
-          install: git
+          install: >-
+            git
             make
             p7zip
             glib2-devel

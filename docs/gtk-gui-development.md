@@ -24,7 +24,7 @@ apt install libgtk-4-dev libcairo2-dev libglib2.0-dev libadwaita-1-dev
 Install GTK using brew:
 
 ```bash
-brew install gtk+4 libadwaita
+brew install gtk4 gobject-introspection gtksourceview5 libadwaita
 ```
 
 ### Windows

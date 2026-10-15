@@ -43,25 +43,25 @@ jobs:
 
       - name: Install Dependencies (macOS)
         if: runner.os == 'macOS'
-        run: brew install gtk+4 gobject-introspection gtksourceview5 libadwaita
+        run: brew install gtk4 gobject-introspection gtksourceview5 libadwaita
 
       - name: Setup MSYS2 and Dependencies (Windows)
         if: runner.os == 'Windows'
         uses: msys2/setup-msys2@v2
         with:
-          msystem: MINGW64
+          msystem: UCRT64
           install: >-
             git
             make
             glib2-devel
-            mingw-w64-x86_64-go
-            mingw-w64-x86_64-gtk4
-            mingw-w64-x86_64-glib2
-            mingw-w64-x86_64-gcc
-            mingw-w64-x86_64-pkg-config
-            mingw-w64-x86_64-gtksourceview5
-            mingw-w64-x86_64-gobject-introspection
-            mingw-w64-x86_64-libadwaita
+            mingw-w64-ucrt-x86_64-go
+            mingw-w64-ucrt-x86_64-gtk4
+            mingw-w64-ucrt-x86_64-glib2
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-pkg-config
+            mingw-w64-ucrt-x86_64-gtksourceview5
+            mingw-w64-ucrt-x86_64-gobject-introspection
+            mingw-w64-ucrt-x86_64-libadwaita
 
       #######################################################
       ## Caching Go modules and GTK dependencies
