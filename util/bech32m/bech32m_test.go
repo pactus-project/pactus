@@ -673,3 +673,26 @@ func TestDecodeToBase256WithTypeNoLimit(t *testing.T) {
 		}
 	}
 }
+
+func TestErrorMessages(t *testing.T) {
+	tests := []struct {
+		err      error
+		contains string
+	}{
+		{MixedCaseError{}, "not all lowercase or all uppercase"},
+		{InvalidBitGroupsError{}, "between 1 and 8"},
+		{InvalidIncompleteGroupError{}, "invalid incomplete group"},
+		{InvalidLengthError(100), "invalid bech32 string length 100"},
+		{InvalidCharacterError('~'), "invalid character in string: '~'"},
+		{InvalidSeparatorIndexError(7), "invalid separator index 7"},
+		{NonCharsetCharError(3), "not part of charset: 3"},
+		{InvalidChecksumError{Expected: "abc", Actual: "xyz"}, "expected abc got xyz"},
+		{InvalidDataByteError(9), "invalid data byte: 9"},
+	}
+
+	for _, tt := range tests {
+		if !strings.Contains(tt.err.Error(), tt.contains) {
+			t.Errorf("error %q should contain %q", tt.err.Error(), tt.contains)
+		}
+	}
+}

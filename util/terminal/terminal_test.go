@@ -80,3 +80,14 @@ func TestPrintSupported(t *testing.T) {
 
 	assert.Equal(t, expected, output)
 }
+
+func TestProgressBarWidth(t *testing.T) {
+	// A small width is enlarged to a readable one.
+	small := ProgressBar(100, 3)
+	assert.NotNil(t, small)
+	assert.Equal(t, int64(100), small.GetMax64())
+
+	wide := ProgressBar(2000, 80)
+	assert.NotNil(t, wide)
+	assert.Equal(t, int64(2000), wide.GetMax64())
+}

@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"testing"
 
+	"github.com/pactus-project/pactus/consensusv2/voteset"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -114,4 +115,66 @@ func TestTotalPower(t *testing.T) {
 
 	log.MoveToNewHeight([]*validator.Validator{val1, val2})
 	assert.Equal(t, val1.Power()+val2.Power(), log.TotalPower())
+}
+
+func TestAddDecidedVote(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	valKey := ts.RandValKey()
+	val := ts.GenerateTestValidator(
+		testsuite.ValidatorWithPublicKey(valKey.PublicKey()),
+	)
+	log := NewLog()
+	log.MoveToNewHeight([]*validator.Validator{val})
+	height := ts.RandHeight()
+	round := ts.RandRound()
+	decidedVotes := log.CPDecidedVoteSet(round)
+
+	decided := vote.NewCPDecidedVote(ts.RandHash(), height, round, 0, vote.CPValueNo,
+		&vote.JustDecided{}, val.Address())
+	ts.HelperSignVote(valKey, decided)
+
+	added, err := log.AddVote(decided)
+	require.NoError(t, err)
+	assert.True(t, added)
+
+	assert.True(t, log.HasVote(decided.Hash()))
+	assert.Contains(t, decidedVotes.AllVotes(), decided)
+	assert.Contains(t, log.RoundMessages(round).AllVotes(), decided)
+}
+
+func TestMoveToNewHeight(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	valKey1 := ts.RandValKey()
+	val1 := ts.GenerateTestValidator(testsuite.ValidatorWithPublicKey(valKey1.PublicKey()))
+	val2 := ts.GenerateTestValidator()
+	height := ts.RandHeight()
+	round := ts.RandRound()
+
+	log := NewLog()
+	log.MoveToNewHeight([]*validator.Validator{val1})
+
+	oldVote := vote.NewPrecommitVote(ts.RandHash(), height, round, val1.Address())
+	ts.HelperSignVote(valKey1, oldVote)
+	added, err := log.AddVote(oldVote)
+	require.NoError(t, err)
+	require.True(t, added)
+	log.SetRoundProposal(round, ts.GenerateTestProposal(height, round))
+
+	log.MoveToNewHeight([]*validator.Validator{val2})
+
+	// Nothing is kept from the previous height.
+	assert.False(t, log.HasVote(oldVote.Hash()))
+	assert.False(t, log.HasRoundProposal(round))
+	assert.Empty(t, log.PrecommitVoteSet(round).AllVotes())
+
+	// The committee is replaced.
+	assert.False(t, log.CanVote(val1.Address()))
+	assert.True(t, log.CanVote(val2.Address()))
+
+	// So the votes of the previous committee are not accepted.
+	added, err = log.AddVote(oldVote)
+	require.ErrorIs(t, err, voteset.IneligibleVoterError{Address: val1.Address()})
+	assert.False(t, added)
 }

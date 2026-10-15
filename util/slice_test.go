@@ -393,3 +393,35 @@ func TestPrepend(t *testing.T) {
 			"Prepend(%v, %v) = %v; want %v", tt.slice, tt.elements, got, tt.want)
 	}
 }
+
+func TestDecompressCorruptedStream(t *testing.T) {
+	original := make([]byte, 10_000)
+	for i := range original {
+		original[i] = byte(i * 7)
+	}
+	compressed, err := CompressBuffer(original)
+	require.NoError(t, err)
+
+	t.Run("the end of the stream is missing", func(t *testing.T) {
+		out, err := DecompressBuffer(compressed[:len(compressed)-20])
+
+		require.Error(t, err)
+		assert.Nil(t, out)
+	})
+
+	t.Run("a byte of the stream is changed", func(t *testing.T) {
+		corrupted := append([]byte(nil), compressed...)
+		corrupted[len(corrupted)/2] ^= 0xff
+
+		out, err := DecompressBuffer(corrupted)
+
+		require.Error(t, err, "the checksum of the stream should detect the change")
+		assert.Nil(t, out)
+	})
+
+	t.Run("empty data", func(t *testing.T) {
+		_, err := DecompressBuffer(nil)
+
+		require.Error(t, err)
+	})
+}

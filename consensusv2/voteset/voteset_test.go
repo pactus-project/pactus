@@ -538,3 +538,14 @@ func TestBinaryHas3FP1Votes(t *testing.T) {
 	_, _ = voteSet.AddVote(vote3)
 	assert.True(t, voteSet.Has2FP1Votes(0))
 }
+
+func TestRoundAndIneligibleVoterError(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	round := ts.RandRound()
+	voteSet := NewPrecommitVoteSet(round, 0, map[crypto.Address]*validator.Validator{})
+	assert.Equal(t, round, voteSet.Round())
+
+	addr := ts.RandValAddress()
+	assert.Contains(t, IneligibleVoterError{Address: addr}.Error(), addr.String())
+}

@@ -3,9 +3,14 @@ package manager_test
 import (
 	"testing"
 
+	"github.com/pactus-project/gopkg/pipeline"
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/consensus/manager"
+	"github.com/pactus-project/pactus/consensusv2"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -156,5 +161,58 @@ func TestManager(t *testing.T) {
 				mgr.MoveToNewHeight()
 			})
 		})
+	})
+}
+
+func TestNewManagers(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	fakeState := state.NewFakeState(ts)
+	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey(), ts.RandValKey()}
+	rewardAddrs := []crypto.Address{ts.RandAccAddress(), ts.RandAccAddress(), ts.RandAccAddress()}
+	broadcastPipe := pipeline.New[message.Message](t.Context())
+
+	t.Run("manager of consensus version 1", func(t *testing.T) {
+		mgr := manager.NewManagerV1(t.Context(), consensus.DefaultConfig(), fakeState, valKeys, rewardAddrs, broadcastPipe)
+
+		assert.Len(t, mgr.Instances(), len(valKeys))
+		assert.False(t, mgr.HasActiveInstance(), "instances are not active before the first height")
+		assert.False(t, mgr.IsDeprecated())
+	})
+
+	t.Run("manager of consensus version 2", func(t *testing.T) {
+		mgr := manager.NewManagerV2(t.Context(), consensusv2.DefaultConfig(), fakeState, valKeys, rewardAddrs, broadcastPipe)
+
+		assert.Len(t, mgr.Instances(), len(valKeys))
+		assert.False(t, mgr.HasActiveInstance(), "instances are not active before the first height")
+		assert.False(t, mgr.IsDeprecated())
+	})
+}
+
+func TestManagerMoveToNewHeight(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	mockState := state.NewMockState(ts.MockController())
+	consA := consensus.NewMockConsensus(ts.MockController())
+	consB := consensus.NewMockConsensus(ts.MockController())
+	mgr := manager.NewManager(mockState, []consensus.Consensus{consA, consB})
+
+	// The consensus is working on the height 10.
+	consA.EXPECT().IsActive().Return(true).AnyTimes()
+	consA.EXPECT().HeightRound().Return(types.Height(10), types.Round(0)).AnyTimes()
+
+	t.Run("the height of the consensus is not committed yet", func(_ *testing.T) {
+		mockState.EXPECT().LastBlockHeight().Return(types.Height(9)).Times(1)
+
+		// The mocked instances don't expect any call.
+		mgr.MoveToNewHeight()
+	})
+
+	t.Run("the height of the consensus is committed", func(_ *testing.T) {
+		mockState.EXPECT().LastBlockHeight().Return(types.Height(10)).Times(1)
+		consA.EXPECT().MoveToNewHeight().Times(1)
+		consB.EXPECT().MoveToNewHeight().Times(1)
+
+		mgr.MoveToNewHeight()
 	})
 }

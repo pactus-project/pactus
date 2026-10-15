@@ -242,3 +242,109 @@ func TestChangedLinesExecution(t *testing.T) {
 	require.NotEqual(t, "shell", cmd.Use)
 	require.NotEqual(t, "Start an interactive shell", cmd.Short)
 }
+
+// In the interactive shell, a command shouldn't inherit the flags of the previous one.
+// For instance, a wallet command could be sent to the address of the previous command.
+func TestExecuteResetsFlagsBetweenRuns(t *testing.T) {
+	var gotName string
+	var gotTags []string
+	var gotCount int
+
+	root := &cobra.Command{Use: "root"}
+	send := &cobra.Command{
+		Use: "send",
+		Run: func(cmd *cobra.Command, _ []string) {
+			gotName, _ = cmd.Flags().GetString("name")
+			gotTags, _ = cmd.Flags().GetStringSlice("tag")
+			gotCount, _ = cmd.Flags().GetInt("count")
+		},
+	}
+	send.Flags().String("name", "", "")
+	send.Flags().StringSlice("tag", nil, "")
+	send.Flags().Int("count", 7, "")
+	root.AddCommand(send)
+
+	require.NoError(t, execute(root, []string{"send", "--name", "alice", "--tag", "a", "--tag", "b", "--count", "3"}))
+	require.Equal(t, "alice", gotName)
+	require.Equal(t, []string{"a", "b"}, gotTags)
+	require.Equal(t, 3, gotCount)
+
+	require.NoError(t, execute(root, []string{"send"}))
+	require.Empty(t, gotName, "the string flag should return to its default value")
+	require.Empty(t, gotTags, "the slice flag should be cleared")
+	require.Equal(t, 7, gotCount, "the number flag should return to its default value")
+}
+
+func TestExecuteUnknownCommand(t *testing.T) {
+	root := &cobra.Command{Use: "root", SilenceErrors: true, SilenceUsage: true}
+	root.AddCommand(&cobra.Command{Use: "send", Run: func(*cobra.Command, []string) {}})
+
+	require.NoError(t, execute(root, []string{"send"}))
+	require.Error(t, execute(root, []string{"send", "--unknown-flag"}))
+}
+
+func TestCompleter(t *testing.T) {
+	root := &cobra.Command{Use: "root"}
+	for _, name := range []string{"send", "sync", "balance"} {
+		root.AddCommand(&cobra.Command{Use: name, Short: name + " command", Run: func(*cobra.Command, []string) {}})
+	}
+	lex := &lexer{root: root, cache: make(map[string][]prompt.Suggest)}
+
+	complete := func(input string) []string {
+		buf := prompt.NewBuffer()
+		buf.InsertText(input, false, true)
+
+		suggestions := lex.completer(*buf.Document())
+		texts := make([]string, 0, len(suggestions))
+		for _, sugg := range suggestions {
+			texts = append(texts, sugg.Text)
+		}
+
+		return texts
+	}
+
+	t.Run("commands are filtered by the typed prefix", func(t *testing.T) {
+		require.Equal(t, []string{"send", "sync"}, complete("s"))
+		require.Equal(t, []string{"send"}, complete("se"))
+		require.Empty(t, complete("x"))
+	})
+
+	t.Run("all the commands are suggested at the beginning", func(t *testing.T) {
+		require.Subset(t, complete(""), []string{"balance", "send", "sync"})
+	})
+
+	t.Run("suggestions are cached", func(t *testing.T) {
+		require.NotEmpty(t, lex.cache)
+	})
+}
+
+func TestExecutorResetsChangedFlags(t *testing.T) {
+	root := &cobra.Command{Use: "root", SilenceErrors: true, SilenceUsage: true}
+	send := &cobra.Command{Use: "send", Run: func(*cobra.Command, []string) {}}
+	send.Flags().String("name", "", "")
+	root.AddCommand(send)
+
+	// The tree is not refreshed: the flags of the executed command are marked as unchanged.
+	lex := &lexer{root: root, cache: make(map[string][]prompt.Suggest)}
+	lex.executor("send --name bob")
+
+	require.False(t, send.Flags().Lookup("name").Changed)
+	require.Empty(t, lex.cache, "the cache is cleared after a command")
+
+	t.Run("the tree is refreshed after each command", func(t *testing.T) {
+		refreshed := 0
+		refreshLex := &lexer{
+			root:  root,
+			cache: make(map[string][]prompt.Suggest),
+			refresh: func() *cobra.Command {
+				refreshed++
+
+				return root
+			},
+		}
+
+		refreshLex.executor("send")
+
+		require.Equal(t, 1, refreshed)
+	})
+}

@@ -39,3 +39,20 @@ func TestHeightEncodeAsSlice(t *testing.T) {
 		assert.Equal(t, test.height, height)
 	}
 }
+
+func TestHeightSafeIncrease(t *testing.T) {
+	assert.Equal(t, types.Height(15), types.Height(10).SafeIncrease(5))
+	assert.Equal(t, types.Height(10), types.Height(10).SafeIncrease(0))
+	assert.Equal(t, types.Height(1), types.Height(0).SafeIncrease(1))
+}
+
+func TestHeightSafeDecrease(t *testing.T) {
+	assert.Equal(t, types.Height(5), types.Height(10).SafeDecrease(5))
+	assert.Equal(t, types.Height(10), types.Height(10).SafeDecrease(0))
+
+	// The result never goes below zero.
+	assert.Equal(t, types.Height(0), types.Height(10).SafeDecrease(10))
+	assert.Equal(t, types.Height(0), types.Height(10).SafeDecrease(11))
+	assert.Equal(t, types.Height(0), types.Height(0).SafeDecrease(1))
+	assert.Equal(t, types.Height(0), types.Height(5).SafeDecrease(1<<32-1))
+}

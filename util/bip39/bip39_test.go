@@ -4,9 +4,12 @@ package bip39
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"strings"
 	"testing"
 
 	"github.com/pactus-project/pactus/util/bip39/wordlists"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type vector struct {
@@ -512,6 +515,73 @@ func assertEqualByteSlices(t *testing.T, expected, actual []byte) {
 			t.Errorf("Byte slices not equal, expected %v and got %v", expected, actual)
 
 			return
+		}
+	}
+}
+
+func TestMnemonicToByteArrayChecksum(t *testing.T) {
+	// The first test vector of BIP-39: entropy is made of zeros.
+	valid := "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
+	// All the words are valid, but the checksum doesn't match.
+	invalidChecksum := "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon"
+
+	t.Run("raw entropy", func(t *testing.T) {
+		entropy, err := MnemonicToByteArray(valid, true)
+
+		require.NoError(t, err)
+		assert.Equal(t, make([]byte, 16), entropy)
+	})
+
+	t.Run("entropy with the checksum", func(t *testing.T) {
+		entropy, err := MnemonicToByteArray(valid)
+
+		require.NoError(t, err)
+		assert.Len(t, entropy, 17)
+		assert.Equal(t, make([]byte, 16), entropy[:16])
+		assert.NotZero(t, entropy[16], "the checksum of the zero entropy is not zero")
+	})
+
+	t.Run("invalid checksum", func(t *testing.T) {
+		assert.False(t, IsMnemonicValid(invalidChecksum))
+
+		// The mnemonic is validated first, so the checksum failure is reported as an invalid mnemonic.
+		for _, raw := range []bool{false, true} {
+			_, err := MnemonicToByteArray(invalidChecksum, raw)
+			require.ErrorIs(t, err, ErrInvalidMnemonic)
+		}
+
+		_, err := EntropyFromMnemonic(invalidChecksum)
+		require.ErrorIs(t, err, ErrChecksumIncorrect)
+	})
+}
+
+// All the ways of reading a mnemonic should return the same entropy.
+func TestEntropyRoundTrip(t *testing.T) {
+	for _, bitSize := range []int{128, 160, 192, 224, 256} {
+		entropy, err := NewEntropy(bitSize)
+		require.NoError(t, err)
+
+		mnemonic, err := NewMnemonic(entropy)
+		require.NoError(t, err)
+		assert.Len(t, strings.Fields(mnemonic), (bitSize+bitSize/32)/11)
+		assert.True(t, IsMnemonicValid(mnemonic))
+
+		fromMnemonic, err := EntropyFromMnemonic(mnemonic)
+		require.NoError(t, err)
+		assert.Equal(t, entropy, fromMnemonic, "bit size %d", bitSize)
+
+		raw, err := MnemonicToByteArray(mnemonic, true)
+		require.NoError(t, err)
+		assert.Equal(t, entropy, raw, "bit size %d", bitSize)
+
+		// A different word at the end can't give the same mnemonic.
+		words := strings.Fields(mnemonic)
+		last := words[len(words)-1]
+		words[len(words)-1] = GetWordList()[(wordMap[last]+1)%2048]
+		changed := strings.Join(words, " ")
+		fromChanged, err := EntropyFromMnemonic(changed)
+		if err == nil {
+			assert.NotEqual(t, entropy, fromChanged, "bit size %d", bitSize)
 		}
 	}
 }
