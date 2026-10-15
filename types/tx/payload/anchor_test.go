@@ -3,6 +3,7 @@ package payload_test
 import (
 	"bytes"
 	"encoding/hex"
+	"slices"
 	"strings"
 	"testing"
 	"unicode/utf8"
@@ -346,7 +347,7 @@ func TestAnchorDecodeRejects(t *testing.T) {
 func TestAnchorParserAttacks(t *testing.T) {
 	setData := encodeAnchor(t, setPayload(blsAddr(), 32, "abc", 4, 300))
 	delData := encodeAnchor(t, &payload.AnchorPayload{From: blsAddr(), Action: payload.AnchorActionDelete})
-	stuck := append(append([]byte{}, delData...), setData...)
+	stuck := slices.Concat(delData, setData)
 	reader := bytes.NewReader(stuck)
 	decoded := &payload.AnchorPayload{}
 	require.NoError(t, decoded.Decode(payload.DecodeContext{}, reader))
@@ -652,7 +653,7 @@ func FuzzAnchorDecode(f *testing.F) {
 	f.Add(delData)
 	f.Add(setData[:10])
 	f.Add(action)
-	f.Add(append(append([]byte{}, delData...), setData...))
+	f.Add(slices.Concat(delData, setData))
 	f.Add(over)
 
 	f.Fuzz(func(t *testing.T, data []byte) {

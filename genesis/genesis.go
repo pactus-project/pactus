@@ -105,7 +105,8 @@ func (gen *Genesis) Validators() []*validator.Validator {
 	return vals
 }
 
-func (gen *Genesis) MarshalJSON() ([]byte, error) {
+//nolint:gocritic // copying an 80-byte Genesis while marshaling JSON is negligible.
+func (gen Genesis) MarshalJSON() ([]byte, error) {
 	return json.MarshalIndent(&gen.data, "  ", "  ")
 }
 

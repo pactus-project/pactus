@@ -97,9 +97,10 @@ func (s *walletServer) RestoreWallet(_ context.Context,
 		return nil, errors.New("mnemonic is required")
 	}
 
-	if err := s.walletManager.RestoreWallet(
+	err := s.walletManager.RestoreWallet(
 		req.WalletName, req.Mnemonic, req.Password,
-	); err != nil {
+	)
+	if err != nil {
 		return nil, err
 	}
 
