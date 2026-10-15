@@ -49,8 +49,8 @@
 }
 }}
 },"anchor": {
-  "type": "object","required": ["from","action","root_hash","manifest_uri","anchor_type","deposit"],
-  "properties": {"from": { "type": "string" },"action": { "type": "integer" },"root_hash": { "type": "string" },"manifest_uri": { "type": "string" },"anchor_type": { "type": "integer" },"deposit": { "type": "integer" }}
+  "type": "object","required": ["sender","action","root_hash","manifest_uri","anchor_type","deposit"],
+  "properties": {"sender": { "type": "string" },"action": { "type": "integer" },"root_hash": { "type": "string" },"manifest_uri": { "type": "string" },"anchor_type": { "type": "integer" },"deposit": { "type": "integer" }}
 },"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" },"block_height": { "type": "integer" },"confirmed": { "type": "boolean" },"confirmations": { "type": "integer" }}
 }}
           }
@@ -298,7 +298,7 @@
       "tags": [{ "name": "transaction"}],
       "paramStructure": "by-name",
       "params": [{
-          "name": "from",
+          "name": "sender",
           "description": "The sender's account address.",
           "schema": { "type": "string" }
         },{
@@ -382,8 +382,8 @@
 }
 }}
 },"anchor": {
-  "type": "object","required": ["from","action","root_hash","manifest_uri","anchor_type","deposit"],
-  "properties": {"from": { "type": "string" },"action": { "type": "integer" },"root_hash": { "type": "string" },"manifest_uri": { "type": "string" },"anchor_type": { "type": "integer" },"deposit": { "type": "integer" }}
+  "type": "object","required": ["sender","action","root_hash","manifest_uri","anchor_type","deposit"],
+  "properties": {"sender": { "type": "string" },"action": { "type": "integer" },"root_hash": { "type": "string" },"manifest_uri": { "type": "string" },"anchor_type": { "type": "integer" },"deposit": { "type": "integer" }}
 },"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" },"block_height": { "type": "integer" },"confirmed": { "type": "boolean" },"confirmations": { "type": "integer" }}
 }}
           }
@@ -464,8 +464,8 @@
 }
 }}
 },"anchor": {
-  "type": "object","required": ["from","action","root_hash","manifest_uri","anchor_type","deposit"],
-  "properties": {"from": { "type": "string" },"action": { "type": "integer" },"root_hash": { "type": "string" },"manifest_uri": { "type": "string" },"anchor_type": { "type": "integer" },"deposit": { "type": "integer" }}
+  "type": "object","required": ["sender","action","root_hash","manifest_uri","anchor_type","deposit"],
+  "properties": {"sender": { "type": "string" },"action": { "type": "integer" },"root_hash": { "type": "string" },"manifest_uri": { "type": "string" },"anchor_type": { "type": "integer" },"deposit": { "type": "integer" }}
 },"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" },"block_height": { "type": "integer" },"confirmed": { "type": "boolean" },"confirmations": { "type": "integer" }}
 }
 }}
@@ -756,8 +756,8 @@
 }
 }}
 },"anchor": {
-  "type": "object","required": ["from","action","root_hash","manifest_uri","anchor_type","deposit"],
-  "properties": {"from": { "type": "string" },"action": { "type": "integer" },"root_hash": { "type": "string" },"manifest_uri": { "type": "string" },"anchor_type": { "type": "integer" },"deposit": { "type": "integer" }}
+  "type": "object","required": ["sender","action","root_hash","manifest_uri","anchor_type","deposit"],
+  "properties": {"sender": { "type": "string" },"action": { "type": "integer" },"root_hash": { "type": "string" },"manifest_uri": { "type": "string" },"anchor_type": { "type": "integer" },"deposit": { "type": "integer" }}
 },"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" },"block_height": { "type": "integer" },"confirmed": { "type": "boolean" },"confirmations": { "type": "integer" }}
 }
 }}

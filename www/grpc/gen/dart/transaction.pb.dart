@@ -1152,7 +1152,7 @@ class GetRawBatchTransferTransactionRequest extends $pb.GeneratedMessage {
 /// Request message for retrieving raw details of an anchor transaction.
 class GetRawAnchorTransactionRequest extends $pb.GeneratedMessage {
   factory GetRawAnchorTransactionRequest({
-    $core.String? from,
+    $core.String? sender,
     $core.int? action,
     $core.List<$core.int>? rootHash,
     $core.String? manifestUri,
@@ -1163,7 +1163,7 @@ class GetRawAnchorTransactionRequest extends $pb.GeneratedMessage {
     $core.int? lockTime,
   }) {
     final result = GetRawAnchorTransactionRequest._();
-    if (from != null) result.from = from;
+    if (sender != null) result.sender = sender;
     if (action != null) result.action = action;
     if (rootHash != null) result.rootHash = rootHash;
     if (manifestUri != null) result.manifestUri = manifestUri;
@@ -1188,7 +1188,7 @@ class GetRawAnchorTransactionRequest extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'GetRawAnchorTransactionRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: GetRawAnchorTransactionRequest.$_createMessage)
-    ..aOS(1, _omitFieldNames ? '' : 'from')
+    ..aOS(1, _omitFieldNames ? '' : 'sender')
     ..aI(2, _omitFieldNames ? '' : 'action', fieldType: $pb.PbFieldType.OU3)
     ..a<$core.List<$core.int>>(
         3, _omitFieldNames ? '' : 'rootHash', $pb.PbFieldType.OY)
@@ -1230,13 +1230,13 @@ class GetRawAnchorTransactionRequest extends $pb.GeneratedMessage {
 
   /// The sender's account address.
   @$pb.TagNumber(1)
-  $core.String get from => $_getSZ(0);
+  $core.String get sender => $_getSZ(0);
   @$pb.TagNumber(1)
-  set from($core.String value) => $_setString(0, value);
+  set sender($core.String value) => $_setString(0, value);
   @$pb.TagNumber(1)
-  $core.bool hasFrom() => $_has(0);
+  $core.bool hasSender() => $_has(0);
   @$pb.TagNumber(1)
-  void clearFrom() => $_clearField(1);
+  void clearSender() => $_clearField(1);
 
   /// 0 = set, 1 = delete.
   @$pb.TagNumber(2)
@@ -1868,7 +1868,7 @@ class PayloadWithdraw extends $pb.GeneratedMessage {
 /// Payload for an anchor transaction.
 class PayloadAnchor extends $pb.GeneratedMessage {
   factory PayloadAnchor({
-    $core.String? from,
+    $core.String? sender,
     $core.int? action,
     $core.List<$core.int>? rootHash,
     $core.String? manifestUri,
@@ -1876,7 +1876,7 @@ class PayloadAnchor extends $pb.GeneratedMessage {
     $fixnum.Int64? deposit,
   }) {
     final result = PayloadAnchor._();
-    if (from != null) result.from = from;
+    if (sender != null) result.sender = sender;
     if (action != null) result.action = action;
     if (rootHash != null) result.rootHash = rootHash;
     if (manifestUri != null) result.manifestUri = manifestUri;
@@ -1898,7 +1898,7 @@ class PayloadAnchor extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'PayloadAnchor',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: PayloadAnchor.$_createMessage)
-    ..aOS(1, _omitFieldNames ? '' : 'from')
+    ..aOS(1, _omitFieldNames ? '' : 'sender')
     ..aI(2, _omitFieldNames ? '' : 'action', fieldType: $pb.PbFieldType.OU3)
     ..a<$core.List<$core.int>>(
         3, _omitFieldNames ? '' : 'rootHash', $pb.PbFieldType.OY)
@@ -1931,13 +1931,13 @@ class PayloadAnchor extends $pb.GeneratedMessage {
 
   /// The sender's address.
   @$pb.TagNumber(1)
-  $core.String get from => $_getSZ(0);
+  $core.String get sender => $_getSZ(0);
   @$pb.TagNumber(1)
-  set from($core.String value) => $_setString(0, value);
+  set sender($core.String value) => $_setString(0, value);
   @$pb.TagNumber(1)
-  $core.bool hasFrom() => $_has(0);
+  $core.bool hasSender() => $_has(0);
   @$pb.TagNumber(1)
-  void clearFrom() => $_clearField(1);
+  void clearSender() => $_clearField(1);
 
   /// 0 = set, 1 = delete.
   @$pb.TagNumber(2)

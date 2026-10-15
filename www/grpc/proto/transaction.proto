@@ -179,7 +179,7 @@ message GetRawBatchTransferTransactionRequest {
 // Request message for retrieving raw details of an anchor transaction.
 message GetRawAnchorTransactionRequest {
   // The sender's account address.
-  string from = 1;
+  string sender = 1;
   // 0 = set, 1 = delete.
   uint32 action = 2;
   // Required when action is set.
@@ -271,7 +271,7 @@ message PayloadWithdraw {
 // Payload for an anchor transaction.
 message PayloadAnchor {
   // The sender's address.
-  string from = 1;
+  string sender = 1;
   // 0 = set, 1 = delete.
   uint32 action = 2;
   // Empty when action is delete.

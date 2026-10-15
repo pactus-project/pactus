@@ -6474,7 +6474,7 @@ impl serde::Serialize for GetRawAnchorTransactionRequest {
     {
         use serde::ser::SerializeStruct;
         let mut len = 0;
-        if !self.from.is_empty() {
+        if !self.sender.is_empty() {
             len += 1;
         }
         if self.action != 0 {
@@ -6502,8 +6502,8 @@ impl serde::Serialize for GetRawAnchorTransactionRequest {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("pactus.GetRawAnchorTransactionRequest", len)?;
-        if !self.from.is_empty() {
-            struct_ser.serialize_field("from", &self.from)?;
+        if !self.sender.is_empty() {
+            struct_ser.serialize_field("sender", &self.sender)?;
         }
         if self.action != 0 {
             struct_ser.serialize_field("action", &self.action)?;
@@ -6545,7 +6545,7 @@ impl<'de> serde::Deserialize<'de> for GetRawAnchorTransactionRequest {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "from",
+            "sender",
             "action",
             "root_hash",
             "rootHash",
@@ -6562,7 +6562,7 @@ impl<'de> serde::Deserialize<'de> for GetRawAnchorTransactionRequest {
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
-            From,
+            Sender,
             Action,
             RootHash,
             ManifestUri,
@@ -6592,7 +6592,7 @@ impl<'de> serde::Deserialize<'de> for GetRawAnchorTransactionRequest {
                         E: serde::de::Error,
                     {
                         match value {
-                            "from" => Ok(GeneratedField::From),
+                            "sender" => Ok(GeneratedField::Sender),
                             "action" => Ok(GeneratedField::Action),
                             "rootHash" | "root_hash" => Ok(GeneratedField::RootHash),
                             "manifestUri" | "manifest_uri" => Ok(GeneratedField::ManifestUri),
@@ -6620,7 +6620,7 @@ impl<'de> serde::Deserialize<'de> for GetRawAnchorTransactionRequest {
                 where
                     V: serde::de::MapAccess<'de>,
             {
-                let mut from__ = None;
+                let mut sender__ = None;
                 let mut action__ = None;
                 let mut root_hash__ = None;
                 let mut manifest_uri__ = None;
@@ -6631,11 +6631,11 @@ impl<'de> serde::Deserialize<'de> for GetRawAnchorTransactionRequest {
                 let mut lock_time__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
-                        GeneratedField::From => {
-                            if from__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("from"));
+                        GeneratedField::Sender => {
+                            if sender__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("sender"));
                             }
-                            from__ = Some(map_.next_value()?);
+                            sender__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Action => {
                             if action__.is_some() {
@@ -6700,7 +6700,7 @@ impl<'de> serde::Deserialize<'de> for GetRawAnchorTransactionRequest {
                     }
                 }
                 Ok(GetRawAnchorTransactionRequest {
-                    from: from__.unwrap_or_default(),
+                    sender: sender__.unwrap_or_default(),
                     action: action__.unwrap_or_default(),
                     root_hash: root_hash__.unwrap_or_default(),
                     manifest_uri: manifest_uri__.unwrap_or_default(),
@@ -11215,7 +11215,7 @@ impl serde::Serialize for PayloadAnchor {
     {
         use serde::ser::SerializeStruct;
         let mut len = 0;
-        if !self.from.is_empty() {
+        if !self.sender.is_empty() {
             len += 1;
         }
         if self.action != 0 {
@@ -11234,8 +11234,8 @@ impl serde::Serialize for PayloadAnchor {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("pactus.PayloadAnchor", len)?;
-        if !self.from.is_empty() {
-            struct_ser.serialize_field("from", &self.from)?;
+        if !self.sender.is_empty() {
+            struct_ser.serialize_field("sender", &self.sender)?;
         }
         if self.action != 0 {
             struct_ser.serialize_field("action", &self.action)?;
@@ -11266,7 +11266,7 @@ impl<'de> serde::Deserialize<'de> for PayloadAnchor {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "from",
+            "sender",
             "action",
             "root_hash",
             "rootHash",
@@ -11279,7 +11279,7 @@ impl<'de> serde::Deserialize<'de> for PayloadAnchor {
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
-            From,
+            Sender,
             Action,
             RootHash,
             ManifestUri,
@@ -11306,7 +11306,7 @@ impl<'de> serde::Deserialize<'de> for PayloadAnchor {
                         E: serde::de::Error,
                     {
                         match value {
-                            "from" => Ok(GeneratedField::From),
+                            "sender" => Ok(GeneratedField::Sender),
                             "action" => Ok(GeneratedField::Action),
                             "rootHash" | "root_hash" => Ok(GeneratedField::RootHash),
                             "manifestUri" | "manifest_uri" => Ok(GeneratedField::ManifestUri),
@@ -11331,7 +11331,7 @@ impl<'de> serde::Deserialize<'de> for PayloadAnchor {
                 where
                     V: serde::de::MapAccess<'de>,
             {
-                let mut from__ = None;
+                let mut sender__ = None;
                 let mut action__ = None;
                 let mut root_hash__ = None;
                 let mut manifest_uri__ = None;
@@ -11339,11 +11339,11 @@ impl<'de> serde::Deserialize<'de> for PayloadAnchor {
                 let mut deposit__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
-                        GeneratedField::From => {
-                            if from__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("from"));
+                        GeneratedField::Sender => {
+                            if sender__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("sender"));
                             }
-                            from__ = Some(map_.next_value()?);
+                            sender__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Action => {
                             if action__.is_some() {
@@ -11386,7 +11386,7 @@ impl<'de> serde::Deserialize<'de> for PayloadAnchor {
                     }
                 }
                 Ok(PayloadAnchor {
-                    from: from__.unwrap_or_default(),
+                    sender: sender__.unwrap_or_default(),
                     action: action__.unwrap_or_default(),
                     root_hash: root_hash__.unwrap_or_default(),
                     manifest_uri: manifest_uri__.unwrap_or_default(),

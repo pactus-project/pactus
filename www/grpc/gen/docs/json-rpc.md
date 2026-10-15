@@ -611,7 +611,7 @@ Optional, but required when the validator is a delegated validator.;
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">transaction.anchor.from</td>
+    <td class="fw-bold">transaction.anchor.sender</td>
     <td> string</td>
     <td>
   The sender's address.
@@ -1203,7 +1203,7 @@ Optional, but required when the validator is a delegated validator.;
   </thead>
   <tbody class="table-group-divider">
   <tr>
-    <td class="fw-bold">from</td>
+    <td class="fw-bold">sender</td>
     <td> string</td>
     <td>
   The sender's account address.
@@ -1556,7 +1556,7 @@ Optional, but required when the validator is a delegated validator.;
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">transaction.anchor.from</td>
+    <td class="fw-bold">transaction.anchor.sender</td>
     <td> string</td>
     <td>
   The sender's address.
@@ -2076,7 +2076,7 @@ Optional, but required when the validator is a delegated validator.;
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">txs[].anchor.from</td>
+    <td class="fw-bold">txs[].anchor.sender</td>
     <td> string</td>
     <td>
   The sender's address.
@@ -3607,7 +3607,7 @@ Optional, but required when the validator is a delegated validator.;
     </td>
   </tr>
    <tr>
-    <td class="fw-bold">txs[].anchor.from</td>
+    <td class="fw-bold">txs[].anchor.sender</td>
     <td> string</td>
     <td>
   The sender's address.

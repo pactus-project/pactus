@@ -164,8 +164,8 @@ class GetRawBatchTransferTransactionRequest(_message.Message):
     def __init__(self, lock_time: _Optional[int] = ..., sender: _Optional[str] = ..., recipients: _Optional[_Iterable[_Union[Recipient, _Mapping]]] = ..., fee: _Optional[int] = ..., memo: _Optional[str] = ...) -> None: ...
 
 class GetRawAnchorTransactionRequest(_message.Message):
-    __slots__ = ("action", "root_hash", "manifest_uri", "anchor_type", "deposit", "fee", "memo", "lock_time")
-    FROM_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("sender", "action", "root_hash", "manifest_uri", "anchor_type", "deposit", "fee", "memo", "lock_time")
+    SENDER_FIELD_NUMBER: _ClassVar[int]
     ACTION_FIELD_NUMBER: _ClassVar[int]
     ROOT_HASH_FIELD_NUMBER: _ClassVar[int]
     MANIFEST_URI_FIELD_NUMBER: _ClassVar[int]
@@ -174,6 +174,7 @@ class GetRawAnchorTransactionRequest(_message.Message):
     FEE_FIELD_NUMBER: _ClassVar[int]
     MEMO_FIELD_NUMBER: _ClassVar[int]
     LOCK_TIME_FIELD_NUMBER: _ClassVar[int]
+    sender: str
     action: int
     root_hash: bytes
     manifest_uri: str
@@ -182,7 +183,7 @@ class GetRawAnchorTransactionRequest(_message.Message):
     fee: int
     memo: str
     lock_time: int
-    def __init__(self, action: _Optional[int] = ..., root_hash: _Optional[bytes] = ..., manifest_uri: _Optional[str] = ..., anchor_type: _Optional[int] = ..., deposit: _Optional[int] = ..., fee: _Optional[int] = ..., memo: _Optional[str] = ..., lock_time: _Optional[int] = ..., **kwargs) -> None: ...
+    def __init__(self, sender: _Optional[str] = ..., action: _Optional[int] = ..., root_hash: _Optional[bytes] = ..., manifest_uri: _Optional[str] = ..., anchor_type: _Optional[int] = ..., deposit: _Optional[int] = ..., fee: _Optional[int] = ..., memo: _Optional[str] = ..., lock_time: _Optional[int] = ...) -> None: ...
 
 class GetRawTransactionResponse(_message.Message):
     __slots__ = ("raw_transaction", "id")
@@ -249,19 +250,20 @@ class PayloadWithdraw(_message.Message):
     def __init__(self, validator_address: _Optional[str] = ..., account_address: _Optional[str] = ..., amount: _Optional[int] = ...) -> None: ...
 
 class PayloadAnchor(_message.Message):
-    __slots__ = ("action", "root_hash", "manifest_uri", "anchor_type", "deposit")
-    FROM_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("sender", "action", "root_hash", "manifest_uri", "anchor_type", "deposit")
+    SENDER_FIELD_NUMBER: _ClassVar[int]
     ACTION_FIELD_NUMBER: _ClassVar[int]
     ROOT_HASH_FIELD_NUMBER: _ClassVar[int]
     MANIFEST_URI_FIELD_NUMBER: _ClassVar[int]
     ANCHOR_TYPE_FIELD_NUMBER: _ClassVar[int]
     DEPOSIT_FIELD_NUMBER: _ClassVar[int]
+    sender: str
     action: int
     root_hash: bytes
     manifest_uri: str
     anchor_type: int
     deposit: int
-    def __init__(self, action: _Optional[int] = ..., root_hash: _Optional[bytes] = ..., manifest_uri: _Optional[str] = ..., anchor_type: _Optional[int] = ..., deposit: _Optional[int] = ..., **kwargs) -> None: ...
+    def __init__(self, sender: _Optional[str] = ..., action: _Optional[int] = ..., root_hash: _Optional[bytes] = ..., manifest_uri: _Optional[str] = ..., anchor_type: _Optional[int] = ..., deposit: _Optional[int] = ...) -> None: ...
 
 class PayloadBatchTransfer(_message.Message):
     __slots__ = ("sender", "recipients")

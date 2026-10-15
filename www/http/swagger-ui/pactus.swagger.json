@@ -2552,7 +2552,7 @@
     "pactusGetRawAnchorTransactionRequest": {
       "type": "object",
       "properties": {
-        "from": {
+        "sender": {
           "type": "string",
           "description": "The sender's account address."
         },
@@ -3082,7 +3082,7 @@
     "pactusPayloadAnchor": {
       "type": "object",
       "properties": {
-        "from": {
+        "sender": {
           "type": "string",
           "description": "The sender's address."
         },

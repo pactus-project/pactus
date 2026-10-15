@@ -171,7 +171,7 @@ func TestJSONRPCRawAnchor(t *testing.T) {
 	root := base64.StdEncoding.EncodeToString(bytesFill(0x31))
 
 	rawResult := callJSONRPC(t, td, "pactus.transaction.get_raw_anchor_transaction", map[string]any{
-		"from":      from,
+		"sender":    from,
 		"action":    0,
 		"root_hash": root,
 		"deposit":   5,

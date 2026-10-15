@@ -112,7 +112,7 @@ func TestAnchors(t *testing.T) {
 	var created *pactus.AnchorInfo
 	t.Run("create", func(t *testing.T) {
 		trx := broadcastAnchor(t, owner, &pactus.GetRawAnchorTransactionRequest{
-			From:        ownerAddr.String(),
+			Sender:      ownerAddr.String(),
 			Action:      uint32(payload.AnchorActionSet),
 			RootHash:    root,
 			ManifestUri: "ipfs://integration",
@@ -147,7 +147,7 @@ func TestAnchors(t *testing.T) {
 
 	t.Run("a top-up that moves the manifest keeps the content date", func(t *testing.T) {
 		broadcastAnchor(t, owner, &pactus.GetRawAnchorTransactionRequest{
-			From:        ownerAddr.String(),
+			Sender:      ownerAddr.String(),
 			Action:      uint32(payload.AnchorActionSet),
 			RootHash:    root,
 			ManifestUri: "ipfs://moved",
@@ -174,7 +174,7 @@ func TestAnchors(t *testing.T) {
 	t.Run("delete refunds the deposit", func(t *testing.T) {
 		before := getAccount(t, ownerAddr).Balance
 		trx := broadcastAnchor(t, owner, &pactus.GetRawAnchorTransactionRequest{
-			From:   ownerAddr.String(),
+			Sender: ownerAddr.String(),
 			Action: uint32(payload.AnchorActionDelete),
 		})
 		waitFor(t, "delete", func() bool {

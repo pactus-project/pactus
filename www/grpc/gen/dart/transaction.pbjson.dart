@@ -295,7 +295,7 @@ final $typed_data.Uint8List getRawBatchTransferTransactionRequestDescriptor =
 const GetRawAnchorTransactionRequest$json = {
   '1': 'GetRawAnchorTransactionRequest',
   '2': [
-    {'1': 'from', '3': 1, '4': 1, '5': 9, '10': 'from'},
+    {'1': 'sender', '3': 1, '4': 1, '5': 9, '10': 'sender'},
     {'1': 'action', '3': 2, '4': 1, '5': 13, '10': 'action'},
     {'1': 'root_hash', '3': 3, '4': 1, '5': 12, '10': 'rootHash'},
     {'1': 'manifest_uri', '3': 4, '4': 1, '5': 9, '10': 'manifestUri'},
@@ -309,11 +309,11 @@ const GetRawAnchorTransactionRequest$json = {
 
 /// Descriptor for `GetRawAnchorTransactionRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getRawAnchorTransactionRequestDescriptor = $convert.base64Decode(
-    'Ch5HZXRSYXdBbmNob3JUcmFuc2FjdGlvblJlcXVlc3QSEgoEZnJvbRgBIAEoCVIEZnJvbRIWCg'
-    'ZhY3Rpb24YAiABKA1SBmFjdGlvbhIbCglyb290X2hhc2gYAyABKAxSCHJvb3RIYXNoEiEKDG1h'
-    'bmlmZXN0X3VyaRgEIAEoCVILbWFuaWZlc3RVcmkSHwoLYW5jaG9yX3R5cGUYBSABKA1SCmFuY2'
-    'hvclR5cGUSGAoHZGVwb3NpdBgGIAEoA1IHZGVwb3NpdBIQCgNmZWUYByABKANSA2ZlZRISCgRt'
-    'ZW1vGAggASgJUgRtZW1vEhsKCWxvY2tfdGltZRgJIAEoDVIIbG9ja1RpbWU=');
+    'Ch5HZXRSYXdBbmNob3JUcmFuc2FjdGlvblJlcXVlc3QSFgoGc2VuZGVyGAEgASgJUgZzZW5kZX'
+    'ISFgoGYWN0aW9uGAIgASgNUgZhY3Rpb24SGwoJcm9vdF9oYXNoGAMgASgMUghyb290SGFzaBIh'
+    'CgxtYW5pZmVzdF91cmkYBCABKAlSC21hbmlmZXN0VXJpEh8KC2FuY2hvcl90eXBlGAUgASgNUg'
+    'phbmNob3JUeXBlEhgKB2RlcG9zaXQYBiABKANSB2RlcG9zaXQSEAoDZmVlGAcgASgDUgNmZWUS'
+    'EgoEbWVtbxgIIAEoCVIEbWVtbxIbCglsb2NrX3RpbWUYCSABKA1SCGxvY2tUaW1l');
 
 @$core.Deprecated('Use getRawTransactionResponseDescriptor instead')
 const GetRawTransactionResponse$json = {
@@ -422,7 +422,7 @@ final $typed_data.Uint8List payloadWithdrawDescriptor = $convert.base64Decode(
 const PayloadAnchor$json = {
   '1': 'PayloadAnchor',
   '2': [
-    {'1': 'from', '3': 1, '4': 1, '5': 9, '10': 'from'},
+    {'1': 'sender', '3': 1, '4': 1, '5': 9, '10': 'sender'},
     {'1': 'action', '3': 2, '4': 1, '5': 13, '10': 'action'},
     {'1': 'root_hash', '3': 3, '4': 1, '5': 12, '10': 'rootHash'},
     {'1': 'manifest_uri', '3': 4, '4': 1, '5': 9, '10': 'manifestUri'},
@@ -433,10 +433,10 @@ const PayloadAnchor$json = {
 
 /// Descriptor for `PayloadAnchor`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List payloadAnchorDescriptor = $convert.base64Decode(
-    'Cg1QYXlsb2FkQW5jaG9yEhIKBGZyb20YASABKAlSBGZyb20SFgoGYWN0aW9uGAIgASgNUgZhY3'
-    'Rpb24SGwoJcm9vdF9oYXNoGAMgASgMUghyb290SGFzaBIhCgxtYW5pZmVzdF91cmkYBCABKAlS'
-    'C21hbmlmZXN0VXJpEh8KC2FuY2hvcl90eXBlGAUgASgNUgphbmNob3JUeXBlEhgKB2RlcG9zaX'
-    'QYBiABKANSB2RlcG9zaXQ=');
+    'Cg1QYXlsb2FkQW5jaG9yEhYKBnNlbmRlchgBIAEoCVIGc2VuZGVyEhYKBmFjdGlvbhgCIAEoDV'
+    'IGYWN0aW9uEhsKCXJvb3RfaGFzaBgDIAEoDFIIcm9vdEhhc2gSIQoMbWFuaWZlc3RfdXJpGAQg'
+    'ASgJUgttYW5pZmVzdFVyaRIfCgthbmNob3JfdHlwZRgFIAEoDVIKYW5jaG9yVHlwZRIYCgdkZX'
+    'Bvc2l0GAYgASgDUgdkZXBvc2l0');
 
 @$core.Deprecated('Use payloadBatchTransferDescriptor instead')
 const PayloadBatchTransfer$json = {
