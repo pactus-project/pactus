@@ -437,7 +437,7 @@ func _TransactionGetRawAnchorTransactionCommand(cfg *client.Config) *cobra.Comma
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.From, cfg.FlagNamer("From"), "", "The sender's account address.")
+	cmd.PersistentFlags().StringVar(&req.Sender, cfg.FlagNamer("Sender"), "", "The sender's account address.")
 	cmd.PersistentFlags().Uint32Var(&req.Action, cfg.FlagNamer("Action"), 0, "0 = set, 1 = delete.")
 	flag.BytesBase64Var(cmd.PersistentFlags(), &req.RootHash, cfg.FlagNamer("RootHash"), "Required when action is set.")
 	cmd.PersistentFlags().StringVar(&req.ManifestUri, cfg.FlagNamer("ManifestUri"), "", "Manifest URI. Ignored on delete.")

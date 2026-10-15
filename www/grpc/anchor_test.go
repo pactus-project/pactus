@@ -661,7 +661,7 @@ func TestGetRawAnchorTransaction(t *testing.T) {
 
 	td.FakeState.FakeHeight = 42
 	res, err := client.GetRawAnchorTransaction(t.Context(), &pactus.GetRawAnchorTransactionRequest{
-		From:        from,
+		Sender:      from,
 		Action:      uint32(payload.AnchorActionSet),
 		RootHash:    root,
 		ManifestUri: "line\nuri",
@@ -726,7 +726,7 @@ func TestGetRawAnchorRejectsBadSender(t *testing.T) {
 
 	for _, from := range []string{"", "not-an-address"} {
 		_, err := client.GetRawAnchorTransaction(t.Context(), &pactus.GetRawAnchorTransactionRequest{
-			From: from, RootHash: bytesRepeat(0x11, 32), Deposit: 5, Fee: 1,
+			Sender: from, RootHash: bytesRepeat(0x11, 32), Deposit: 5, Fee: 1,
 		})
 		require.Equal(t, codes.InvalidArgument, status.Code(err), from)
 	}
@@ -740,7 +740,7 @@ func TestGetRawAnchorRejectsWideAnchorType(t *testing.T) {
 
 	for _, anchorType := range []uint32{256, 300, math.MaxUint32} {
 		_, err := client.GetRawAnchorTransaction(t.Context(), &pactus.GetRawAnchorTransactionRequest{
-			From:       from,
+			Sender:     from,
 			RootHash:   root,
 			AnchorType: anchorType,
 			Deposit:    5,
@@ -750,7 +750,7 @@ func TestGetRawAnchorRejectsWideAnchorType(t *testing.T) {
 	}
 
 	res, err := client.GetRawAnchorTransaction(t.Context(), &pactus.GetRawAnchorTransactionRequest{
-		From:       from,
+		Sender:     from,
 		RootHash:   root,
 		AnchorType: math.MaxUint8,
 		Deposit:    5,
@@ -770,7 +770,7 @@ func TestGetRawAnchorFeeAndLockTime(t *testing.T) {
 	td.FakeState.EXPECT().CalculateFee(amount.Amount(5), payload.TypeAnchor).Return(amount.Amount(4242))
 
 	res, err := client.GetRawAnchorTransaction(t.Context(), &pactus.GetRawAnchorTransactionRequest{
-		From:     from,
+		Sender:   from,
 		RootHash: root,
 		Deposit:  5,
 	})
@@ -780,7 +780,7 @@ func TestGetRawAnchorFeeAndLockTime(t *testing.T) {
 	require.Equal(t, uint32(77), decoded.LockTime)
 
 	kept, err := client.GetRawAnchorTransaction(t.Context(), &pactus.GetRawAnchorTransactionRequest{
-		From:     from,
+		Sender:   from,
 		RootHash: root,
 		Deposit:  5,
 		Fee:      1,
@@ -792,7 +792,7 @@ func TestGetRawAnchorFeeAndLockTime(t *testing.T) {
 	require.Equal(t, uint32(1), decoded.LockTime)
 
 	high, err := client.GetRawAnchorTransaction(t.Context(), &pactus.GetRawAnchorTransactionRequest{
-		From:     from,
+		Sender:   from,
 		RootHash: root,
 		Deposit:  5,
 		Fee:      amount.MaxNanoPAC,
@@ -823,93 +823,93 @@ func TestGetRawAnchorBounds(t *testing.T) {
 	}
 
 	base := &pactus.GetRawAnchorTransactionRequest{
-		From: from, RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: 1, LockTime: 1,
+		Sender: from, RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: 1, LockTime: 1,
 	}
 	require.Equal(t, bytesRepeat(0x11, 32), ok(base).GetAnchor().RootHash)
 
 	memo64 := strings.Repeat("m", 64)
 	got := ok(&pactus.GetRawAnchorTransactionRequest{
-		From: from, RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: 1, LockTime: 1, Memo: memo64,
+		Sender: from, RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: 1, LockTime: 1, Memo: memo64,
 	})
 	require.Equal(t, memo64, got.Memo)
 	bad(&pactus.GetRawAnchorTransactionRequest{
-		From: from, RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: 1, LockTime: 1,
+		Sender: from, RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: 1, LockTime: 1,
 		Memo: strings.Repeat("m", 65),
 	})
 
 	bad(&pactus.GetRawAnchorTransactionRequest{
-		From: from, RootHash: bytesRepeat(0x11, 31), Deposit: 1, Fee: 1, LockTime: 1,
+		Sender: from, RootHash: bytesRepeat(0x11, 31), Deposit: 1, Fee: 1, LockTime: 1,
 	})
 	require.Len(t, ok(&pactus.GetRawAnchorTransactionRequest{
-		From: from, RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: 1, LockTime: 1,
+		Sender: from, RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: 1, LockTime: 1,
 	}).GetAnchor().RootHash, 32)
 	require.Len(t, ok(&pactus.GetRawAnchorTransactionRequest{
-		From: from, RootHash: bytesRepeat(0x11, 64), Deposit: 1, Fee: 1, LockTime: 1,
+		Sender: from, RootHash: bytesRepeat(0x11, 64), Deposit: 1, Fee: 1, LockTime: 1,
 	}).GetAnchor().RootHash, 64)
 	bad(&pactus.GetRawAnchorTransactionRequest{
-		From: from, RootHash: bytesRepeat(0x11, 65), Deposit: 1, Fee: 1, LockTime: 1,
+		Sender: from, RootHash: bytesRepeat(0x11, 65), Deposit: 1, Fee: 1, LockTime: 1,
 	})
 
 	uri128 := strings.Repeat("u", 128)
 	require.Equal(t, uri128, ok(&pactus.GetRawAnchorTransactionRequest{
-		From: from, RootHash: bytesRepeat(0x11, 32), ManifestUri: uri128, Deposit: 1, Fee: 1, LockTime: 1,
+		Sender: from, RootHash: bytesRepeat(0x11, 32), ManifestUri: uri128, Deposit: 1, Fee: 1, LockTime: 1,
 	}).GetAnchor().ManifestUri)
 	bad(&pactus.GetRawAnchorTransactionRequest{
-		From: from, RootHash: bytesRepeat(0x11, 32), ManifestUri: strings.Repeat("u", 129),
+		Sender: from, RootHash: bytesRepeat(0x11, 32), ManifestUri: strings.Repeat("u", 129),
 		Deposit: 1, Fee: 1, LockTime: 1,
 	})
 	res, err := client.GetRawAnchorTransaction(t.Context(), &pactus.GetRawAnchorTransactionRequest{
-		From: from, RootHash: bytesRepeat(0x11, 32), ManifestUri: "\xC3", Deposit: 1, Fee: 1, LockTime: 1,
+		Sender: from, RootHash: bytesRepeat(0x11, 32), ManifestUri: "\xC3", Deposit: 1, Fee: 1, LockTime: 1,
 	})
 	require.Error(t, err)
 	require.Nil(t, res)
 
 	bad(&pactus.GetRawAnchorTransactionRequest{
-		From: from, RootHash: bytesRepeat(0x11, 32), Deposit: -1, Fee: 1, LockTime: 1,
+		Sender: from, RootHash: bytesRepeat(0x11, 32), Deposit: -1, Fee: 1, LockTime: 1,
 	})
 	bad(&pactus.GetRawAnchorTransactionRequest{
-		From: from, RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: -1, LockTime: 1,
+		Sender: from, RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: -1, LockTime: 1,
 	})
 	bad(&pactus.GetRawAnchorTransactionRequest{
-		From: from, RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: amount.MaxNanoPAC + 1, LockTime: 1,
+		Sender: from, RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: amount.MaxNanoPAC + 1, LockTime: 1,
 	})
 
 	require.Equal(t, int64(0), ok(&pactus.GetRawAnchorTransactionRequest{
-		From: from, RootHash: bytesRepeat(0x11, 32), Fee: 1, LockTime: 1,
+		Sender: from, RootHash: bytesRepeat(0x11, 32), Fee: 1, LockTime: 1,
 	}).GetAnchor().Deposit)
 	require.Equal(t, int64(executor.MinAnchorDeposit-1), ok(&pactus.GetRawAnchorTransactionRequest{
-		From: from, RootHash: bytesRepeat(0x11, 32), Deposit: int64(executor.MinAnchorDeposit - 1),
+		Sender: from, RootHash: bytesRepeat(0x11, 32), Deposit: int64(executor.MinAnchorDeposit - 1),
 		Fee: 1, LockTime: 1,
 	}).GetAnchor().Deposit)
 	require.Equal(t, int64(amount.MaxNanoPAC), ok(&pactus.GetRawAnchorTransactionRequest{
-		From: from, RootHash: bytesRepeat(0x11, 32), Deposit: amount.MaxNanoPAC, Fee: 1, LockTime: 1,
+		Sender: from, RootHash: bytesRepeat(0x11, 32), Deposit: amount.MaxNanoPAC, Fee: 1, LockTime: 1,
 	}).GetAnchor().Deposit)
 	bad(&pactus.GetRawAnchorTransactionRequest{
-		From: from, RootHash: bytesRepeat(0x11, 32), Deposit: amount.MaxNanoPAC + 1, Fee: 1, LockTime: 1,
+		Sender: from, RootHash: bytesRepeat(0x11, 32), Deposit: amount.MaxNanoPAC + 1, Fee: 1, LockTime: 1,
 	})
 
 	zeros := ok(&pactus.GetRawAnchorTransactionRequest{
-		From: from, RootHash: make([]byte, 32), Fee: 1, LockTime: 1,
+		Sender: from, RootHash: make([]byte, 32), Fee: 1, LockTime: 1,
 	})
 	require.Equal(t, make([]byte, 32), zeros.GetAnchor().RootHash)
 	require.NotEmpty(t, zeros.GetAnchor().RootHash)
 
-	bad(&pactus.GetRawAnchorTransactionRequest{From: from, Fee: 1, LockTime: 1})
-	bad(&pactus.GetRawAnchorTransactionRequest{From: from, Action: 2, Fee: 1, LockTime: 1})
+	bad(&pactus.GetRawAnchorTransactionRequest{Sender: from, Fee: 1, LockTime: 1})
+	bad(&pactus.GetRawAnchorTransactionRequest{Sender: from, Action: 2, Fee: 1, LockTime: 1})
 	bad(&pactus.GetRawAnchorTransactionRequest{
-		From: crypto.TreasuryAddress.String(), RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: 1, LockTime: 1,
+		Sender: crypto.TreasuryAddress.String(), RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: 1, LockTime: 1,
 	})
 	bad(&pactus.GetRawAnchorTransactionRequest{
-		From: td.RandValAddress().String(), RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: 1, LockTime: 1,
+		Sender: td.RandValAddress().String(), RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: 1, LockTime: 1,
 	})
 
 	edPub, _ := td.RandEd25519KeyPair()
 	secPub, _ := td.RandSecp256k1KeyPair()
 	for _, addr := range []crypto.Address{edPub.AccountAddress(), secPub.AccountAddress()} {
 		info := ok(&pactus.GetRawAnchorTransactionRequest{
-			From: addr.String(), RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: 1, LockTime: 1,
+			Sender: addr.String(), RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: 1, LockTime: 1,
 		})
-		require.Equal(t, addr.String(), info.GetAnchor().From)
+		require.Equal(t, addr.String(), info.GetAnchor().Sender)
 	}
 }
 
@@ -919,17 +919,17 @@ func TestGetRawAnchorDelete(t *testing.T) {
 	from := td.RandAccAddress().String()
 
 	_, err := client.GetRawAnchorTransaction(t.Context(), &pactus.GetRawAnchorTransactionRequest{
-		From: from, Action: uint32(payload.AnchorActionDelete), Deposit: 1, Fee: 1, LockTime: 1,
+		Sender: from, Action: uint32(payload.AnchorActionDelete), Deposit: 1, Fee: 1, LockTime: 1,
 	})
 	require.Equal(t, codes.InvalidArgument, status.Code(err))
 	_, err = client.GetRawAnchorTransaction(t.Context(), &pactus.GetRawAnchorTransactionRequest{
-		From: from, Action: uint32(payload.AnchorActionDelete), RootHash: bytesRepeat(0x11, 32),
+		Sender: from, Action: uint32(payload.AnchorActionDelete), RootHash: bytesRepeat(0x11, 32),
 		Fee: 1, LockTime: 1,
 	})
 	require.Equal(t, codes.InvalidArgument, status.Code(err))
 
 	res, err := client.GetRawAnchorTransaction(t.Context(), &pactus.GetRawAnchorTransactionRequest{
-		From: from, Action: uint32(payload.AnchorActionDelete), ManifestUri: "leftover",
+		Sender: from, Action: uint32(payload.AnchorActionDelete), ManifestUri: "leftover",
 		AnchorType: 0xFF, Memo: "gone", Fee: 1, LockTime: 1,
 	})
 	require.NoError(t, err)
@@ -949,7 +949,7 @@ func TestDecodeRawAnchorAndTransfer(t *testing.T) {
 	client := td.transactionClient(t)
 	from := td.RandAccAddress().String()
 	res, err := client.GetRawAnchorTransaction(t.Context(), &pactus.GetRawAnchorTransactionRequest{
-		From: from, RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: 1, LockTime: 1,
+		Sender: from, RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: 1, LockTime: 1,
 	})
 	require.NoError(t, err)
 	require.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_ANCHOR,
@@ -991,7 +991,7 @@ func TestBroadcastAnchor(t *testing.T) {
 	client := td.transactionClient(t)
 	pub, prv := td.RandBLSKeyPair()
 	res, err := client.GetRawAnchorTransaction(t.Context(), &pactus.GetRawAnchorTransactionRequest{
-		From: pub.AccountAddress().String(), RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: 1, LockTime: 1,
+		Sender: pub.AccountAddress().String(), RootHash: bytesRepeat(0x11, 32), Deposit: 1, Fee: 1, LockTime: 1,
 	})
 	require.NoError(t, err)
 
@@ -1022,7 +1022,7 @@ func TestSignRawAnchor(t *testing.T) {
 	pub, prv := td.RandBLSKeyPair()
 
 	res, err := txs.GetRawAnchorTransaction(t.Context(), &pactus.GetRawAnchorTransactionRequest{
-		From: pub.AccountAddress().String(), RootHash: bytesRepeat(0x11, 32), Deposit: 3, Fee: 4, LockTime: 1,
+		Sender: pub.AccountAddress().String(), RootHash: bytesRepeat(0x11, 32), Deposit: 3, Fee: 4, LockTime: 1,
 	})
 	require.NoError(t, err)
 

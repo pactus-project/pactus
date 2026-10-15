@@ -184,7 +184,7 @@ pub struct GetRawBatchTransferTransactionRequest {
 pub struct GetRawAnchorTransactionRequest {
     /// The sender's account address.
     #[prost(string, tag="1")]
-    pub from: ::prost::alloc::string::String,
+    pub sender: ::prost::alloc::string::String,
     /// 0 = set, 1 = delete.
     #[prost(uint32, tag="2")]
     pub action: u32,
@@ -304,7 +304,7 @@ pub struct PayloadWithdraw {
 pub struct PayloadAnchor {
     /// The sender's address.
     #[prost(string, tag="1")]
-    pub from: ::prost::alloc::string::String,
+    pub sender: ::prost::alloc::string::String,
     /// 0 = set, 1 = delete.
     #[prost(uint32, tag="2")]
     pub action: u32,

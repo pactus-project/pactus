@@ -95,7 +95,7 @@ func txToTable(tmk *tableMaker, trx *pactus.TransactionInfo) {
 
 	case pactus.PayloadType_PAYLOAD_TYPE_ANCHOR:
 		pld := trx.Payload.(*pactus.TransactionInfo_Anchor).Anchor
-		tmk.addRowAccAddress("Sender", pld.From)
+		tmk.addRowAccAddress("Sender", pld.Sender)
 		tmk.addRowInt("Action", int(pld.Action))
 		if len(pld.RootHash) > 0 {
 			tmk.addRowString("Root Hash", hex.EncodeToString(pld.RootHash))

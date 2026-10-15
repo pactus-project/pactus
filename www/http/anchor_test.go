@@ -188,7 +188,7 @@ func TestGatewayRawAnchor(t *testing.T) {
 	root := bytesFill(0x31)
 
 	status, body := postJSON(t, td, "/pactus/transaction/get_raw_anchor_transaction", map[string]any{
-		"from":     from,
+		"sender":   from,
 		"action":   0,
 		"rootHash": base64.StdEncoding.EncodeToString(root),
 		"deposit":  5,
@@ -205,7 +205,7 @@ func TestGatewayRawAnchor(t *testing.T) {
 	require.NotEqual(t, pld.Deposit, parsed.Fee())
 
 	status, _ = postJSON(t, td, "/pactus/transaction/get_raw_anchor_transaction", map[string]any{
-		"from":     from,
+		"sender":   from,
 		"action":   1,
 		"deposit":  1,
 		"rootHash": base64.StdEncoding.EncodeToString(root),
@@ -214,7 +214,7 @@ func TestGatewayRawAnchor(t *testing.T) {
 
 	td.fake.FakeState.EXPECT().CalculateFee(amount.Amount(5), payload.TypeAnchor).Return(amount.Amount(4242))
 	status, body = postJSON(t, td, "/pactus/transaction/get_raw_anchor_transaction", map[string]any{
-		"from":     from,
+		"sender":   from,
 		"action":   0,
 		"rootHash": base64.StdEncoding.EncodeToString(root),
 		"deposit":  5,

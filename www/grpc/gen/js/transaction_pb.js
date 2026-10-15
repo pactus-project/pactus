@@ -3063,7 +3063,7 @@ proto.pactus.GetRawAnchorTransactionRequest.prototype.toObject = function(opt_in
  */
 proto.pactus.GetRawAnchorTransactionRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-from: jspb.Message.getFieldWithDefault(msg, 1, ""),
+sender: jspb.Message.getFieldWithDefault(msg, 1, ""),
 action: jspb.Message.getFieldWithDefault(msg, 2, 0),
 rootHash: msg.getRootHash_asB64(),
 manifestUri: jspb.Message.getFieldWithDefault(msg, 4, ""),
@@ -3110,7 +3110,7 @@ proto.pactus.GetRawAnchorTransactionRequest.deserializeBinaryFromReader = functi
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readStringRequireUtf8());
-      msg.setFrom(value);
+      msg.setSender(value);
       break;
     case 2:
       var value = /** @type {number} */ (reader.readUint32());
@@ -3173,7 +3173,7 @@ proto.pactus.GetRawAnchorTransactionRequest.prototype.serializeBinary = function
  */
 proto.pactus.GetRawAnchorTransactionRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getFrom();
+  f = message.getSender();
   if (f.length > 0) {
     writer.writeString(
       1,
@@ -3240,10 +3240,10 @@ proto.pactus.GetRawAnchorTransactionRequest.serializeBinaryToWriter = function(m
 
 
 /**
- * optional string from = 1;
+ * optional string sender = 1;
  * @return {string}
  */
-proto.pactus.GetRawAnchorTransactionRequest.prototype.getFrom = function() {
+proto.pactus.GetRawAnchorTransactionRequest.prototype.getSender = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
@@ -3252,7 +3252,7 @@ proto.pactus.GetRawAnchorTransactionRequest.prototype.getFrom = function() {
  * @param {string} value
  * @return {!proto.pactus.GetRawAnchorTransactionRequest} returns this
  */
-proto.pactus.GetRawAnchorTransactionRequest.prototype.setFrom = function(value) {
+proto.pactus.GetRawAnchorTransactionRequest.prototype.setSender = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
 };
 
@@ -4657,7 +4657,7 @@ proto.pactus.PayloadAnchor.prototype.toObject = function(opt_includeInstance) {
  */
 proto.pactus.PayloadAnchor.toObject = function(includeInstance, msg) {
   var f, obj = {
-from: jspb.Message.getFieldWithDefault(msg, 1, ""),
+sender: jspb.Message.getFieldWithDefault(msg, 1, ""),
 action: jspb.Message.getFieldWithDefault(msg, 2, 0),
 rootHash: msg.getRootHash_asB64(),
 manifestUri: jspb.Message.getFieldWithDefault(msg, 4, ""),
@@ -4701,7 +4701,7 @@ proto.pactus.PayloadAnchor.deserializeBinaryFromReader = function(msg, reader) {
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readStringRequireUtf8());
-      msg.setFrom(value);
+      msg.setSender(value);
       break;
     case 2:
       var value = /** @type {number} */ (reader.readUint32());
@@ -4752,7 +4752,7 @@ proto.pactus.PayloadAnchor.prototype.serializeBinary = function() {
  */
 proto.pactus.PayloadAnchor.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getFrom();
+  f = message.getSender();
   if (f.length > 0) {
     writer.writeString(
       1,
@@ -4798,10 +4798,10 @@ proto.pactus.PayloadAnchor.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional string from = 1;
+ * optional string sender = 1;
  * @return {string}
  */
-proto.pactus.PayloadAnchor.prototype.getFrom = function() {
+proto.pactus.PayloadAnchor.prototype.getSender = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
@@ -4810,7 +4810,7 @@ proto.pactus.PayloadAnchor.prototype.getFrom = function() {
  * @param {string} value
  * @return {!proto.pactus.PayloadAnchor} returns this
  */
-proto.pactus.PayloadAnchor.prototype.setFrom = function(value) {
+proto.pactus.PayloadAnchor.prototype.setSender = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
 };
 

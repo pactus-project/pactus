@@ -279,7 +279,7 @@ func (s *transactionServer) GetRawBatchTransferTransaction(_ context.Context,
 func (s *transactionServer) GetRawAnchorTransaction(_ context.Context,
 	req *pactus.GetRawAnchorTransactionRequest,
 ) (*pactus.GetRawTransactionResponse, error) {
-	sender, err := crypto.AddressFromString(req.From)
+	sender, err := crypto.AddressFromString(req.Sender)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid address: %v", err)
 	}
@@ -452,7 +452,7 @@ func transactionToProto(trx *tx.Tx, blockHeight types.Height, confirmations int)
 		pld := trx.Payload().(*payload.AnchorPayload)
 		trxInfo.Payload = &pactus.TransactionInfo_Anchor{
 			Anchor: &pactus.PayloadAnchor{
-				From:        pld.From.String(),
+				Sender:      pld.From.String(),
 				Action:      uint32(pld.Action),
 				RootHash:    append([]byte(nil), pld.RootHash...),
 				ManifestUri: pld.ManifestURI,

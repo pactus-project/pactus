@@ -947,7 +947,7 @@ func (x *GetRawBatchTransferTransactionRequest) GetMemo() string {
 type GetRawAnchorTransactionRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The sender's account address.
-	From string `protobuf:"bytes,1,opt,name=from,proto3" json:"from,omitempty"`
+	Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
 	// 0 = set, 1 = delete.
 	Action uint32 `protobuf:"varint,2,opt,name=action,proto3" json:"action,omitempty"`
 	// Required when action is set.
@@ -998,9 +998,9 @@ func (*GetRawAnchorTransactionRequest) Descriptor() ([]byte, []int) {
 	return file_transaction_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *GetRawAnchorTransactionRequest) GetFrom() string {
+func (x *GetRawAnchorTransactionRequest) GetSender() string {
 	if x != nil {
-		return x.From
+		return x.Sender
 	}
 	return ""
 }
@@ -1472,7 +1472,7 @@ func (x *PayloadWithdraw) GetAmount() int64 {
 type PayloadAnchor struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The sender's address.
-	From string `protobuf:"bytes,1,opt,name=from,proto3" json:"from,omitempty"`
+	Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
 	// 0 = set, 1 = delete.
 	Action uint32 `protobuf:"varint,2,opt,name=action,proto3" json:"action,omitempty"`
 	// Empty when action is delete.
@@ -1517,9 +1517,9 @@ func (*PayloadAnchor) Descriptor() ([]byte, []int) {
 	return file_transaction_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *PayloadAnchor) GetFrom() string {
+func (x *PayloadAnchor) GetSender() string {
 	if x != nil {
-		return x.From
+		return x.Sender
 	}
 	return ""
 }
@@ -2217,9 +2217,9 @@ const file_transaction_proto_rawDesc = "" +
 	"recipients\x18\x03 \x03(\v2\x11.pactus.RecipientR\n" +
 	"recipients\x12\x10\n" +
 	"\x03fee\x18\x04 \x01(\x03R\x03fee\x12\x12\n" +
-	"\x04memo\x18\x05 \x01(\tR\x04memo\"\x8a\x02\n" +
-	"\x1eGetRawAnchorTransactionRequest\x12\x12\n" +
-	"\x04from\x18\x01 \x01(\tR\x04from\x12\x16\n" +
+	"\x04memo\x18\x05 \x01(\tR\x04memo\"\x8e\x02\n" +
+	"\x1eGetRawAnchorTransactionRequest\x12\x16\n" +
+	"\x06sender\x18\x01 \x01(\tR\x06sender\x12\x16\n" +
 	"\x06action\x18\x02 \x01(\rR\x06action\x12\x1b\n" +
 	"\troot_hash\x18\x03 \x01(\fR\brootHash\x12!\n" +
 	"\fmanifest_uri\x18\x04 \x01(\tR\vmanifestUri\x12\x1f\n" +
@@ -2255,9 +2255,9 @@ const file_transaction_proto_rawDesc = "" +
 	"\x0fPayloadWithdraw\x12+\n" +
 	"\x11validator_address\x18\x01 \x01(\tR\x10validatorAddress\x12'\n" +
 	"\x0faccount_address\x18\x02 \x01(\tR\x0eaccountAddress\x12\x16\n" +
-	"\x06amount\x18\x03 \x01(\x03R\x06amount\"\xb6\x01\n" +
-	"\rPayloadAnchor\x12\x12\n" +
-	"\x04from\x18\x01 \x01(\tR\x04from\x12\x16\n" +
+	"\x06amount\x18\x03 \x01(\x03R\x06amount\"\xba\x01\n" +
+	"\rPayloadAnchor\x12\x16\n" +
+	"\x06sender\x18\x01 \x01(\tR\x06sender\x12\x16\n" +
 	"\x06action\x18\x02 \x01(\rR\x06action\x12\x1b\n" +
 	"\troot_hash\x18\x03 \x01(\fR\brootHash\x12!\n" +
 	"\fmanifest_uri\x18\x04 \x01(\tR\vmanifestUri\x12\x1f\n" +
