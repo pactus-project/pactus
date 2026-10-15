@@ -122,14 +122,15 @@ func (acc *Account) decodeAnchor(r *bytes.Reader) error {
 		RootHash:    root,
 		ManifestURI: string(uriBytes),
 	}
-	if err := encoding.ReadElements(r,
+	err := encoding.ReadElements(r,
 		&anchor.AnchorType,
 		&anchor.LockedDeposit,
 		&anchor.CreatedAtHeight,
 		&anchor.CreatedAtTime,
 		&anchor.UpdatedAtHeight,
 		&anchor.UpdatedAtTime,
-	); err != nil {
+	)
+	if err != nil {
 		return err
 	}
 

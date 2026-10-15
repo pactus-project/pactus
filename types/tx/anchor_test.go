@@ -2,6 +2,7 @@ package tx_test
 
 import (
 	"bytes"
+	"slices"
 	"strings"
 	"testing"
 
@@ -262,7 +263,7 @@ func TestAnchorStreamAndStandaloneBytes(t *testing.T) {
 	transferRaw, err := transfer.Bytes()
 	require.NoError(t, err)
 
-	stream := append(append([]byte{}, anchorRaw...), transferRaw...)
+	stream := slices.Concat(anchorRaw, transferRaw)
 	reader := bytes.NewReader(stream)
 	first := new(tx.Tx)
 	require.NoError(t, first.Decode(reader))
@@ -274,7 +275,7 @@ func TestAnchorStreamAndStandaloneBytes(t *testing.T) {
 
 	unsigned, err := tx.NewAnchorTx(1, from, payload.AnchorActionDelete, nil, "", 0, 0, 1).Bytes()
 	require.NoError(t, err)
-	unsignedStream := append(append([]byte{}, unsigned...), transferRaw...)
+	unsignedStream := slices.Concat(unsigned, transferRaw)
 	unsignedReader := bytes.NewReader(unsignedStream)
 	require.NoError(t, new(tx.Tx).Decode(unsignedReader))
 	require.NoError(t, new(tx.Tx).Decode(unsignedReader))

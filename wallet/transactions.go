@@ -121,8 +121,9 @@ func (t *transactions) processBlock(blk *block.Block) {
 
 		if _, ok := pendingTxs[txID]; ok {
 			pendingInfo := pendingTxs[txID]
-			if err := t.storage.UpdateTransactionStatus(pendingInfo.No,
-				wtypes.TransactionStatusConfirmed, blk.Height()); err != nil {
+			err := t.storage.UpdateTransactionStatus(pendingInfo.No,
+				wtypes.TransactionStatusConfirmed, blk.Height())
+			if err != nil {
 				logger.Warn("failed to update transaction status", "error", err, "id", txID)
 			}
 
@@ -156,8 +157,9 @@ func (t *transactions) getPendingTransaction() map[string]*wtypes.TransactionInf
 		err = t.provider.CheckTransaction(pendingInfo.Data)
 		if err != nil {
 			logger.Warn("pending transaction is invalid", "error", err, "id", pendingInfo.TxID)
-			if err := t.storage.UpdateTransactionStatus(pendingInfo.No,
-				wtypes.TransactionStatusFailed, 0); err != nil {
+			err = t.storage.UpdateTransactionStatus(pendingInfo.No,
+				wtypes.TransactionStatusFailed, 0)
+			if err != nil {
 				logger.Warn("failed to update transaction status", "error", err, "id", pendingInfo.TxID)
 			}
 
