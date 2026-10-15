@@ -31,6 +31,13 @@ var (
 
 const (
 	lastStoreVersion = int32(2)
+
+	// A committed block starts with the hash of the block, followed by the data of the block.
+	// The header of the block starts with its version (1 byte) and its time (4 bytes).
+	blockVersionSize = 1
+	blockTimeSize    = 4
+	blockTimeOffset  = hash.HashSize + blockVersionSize
+	blockTimeEnd     = blockTimeOffset + blockTimeSize
 )
 
 var (
@@ -280,10 +287,10 @@ func (s *store) Transaction(txID tx.ID) (*CommittedTx, error) {
 	// The sum is calculated with 64 bits to avoid overflow of a corrupted index.
 	start := uint64(pos.offset)
 	end := start + uint64(pos.length)
-	if end > uint64(len(data)) || len(data) < hash.HashSize+5 {
+	if end > uint64(len(data)) || len(data) < blockTimeEnd {
 		return nil, ErrBadOffset
 	}
-	blockTime := util.BytesToUint32LE(data[hash.HashSize+1 : hash.HashSize+5])
+	blockTime := util.BytesToUint32LE(data[blockTimeOffset:blockTimeEnd])
 
 	return &CommittedTx{
 		store:     s,
