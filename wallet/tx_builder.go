@@ -50,7 +50,7 @@ func OptionMemo(memo string) func(builder *txBuilder) error {
 	}
 }
 
-// OptionDelegateOwner sets delegation owner address for bond/unbond transactions.
+// OptionDelegateOwner sets delegation owner address for bond/unbond/withdraw transactions.
 func OptionDelegateOwner(owner string) func(builder *txBuilder) error {
 	return func(builder *txBuilder) error {
 		if owner == "" {
@@ -180,6 +180,10 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 
 	case payload.TypeWithdraw:
 		trx = tx.NewWithdrawTx(m.lockTime, *m.sender, *m.receiver, m.amount, m.fee, tx.WithMemo(m.memo))
+		if m.delegateOwner != nil {
+			withdrawPld := trx.Payload().(*payload.WithdrawPayload)
+			withdrawPld.DelegateOwner = *m.delegateOwner
+		}
 
 	case payload.TypeBatchTransfer:
 		return nil, errors.New("BatchTransfer is not implemented yet")

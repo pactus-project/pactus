@@ -50,11 +50,17 @@ func (e *WithdrawExecutor) Check(sbx sandbox.SandboxReader, _ bool) error {
 		return ErrUnbondingPeriod
 	}
 
-	// For delegated validators (PIP-49), only the stake owner can receive withdrawn principal.
+	// For delegated validators (PIP-49), only the stake owner can withdraw.
+	// The owner signs the transaction and may send the funds to any account,
+	// so the operator cannot redirect the principal by setting a large fee.
 	if e.sender.IsDelegated() {
-		if e.pld.To != e.sender.DelegateOwner() {
-			return ErrWithdrawMustGoToStakeOwner
+		if !e.pld.IsDelegated() || e.pld.DelegateOwner != e.sender.DelegateOwner() {
+			return ErrInvalidDelegateOwner
 		}
+	} else if e.pld.IsDelegated() {
+		// A non-delegated validator can only be withdrawn by its own key.
+		// The payload must not be delegated, forcing Signer() == From.
+		return ErrInvalidDelegateOwner
 	}
 
 	return nil

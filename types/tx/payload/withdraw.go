@@ -13,13 +13,23 @@ type WithdrawPayload struct {
 	From   crypto.Address // withdraw from validator address
 	To     crypto.Address // deposit to account address
 	Amount amount.Amount  // amount to deposit
+
+	// Delegation fields
+	DelegateOwner crypto.Address
 }
 
 func (*WithdrawPayload) Type() Type {
 	return TypeWithdraw
 }
 
+// Signer returns the address that must sign this transaction.
+// For a delegated validator the stake owner is the signer, so the operator
+// cannot withdraw the owner's stake (for example, by taking it as a fee).
 func (p *WithdrawPayload) Signer() crypto.Address {
+	if p.IsDelegated() {
+		return p.DelegateOwner
+	}
+
 	return p.From
 }
 
@@ -40,13 +50,26 @@ func (p *WithdrawPayload) BasicCheck() error {
 		}
 	}
 
+	if p.IsDelegated() {
+		if !p.DelegateOwner.IsAccountAddress() {
+			return BasicCheckError{
+				Reason: "delegation owner is not an account address: " + p.DelegateOwner.String(),
+			}
+		}
+	}
+
 	return nil
 }
 
 func (p *WithdrawPayload) SerializeSize() int {
-	return p.From.SerializeSize() +
+	size := p.From.SerializeSize() +
 		p.To.SerializeSize() +
 		encoding.VarIntSerializeSize(uint64(p.Amount))
+	if p.IsDelegated() {
+		size += p.DelegateOwner.SerializeSize()
+	}
+
+	return size
 }
 
 func (p *WithdrawPayload) Encode(w io.Writer) error {
@@ -60,10 +83,21 @@ func (p *WithdrawPayload) Encode(w io.Writer) error {
 		return err
 	}
 
-	return p.Amount.Encode(w)
+	err = p.Amount.Encode(w)
+	if err != nil {
+		return err
+	}
+
+	if p.IsDelegated() {
+		if err := p.DelegateOwner.Encode(w); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
-func (p *WithdrawPayload) Decode(_ DecodeContext, r io.Reader) error {
+func (p *WithdrawPayload) Decode(ctx DecodeContext, r io.Reader) error {
 	err := p.From.Decode(r)
 	if err != nil {
 		return err
@@ -74,7 +108,22 @@ func (p *WithdrawPayload) Decode(_ DecodeContext, r io.Reader) error {
 		return err
 	}
 
-	return p.Amount.Decode(r)
+	err = p.Amount.Decode(r)
+	if err != nil {
+		return err
+	}
+
+	if ctx.WithDelegation {
+		if err := p.DelegateOwner.Decode(r); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (p *WithdrawPayload) IsDelegated() bool {
+	return p.DelegateOwner != crypto.TreasuryAddress
 }
 
 // LogString returns a concise string representation intended for use in logs.

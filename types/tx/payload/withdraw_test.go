@@ -137,6 +137,75 @@ func TestWithdrawDecoding(t *testing.T) {
 	}
 }
 
+func TestWithdrawWithDelegationDecoding(t *testing.T) {
+	tests := []struct {
+		raw     []byte
+		value   amount.Amount
+		readErr error
+	}{
+		{
+			raw: []byte{
+				0x01, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+				0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20,
+				0x21, 0x12, 0x23, 0x24, 0x25, // from
+				0x02, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+				0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20,
+				0x21, 0x12, 0x23, 0x24, 0x25, // to
+				0x80, 0x80, 0x80, 0x01, // amount
+			},
+			value:   0x200000,
+			readErr: io.EOF,
+		},
+		{
+			raw: []byte{
+				0x01, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+				0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20,
+				0x21, 0x12, 0x23, 0x24, 0x25, // from
+				0x02, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+				0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20,
+				0x21, 0x12, 0x23, 0x24, 0x25, // to
+				0x80, 0x80, 0x80, 0x01, // amount
+				0x03, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+				0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20,
+				0x21, 0x12, 0x23, 0x24, 0x25, // delegate owner
+			},
+			value:   0x200000,
+			readErr: nil,
+		},
+	}
+
+	for no, tt := range tests {
+		pld := payload.WithdrawPayload{}
+		r := util.NewFixedReader(len(tt.raw), tt.raw)
+		err := pld.Decode(payload.DecodeContext{WithDelegation: true}, r)
+		if tt.readErr != nil {
+			require.ErrorIs(t, err, tt.readErr)
+		} else {
+			require.NoError(t, err)
+
+			for i := 0; i < pld.SerializeSize(); i++ {
+				w := util.NewFixedWriter(i)
+				require.Error(t, pld.Encode(w), "encode test %v failed", no)
+			}
+			w := util.NewFixedWriter(pld.SerializeSize())
+			require.NoError(t, pld.Encode(w))
+			assert.Len(t, w.Bytes(), pld.SerializeSize())
+			assert.Equal(t, tt.raw, w.Bytes())
+
+			// Basic check
+
+			require.NoError(t, pld.BasicCheck())
+
+			// The delegate owner is the signer, not the validator.
+			assert.True(t, pld.IsDelegated())
+			assert.Equal(t, crypto.Address(tt.raw[46:67]), pld.DelegateOwner)
+			assert.Equal(t, pld.DelegateOwner, pld.Signer())
+			assert.NotEqual(t, pld.From, pld.Signer())
+			assert.Equal(t, tt.value, pld.Value())
+		}
+	}
+}
+
 func TestWithdrawBasicCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
@@ -157,6 +226,14 @@ func TestWithdrawBasicCheck(t *testing.T) {
 				To:   ts.RandValAddress(),
 			},
 			err: "receiver is not an account address",
+		},
+		{
+			pld: payload.WithdrawPayload{
+				From:          ts.RandValAddress(),
+				To:            ts.RandAccAddress(),
+				DelegateOwner: ts.RandValAddress(),
+			},
+			err: "delegation owner is not an account address",
 		},
 	}
 

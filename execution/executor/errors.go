@@ -73,9 +73,6 @@ var ErrDelegateExpiryInPast = errors.New("delegate expiry must be in the future"
 // delegation is still active and has not yet reached its expiration height.
 var ErrDelegationNotExpired = errors.New("delegation has not expired")
 
-// ErrWithdrawMustGoToStakeOwner is returned when the withdrawal is not going to the stake owner.
-var ErrWithdrawMustGoToStakeOwner = errors.New("delegated validator withdraw must go to stake owner")
-
 // ErrInvalidDelegateOwner is returned when the delegate owner is invalid.
 var ErrInvalidDelegateOwner = errors.New("invalid delegate owner")
 
