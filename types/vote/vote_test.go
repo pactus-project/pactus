@@ -2,6 +2,7 @@ package vote_test
 
 import (
 	"encoding/hex"
+	"fmt"
 	"testing"
 	"unsafe"
 
@@ -396,6 +397,24 @@ func TestCPDecided(t *testing.T) {
 		assert.Equal(t, int16(1), vte.CPRound())
 		assert.Equal(t, vote.CPValueAbstain, vte.CPValue())
 		assert.NotNil(t, vte.CPJust())
+	})
+}
+
+func TestCPVoteQCertHeightRound(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	height := ts.RandHeight()
+	round := types.Round(0)
+	just := &vote.JustDecided{
+		QCert: ts.GenerateTestCertificate(height),
+	}
+	vte := vote.NewCPDecidedVote(hash.UndefHash, height+1, round, 0,
+		vote.CPValueYes, just, ts.RandAccAddress())
+	vte.SetSignature(ts.RandBLSSignature())
+
+	err := vte.BasicCheck()
+	require.ErrorIs(t, err, vote.BasicCheckError{
+		Reason: fmt.Sprintf("certificate height %d does not match vote height %d", height, height+1),
 	})
 }
 
