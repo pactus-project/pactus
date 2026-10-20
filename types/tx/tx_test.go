@@ -81,6 +81,52 @@ func TestEncodingTx(t *testing.T) {
 	require.Error(t, err)
 }
 
+func TestDelegatedWithdrawTxEncoding(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	valPub, _ := ts.RandBLSKeyPair()
+	ownerPub, ownerPrv := ts.RandBLSKeyPair()
+
+	trx := tx.NewWithdrawTx(ts.RandHeight(), valPub.ValidatorAddress(),
+		ts.RandAccAddress(), ts.RandAmount(), ts.RandFee())
+	pld := trx.Payload().(*payload.WithdrawPayload)
+	pld.DelegateOwner = ownerPub.AccountAddress()
+	ts.HelperSignTransaction(ownerPrv, trx)
+
+	require.NoError(t, trx.BasicCheck())
+	require.Equal(t, pld.DelegateOwner, pld.Signer())
+
+	bz, err := trx.Bytes()
+	require.NoError(t, err)
+
+	decoded, err := tx.FromBytes(bz)
+	require.NoError(t, err)
+	assert.Equal(t, trx.ID(), decoded.ID())
+
+	decodedPld := decoded.Payload().(*payload.WithdrawPayload)
+	assert.True(t, decodedPld.IsDelegated())
+	assert.Equal(t, pld.DelegateOwner, decodedPld.DelegateOwner)
+	assert.Equal(t, pld.DelegateOwner, decodedPld.Signer())
+}
+
+func TestDelegatedWithdrawRequiresOwnerSignature(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	valPub, valPrv := ts.RandBLSKeyPair()
+	ownerPub, _ := ts.RandBLSKeyPair()
+
+	// The operator tries to withdraw the whole stake as fee, sending nothing
+	// to the owner. The payload claims the owner as the delegate.
+	trx := tx.NewWithdrawTx(ts.RandHeight(), valPub.ValidatorAddress(),
+		ownerPub.AccountAddress(), 0, ts.RandAmountRange(1, amount.MaxNanoPAC))
+	trx.Payload().(*payload.WithdrawPayload).DelegateOwner = ownerPub.AccountAddress()
+
+	// The operator signs the transaction with the validator key.
+	ts.HelperSignTransaction(valPrv, trx)
+
+	require.ErrorContains(t, trx.BasicCheck(), "address mismatch")
+}
+
 func TestTxIDNoSignatory(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 

@@ -3,8 +3,10 @@ package executor
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -82,23 +84,63 @@ func TestExecuteDelegatedWithdrawTx(t *testing.T) {
 	amt, fee := td.randAmountFee(totalStake)
 	lockTime := td.sbx.CurrentHeight()
 
-	t.Run("Should fail, receiver must be stake owner", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(lockTime, val.Address(), td.RandAccAddress(), amt, fee)
+	// makeWithdrawTx builds a withdraw transaction signed by delegateOwner.
+	makeWithdrawTx := func(to, delegateOwner crypto.Address) *tx.Tx {
+		trx := tx.NewWithdrawTx(lockTime, val.Address(), to, amt, fee)
+		trx.Payload().(*payload.WithdrawPayload).DelegateOwner = delegateOwner
 
-		td.check(t, trx, true, ErrWithdrawMustGoToStakeOwner)
-		td.check(t, trx, false, ErrWithdrawMustGoToStakeOwner)
+		return trx
+	}
+
+	t.Run("Should fail, operator cannot withdraw", func(t *testing.T) {
+		trx := tx.NewWithdrawTx(lockTime, val.Address(), owner, amt, fee)
+
+		td.check(t, trx, true, ErrInvalidDelegateOwner)
+		td.check(t, trx, false, ErrInvalidDelegateOwner)
 	})
 
-	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(lockTime, val.Address(), owner, amt, fee)
+	t.Run("Should fail, operator cannot steal stake as fee", func(t *testing.T) {
+		// amount is zero and the whole stake is set as the fee.
+		trx := tx.NewWithdrawTx(lockTime, val.Address(), owner, 0, totalStake)
+
+		td.check(t, trx, true, ErrInvalidDelegateOwner)
+		td.check(t, trx, false, ErrInvalidDelegateOwner)
+	})
+
+	t.Run("Should fail, wrong delegate owner", func(t *testing.T) {
+		trx := makeWithdrawTx(owner, td.RandAccAddress())
+
+		td.check(t, trx, true, ErrInvalidDelegateOwner)
+		td.check(t, trx, false, ErrInvalidDelegateOwner)
+	})
+
+	t.Run("Ok, owner can withdraw to any address", func(t *testing.T) {
+		receiver := td.RandAccAddress()
+		trx := makeWithdrawTx(receiver, owner)
 
 		td.check(t, trx, true, nil)
 		td.check(t, trx, false, nil)
 		td.execute(t, trx)
-	})
 
-	updatedVal := td.sbx.Validator(val.Address())
-	updatedOwner := td.sbx.Account(owner)
-	assert.Equal(t, totalStake-amt-fee, updatedVal.Stake())
-	assert.Equal(t, amt, updatedOwner.Balance())
+		updatedVal := td.sbx.Validator(val.Address())
+		updatedReceiver := td.sbx.Account(receiver)
+		assert.Equal(t, totalStake-amt-fee, updatedVal.Stake())
+		assert.Equal(t, amt, updatedReceiver.Balance())
+	})
+}
+
+func TestExecuteNonDelegatedWithdrawWithDelegateOwner(t *testing.T) {
+	td := setup(t)
+
+	val := td.addTestValidator(t)
+	totalStake := val.Stake()
+	amt, fee := td.randAmountFee(totalStake)
+	val.UpdateUnbondingHeight(td.sbx.CurrentHeight().SafeDecrease(td.sbx.Params().UnbondInterval))
+	td.sbx.UpdateValidator(val)
+
+	trx := tx.NewWithdrawTx(td.sbx.CurrentHeight(), val.Address(), td.RandAccAddress(), amt, fee)
+	trx.Payload().(*payload.WithdrawPayload).DelegateOwner = td.RandAccAddress()
+
+	td.check(t, trx, true, ErrInvalidDelegateOwner)
+	td.check(t, trx, false, ErrInvalidDelegateOwner)
 }

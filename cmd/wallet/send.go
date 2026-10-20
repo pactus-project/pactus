@@ -176,6 +176,8 @@ func buildSendWithdrawCmd(parentCmd *cobra.Command) {
 	parentCmd.AddCommand(withdrawCmd)
 
 	lockTime, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(withdrawCmd)
+	delegateOwnerOpt := withdrawCmd.Flags().String("delegate-owner", "",
+		"delegation stake owner account address")
 	passOpt := addPasswordOption(withdrawCmd)
 
 	withdrawCmd.Run = func(_ *cobra.Command, args []string) {
@@ -192,6 +194,7 @@ func buildSendWithdrawCmd(parentCmd *cobra.Command) {
 			wallet.OptionFee(*feeOpt),
 			wallet.OptionLockTime(types.Height(*lockTime)),
 			wallet.OptionMemo(*memoOpt),
+			wallet.OptionDelegateOwner(*delegateOwnerOpt),
 		}
 
 		trx, err := wlt.MakeWithdrawTx(sender, receiver, amt, opts...)

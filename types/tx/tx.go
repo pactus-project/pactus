@@ -319,6 +319,9 @@ func (tx *Tx) Encode(w io.Writer, opts ...EncodeOption) error {
 	if pld, ok := tx.data.Payload.(*payload.UnbondPayload); ok && pld.IsDelegated() {
 		flags = util.SetFlag(flags, flagWithDelegation)
 	}
+	if pld, ok := tx.data.Payload.(*payload.WithdrawPayload); ok && pld.IsDelegated() {
+		flags = util.SetFlag(flags, flagWithDelegation)
+	}
 
 	err := encoding.WriteElement(w, flags)
 	if err != nil {
