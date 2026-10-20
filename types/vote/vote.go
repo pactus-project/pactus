@@ -233,6 +233,9 @@ func (v *Vote) BasicCheck() error {
 		if err := v.data.CPVote.BasicCheck(); err != nil {
 			return err
 		}
+		if err := checkJustHeightRound(v.data.CPVote.Just, v.data.Height, v.data.Round); err != nil {
+			return err
+		}
 	} else if v.data.CPVote != nil {
 		return BasicCheckError{
 			Reason: "should not have CP data",

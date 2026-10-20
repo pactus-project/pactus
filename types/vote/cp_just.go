@@ -1,6 +1,9 @@
 package vote
 
 import (
+	"fmt"
+
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/certificate"
 )
 
@@ -41,6 +44,62 @@ func (t JustType) String() string {
 type Just interface {
 	Type() JustType
 	BasicCheck() error
+}
+
+// checkJustHeightRound checks that the quorum certificates attached to the
+// justification were issued at the same height and round as the vote. Without
+// this binding, a valid certificate from another height or round could be
+// replayed as the justification of a newly signed vote.
+func checkJustHeightRound(just Just, height types.Height, round types.Round) error {
+	switch j := just.(type) {
+	case *JustInitNo:
+		return checkQCertHeightRound(j.QCert, height, round)
+	case *JustInitYes:
+		return nil
+	case *JustPreVoteSoft:
+		return checkQCertHeightRound(j.QCert, height, round)
+	case *JustPreVoteHard:
+		return checkQCertHeightRound(j.QCert, height, round)
+	case *JustMainVoteNoConflict:
+		return checkQCertHeightRound(j.QCert, height, round)
+	case *JustDecided:
+		return checkQCertHeightRound(j.QCert, height, round)
+	case *JustMainVoteConflict:
+		if j.JustNo == nil || j.JustYes == nil {
+			return BasicCheckError{Reason: "quorum certificate is not set"}
+		}
+		if err := checkJustHeightRound(j.JustNo, height, round); err != nil {
+			return err
+		}
+
+		return checkJustHeightRound(j.JustYes, height, round)
+	default:
+		return BasicCheckError{Reason: "unknown justification"}
+	}
+}
+
+func checkQCertHeightRound(qCert *certificate.Certificate,
+	height types.Height, round types.Round,
+) error {
+	if qCert == nil {
+		return BasicCheckError{Reason: "quorum certificate is not set"}
+	}
+
+	if qCert.Height() != height {
+		return BasicCheckError{
+			Reason: fmt.Sprintf("certificate height %d does not match vote height %d",
+				qCert.Height(), height),
+		}
+	}
+
+	if qCert.Round() != round {
+		return BasicCheckError{
+			Reason: fmt.Sprintf("certificate round %d does not match vote round %d",
+				qCert.Round(), round),
+		}
+	}
+
+	return nil
 }
 
 func makeJust(t JustType) Just {
