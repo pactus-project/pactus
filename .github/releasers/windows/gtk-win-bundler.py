@@ -32,12 +32,15 @@ class GTKBundler:
         # Use ldd to get dependencies
         ldd_output = self.run_command(['ldd', str(exe_path)])
 
+        # ldd reports POSIX paths of the active MSYS2 environment (e.g. /ucrt64 or /mingw64)
+        posix_prefix = f"/{self.mingw_prefix.name.lower()}/"
+
         for line in ldd_output.split('\n'):
-            if '/mingw64' in line and '.dll' in line:
+            if posix_prefix in line and '.dll' in line:
                 # Extract the DLL path
                 parts = line.split()
                 if len(parts) >= 3:
-                    dll_path = parts[2].replace('/mingw64', str(self.mingw_prefix))
+                    dll_path = parts[2].replace(posix_prefix, f"{self.mingw_prefix.as_posix()}/", 1)
                     dll_path = Path(dll_path)
                     if dll_path not in dependencies:
                         dependencies.append(dll_path)
@@ -93,6 +96,10 @@ class GTKBundler:
 
         for dep in dependencies:
             self.get_dependencies(dep, dependencies)
+
+        if not dependencies:
+            print(f"ERROR: No DLL dependencies found under {self.mingw_prefix}")
+            sys.exit(1)
 
         for dep in dependencies:
             self.copy_file(dep, target_exe_dir / dep.name)
