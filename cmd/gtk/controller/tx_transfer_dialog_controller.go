@@ -55,11 +55,11 @@ func (c *TxTransferDialogController) applyDefaults() {
 }
 
 func (c *TxTransferDialogController) populateCombos() {
-	gtkutil.DropDownFromAddressList(c.view.SenderDrop, c.model.ListAccountAddresses())
+	gtkutil.DropDownFromAddressListWithAmount(c.view.SenderDrop, c.model.ListAccountAddresses(), c.model.Balance)
 }
 
 func (c *TxTransferDialogController) onSenderChanged() {
-	sender := gtkutil.DropDownGetSelectedText(c.view.SenderDrop)
+	sender := gtkutil.DropDownGetSelectedAddress(c.view.SenderDrop)
 	if info := c.model.AddressInfo(sender); info != nil && info.Label != "" {
 		setHintLabel(c.view.SenderHint, fmt.Sprintf("label: %s", info.Label))
 	} else {
@@ -88,7 +88,7 @@ func (c *TxTransferDialogController) onFeeChanged() {
 }
 
 func (c *TxTransferDialogController) onSend() {
-	sender := gtkutil.DropDownGetSelectedText(c.view.SenderDrop)
+	sender := gtkutil.DropDownGetSelectedAddress(c.view.SenderDrop)
 	receiver := gtkutil.EntryGetText(c.view.ReceiverEntry)
 	amountStr := gtkutil.EntryGetText(c.view.AmountEntry)
 	feeStr := gtkutil.EntryGetText(c.view.FeeEntry)

@@ -1,6 +1,5 @@
 //go:build gtk
 
-//nolint:staticcheck // Using depreciated widgets
 package controller
 
 import (
@@ -47,12 +46,12 @@ func (c *TxBondDialogController) applyDefaults() {
 }
 
 func (c *TxBondDialogController) populateCombos() {
-	gtkutil.DropDownFromAddressList(c.view.SenderDrop, c.model.ListAccountAddresses())
-	gtkutil.ComboBoxFromAddressList(c.view.ReceiverCombo, c.model.ListValidatorAddresses())
+	gtkutil.DropDownFromAddressListWithAmount(c.view.SenderDrop, c.model.ListAccountAddresses(), c.model.Balance)
+	gtkutil.ComboBoxFromAddressListWithAmount(c.view.ReceiverCombo, c.model.ListValidatorAddresses(), c.model.Stake)
 }
 
 func (c *TxBondDialogController) onSenderChanged() {
-	sender := gtkutil.DropDownGetSelectedText(c.view.SenderDrop)
+	sender := gtkutil.DropDownGetSelectedAddress(c.view.SenderDrop)
 	if info := c.model.AddressInfo(sender); info != nil && info.Label != "" {
 		setHint(c.view.SenderHint, fmt.Sprintf("label: %s", info.Label))
 	} else {
@@ -70,7 +69,7 @@ func (c *TxBondDialogController) onSenderChanged() {
 func (c *TxBondDialogController) onReceiverChanged() {
 	hint := ""
 
-	receiver := c.view.ReceiverCombo.ActiveText()
+	receiver := gtkutil.ComboBoxGetSelectedAddress(c.view.ReceiverCombo)
 	stake, err := c.model.Stake(receiver)
 	if err == nil {
 		hint = fmt.Sprintf("stake: %s", stake)
@@ -90,8 +89,8 @@ func (c *TxBondDialogController) onFeeChanged() {
 }
 
 func (c *TxBondDialogController) onSend() {
-	sender := gtkutil.DropDownGetSelectedText(c.view.SenderDrop)
-	receiver := gtkutil.ComboBoxGetSelectedText(c.view.ReceiverCombo)
+	sender := gtkutil.DropDownGetSelectedAddress(c.view.SenderDrop)
+	receiver := gtkutil.ComboBoxGetSelectedAddress(c.view.ReceiverCombo)
 	publicKey := gtkutil.EntryGetText(c.view.PublicKeyEntry)
 	amountStr := gtkutil.EntryGetText(c.view.AmountEntry)
 	feeStr := gtkutil.EntryGetText(c.view.FeeEntry)
