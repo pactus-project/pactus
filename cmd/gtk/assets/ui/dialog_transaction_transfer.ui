@@ -55,8 +55,20 @@
               </object>
             </child>
             <child>
-              <object class="GtkEntry" id="id_entry_amount">
-                <property name="input-purpose">number</property>
+              <object class="GtkBox">
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkEntry" id="id_entry_amount">
+                    <property name="hexpand">True</property>
+                    <property name="input-purpose">number</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="id_button_amount_max">
+                    <property name="label">Max</property>
+                    <property name="tooltip-text">Use the whole balance, minus the fee</property>
+                  </object>
+                </child>
               </object>
             </child>
             <child>

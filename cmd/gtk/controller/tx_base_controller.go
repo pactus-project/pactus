@@ -54,6 +54,23 @@ func setDefaultFee(model *model.WalletModel, entry *gtk.Entry) {
 	}
 }
 
+// setBalanceHint shows the account balance below the amount field, in normal
+// size with the amount in bold, so it is easy to see.
+func setBalanceHint(lbl *gtk.Label, balance amount.Amount) {
+	lbl.SetMarkup(gtkutil.LabelValueMarkup("Account Balance", balance.String()))
+}
+
+// setMaxAmount fills the amount field with the result of a Max calculation,
+// or shows the error when there is nothing to fill in.
+func setMaxAmount(window *gtk.Window, entry *gtk.Entry, maxAmount amount.Amount, err error) {
+	if err != nil {
+		gtkutil.ShowErrorDialog(window, err.Error(), nil)
+
+		return
+	}
+	entry.SetText(maxAmount.Format())
+}
+
 func setHint(lbl *gtk.Label, hint string) {
 	if hint == "" {
 		lbl.SetMarkup("")

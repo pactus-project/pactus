@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
 )
@@ -32,6 +33,7 @@ func (c *TxBondDialogController) Show() {
 	gtkutil.ComboBoxOnChanged(c.view.ReceiverCombo, c.onReceiverChanged)
 	gtkutil.EntryOnChanged(c.view.FeeEntry, c.onFeeChanged)
 
+	gtkutil.ConnectButtonSignal(c.view.AmountMaxButton, c.onMax)
 	gtkutil.ConnectButtonSignal(c.view.ButtonSend, c.onSend)
 	gtkutil.ConnectButtonSignal(c.view.ButtonCancel, c.onCancel)
 
@@ -60,7 +62,7 @@ func (c *TxBondDialogController) onSenderChanged() {
 
 	bal, err := c.model.Balance(sender)
 	if err == nil {
-		setHint(c.view.AmountHint, fmt.Sprintf("Account Balance: %s", bal))
+		setBalanceHint(c.view.AmountHint, bal)
 	} else {
 		setHint(c.view.AmountHint, "")
 	}
@@ -81,6 +83,36 @@ func (c *TxBondDialogController) onReceiverChanged() {
 		hint += "label: " + info.Label
 	}
 	setHint(c.view.ReceiverHint, hint)
+}
+
+// onMax fills in the whole balance of the sender, minus the fee, but not more
+// than the stake the validator can still receive.
+func (c *TxBondDialogController) onMax() {
+	sender := gtkutil.DropDownGetSelectedAddress(c.view.SenderDrop)
+	balance, err := c.model.Balance(sender)
+	if err != nil {
+		gtkutil.ShowErrorDialog(c.view.Window, err.Error(), nil)
+
+		return
+	}
+
+	fee, err := amount.FromString(gtkutil.EntryGetText(c.view.FeeEntry))
+	if err != nil {
+		gtkutil.ShowErrorDialog(c.view.Window, err.Error(), nil)
+
+		return
+	}
+
+	// A validator that is not on the blockchain yet has no stake.
+	receiver := gtkutil.ComboBoxGetSelectedAddress(c.view.ReceiverCombo)
+	stake, err := c.model.Stake(receiver)
+	if err != nil {
+		stake = 0
+	}
+
+	maxStake := genesis.DefaultGenesisParams().MaximumStake
+	maxAmount, err := model.MaxBondAmount(balance, fee, stake, maxStake)
+	setMaxAmount(c.view.Window, c.view.AmountEntry, maxAmount, err)
 }
 
 func (c *TxBondDialogController) onFeeChanged() {
