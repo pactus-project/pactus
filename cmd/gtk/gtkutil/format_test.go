@@ -44,3 +44,8 @@ func TestAddressFromItem(t *testing.T) {
 	assert.Equal(t, "pc1ptyped", AddressFromItem("  pc1ptyped  "))
 	assert.Empty(t, AddressFromItem(""))
 }
+
+func TestLabelValueMarkup(t *testing.T) {
+	assert.Equal(t, "Account Balance: <b>1,234.5 PAC</b>", LabelValueMarkup("Account Balance", "1,234.5 PAC"))
+	assert.Equal(t, "a&lt;b: <b>c&amp;d</b>", LabelValueMarkup("a<b", "c&d"))
+}

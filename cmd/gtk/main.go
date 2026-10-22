@@ -60,11 +60,6 @@ func init() {
 	)
 	version.NodeAgent.AppType = "gui"
 
-	if runtime.GOOS == "darwin" {
-		// Changing the PANGOCAIRO_BACKEND is necessary on MacOS to render emoji
-		_ = os.Setenv("PANGOCAIRO_BACKEND", "fontconfig")
-	}
-
 	// The GUI text is English only, so force GTK's built-in widget strings
 	// (assistant navigation, about dialog, file choosers ...) to English too
 	// instead of following the operating system locale. This affects message

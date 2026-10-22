@@ -28,6 +28,11 @@ func SmallGray(text string) string {
 	return fmt.Sprintf("<span foreground='gray' size='small'>%s</span>", escapeMarkup(text))
 }
 
+// LabelValueMarkup returns "label: value" as Pango markup, with the value in bold.
+func LabelValueMarkup(label, value string) string {
+	return fmt.Sprintf("%s: <b>%s</b>", escapeMarkup(label), escapeMarkup(value))
+}
+
 // ImportedLabel appends the imported suffix if needed.
 func ImportedLabel(label string, imported bool) string {
 	if !imported {
