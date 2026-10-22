@@ -41,6 +41,7 @@ func (c *TxTransferDialogController) Show() {
 	gtkutil.EntryOnChanged(c.view.ReceiverEntry, c.onReceiverChanged)
 	gtkutil.EntryOnChanged(c.view.FeeEntry, c.onFeeChanged)
 
+	gtkutil.ConnectButtonSignal(c.view.AmountMaxButton, c.onMax)
 	gtkutil.ConnectButtonSignal(c.view.ButtonSend, c.onSend)
 	gtkutil.ConnectButtonSignal(c.view.ButtonCancel, c.onCancel)
 
@@ -55,11 +56,11 @@ func (c *TxTransferDialogController) applyDefaults() {
 }
 
 func (c *TxTransferDialogController) populateCombos() {
-	gtkutil.DropDownFromAddressList(c.view.SenderDrop, c.model.ListAccountAddresses())
+	gtkutil.DropDownFromAddressListWithAmount(c.view.SenderDrop, c.model.ListAccountAddresses(), c.model.Balance)
 }
 
 func (c *TxTransferDialogController) onSenderChanged() {
-	sender := gtkutil.DropDownGetSelectedText(c.view.SenderDrop)
+	sender := gtkutil.DropDownGetSelectedAddress(c.view.SenderDrop)
 	if info := c.model.AddressInfo(sender); info != nil && info.Label != "" {
 		setHintLabel(c.view.SenderHint, fmt.Sprintf("label: %s", info.Label))
 	} else {
@@ -68,7 +69,7 @@ func (c *TxTransferDialogController) onSenderChanged() {
 
 	bal, err := c.model.Balance(sender)
 	if err == nil {
-		setHintLabel(c.view.AmountHint, fmt.Sprintf("Account Balance: %s", bal))
+		setBalanceHint(c.view.AmountHint, bal)
 	} else {
 		setHintLabel(c.view.AmountHint, "")
 	}
@@ -83,12 +84,33 @@ func (c *TxTransferDialogController) onReceiverChanged() {
 	}
 }
 
+// onMax fills in the whole balance of the sender, minus the fee.
+func (c *TxTransferDialogController) onMax() {
+	sender := gtkutil.DropDownGetSelectedAddress(c.view.SenderDrop)
+	balance, err := c.model.Balance(sender)
+	if err != nil {
+		gtkutil.ShowErrorDialog(c.view.Window, err.Error(), nil)
+
+		return
+	}
+
+	fee, err := amount.FromString(gtkutil.EntryGetText(c.view.FeeEntry))
+	if err != nil {
+		gtkutil.ShowErrorDialog(c.view.Window, err.Error(), nil)
+
+		return
+	}
+
+	maxAmount, err := model.MaxTransferAmount(balance, fee)
+	setMaxAmount(c.view.Window, c.view.AmountEntry, maxAmount, err)
+}
+
 func (c *TxTransferDialogController) onFeeChanged() {
 	setHintLabel(c.view.FeeHint, "")
 }
 
 func (c *TxTransferDialogController) onSend() {
-	sender := gtkutil.DropDownGetSelectedText(c.view.SenderDrop)
+	sender := gtkutil.DropDownGetSelectedAddress(c.view.SenderDrop)
 	receiver := gtkutil.EntryGetText(c.view.ReceiverEntry)
 	amountStr := gtkutil.EntryGetText(c.view.AmountEntry)
 	feeStr := gtkutil.EntryGetText(c.view.FeeEntry)

@@ -14,16 +14,17 @@ type TxBondDialogView struct {
 
 	Window *gtk.Window
 
-	SenderDrop     *gtk.DropDown
-	SenderHint     *gtk.Label
-	ReceiverCombo  *gtk.ComboBoxText
-	ReceiverHint   *gtk.Label
-	PublicKeyEntry *gtk.Entry
-	AmountEntry    *gtk.Entry
-	AmountHint     *gtk.Label
-	FeeEntry       *gtk.Entry
-	FeeHint        *gtk.Label
-	MemoEntry      *gtk.Entry
+	SenderDrop      *gtk.DropDown
+	SenderHint      *gtk.Label
+	ReceiverCombo   *gtk.ComboBoxText
+	ReceiverHint    *gtk.Label
+	PublicKeyEntry  *gtk.Entry
+	AmountEntry     *gtk.Entry
+	AmountHint      *gtk.Label
+	AmountMaxButton *gtk.Button
+	FeeEntry        *gtk.Entry
+	FeeHint         *gtk.Label
+	MemoEntry       *gtk.Entry
 
 	ButtonCancel *gtk.Button
 	ButtonSend   *gtk.Button
@@ -36,16 +37,17 @@ func NewTxBondDialogView() *TxBondDialogView {
 		ViewBuilder: builder,
 		Window:      builder.GetWindowObj("id_dialog_transaction_bond"),
 
-		SenderDrop:     builder.GetDropDownObj("id_drop_sender"),
-		SenderHint:     builder.GetLabelObj("id_hint_sender"),
-		ReceiverCombo:  builder.GetComboBoxTextObj("id_combo_receiver"),
-		ReceiverHint:   builder.GetLabelObj("id_hint_receiver"),
-		PublicKeyEntry: builder.GetEntryObj("id_entry_public_key"),
-		AmountEntry:    builder.GetEntryObj("id_entry_amount"),
-		AmountHint:     builder.GetLabelObj("id_hint_amount"),
-		FeeEntry:       builder.GetEntryObj("id_entry_fee"),
-		FeeHint:        builder.GetLabelObj("id_hint_fee"),
-		MemoEntry:      builder.GetEntryObj("id_entry_memo"),
+		SenderDrop:      builder.GetDropDownObj("id_drop_sender"),
+		SenderHint:      builder.GetLabelObj("id_hint_sender"),
+		ReceiverCombo:   builder.GetComboBoxTextObj("id_combo_receiver"),
+		ReceiverHint:    builder.GetLabelObj("id_hint_receiver"),
+		PublicKeyEntry:  builder.GetEntryObj("id_entry_public_key"),
+		AmountEntry:     builder.GetEntryObj("id_entry_amount"),
+		AmountHint:      builder.GetLabelObj("id_hint_amount"),
+		AmountMaxButton: builder.GetButtonObj("id_button_amount_max"),
+		FeeEntry:        builder.GetEntryObj("id_entry_fee"),
+		FeeHint:         builder.GetLabelObj("id_hint_fee"),
+		MemoEntry:       builder.GetEntryObj("id_entry_memo"),
 
 		ButtonCancel: builder.GetButtonObj("id_button_cancel"),
 		ButtonSend:   builder.GetButtonObj("id_button_send"),

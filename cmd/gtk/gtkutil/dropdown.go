@@ -4,6 +4,7 @@ package gtkutil
 
 import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
+	"github.com/pactus-project/pactus/types/amount"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
@@ -13,6 +14,14 @@ func DropDownFromAddressList(drop *gtk.DropDown, infos []*pactus.AddressInfo) {
 		addrs = append(addrs, info.Address)
 	}
 	DropDownSetup(drop, addrs)
+}
+
+// DropDownFromAddressListWithAmount fills the drop-down with "address - amount"
+// items. Use DropDownGetSelectedAddress to read the selected address.
+func DropDownFromAddressListWithAmount(drop *gtk.DropDown, infos []*pactus.AddressInfo,
+	getAmount func(addr string) (amount.Amount, error),
+) {
+	DropDownSetup(drop, AddressItems(infos, getAmount))
 }
 
 func DropDownSetup(drop *gtk.DropDown, names []string) {
@@ -36,6 +45,11 @@ func DropDownGetSelectedText(drop *gtk.DropDown) string {
 	str := item.Cast().(*gtk.StringObject)
 
 	return str.String()
+}
+
+// DropDownGetSelectedAddress returns the address of the selected address list item.
+func DropDownGetSelectedAddress(drop *gtk.DropDown) string {
+	return AddressFromItem(DropDownGetSelectedText(drop))
 }
 
 func DropDownOnChanged(drop *gtk.DropDown, callback func()) {
