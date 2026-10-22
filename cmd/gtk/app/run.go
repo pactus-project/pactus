@@ -217,40 +217,67 @@ func createTray(mwView *view.MainWindowView, gtkApp *gtk.Application) *systray.S
 		return nil
 	}
 
+	// On Windows, the tray window only receives messages on the thread that
+	// created it, so the tray is created and run on the same locked thread.
+	created := make(chan *systray.SystemTray)
+	go func() {
+		runtime.LockOSThread()
+		defer runtime.UnlockOSThread()
+
+		trayIcon := newTray(mwView, gtkApp)
+		created <- trayIcon
+
+		if err := trayIcon.Run(); err != nil {
+			gtkutil.Logf("System tray error: %v", err)
+		}
+	}()
+
+	return <-created
+}
+
+// newTray builds the tray icon and its menu.
+// The callbacks run on the tray thread, so they must not wait for the GTK
+// main loop.
+func newTray(mwView *view.MainWindowView, gtkApp *gtk.Application) *systray.SystemTray {
 	trayIcon := systray.New()
 
 	menu := systray.NewMenu()
 	menu.Add("Show", func() {
-		gtkutil.IdleAddSync(func() {
+		gtkutil.IdleAddAsync(func() {
 			mwView.Window.Present()
 		})
 	})
 	menu.AddSeparator()
 	menu.Add("Exit", func() {
-		gtkutil.IdleAddSync(func() {
+		gtkutil.IdleAddAsync(func() {
 			mwView.HideOnClose = false
 			gtkApp.Quit()
 		})
 	})
 
+	// Windows switches between the light and dark icons to match the taskbar
+	// theme. Other platforms keep the white icon.
+	if runtime.GOOS == "windows" {
+		trayIcon.SetIcon(assets.ImagePactusTrayLight32Data)
+	} else {
+		trayIcon.SetIcon(assets.ImagePactusTrayDark32Data)
+	}
+
 	trayIcon.
-		SetIcon(assets.ImagePactusTrayDark32Data).
 		SetTooltip("Pactus GUI").
 		SetMenu(menu).
 		OnClick(func() {
-			gtkutil.IdleAddSync(func() {
+			gtkutil.IdleAddAsync(func() {
 				mwView.Window.Present()
 			})
 		})
 
 	trayIcon.Show()
 
-	// Run the tray event loop in a background goroutine.
-	go func() {
-		if err := trayIcon.Run(); err != nil {
-			gtkutil.Logf("System tray error: %v", err)
-		}
-	}()
+	// The dark icon only takes effect once the tray is visible.
+	if runtime.GOOS == "windows" {
+		trayIcon.SetDarkModeIcon(assets.ImagePactusTrayDark32Data)
+	}
 
 	return trayIcon
 }
