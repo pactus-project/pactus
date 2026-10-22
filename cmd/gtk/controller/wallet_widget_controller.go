@@ -100,6 +100,10 @@ func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) 
 			func(row transactionRow) string {
 				return strconv.Itoa(int(row.trx.No))
 			})
+		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewTransactions, "Time", 0, false, "",
+			func(row transactionRow) string {
+				return gtkutil.FormatTimeAgo(row.trx.CreatedAt)
+			})
 		gtkutil.ColumnViewAppendAddressColumn(c.view.ColViewTransactions, "ID", func(row transactionRow) string {
 			return row.trx.TxId
 		})

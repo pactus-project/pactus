@@ -88,9 +88,9 @@ func NewWalletWidgetView() *WalletWidgetView {
 		"Upgrade this legacy wallet to the SQLite format", nil)
 	gtkutil.ExtendImageButton(view.BtnTxRefresh, "_Refresh",
 		"Refresh transaction list", assets.IconRefreshTexture)
-	gtkutil.ExtendImageButton(view.BtnTxPrev, "_Previous",
+	gtkutil.ExtendImageButton(view.BtnTxPrev, "< _Previous",
 		"Show previous transactions", assets.IconPrevTexture)
-	gtkutil.ExtendImageButton(view.BtnTxNext, "_Next",
+	gtkutil.ExtendImageButton(view.BtnTxNext, "_Next >",
 		"Show next transactions", assets.IconNextTexture)
 	view.BtnTxPrev.SetSensitive(false)
 	view.BtnTxNext.SetSensitive(false)
