@@ -4,6 +4,7 @@ package app
 
 import (
 	"context"
+	"runtime"
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
@@ -205,6 +206,17 @@ func (g *GUI) Cleanup() {
 // createTray creates a system tray icon with Show and Exit menu items.
 // The tray runs its event loop in a background goroutine.
 func createTray(mwView *view.MainWindowView, gtkApp *gtk.Application) *systray.SystemTray {
+	// On macOS, the status item must be created on the main thread, which GTK
+	// owns, and creating it here crashes the app. Skip the tray and let the
+	// close button quit, so the hidden window is never left without a way back.
+	if runtime.GOOS == "darwin" {
+		gtkutil.IdleAddSync(func() {
+			mwView.HideOnClose = false
+		})
+
+		return nil
+	}
+
 	trayIcon := systray.New()
 
 	menu := systray.NewMenu()
