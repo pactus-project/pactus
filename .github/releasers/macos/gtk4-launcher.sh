@@ -29,12 +29,6 @@ export GTK_DATA_PREFIX="$bundle_res"
 export GTK_EXE_PREFIX="$bundle_res"
 export GTK_PATH="$bundle_res"
 
-# macOS-specific settings
-if [ "$(uname)" = "Darwin" ]; then
-    # Changing the PANGOCAIRO_BACKEND is necessary on MacOS to render emoji
-    export PANGOCAIRO_BACKEND="fontconfig"
-fi
-
 export GDK_PIXBUF_MODULE_FILE="$bundle_lib/gdk-pixbuf-2.0/2.10.0/loaders.cache"
 
 APP=$name
