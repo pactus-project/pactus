@@ -344,6 +344,18 @@ func TestAppendInvalidTransaction(t *testing.T) {
 		})
 	})
 
+	t.Run("subsidy transaction", func(t *testing.T) {
+		trx := td.makeSubsidyTx()
+
+		err := td.pool.AppendTx(trx)
+		require.ErrorIs(t, err, ErrSubsidyTransaction)
+		assert.False(t, td.pool.HasTx(trx.ID()))
+
+		err = td.pool.AppendTxAndBroadcast(trx)
+		require.ErrorIs(t, err, ErrSubsidyTransaction)
+		assert.False(t, td.pool.HasTx(trx.ID()))
+	})
+
 	t.Run("execution error", func(t *testing.T) {
 		expectedErr := errors.New("error")
 		td.exe.EXPECT().Check(gomock.Any(), gomock.Any()).Return(expectedErr).AnyTimes()
@@ -437,7 +449,7 @@ func TestPrepareBlockTransactions(t *testing.T) {
 func TestRecheckTransactions(t *testing.T) {
 	td := setup(t, nil)
 
-	trx := td.makeSubsidyTx()
+	trx := td.makeTransferTx()
 
 	td.mockExecution(trx, nil)
 	err := td.pool.AppendTx(trx)
