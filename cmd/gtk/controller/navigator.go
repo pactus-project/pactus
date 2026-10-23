@@ -7,6 +7,7 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
+	"github.com/pactus-project/pactus/cmd/gtk/autostart"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
@@ -19,16 +20,22 @@ type Navigator struct {
 	walletCtrl  *WalletWidgetController
 	configModel *model.ConfigModel
 	gtkApp      *gtk.Application
+
+	autostart          *autostart.Entry
+	autostartAction    *gio.SimpleAction
+	onAutostartChanged func(enabled bool)
 }
 
 func NewNavigator(gtkApp *gtk.Application,
 	walletModel *model.WalletModel, walletCtrl *WalletWidgetController, configModel *model.ConfigModel,
+	autostartEntry *autostart.Entry,
 ) *Navigator {
 	return &Navigator{
 		walletModel: walletModel,
 		walletCtrl:  walletCtrl,
 		gtkApp:      gtkApp,
 		configModel: configModel,
+		autostart:   autostartEntry,
 	}
 }
 
@@ -163,6 +170,33 @@ func (n *Navigator) Quit() {
 	n.gtkApp.Quit()
 }
 
+// AutostartEnabled reports whether Pactus GUI starts on system startup.
+func (n *Navigator) AutostartEnabled() bool {
+	return n.autostart.IsEnabled()
+}
+
+// OnAutostartChanged sets a function that is called on the UI thread after
+// the autostart option changes, so other menus can show the new state.
+func (n *Navigator) OnAutostartChanged(callback func(enabled bool)) {
+	n.onAutostartChanged = callback
+}
+
+// SetAutostart turns starting Pactus GUI on system startup on or off.
+// It must be called on the UI thread.
+func (n *Navigator) SetAutostart(enabled bool) {
+	if err := n.autostart.SetEnabled(enabled); err != nil {
+		gtkutil.ShowErrorDialog(n.gtkApp.ActiveWindow(), err.Error(), nil)
+	}
+
+	enabled = n.autostart.IsEnabled()
+	if n.autostartAction != nil {
+		n.autostartAction.SetState(glib.NewVariantBoolean(enabled))
+	}
+	if n.onAutostartChanged != nil {
+		n.onAutostartChanged(enabled)
+	}
+}
+
 // SetDarkMode forces the light or dark appearance at runtime through the
 // libadwaita style manager, independent of the operating system theme.
 // It must be called on the UI thread.
@@ -204,11 +238,20 @@ func (n *Navigator) CreateMenu(isLocal bool) *gio.Menu {
 	createAppAction("about", n.ShowAbout)
 	createAppAction("aboutgtk", n.ShowAboutGtk)
 
+	// A stateful boolean action is shown as a check item in the menu.
+	n.autostartAction = gio.NewSimpleActionStateful("autostart", nil,
+		glib.NewVariantBoolean(n.AutostartEnabled()))
+	n.autostartAction.ConnectActivate(func(*glib.Variant) {
+		n.SetAutostart(!n.AutostartEnabled())
+	})
+	n.gtkApp.AddAction(n.autostartAction)
+
 	menubar := gio.NewMenu()
 
 	// --- File Menu ---
 	fileMenu := gio.NewMenu()
 	fileMenu.Append("Edit _Config", "app.config")
+	fileMenu.Append("Start on System _Startup", "app.autostart")
 	fileMenu.AppendSection("", gio.NewMenu()) // separator
 	fileMenu.Append("_Quit", "app.quit")
 

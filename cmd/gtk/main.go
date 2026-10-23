@@ -23,6 +23,7 @@ import (
 	"github.com/pactus-project/pactus/cmd"
 	gtkapp "github.com/pactus-project/pactus/cmd/gtk/app"
 	"github.com/pactus-project/pactus/cmd/gtk/assets"
+	"github.com/pactus-project/pactus/cmd/gtk/autostart"
 	"github.com/pactus-project/pactus/cmd/gtk/controller"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
@@ -106,6 +107,12 @@ func main() {
 
 		return
 	}
+
+	// The autostart entry starts the GUI with the same flags, except the wallet
+	// password, which must not be stored. The working directory is always set
+	// as an absolute path, because the login session may start elsewhere.
+	autostartArgs := autostart.ArgsFromFlags(flag.CommandLine, "password", "working-dir")
+	autostartEntry := autostart.New(append(autostartArgs, "-working-dir="+workingDir))
 
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -253,7 +260,7 @@ func main() {
 					connectionValue = *grpcAddrOpt
 				}
 				gui, err = gtkapp.Run(ctx, grpcConn, app, notify,
-					connectionLabel, connectionValue, workingDir, isLocal)
+					connectionLabel, connectionValue, workingDir, isLocal, autostartEntry)
 				if err != nil {
 					gtkutil.ShowErrorDialog(splash.Window(), err.Error(), func(_ int) {
 						splash.Destroy()
