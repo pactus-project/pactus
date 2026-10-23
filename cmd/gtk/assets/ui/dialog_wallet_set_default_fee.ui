@@ -29,6 +29,7 @@
               <object class="GtkEntry" id="id_entry_default_fee">
                 <property name="activates-default">True</property>
                 <property name="input-purpose">number</property>
+                <property name="hexpand">True</property>
                 <property name="width-chars">24</property>
                 <layout>
                   <property name="column">1</property>
