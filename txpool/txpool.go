@@ -161,6 +161,12 @@ func (p *txPool) checkTx(trx *tx.Tx) error {
 		return err
 	}
 
+	if trx.IsSubsidyTx() {
+		p.logger.Debug("subsidy transaction", "trx", trx)
+
+		return ErrSubsidyTransaction
+	}
+
 	if _, ok := p.pools[trx.Payload().Type()]; !ok {
 		p.logger.Debug("unsupported payload type", "trx", trx)
 

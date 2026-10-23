@@ -10,6 +10,11 @@ import (
 // ErrPayloadTypeNotSupported is returned when the pool has no queue for the payload.
 var ErrPayloadTypeNotSupported = errors.New("payload type is not supported")
 
+// ErrSubsidyTransaction is returned for a transaction signed by the treasury.
+// The proposer puts the subsidy transaction in its own block, so it never
+// goes through the pool.
+var ErrSubsidyTransaction = errors.New("subsidy transaction is not accepted")
+
 // ConfigError is returned when the transaction pool configuration is invalid.
 type ConfigError struct {
 	Reason string
