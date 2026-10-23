@@ -5,6 +5,7 @@ package gtkutil
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/pactus-project/pactus/types/amount"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -51,6 +52,42 @@ func YesNo(v bool) string {
 	}
 
 	return "No"
+}
+
+// FormatTimeAgo formats a Unix timestamp as a human-readable relative time.
+// Recent timestamps are shown as "just now", "5 minutes ago" or "3 hours ago".
+// Anything older than a day is shown as its day and time, for example
+// "02 Jan 2006 15:04". A zero timestamp is rendered as an empty string.
+func FormatTimeAgo(timestamp int64) string {
+	return formatTimeAgo(timestamp, time.Now())
+}
+
+func formatTimeAgo(timestamp int64, now time.Time) string {
+	if timestamp <= 0 {
+		return ""
+	}
+
+	then := time.Unix(timestamp, 0)
+	elapsed := now.Sub(then)
+
+	switch {
+	case elapsed < time.Minute:
+		return "just now"
+	case elapsed < time.Hour:
+		return pluralAgo(int(elapsed/time.Minute), "minute")
+	case elapsed < 24*time.Hour:
+		return pluralAgo(int(elapsed/time.Hour), "hour")
+	default:
+		return then.Format("02 Jan 2006 15:04")
+	}
+}
+
+func pluralAgo(n int, unit string) string {
+	if n == 1 {
+		return fmt.Sprintf("1 %s ago", unit)
+	}
+
+	return fmt.Sprintf("%d %ss ago", n, unit)
 }
 
 // AvailabilityScorePercent formats an availability score (0–1) as a percentage string with 2 decimal places.
