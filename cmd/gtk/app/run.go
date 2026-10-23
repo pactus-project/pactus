@@ -12,6 +12,7 @@ import (
 	"github.com/gogpu/systray"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/cmd/gtk/assets"
+	"github.com/pactus-project/pactus/cmd/gtk/autostart"
 	"github.com/pactus-project/pactus/cmd/gtk/controller"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
@@ -35,10 +36,14 @@ type GUI struct {
 // It accepts a gRPC connection to the node (standard grpc.ClientConn or gRPC-Web).
 // connectionLabel is "Remote address" or "Working directory"; connectionValue is the address or path.
 // workingDir is the local node data directory; isLocal is true when running a local node.
+// autostartEntry is the entry that starts the GUI on system startup.
 // It returns a cleanup function that closes the window and stops timers.
+//
+//revive:disable-next-line:argument-limit
 func Run(ctx context.Context, conn grpc.ClientConnInterface,
 	gtkApp *gtk.Application, notify func(string),
 	connectionLabel, connectionValue, workingDir string, isLocal bool,
+	autostartEntry *autostart.Entry,
 ) (*GUI, error) {
 	blockchainClient := pactus.NewBlockchainClient(conn)
 	transactionClient := pactus.NewTransactionClient(conn)
@@ -67,7 +72,7 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 		return nil, err
 	}
 
-	nav := controller.NewNavigator(gtkApp, walletModel, walletCtrl, configModel)
+	nav := controller.NewNavigator(gtkApp, walletModel, walletCtrl, configModel, autostartEntry)
 
 	notify("Fetching Node info...")
 	err = nodeCtrl.BuildView(ctx, connectionLabel, connectionValue)
@@ -183,7 +188,7 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 	})
 
 	// Create the system tray icon.
-	trayIcon := createTray(mwView, gtkApp)
+	trayIcon := createTray(mwView, gtkApp, nav)
 
 	return &GUI{
 		MainWindow:    mwView,
@@ -203,9 +208,11 @@ func (g *GUI) Cleanup() {
 	}
 }
 
-// createTray creates a system tray icon with Show and Exit menu items.
+// createTray creates a system tray icon with Show, autostart and Exit menu items.
 // The tray runs its event loop in a background goroutine.
-func createTray(mwView *view.MainWindowView, gtkApp *gtk.Application) *systray.SystemTray {
+func createTray(mwView *view.MainWindowView, gtkApp *gtk.Application,
+	nav *controller.Navigator,
+) *systray.SystemTray {
 	// On macOS, the status item must be created on the main thread, which GTK
 	// owns, and creating it here crashes the app. Skip the tray and let the
 	// close button quit, so the hidden window is never left without a way back.
@@ -224,7 +231,7 @@ func createTray(mwView *view.MainWindowView, gtkApp *gtk.Application) *systray.S
 		runtime.LockOSThread()
 		defer runtime.UnlockOSThread()
 
-		trayIcon := newTray(mwView, gtkApp)
+		trayIcon := newTray(mwView, gtkApp, nav)
 		created <- trayIcon
 
 		if err := trayIcon.Run(); err != nil {
@@ -238,21 +245,38 @@ func createTray(mwView *view.MainWindowView, gtkApp *gtk.Application) *systray.S
 // newTray builds the tray icon and its menu.
 // The callbacks run on the tray thread, so they must not wait for the GTK
 // main loop.
-func newTray(mwView *view.MainWindowView, gtkApp *gtk.Application) *systray.SystemTray {
+func newTray(mwView *view.MainWindowView, gtkApp *gtk.Application,
+	nav *controller.Navigator,
+) *systray.SystemTray {
 	trayIcon := systray.New()
 
-	menu := systray.NewMenu()
-	menu.Add("Show", func() {
-		gtkutil.IdleAddAsync(func() {
-			mwView.Window.Present()
+	// The tray menu cannot change a check item in place, so it is rebuilt
+	// whenever the autostart option changes.
+	buildMenu := func(autostartEnabled bool) *systray.Menu {
+		menu := systray.NewMenu()
+		menu.Add("Show", func() {
+			gtkutil.IdleAddAsync(func() {
+				mwView.Window.Present()
+			})
 		})
-	})
-	menu.AddSeparator()
-	menu.Add("Exit", func() {
-		gtkutil.IdleAddAsync(func() {
-			mwView.HideOnClose = false
-			gtkApp.Quit()
+		menu.AddCheckbox("Start on System Startup", autostartEnabled, func() {
+			gtkutil.IdleAddAsync(func() {
+				nav.SetAutostart(!nav.AutostartEnabled())
+			})
 		})
+		menu.AddSeparator()
+		menu.Add("Exit", func() {
+			gtkutil.IdleAddAsync(func() {
+				mwView.HideOnClose = false
+				gtkApp.Quit()
+			})
+		})
+
+		return menu
+	}
+
+	nav.OnAutostartChanged(func(enabled bool) {
+		trayIcon.SetMenu(buildMenu(enabled))
 	})
 
 	// Windows switches between the light and dark icons to match the taskbar
@@ -265,7 +289,7 @@ func newTray(mwView *view.MainWindowView, gtkApp *gtk.Application) *systray.Syst
 
 	trayIcon.
 		SetTooltip("Pactus GUI").
-		SetMenu(menu).
+		SetMenu(buildMenu(nav.AutostartEnabled())).
 		OnClick(func() {
 			gtkutil.IdleAddAsync(func() {
 				mwView.Window.Present()
