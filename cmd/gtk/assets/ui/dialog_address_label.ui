@@ -26,6 +26,7 @@
             </child>
             <child>
               <object class="GtkEntry" id="id_entry_label">
+                <property name="hexpand">True</property>
                 <property name="width-chars">32</property>
                 <layout>
                   <property name="column">0</property>
