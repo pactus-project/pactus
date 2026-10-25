@@ -16,99 +16,117 @@
       </object>
     </child>
 
-    <!-- Info stat cards -->
+    <!-- Info stat cards: two pairs side by side, wrapping to 2x2 on narrow
+         windows so the cards never force a wide minimum window width. -->
     <child>
-      <object class="GtkBox" id="id_box_committee_info">
+      <object class="GtkFlowBox" id="id_flowbox_committee_info">
+        <property name="css-classes">stat-grid</property>
         <property name="homogeneous">True</property>
-        <property name="spacing">12</property>
+        <property name="min-children-per-line">1</property>
+        <property name="max-children-per-line">2</property>
+        <property name="column-spacing">12</property>
+        <property name="row-spacing">12</property>
+        <property name="selection-mode">none</property>
         <child>
           <object class="GtkBox">
-            <property name="css-classes">card</property>
-            <property name="orientation">vertical</property>
-            <property name="spacing">4</property>
+            <property name="homogeneous">True</property>
+            <property name="spacing">12</property>
             <child>
-              <object class="GtkLabel">
-                <property name="label">Committee Size</property>
-                <property name="css-classes">section-title</property>
-                <property name="halign">start</property>
+              <object class="GtkBox">
+                <property name="css-classes">card</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">4</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label">Committee Size</property>
+                    <property name="css-classes">section-title</property>
+                    <property name="halign">start</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="id_label_committee_size">
+                    <property name="css-classes">stat-value</property>
+                    <property name="halign">start</property>
+                    <property name="xalign">0</property>
+                    <property name="selectable">True</property>
+                  </object>
+                </child>
               </object>
             </child>
             <child>
-              <object class="GtkLabel" id="id_label_committee_size">
-                <property name="css-classes">stat-value</property>
-                <property name="halign">start</property>
-                <property name="xalign">0</property>
-                <property name="selectable">True</property>
+              <object class="GtkBox">
+                <property name="css-classes">card</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">4</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label">Committee Power</property>
+                    <property name="css-classes">section-title</property>
+                    <property name="halign">start</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="id_label_committee_power">
+                    <property name="css-classes">stat-value</property>
+                    <property name="halign">start</property>
+                    <property name="xalign">0</property>
+                    <property name="selectable">True</property>
+                    <property name="ellipsize">end</property>
+                  </object>
+                </child>
               </object>
             </child>
           </object>
         </child>
         <child>
           <object class="GtkBox">
-            <property name="css-classes">card</property>
-            <property name="orientation">vertical</property>
-            <property name="spacing">4</property>
+            <property name="homogeneous">True</property>
+            <property name="spacing">12</property>
             <child>
-              <object class="GtkLabel">
-                <property name="label">Committee Power</property>
-                <property name="css-classes">section-title</property>
-                <property name="halign">start</property>
+              <object class="GtkBox">
+                <property name="css-classes">card</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">4</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label">Total Power</property>
+                    <property name="css-classes">section-title</property>
+                    <property name="halign">start</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="id_label_total_power">
+                    <property name="css-classes">stat-value</property>
+                    <property name="halign">start</property>
+                    <property name="xalign">0</property>
+                    <property name="selectable">True</property>
+                    <property name="ellipsize">end</property>
+                  </object>
+                </child>
               </object>
             </child>
             <child>
-              <object class="GtkLabel" id="id_label_committee_power">
-                <property name="css-classes">stat-value</property>
-                <property name="halign">start</property>
-                <property name="xalign">0</property>
-                <property name="selectable">True</property>
-                <property name="ellipsize">end</property>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child>
-          <object class="GtkBox">
-            <property name="css-classes">card</property>
-            <property name="orientation">vertical</property>
-            <property name="spacing">4</property>
-            <child>
-              <object class="GtkLabel">
-                <property name="label">Total Power</property>
-                <property name="css-classes">section-title</property>
-                <property name="halign">start</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="id_label_total_power">
-                <property name="css-classes">stat-value</property>
-                <property name="halign">start</property>
-                <property name="xalign">0</property>
-                <property name="selectable">True</property>
-                <property name="ellipsize">end</property>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child>
-          <object class="GtkBox">
-            <property name="css-classes">card</property>
-            <property name="orientation">vertical</property>
-            <property name="spacing">4</property>
-            <child>
-              <object class="GtkLabel">
-                <property name="label">Protocol Versions</property>
-                <property name="css-classes">section-title</property>
-                <property name="halign">start</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="id_label_protocol_versions">
-                <property name="css-classes">metric-value</property>
-                <property name="halign">start</property>
-                <property name="xalign">0</property>
-                <property name="valign">start</property>
-                <property name="selectable">True</property>
-                <property name="wrap">True</property>
+              <object class="GtkBox">
+                <property name="css-classes">card</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">4</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label">Protocol Versions</property>
+                    <property name="css-classes">section-title</property>
+                    <property name="halign">start</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="id_label_protocol_versions">
+                    <property name="css-classes">metric-value</property>
+                    <property name="halign">start</property>
+                    <property name="xalign">0</property>
+                    <property name="valign">start</property>
+                    <property name="selectable">True</property>
+                    <property name="wrap">True</property>
+                  </object>
+                </child>
               </object>
             </child>
           </object>

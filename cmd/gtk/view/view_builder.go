@@ -73,6 +73,10 @@ func (vb *ViewBuilder) GetBoxObj(name string) *gtk.Box {
 	return GetObj[*gtk.Box](vb.builder, name)
 }
 
+func (vb *ViewBuilder) GetFlowBoxObj(name string) *gtk.FlowBox {
+	return GetObj[*gtk.FlowBox](vb.builder, name)
+}
+
 func (vb *ViewBuilder) GetLabelObj(name string) *gtk.Label {
 	return GetObj[*gtk.Label](vb.builder, name)
 }
