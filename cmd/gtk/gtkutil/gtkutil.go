@@ -20,6 +20,7 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
+	"github.com/pactus-project/pactus/cmd/gtk/assets"
 )
 
 func ShowQuestionDialog(parent *gtk.Window, msg string,
@@ -29,7 +30,18 @@ func ShowQuestionDialog(parent *gtk.Window, msg string,
 		dlg := gtk.NewMessageDialog(parent,
 			gtk.DialogModal, gtk.MessageQuestion, gtk.ButtonsYesNo)
 
-		showMessageDialog(dlg, "Question", msg, onClone)
+		showMessageDialog(dlg, assets.IconDialogQuestionTexture, "Question", msg, onClone)
+	})
+}
+
+// ShowConfirmDialog asks a Yes/No question with a warning icon, for actions
+// that cannot be undone.
+func ShowConfirmDialog(parent *gtk.Window, msg string, onClone func(res int)) {
+	IdleAddSync(func() {
+		dlg := gtk.NewMessageDialog(parent,
+			gtk.DialogModal, gtk.MessageWarning, gtk.ButtonsYesNo)
+
+		showMessageDialog(dlg, assets.IconDialogWarningTexture, "Confirm", msg, onClone)
 	})
 }
 
@@ -37,7 +49,17 @@ func ShowInfoDialog(parent *gtk.Window, msg string, onClone func(res int)) {
 	IdleAddSync(func() {
 		dlg := gtk.NewMessageDialog(parent,
 			gtk.DialogModal, gtk.MessageInfo, gtk.ButtonsOK)
-		showMessageDialog(dlg, "Info", msg, onClone)
+		showMessageDialog(dlg, assets.IconDialogInfoTexture, "Info", msg, onClone)
+	})
+}
+
+// ShowSuccessDialog shows an info dialog with a success icon, for example after
+// a transaction has been sent.
+func ShowSuccessDialog(parent *gtk.Window, msg string, onClone func(res int)) {
+	IdleAddSync(func() {
+		dlg := gtk.NewMessageDialog(parent,
+			gtk.DialogModal, gtk.MessageInfo, gtk.ButtonsOK)
+		showMessageDialog(dlg, assets.IconDialogSuccessTexture, "Success", msg, onClone)
 	})
 }
 
@@ -45,7 +67,7 @@ func ShowWarningDialog(parent *gtk.Window, msg string, onClone func(res int)) {
 	IdleAddSync(func() {
 		dlg := gtk.NewMessageDialog(parent,
 			gtk.DialogModal, gtk.MessageWarning, gtk.ButtonsOK)
-		showMessageDialog(dlg, "Warning", msg, onClone)
+		showMessageDialog(dlg, assets.IconDialogWarningTexture, "Warning", msg, onClone)
 	})
 }
 
@@ -55,14 +77,20 @@ func ShowErrorDialog(parent *gtk.Window, msg string, onClone func(res int)) {
 	IdleAddSync(func() {
 		dlg := gtk.NewMessageDialog(parent,
 			gtk.DialogModal, gtk.MessageError, gtk.ButtonsOK)
-		showMessageDialog(dlg, "Error", msg, onClone)
+		showMessageDialog(dlg, assets.IconDialogErrorTexture, "Error", msg, onClone)
 	})
 }
 
-func showMessageDialog(dlg *gtk.MessageDialog, title, msg string, onClose func(res int)) {
+func showMessageDialog(dlg *gtk.MessageDialog, icon *gdk.Texture, title, msg string, onClose func(res int)) {
 	dlg.SetMarkup(fmt.Sprintf("<b>%s</b>", title))
 	dlg.SetObjectProperty("secondary-use-markup", true)
 	dlg.SetObjectProperty("secondary-text", msg)
+
+	// GTK 4 message dialogs have no icon of their own, so put the SVG icon
+	// above the title.
+	if area, ok := dlg.MessageArea().(*gtk.Box); ok && icon != nil {
+		area.Prepend(NewIcon(icon, iconSizeDialog))
+	}
 
 	dlg.ConnectResponse(func(responseID int) {
 		dlg.Destroy()
@@ -129,7 +157,8 @@ func BuildExtendedEntry(builder *gtk.Builder, overlayID string) *gtk.Entry {
 	entry.AddCSSClass("copyable_entry")
 
 	// Create a new Button
-	button := gtk.NewButtonFromIconName("edit-copy-symbolic")
+	button := gtk.NewButton()
+	button.SetChild(NewIcon(assets.IconCopyTexture, iconSizeSmall))
 
 	button.SetTooltipText("Copy to Clipboard")
 	button.SetHAlign(gtk.AlignEnd)

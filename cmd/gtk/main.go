@@ -252,11 +252,11 @@ func main() {
 				var isLocal bool
 				if *grpcAddrOpt == "" {
 					isLocal = true
-					connectionLabel = "📁 Working Directory"
+					connectionLabel = "Working Directory"
 					connectionValue = workingDir
 				} else {
 					isLocal = false
-					connectionLabel = "📡 Remote Address"
+					connectionLabel = "Remote Address"
 					connectionValue = *grpcAddrOpt
 				}
 				gui, err = gtkapp.Run(ctx, grpcConn, app, notify,

@@ -132,11 +132,13 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 		themeToggle.AddCSSClass("circular")
 		themeToggle.SetVAlign(gtk.AlignCenter)
 		themeToggle.SetTooltipText("Toggle light / dark mode")
+		themeIcon := gtkutil.NewIcon(assets.IconThemeSunTexture, 14)
+		themeToggle.SetChild(themeIcon)
 		applyThemeIcon := func(dark bool) {
 			if dark {
-				themeToggle.SetLabel("🌙")
+				themeIcon.SetFromPaintable(assets.IconThemeMoonTexture)
 			} else {
-				themeToggle.SetLabel("☀")
+				themeIcon.SetFromPaintable(assets.IconThemeSunTexture)
 			}
 		}
 		// Restore the persisted light/dark choice, falling back to the system

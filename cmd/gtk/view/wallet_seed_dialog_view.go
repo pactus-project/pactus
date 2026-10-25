@@ -29,6 +29,7 @@ func NewWalletSeedDialogView() *WalletSeedDialogView {
 	}
 
 	gtkutil.UpdateCloseButton(view.ButtonClose)
+	builder.GetImageObj("id_image_warning").SetFromPaintable(assets.IconStatusWarningTexture)
 
 	gtkutil.DialogSetup(view.Window)
 

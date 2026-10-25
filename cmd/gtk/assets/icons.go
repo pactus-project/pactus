@@ -76,6 +76,78 @@ var (
 	//go:embed icons/nav_wallet.svg
 	iconNavWalletData    []byte
 	IconNavWalletTexture *gdk.Texture
+
+	//go:embed icons/dialog_warning.svg
+	iconDialogWarningData    []byte
+	IconDialogWarningTexture *gdk.Texture
+
+	//go:embed icons/dialog_success.svg
+	iconDialogSuccessData    []byte
+	IconDialogSuccessTexture *gdk.Texture
+
+	//go:embed icons/dialog_error.svg
+	iconDialogErrorData    []byte
+	IconDialogErrorTexture *gdk.Texture
+
+	//go:embed icons/dialog_info.svg
+	iconDialogInfoData    []byte
+	IconDialogInfoTexture *gdk.Texture
+
+	//go:embed icons/dialog_question.svg
+	iconDialogQuestionData    []byte
+	IconDialogQuestionTexture *gdk.Texture
+
+	//go:embed icons/status_warning.svg
+	iconStatusWarningData    []byte
+	IconStatusWarningTexture *gdk.Texture
+
+	//go:embed icons/status_success.svg
+	iconStatusSuccessData    []byte
+	IconStatusSuccessTexture *gdk.Texture
+
+	//go:embed icons/status_error.svg
+	iconStatusErrorData    []byte
+	IconStatusErrorTexture *gdk.Texture
+
+	//go:embed icons/theme_sun.svg
+	iconThemeSunData    []byte
+	IconThemeSunTexture *gdk.Texture
+
+	//go:embed icons/theme_moon.svg
+	iconThemeMoonData    []byte
+	IconThemeMoonTexture *gdk.Texture
+
+	//go:embed icons/copy.svg
+	iconCopyData    []byte
+	IconCopyTexture *gdk.Texture
+
+	//go:embed icons/download.svg
+	iconDownloadData    []byte
+	IconDownloadTexture *gdk.Texture
+
+	//go:embed icons/loading.svg
+	iconLoadingData    []byte
+	IconLoadingTexture *gdk.Texture
+
+	//go:embed icons/list.svg
+	iconListData    []byte
+	IconListTexture *gdk.Texture
+
+	//go:embed icons/folder_open.svg
+	iconFolderOpenData    []byte
+	IconFolderOpenTexture *gdk.Texture
+
+	//go:embed icons/package.svg
+	iconPackageData    []byte
+	IconPackageTexture *gdk.Texture
+
+	//go:embed icons/arrow_incoming.svg
+	iconArrowIncomingData    []byte
+	IconArrowIncomingTexture *gdk.Texture
+
+	//go:embed icons/arrow_outgoing.svg
+	iconArrowOutgoingData    []byte
+	IconArrowOutgoingTexture *gdk.Texture
 )
 
 func initIcons() {
@@ -96,4 +168,22 @@ func initIcons() {
 	IconNavNetworkTexture = TextureFromBytes(iconNavNetworkData)
 	IconNavValidatorsTexture = TextureFromBytes(iconNavValidatorsData)
 	IconNavWalletTexture = TextureFromBytes(iconNavWalletData)
+	IconDialogWarningTexture = TextureFromBytes(iconDialogWarningData)
+	IconDialogSuccessTexture = TextureFromBytes(iconDialogSuccessData)
+	IconDialogErrorTexture = TextureFromBytes(iconDialogErrorData)
+	IconDialogInfoTexture = TextureFromBytes(iconDialogInfoData)
+	IconDialogQuestionTexture = TextureFromBytes(iconDialogQuestionData)
+	IconStatusWarningTexture = TextureFromBytes(iconStatusWarningData)
+	IconStatusSuccessTexture = TextureFromBytes(iconStatusSuccessData)
+	IconStatusErrorTexture = TextureFromBytes(iconStatusErrorData)
+	IconThemeSunTexture = TextureFromBytes(iconThemeSunData)
+	IconThemeMoonTexture = TextureFromBytes(iconThemeMoonData)
+	IconCopyTexture = TextureFromBytes(iconCopyData)
+	IconDownloadTexture = TextureFromBytes(iconDownloadData)
+	IconLoadingTexture = TextureFromBytes(iconLoadingData)
+	IconListTexture = TextureFromBytes(iconListData)
+	IconFolderOpenTexture = TextureFromBytes(iconFolderOpenData)
+	IconPackageTexture = TextureFromBytes(iconPackageData)
+	IconArrowIncomingTexture = TextureFromBytes(iconArrowIncomingData)
+	IconArrowOutgoingTexture = TextureFromBytes(iconArrowOutgoingData)
 }
