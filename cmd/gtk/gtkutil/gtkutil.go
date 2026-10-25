@@ -167,6 +167,16 @@ func MainWindow() *gtk.Window {
 	return mainWindow
 }
 
+// PresentMainWindow brings the main window back to the front. Call it after a
+// dialog closes another dialog: on Windows, closing two stacked modal windows
+// at once can hand the focus to another application and leave the main window
+// behind it.
+func PresentMainWindow() {
+	if mainWindow != nil {
+		mainWindow.Present()
+	}
+}
+
 // parentForDialog makes the dialog transient for the main window so it opens
 // centered over it. It reports whether a parent was set; when it was not (for
 // example dialogs shown during startup before the main window exists), the
