@@ -8,8 +8,10 @@ import (
 	"time"
 
 	"github.com/diamondburned/gotk4/pkg/core/gioutil"
+	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/gopkg/scheduler"
+	"github.com/pactus-project/pactus/cmd/gtk/assets"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
@@ -121,8 +123,8 @@ func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) 
 			func(row transactionRow) string {
 				return amount.Amount(row.trx.Amount).String()
 			})
-		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewTransactions, "Direction", 0, false, "",
-			func(row transactionRow) string {
+		gtkutil.ColumnViewAppendIconTextColumn(c.view.ColViewTransactions, "Direction",
+			func(row transactionRow) (*gdk.Texture, string) {
 				return getDirectionTextWithIcon(types.TxDirection(row.trx.Direction))
 			})
 		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewTransactions, "Status", 0, false, "",
@@ -195,17 +197,17 @@ func (c *WalletWidgetController) SetupMenu(appWindow *gtk.ApplicationWindow) {
 	})
 }
 
-// getDirectionTextWithIcon returns formatted text with icon for the transaction direction.
-func getDirectionTextWithIcon(dir types.TxDirection) string {
+// getDirectionTextWithIcon returns the icon and text for the transaction direction.
+func getDirectionTextWithIcon(dir types.TxDirection) (*gdk.Texture, string) {
 	switch dir {
 	case types.TxDirectionIncoming:
-		return "incoming ↘"
+		return assets.IconArrowIncomingTexture, "incoming"
 	case types.TxDirectionOutgoing:
-		return "outgoing ↗"
+		return assets.IconArrowOutgoingTexture, "outgoing"
 	case types.TxDirectionAny:
-		return "any"
+		return nil, "any"
 	default:
-		return "unknown"
+		return nil, "unknown"
 	}
 }
 

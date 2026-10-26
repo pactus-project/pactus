@@ -15,7 +15,7 @@ import (
 func confirmAndSend(parent *gtk.Window, model *model.WalletModel,
 	msg string, trx *tx.Tx,
 ) {
-	gtkutil.ShowQuestionDialog(parent, msg, func(res int) {
+	gtkutil.ShowConfirmDialog(parent, msg, func(res int) {
 		if res != int(gtk.ResponseYes) {
 			return
 		}
@@ -39,9 +39,9 @@ func confirmAndSend(parent *gtk.Window, model *model.WalletModel,
 				return
 			}
 
-			sentMsg := fmt.Sprintf("✅ Transaction sent successfully!\n\n"+
+			sentMsg := fmt.Sprintf("Transaction sent successfully!\n\n"+
 				"Transaction ID: <a href=\"https://pactusscan.com/transaction/%s\">%s</a>", txID, txID)
-			gtkutil.ShowInfoDialog(parent, sentMsg, func(int) {
+			gtkutil.ShowSuccessDialog(parent, sentMsg, func(int) {
 				parent.Close()
 			})
 		})

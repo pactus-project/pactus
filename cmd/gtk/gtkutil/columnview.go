@@ -5,6 +5,7 @@ package gtkutil
 import (
 	"github.com/diamondburned/gotk4/pkg/core/gioutil"
 	"github.com/diamondburned/gotk4/pkg/core/glib"
+	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/diamondburned/gotk4/pkg/pango"
 )
@@ -104,6 +105,38 @@ func ColumnViewAppendAddressColumn[T any](colView *gtk.ColumnView, title string,
 	column := gtk.NewColumnViewColumn(title, &factory.ListItemFactory)
 	column.SetTitle(title)
 	column.SetExpand(true)
+	column.SetResizable(true)
+
+	colView.AppendColumn(column)
+}
+
+// ColumnViewAppendIconTextColumn appends a column that shows an icon in front
+// of the text. The extractor returns the icon texture (nil for none) and text.
+func ColumnViewAppendIconTextColumn[T any](colView *gtk.ColumnView, title string,
+	extractor func(T) (*gdk.Texture, string),
+) {
+	factory := gtk.NewSignalListItemFactory()
+	factory.ConnectSetup(func(obj *glib.Object) {
+		cell := obj.Cast().(*gtk.ColumnViewCell)
+		cell.SetChild(NewStatusLabel())
+	})
+	factory.ConnectBind(func(obj *glib.Object) {
+		cell := obj.Cast().(*gtk.ColumnViewCell)
+		row := gioutil.ObjectValue[T](cell.Item())
+		status := cell.Child().(*gtk.Box)
+		icon := status.FirstChild().(*gtk.Image)
+		label := status.LastChild().(*gtk.Label)
+		texture, text := extractor(row)
+		if texture != nil {
+			icon.SetFromPaintable(texture)
+		}
+		icon.SetVisible(texture != nil)
+		label.SetText(text)
+	})
+
+	column := gtk.NewColumnViewColumn(title, &factory.ListItemFactory)
+	column.SetTitle(title)
+	column.SetExpand(false)
 	column.SetResizable(true)
 
 	colView.AppendColumn(column)

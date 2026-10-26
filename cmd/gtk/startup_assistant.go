@@ -17,6 +17,7 @@ import (
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/cmd/gtk/assets"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
@@ -187,7 +188,7 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 			assistantPageComplete(assistant, wgtNodeType, true)
 
 			// --- dynamic snapshot UI (only shown when pruned node is selected)
-			ssLabel := gtk.NewLabel("")
+			ssLabel := gtkutil.NewStatusLabel()
 			ssLabel.SetHAlign(gtk.AlignStart)
 			setDefaultMargin(&ssLabel.Widget)
 
@@ -196,14 +197,14 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 			listBox.SetSizeRequest(700, -1)
 			setDefaultMargin(&listBox.Widget)
 
-			ssDLBtn := gtk.NewButtonWithLabel("⏬ Download")
+			ssDLBtn := gtkutil.NewIconButton(assets.IconDownloadTexture, "Download")
 			ssDLBtn.SetHAlign(gtk.AlignCenter)
 			ssDLBtn.SetSizeRequest(700, -1)
 			setDefaultMargin(&ssDLBtn.Widget)
 
-			ssPBLabel := gtk.NewLabel("")
+			ssPBLabel := gtkutil.NewStatusLabel()
 			ssPBLabel.SetHAlign(gtk.AlignStart)
-			ssPBLabel.SetWrap(true)
+			ssPBLabel.Label.SetWrap(true)
 			setDefaultMargin(&ssPBLabel.Widget)
 
 			gridImport.Attach(ssLabel, 0, 1, 1, 1)
@@ -245,7 +246,7 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 				if radioImport.Active() {
 					assistantPageComplete(assistant, wgtNodeType, false)
 
-					ssLabel.SetText("♻️ Please wait, loading snapshot list...")
+					ssLabel.SetText(assets.IconLoadingTexture, "Please wait, loading snapshot list...")
 
 					go func() {
 						time.Sleep(1 * time.Second)
@@ -262,9 +263,10 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 							mdCh := getMetadata(ctx, importer, listBox)
 
 							if metadata := <-mdCh; metadata == nil {
-								gtkutil.SetColoredText(ssLabel, "❌ Failed to get snapshot list. Please try again later.", gtkutil.ColorRed)
+								ssLabel.SetColoredText(assets.IconStatusErrorTexture,
+									"Failed to get snapshot list. Please try again later.", gtkutil.ColorRed)
 							} else {
-								ssLabel.SetText("🔽 Please select a snapshot to download:")
+								ssLabel.SetText(assets.IconListTexture, "Please select a snapshot to download:")
 								listBox.SetVisible(true)
 
 								listBox.ConnectRowSelected(func(row *gtk.ListBoxRow) {
@@ -286,7 +288,7 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 										ssPBLabel.SetVisible(true)
 										listBox.SetSelectionMode(gtk.SelectionNone)
 
-										gtkutil.ClearLable(ssPBLabel)
+										ssPBLabel.Clear()
 
 										go func() {
 											gtkutil.Logf("start downloading...\n")
@@ -300,12 +302,12 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 														percent := int(stats.Percent)
 														glib.IdleAdd(func() {
 															dlMessage := fmt.Sprintf(
-																"🌐 Downloading %s | %d%% (%s / %s)",
+																"Downloading %s | %d%% (%s / %s)",
 																snapshot.Data.Name, percent,
 																util.FormatBytesToHumanReadable(uint64(stats.Downloaded)),
 																util.FormatBytesToHumanReadable(uint64(stats.TotalSize)),
 															)
-															ssPBLabel.SetText(dlMessage)
+															ssPBLabel.SetText(assets.IconDownloadTexture, dlMessage)
 														})
 													}
 												},
@@ -315,25 +317,28 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 
 											glib.IdleAdd(func() {
 												if err != nil {
-													gtkutil.SetColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), gtkutil.ColorRed)
+													ssPBLabel.SetColoredText(assets.IconStatusErrorTexture,
+														fmt.Sprintf("Import failed: %v", err), gtkutil.ColorRed)
 
 													return
 												}
 
 												gtkutil.Logf("extracting data...\n")
-												ssPBLabel.SetText("📂 Extracting downloaded files...")
+												ssPBLabel.SetText(assets.IconFolderOpenTexture, "Extracting downloaded files...")
 												err = importer.ExtractAndStoreFiles()
 												if err != nil {
-													gtkutil.SetColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), gtkutil.ColorRed)
+													ssPBLabel.SetColoredText(assets.IconStatusErrorTexture,
+														fmt.Sprintf("Import failed: %v", err), gtkutil.ColorRed)
 
 													return
 												}
 
 												gtkutil.Logf("moving data...\n")
-												ssPBLabel.SetText("📑 Moving data...")
+												ssPBLabel.SetText(assets.IconPackageTexture, "Moving data...")
 												err = importer.MoveStore()
 												if err != nil {
-													gtkutil.SetColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), gtkutil.ColorRed)
+													ssPBLabel.SetColoredText(assets.IconStatusErrorTexture,
+														fmt.Sprintf("Import failed: %v", err), gtkutil.ColorRed)
 
 													return
 												}
@@ -341,12 +346,13 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 												gtkutil.Logf("cleanup...\n")
 												err = importer.Cleanup()
 												if err != nil {
-													gtkutil.SetColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), gtkutil.ColorRed)
+													ssPBLabel.SetColoredText(assets.IconStatusErrorTexture,
+														fmt.Sprintf("Import failed: %v", err), gtkutil.ColorRed)
 
 													return
 												}
 
-												gtkutil.SetColoredText(ssPBLabel, "✅ Import completed.", gtkutil.ColorGreen)
+												ssPBLabel.SetColoredText(assets.IconStatusSuccessTexture, "Import completed.", gtkutil.ColorGreen)
 												assistantPageComplete(assistant, wgtNodeType, true)
 											})
 										}()
@@ -388,14 +394,14 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 				// Disable next button initially
 				assistantPageComplete(assistant, wgtAddressRecovery, false)
 
-				lblRecoveryStatus.SetText("Processing...")
+				lblRecoveryStatus.SetText(assets.IconLoadingTexture, "Processing...")
 
 				// Reset recovery context
 				recoveryCtx, cancelRecovery := context.WithCancel(ctx)
 
 				// Setup cancel recovery button handler
 				btnCancelRecovery.Connect("clicked", func() {
-					lblRecoveryStatus.SetText("Cancelling recovery...")
+					lblRecoveryStatus.SetText(assets.IconLoadingTexture, "Cancelling recovery...")
 					cancelRecovery()
 					btnCancelRecovery.SetSensitive(false)
 				})
@@ -417,16 +423,19 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 					glib.IdleAdd(func() {
 						if err != nil {
 							if errors.Is(err, context.Canceled) {
-								gtkutil.SetColoredText(lblRecoveryStatus, "Address recovery aborted", gtkutil.ColorYellow)
+								lblRecoveryStatus.SetColoredText(assets.IconStatusWarningTexture,
+									"Address recovery aborted", gtkutil.ColorYellow)
 								btnCancelRecovery.SetVisible(false)
 								assistantPageComplete(assistant, wgtAddressRecovery, true)
 							} else {
-								gtkutil.SetColoredText(lblRecoveryStatus, fmt.Sprintf("Address recovery failed: %v", err), gtkutil.ColorRed)
+								lblRecoveryStatus.SetColoredText(assets.IconStatusErrorTexture,
+									fmt.Sprintf("Address recovery failed: %v", err), gtkutil.ColorRed)
 								btnCancelRecovery.SetVisible(false)
 								assistantPageComplete(assistant, wgtAddressRecovery, true)
 							}
 						} else {
-							gtkutil.SetColoredText(lblRecoveryStatus, "✅ Wallet addresses successfully recovered", gtkutil.ColorGreen)
+							lblRecoveryStatus.SetColoredText(assets.IconStatusSuccessTexture,
+								"Wallet addresses successfully recovered", gtkutil.ColorGreen)
 							btnCancelRecovery.SetVisible(false)
 							assistantPageComplete(assistant, wgtAddressRecovery, true)
 						}
@@ -440,20 +449,20 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 			nodeInfo := ""
 
 			if len(recoveredAddrs) > 0 {
-				nodeInfo += "🔄 Recovered Addresses:\n"
+				nodeInfo += "Recovered Addresses:\n"
 				for i, addr := range recoveredAddrs {
 					nodeInfo += fmt.Sprintf("%v- %s\n", i+1, addr)
 				}
 			}
 
-			nodeInfo += "\n🏛️ Validator Addresses:\n"
+			nodeInfo += "\nValidator Addresses:\n"
 			for i, info := range nodeWallet.ListAddresses(wallet.OnlyValidatorAddresses()) {
 				nodeInfo += fmt.Sprintf("%v- %s\n", i+1, info.Address)
 			}
 
-			nodeInfo += "\n💰 Reward Address:\n" + rewardAddr + "\n"
-			nodeInfo += fmt.Sprintf("\n📁 Working Directory: %s", workingDir)
-			nodeInfo += fmt.Sprintf("\n🌐 Network: %s\n", chain.String())
+			nodeInfo += "\nReward Address:\n" + rewardAddr + "\n"
+			nodeInfo += fmt.Sprintf("\nWorking Directory: %s", workingDir)
+			nodeInfo += fmt.Sprintf("\nNetwork: %s\n", chain.String())
 
 			gtkutil.SetTextViewContent(txtNodeInfo, nodeInfo)
 		}
@@ -549,7 +558,7 @@ func pageSeedGenerate(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.
 	pageName := "page_seed_generate"
 	pageTitle := "Wallet Seed"
 	pageSubject := "Your wallet seed phrase:"
-	pageDesc := `<b>⚠️ CRITICAL: Write down this seed phrase and store it safely!</b>
+	pageDesc := `<b>CRITICAL: Write down this seed phrase and store it safely!</b>
 This is the ONLY way to recover your wallet if needed.
 Never share it with anyone or store it electronically.`
 
@@ -733,7 +742,7 @@ You can define validators based on the amount of coins you want to stake.`
 }
 
 func pageAddressRecovery(assistant *gtk.Assistant, assistFunc assistantFunc) (
-	*gtk.Widget, *gtk.TextView, *gtk.Button, *gtk.Label, string,
+	*gtk.Widget, *gtk.TextView, *gtk.Button, *gtkutil.StatusLabel, string,
 ) {
 	vbox := gtk.NewBox(gtk.OrientationVertical, 10)
 
@@ -746,7 +755,7 @@ func pageAddressRecovery(assistant *gtk.Assistant, assistFunc assistantFunc) (
 	scrolledWindow.SetSizeRequest(0, 200)
 	scrolledWindow.SetChild(textViewRecoveryLog)
 
-	lblRecoveryStatus := gtk.NewLabel("")
+	lblRecoveryStatus := gtkutil.NewStatusLabel()
 	lblRecoveryStatus.SetHAlign(gtk.AlignStart)
 
 	btnCancelRecovery := gtk.NewButtonWithLabel("Cancel")

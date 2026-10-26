@@ -115,7 +115,7 @@ func (c *TxWithdrawDialogController) onSend() {
 	}
 
 	msg := fmt.Sprintf(`
-📝 Transaction Details:
+<b>Transaction Details</b>
 <tt>
 Type:   Withdraw
 From:   %s
@@ -126,7 +126,7 @@ Memo:   %s
 </tt>
 
 You are going to sign and broadcast this transaction.
-<b>⚠️ This action cannot be undone.</b>
+<b>This action cannot be undone.</b>
 Do you want to continue with this transaction?`, sender, receiver, amt, trx.Fee(), trx.Memo())
 
 	confirmAndSend(c.view.Window, c.model, msg, trx)

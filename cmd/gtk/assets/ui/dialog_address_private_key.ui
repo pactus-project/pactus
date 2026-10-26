@@ -52,10 +52,20 @@
               </object>
             </child>
             <child>
-              <object class="GtkLabel">
-                <property name="label" >
-                  ⚠️ Keep your private key secure.
-                </property>
+              <object class="GtkBox">
+                <property name="halign">center</property>
+                <property name="spacing">8</property>
+                <child>
+                  <object class="GtkImage" id="id_image_warning">
+                    <property name="pixel-size">20</property>
+                    <property name="valign">start</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label">Keep your private key secure.</property>
+                  </object>
+                </child>
               </object>
             </child>
           </object>
