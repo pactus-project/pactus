@@ -326,6 +326,13 @@ textview.view {
     box-shadow: 0 1px 3px alpha(@theme_fg_color, 0.06);
 }
 
+/* Stat cards laid out in a GtkFlowBox; the children are plain containers. */
+.stat-grid > flowboxchild {
+    padding: 0;
+    background: none;
+    outline: none;
+}
+
 .section-title {
     font-weight: 800;
     font-size: 11px;
