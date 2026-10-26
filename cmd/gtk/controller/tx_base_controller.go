@@ -43,6 +43,7 @@ func confirmAndSend(parent *gtk.Window, model *model.WalletModel,
 				"Transaction ID: <a href=\"https://pactusscan.com/transaction/%s\">%s</a>", txID, txID)
 			gtkutil.ShowSuccessDialog(parent, sentMsg, func(int) {
 				parent.Close()
+				gtkutil.PresentMainWindow()
 			})
 		})
 	})
