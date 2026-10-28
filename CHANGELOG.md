@@ -1,5 +1,54 @@
 # Changelog
 
+## [1.17.0](https://github.com/pactus-project/pactus/compare/v1.16.0...v1.17.0) (2026-10-28)
+
+### Feat
+
+- **gtk**: replace emoji with SVG icons ([#2445](https://github.com/pactus-project/pactus/pull/2445))
+- **gtk**: show transaction time and pager arrows ([#2437](https://github.com/pactus-project/pactus/pull/2437))
+- **gtk**: add start on system startup option ([#2440](https://github.com/pactus-project/pactus/pull/2440))
+- **gtk**: show balance and stake in address lists ([#2434](https://github.com/pactus-project/pactus/pull/2434))
+- **gtk**: add Max button to amount fields ([#2436](https://github.com/pactus-project/pactus/pull/2436))
+- **execution**: implement PIP-50 state anchoring ([#2407](https://github.com/pactus-project/pactus/pull/2407))
+- **gtk**: add upgrade button for legacy JSON wallets ([#2410](https://github.com/pactus-project/pactus/pull/2410))
+- **gtk**: modernize the GTK GUI - sidebar, dashboards, light/dark theme ([#2379](https://github.com/pactus-project/pactus/pull/2379))
+- **grpc**: add MigrateWallet RPC for legacy JSON wallets ([#2397](https://github.com/pactus-project/pactus/pull/2397))
+- **wallet**: migrate legacy JSON wallet in place ([#2393](https://github.com/pactus-project/pactus/pull/2393))
+- **cmd**: add migrate command for legacy JSON wallets ([#2390](https://github.com/pactus-project/pactus/pull/2390))
+- **wallet**: add migration from legacy JSON to SQLite storage ([#2388](https://github.com/pactus-project/pactus/pull/2388))
+- **execution**: remove secp256k1 account restrictions after protocol v4 ([#2381](https://github.com/pactus-project/pactus/pull/2381))
+
+### Fix
+
+- **gtk**: refocus main window after sending tx ([#2444](https://github.com/pactus-project/pactus/pull/2444))
+- **gtk**: wrap committee stat cards ([#2443](https://github.com/pactus-project/pactus/pull/2443))
+- **gtk**: stretch entries to the dialog width ([#2442](https://github.com/pactus-project/pactus/pull/2442))
+- **txpool**: reject subsidy transactions ([#2441](https://github.com/pactus-project/pactus/pull/2441))
+- **gtk**: make the Windows tray icon clickable and visible ([#2439](https://github.com/pactus-project/pactus/pull/2439))
+- **gtk**: skip system tray on macOS ([#2431](https://github.com/pactus-project/pactus/pull/2431))
+- **gtk**: use default font backend on macOS ([#2433](https://github.com/pactus-project/pactus/pull/2433))
+- **execution**: require stake owner signature for delegated withdraw ([#2427](https://github.com/pactus-project/pactus/pull/2427))
+- **vote**: bind CP quorum certificates to vote height and round ([#2426](https://github.com/pactus-project/pactus/pull/2426))
+- **packager**: rename anchor from field to sender ([#2425](https://github.com/pactus-project/pactus/pull/2425))
+- **linter**: make BUILD_TAG=gtk make check pass with Go 1.27.2 ([#2422](https://github.com/pactus-project/pactus/pull/2422))
+- **state**: handle invalid genesis and fork gracefully ([#2415](https://github.com/pactus-project/pactus/pull/2415))
+- **store**: close the database when startup fails ([#2414](https://github.com/pactus-project/pactus/pull/2414))
+- **util**: fix endless download and directory check ([#2412](https://github.com/pactus-project/pactus/pull/2412))
+- **sync**: fix session expiry and synced check ([#2416](https://github.com/pactus-project/pactus/pull/2416))
+- **gtk**: set focus on PasswordEntry ([#2408](https://github.com/pactus-project/pactus/pull/2408))
+
+### Refactor
+
+- **store**: name the offsets of block records ([#2420](https://github.com/pactus-project/pactus/pull/2420))
+- **gtk**: use non-deprecated texture and response APIs ([#2409](https://github.com/pactus-project/pactus/pull/2409))
+- **www**: use netutil package ([#2398](https://github.com/pactus-project/pactus/pull/2398))
+- **state**: use ProtocolVersionLatest for block version upgrade ([#2392](https://github.com/pactus-project/pactus/pull/2392))
+- **types**: add Encode/Decode methods to Amount ([#2361](https://github.com/pactus-project/pactus/pull/2361))
+
+### Perf
+
+- **consensus**: optimize CanVote with O(1) map lookup ([#2382](https://github.com/pactus-project/pactus/pull/2382))
+
 ## [1.16.0](https://github.com/pactus-project/pactus/compare/v1.15.0...v1.16.0) (2026-07-09)
 
 ### Feat
