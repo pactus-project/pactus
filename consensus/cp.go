@@ -209,6 +209,13 @@ func (cp *changeProposer) checkJustPreVote(vte *vote.Vote) error {
 				return err
 			}
 
+			if !vte.BlockHash().IsUndef() {
+				return InvalidJustificationError{
+					JustType: just.Type(),
+					Reason:   fmt.Sprintf("invalid block hash: %s", vte.BlockHash()),
+				}
+			}
+
 			return cp.checkJustInitYes(just)
 		default:
 			return InvalidJustificationError{
@@ -224,12 +231,26 @@ func (cp *changeProposer) checkJustPreVote(vte *vote.Vote) error {
 				return err
 			}
 
+			if vte.CPValue() == vote.CPValueYes && !vte.BlockHash().IsUndef() {
+				return InvalidJustificationError{
+					JustType: just.Type(),
+					Reason:   fmt.Sprintf("invalid block hash: %s", vte.BlockHash()),
+				}
+			}
+
 			return cp.checkJustPreVoteSoft(just, vte.BlockHash(), vte.CPRound())
 
 		case vote.JustTypePreVoteHard:
 			err := cp.checkCPValue(vte, vote.CPValueNo, vote.CPValueYes)
 			if err != nil {
 				return err
+			}
+
+			if vte.CPValue() == vote.CPValueYes && !vte.BlockHash().IsUndef() {
+				return InvalidJustificationError{
+					JustType: just.Type(),
+					Reason:   fmt.Sprintf("invalid block hash: %s", vte.BlockHash()),
+				}
 			}
 
 			return cp.checkJustPreVoteHard(just, vte.BlockHash(), vte.CPRound(), vte.CPValue())
