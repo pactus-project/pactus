@@ -161,6 +161,16 @@ func (mgr *peerMgr) setPeerDisconnected(pid lp2ppeer.ID) bool {
 	case lp2pnet.DirInbound:
 		mgr.numInbound--
 
+		// An inbound peer's remote address is its ephemeral source port,
+		// never useful for dialing it back. Unlike an outbound-dialable
+		// address, there is nothing worth remembering once it disconnects:
+		// keeping the entry would let any inbound stranger (a peer ID
+		// costs nothing to generate) grow this table and peers.json
+		// without limit, and get re-dialled by CheckConnectivity.
+		delete(mgr.peers, pid)
+
+		return true
+
 	case lp2pnet.DirOutbound:
 		mgr.numOutbound--
 
