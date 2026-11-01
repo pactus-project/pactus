@@ -56,6 +56,57 @@ type Config struct {
 	ConsensusV2 *consensusv2.Config `toml:"-"`
 }
 
+// clone returns a shallow-per-level copy of conf: every struct conf's own
+// fields point to (directly, or one level further for Sync.Firewall and
+// TxPool.Fee) is copied by value into a freshly allocated struct, so a TOML
+// decode into the clone can never mutate conf itself. Consensus/ConsensusV2
+// are `toml:"-"` (the decoder never touches them) and are shared as-is.
+func (conf *Config) clone() *Config {
+	clone := *conf
+
+	node := *conf.Node
+	clone.Node = &node
+
+	st := *conf.Store
+	clone.Store = &st
+
+	net := *conf.Network
+	clone.Network = &net
+
+	snc := *conf.Sync
+	fw := *conf.Sync.Firewall
+	snc.Firewall = &fw
+	clone.Sync = &snc
+
+	tp := *conf.TxPool
+	fee := *conf.TxPool.Fee
+	tp.Fee = &fee
+	clone.TxPool = &tp
+
+	lg := *conf.Logger
+	clone.Logger = &lg
+
+	grpcConf := *conf.GRPC
+	clone.GRPC = &grpcConf
+
+	jrpc := *conf.JSONRPC
+	clone.JSONRPC = &jrpc
+
+	httpConf := *conf.HTTP
+	clone.HTTP = &httpConf
+
+	htmlConf := *conf.HTML
+	clone.HTML = &htmlConf
+
+	zmqConf := *conf.ZeroMq
+	clone.ZeroMq = &zmqConf
+
+	wm := *conf.WalletManager
+	clone.WalletManager = &wm
+
+	return &clone
+}
+
 type BootstrapInfo struct {
 	Name    string `json:"name"`
 	Email   string `json:"email"`
@@ -310,7 +361,11 @@ func LoadFromFile(file string, strict bool, defaultConfig *Config) (*Config, err
 }
 
 func LoadFromToml(str string, strict bool, defaultConfig *Config) (*Config, error) {
-	conf := defaultConfig
+	// Decode into a clone, not defaultConfig itself: go-toml applies keys
+	// incrementally as it reads the document, so a syntax or type error
+	// partway through would otherwise leave defaultConfig mutated with
+	// whatever fields were already applied before the error.
+	conf := defaultConfig.clone()
 	buf := bytes.NewBufferString(str)
 	decoder := toml.NewDecoder(buf)
 	if strict {
