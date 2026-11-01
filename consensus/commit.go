@@ -24,10 +24,10 @@ func (s *commitState) decide() {
 		s.logger.Error("committing block failed", "block", certBlock, "error", err)
 	} else {
 		s.logger.Info("block committed, schedule new height", "hash", certBlock.Hash())
-	}
 
-	// Now we can announce the committed block and certificate
-	s.announceNewBlock(certBlock, cert, nil)
+		// Now we can announce the committed block and certificate
+		s.announceNewBlock(certBlock, cert, nil)
+	}
 
 	s.enterNewState(s.newHeightState)
 }
