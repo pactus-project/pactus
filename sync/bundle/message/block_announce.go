@@ -37,13 +37,24 @@ func (m *BlockAnnounceMessage) BasicCheck() error {
 		return err
 	}
 
+	if err := m.Certificate.BasicCheck(); err != nil {
+		return err
+	}
+
+	if m.Block.Height() != m.Certificate.Height() {
+		return BasicCheckError{Reason: "block height does not match certificate height"}
+	}
+
 	if m.Proof != nil {
 		if err := m.Proof.BasicCheck(); err != nil {
 			return err
 		}
+		if m.Proof.Height() != m.Certificate.Height() {
+			return BasicCheckError{Reason: "proof height does not match certificate height"}
+		}
 	}
 
-	return m.Certificate.BasicCheck()
+	return nil
 }
 
 func (m *BlockAnnounceMessage) Height() types.Height {
