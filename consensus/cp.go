@@ -190,7 +190,7 @@ func (cp *changeProposer) checkJustMainVoteConflict(just vote.Just,
 	return nil
 }
 
-//nolint:exhaustive // refactor me; check just by just_type, not vote_type
+//nolint:exhaustive,nestif // refactor me; check just by just_type, not vote_type
 func (cp *changeProposer) checkJustPreVote(vte *vote.Vote) error {
 	just := vte.CPJust()
 	if vte.CPRound() == 0 {
