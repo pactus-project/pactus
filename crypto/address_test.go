@@ -255,10 +255,10 @@ func TestShortString(t *testing.T) {
 func TestShortStringWithInvalidType(t *testing.T) {
 	addr := crypto.NewAddress(crypto.AddressType(200), make([]byte, crypto.AddressSize-1))
 
-	assert.Equal(t, "", addr.String())
+	assert.Empty(t, addr.String())
 	assert.NotPanics(t, func() {
-		assert.Equal(t, "", addr.ShortString())
-		assert.Equal(t, "", addr.LogString())
+		assert.Empty(t, addr.ShortString())
+		assert.Empty(t, addr.LogString())
 	})
 }
 
