@@ -134,10 +134,10 @@ func (prv *PrivateKey) SignNative(msg []byte) *Signature {
 	sigAffine := new(bls12381.G1Affine).FromJacobian(sigJac)
 	data := sigAffine.Bytes()
 
-	return &Signature{
-		data:    data[:],
-		pointG1: sigAffine,
-	}
+	sig := &Signature{data: data[:]}
+	sig.pointG1.Store(sigAffine)
+
+	return sig
 }
 
 func (prv *PrivateKey) PublicKeyNative() *PublicKey {
@@ -145,10 +145,10 @@ func (prv *PrivateKey) PublicKeyNative() *PublicKey {
 	pkAffine := new(bls12381.G2Affine).FromJacobian(pkJac)
 	data := pkAffine.Bytes()
 
-	return &PublicKey{
-		data:    data[:],
-		pointG2: pkAffine,
-	}
+	pub := &PublicKey{data: data[:]}
+	pub.pointG2.Store(pkAffine)
+
+	return pub
 }
 
 func (prv *PrivateKey) PublicKey() crypto.PublicKey {

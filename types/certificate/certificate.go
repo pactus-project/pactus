@@ -354,17 +354,22 @@ func (cert *Certificate) AddSignature(valNum int32, sig *bls.Signature) {
 }
 
 func (cert *Certificate) Clone() *Certificate {
+	// cert.signature is already a valid signature of the right size, so
+	// this can't fail; built through the public constructor rather than a
+	// struct copy, since Signature's lazy point cache (atomic.Pointer)
+	// must not be copied.
+	clonedSignature, _ := bls.SignatureFromBytes(cert.signature.Bytes())
+
 	cloned := &Certificate{
 		height:     cert.height,
 		round:      cert.round,
 		committers: make([]int32, len(cert.committers)),
 		absentees:  make([]int32, len(cert.absentees)),
-		signature:  new(bls.Signature),
+		signature:  clonedSignature,
 	}
 
 	copy(cloned.committers, cert.committers)
 	copy(cloned.absentees, cert.absentees)
-	*cloned.signature = *cert.signature
 
 	return cloned
 }
