@@ -295,7 +295,8 @@ func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
 
 	if vte.Type() != vote.VoteTypePrecommit ||
 		vte.Height() != lastCert.Height() ||
-		vte.Round() != lastCert.Round() {
+		vte.Round() != lastCert.Round() ||
+		vte.BlockHash() != st.lastInfo.BlockHash() {
 		return InvalidVoteForCertificateError{
 			Vote: vte,
 		}
