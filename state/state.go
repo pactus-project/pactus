@@ -940,5 +940,16 @@ func (st *state) CheckTransaction(trx *tx.Tx) error {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
+	// CheckAndExecute never checks structural/self-contained validity
+	// (version, memo length, payload shape, fee, signature): the txpool and
+	// block-proposal/validation paths already call it beforehand, via a
+	// real pool's admission-time check. CheckTransaction is the gRPC API's
+	// own standalone entry point, with no such caller, so an unsigned,
+	// wrongly-signed, or otherwise structurally invalid transaction was
+	// reported as valid.
+	if err := trx.BasicCheck(); err != nil {
+		return err
+	}
+
 	return execution.CheckAndExecute(trx, st.concreteSandbox(), false)
 }
