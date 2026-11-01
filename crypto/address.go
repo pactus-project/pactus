@@ -87,8 +87,17 @@ func (addr Address) String() string {
 }
 
 // ShortString returns a shortened string representation of the hash.
+//
+// String() silently returns "" when the address has an unrecognized type
+// byte (the bech32m encoder rejects it), which previously made this function
+// panic by slicing past the end of that empty string. Any address decoded
+// from untrusted input (a vote, a proposal, a peer message) can carry such a
+// byte, so this must never panic.
 func (addr Address) ShortString() string {
 	str := addr.String()
+	if len(str) < 13 {
+		return str
+	}
 
 	return fmt.Sprintf("%s-%s", str[:8], str[len(str)-5:])
 }

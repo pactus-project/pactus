@@ -245,6 +245,23 @@ func TestShortString(t *testing.T) {
 	assert.Equal(t, h.ShortString(), h.LogString())
 }
 
+// TestShortStringWithInvalidType decodes an address with a type byte that
+// bech32m's encoder rejects (any value >= 32), which is exactly what a vote,
+// a proposal, or any other message carrying an address can contain once it
+// comes off the wire. String() swallows that encoding error and returns "",
+// which used to make ShortString (and therefore LogString, called by every
+// logger in the codebase) panic by slicing past the end of that empty
+// string. A single such message should never be able to crash a node.
+func TestShortStringWithInvalidType(t *testing.T) {
+	addr := crypto.NewAddress(crypto.AddressType(200), make([]byte, crypto.AddressSize-1))
+
+	assert.Equal(t, "", addr.String())
+	assert.NotPanics(t, func() {
+		assert.Equal(t, "", addr.ShortString())
+		assert.Equal(t, "", addr.LogString())
+	})
+}
+
 func TestAddressTypeString(t *testing.T) {
 	tests := []struct {
 		str string
