@@ -347,6 +347,9 @@ func cpCheckJustForVoteType(vte *vote.Vote) error {
 		}
 	case vote.VoteTypeCPDecided:
 		allowed = []vote.JustType{vote.JustTypeDecided}
+	case vote.VoteTypePrepare, vote.VoteTypePrecommit:
+		// Not a CP vote type; allowed stays nil, so the Contains check
+		// below correctly rejects it.
 	}
 
 	if !slices.Contains(allowed, vte.CPJust().Type()) {
