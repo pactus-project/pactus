@@ -27,6 +27,19 @@ type manager struct {
 	state             state.State
 }
 
+// maxUpcomingVotes and maxUpcomingProposals bound upcomingVotes and
+// upcomingProposals. Neither cache checks a signature, a committee
+// membership, or even a duplicate before caching an entry for height+1
+// (unlike the current-height path, which forwards into each consensus
+// instance's own, checked AddVote/SetProposal), so an unauthenticated peer
+// could otherwise grow them without limit just by sending future-height
+// votes or proposals. Comfortably above what every real committee member
+// sending every vote type once for the round could produce.
+const (
+	maxUpcomingVotes     = 512
+	maxUpcomingProposals = 100
+)
+
 // NewManagerV1 creates a new manager instance that manages a set of consensus instances,
 // each associated with a validator key and a reward address.
 // It is not thread-safe.
@@ -168,7 +181,9 @@ func (mgr *manager) AddVote(vote *vote.Vote) {
 		_ = mgr.state.UpdateLastCertificate(vote)
 
 	case vote.Height() == curHeight+1:
-		mgr.upcomingVotes = append(mgr.upcomingVotes, vote)
+		if len(mgr.upcomingVotes) < maxUpcomingVotes {
+			mgr.upcomingVotes = append(mgr.upcomingVotes, vote)
+		}
 
 	case vote.Height() == curHeight:
 		for _, cons := range mgr.instances {
@@ -183,7 +198,9 @@ func (mgr *manager) SetProposal(prop *proposal.Proposal) {
 	curHeight, _ := cons.HeightRound()
 	switch {
 	case prop.Height() == curHeight+1:
-		mgr.upcomingProposals = append(mgr.upcomingProposals, prop)
+		if len(mgr.upcomingProposals) < maxUpcomingProposals {
+			mgr.upcomingProposals = append(mgr.upcomingProposals, prop)
+		}
 
 	case prop.Height() == curHeight:
 		for _, cons := range mgr.instances {
