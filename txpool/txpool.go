@@ -88,14 +88,14 @@ func (p *txPool) SetNewSandboxAndRecheck(sbx sandbox.Sandbox) {
 
 	var next *linkedlist.Element[linkedmap.Pair[tx.ID, *tx.Tx]]
 	for _, payloadType := range payloadTypeOrder {
-		pool := p.pools[payloadType]
-		for e := pool.list.HeadNode(); e != nil; e = next {
+		subPool := p.pools[payloadType]
+		for e := subPool.list.HeadNode(); e != nil; e = next {
 			next = e.Next
 			trx := e.Data.Value
 
 			if err := p.checkTx(trx); err != nil {
 				p.logger.Debug("invalid transaction after rechecking", "id", trx.ID())
-				pool.list.Remove(trx.ID())
+				subPool.list.Remove(trx.ID())
 			}
 		}
 	}
