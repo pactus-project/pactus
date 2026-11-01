@@ -66,6 +66,15 @@ func TestParseVersion(t *testing.T) {
 			expectedErr: true,
 		},
 		{
+			// A Hello message's Agent field can carry "node-version=" (empty
+			// value), which reaches ParseVersion("") off the wire. It must
+			// return an error, not panic by indexing an empty string.
+			name:        "Empty Version String",
+			input:       "",
+			expected:    version.Version{},
+			expectedErr: true,
+		},
+		{
 			name:        "Invalid Major number",
 			input:       "one.2.3",
 			expected:    version.Version{},

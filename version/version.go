@@ -47,6 +47,10 @@ func NodeVersion() Version {
 func ParseVersion(versionStr string) (Version, error) {
 	var ver Version
 
+	if versionStr == "" {
+		return ver, errors.New("empty version string")
+	}
+
 	if versionStr[0] == 'v' {
 		versionStr = versionStr[1:]
 	}
