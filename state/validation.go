@@ -52,6 +52,17 @@ func (st *state) validateBlock(blk *block.Block, round types.Round) error {
 
 // validatePrevCertificate validates certificate for the previous block.
 func (st *state) validatePrevCertificate(cert *certificate.Certificate, blockHash hash.Hash) error {
+	if blockHash != st.lastInfo.BlockHash() {
+		// The certificate below can still be a validly signed certificate,
+		// just for an older block: ValidatePrecommit only checks that
+		// blockHash was precommitted by the given validators, not that
+		// blockHash is the chain's actual tip.
+		return ForkDetectedError{
+			Expected: st.lastInfo.BlockHash(),
+			Got:      blockHash,
+		}
+	}
+
 	if cert == nil {
 		if !st.lastInfo.BlockHash().IsUndef() {
 			return ErrInvalidCertificate
