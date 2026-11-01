@@ -225,7 +225,8 @@ func TestCompletedSession(t *testing.T) {
 	peerSet.SetSessionCompleted(sid)
 	assert.Equal(t, 1, peerSet.NumberOfSessions())
 	assert.False(t, peerSet.HasAnyOpenSession())
-	assert.Equal(t, session.Completed, ssn.Status)
+	// Sessions() returns copies (M-L1-37): re-fetch to see the update.
+	assert.Equal(t, session.Completed, getSessionByID(peerSet, sid).Status)
 }
 
 func TestUncompletedSession(t *testing.T) {
@@ -238,7 +239,8 @@ func TestUncompletedSession(t *testing.T) {
 	peerSet.SetSessionUncompleted(sid)
 	assert.Equal(t, 1, peerSet.NumberOfSessions())
 	assert.False(t, peerSet.HasAnyOpenSession())
-	assert.Equal(t, session.Uncompleted, ssn.Status)
+	// Sessions() returns copies (M-L1-37): re-fetch to see the update.
+	assert.Equal(t, session.Uncompleted, getSessionByID(peerSet, sid).Status)
 }
 
 func TestExpireSessions(t *testing.T) {
@@ -247,12 +249,14 @@ func TestExpireSessions(t *testing.T) {
 
 	sid := peerSet.OpenSession("peer1", 100, 101)
 	ssn := getSessionByID(peerSet, sid)
+	assert.Equal(t, session.Open, ssn.Status)
 	time.Sleep(timeout)
 
 	peerSet.SetExpiredSessionsAsUncompleted()
 	assert.Equal(t, 1, peerSet.NumberOfSessions())
 	assert.False(t, peerSet.HasAnyOpenSession())
-	assert.Equal(t, session.Uncompleted, ssn.Status)
+	// Sessions() returns copies (M-L1-37): re-fetch to see the update.
+	assert.Equal(t, session.Uncompleted, getSessionByID(peerSet, sid).Status)
 }
 
 func TestGetRandomPeer(t *testing.T) {
@@ -348,11 +352,11 @@ func TestUpdateSessionLastActivity(t *testing.T) {
 	peerSet := NewPeerSet(time.Minute)
 
 	sid := peerSet.OpenSession("peer1", 100, 101)
-	ssn := getSessionByID(peerSet, sid)
-	activity1 := ssn.LastActivity
+	activity1 := getSessionByID(peerSet, sid).LastActivity
 	time.Sleep(10 * time.Millisecond)
 	peerSet.UpdateSessionLastActivity(sid)
-	assert.Greater(t, ssn.LastActivity, activity1)
+	// Sessions() returns copies (M-L1-37): re-fetch to see the update.
+	assert.Greater(t, getSessionByID(peerSet, sid).LastActivity, activity1)
 }
 
 func TestUpdateProtocols(t *testing.T) {

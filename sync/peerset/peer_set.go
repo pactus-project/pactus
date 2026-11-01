@@ -350,11 +350,20 @@ func (ps *PeerSet) IteratePeers(consumer func(p *peer.Peer) (stop bool)) {
 	}
 }
 
+// Sessions returns a copy of each session, so a caller reading the result
+// after this call returns doesn't see -- or race on -- later updates.
 func (ps *PeerSet) Sessions() []*session.Session {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	return ps.sessionManager.Sessions()
+	sessions := ps.sessionManager.Sessions()
+	snapshots := make([]*session.Session, len(sessions))
+	for i, ssn := range sessions {
+		snapshot := *ssn
+		snapshots[i] = &snapshot
+	}
+
+	return snapshots
 }
 
 func (ps *PeerSet) Metric() metric.Metric {
@@ -403,7 +412,11 @@ func (ps *PeerSet) GetRandomPeer() *peer.Peer {
 		totalScore -= p.score
 
 		if rnd >= totalScore {
-			return p.peer
+			// Copy, like GetPeer: the caller must not see -- or race on --
+			// later updates to the live entry after this call returns.
+			snapshot := *p.peer
+
+			return &snapshot
 		}
 	}
 	panic("unreachable code")
