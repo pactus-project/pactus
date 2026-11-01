@@ -447,7 +447,7 @@ func (tx *Tx) Decode(r io.Reader) error {
 	if withDelegation {
 		switch typ {
 		case payload.TypeBond, payload.TypeUnbond, payload.TypeWithdraw:
-		default:
+		case payload.TypeTransfer, payload.TypeSortition, payload.TypeBatchTransfer, payload.TypeAnchor:
 			return BasicCheckError{
 				Reason: fmt.Sprintf("delegation flag is set on a %s payload", typ),
 			}
