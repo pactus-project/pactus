@@ -86,6 +86,9 @@ func FromBytes(bs []byte) (*Tx, error) {
 	if err := trx.Decode(r); err != nil {
 		return nil, err
 	}
+	if r.Len() != 0 {
+		return nil, BasicCheckError{Reason: fmt.Sprintf("%d trailing byte(s) after the transaction", r.Len())}
+	}
 
 	return trx, nil
 }
@@ -260,7 +263,14 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 	}
 	buf := bytes.NewBuffer(data)
 
-	return tx.Decode(buf)
+	if err := tx.Decode(buf); err != nil {
+		return err
+	}
+	if buf.Len() != 0 {
+		return BasicCheckError{Reason: fmt.Sprintf("%d trailing byte(s) after the transaction", buf.Len())}
+	}
+
+	return nil
 }
 
 // SerializeSize returns the number of bytes it would take to serialize the transaction.
@@ -381,6 +391,16 @@ func (tx *Tx) Decode(r io.Reader) error {
 		return err
 	}
 
+	// flags is not covered by SignBytes or the tx ID, so an unknown bit (or
+	// the delegation bit on a payload type that doesn't support delegation)
+	// lets a byte sequence other than the canonical one decode to the same
+	// transaction: silently accepting it would let that bit be flipped
+	// without invalidating the signature.
+	const knownFlags = flagStripedPublicKey | flagNotSigned | flagWithDelegation
+	if flags&^knownFlags != 0 {
+		return BasicCheckError{Reason: fmt.Sprintf("unknown flag bits: %#x", flags)}
+	}
+
 	err = tx.data.Fee.Decode(r)
 	if err != nil {
 		return err
@@ -400,7 +420,8 @@ func (tx *Tx) Decode(r io.Reader) error {
 		return err
 	}
 
-	switch typ := payload.Type(payloadType); typ {
+	typ := payload.Type(payloadType)
+	switch typ {
 	case payload.TypeTransfer:
 		tx.data.Payload = new(payload.TransferPayload)
 	case payload.TypeBond:
@@ -422,8 +443,19 @@ func (tx *Tx) Decode(r io.Reader) error {
 		}
 	}
 
+	withDelegation := util.IsFlagSet(flags, flagWithDelegation)
+	if withDelegation {
+		switch typ {
+		case payload.TypeBond, payload.TypeUnbond, payload.TypeWithdraw:
+		default:
+			return BasicCheckError{
+				Reason: fmt.Sprintf("delegation flag is set on a %s payload", typ),
+			}
+		}
+	}
+
 	ctx := payload.DecodeContext{
-		WithDelegation: util.IsFlagSet(flags, flagWithDelegation),
+		WithDelegation: withDelegation,
 	}
 	err = tx.data.Payload.Decode(ctx, r)
 	if err != nil {
