@@ -80,6 +80,14 @@ func (ps *PeerSet) HasAnyOpenSession() bool {
 	return ps.sessionManager.HasAnyOpenSession()
 }
 
+// HasOpenSessionFor reports whether sid is an open session owned by pid.
+func (ps *PeerSet) HasOpenSessionFor(pid peer.ID, sid int) bool {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	return ps.sessionManager.HasOpenSessionFor(pid, sid)
+}
+
 func (ps *PeerSet) UpdateSessionLastActivity(sid int) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()

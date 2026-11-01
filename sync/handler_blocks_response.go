@@ -21,6 +21,19 @@ func (handler *blocksResponseHandler) ParseMessage(m message.Message, pid peer.I
 	msg := m.(*message.BlocksResponseMessage)
 	handler.logger.Trace("parsing BlocksResponse message", "msg", msg)
 
+	// A session ID is just an integer we handed out; nothing else ties
+	// this response to the peer who's actually supposed to own it, or
+	// confirms we're still expecting one from them. Without this gate,
+	// any peer can act on (close, reject, or feed blocks into) a session
+	// opened for someone else, and an unsolicited response can seed the
+	// cache with a block nobody asked for or verified.
+	if !handler.peerSet.HasOpenSessionFor(pid, msg.SessionID) {
+		handler.logger.Debug("blocks response for a session not owned by this peer, or not open",
+			"pid", pid, "sid", msg.SessionID)
+
+		return
+	}
+
 	if msg.IsRequestRejected() {
 		handler.logger.Warn("blocks request is rejected", "pid", pid,
 			"reason", msg.Reason, "sid", msg.SessionID)
