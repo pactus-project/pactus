@@ -377,26 +377,51 @@ func VarBytesSerializeSize(bytes []byte) int {
 // maximum payload size since it helps protect against memory exhaustion
 // attacks and forced panics through malformed messages.
 func ReadVarString(r io.Reader) (string, error) {
+	return ReadVarStringMax(r, MaxPayloadSize)
+}
+
+// ReadVarStringMax is like ReadVarString, but rejects a string longer than
+// maxLen instead of the generic MaxPayloadSize. Callers that know a field's
+// real maximum length (e.g. a transaction memo) should use this instead of
+// ReadVarString, so a tiny message cannot force a large allocation merely by
+// announcing a large length ahead of a cheap, far smaller limit check.
+func ReadVarStringMax(r io.Reader, maxLen uint64) (string, error) {
 	count, err := ReadVarInt(r)
 	if err != nil {
 		return "", err
 	}
 
-	// Prevent variable length strings that are larger than the maximum
-	// payload size.  It would be possible to cause memory exhaustion and
-	// panics without a sane upper bound on this count.
-	if count > MaxPayloadSize {
+	// Prevent variable length strings that are larger than maxLen.  It
+	// would be possible to cause memory exhaustion and panics without a
+	// sane upper bound on this count.
+	if count > maxLen {
 		return "", fmt.Errorf("variable length string is too long "+
-			"[count %d, max %d]", count, MaxPayloadSize)
+			"[count %d, max %d]", count, maxLen)
 	}
 
-	buf := make([]byte, count)
-	_, err = io.ReadFull(r, buf)
+	buf, err := readExactly(r, count)
 	if err != nil {
 		return "", err
 	}
 
 	return string(buf), nil
+}
+
+// readExactly reads exactly n bytes from r, growing its buffer incrementally
+// (as io.ReadAll does) rather than allocating n bytes upfront. A message
+// that announces a length far larger than the data it actually carries
+// would otherwise force that large allocation before the short read is
+// even detected.
+func readExactly(r io.Reader, n uint64) ([]byte, error) {
+	buf, err := io.ReadAll(io.LimitReader(r, int64(n)))
+	if err != nil {
+		return nil, err
+	}
+	if uint64(len(buf)) != n {
+		return nil, io.ErrUnexpectedEOF
+	}
+
+	return buf, nil
 }
 
 // WriteVarString serializes str to w as a variable length integer containing
@@ -431,13 +456,7 @@ func ReadVarBytes(r io.Reader) ([]byte, error) {
 			"[count %d, max %d]", count, MaxPayloadSize)
 	}
 
-	buf := make([]byte, count)
-	_, err = io.ReadFull(r, buf)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
+	return readExactly(r, count)
 }
 
 // WriteVarBytes serializes a variable length byte array to w as a varInt
