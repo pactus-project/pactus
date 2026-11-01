@@ -254,6 +254,25 @@ func (cs *consensus) SetProposal(prop *proposal.Proposal) {
 
 			return
 		}
+
+		// The block hash matches the already-committed block, so prop.Block()
+		// is byte-identical to it (any difference would change the hash) --
+		// including its ProposerAddress(), the validator who actually
+		// proposed it. cs.proposer(round) cannot be used here: it reflects
+		// the next height's committee, not the one the committed block (a
+		// past height) was proposed under.
+		proposerAddr := prop.Block().Header().ProposerAddress()
+		proposer := cs.findCommitteeValidator(proposerAddr)
+		if proposer == nil {
+			cs.logger.Warn("unknown proposer for the committed block", "proposal", prop)
+
+			return
+		}
+		if err := prop.Verify(proposer.PublicKey()); err != nil {
+			cs.logger.Warn("invalid proposer", "proposal", prop, "error", err)
+
+			return
+		}
 	} else {
 		proposer := cs.proposer(prop.Round())
 		if err := prop.Verify(proposer.PublicKey()); err != nil {
@@ -317,6 +336,18 @@ func (cs *consensus) AddVote(vte *vote.Vote) {
 
 func (cs *consensus) proposer(round types.Round) *validator.Validator {
 	return cs.bcState.Proposer(round)
+}
+
+// findCommitteeValidator looks up a validator by address in the current
+// committee, or returns nil if it's not a member.
+func (cs *consensus) findCommitteeValidator(addr crypto.Address) *validator.Validator {
+	for _, val := range cs.validators {
+		if val.Address() == addr {
+			return val
+		}
+	}
+
+	return nil
 }
 
 func (cs *consensus) IsProposer() bool {

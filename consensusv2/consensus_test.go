@@ -560,9 +560,22 @@ func TestConsensusLateProposal(t *testing.T) {
 	height := types.Height(2)
 	round := types.Round(0)
 
-	blk, _ := td.commitBlockForAllStates(t) // height 2
+	// The committed block's proposer must match the key the late proposal is
+	// signed with: SetProposal now verifies it against the committed block's
+	// own ProposerAddress() rather than skipping verification for this path.
+	proposerKey := td.valKeys[td.stateX.ProposerIndex(round)]
+	blk, cert := td.GenerateTestBlock(td.stateX.FakeHeight+1, testsuite.BlockWithProposer(proposerKey.Address()))
+	_ = td.stateX.CommitBlock(blk, cert)
+	_ = td.stateY.CommitBlock(blk, cert)
+	_ = td.stateB.CommitBlock(blk, cert)
+	_ = td.stateP.CommitBlock(blk, cert)
 
-	prop := td.makeProposal(t, height, round, testsuite.ProposalWithBlock(blk))
+	// makeProposal's own default key is ProposerIndex(round) evaluated now,
+	// after the commit above moved FakeHeight forward -- a different index
+	// than proposerKey above. Pass proposerKey explicitly so the proposal is
+	// signed by the same key the block's ProposerAddress() names.
+	prop := td.makeProposal(t, height, round,
+		testsuite.ProposalWithBlock(blk), testsuite.ProposalWithKey(proposerKey))
 	require.NotNil(t, prop)
 
 	// Partitioned node receives proposal now
