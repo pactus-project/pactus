@@ -272,9 +272,10 @@ func TestBlockSubsidyTx(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, cert := td.GenerateTestBlock(tt.height)
 			td.state.lastInfo.UpdateCertificate(cert)
-			trx := td.state.createSubsidyTx(proposerAddr, rewardAddr, tt.accumulatedFee)
+			trx, err := td.state.createSubsidyTx(proposerAddr, rewardAddr, tt.accumulatedFee)
+			require.NoError(t, err)
 
-			err := td.state.checkSubsidy(trx, td.genValKeys[0].Address(), true)
+			err = td.state.checkSubsidy(trx, td.genValKeys[0].Address(), true)
 			require.NoError(t, err)
 
 			payload := trx.Payload().(*payload.BatchTransferPayload)
@@ -366,9 +367,10 @@ func TestBlockSubsidyWithDelegationTx(t *testing.T) {
 			val.SetDelegation(dlgOwnerAddr, tt.ownerShare, td.RandHeight())
 			td.state.store.UpdateValidator(val)
 
-			trx := td.state.createSubsidyTx(proposerAddr, rewardAddr, tt.accumulatedFee)
+			trx, err := td.state.createSubsidyTx(proposerAddr, rewardAddr, tt.accumulatedFee)
+			require.NoError(t, err)
 
-			err := td.state.checkSubsidy(trx, proposerAddr, true)
+			err = td.state.checkSubsidy(trx, proposerAddr, true)
 			require.NoError(t, err)
 
 			payload := trx.Payload().(*payload.BatchTransferPayload)

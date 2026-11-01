@@ -14,6 +14,18 @@ import (
 // ErrInvalidSubsidyTransaction indicates that the subsidy transaction is not valid.
 var ErrInvalidSubsidyTransaction = errors.New("invalid subsidy transaction")
 
+// SubsidyRewardAddressError is returned when a reward or delegate-owner
+// address would collide with the foundation address in a subsidy
+// transaction. checkSubsidy requires recipient 0 to be exactly the
+// foundation's own entry, so no other recipient can share that address.
+type SubsidyRewardAddressError struct {
+	Address crypto.Address
+}
+
+func (e SubsidyRewardAddressError) Error() string {
+	return fmt.Sprintf("reward address collides with the foundation address: %s", e.Address)
+}
+
 // ErrDuplicatedSubsidyTransaction indicates that there is more than one subsidy transaction
 // inside the block.
 var ErrDuplicatedSubsidyTransaction = errors.New("duplicated subsidy transaction")

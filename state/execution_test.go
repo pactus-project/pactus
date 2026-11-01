@@ -70,8 +70,10 @@ func TestExecuteBlock(t *testing.T) {
 
 	blockHeight := td.state.LastBlockHeight() + 1
 	proposerAddr := td.proposerKey(t, 0).Address()
-	invSubsidyTx := td.state.createSubsidyTx(proposerAddr, td.RandAccAddress(), validTx1.Fee()+1)
-	validSubsidyTx := td.state.createSubsidyTx(proposerAddr, td.RandAccAddress(), validTx1.Fee())
+	invSubsidyTx, err := td.state.createSubsidyTx(proposerAddr, td.RandAccAddress(), validTx1.Fee()+1)
+	require.NoError(t, err)
+	validSubsidyTx, err := td.state.createSubsidyTx(proposerAddr, td.RandAccAddress(), validTx1.Fee())
+	require.NoError(t, err)
 
 	t.Run("Block has invalid subsidy amount", func(t *testing.T) {
 		txs := block.NewTxs()

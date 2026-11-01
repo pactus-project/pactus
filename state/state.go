@@ -328,19 +328,31 @@ func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
 	return nil
 }
 
-func (st *state) createSubsidyTx(valAddr, rewardAddr crypto.Address, accumulatedFee amount.Amount) *tx.Tx {
+func (st *state) createSubsidyTx(valAddr, rewardAddr crypto.Address,
+	accumulatedFee amount.Amount,
+) (*tx.Tx, error) {
 	lockTime := st.lastInfo.BlockHeight() + 1
 	blockReward := st.params.BlockReward(lockTime)
 	foundationReward := st.params.FoundationReward(lockTime)
 
 	foundationAddress := st.params.FoundationAddress(lockTime)
+	// checkSubsidy requires recipient 0 to be exactly {foundationAddress,
+	// foundationReward}; no other recipient can carry that address too, since
+	// a duplicate recipient is rejected by BatchTransferPayload.BasicCheck.
+	if rewardAddr == foundationAddress {
+		return nil, SubsidyRewardAddressError{Address: rewardAddr}
+	}
+
 	recipients := make([]payload.BatchRecipient, 0, 3)
 	recipients = append(recipients, payload.BatchRecipient{
 		To:     foundationAddress,
 		Amount: foundationReward,
 	})
 
-	val, _ := st.store.Validator(valAddr)
+	val, err := st.store.Validator(valAddr)
+	if err != nil {
+		return nil, err
+	}
 
 	if val.IsDelegated() {
 		// Base on PIP-49, the maximum delegate share is 0.7 PAC.
@@ -353,24 +365,45 @@ func (st *state) createSubsidyTx(valAddr, rewardAddr crypto.Address, accumulated
 		dlgOwnerShare := val.DelegateShare().MulF64(rewardCoeff)
 		maxOwnerShare := param.MaxDelegateOwnerRewardShare.MulF64(rewardCoeff)
 
-		if dlgOwnerShare > 0 {
-			amount := dlgOwnerShare
-			if dlgOwnerShare == maxOwnerShare {
-				amount += accumulatedFee
-			}
-			recipients = append(recipients,
-				payload.BatchRecipient{
-					To:     dlgOwnerAddr,
-					Amount: amount,
-				})
+		if dlgOwnerShare > 0 && dlgOwnerAddr == foundationAddress {
+			return nil, SubsidyRewardAddressError{Address: dlgOwnerAddr}
 		}
 
+		ownerAmount := amount.Amount(0)
+		if dlgOwnerShare > 0 {
+			ownerAmount = dlgOwnerShare
+			if dlgOwnerShare == maxOwnerShare {
+				ownerAmount += accumulatedFee
+			}
+		}
+
+		rewardAmount := amount.Amount(0)
 		if dlgOwnerShare < maxOwnerShare {
-			recipients = append(recipients,
-				payload.BatchRecipient{
-					To:     rewardAddr,
-					Amount: blockReward + accumulatedFee - foundationReward - dlgOwnerShare,
+			rewardAmount = blockReward + accumulatedFee - foundationReward - dlgOwnerShare
+		}
+
+		if dlgOwnerShare > 0 && dlgOwnerAddr == rewardAddr {
+			// Same address would receive both shares: merge into a single
+			// recipient instead of a duplicate one (checkSubsidy only
+			// requires recipient 1's amount to be >= dlgShare, so adding the
+			// reward share to it still satisfies that check).
+			recipients = append(recipients, payload.BatchRecipient{
+				To:     dlgOwnerAddr,
+				Amount: ownerAmount + rewardAmount,
+			})
+		} else {
+			if dlgOwnerShare > 0 {
+				recipients = append(recipients, payload.BatchRecipient{
+					To:     dlgOwnerAddr,
+					Amount: ownerAmount,
 				})
+			}
+			if dlgOwnerShare < maxOwnerShare {
+				recipients = append(recipients, payload.BatchRecipient{
+					To:     rewardAddr,
+					Amount: rewardAmount,
+				})
+			}
 		}
 	} else {
 		recipients = append(recipients,
@@ -380,7 +413,7 @@ func (st *state) createSubsidyTx(valAddr, rewardAddr crypto.Address, accumulated
 			})
 	}
 
-	return tx.NewSubsidyTx(lockTime, recipients)
+	return tx.NewSubsidyTx(lockTime, recipients), nil
 }
 
 func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Address) (*block.Block, error) {
@@ -413,7 +446,20 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 	}
 
 	valAddr := valKey.Address()
-	subsidyTx := st.createSubsidyTx(valAddr, rewardAddr, sbx.AccumulatedFee())
+	subsidyTx, err := st.createSubsidyTx(valAddr, rewardAddr, sbx.AccumulatedFee())
+	if err != nil {
+		return nil, err
+	}
+	// Defense in depth: a bug in subsidy-tx construction (or a future one)
+	// should fail the proposal here, not produce a block every peer (and
+	// this node's own BasicCheck) rejects. Scoped to the subsidy tx alone,
+	// not the whole block: pool-sourced transactions may legitimately omit
+	// their public key (resolved from the store instead), which fails the
+	// plain, context-free Tx.BasicCheck() despite being valid once checked
+	// against the chain.
+	if err := subsidyTx.BasicCheck(); err != nil {
+		return nil, err
+	}
 	txs.Prepend(subsidyTx)
 	prevSeed := st.lastInfo.SortitionSeed()
 
