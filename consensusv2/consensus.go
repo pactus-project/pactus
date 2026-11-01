@@ -160,8 +160,7 @@ func (cs *consensusV2) AllVotes() []*vote.Vote {
 
 	votes := []*vote.Vote{}
 	for r := types.Round(0); r <= cs.round; r++ {
-		m := cs.log.RoundMessages(r)
-		votes = append(votes, m.AllVotes()...)
+		votes = append(votes, cs.log.AllVotesIfExists(r)...)
 	}
 
 	return votes
@@ -437,7 +436,7 @@ func (cs *consensusV2) Proposal() *proposal.Proposal {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
-	return cs.log.RoundProposal(cs.round)
+	return cs.log.RoundProposalIfExists(cs.round)
 }
 
 func (cs *consensusV2) HandleQueryProposal(height types.Height, round types.Round) *proposal.Proposal {
@@ -457,14 +456,14 @@ func (cs *consensusV2) HandleQueryProposal(height types.Height, round types.Roun
 	}
 
 	if cs.isProposer() {
-		return cs.log.RoundProposal(cs.round)
+		return cs.log.RoundProposalIfExists(cs.round)
 	}
 
 	if cs.cpDecidedCert != nil {
 		// It is decided not to change the proposer and the proposal is locked.
 		// Locked proposals can be sent by all validators.
 		// This helps prevent a situation where the proposer goes offline after proposing the block.
-		return cs.log.RoundProposal(cs.round)
+		return cs.log.RoundProposalIfExists(cs.round)
 	}
 
 	return nil
@@ -487,13 +486,11 @@ func (cs *consensusV2) HandleQueryVote(height types.Height, round types.Round) *
 	switch {
 	case round < cs.round:
 		// Past round: Only broadcast cp:decided votes
-		vs := cs.log.CPDecidedVoteSet(round)
-		votes = append(votes, vs.AllVotes()...)
+		votes = append(votes, cs.log.CPDecidedVotesIfExists(round)...)
 
 	case round == cs.round:
 		// Current round
-		m := cs.log.RoundMessages(round)
-		votes = append(votes, m.AllVotes()...)
+		votes = append(votes, cs.log.AllVotesIfExists(round)...)
 
 	case round > cs.round:
 		// Future round

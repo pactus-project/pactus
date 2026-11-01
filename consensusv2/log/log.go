@@ -26,6 +26,43 @@ func (log *Log) RoundMessages(round types.Round) *Messages {
 	return log.mustGetRoundMessages(round)
 }
 
+// AllVotesIfExists returns all votes recorded for round, or nil if the round
+// has never been touched. Unlike RoundMessages, it never creates an entry in
+// the log, so it is safe to call while holding only a read lock.
+func (log *Log) AllVotesIfExists(round types.Round) []*vote.Vote {
+	m := log.roundMessages[round]
+	if m == nil {
+		return nil
+	}
+
+	return m.AllVotes()
+}
+
+// RoundProposalIfExists returns round's proposal, or nil if the round has
+// never been touched. Unlike RoundProposal, it never creates an entry in
+// the log, so it is safe to call while holding only a read lock.
+func (log *Log) RoundProposalIfExists(round types.Round) *proposal.Proposal {
+	m := log.roundMessages[round]
+	if m == nil {
+		return nil
+	}
+
+	return m.proposal
+}
+
+// CPDecidedVotesIfExists returns all CPDecided votes for round, or nil if
+// the round has never been touched. Unlike CPDecidedVoteSet, it never
+// creates an entry in the log, so it is safe to call while holding only a
+// read lock.
+func (log *Log) CPDecidedVotesIfExists(round types.Round) []*vote.Vote {
+	m := log.roundMessages[round]
+	if m == nil {
+		return nil
+	}
+
+	return m.cpDecidedVotes.AllVotes()
+}
+
 func (log *Log) HasVote(h hash.Hash) bool {
 	for _, m := range log.roundMessages {
 		if m.HasVote(h) {
