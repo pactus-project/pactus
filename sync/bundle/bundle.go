@@ -1,7 +1,9 @@
 package bundle
 
 import (
+	"bytes"
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"io"
 
@@ -9,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/encoding"
 )
 
 const (
@@ -83,16 +86,40 @@ func (b *Bundle) Encode() ([]byte, error) {
 }
 
 func (b *Bundle) Decode(r io.Reader) (int, error) {
+	// Read the whole message into memory first: the CBOR decoder below
+	// stops after one item and, reading directly from r, may itself pull
+	// more bytes from r than it logically consumes (its own internal
+	// buffering), which would make any trailing-bytes check against r
+	// unreliable. Decoding from a fresh, fully-read buffer lets bytesRead
+	// be compared against the buffer's real length. Both callers (a gossip
+	// message's in-memory bytes, and a stream message already buffered in
+	// full, see sync.dispatchStreamMessage) already hand this function a
+	// bounded, fully-available reader, so this never blocks.
+	wire, err := io.ReadAll(io.LimitReader(r, encoding.MaxPayloadSize))
+	if err != nil {
+		return 0, err
+	}
+
 	var bdl _Bundle
 	decOpts := cbor.DecOptions{}
 	decOpts.MaxArrayElements = 65_536 // default in 131072
 	decOpts.MaxMapPairs = 65_536      // default in 131072
 	decMode, _ := decOpts.DecMode()
-	d := decMode.NewDecoder(r)
-	err := d.Decode(&bdl)
+	d := decMode.NewDecoder(bytes.NewReader(wire))
+	err = d.Decode(&bdl)
 	bytesRead := d.NumBytesRead()
 	if err != nil {
 		return bytesRead, err
+	}
+
+	// The CBOR decoder above stops after one item; reject anything left
+	// in wire instead of silently ignoring it. Two wire messages that
+	// differ only by a trailing junk suffix would otherwise decode to the
+	// identical Bundle while hashing to different gossip message IDs
+	// (network.MessageIDFunc hashes the raw wire bytes), defeating
+	// pubsub's own deduplication.
+	if bytesRead != len(wire) {
+		return bytesRead, errors.New("bundle: trailing bytes after decoded message")
 	}
 
 	data := bdl.MessageData
