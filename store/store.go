@@ -96,11 +96,19 @@ func NewStore(conf *Config) (Store, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	blockStore, err := newBlockStore(db, conf.SeedCacheWindow, conf.PublicKeyCacheSize)
+	if err != nil {
+		_ = db.Close()
+
+		return nil, err
+	}
+
 	store := &store{
 		config:         conf,
 		db:             db,
 		batch:          new(leveldb.Batch),
-		blockStore:     newBlockStore(db, conf.SeedCacheWindow, conf.PublicKeyCacheSize),
+		blockStore:     blockStore,
 		txStore:        newTxStore(db, conf.TxCacheWindow),
 		accountStore:   newAccountStore(db, conf.AccountCacheSize),
 		validatorStore: newValidatorStore(db),
