@@ -146,15 +146,15 @@ func (ps *PeerSet) GetPeer(pid peer.ID) *peer.Peer {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	p := ps.findPeer(pid)
-	if p == nil {
+	livePeer := ps.findPeer(pid)
+	if livePeer == nil {
 		return nil
 	}
 
 	// findPeer returns the live entry stored in the map; copy it so a
 	// caller reading the result after this call returns (as the method's
 	// own doc promises) doesn't see -- or race on -- later updates to it.
-	snapshot := *p
+	snapshot := *livePeer
 
 	return &snapshot
 }
