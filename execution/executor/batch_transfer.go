@@ -13,6 +13,7 @@ type batchRecipient struct {
 	Address crypto.Address
 	Account *account.Account
 	Amount  amount.Amount
+	IsNew   bool
 }
 
 type BatchTransferExecutor struct {
@@ -37,7 +38,13 @@ func newBatchTransferExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*BatchTransferEx
 		} else {
 			receiver := sbx.Account(r.To)
 			if receiver == nil {
-				receiver = sbx.MakeNewAccount(r.To)
+				// sbx.MakeNewAccount is deferred to Execute, which only runs
+				// once Check has accepted the transaction, so a transaction
+				// Check later rejects never leaks an empty account into the
+				// sandbox. This placeholder is for validation only and is
+				// never written back.
+				receiver = account.NewAccount(0)
+				recipients[i].IsNew = true
 			}
 			recipients[i].Account = receiver
 		}
@@ -66,7 +73,12 @@ func (e *BatchTransferExecutor) Execute(sbx sandbox.Sandbox) {
 	e.sender.SubtractFromBalance(e.pld.Value() + e.fee)
 	sbx.UpdateAccount(e.pld.From, e.sender)
 
-	for _, r := range e.recipients {
+	for i := range e.recipients {
+		r := &e.recipients[i]
+		if r.IsNew {
+			r.Account = sbx.MakeNewAccount(r.Address)
+		}
+
 		r.Account.AddToBalance(r.Amount)
 
 		sbx.UpdateAccount(r.Address, r.Account)

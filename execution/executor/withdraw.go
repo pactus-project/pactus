@@ -10,10 +10,11 @@ import (
 )
 
 type WithdrawExecutor struct {
-	pld      *payload.WithdrawPayload
-	fee      amount.Amount
-	sender   *validator.Validator
-	receiver *account.Account
+	pld         *payload.WithdrawPayload
+	fee         amount.Amount
+	sender      *validator.Validator
+	receiver    *account.Account
+	newReceiver bool
 }
 
 func newWithdrawExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*WithdrawExecutor, error) {
@@ -25,15 +26,23 @@ func newWithdrawExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*WithdrawExecutor, er
 	}
 
 	receiver := sbx.Account(pld.To)
+	newReceiver := false
 	if receiver == nil {
-		receiver = sbx.MakeNewAccount(pld.To)
+		// sbx.MakeNewAccount is deferred to Execute, which only runs once
+		// Check has accepted the transaction, so a transaction Check later
+		// rejects (e.g. still bonded) never leaks an empty account into the
+		// sandbox. This placeholder is for validation only and is never
+		// written back.
+		receiver = account.NewAccount(0)
+		newReceiver = true
 	}
 
 	return &WithdrawExecutor{
-		pld:      pld,
-		fee:      trx.Fee(),
-		sender:   sender,
-		receiver: receiver,
+		pld:         pld,
+		fee:         trx.Fee(),
+		sender:      sender,
+		receiver:    receiver,
+		newReceiver: newReceiver,
 	}, nil
 }
 
@@ -67,6 +76,10 @@ func (e *WithdrawExecutor) Check(sbx sandbox.SandboxReader, _ bool) error {
 }
 
 func (e *WithdrawExecutor) Execute(sbx sandbox.Sandbox) {
+	if e.newReceiver {
+		e.receiver = sbx.MakeNewAccount(e.pld.To)
+	}
+
 	e.sender.SubtractFromStake(e.pld.Amount + e.fee)
 	e.receiver.AddToBalance(e.pld.Amount)
 

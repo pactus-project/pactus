@@ -10,10 +10,11 @@ import (
 )
 
 type BondExecutor struct {
-	pld      *payload.BondPayload
-	fee      amount.Amount
-	sender   *account.Account
-	receiver *validator.Validator
+	pld          *payload.BondPayload
+	fee          amount.Amount
+	sender       *account.Account
+	receiver     *validator.Validator
+	newValidator bool
 }
 
 func newBondExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*BondExecutor, error) {
@@ -25,20 +26,30 @@ func newBondExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*BondExecutor, error) {
 	}
 
 	receiver := sbx.Validator(pld.To)
+	newValidator := false
 	if receiver == nil {
 		if pld.PublicKey == nil {
 			return nil, ErrPublicKeyNotSet
 		}
-		receiver = sbx.MakeNewValidator(pld.PublicKey)
+		// sbx.MakeNewValidator is deferred to Execute, which only runs once
+		// Check has accepted the transaction. Registering the validator here
+		// would leak it into the sandbox even if Check later rejects the
+		// transaction (e.g. insufficient stake), letting a later transaction
+		// bond to this half-created validator without ever setting its
+		// public key. This placeholder is for validation only and is never
+		// written back.
+		receiver = validator.NewValidator(pld.PublicKey, 0)
+		newValidator = true
 	} else if pld.PublicKey != nil {
 		return nil, ErrPublicKeyAlreadySet
 	}
 
 	return &BondExecutor{
-		pld:      pld,
-		fee:      trx.Fee(),
-		sender:   sender,
-		receiver: receiver,
+		pld:          pld,
+		fee:          trx.Fee(),
+		sender:       sender,
+		receiver:     receiver,
+		newValidator: newValidator,
 	}, nil
 }
 
@@ -99,6 +110,10 @@ func (e *BondExecutor) Check(sbx sandbox.SandboxReader, strict bool) error {
 }
 
 func (e *BondExecutor) Execute(sbx sandbox.Sandbox) {
+	if e.newValidator {
+		e.receiver = sbx.MakeNewValidator(e.pld.PublicKey)
+	}
+
 	e.sender.SubtractFromBalance(e.pld.Stake + e.fee)
 	e.receiver.AddToStake(e.pld.Stake)
 	e.receiver.UpdateLastBondingHeight(sbx.CurrentHeight())
