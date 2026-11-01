@@ -601,6 +601,7 @@ func (sync *synchronizer) prepareBlocks(from types.Height, count uint32) [][]byt
 	}
 
 	blocks := make([][]byte, 0, count)
+	totalBytes := 0
 
 	for height := from; height < from+types.Height(count); height++ {
 		cBlk, err := sync.state.CommittedBlock(height)
@@ -610,7 +611,17 @@ func (sync *synchronizer) prepareBlocks(from types.Height, count uint32) [][]byt
 			return nil
 		}
 
+		// Stop before the response would exceed the stream's size limit;
+		// the requester resumes from this height on its next request.
+		// Always include at least one block so a single call never
+		// returns nothing (which would make the caller wrongly report
+		// this range as fully delivered).
+		if len(blocks) > 0 && totalBytes+len(cBlk.Data) > sync.config.MaxBlocksDataBytes {
+			break
+		}
+
 		blocks = append(blocks, cBlk.Data)
+		totalBytes += len(cBlk.Data)
 	}
 
 	return blocks
