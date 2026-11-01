@@ -50,6 +50,17 @@ type synchronizer struct {
 	network       network.Network
 	logger        *logger.SubLogger
 	ntp           *ntp.Checker
+	streamMsgCh   chan *network.StreamMessage
+}
+
+// streamMsgChSize bounds how many stream messages can be queued for
+// streamMessageLoop while it is busy with a slow or silent peer.
+const streamMsgChSize = 64
+
+// newStreamMsgCh exists only because NewSynchronizer's own "network"
+// parameter shadows the network package name in its body.
+func newStreamMsgCh() chan *network.StreamMessage {
+	return make(chan *network.StreamMessage, streamMsgChSize)
 }
 
 //nolint:revive // arguments can't be reduced.
@@ -74,6 +85,7 @@ func NewSynchronizer(
 		broadcastPipe: broadcastPipe,
 		networkPipe:   networkPipe,
 		ntp:           ntp.NewNtpChecker(ctx),
+		streamMsgCh:   newStreamMsgCh(),
 	}
 
 	sync.peerSet = peerset.NewPeerSet(conf.SessionTimeout())
@@ -110,6 +122,8 @@ func NewSynchronizer(
 
 	sync.networkPipe.RegisterReceiver(sync.processNetworkEvent)
 	sync.broadcastPipe.RegisterReceiver(sync.broadcastMessage)
+
+	go sync.streamMessageLoop(ctx)
 
 	return sync, nil
 }
@@ -255,7 +269,7 @@ func (sync *synchronizer) processNetworkEvent(evt network.Event) {
 
 	case network.EventTypeStream:
 		se := evt.(*network.StreamMessage)
-		sync.processStreamMessage(se)
+		sync.dispatchStreamMessage(se)
 
 	case network.EventTypeConnect:
 		ce := evt.(*network.ConnectEvent)
@@ -282,6 +296,41 @@ func (sync *synchronizer) processGossipMessage(msg *network.GossipMessage) {
 		return
 	}
 	sync.processIncomingBundle(bdl, msg.From)
+}
+
+// dispatchStreamMessage hands msg off to the dedicated stream-processing
+// goroutine (see streamMessageLoop) instead of decoding it inline.
+// msg.Reader may be a live network stream, and a hostile peer can keep it
+// open without ever sending a byte; processStreamMessage reads it
+// synchronously, and this function is called from processNetworkEvent, the
+// single consumer of every network event (gossip, connect/disconnect, other
+// streams), so decoding here would block that shared goroutine for up to the
+// stream's own deadline. streamMessageLoop processes its queue strictly in
+// order on its own goroutine, so a slow or silent peer only delays other
+// pending stream messages (handshake, block sync), never gossip, votes or
+// proposals. The queue is bounded: once full, the oldest-pending peer's
+// stream traffic is already backed up, so new stream messages are dropped
+// rather than risked blocking the shared loop.
+func (sync *synchronizer) dispatchStreamMessage(msg *network.StreamMessage) {
+	select {
+	case sync.streamMsgCh <- msg:
+	default:
+		sync.logger.Warn("stream message queue is full, dropping", "pid", msg.From)
+		_ = msg.Reader.Close()
+	}
+}
+
+// streamMessageLoop processes stream messages one at a time, in the order
+// they were received, on its own goroutine: see dispatchStreamMessage.
+func (sync *synchronizer) streamMessageLoop(ctx context.Context) {
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case msg := <-sync.streamMsgCh:
+			sync.processStreamMessage(msg)
+		}
+	}
 }
 
 func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
