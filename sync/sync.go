@@ -376,6 +376,17 @@ func (sync *synchronizer) processProtocolsEvent(eve *network.ProtocolsEvents) {
 func (sync *synchronizer) processDisconnectEvent(de *network.DisconnectEvent) {
 	sync.logger.Debug("processing disconnect event", "pid", de.PeerID)
 
+	if !sync.peerSet.GetPeerStatus(de.PeerID).IsKnown() {
+		// This peer never completed the handshake, so there's nothing
+		// about it worth remembering: a peer ID costs nothing to
+		// generate, so keeping a record per connection attempt (metrics,
+		// moniker, agent, keys) would let that cost nothing to the other
+		// side either.
+		sync.peerSet.RemovePeer(de.PeerID)
+
+		return
+	}
+
 	sync.peerSet.UpdateStatus(de.PeerID, status.StatusDisconnected)
 }
 

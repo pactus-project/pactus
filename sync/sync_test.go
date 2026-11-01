@@ -237,7 +237,11 @@ func TestConnectEvent(t *testing.T) {
 	assert.Equal(t, lp2pnetwork.DirInbound, peer.Direction)
 }
 
-func TestDisconnectEvent(t *testing.T) {
+// A disconnect for a peer that never completed the handshake leaves nothing
+// behind (M-H-23): a peer ID costs nothing to generate, so keeping a record
+// per connection attempt would let that cost nothing to the other side
+// either.
+func TestDisconnectEventForUnknownPeer(t *testing.T) {
 	td := setup(t, nil)
 	pid := td.RandPeerID()
 	de := &network.DisconnectEvent{
@@ -246,10 +250,27 @@ func TestDisconnectEvent(t *testing.T) {
 	td.network.EventPipe.Send(de)
 
 	assert.Eventually(t, func() bool {
-		return td.sync.peerSet.HasPeer(pid)
+		return td.sync.peerSet.GetPeerStatus(pid) == status.StatusUnknown
 	}, time.Second, 100*time.Millisecond)
 
-	td.checkPeerStatus(t, pid, status.StatusDisconnected)
+	assert.False(t, td.sync.peerSet.HasPeer(pid),
+		"a disconnect for a peer that never completed the handshake must not leave a record behind")
+}
+
+// A disconnect for a peer that did complete the handshake is still recorded
+// as disconnected, so e.g. its sessions can be handled appropriately.
+func TestDisconnectEventForKnownPeer(t *testing.T) {
+	td := setup(t, nil)
+	pid := td.addPeer(t, status.StatusKnown, service.New(service.FullNode))
+
+	de := &network.DisconnectEvent{
+		PeerID: pid,
+	}
+	td.network.EventPipe.Send(de)
+
+	assert.Eventually(t, func() bool {
+		return td.sync.peerSet.GetPeerStatus(pid) == status.StatusDisconnected
+	}, time.Second, 100*time.Millisecond)
 }
 
 func TestProtocolsEvent(t *testing.T) {

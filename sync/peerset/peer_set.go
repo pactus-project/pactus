@@ -146,7 +146,17 @@ func (ps *PeerSet) GetPeer(pid peer.ID) *peer.Peer {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	return ps.findPeer(pid)
+	p := ps.findPeer(pid)
+	if p == nil {
+		return nil
+	}
+
+	// findPeer returns the live entry stored in the map; copy it so a
+	// caller reading the result after this call returns (as the method's
+	// own doc promises) doesn't see -- or race on -- later updates to it.
+	snapshot := *p
+
+	return &snapshot
 }
 
 // HasPeer checks if a peer with the given id exists in the set.
