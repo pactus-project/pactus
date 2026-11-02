@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -119,9 +120,30 @@ func TempFilePath() string {
 
 // IsDirEmpty checks if a directory is empty.
 func IsDirEmpty(path string) bool {
-	file, err := os.Open(path)
+	empty, err := dirEmpty(path)
 	if err != nil {
 		panic(err)
+	}
+
+	return empty
+}
+
+// IsDirNotExistsOrEmpty checks if the path exists and, if so, whether the directory is empty.
+// A path that can't be inspected, for example because of its permissions, is not reported as missing.
+func IsDirNotExistsOrEmpty(path string) bool {
+	if _, err := os.Stat(path); err != nil {
+		return errors.Is(err, fs.ErrNotExist)
+	}
+
+	empty, err := dirEmpty(path)
+
+	return err == nil && empty
+}
+
+func dirEmpty(path string) (bool, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return false, err
 	}
 	defer func() {
 		_ = file.Close()
@@ -131,41 +153,42 @@ func IsDirEmpty(path string) bool {
 	_, err = file.Readdir(1)
 
 	// and if the file is EOF... well, the dir is empty.
-	return errors.Is(err, io.EOF)
+	return errors.Is(err, io.EOF), nil
 }
 
-// IsDirNotExistsOrEmpty checks if the path exists and, if so, whether the directory is empty.
-func IsDirNotExistsOrEmpty(path string) bool {
-	if !PathExists(path) {
-		return true
+// IsValidDirPath checks if a directory exists, or could be created, and is writable.
+// It doesn't create anything: a missing directory is checked through its closest existing parent.
+func IsValidDirPath(path string) bool {
+	if strings.ContainsRune(path, 0) {
+		return false
 	}
 
-	return IsDirEmpty(path)
-}
-
-func IsValidDirPath(path string) bool {
-	fi, err := os.Stat(path)
-	if err == nil {
-		if fi.IsDir() {
-			// A temporary file with a unique name checks that the directory is writable,
-			// without overwriting or removing the files of the user.
-			file, err := os.CreateTemp(path, ".write-check-*")
-			if err != nil {
-				return false
-			}
-			_ = file.Close()
-			_ = os.Remove(file.Name())
-
-			return true
+	for current := path; ; {
+		fi, err := os.Stat(current)
+		if err == nil {
+			return fi.IsDir() && isWritableDir(current)
+		}
+		if !errors.Is(err, fs.ErrNotExist) {
+			return false
 		}
 
-		return false
+		parent := filepath.Dir(current)
+		if parent == current {
+			return false
+		}
+		current = parent
 	}
+}
 
-	if err := Mkdir(path); err != nil {
+// isWritableDir creates a temporary file with a unique name to check that the directory is writable,
+// without overwriting or removing the files of the user.
+func isWritableDir(path string) bool {
+	file, err := os.CreateTemp(path, ".write-check-*")
+	if err != nil {
 		return false
 	}
-	_ = os.Remove(path)
+	_ = file.Close()
+	_ = os.Remove(file.Name())
 
 	return true
 }
