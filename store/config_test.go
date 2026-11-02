@@ -36,10 +36,28 @@ func TestConfigBasicCheck(t *testing.T) {
 		{
 			name: "Invalid AccountCacheSize",
 			expectedErr: ConfigError{
-				Reason: "cache size set to zero",
+				Reason: "cache size must be positive",
 			},
 			updateFn: func(c *Config) {
 				c.AccountCacheSize = 0
+			},
+		},
+		{
+			name: "Negative AccountCacheSize",
+			expectedErr: ConfigError{
+				Reason: "cache size must be positive",
+			},
+			updateFn: func(c *Config) {
+				c.AccountCacheSize = -1
+			},
+		},
+		{
+			name: "Negative PublicKeyCacheSize",
+			expectedErr: ConfigError{
+				Reason: "cache size must be positive",
+			},
+			updateFn: func(c *Config) {
+				c.PublicKeyCacheSize = -1
 			},
 		},
 		{

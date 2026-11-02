@@ -38,6 +38,27 @@ func TestBlockStore(t *testing.T) {
 	})
 }
 
+func TestNewBlockStoreInvalidCacheSize(t *testing.T) {
+	td := setup(t, nil)
+
+	blkStore, err := newBlockStore(td.store.db, 7, 0)
+	require.Error(t, err)
+	assert.Nil(t, blkStore)
+
+	blkStore, err = newBlockStore(td.store.db, 7, -1)
+	require.Error(t, err)
+	assert.Nil(t, blkStore)
+}
+
+func TestNewStoreInvalidCacheSize(t *testing.T) {
+	conf := testConfig()
+	conf.PublicKeyCacheSize = 0
+
+	store, err := NewStore(conf)
+	require.Error(t, err)
+	assert.Nil(t, store)
+}
+
 func TestSortitionSeed(t *testing.T) {
 	conf := testConfig()
 	conf.SeedCacheWindow = 7

@@ -37,10 +37,10 @@ type blockStore struct {
 	seedCacheWindow uint32
 }
 
-func newBlockStore(db *leveldb.DB, seedCacheWindow uint32, publicKeyCacheSize int) *blockStore {
+func newBlockStore(db *leveldb.DB, seedCacheWindow uint32, publicKeyCacheSize int) (*blockStore, error) {
 	pubKeyCache, err := lru.New[crypto.Address, crypto.PublicKey](publicKeyCacheSize)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
 	return &blockStore{
@@ -48,7 +48,7 @@ func newBlockStore(db *leveldb.DB, seedCacheWindow uint32, publicKeyCacheSize in
 		seedCache:       pairslice.New[types.Height, *sortition.VerifiableSeed](int(seedCacheWindow)),
 		pubKeyCache:     pubKeyCache,
 		seedCacheWindow: seedCacheWindow,
-	}
+	}, nil
 }
 
 func (bs *blockStore) saveBlock(batch *leveldb.Batch, height types.Height, blk *block.Block) []blockRegion {

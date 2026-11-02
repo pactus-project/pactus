@@ -58,10 +58,10 @@ func (conf *Config) BasicCheck() error {
 		}
 	}
 
-	if conf.AccountCacheSize == 0 ||
-		conf.PublicKeyCacheSize == 0 {
+	if conf.AccountCacheSize <= 0 ||
+		conf.PublicKeyCacheSize <= 0 {
 		return ConfigError{
-			Reason: "cache size set to zero",
+			Reason: "cache size must be positive",
 		}
 	}
 
