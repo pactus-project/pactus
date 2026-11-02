@@ -9,6 +9,7 @@ import (
 	"io"
 	"math/big"
 	"math/bits"
+	"net"
 	"net/url"
 	"os"
 	"strings"
@@ -169,33 +170,40 @@ func FormatBytesToHumanReadable(bytes uint64) string {
 }
 
 func ParseGRPCAddr(addr string, insecureCredentials bool) (target, prefix string, err error) {
-	if insecureCredentials {
-		if strings.HasPrefix(addr, "https://") {
-			return "", "", errors.New("insecure credentials are not supported for HTTPS addresses")
-		}
-		addr = strings.TrimPrefix(addr, "http://")
-
-		return addr, "", nil
-	}
-
-	if strings.HasPrefix(addr, "http://") {
+	lower := strings.ToLower(addr)
+	switch {
+	case insecureCredentials && strings.HasPrefix(lower, "https://"):
+		return "", "", errors.New("insecure credentials are not supported for HTTPS addresses")
+	case !insecureCredentials && strings.HasPrefix(lower, "http://"):
 		return "", "", errors.New("insecure credentials are not supported for HTTP addresses")
-	}
-	if !strings.HasPrefix(addr, "https://") {
-		addr = "https://" + addr
+	case !strings.Contains(addr, "://"):
+		if insecureCredentials {
+			addr = "http://" + addr
+		} else {
+			addr = "https://" + addr
+		}
 	}
 
 	parsed, err := url.Parse(addr)
 	if err != nil {
 		return "", "", err
 	}
-	target = parsed.Host
-	prefix = parsed.Path
-	if parsed.Port() == "" {
-		if parsed.Scheme == "https" {
-			target = parsed.Host + ":443"
-		}
+
+	host := parsed.Hostname()
+	if host == "" {
+		return "", "", errors.New("address has no host")
 	}
+
+	port := parsed.Port()
+	if port == "" && !insecureCredentials {
+		port = "443"
+	}
+
+	target = host
+	if port != "" {
+		target = net.JoinHostPort(host, port)
+	}
+	prefix = strings.TrimRight(parsed.Path, "/")
 
 	return target, prefix, nil
 }
