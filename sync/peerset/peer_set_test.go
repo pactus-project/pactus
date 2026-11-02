@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func getSessionByID(ps *PeerSet, sid int) *session.Session {
@@ -225,7 +226,7 @@ func TestCompletedSession(t *testing.T) {
 	peerSet.SetSessionCompleted(sid)
 	assert.Equal(t, 1, peerSet.NumberOfSessions())
 	assert.False(t, peerSet.HasAnyOpenSession())
-	assert.Equal(t, session.Completed, ssn.Status)
+	assert.Equal(t, session.Completed, getSessionByID(peerSet, sid).Status)
 }
 
 func TestUncompletedSession(t *testing.T) {
@@ -238,7 +239,7 @@ func TestUncompletedSession(t *testing.T) {
 	peerSet.SetSessionUncompleted(sid)
 	assert.Equal(t, 1, peerSet.NumberOfSessions())
 	assert.False(t, peerSet.HasAnyOpenSession())
-	assert.Equal(t, session.Uncompleted, ssn.Status)
+	assert.Equal(t, session.Uncompleted, getSessionByID(peerSet, sid).Status)
 }
 
 func TestExpireSessions(t *testing.T) {
@@ -246,13 +247,12 @@ func TestExpireSessions(t *testing.T) {
 	peerSet := NewPeerSet(timeout)
 
 	sid := peerSet.OpenSession("peer1", 100, 101)
-	ssn := getSessionByID(peerSet, sid)
 	time.Sleep(timeout)
 
 	peerSet.SetExpiredSessionsAsUncompleted()
 	assert.Equal(t, 1, peerSet.NumberOfSessions())
 	assert.False(t, peerSet.HasAnyOpenSession())
-	assert.Equal(t, session.Uncompleted, ssn.Status)
+	assert.Equal(t, session.Uncompleted, getSessionByID(peerSet, sid).Status)
 }
 
 func TestGetRandomPeer(t *testing.T) {
@@ -352,7 +352,7 @@ func TestUpdateSessionLastActivity(t *testing.T) {
 	activity1 := ssn.LastActivity
 	time.Sleep(10 * time.Millisecond)
 	peerSet.UpdateSessionLastActivity(sid)
-	assert.Greater(t, ssn.LastActivity, activity1)
+	assert.Greater(t, getSessionByID(peerSet, sid).LastActivity, activity1)
 }
 
 func TestUpdateProtocols(t *testing.T) {
@@ -472,4 +472,41 @@ func TestSessionStats(t *testing.T) {
 	peerSet.SetSessionUncompleted(sid2)
 
 	assert.Equal(t, session.Stats{Total: 3, Open: 1, Completed: 1, Uncompleted: 1}, peerSet.SessionStats())
+}
+
+func TestSnapshotsDoNotAliasInternalState(t *testing.T) {
+	peerSet := NewPeerSet(time.Minute)
+
+	pid := peer.ID("peer1")
+	peerSet.UpdateInfo(pid, "moniker", "agent", nil, service.New())
+	peerSet.UpdateStatus(pid, status.StatusKnown)
+	sid := peerSet.OpenSession(pid, 100, 101)
+
+	t.Run("GetPeer", func(t *testing.T) {
+		p := peerSet.GetPeer(pid)
+		p.Moniker = "changed"
+		p.Status = status.StatusBanned
+		p.Metric.UpdateSentMetric(message.TypeHello, 10)
+
+		fresh := peerSet.GetPeer(pid)
+		assert.Equal(t, "moniker", fresh.Moniker)
+		assert.Equal(t, status.StatusKnown, fresh.Status)
+		assert.Zero(t, fresh.Metric.TotalSent.Bundles)
+	})
+
+	t.Run("GetRandomPeer", func(t *testing.T) {
+		p := peerSet.GetRandomPeer()
+		require.NotNil(t, p)
+		p.Moniker = "changed"
+
+		assert.Equal(t, "moniker", peerSet.GetPeer(pid).Moniker)
+	})
+
+	t.Run("Sessions", func(t *testing.T) {
+		ssns := peerSet.Sessions()
+		require.Len(t, ssns, 1)
+		ssns[0].Status = session.Completed
+
+		assert.Equal(t, session.Open, getSessionByID(peerSet, sid).Status)
+	})
 }
