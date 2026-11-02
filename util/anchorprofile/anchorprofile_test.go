@@ -436,6 +436,47 @@ func TestProofDocumentRejects(t *testing.T) {
 	}
 }
 
+// Upper-case hex decodes to the same digest, so accepting it would give one
+// manifest or one proof several byte forms.
+func TestHashesMustBeLowerCase(t *testing.T) {
+	items := namedItems(3)
+
+	t.Run("manifest", func(t *testing.T) {
+		manifest, err := NewManifest(items)
+		require.NoError(t, err)
+		_, err = manifest.Entries()
+		require.NoError(t, err)
+
+		manifest.Items[1].Hash = strings.ToUpper(manifest.Items[1].Hash)
+		_, err = manifest.Entries()
+		require.ErrorIs(t, err, ErrInvalidManifest)
+		_, err = manifest.Root()
+		require.ErrorIs(t, err, ErrInvalidManifest)
+	})
+
+	t.Run("proof document", func(t *testing.T) {
+		proof, err := Prove(items, items[1].Name)
+		require.NoError(t, err)
+		root, err := Root(items)
+		require.NoError(t, err)
+		valid := NewProofDocument("", items[1], proof)
+		require.True(t, valid.Verify(root))
+
+		itemHash := valid
+		itemHash.Item.Hash = strings.ToUpper(valid.Item.Hash)
+		_, _, err = itemHash.Decode()
+		require.ErrorIs(t, err, ErrInvalidProof)
+		require.False(t, itemHash.Verify(root))
+
+		pathHash := valid
+		pathHash.Path = slices.Clone(valid.Path)
+		pathHash.Path[0] = strings.ToUpper(valid.Path[0])
+		_, _, err = pathHash.Decode()
+		require.ErrorIs(t, err, ErrInvalidProof)
+		require.False(t, pathHash.Verify(root))
+	})
+}
+
 // FuzzProofDocument feeds arbitrary JSON to a verifier. It must never panic, and
 // it may only accept a document for a real item at its real position.
 func FuzzProofDocument(f *testing.F) {
