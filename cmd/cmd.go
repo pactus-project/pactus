@@ -222,6 +222,14 @@ func MakeConfig(workingDir string) (*config.Config, *genesis.Genesis, error) {
 		crypto.ToTestnetHRP()
 	}
 
+	// The mainnet and testnet genesis documents are known to be valid.
+	// A custom genesis file is checked here, before the state is built from it.
+	if chainType == genesis.Localnet {
+		if err := gen.Validate(); err != nil {
+			return nil, nil, err
+		}
+	}
+
 	walletsDir := PactusWalletDir(workingDir)
 	confPath := PactusConfigPath(workingDir)
 	defConf := config.DefaultConfigForChain(chainType)
