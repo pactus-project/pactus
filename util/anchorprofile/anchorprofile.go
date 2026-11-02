@@ -27,6 +27,11 @@
 //
 // Hashes in a manifest or a proof document are lower-case hex, so a document
 // has one form only.
+//
+// An item name is an opaque, non-empty UTF-8 string of at most MaxNameLen bytes.
+// The profile does not treat it as a path: "/", ".." and control characters are
+// accepted and part of the name. A client that writes files from a manifest or a
+// proof document must check every name itself before using it as a path.
 package anchorprofile
 
 import (
@@ -70,6 +75,7 @@ var (
 	ErrDuplicateName = errors.New("duplicate item name")
 
 	// ErrInvalidName is returned when a name is empty, too long or not valid UTF-8.
+	// Names are not checked as paths, see the package documentation.
 	ErrInvalidName = errors.New("invalid item name")
 
 	// ErrItemNotFound is returned when no item has the requested name.

@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -511,4 +512,35 @@ func FuzzProofDocument(f *testing.F) {
 		require.Equal(t, genuine.Index, proof.Index)
 		require.Equal(t, genuine.Size, proof.Size)
 	})
+}
+
+func TestNamesAreOpaque(t *testing.T) {
+	// The profile accepts any UTF-8 name and does not treat it as a path.
+	// Tightening this is a change of the profile, because it changes which
+	// roots are valid, so it must be a deliberate decision.
+	names := []string{"../escape", "dir/file", "a\x00b", "tab\tname", "..", "C:\\file"}
+
+	items := make([]Item, 0, len(names))
+	for _, name := range names {
+		items = append(items, NewItem(name, []byte(name)))
+	}
+
+	root, err := Root(items)
+	require.NoError(t, err)
+
+	manifest, err := NewManifest(items)
+	require.NoError(t, err)
+	entries, err := manifest.Entries()
+	require.NoError(t, err)
+	assert.Len(t, entries, len(names))
+
+	manifestRoot, err := manifest.Root()
+	require.NoError(t, err)
+	assert.Equal(t, root, manifestRoot)
+
+	for _, item := range items {
+		proof, err := Prove(items, item.Name)
+		require.NoError(t, err)
+		assert.True(t, Verify(root, item, proof), item.Name)
+	}
 }
