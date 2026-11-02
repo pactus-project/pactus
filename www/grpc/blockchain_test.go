@@ -10,6 +10,8 @@ import (
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func TestGetBlock(t *testing.T) {
@@ -142,6 +144,7 @@ func TestGetBlockHeight(t *testing.T) {
 			&pactus.GetBlockHeightRequest{Hash: td.RandHash().String()})
 
 		require.Error(t, err)
+		assert.Equal(t, codes.NotFound, status.Code(err))
 		assert.Nil(t, res)
 	})
 

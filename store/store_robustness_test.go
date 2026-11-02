@@ -259,7 +259,9 @@ func TestClosedStoreDoesNotPanic(t *testing.T) {
 		require.Error(t, err)
 
 		assert.Equal(t, hash.UndefHash, td.store.BlockHash(1))
-		assert.Zero(t, td.store.BlockHeight(blk.BlockHash))
+		_, err = td.store.BlockHeight(blk.BlockHash)
+		require.Error(t, err)
+		assert.NotErrorIs(t, err, ErrNotFound)
 		assert.False(t, td.store.HasPublicKey(unknownAddr))
 		has, err := td.store.HasAccount(unknownAddr)
 		require.Error(t, err)
@@ -441,4 +443,19 @@ func TestUpdateAccountDoesNotCountAfterReadError(t *testing.T) {
 		td.store.UpdateAccount(td.RandAccAddress(), account.NewAccount(total))
 	})
 	assert.Equal(t, total, td.store.TotalAccounts())
+}
+
+func TestPruneBlockReportsReadError(t *testing.T) {
+	td := setup(t, nil)
+
+	pruned, err := td.store.pruneBlock(td.RandHeight() + 1_000_000)
+	require.NoError(t, err)
+	assert.False(t, pruned, "a block that doesn't exist is not pruned")
+
+	// A failed read must not be mistaken for a block that doesn't exist.
+	td.store.Close()
+
+	pruned, err = td.store.pruneBlock(1)
+	require.Error(t, err)
+	assert.False(t, pruned)
 }

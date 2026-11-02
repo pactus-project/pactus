@@ -123,11 +123,12 @@ func (mr *MockReaderMockRecorder) BlockHash(height any) *gomock.Call {
 }
 
 // BlockHeight mocks base method.
-func (m *MockReader) BlockHeight(h hash.Hash) types.Height {
+func (m *MockReader) BlockHeight(h hash.Hash) (types.Height, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "BlockHeight", h)
 	ret0, _ := ret[0].(types.Height)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // BlockHeight indicates an expected call of BlockHeight.
@@ -487,11 +488,12 @@ func (mr *MockStoreMockRecorder) BlockHash(height any) *gomock.Call {
 }
 
 // BlockHeight mocks base method.
-func (m *MockStore) BlockHeight(h hash.Hash) types.Height {
+func (m *MockStore) BlockHeight(h hash.Hash) (types.Height, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "BlockHeight", h)
 	ret0, _ := ret[0].(types.Height)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // BlockHeight indicates an expected call of BlockHeight.

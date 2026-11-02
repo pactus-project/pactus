@@ -73,7 +73,7 @@ type State interface {
 	CommittedBlock(height types.Height) (*store.CommittedBlock, error)
 	CommittedTx(txID tx.ID) (*store.CommittedTx, error)
 	BlockHash(height types.Height) hash.Hash
-	BlockHeight(h hash.Hash) types.Height
+	BlockHeight(h hash.Hash) (types.Height, error)
 	AccountByAddress(addr crypto.Address) (*account.Account, error)
 	ListAnchors(skip, count uint32) ([]AnchorAccount, uint32)
 	ValidatorByAddress(addr crypto.Address) (*validator.Validator, error)

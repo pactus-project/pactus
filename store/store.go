@@ -279,7 +279,7 @@ func (s *store) block(height types.Height) (*CommittedBlock, error) {
 	}, nil
 }
 
-func (s *store) BlockHeight(h hash.Hash) types.Height {
+func (s *store) BlockHeight(h hash.Hash) (types.Height, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -618,7 +618,11 @@ func (s *store) Prune(callback func(pruned bool, pruningHeight types.Height) boo
 // indicate whether the block at the specified height existed and pruned,
 // or did not exist, along with any encountered errors.
 func (s *store) pruneBlock(blockHeight types.Height) (bool, error) {
-	if !s.blockStore.hasBlock(blockHeight) {
+	exists, err := s.blockStore.hasBlock(blockHeight)
+	if err != nil {
+		return false, err
+	}
+	if !exists {
 		return false, nil
 	}
 

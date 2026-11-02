@@ -95,7 +95,7 @@ func (s *CommittedTx) ToTx() (*tx.Tx, error) {
 
 type Reader interface {
 	Block(height types.Height) (*CommittedBlock, error)
-	BlockHeight(h hash.Hash) types.Height
+	BlockHeight(h hash.Hash) (types.Height, error)
 	BlockHash(height types.Height) hash.Hash
 	SortitionSeed(height types.Height) *sortition.VerifiableSeed
 	Transaction(txID tx.ID) (*CommittedTx, error)

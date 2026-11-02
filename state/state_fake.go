@@ -187,7 +187,7 @@ func NewFakeState(ts *testsuite.TestSuite) *FakeState {
 	).AnyTimes()
 
 	mock.EXPECT().BlockHeight(gomock.Any()).DoAndReturn(
-		func(h hash.Hash) types.Height {
+		func(h hash.Hash) (types.Height, error) {
 			return fake.FakeStore.BlockHeight(h)
 		},
 	).AnyTimes()
