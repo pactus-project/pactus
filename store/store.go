@@ -558,6 +558,9 @@ func (s *store) PruningHeight() types.Height {
 
 	// TODO: it can be optimized (and safer?) by keeping the last block height in memory.
 	cert := s.lastCertificate()
+	if cert == nil {
+		return 0
+	}
 
 	return cert.Height().SafeDecrease(s.config.RetentionBlocks())
 }

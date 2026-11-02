@@ -369,3 +369,37 @@ func TestLoadValidatorsFailsOnIteratorError(t *testing.T) {
 	require.Error(t, err)
 	assert.Nil(t, vs)
 }
+
+func TestCommittedTxCorruptedPublicKeyIsNotReportedAsAbsent(t *testing.T) {
+	td := setup(t, nil)
+
+	trx := td.GenerateTestTransferTx()
+	addr := trx.Payload().Signer()
+	trx.StripPublicKey()
+	data, err := trx.Bytes()
+	require.NoError(t, err)
+
+	cTx := &CommittedTx{store: td.store, Data: data}
+
+	// The public key is not indexed: it is absent.
+	_, err = cTx.ToTx()
+	require.ErrorIs(t, err, PublicKeyNotFoundError{Address: addr})
+
+	// The public key is indexed but can't be decoded: it is not absent.
+	require.NoError(t, td.store.db.Put(publicKeyKey(addr), []byte{1, 2, 3}, nil))
+
+	_, err = cTx.ToTx()
+	require.Error(t, err)
+	assert.NotErrorIs(t, err, PublicKeyNotFoundError{Address: addr})
+}
+
+func TestPruningHeightWithUnreadableLastCertificate(t *testing.T) {
+	td := setup(t, nil)
+
+	td.store.isPruned = true
+	require.NoError(t, td.store.db.Close())
+
+	require.NotPanics(t, func() {
+		assert.Zero(t, td.store.PruningHeight())
+	})
+}
