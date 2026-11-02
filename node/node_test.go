@@ -316,3 +316,52 @@ func TestStopShutsDownTheAPIBeforeClosingTheState(t *testing.T) {
 	assert.Empty(t, stillServing, "these servers were still running when the state was closed")
 	assert.Equal(t, []string{"wallet manager", "state"}, events)
 }
+
+func TestNewNodeValidatesKeysAndRewardAddresses(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	pub, _ := ts.RandBLSKeyPair()
+	acc := account.NewAccount(0)
+	acc.AddToBalance(21 * 1e14)
+	val := validator.NewValidator(pub, 0)
+	gen := genesis.MakeGenesis(time.Now(),
+		map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc},
+		[]*validator.Validator{val}, genesis.DefaultGenesisParams())
+
+	tests := []struct {
+		name        string
+		valKeys     []*bls.ValidatorKey
+		rewardAddrs []crypto.Address
+	}{
+		{"no validator key", nil, nil},
+		{"no reward address", []*bls.ValidatorKey{ts.RandValKey()}, nil},
+		{
+			"missing reward address",
+			[]*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()},
+			[]crypto.Address{ts.RandAccAddress()},
+		},
+		{
+			"too many reward addresses",
+			[]*bls.ValidatorKey{ts.RandValKey()},
+			[]crypto.Address{ts.RandAccAddress(), ts.RandAccAddress()},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			conf := config.DefaultConfigForChain(genesis.Mainnet)
+			conf.Logger.Filename = util.TempFilePath()
+			conf.Store.Path = util.TempDirPath()
+			conf.Network.EnableRelay = false
+			conf.Network.NetworkKey = util.TempFilePath()
+			conf.Network.PeerStorePath = util.TempFilePath()
+			conf.WalletManager.WalletsDir = util.TempDirPath()
+
+			var err error
+			require.NotPanics(t, func() {
+				_, err = NewNode(t.Context(), gen, conf, tt.valKeys, tt.rewardAddrs)
+			})
+			require.Error(t, err)
+		})
+	}
+}

@@ -54,6 +54,15 @@ type Node struct {
 func NewNode(ctx context.Context, genDoc *genesis.Genesis, conf *config.Config,
 	valKeys []*bls.ValidatorKey, rewardAddrs []crypto.Address,
 ) (*Node, error) {
+	// Each validator key is paired with a reward address by its index.
+	if len(valKeys) == 0 {
+		return nil, errors.New("at least one validator key is required")
+	}
+	if len(rewardAddrs) != len(valKeys) {
+		return nil, errors.Errorf("expected %d reward addresses, but got %d",
+			len(valKeys), len(rewardAddrs))
+	}
+
 	// Initialize the logger
 	logger.InitGlobalLogger(ctx, conf.Logger)
 
