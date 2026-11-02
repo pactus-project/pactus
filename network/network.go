@@ -277,7 +277,10 @@ func makeNetwork(ctx context.Context, conf *Config,
 	if err != nil {
 		return nil, LibP2PError{Err: err}
 	}
-	self.notifee = newNotifeeService(ctx, host, self.networkPipe, self.peerMgr, streamProtocolID, self.logger)
+	self.notifee, err = newNotifeeService(ctx, host, self.networkPipe, self.peerMgr, streamProtocolID, self.logger)
+	if err != nil {
+		return nil, LibP2PError{Err: err}
+	}
 
 	self.logger.Info("network setup", "id", self.host.ID(),
 		"name", conf.NetworkName,
