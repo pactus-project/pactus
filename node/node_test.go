@@ -14,6 +14,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
@@ -21,6 +22,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet"
+	wltmgr "github.com/pactus-project/pactus/wallet/manager"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -216,4 +218,101 @@ func TestNewNodeReleasesNetworkOnError(t *testing.T) {
 		require.NoError(t, err, "port %d is still in use after NewNode has failed", port)
 		_ = lis.Close()
 	}
+}
+
+type closeHookState struct {
+	state.State
+
+	onClose func()
+}
+
+func (s *closeHookState) Close() {
+	s.onClose()
+	s.State.Close()
+}
+
+type stopHookWalletManager struct {
+	wltmgr.WalletManager
+
+	onStop func()
+}
+
+func (m *stopHookWalletManager) Stop() {
+	m.onStop()
+	m.WalletManager.Stop()
+}
+
+// loopbackAddr returns the loopback address with the port of the given listen address.
+func loopbackAddr(t *testing.T, listenAddr string) string {
+	t.Helper()
+
+	_, port, err := net.SplitHostPort(listenAddr)
+	require.NoError(t, err)
+
+	return net.JoinHostPort("127.0.0.1", port)
+}
+
+func TestStopShutsDownTheAPIBeforeClosingTheState(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	pub, _ := ts.RandBLSKeyPair()
+	acc := account.NewAccount(0)
+	acc.AddToBalance(21 * 1e14)
+	val := validator.NewValidator(pub, 0)
+	gen := genesis.MakeGenesis(time.Now(),
+		map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc},
+		[]*validator.Validator{val}, genesis.DefaultGenesisParams())
+	conf := config.DefaultConfigForChain(genesis.Mainnet)
+	conf.Logger.Filename = util.TempFilePath()
+	conf.GRPC.Enable = true
+	conf.GRPC.Listen = "127.0.0.1:0"
+	conf.JSONRPC.Enable = true
+	conf.JSONRPC.Listen = "127.0.0.1:0"
+	conf.Store.Path = util.TempDirPath()
+	conf.Network.EnableRelay = false
+	conf.Network.NetworkKey = util.TempFilePath()
+	conf.Network.PeerStorePath = util.TempFilePath()
+	conf.WalletManager.WalletsDir = util.TempDirPath()
+
+	valKeys := []*bls.ValidatorKey{ts.RandValKey()}
+	rewardAddrs := []crypto.Address{ts.RandAccAddress()}
+	node, err := NewNode(t.Context(), gen, conf, valKeys, rewardAddrs)
+	require.NoError(t, err)
+	require.NoError(t, node.Start())
+
+	servers := map[string]string{
+		"gRPC":     loopbackAddr(t, node.GRPC().Address()),
+		"JSON-RPC": loopbackAddr(t, node.jsonrpc.Address()),
+	}
+	for name, addr := range servers {
+		conn, err := net.DialTimeout("tcp", addr, time.Second)
+		require.NoError(t, err, "%s server is not running", name)
+		_ = conn.Close()
+	}
+
+	events := make([]string, 0)
+	stillServing := make([]string, 0)
+	node.walletMgr = &stopHookWalletManager{
+		WalletManager: node.walletMgr,
+		onStop:        func() { events = append(events, "wallet manager") },
+	}
+	node.state = &closeHookState{
+		State: node.state,
+		onClose: func() {
+			events = append(events, "state")
+			// Requests must not reach a state that is being closed.
+			for name, addr := range servers {
+				conn, err := net.DialTimeout("tcp", addr, time.Second)
+				if err == nil {
+					_ = conn.Close()
+					stillServing = append(stillServing, name)
+				}
+			}
+		},
+	}
+
+	node.Stop()
+
+	assert.Empty(t, stillServing, "these servers were still running when the state was closed")
+	assert.Equal(t, []string{"wallet manager", "state"}, events)
 }

@@ -238,6 +238,15 @@ func (n *Node) Start() error {
 func (n *Node) Stop() {
 	logger.Info("stopping Node")
 
+	// Stop the components that serve requests first, in the reverse order of
+	// their start. Otherwise a request can reach the state and the store after
+	// they have been closed.
+	n.jsonrpc.StopServer()
+	n.http.StopServer()
+	n.html.StopServer()
+	n.grpc.StopServer()
+	n.walletMgr.Stop()
+
 	n.broadcastPipe.Close()
 	n.networkPipe.Close()
 	n.eventPipe.Close()
@@ -253,11 +262,6 @@ func (n *Node) Stop() {
 	n.sync.Stop()
 	n.state.Close()
 	n.store.Close()
-	n.walletMgr.Stop()
-	n.grpc.StopServer()
-	n.html.StopServer()
-	n.http.StopServer()
-	n.jsonrpc.StopServer()
 	n.zeromq.Close()
 }
 
