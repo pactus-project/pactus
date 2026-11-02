@@ -18,6 +18,7 @@ type gossipService struct {
 	wg               sync.WaitGroup
 	host             lp2phost.Host
 	pubsub           *lp2pps.PubSub
+	lk               sync.Mutex // protects topics and subs
 	topics           []*lp2pps.Topic
 	subs             []*lp2pps.Subscription
 	topicBlock       *lp2pps.Topic
@@ -158,14 +159,10 @@ func (g *gossipService) TopicName(topicID TopicID) string {
 
 // joinTopic joins a given topic and registers a validator for it.
 // If successful, it returns the topic and subscribes to it.
+// If it fails, nothing is left joined or registered.
 func (g *gossipService) joinTopic(topicID TopicID, evaluator PropagationEvaluator) (*lp2pps.Topic, error) {
 	topicName := g.TopicName(topicID)
 	topic, err := g.pubsub.Join(topicName)
-	if err != nil {
-		return nil, LibP2PError{Err: err}
-	}
-
-	sub, err := topic.Subscribe()
 	if err != nil {
 		return nil, LibP2PError{Err: err}
 	}
@@ -174,11 +171,23 @@ func (g *gossipService) joinTopic(topicID TopicID, evaluator PropagationEvaluato
 		topicName, g.createValidator(topicID, evaluator),
 	)
 	if err != nil {
+		_ = topic.Close()
+
 		return nil, LibP2PError{Err: err}
 	}
 
+	sub, err := topic.Subscribe()
+	if err != nil {
+		_ = g.pubsub.UnregisterTopicValidator(topicName)
+		_ = topic.Close()
+
+		return nil, LibP2PError{Err: err}
+	}
+
+	g.lk.Lock()
 	g.topics = append(g.topics, topic)
 	g.subs = append(g.subs, sub)
+	g.lk.Unlock()
 
 	g.wg.Go(func() {
 		for {
@@ -244,16 +253,30 @@ func (*gossipService) Start() {
 }
 
 // Stop stops the gossip service.
-// It closes all the joined topics and cancels all the subscriptions.
+// It cancels all the subscriptions, waits for the readers, and then
+// closes all the joined topics. A closed topic can be joined again.
 func (g *gossipService) Stop() {
-	for _, t := range g.topics {
-		_ = t.Close()
-	}
-	for _, s := range g.subs {
+	g.lk.Lock()
+	topics := g.topics
+	subs := g.subs
+	g.topics = nil
+	g.subs = nil
+	g.lk.Unlock()
+
+	for _, s := range subs {
 		s.Cancel()
 	}
 
 	g.wg.Wait()
+
+	for _, t := range topics {
+		if err := t.Close(); err != nil {
+			g.logger.Error("unable to close the topic", "topic", t.String(), "error", err)
+		}
+		if err := g.pubsub.UnregisterTopicValidator(t.String()); err != nil {
+			g.logger.Error("unable to unregister the topic validator", "topic", t.String(), "error", err)
+		}
+	}
 }
 
 func (g *gossipService) onReceiveMessage(msg *GossipMessage) {

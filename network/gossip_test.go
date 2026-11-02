@@ -1,6 +1,7 @@
 package network
 
 import (
+	"context"
 	"testing"
 
 	lp2pps "github.com/libp2p/go-libp2p-pubsub"
@@ -149,4 +150,44 @@ func TestTopicValidator(t *testing.T) {
 			assert.Equal(t, tt.expectedResult, result)
 		})
 	}
+}
+
+func TestStopGossipAllowsJoiningAgain(t *testing.T) {
+	net := makeTestNetwork(t, testConfig(), nil)
+
+	require.NoError(t, net.JoinTopic(TopicIDBlock, alwaysPropagate))
+	require.NoError(t, net.JoinTopic(TopicIDTransaction, alwaysPropagate))
+
+	net.gossip.Stop()
+	assert.Empty(t, net.gossip.topics)
+	assert.Empty(t, net.gossip.subs)
+
+	// Stopping twice is harmless.
+	net.gossip.Stop()
+
+	require.NoError(t, net.JoinTopic(TopicIDBlock, alwaysPropagate))
+	require.NoError(t, net.JoinTopic(TopicIDTransaction, alwaysPropagate))
+
+	net.Stop()
+}
+
+func TestFailedJoinLeavesNoTopic(t *testing.T) {
+	net := makeTestNetwork(t, testConfig(), nil)
+
+	// A validator that is already registered makes joining the topic fail.
+	topicName := net.gossip.TopicName(TopicIDBlock)
+	validator := func(context.Context, lp2pcore.PeerID, *lp2pps.Message) lp2pps.ValidationResult {
+		return lp2pps.ValidationAccept
+	}
+	require.NoError(t, net.gossip.pubsub.RegisterTopicValidator(topicName, validator))
+
+	require.Error(t, net.JoinTopic(TopicIDBlock, alwaysPropagate))
+	assert.Empty(t, net.gossip.topics)
+	assert.Empty(t, net.gossip.subs)
+
+	// The failed attempt did not leave the topic joined.
+	require.NoError(t, net.gossip.pubsub.UnregisterTopicValidator(topicName))
+	require.NoError(t, net.JoinTopic(TopicIDBlock, alwaysPropagate))
+
+	net.Stop()
 }
