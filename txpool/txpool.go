@@ -21,6 +21,19 @@ import (
 	"github.com/pactus-project/pactus/util/linkedmap"
 )
 
+// payloadTypeOrder is a fixed iteration order over the sub-pools, matching
+// the order PrepareBlockTransactions assembles them in. Iterating p.pools
+// directly (a map) gives a different, random order on every call.
+var payloadTypeOrder = []payload.Type{
+	payload.TypeSortition,
+	payload.TypeBond,
+	payload.TypeUnbond,
+	payload.TypeWithdraw,
+	payload.TypeTransfer,
+	payload.TypeBatchTransfer,
+	payload.TypeAnchor,
+}
+
 type txPool struct {
 	lk sync.RWMutex
 
@@ -74,14 +87,15 @@ func (p *txPool) SetNewSandboxAndRecheck(sbx sandbox.Sandbox) {
 	p.logger.Debug("set new sandbox")
 
 	var next *linkedlist.Element[linkedmap.Pair[tx.ID, *tx.Tx]]
-	for _, pool := range p.pools {
-		for e := pool.list.HeadNode(); e != nil; e = next {
+	for _, payloadType := range payloadTypeOrder {
+		subPool := p.pools[payloadType]
+		for e := subPool.list.HeadNode(); e != nil; e = next {
 			next = e.Next
 			trx := e.Data.Value
 
 			if err := p.checkTx(trx); err != nil {
 				p.logger.Debug("invalid transaction after rechecking", "id", trx.ID())
-				pool.list.Remove(trx.ID())
+				subPool.list.Remove(trx.ID())
 			}
 		}
 	}
