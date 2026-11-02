@@ -32,7 +32,7 @@ func PublicKeyFromString(text string) (*PublicKey, error) {
 	}
 
 	// Check if hrp is valid
-	if hrp != crypto.PublicKeyHRP {
+	if hrp != crypto.PublicKeyHRP() {
 		return nil, crypto.InvalidHRPError(hrp)
 	}
 
@@ -65,7 +65,7 @@ func (pub *PublicKey) Bytes() []byte {
 // String returns a human-readable string for the BLS public key.
 func (pub *PublicKey) String() string {
 	str, _ := bech32m.EncodeFromBase256WithType(
-		crypto.PublicKeyHRP,
+		crypto.PublicKeyHRP(),
 		byte(crypto.SignatureTypeBLS),
 		pub.Bytes(),
 	)

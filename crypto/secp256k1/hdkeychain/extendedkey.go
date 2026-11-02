@@ -259,9 +259,9 @@ func (k *ExtendedKey) String() string {
 		return err.Error()
 	}
 
-	hrp := crypto.XPublicKeyHRP
+	hrp := crypto.XPublicKeyHRP()
 	if k.isPrivate {
-		hrp = crypto.XPrivateKeyHRP
+		hrp = crypto.XPrivateKeyHRP()
 	}
 
 	str, err := bech32m.EncodeFromBase256WithType(hrp,
@@ -321,10 +321,10 @@ func NewKeyFromString(str string) (*ExtendedKey, error) {
 
 	var isPrivate bool
 	switch hrp {
-	case crypto.XPrivateKeyHRP:
+	case crypto.XPrivateKeyHRP():
 		isPrivate = true
 
-	case crypto.XPublicKeyHRP:
+	case crypto.XPublicKeyHRP():
 		isPrivate = false
 
 	default:

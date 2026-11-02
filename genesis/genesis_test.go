@@ -92,7 +92,7 @@ func TestCheckGenesisAccountAndValidator(t *testing.T) {
 }
 
 func TestGenesisTestnet(t *testing.T) {
-	crypto.AddressHRP = "tpc"
+	crypto.SetAddressHRP("tpc")
 
 	gen := genesis.TestnetGenesis()
 	assert.Len(t, gen.Validators(), 4)
@@ -108,5 +108,5 @@ func TestGenesisTestnet(t *testing.T) {
 	assert.True(t, gen.ChainType().IsTestnet())
 
 	// reset address HRP global variable to miannet to prevent next tests failing.
-	crypto.AddressHRP = "pc"
+	crypto.SetAddressHRP("pc")
 }
