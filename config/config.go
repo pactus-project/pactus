@@ -232,16 +232,20 @@ func defaultConfigLocalnet() *Config {
 	conf.Network.EnableMdns = true
 	conf.Sync.Moniker = "localnet"
 	conf.GRPC.Enable = true
-	conf.GRPC.EnableWallet = true
-	conf.GRPC.Listen = "[::]:50052"
+	// The localnet profile is also used for any genesis that is not the
+	// published Mainnet or Testnet one, so keep it conservative: loopback
+	// only, wallet service and pprof off. Enable them in config.toml when
+	// they are needed for local development.
+	conf.GRPC.EnableWallet = false
+	conf.GRPC.Listen = "127.0.0.1:50052"
 	conf.HTML.Enable = true
-	conf.HTML.Listen = "[::]:0"
-	conf.HTML.EnablePprof = true
+	conf.HTML.Listen = "127.0.0.1:0"
+	conf.HTML.EnablePprof = false
 	conf.HTTP.Enable = true
-	conf.HTTP.Listen = "[::]:8080"
+	conf.HTTP.Listen = "127.0.0.1:8080"
 	conf.JSONRPC.Enable = true
-	conf.JSONRPC.Listen = "[::]:8545"
-	conf.JSONRPC.Origins = []string{"*"}
+	conf.JSONRPC.Listen = "127.0.0.1:8545"
+	conf.JSONRPC.Origins = []string{}
 	conf.ZeroMq.ZmqPubBlockInfo = "tcp://127.0.0.1:28332"
 	conf.ZeroMq.ZmqPubTxInfo = "tcp://127.0.0.1:28333"
 	conf.ZeroMq.ZmqPubRawBlock = "tcp://127.0.0.1:28334"

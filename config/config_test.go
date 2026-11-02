@@ -116,10 +116,15 @@ func TestLocalnetConfig(t *testing.T) {
 	assert.True(t, conf.HTTP.Enable)
 	assert.True(t, conf.JSONRPC.Enable)
 
-	assert.Equal(t, "[::]:50052", conf.GRPC.Listen)
-	assert.Equal(t, "[::]:0", conf.HTML.Listen)
-	assert.Equal(t, "[::]:8080", conf.HTTP.Listen)
-	assert.Equal(t, "[::]:8545", conf.JSONRPC.Listen)
+	// The localnet profile is also used for custom genesis files, so it must
+	// stay conservative: loopback only, wallet service and pprof disabled.
+	assert.False(t, conf.GRPC.EnableWallet)
+	assert.Equal(t, "127.0.0.1:50052", conf.GRPC.Listen)
+	assert.Equal(t, "127.0.0.1:0", conf.HTML.Listen)
+	assert.False(t, conf.HTML.EnablePprof)
+	assert.Equal(t, "127.0.0.1:8080", conf.HTTP.Listen)
+	assert.Equal(t, "127.0.0.1:8545", conf.JSONRPC.Listen)
+	assert.Empty(t, conf.JSONRPC.Origins)
 }
 
 func TestLoadFromFile(t *testing.T) {
