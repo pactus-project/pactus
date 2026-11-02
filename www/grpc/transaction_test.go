@@ -128,6 +128,8 @@ func TestGetRawTransaction(t *testing.T) {
 	client := td.transactionClient(t)
 
 	td.FakeState.EXPECT().CalculateFee(gomock.Any(), gomock.Any()).Return(td.RandFee()).AnyTimes()
+	td.FakeState.EXPECT().CalculateFeeForTx(gomock.Any()).DoAndReturn(
+		func(trx *tx.Tx) (amount.Amount, error) { return trx.Fee(), nil }).AnyTimes()
 
 	t.Run("Transfer", func(t *testing.T) {
 		amt := td.RandAmount()
@@ -274,6 +276,94 @@ func TestGetRawTransaction(t *testing.T) {
 		assert.Equal(t, expectedLockTime, decodedTrx.LockTime())
 		assert.Equal(t, expectedFee, decodedTrx.Fee())
 	})
+}
+
+// TestGetRawTransactionFollowsMinimumFee checks that a raw transaction built with the
+// estimated fee is rebuilt when the pool requires more for this particular transaction,
+// and that an explicit fee is used as it is.
+func TestGetRawTransactionFollowsMinimumFee(t *testing.T) {
+	td := setup(t, nil)
+	client := td.transactionClient(t)
+
+	const estimated = amount.Amount(1_000)
+	const required = amount.Amount(5_000)
+
+	td.FakeState.EXPECT().CalculateFee(gomock.Any(), gomock.Any()).Return(estimated).AnyTimes()
+	td.FakeState.EXPECT().CalculateFeeForTx(gomock.Any()).DoAndReturn(
+		func(*tx.Tx) (amount.Amount, error) { return required, nil }).AnyTimes()
+
+	sender := td.RandAccAddress().String()
+	root := make([]byte, 32)
+
+	tests := []struct {
+		name  string
+		build func(fee int64) (string, error)
+	}{
+		{"Transfer", func(fee int64) (string, error) {
+			res, err := client.GetRawTransferTransaction(t.Context(), &pactus.GetRawTransferTransactionRequest{
+				Sender: sender, Receiver: td.RandAccAddress().String(), Amount: 10, Fee: fee,
+			})
+
+			return rawOf(res, err)
+		}},
+		{"Bond", func(fee int64) (string, error) {
+			res, err := client.GetRawBondTransaction(t.Context(), &pactus.GetRawBondTransactionRequest{
+				Sender: sender, Receiver: td.RandValAddress().String(), Stake: 10, Fee: fee,
+			})
+
+			return rawOf(res, err)
+		}},
+		{"Withdraw", func(fee int64) (string, error) {
+			res, err := client.GetRawWithdrawTransaction(t.Context(), &pactus.GetRawWithdrawTransactionRequest{
+				ValidatorAddress: td.RandValAddress().String(), AccountAddress: sender, Amount: 10, Fee: fee,
+			})
+
+			return rawOf(res, err)
+		}},
+		{"Batch transfer", func(fee int64) (string, error) {
+			res, err := client.GetRawBatchTransferTransaction(t.Context(), &pactus.GetRawBatchTransferTransactionRequest{
+				Sender: sender, Fee: fee,
+				Recipients: []*pactus.Recipient{{Receiver: td.RandAccAddress().String(), Amount: 10}},
+			})
+
+			return rawOf(res, err)
+		}},
+		{"Anchor", func(fee int64) (string, error) {
+			res, err := client.GetRawAnchorTransaction(t.Context(), &pactus.GetRawAnchorTransactionRequest{
+				Sender: sender, Action: uint32(payload.AnchorActionSet), RootHash: root, Deposit: 5, Fee: fee,
+			})
+
+			return rawOf(res, err)
+		}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name+": estimated fee follows the minimum", func(t *testing.T) {
+			raw, err := tt.build(0)
+			require.NoError(t, err)
+
+			trx, err := tx.FromString(raw)
+			require.NoError(t, err)
+			assert.Equal(t, required, trx.Fee())
+		})
+
+		t.Run(tt.name+": explicit fee is kept", func(t *testing.T) {
+			raw, err := tt.build(7)
+			require.NoError(t, err)
+
+			trx, err := tx.FromString(raw)
+			require.NoError(t, err)
+			assert.Equal(t, amount.Amount(7), trx.Fee())
+		})
+	}
+}
+
+func rawOf(res *pactus.GetRawTransactionResponse, err error) (string, error) {
+	if err != nil {
+		return "", err
+	}
+
+	return res.RawTransaction, nil
 }
 
 func TestCalculateFee(t *testing.T) {

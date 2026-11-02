@@ -169,6 +169,21 @@ func (mr *MockStateMockRecorder) CalculateFee(amt, payloadType any) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CalculateFee", reflect.TypeOf((*MockState)(nil).CalculateFee), amt, payloadType)
 }
 
+// CalculateFeeForTx mocks base method.
+func (m *MockState) CalculateFeeForTx(trx *tx.Tx) (amount.Amount, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CalculateFeeForTx", trx)
+	ret0, _ := ret[0].(amount.Amount)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CalculateFeeForTx indicates an expected call of CalculateFeeForTx.
+func (mr *MockStateMockRecorder) CalculateFeeForTx(trx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CalculateFeeForTx", reflect.TypeOf((*MockState)(nil).CalculateFeeForTx), trx)
+}
+
 // ChainInfo mocks base method.
 func (m *MockState) ChainInfo() *ChainInfo {
 	m.ctrl.T.Helper()

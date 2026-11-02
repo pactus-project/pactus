@@ -113,10 +113,11 @@ func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 	}
 
 	amt := amount.Amount(req.Amount)
-	fee := s.getFee(req.Fee, amt, payload.TypeTransfer)
 	lockTime := s.getLockTime(req.LockTime)
 
-	transferTx := tx.NewTransferTx(lockTime, sender, receiver, amt, fee, tx.WithMemo(req.Memo))
+	transferTx := s.buildTxWithFee(req.Fee, amt, payload.TypeTransfer, func(fee amount.Amount) *tx.Tx {
+		return tx.NewTransferTx(lockTime, sender, receiver, amt, fee, tx.WithMemo(req.Memo))
+	})
 	rawTx, err := transferTx.Bytes()
 	if err != nil {
 		return nil, err
@@ -151,21 +152,27 @@ func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 	}
 
 	amt := amount.Amount(req.Stake)
-	fee := s.getFee(req.Fee, amt, payload.TypeBond)
 	lockTime := s.getLockTime(req.LockTime)
 
-	bondTx := tx.NewBondTx(lockTime, sender, receiver, publicKey, amt, fee, tx.WithMemo(req.Memo))
+	var delegateOwner crypto.Address
 	if req.DelegateOwner != "" {
-		delegateOwner, err := crypto.AddressFromString(req.DelegateOwner)
+		delegateOwner, err = crypto.AddressFromString(req.DelegateOwner)
 		if err != nil {
 			return nil, err
 		}
-
-		bondPld := bondTx.Payload().(*payload.BondPayload)
-		bondPld.DelegateOwner = delegateOwner
-		bondPld.DelegateShare = amount.Amount(req.DelegateShare)
-		bondPld.DelegateExpiry = types.Height(req.DelegateExpiry)
 	}
+
+	bondTx := s.buildTxWithFee(req.Fee, amt, payload.TypeBond, func(fee amount.Amount) *tx.Tx {
+		bondTx := tx.NewBondTx(lockTime, sender, receiver, publicKey, amt, fee, tx.WithMemo(req.Memo))
+		if req.DelegateOwner != "" {
+			bondPld := bondTx.Payload().(*payload.BondPayload)
+			bondPld.DelegateOwner = delegateOwner
+			bondPld.DelegateShare = amount.Amount(req.DelegateShare)
+			bondPld.DelegateExpiry = types.Height(req.DelegateExpiry)
+		}
+
+		return bondTx
+	})
 	rawTx, err := bondTx.Bytes()
 	if err != nil {
 		return nil, err
@@ -221,10 +228,11 @@ func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 	}
 
 	amt := amount.Amount(req.Amount)
-	fee := s.getFee(req.Fee, amt, payload.TypeWithdraw)
 	lockTime := s.getLockTime(req.LockTime)
 
-	withdrawTx := tx.NewWithdrawTx(lockTime, validatorAddr, accountAddr, amt, fee, tx.WithMemo(req.Memo))
+	withdrawTx := s.buildTxWithFee(req.Fee, amt, payload.TypeWithdraw, func(fee amount.Amount) *tx.Tx {
+		return tx.NewWithdrawTx(lockTime, validatorAddr, accountAddr, amt, fee, tx.WithMemo(req.Memo))
+	})
 	rawTx, err := withdrawTx.Bytes()
 	if err != nil {
 		return nil, err
@@ -262,10 +270,11 @@ func (s *transactionServer) GetRawBatchTransferTransaction(_ context.Context,
 		totalAmount += amt
 	}
 
-	fee := s.getFee(req.Fee, totalAmount, payload.TypeBatchTransfer)
 	lockTime := s.getLockTime(req.LockTime)
 
-	batchTransferTx := tx.NewBatchTransferTx(lockTime, sender, recipients, fee, tx.WithMemo(req.Memo))
+	batchTransferTx := s.buildTxWithFee(req.Fee, totalAmount, payload.TypeBatchTransfer, func(fee amount.Amount) *tx.Tx {
+		return tx.NewBatchTransferTx(lockTime, sender, recipients, fee, tx.WithMemo(req.Memo))
+	})
 	rawTx, err := batchTransferTx.Bytes()
 	if err != nil {
 		return nil, err
@@ -301,13 +310,15 @@ func (s *transactionServer) GetRawAnchorTransaction(_ context.Context,
 	}
 
 	deposit := amount.Amount(req.Deposit)
-	fee := s.getFee(req.Fee, deposit, payload.TypeAnchor)
+	feeAmount := deposit
 	lockTime := s.getLockTime(req.LockTime)
 	root, uri, anchorType, deposit := payload.PreparedAnchor(
 		uint8(req.Action), req.RootHash, req.ManifestUri, uint8(req.AnchorType), deposit)
 
-	anchorTx := tx.NewAnchorTx(lockTime, sender, uint8(req.Action), root, uri, anchorType, deposit, fee,
-		tx.WithMemo(req.Memo))
+	anchorTx := s.buildTxWithFee(req.Fee, feeAmount, payload.TypeAnchor, func(fee amount.Amount) *tx.Tx {
+		return tx.NewAnchorTx(lockTime, sender, uint8(req.Action), root, uri, anchorType, deposit, fee,
+			tx.WithMemo(req.Memo))
+	})
 	if err := anchorTx.Payload().BasicCheck(); err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
@@ -322,13 +333,33 @@ func (s *transactionServer) GetRawAnchorTransaction(_ context.Context,
 	}, nil
 }
 
-func (s *transactionServer) getFee(f int64, amt amount.Amount, payloadType payload.Type) amount.Amount {
-	fee := amount.Amount(f)
-	if fee == 0 {
-		fee = s.state.CalculateFee(amt, payloadType)
+// maxFeeAdjustments bounds how many times a transaction is rebuilt to follow the
+// fee the pool asks for it: a higher fee can make the encoded transaction larger,
+// and the minimum fee depends on the size.
+const maxFeeAdjustments = 3
+
+// buildTxWithFee builds a transaction with the given fee, or with the estimated
+// fee when the fee is zero. The minimum fee can depend on the transaction itself
+// (its size and the recent consumption of its signer), so the transaction is
+// rebuilt while the pool requires more than the fee it carries.
+func (s *transactionServer) buildTxWithFee(f int64, amt amount.Amount, payloadType payload.Type,
+	build func(fee amount.Amount) *tx.Tx,
+) *tx.Tx {
+	if f != 0 {
+		return build(amount.Amount(f))
 	}
 
-	return fee
+	trx := build(s.state.CalculateFee(amt, payloadType))
+	for range maxFeeAdjustments {
+		minFee, err := s.state.CalculateFeeForTx(trx)
+		if err != nil || minFee <= trx.Fee() {
+			break
+		}
+
+		trx = build(minFee)
+	}
+
+	return trx
 }
 
 func (s *transactionServer) getLockTime(lockTime uint32) types.Height {

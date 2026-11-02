@@ -193,7 +193,12 @@ func (p *txPool) appendTx(trx *tx.Tx) {
 
 func (p *txPool) checkFee(trx *tx.Tx) error {
 	if !trx.IsFreeTx() {
-		minFee := p.estimatedMinimumFee(trx)
+		minFee, err := p.estimatedMinimumFee(trx)
+		if err != nil {
+			p.logger.Warn("unable to calculate the minimum fee", "txs", trx, "error", err)
+
+			return err
+		}
 
 		if trx.Fee() < minFee {
 			p.logger.Warn("low fee transaction", "txs", trx, "minFee", minFee)
@@ -242,6 +247,20 @@ func (p *txPool) EstimatedFee(_ amount.Amount, payloadType payload.Type) amount.
 	}
 
 	return selectedPool.estimatedFee()
+}
+
+// EstimatedFeeForTx returns the minimum fee the pool requires for the given
+// transaction. Unlike EstimatedFee, it includes the consumption-based part of the
+// fee, which depends on the signer and on the size of the transaction.
+func (p *txPool) EstimatedFeeForTx(trx *tx.Tx) (amount.Amount, error) {
+	p.lk.RLock()
+	defer p.lk.RUnlock()
+
+	if _, ok := p.pools[trx.Payload().Type()]; !ok || trx.IsFreeTx() {
+		return 0, nil
+	}
+
+	return p.estimatedMinimumFee(trx)
 }
 
 func (p *txPool) HandleCommittedBlock(blk *block.Block) {
@@ -408,8 +427,13 @@ func (p *txPool) size() int {
 	return size
 }
 
-func (p *txPool) estimatedMinimumFee(trx *tx.Tx) amount.Amount {
-	return p.fixedFee() + p.consumptionalFee(trx)
+func (p *txPool) estimatedMinimumFee(trx *tx.Tx) (amount.Amount, error) {
+	consumptionalFee, err := p.consumptionalFee(trx)
+	if err != nil {
+		return 0, err
+	}
+
+	return p.fixedFee() + consumptionalFee, nil
 }
 
 func (p *txPool) fixedFee() amount.Amount {
@@ -418,9 +442,9 @@ func (p *txPool) fixedFee() amount.Amount {
 
 // consumptionalFee calculates the dynamic fee based on the amount of data an
 // address consumes daily.
-func (p *txPool) consumptionalFee(trx *tx.Tx) amount.Amount {
+func (p *txPool) consumptionalFee(trx *tx.Tx) (amount.Amount, error) {
 	if !p.config.calculateConsumption() {
-		return 0
+		return 0, nil
 	}
 
 	var consumption int
@@ -435,9 +459,7 @@ func (p *txPool) consumptionalFee(trx *tx.Tx) amount.Amount {
 
 	coefficient := consumption / p.config.Fee.DailyLimit
 
-	consumptionalFee, _ := amount.NewAmount(float64(coefficient) * float64(consumption) * p.config.Fee.UnitPrice)
-
-	return consumptionalFee
+	return amount.NewAmount(float64(coefficient) * float64(consumption) * p.config.Fee.UnitPrice)
 }
 
 func (p *txPool) AllPendingTxs() []*tx.Tx {

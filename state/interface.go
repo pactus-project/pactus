@@ -81,6 +81,7 @@ type State interface {
 	ValidatorAddresses() []crypto.Address
 	UpdateValidatorProtocolVersion(addr crypto.Address, ver protocol.Version)
 	CalculateFee(amt amount.Amount, payloadType payload.Type) amount.Amount
+	CalculateFeeForTx(trx *tx.Tx) (amount.Amount, error)
 	PublicKey(addr crypto.Address) (crypto.PublicKey, error)
 	AvailabilityScore(valNum int32) float64
 	AllPendingTxs() []*tx.Tx

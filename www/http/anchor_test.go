@@ -19,6 +19,7 @@ import (
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/grpc/fake"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/mock/gomock"
 )
 
 type testData struct {
@@ -213,6 +214,8 @@ func TestGatewayRawAnchor(t *testing.T) {
 	require.Equal(t, http.StatusBadRequest, status)
 
 	td.fake.FakeState.EXPECT().CalculateFee(amount.Amount(5), payload.TypeAnchor).Return(amount.Amount(4242))
+	td.fake.FakeState.EXPECT().CalculateFeeForTx(gomock.Any()).DoAndReturn(
+		func(trx *tx.Tx) (amount.Amount, error) { return trx.Fee(), nil })
 	status, body = postJSON(t, td, "/pactus/transaction/get_raw_anchor_transaction", map[string]any{
 		"sender":   from,
 		"action":   0,
