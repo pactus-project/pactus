@@ -2,13 +2,19 @@ package store
 
 import (
 	"fmt"
+	"math"
 	"path/filepath"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util"
 )
 
-const blockPerDay = 8640
+const (
+	blockPerDay = 8640
+
+	// maxRetentionDays is the largest number of days whose blocks fit in a uint32.
+	maxRetentionDays = math.MaxUint32 / blockPerDay
+)
 
 // Config defines parameters for the store module.
 type Config struct {
@@ -68,6 +74,12 @@ func (conf *Config) BasicCheck() error {
 	if conf.RetentionDays < 10 {
 		return ConfigError{
 			Reason: "retention days can't be less than 10 days",
+		}
+	}
+
+	if conf.RetentionDays > maxRetentionDays {
+		return ConfigError{
+			Reason: fmt.Sprintf("retention days can't be more than %d days", maxRetentionDays),
 		}
 	}
 
