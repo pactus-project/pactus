@@ -166,7 +166,8 @@ func TestStartStopsWaitingForGenesisOnCancel(t *testing.T) {
 func freeTCPPort(t *testing.T) int {
 	t.Helper()
 
-	lis, err := net.Listen("tcp", "127.0.0.1:0")
+	lc := net.ListenConfig{}
+	lis, err := lc.Listen(t.Context(), "tcp", "127.0.0.1:0")
 	require.NoError(t, err)
 	defer func() { _ = lis.Close() }()
 
@@ -214,7 +215,8 @@ func TestNewNodeReleasesNetworkOnError(t *testing.T) {
 	// The network and the ZeroMQ sockets must be released: nothing is
 	// listening on their ports anymore.
 	for _, port := range []int{netPort, zmqPort} {
-		lis, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", port))
+		lc := net.ListenConfig{}
+		lis, err := lc.Listen(t.Context(), "tcp", fmt.Sprintf("127.0.0.1:%d", port))
 		require.NoError(t, err, "port %d is still in use after NewNode has failed", port)
 		_ = lis.Close()
 	}
@@ -280,12 +282,13 @@ func TestStopShutsDownTheAPIBeforeClosingTheState(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, node.Start())
 
+	dialer := net.Dialer{Timeout: time.Second}
 	servers := map[string]string{
 		"gRPC":     loopbackAddr(t, node.GRPC().Address()),
 		"JSON-RPC": loopbackAddr(t, node.jsonrpc.Address()),
 	}
 	for name, addr := range servers {
-		conn, err := net.DialTimeout("tcp", addr, time.Second)
+		conn, err := dialer.DialContext(t.Context(), "tcp", addr)
 		require.NoError(t, err, "%s server is not running", name)
 		_ = conn.Close()
 	}
@@ -302,7 +305,7 @@ func TestStopShutsDownTheAPIBeforeClosingTheState(t *testing.T) {
 			events = append(events, "state")
 			// Requests must not reach a state that is being closed.
 			for name, addr := range servers {
-				conn, err := net.DialTimeout("tcp", addr, time.Second)
+				conn, err := dialer.DialContext(t.Context(), "tcp", addr)
 				if err == nil {
 					_ = conn.Close()
 					stillServing = append(stillServing, name)
