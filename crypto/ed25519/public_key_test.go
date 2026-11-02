@@ -111,7 +111,7 @@ func TestPublicKeyFromString(t *testing.T) {
 			false, nil,
 		},
 		{
-			"invalid checksum (expected ztd56p got ztd5p6)",
+			"invalid checksum (got ztd5p6)",
 			"public1rafnl324uwngqdq455ax4e52fedmfcvskkwas6wsau0u0nwj4g96qztd5p6",
 			false, nil,
 		},

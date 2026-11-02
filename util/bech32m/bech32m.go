@@ -261,6 +261,13 @@ func Decode(bech string) (string, []byte, error) {
 func Encode(hrp string, data []byte) (string, error) {
 	// The resulting bech32 string is the concatenation of the lowercase hrp,
 	// the separator 1, data and the 6-byte checksum.
+	// Only	ASCII characters between 33 and 126 are allowed.
+	for index := 0; index < len(hrp); index++ {
+		if hrp[index] < 33 || hrp[index] > 126 {
+			return "", InvalidCharacterError(hrp[index])
+		}
+	}
+
 	hrp = strings.ToLower(hrp)
 	var bldr strings.Builder
 	bldr.Grow(len(hrp) + 1 + len(data) + 6)
@@ -304,6 +311,11 @@ func ConvertBits(data []byte, fromBits, toBits uint8, pad bool) ([]byte, error) 
 	filledBits := uint8(0)
 
 	for _, byt := range data {
+		// Each byte must only use its lowest fromBits bits.
+		if byt>>fromBits != 0 {
+			return nil, InvalidDataByteError(byt)
+		}
+
 		// Discard unused bits.
 		byt <<= (8 - fromBits)
 

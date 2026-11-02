@@ -74,8 +74,7 @@ type InvalidChecksumError struct {
 }
 
 func (e InvalidChecksumError) Error() string {
-	return fmt.Sprintf("invalid checksum (expected %v got %v)",
-		e.Expected, e.Actual)
+	return fmt.Sprintf("invalid checksum (got %v)", e.Actual)
 }
 
 // InvalidDataByteError is returned when a byte outside the range required for
