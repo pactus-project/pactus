@@ -2,6 +2,7 @@ package ntp
 
 import (
 	"context"
+	"errors"
 	"math"
 	"sync"
 	"time"
@@ -22,6 +23,9 @@ func (QueryError) Error() string {
 	return "failed to get NTP query from all pools"
 }
 
+// ErrNotMeasured is returned by ClockOffset until the first measurement is done.
+var ErrNotMeasured = errors.New("the clock offset is not measured yet")
+
 var _pools = []string{
 	"pool.ntp.org",
 	"time.google.com",
@@ -39,6 +43,7 @@ type Checker struct {
 	cancel    func()
 	querier   Querier
 	offset    time.Duration
+	measured  bool
 	interval  time.Duration
 	threshold time.Duration
 }
@@ -93,37 +98,51 @@ func NewNtpChecker(ctx context.Context, opts ...CheckerOption) *Checker {
 	return checker
 }
 
+// Start measures the clock offset once per interval.
 func (c *Checker) Start() {
 	scheduler.Every(c.interval).Do(c.ctx, func(_ context.Context) {
-		offset, _ := c.queryClockOffset()
-
-		c.lk.Lock()
-		c.offset = offset
-		c.lk.Unlock()
-
-		if c.offset != maxClockOffset && c.IsOutOfSync() {
-			logger.Error(
-				"the system time is out of sync with the network time by more than one second",
-				"threshold", c.threshold, "offset", offset,
-			)
-		}
+		c.measure()
 	})
+}
+
+func (c *Checker) measure() {
+	offset, _ := c.queryClockOffset()
+
+	c.lk.Lock()
+	c.offset = offset
+	c.measured = true
+	c.lk.Unlock()
+
+	if offset != maxClockOffset && offset.Abs() > c.threshold {
+		logger.Error(
+			"the system time is out of sync with the network time",
+			"threshold", c.threshold, "offset", offset,
+		)
+	}
 }
 
 func (c *Checker) Stop() {
 	c.cancel()
 }
 
+// IsOutOfSync reports whether the clock is out of sync with the network time.
+// It is false until the first measurement is done.
 func (c *Checker) IsOutOfSync() bool {
 	c.lk.RLock()
 	defer c.lk.RUnlock()
 
-	return c.offset.Abs() > c.threshold
+	return c.measured && c.offset.Abs() > c.threshold
 }
 
+// ClockOffset returns the last measured clock offset. It returns an error
+// until the first measurement is done, and when the last one has failed.
 func (c *Checker) ClockOffset() (time.Duration, error) {
 	c.lk.RLock()
 	defer c.lk.RUnlock()
+
+	if !c.measured {
+		return 0, ErrNotMeasured
+	}
 
 	if c.offset == maxClockOffset {
 		return 0, QueryError{}
