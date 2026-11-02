@@ -153,3 +153,17 @@ func TestPublicKeyFromString(t *testing.T) {
 		}
 	}
 }
+
+func TestPublicKeyVerifyInvalidSignatureTypes(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	pub, _ := ts.RandEd25519KeyPair()
+	msg := ts.RandBytes(16)
+
+	var nilSig *ed25519.Signature
+	_, secpPrv := ts.RandSecp256k1KeyPair()
+
+	assert.ErrorIs(t, pub.Verify(msg, nil), crypto.ErrInvalidSignature)
+	assert.ErrorIs(t, pub.Verify(msg, nilSig), crypto.ErrInvalidSignature)
+	assert.ErrorIs(t, pub.Verify(msg, secpPrv.Sign(msg)), crypto.ErrInvalidSignature)
+}

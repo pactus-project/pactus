@@ -112,11 +112,12 @@ func (*PublicKey) SerializeSize() int {
 // Verify checks that a signature is valid for the given message and public key.
 // It's defined in section 2.6 of the spec: CoreVerify.
 func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
-	if sig == nil {
-		return crypto.ErrInvalidPublicKey
+	sigEd, ok := sig.(*Signature)
+	if !ok || sigEd == nil {
+		return crypto.ErrInvalidSignature
 	}
 
-	if !ed25519.Verify(pub.inner, msg, sig.Bytes()) {
+	if !ed25519.Verify(pub.inner, msg, sigEd.Bytes()) {
 		return crypto.ErrInvalidSignature
 	}
 

@@ -254,3 +254,17 @@ func TestPublicKeyConcurrentPointG2(t *testing.T) {
 	}
 	wg.Wait()
 }
+
+func TestPublicKeyVerifyInvalidSignatureTypes(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	pub, _ := ts.RandBLSKeyPair()
+	msg := ts.RandBytes(16)
+
+	var nilSig *bls.Signature
+	_, edPrv := ts.RandEd25519KeyPair()
+
+	assert.ErrorIs(t, pub.Verify(msg, nil), crypto.ErrInvalidSignature)
+	assert.ErrorIs(t, pub.Verify(msg, nilSig), crypto.ErrInvalidSignature)
+	assert.ErrorIs(t, pub.Verify(msg, edPrv.Sign(msg)), crypto.ErrInvalidSignature)
+}

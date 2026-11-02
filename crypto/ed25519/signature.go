@@ -90,7 +90,7 @@ func (*Signature) SerializeSize() int {
 // EqualsTo checks if the current signature is equal to another signature.
 func (sig *Signature) EqualsTo(x crypto.Signature) bool {
 	xEd25519, ok := x.(*Signature)
-	if !ok {
+	if !ok || xEd25519 == nil {
 		return false
 	}
 
