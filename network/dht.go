@@ -2,6 +2,7 @@ package network
 
 import (
 	"context"
+	"sync"
 
 	lp2pdht "github.com/libp2p/go-libp2p-kad-dht"
 	lp2pcore "github.com/libp2p/go-libp2p/core"
@@ -9,6 +10,9 @@ import (
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/gopkg/logger"
 )
+
+// dhtBootstrapPeersOnce guards the reset of the library's global bootstrap peers.
+var dhtBootstrapPeersOnce sync.Once
 
 type dhtService struct {
 	ctx      context.Context
@@ -19,10 +23,12 @@ type dhtService struct {
 
 func newDHTService(ctx context.Context, host lp2phost.Host, conf *Config,
 	protocolID lp2pcore.ProtocolID, log *logger.SubLogger,
-) *dhtService {
+) (*dhtService, error) {
 	// A dirty code in LibP2P!!!
 	// prevent apply default bootstrap node of libp2p
-	lp2pdht.DefaultBootstrapPeers = []multiaddr.Multiaddr{}
+	dhtBootstrapPeersOnce.Do(func() {
+		lp2pdht.DefaultBootstrapPeers = []multiaddr.Multiaddr{}
+	})
 
 	mode := lp2pdht.ModeAuto
 	if conf.IsBootstrapper {
@@ -36,7 +42,7 @@ func newDHTService(ctx context.Context, host lp2phost.Host, conf *Config,
 
 	kademlia, err := lp2pdht.New(host, opts...)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	return &dhtService{
@@ -44,7 +50,7 @@ func newDHTService(ctx context.Context, host lp2phost.Host, conf *Config,
 		host:     host,
 		kademlia: kademlia,
 		logger:   log,
-	}
+	}, nil
 }
 
 func (s *dhtService) Start() error {

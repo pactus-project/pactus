@@ -3,6 +3,7 @@ package network
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -52,6 +53,12 @@ func newPeerMgr(ctx context.Context, host lp2phost.Host,
 
 	peers := make(map[lp2ppeer.ID]*peerInfo)
 	for _, ai := range peerStore {
+		if len(ai.Addrs) == 0 {
+			log.Warn("ignoring a peer without address", "id", ai.ID)
+
+			continue
+		}
+
 		peers[ai.ID] = &peerInfo{
 			MultiAddress: ai.Addrs[0],
 			Connected:    false,
@@ -248,10 +255,18 @@ func loadPeerStore(path string) ([]lp2ppeer.AddrInfo, error) {
 		return peerStore, err
 	}
 
-	peerStore, err = MakeAddrInfos(addrs)
-	if err != nil {
-		return []lp2ppeer.AddrInfo{}, err
+	// An invalid entry is skipped without dropping the other entries.
+	// The valid entries are returned together with the errors of the skipped ones.
+	var errs []error
+	for _, addr := range addrs {
+		addrInfo, err := lp2ppeer.AddrInfoFromString(addr)
+		if err != nil {
+			errs = append(errs, err)
+
+			continue
+		}
+		peerStore = append(peerStore, *addrInfo)
 	}
 
-	return peerStore, nil
+	return peerStore, errors.Join(errs...)
 }

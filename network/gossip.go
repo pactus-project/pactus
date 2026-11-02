@@ -30,7 +30,7 @@ type gossipService struct {
 
 func newGossipService(ctx context.Context, host lp2phost.Host, conf *Config,
 	networkPipe pipeline.Pipeline[Event], log *logger.SubLogger,
-) *gossipService {
+) (*gossipService, error) {
 	opts := []lp2pps.Option{
 		lp2pps.WithFloodPublish(true),
 		lp2pps.WithMessageSignaturePolicy(lp2pps.StrictNoSign),
@@ -56,9 +56,7 @@ func newGossipService(ctx context.Context, host lp2phost.Host, conf *Config,
 
 	pubsub, err := lp2pps.NewGossipSub(ctx, host, opts...)
 	if err != nil {
-		log.Panic("unable to start Gossip service", "error", err)
-
-		return nil
+		return nil, err
 	}
 
 	return &gossipService{
@@ -69,7 +67,7 @@ func newGossipService(ctx context.Context, host lp2phost.Host, conf *Config,
 		wg:          sync.WaitGroup{},
 		networkPipe: networkPipe,
 		logger:      log,
-	}
+	}, nil
 }
 
 // Broadcast broadcasts a message with the specified topic ID to the network.

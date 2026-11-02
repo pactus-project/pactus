@@ -268,9 +268,15 @@ func makeNetwork(ctx context.Context, conf *Config,
 	}
 
 	self.peerMgr = newPeerMgr(ctx, host, conf, self.logger)
-	self.dht = newDHTService(ctx, host, conf, kadProtocolID, self.logger)
+	self.dht, err = newDHTService(ctx, host, conf, kadProtocolID, self.logger)
+	if err != nil {
+		return nil, LibP2PError{Err: err}
+	}
 	self.stream = newStreamService(ctx, host, conf, streamProtocolID, self.networkPipe, self.logger)
-	self.gossip = newGossipService(ctx, host, conf, self.networkPipe, self.logger)
+	self.gossip, err = newGossipService(ctx, host, conf, self.networkPipe, self.logger)
+	if err != nil {
+		return nil, LibP2PError{Err: err}
+	}
 	self.notifee = newNotifeeService(ctx, host, self.networkPipe, self.peerMgr, streamProtocolID, self.logger)
 
 	self.logger.Info("network setup", "id", self.host.ID(),
