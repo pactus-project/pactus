@@ -324,6 +324,9 @@ func makeNetwork(ctx context.Context, conf *Config,
 	streamProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/stream/v1", conf.NetworkName))
 
 	if conf.EnableMdns {
+		if warning := mdnsWarning(conf); warning != "" {
+			self.logger.Warn(warning)
+		}
 		self.mdns = newMdnsService(ctx, self.host, self.logger)
 	}
 

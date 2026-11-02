@@ -155,3 +155,35 @@ func TestMDNSIgnoresSelf(t *testing.T) {
 	mdns.HandlePeerFound(lp2ppeer.AddrInfo{ID: host.selfID})
 	assert.Equal(t, int32(0), host.started.Load())
 }
+
+func TestMDNSWarning(t *testing.T) {
+	tests := []struct {
+		name                string
+		enableMdns          bool
+		forcePrivateNetwork bool
+		hasWarning          bool
+	}{
+		{"mdns disabled", false, false, false},
+		{"mdns disabled on a private network", false, true, false},
+		{"mdns on a private network", true, true, false},
+		{"mdns without a private network", true, false, true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			conf := testConfig()
+			conf.EnableMdns = tt.enableMdns
+			conf.ForcePrivateNetwork = tt.forcePrivateNetwork
+
+			warning := mdnsWarning(conf)
+			if tt.hasWarning {
+				assert.Contains(t, warning, "force_private_network")
+			} else {
+				assert.Empty(t, warning)
+			}
+
+			// Whatever the warning says, the configuration stays valid.
+			assert.NoError(t, conf.BasicCheck())
+		})
+	}
+}

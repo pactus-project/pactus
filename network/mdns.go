@@ -15,6 +15,20 @@ import (
 // time after being announced via mDNS.
 const maxMdnsConnects = 8
 
+// mdnsWarning returns a description of a configuration that keeps mDNS from
+// working as expected, or an empty string if there is none.
+// Without force_private_network, private addresses are removed from the addresses
+// of the host and refused by the connection gater, so on a private LAN, where mDNS
+// is used, the peers can neither announce nor accept connections.
+func mdnsWarning(conf *Config) string {
+	if conf.EnableMdns && !conf.ForcePrivateNetwork {
+		return "mDNS is enabled, but force_private_network is not: " +
+			"private addresses are not advertised or accepted, so peers on a private LAN may not find this node"
+	}
+
+	return ""
+}
+
 type mdnsService struct {
 	ctx     context.Context
 	host    lp2phost.Host
