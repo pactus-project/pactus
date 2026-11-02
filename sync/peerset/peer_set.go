@@ -112,6 +112,23 @@ func (ps *PeerSet) SetSessionCompleted(sid int) {
 	}
 }
 
+// SetSessionOnlyFullNodes records that the blocks of the session
+// must be requested from full nodes only.
+func (ps *PeerSet) SetSessionOnlyFullNodes(sid int) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	ps.sessionManager.SetSessionOnlyFullNodes(sid)
+}
+
+// RemoveSession removes the session with the given id.
+func (ps *PeerSet) RemoveSession(sid int) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	ps.sessionManager.RemoveSession(sid)
+}
+
 func (ps *PeerSet) RemoveAllSessions() {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()

@@ -368,10 +368,13 @@ func (sync *synchronizer) updateBlockchain() {
 				"sid", ssn.SessionID, "pid", ssn.PeerID,
 				"stats", sync.peerSet.SessionStats())
 
-			sent := sync.sendBlockRequestToRandomPeer(ssn.From, ssn.Count, false)
+			sent := sync.sendBlockRequestToRandomPeer(ssn.From, ssn.Count, ssn.OnlyFullNodes)
 			if !sent {
 				break
 			}
+
+			// The blocks are requested again, so the old session is replaced.
+			sync.peerSet.RemoveSession(ssn.SessionID)
 		}
 	}
 
@@ -481,6 +484,9 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from types.Height, count 
 		}
 
 		sid := sync.peerSet.OpenSession(peer.PeerID, from, count)
+		if onlyFullNodes {
+			sync.peerSet.SetSessionOnlyFullNodes(sid)
+		}
 		msg := message.NewBlocksRequestMessage(sid, from, count)
 		sync.sendTo(msg, peer.PeerID)
 

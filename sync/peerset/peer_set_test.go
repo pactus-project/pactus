@@ -510,3 +510,28 @@ func TestSnapshotsDoNotAliasInternalState(t *testing.T) {
 		assert.Equal(t, session.Open, getSessionByID(peerSet, sid).Status)
 	})
 }
+
+func TestRemoveSession(t *testing.T) {
+	peerSet := NewPeerSet(time.Minute)
+
+	sid1 := peerSet.OpenSession("peer1", 100, 10)
+	sid2 := peerSet.OpenSession("peer2", 110, 10)
+
+	peerSet.RemoveSession(sid1)
+
+	assert.Equal(t, 1, peerSet.NumberOfSessions())
+	assert.Nil(t, getSessionByID(peerSet, sid1))
+	assert.NotNil(t, getSessionByID(peerSet, sid2))
+}
+
+func TestSetSessionOnlyFullNodes(t *testing.T) {
+	peerSet := NewPeerSet(time.Minute)
+
+	sid1 := peerSet.OpenSession("peer1", 100, 10)
+	sid2 := peerSet.OpenSession("peer2", 110, 10)
+
+	peerSet.SetSessionOnlyFullNodes(sid1)
+
+	assert.True(t, getSessionByID(peerSet, sid1).OnlyFullNodes)
+	assert.False(t, getSessionByID(peerSet, sid2).OnlyFullNodes)
+}
