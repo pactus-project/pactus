@@ -2,6 +2,9 @@ package node
 
 import (
 	"context"
+	"fmt"
+	"net"
+	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -154,5 +157,63 @@ func TestStartStopsWaitingForGenesisOnCancel(t *testing.T) {
 		require.ErrorIs(t, err, context.Canceled)
 	case <-time.After(10 * time.Second):
 		t.Fatal("Start is still waiting for the genesis time after the context was canceled")
+	}
+}
+
+// freeTCPPort returns a TCP port on the loopback interface that is not in use.
+func freeTCPPort(t *testing.T) int {
+	t.Helper()
+
+	lis, err := net.Listen("tcp", "127.0.0.1:0")
+	require.NoError(t, err)
+	defer func() { _ = lis.Close() }()
+
+	tcpAddr, ok := lis.Addr().(*net.TCPAddr)
+	require.True(t, ok)
+
+	return tcpAddr.Port
+}
+
+func TestNewNodeReleasesNetworkOnError(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	pub, _ := ts.RandBLSKeyPair()
+	acc := account.NewAccount(0)
+	acc.AddToBalance(21 * 1e14)
+	val := validator.NewValidator(pub, 0)
+	gen := genesis.MakeGenesis(time.Now(),
+		map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc},
+		[]*validator.Validator{val}, genesis.DefaultGenesisParams())
+
+	netPort := freeTCPPort(t)
+	zmqPort := freeTCPPort(t)
+
+	conf := config.DefaultConfigForChain(genesis.Mainnet)
+	conf.Logger.Filename = util.TempFilePath()
+	conf.Store.Path = util.TempDirPath()
+	conf.Network.EnableRelay = false
+	conf.Network.ListenAddrStrings = []string{fmt.Sprintf("/ip4/127.0.0.1/tcp/%d", netPort)}
+	conf.Network.NetworkKey = util.TempFilePath()
+	conf.Network.PeerStorePath = util.TempFilePath()
+	conf.ZeroMq.ZmqPubBlockInfo = fmt.Sprintf("tcp://127.0.0.1:%d", zmqPort)
+
+	// The wallet manager is the last component to be created, and it can't
+	// work on a file.
+	walletsFile := util.TempFilePath()
+	require.NoError(t, os.WriteFile(walletsFile, []byte("not a directory"), 0o600))
+	conf.WalletManager.WalletsDir = walletsFile
+
+	valKeys := []*bls.ValidatorKey{ts.RandValKey()}
+	rewardAddrs := []crypto.Address{ts.RandAccAddress()}
+
+	_, err := NewNode(t.Context(), gen, conf, valKeys, rewardAddrs)
+	require.Error(t, err)
+
+	// The network and the ZeroMQ sockets must be released: nothing is
+	// listening on their ports anymore.
+	for _, port := range []int{netPort, zmqPort} {
+		lis, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", port))
+		require.NoError(t, err, "port %d is still in use after NewNode has failed", port)
+		_ = lis.Close()
 	}
 }

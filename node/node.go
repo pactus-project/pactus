@@ -66,16 +66,35 @@ func NewNode(ctx context.Context, genDoc *genesis.Genesis, conf *config.Config,
 	eventPipe := pipeline.New[any](ctx,
 		pipeline.WithName("Event Pipeline"), pipeline.WithBufferSize(512))
 
+	// Release what has been created so far if the node can't be created.
+	// Otherwise the database stays locked, the listening ports stay in use,
+	// and the same data directory or addresses can't be used again.
+	created := false
+	defer func() {
+		if !created {
+			eventPipe.Close()
+			networkPipe.Close()
+			broadcastPipe.Close()
+		}
+	}()
+
 	store, err := store.NewStore(conf.Store)
 	if err != nil {
 		return nil, err
 	}
 
-	// Release the store if the node can't be created. Otherwise the database
-	// stays locked and the same data directory can't be opened again.
-	created := false
+	var (
+		net          network.Network
+		zeromqServer *zmq.Server
+	)
 	defer func() {
 		if !created {
+			if zeromqServer != nil {
+				zeromqServer.Close()
+			}
+			if net != nil {
+				net.Stop()
+			}
 			store.Close()
 		}
 	}()
@@ -91,10 +110,13 @@ func NewNode(ctx context.Context, genDoc *genesis.Genesis, conf *config.Config,
 		return nil, err
 	}
 
-	net, err := network.NewNetwork(ctx, conf.Network, networkPipe)
+	// A failed NewNetwork returns a nil pointer inside a non-nil interface,
+	// so keep it out of net: the deferred cleanup must only stop a real network.
+	createdNet, err := network.NewNetwork(ctx, conf.Network, networkPipe)
 	if err != nil {
 		return nil, err
 	}
+	net = createdNet
 
 	consV1Mgr := consmgr.NewManagerV1(ctx, conf.Consensus, state, valKeys, rewardAddrs, broadcastPipe)
 	consV2Mgr := consmgr.NewManagerV2(ctx, conf.ConsensusV2, state, valKeys, rewardAddrs, broadcastPipe)
@@ -110,7 +132,7 @@ func NewNode(ctx context.Context, genDoc *genesis.Genesis, conf *config.Config,
 
 	enableHTTPAuth := (conf.GRPC.BasicAuth != "")
 
-	zeromqServer, err := zmq.New(ctx, conf.ZeroMq, eventPipe)
+	zeromqServer, err = zmq.New(ctx, conf.ZeroMq, eventPipe)
 	if err != nil {
 		return nil, err
 	}
