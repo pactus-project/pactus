@@ -203,6 +203,17 @@ func TestNodeConfigBasicCheck(t *testing.T) {
 			},
 		},
 		{
+			name: "Treasury address as reward address",
+			expectedErr: NodeConfigError{
+				Reason: "reward address can't be the treasury address: " + crypto.TreasuryAddress.String(),
+			},
+			updateFn: func(c *NodeConfig) {
+				c.RewardAddresses = []string{
+					crypto.TreasuryAddress.String(),
+				}
+			},
+		},
+		{
 			name: "Two rewards addresses",
 			updateFn: func(c *NodeConfig) {
 				c.RewardAddresses = []string{

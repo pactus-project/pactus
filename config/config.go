@@ -137,6 +137,12 @@ func (conf *NodeConfig) BasicCheck() error {
 				Reason: fmt.Sprintf("reward address is not an account address: %s", addrStr),
 			}
 		}
+
+		if addr.IsTreasuryAddress() {
+			return NodeConfigError{
+				Reason: fmt.Sprintf("reward address can't be the treasury address: %s", addrStr),
+			}
+		}
 	}
 
 	return nil
@@ -412,7 +418,7 @@ func (conf *Config) BasicCheck() error {
 		return err
 	}
 
-	return conf.HTTP.BasicCheck()
+	return conf.HTML.BasicCheck()
 }
 
 func GetBootstrapNodes() ([]BootstrapInfo, error) {
