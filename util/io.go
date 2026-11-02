@@ -35,8 +35,43 @@ func WriteFile(filename string, data []byte) error {
 	if err := Mkdir(filepath.Dir(filename)); err != nil {
 		return err
 	}
-	if err := os.WriteFile(filename, data, 0o600); err != nil {
+	if err := writeFileAtomic(filename, data); err != nil {
 		return fmt.Errorf("failed to write to %s: %w", filename, err)
+	}
+
+	return nil
+}
+
+// writeFileAtomic writes the data to a temporary file next to the destination
+// and renames it, so an interrupted write never leaves a truncated file.
+func writeFileAtomic(filename string, data []byte) error {
+	// Write through a symbolic link instead of replacing it.
+	if resolved, err := filepath.EvalSymlinks(filename); err == nil {
+		filename = resolved
+	}
+
+	perm := os.FileMode(0o600)
+	if info, err := os.Stat(filename); err == nil {
+		perm = info.Mode().Perm()
+	}
+
+	tmp, err := os.CreateTemp(filepath.Dir(filename), "."+filepath.Base(filename)+".tmp-*")
+	if err != nil {
+		return err
+	}
+	tmpName := tmp.Name()
+
+	err = copyAndClose(tmp, bytes.NewReader(data))
+	if err == nil {
+		err = os.Chmod(tmpName, perm)
+	}
+	if err == nil {
+		err = os.Rename(tmpName, filename)
+	}
+	if err != nil {
+		_ = os.Remove(tmpName)
+
+		return err
 	}
 
 	return nil
@@ -229,14 +264,24 @@ func MoveDirectory(srcDir, dstDir string) error {
 	err := os.Rename(srcDir, dstDir)
 	if err != nil {
 		// To prevent invalid cross-device link perform a manual copy
-		if err := CopyDirectory(srcDir, dstDir); err != nil {
-			return fmt.Errorf("failed to move directory from %s to %s: %w", srcDir, dstDir, err)
-		}
+		return moveByCopy(srcDir, dstDir)
+	}
 
-		// Remove source directory after successful copy
-		if err := os.RemoveAll(srcDir); err != nil {
-			return fmt.Errorf("failed to remove source directory %s: %w", srcDir, err)
-		}
+	return nil
+}
+
+// moveByCopy copies srcDir to dstDir and removes srcDir once the copy is complete.
+// A partial copy is removed, and srcDir is kept, when the copy fails.
+func moveByCopy(srcDir, dstDir string) error {
+	if err := CopyDirectory(srcDir, dstDir); err != nil {
+		_ = os.RemoveAll(dstDir)
+
+		return fmt.Errorf("failed to move directory from %s to %s: %w", srcDir, dstDir, err)
+	}
+
+	// Remove source directory after successful copy
+	if err := os.RemoveAll(srcDir); err != nil {
+		return fmt.Errorf("failed to remove source directory %s: %w", srcDir, err)
 	}
 
 	return nil
@@ -267,29 +312,47 @@ func CopyFile(src, dst string) error {
 	if err != nil {
 		return err
 	}
+	defer func() {
+		_ = input.Close()
+	}()
+
 	info, err := input.Stat()
 	if err != nil {
 		return err
 	}
 
-	defer func() {
-		_ = input.Close()
-	}()
-
 	out, err := os.Create(dst)
 	if err != nil {
 		return err
 	}
-	defer func() {
-		_ = out.Close()
-	}()
 
-	if _, err = io.Copy(out, input); err != nil {
+	if err := copyAndClose(out, input); err != nil {
 		return err
 	}
 
 	// Preserve file permissions
 	return os.Chmod(dst, info.Mode())
+}
+
+// copyAndClose copies the data to out, flushes it to the disk and closes it.
+// Errors reported while flushing or closing are returned like write errors.
+func copyAndClose(out interface {
+	io.WriteCloser
+	Sync() error
+}, input io.Reader,
+) error {
+	if _, err := io.Copy(out, input); err != nil {
+		_ = out.Close()
+
+		return err
+	}
+	if err := out.Sync(); err != nil {
+		_ = out.Close()
+
+		return err
+	}
+
+	return out.Close()
 }
 
 // SecureJoinPath mitigates the "Zip Slip" vulnerability by sanitizing archive file paths.
