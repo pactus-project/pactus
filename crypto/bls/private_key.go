@@ -93,8 +93,13 @@ func PrivateKeyFromBytes(data []byte) (*PrivateKey, error) {
 		return nil, crypto.InvalidLengthError(len(data))
 	}
 
-	scalar := new(big.Int)
-	scalar = scalar.SetBytes(data)
+	// Reduce the scalar modulo the curve order, so every encoding of a secret
+	// maps to the same key, and reject the zero key.
+	scalar := new(big.Int).SetBytes(data)
+	scalar.Mod(scalar, fr.Modulus())
+	if scalar.Sign() == 0 {
+		return nil, crypto.ErrInvalidPrivateKey
+	}
 
 	return &PrivateKey{scalar: scalar}, nil
 }

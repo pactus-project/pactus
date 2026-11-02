@@ -2,9 +2,12 @@ package bls_test
 
 import (
 	"encoding/hex"
+	"math/big"
 	"strings"
 	"testing"
 
+	"github.com/consensys/gnark-crypto/ecc/bls12-381/fr"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -158,4 +161,28 @@ func TestKeyGen(t *testing.T) {
 				"test '%v' failed. not equal", no)
 		}
 	}
+}
+
+func TestPrivateKeyFromBytesRange(t *testing.T) {
+	order := fr.Modulus()
+	encode := func(n *big.Int) []byte {
+		return n.FillBytes(make([]byte, bls.PrivateKeySize))
+	}
+
+	_, err := bls.PrivateKeyFromBytes(make([]byte, bls.PrivateKeySize))
+	assert.ErrorIs(t, err, crypto.ErrInvalidPrivateKey, "zero")
+
+	_, err = bls.PrivateKeyFromBytes(encode(order))
+	assert.ErrorIs(t, err, crypto.ErrInvalidPrivateKey, "order reduces to zero")
+
+	one, err := bls.PrivateKeyFromBytes(encode(big.NewInt(1)))
+	require.NoError(t, err)
+
+	oneAlias, err := bls.PrivateKeyFromBytes(encode(new(big.Int).Add(order, big.NewInt(1))))
+	require.NoError(t, err)
+	assert.True(t, one.EqualsTo(oneAlias), "order+1 is the same secret as 1")
+	assert.Equal(t, one.Bytes(), oneAlias.Bytes())
+
+	_, err = bls.PrivateKeyFromBytes(encode(new(big.Int).Sub(order, big.NewInt(1))))
+	assert.NoError(t, err, "order-1")
 }
