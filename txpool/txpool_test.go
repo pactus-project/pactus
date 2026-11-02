@@ -280,6 +280,43 @@ func TestCalculatingConsumption(t *testing.T) {
 	require.Equal(t, expected, td.pool.consumptionMap)
 }
 
+// TestConsumptionAfterRestart checks that a pool created over a store that
+// already holds blocks counts the blocks inside the consumption window, so a
+// block leaving the window is subtracted only if it was counted.
+func TestConsumptionAfterRestart(t *testing.T) {
+	td := setup(t, testConsumptionalConfig()) // window of 3 blocks
+
+	pub, prv := td.RandEd25519KeyPair()
+	signer := pub.AccountAddress()
+
+	beforeRestart := td.makeTransferTx(testsuite.TransactionWithSigner(prv))
+	afterRestart := td.makeTransferTx(testsuite.TransactionWithSigner(prv))
+
+	// Block 1 is committed before the restart: it is only in the store.
+	blk1, cert1 := td.GenerateTestBlock(1,
+		testsuite.BlockWithTransactions([]*tx.Tx{td.makeSubsidyTx(), beforeRestart}))
+	td.fakeStore.SaveBlock(blk1, cert1)
+
+	// Restart: a new pool is created over the same store.
+	restarted := NewTxPool(t.Context(), testConsumptionalConfig(), td.fakeStore,
+		td.broadcastPipe, td.eventPipe).(*txPool)
+	assert.Equal(t, beforeRestart.SerializeSize(), restarted.consumptionMap[signer])
+
+	blocks := [][]*tx.Tx{
+		{td.makeSubsidyTx(), afterRestart}, // block 2
+		{td.makeSubsidyTx()},               // block 3
+		{td.makeSubsidyTx()},               // block 4: block 1 leaves the window
+	}
+	for i, txs := range blocks {
+		blk, cert := td.GenerateTestBlock(types.Height(i+2), testsuite.BlockWithTransactions(txs))
+		td.fakeStore.SaveBlock(blk, cert)
+		restarted.HandleCommittedBlock(blk)
+	}
+
+	// Blocks 2, 3 and 4 are in the window: only the transaction of block 2 counts.
+	assert.Equal(t, afterRestart.SerializeSize(), restarted.consumptionMap[signer])
+}
+
 func TestEstimatedConsumptionalFee(t *testing.T) {
 	td := setup(t, testConsumptionalConfig())
 

@@ -74,7 +74,46 @@ func NewTxPool(ctx context.Context, conf *Config, storeReader store.Reader,
 
 	pool.logger = logger.NewSubLogger(ctx, "_pool", pool)
 
+	if conf.calculateConsumption() {
+		pool.rebuildConsumption()
+	}
+
 	return pool
+}
+
+// rebuildConsumption replays the committed blocks that are still inside the
+// consumption window, so that after a restart the consumption map matches the
+// one of a node that stayed up. Without it, blocks that leave the window later
+// would be subtracted although they were never added.
+func (p *txPool) rebuildConsumption() {
+	lastCert := p.store.LastCertificate()
+	if lastCert == nil {
+		return
+	}
+
+	lastHeight := lastCert.Height()
+	firstHeight := types.Height(1)
+	if lastHeight > types.Height(p.config.ConsumptionWindow) {
+		firstHeight = lastHeight - types.Height(p.config.ConsumptionWindow) + 1
+	}
+
+	for height := firstHeight; height <= lastHeight; height++ {
+		committedBlock, err := p.store.Block(height)
+		if err != nil {
+			p.logger.Error("failed to read block", "height", height, "err", err)
+
+			continue
+		}
+
+		blk, err := committedBlock.ToBlock()
+		if err != nil {
+			p.logger.Error("failed to parse block", "height", height, "err", err)
+
+			continue
+		}
+
+		p.increaseConsumption(blk)
+	}
 }
 
 // SetNewSandboxAndRecheck updates the sandbox and rechecks all transactions,
