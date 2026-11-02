@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"slices"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -411,10 +412,15 @@ func TestProofDocumentRejects(t *testing.T) {
 		"negative index":  change(func(d *ProofDocument) { d.Index = -1 }),
 		"index too large": change(func(d *ProofDocument) { d.Index = d.Size }),
 		"no item":         change(func(d *ProofDocument) { d.Size = 0 }),
-		"size too large":  change(func(d *ProofDocument) { d.Size = MaxProofSize + 1 }),
 		"path too long": change(func(d *ProofDocument) {
 			d.Path = slices.Repeat([]string{d.Path[0]}, maxPathLen+1)
 		}),
+	}
+	// An int holds at most 2^31-1 on a 32-bit architecture, so the size limit
+	// can only be reached on a 64-bit one.
+	maxSize := uint64(MaxProofSize)
+	if strconv.IntSize == 64 {
+		bad["size too large"] = change(func(d *ProofDocument) { d.Size = int(maxSize + 1) })
 	}
 	for name, doc := range bad {
 		_, _, err := doc.Decode()
@@ -422,10 +428,12 @@ func TestProofDocumentRejects(t *testing.T) {
 		require.False(t, doc.Verify(root), name)
 	}
 
-	largest := change(func(d *ProofDocument) { d.Size = MaxProofSize })
-	_, _, err = largest.Decode()
-	require.NoError(t, err, "the largest size decodes, it just does not verify here")
-	require.False(t, largest.Verify(root))
+	if strconv.IntSize == 64 {
+		largest := change(func(d *ProofDocument) { d.Size = int(maxSize) })
+		_, _, err = largest.Decode()
+		require.NoError(t, err, "the largest size decodes, it just does not verify here")
+		require.False(t, largest.Verify(root))
+	}
 }
 
 // FuzzProofDocument feeds arbitrary JSON to a verifier. It must never panic, and

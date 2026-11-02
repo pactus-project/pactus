@@ -362,7 +362,7 @@ func (d *ProofDocument) Decode() (Item, Proof, error) {
 		return Item{}, Proof{}, fmt.Errorf("%w: version %d, algorithm %q", ErrInvalidProof, d.Version, d.Alg)
 	case !validName(d.Item.Name):
 		return Item{}, Proof{}, fmt.Errorf("%w: item name %q", ErrInvalidProof, d.Item.Name)
-	case d.Size < 1 || d.Size > MaxProofSize || d.Index < 0 || d.Index >= d.Size:
+	case d.Size < 1 || uint64(d.Size) > MaxProofSize || d.Index < 0 || d.Index >= d.Size:
 		return Item{}, Proof{}, fmt.Errorf("%w: index %d of %d items", ErrInvalidProof, d.Index, d.Size)
 	case len(d.Path) > maxPathLen:
 		return Item{}, Proof{}, fmt.Errorf("%w: path of %d hashes", ErrInvalidProof, len(d.Path))
