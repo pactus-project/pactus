@@ -114,6 +114,11 @@ func (v Version) String() string {
 //	-1 if v < other
 //	 0 if v == other
 //	 1 if v > other
+//
+// Only Major, Minor and Patch are compared. The Meta field (e.g. "beta", "rc1")
+// is ignored on purpose, so a pre-release has the same precedence as its final
+// release. This differs from Semantic Versioning 2.0.0, where a pre-release
+// has a lower precedence.
 func (v Version) Compare(other Version) int {
 	if v.Major != other.Major {
 		return compareInt(v.Major, other.Major)
