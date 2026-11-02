@@ -22,6 +22,20 @@ func TestConfigBasicCheck(t *testing.T) {
 			},
 		},
 		{
+			name:        "Zero Session Timeout",
+			expectedErr: "session timeout should be positive",
+			updateFn: func(c *Config) {
+				c.SessionTimeoutStr = "0s"
+			},
+		},
+		{
+			name:        "Negative Session Timeout",
+			expectedErr: "session timeout should be positive",
+			updateFn: func(c *Config) {
+				c.SessionTimeoutStr = "-5s"
+			},
+		},
+		{
 			name:     "DefaultConfig",
 			updateFn: func(*Config) {},
 		},

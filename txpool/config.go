@@ -1,6 +1,10 @@
 package txpool
 
-import "github.com/pactus-project/pactus/types/amount"
+import (
+	"math"
+
+	"github.com/pactus-project/pactus/types/amount"
+)
 
 // Config defines parameters for the transaction pool.
 type Config struct {
@@ -51,7 +55,23 @@ func (conf *Config) BasicCheck() error {
 		}
 	}
 
+	if !isValidFee(conf.Fee.FixedFee) {
+		return ConfigError{
+			Reason: "fixedFee should be a finite non-negative number",
+		}
+	}
+
+	if !isValidFee(conf.Fee.UnitPrice) {
+		return ConfigError{
+			Reason: "unitPrice should be a finite non-negative number",
+		}
+	}
+
 	return nil
+}
+
+func isValidFee(fee float64) bool {
+	return !math.IsNaN(fee) && !math.IsInf(fee, 0) && fee >= 0
 }
 
 func (conf *Config) calculateConsumption() bool {

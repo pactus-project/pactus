@@ -29,6 +29,14 @@ func DefaultConfig() *Config {
 
 // BasicCheck performs basic checks on the configuration.
 func (conf *Config) BasicCheck() error {
+	if conf.RateLimit.BlockTopic < 0 ||
+		conf.RateLimit.TransactionTopic < 0 ||
+		conf.RateLimit.ConsensusTopic < 0 {
+		return ConfigError{
+			Reason: "rate limits can't be negative",
+		}
+	}
+
 	for _, address := range conf.BannedNets {
 		_, _, err := net.ParseCIDR(address)
 		if err != nil {

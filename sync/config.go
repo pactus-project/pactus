@@ -9,6 +9,15 @@ import (
 	"github.com/pactus-project/pactus/version"
 )
 
+// ConfigError is returned when the sync configuration is invalid.
+type ConfigError struct {
+	Reason string
+}
+
+func (e ConfigError) Error() string {
+	return e.Reason
+}
+
 // Config defines parameters for the sync module.
 type Config struct {
 	Moniker           string           `toml:"moniker"`
@@ -43,9 +52,15 @@ func DefaultConfig() *Config {
 
 // BasicCheck performs basic checks on the configuration.
 func (conf *Config) BasicCheck() error {
-	_, err := time.ParseDuration(conf.SessionTimeoutStr)
+	timeout, err := time.ParseDuration(conf.SessionTimeoutStr)
 	if err != nil {
 		return err
+	}
+
+	if timeout <= 0 {
+		return ConfigError{
+			Reason: "session timeout should be positive",
+		}
 	}
 
 	return conf.Firewall.BasicCheck()
