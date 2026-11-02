@@ -102,7 +102,7 @@ type Reader interface {
 	RecentTransaction(txID tx.ID) bool
 	PublicKey(addr crypto.Address) (crypto.PublicKey, error)
 	HasPublicKey(addr crypto.Address) bool
-	HasAccount(crypto.Address) bool
+	HasAccount(crypto.Address) (bool, error)
 	Account(addr crypto.Address) (*account.Account, error)
 	TotalAccounts() int32
 	HasValidator(addr crypto.Address) bool

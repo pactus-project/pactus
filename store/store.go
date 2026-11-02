@@ -62,8 +62,16 @@ func tryGet(db *leveldb.DB, key []byte) ([]byte, error) {
 	return data, nil
 }
 
+// hasKey reports whether the key exists in the database. An I/O failure is
+// returned as an error instead of being read as "the key doesn't exist".
+func hasKey(db *leveldb.DB, key []byte) (bool, error) {
+	return db.Has(key, nil)
+}
+
+// tryHas is like hasKey, but it logs a failure and reports the key as absent.
+// Only use it where "absent" is the safe answer, because it hides read errors.
 func tryHas(db *leveldb.DB, key []byte) bool {
-	has, err := db.Has(key, nil)
+	has, err := hasKey(db, key)
 	if err != nil {
 		logger.Error("database `has` error", "error", err, "key", key)
 
@@ -353,7 +361,7 @@ func (s *store) RecentTransaction(txID tx.ID) bool {
 	return s.txStore.recentTransaction(txID)
 }
 
-func (s *store) HasAccount(addr crypto.Address) bool {
+func (s *store) HasAccount(addr crypto.Address) (bool, error) {
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 

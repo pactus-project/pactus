@@ -117,10 +117,10 @@ func NewFakeStore(ts *testsuite.TestSuite) *FakeStore {
 	).AnyTimes()
 
 	fake.EXPECT().HasAccount(gomock.Any()).DoAndReturn(
-		func(addr crypto.Address) bool {
+		func(addr crypto.Address) (bool, error) {
 			_, ok := fake.FakeAccounts[addr]
 
-			return ok
+			return ok, nil
 		},
 	).AnyTimes()
 

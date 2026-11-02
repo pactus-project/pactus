@@ -137,11 +137,12 @@ func (mr *MockReaderMockRecorder) BlockHeight(h any) *gomock.Call {
 }
 
 // HasAccount mocks base method.
-func (m *MockReader) HasAccount(arg0 crypto.Address) bool {
+func (m *MockReader) HasAccount(arg0 crypto.Address) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HasAccount", arg0)
 	ret0, _ := ret[0].(bool)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // HasAccount indicates an expected call of HasAccount.
@@ -512,11 +513,12 @@ func (mr *MockStoreMockRecorder) Close() *gomock.Call {
 }
 
 // HasAccount mocks base method.
-func (m *MockStore) HasAccount(arg0 crypto.Address) bool {
+func (m *MockStore) HasAccount(arg0 crypto.Address) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HasAccount", arg0)
 	ret0, _ := ret[0].(bool)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // HasAccount indicates an expected call of HasAccount.

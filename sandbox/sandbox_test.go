@@ -1,6 +1,7 @@
 package sandbox
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/pactus-project/pactus/committee"
@@ -15,6 +16,7 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 )
 
 type testData struct {
@@ -411,4 +413,26 @@ func TestBlockContext(t *testing.T) {
 		td.fakeStore, td.fakeParams, committee.NewFakeCommittee(td.TestSuite), 0)
 	assert.Equal(t, protocol.Version(5), sbx.BlockVersion())
 	assert.Equal(t, uint32(1_700_000_000), sbx.CurrentUnixTime())
+}
+
+func TestMakeNewAccountStoreError(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+	ctrl := gomock.NewController(t)
+
+	mockStore := store.NewMockReader(ctrl)
+	mockStore.EXPECT().TotalAccounts().Return(int32(1)).AnyTimes()
+	mockStore.EXPECT().TotalValidators().Return(int32(1)).AnyTimes()
+
+	params := param.FromGenesis(genesis.MainnetGenesis())
+	sbx := NewSandbox(ts.RandHeight(), params.BlockVersion, 0,
+		mockStore, params, committee.NewFakeCommittee(ts), 0).(*sandbox)
+
+	// A failed lookup says nothing about the account: it must not be handled
+	// as a missing account, otherwise a new one is created over the real data.
+	addr := ts.RandAccAddress()
+	mockStore.EXPECT().HasAccount(addr).Return(false, errors.New("read error"))
+
+	assert.Panics(t, func() { sbx.MakeNewAccount(addr) })
+	assert.Equal(t, int32(1), sbx.totalAccounts)
+	assert.Empty(t, sbx.accounts)
 }

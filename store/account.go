@@ -78,13 +78,12 @@ func newAccountStore(db *leveldb.DB, cacheSize int) (*accountStore, error) {
 	}, nil
 }
 
-func (as *accountStore) hasAccount(addr crypto.Address) bool {
-	ok := as.accCache.Contains(addr)
-	if !ok {
-		ok = tryHas(as.db, accountKey(addr))
+func (as *accountStore) hasAccount(addr crypto.Address) (bool, error) {
+	if as.accCache.Contains(addr) {
+		return true, nil
 	}
 
-	return ok
+	return hasKey(as.db, accountKey(addr))
 }
 
 func (as *accountStore) account(addr crypto.Address) (*account.Account, error) {
@@ -148,7 +147,13 @@ func (as *accountStore) updateAccount(batch *leveldb.Batch, addr crypto.Address,
 	if err != nil {
 		logger.Panic("unable to encode account", "error", err)
 	}
-	if !as.hasAccount(addr) {
+	// Counting a new account depends on the lookup, so a failed read must not
+	// be mistaken for a missing account: that would corrupt the account numbers.
+	exists, err := as.hasAccount(addr)
+	if err != nil {
+		logger.Panic("unable to check the account", "error", err)
+	}
+	if !exists {
 		as.total++
 	}
 	as.accCache.Add(addr, acc)

@@ -261,7 +261,9 @@ func TestClosedStoreDoesNotPanic(t *testing.T) {
 		assert.Equal(t, hash.UndefHash, td.store.BlockHash(1))
 		assert.Zero(t, td.store.BlockHeight(blk.BlockHash))
 		assert.False(t, td.store.HasPublicKey(unknownAddr))
-		assert.False(t, td.store.HasAccount(unknownAddr))
+		has, err := td.store.HasAccount(unknownAddr)
+		require.Error(t, err)
+		assert.False(t, has)
 	})
 }
 
@@ -402,4 +404,41 @@ func TestPruningHeightWithUnreadableLastCertificate(t *testing.T) {
 	require.NotPanics(t, func() {
 		assert.Zero(t, td.store.PruningHeight())
 	})
+}
+
+func TestHasAccountReportsReadError(t *testing.T) {
+	td := setup(t, nil)
+
+	addr := td.RandAccAddress()
+	td.store.UpdateAccount(addr, account.NewAccount(1))
+	require.NoError(t, td.store.WriteBatch())
+
+	has, err := td.store.HasAccount(addr)
+	require.NoError(t, err)
+	assert.True(t, has)
+
+	has, err = td.store.HasAccount(td.RandAccAddress())
+	require.NoError(t, err)
+	assert.False(t, has)
+
+	// A failed read must be reported, not mistaken for a missing account.
+	td.store.Close()
+
+	has, err = td.store.HasAccount(td.RandAccAddress())
+	require.Error(t, err)
+	assert.False(t, has)
+}
+
+func TestUpdateAccountDoesNotCountAfterReadError(t *testing.T) {
+	td := setup(t, nil)
+
+	total := td.store.TotalAccounts()
+	td.store.Close()
+
+	// The account lookup fails, so the store can't tell whether the account is
+	// new. It must not guess, as that would shift the numbers of future accounts.
+	assert.Panics(t, func() {
+		td.store.UpdateAccount(td.RandAccAddress(), account.NewAccount(total))
+	})
+	assert.Equal(t, total, td.store.TotalAccounts())
 }
