@@ -26,6 +26,13 @@ const (
 	// for hardened child keys is [2^31, 2^32 - 1].
 	hardenedKeyStart = uint32(0x80000000) // 2^31
 
+	// maxDepth is the maximum depth of a derivation path: the depth is
+	// serialized in a single byte.
+	maxDepth = 255
+
+	// chainCodeSize is the size of the chain code in bytes.
+	chainCodeSize = 32
+
 	// MinSeedBytes is the minimum number of bytes allowed for a seed to
 	// a master node.
 	MinSeedBytes = 16 // 128 bits
@@ -98,6 +105,10 @@ func (k *ExtendedKey) DerivePath(path []uint32) (*ExtendedKey, error) {
 
 // Derive returns a derived child extended key at the given index.
 func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
+	if len(k.path) >= maxDepth {
+		return nil, ErrMaxDepthExceeded
+	}
+
 	isChildHardened := index >= hardenedKeyStart
 
 	data := make([]byte, 0, 37)
@@ -329,6 +340,16 @@ func NewKeyFromString(str string) (*ExtendedKey, error) {
 
 	default:
 		return nil, crypto.InvalidHRPError(hrp)
+	}
+
+	if len(chainCode) != chainCodeSize || res != 0 || reader.Len() != 0 {
+		return nil, ErrInvalidKeyData
+	}
+
+	switch {
+	case isPrivate && len(key) != 32,
+		!isPrivate && len(key) != 33:
+		return nil, ErrInvalidKeyData
 	}
 
 	return newExtendedKey(key, chainCode, path, isPrivate), nil
