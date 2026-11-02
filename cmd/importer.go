@@ -70,7 +70,10 @@ func NewImporter(chainType genesis.ChainType, snapshotURL, storeDir string) (*Im
 		return nil, fmt.Errorf("unsupported chain type: %s", chainType)
 	}
 
-	tempDir := util.TempDirPath()
+	tempDir, err := util.MakeTempDir()
+	if err != nil {
+		return nil, err
+	}
 
 	return &Importer{
 		snapshotURL: snapshotURL,

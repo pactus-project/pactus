@@ -15,13 +15,20 @@ func IsAbsPath(path string) bool {
 	return filepath.IsAbs(path)
 }
 
+// MakeAbs returns the absolute form of path. If the working directory can't be
+// determined, the cleaned relative path is returned, so the error shows up where
+// the path is used instead of aborting the process here.
 func MakeAbs(path string) string {
+	return makeAbs(path, os.Getwd)
+}
+
+func makeAbs(path string, getwd func() (string, error)) string {
 	if IsAbsPath(path) {
 		return path
 	}
-	wd, err := os.Getwd()
+	wd, err := getwd()
 	if err != nil {
-		panic(err)
+		return filepath.Clean(path)
 	}
 
 	return filepath.Clean(filepath.Join(wd, path))
@@ -105,8 +112,16 @@ func PathExists(path string) bool {
 	return err == nil
 }
 
+// MakeTempDir creates a new temporary directory and returns its path.
+func MakeTempDir() (string, error) {
+	return os.MkdirTemp("", "pactus*")
+}
+
+// TempDirPath creates a new temporary directory and returns its path.
+// It panics if the directory can't be created, so it is meant for tests;
+// other code should use MakeTempDir.
 func TempDirPath() string {
-	path, err := os.MkdirTemp("", "pactus*")
+	path, err := MakeTempDir()
 	if err != nil {
 		panic(err)
 	}
@@ -119,13 +134,9 @@ func TempFilePath() string {
 }
 
 // IsDirEmpty checks if a directory is empty.
-func IsDirEmpty(path string) bool {
-	empty, err := dirEmpty(path)
-	if err != nil {
-		panic(err)
-	}
-
-	return empty
+// It returns an error if the directory can't be read, for example when it doesn't exist.
+func IsDirEmpty(path string) (bool, error) {
+	return dirEmpty(path)
 }
 
 // IsDirNotExistsOrEmpty checks if the path exists and, if so, whether the directory is empty.
