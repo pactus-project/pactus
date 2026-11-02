@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/validator"
@@ -83,4 +84,35 @@ func TestRunningNode(t *testing.T) {
 	assert.NotEmpty(t, wallets)
 
 	node.Stop()
+}
+
+func TestNewNodeReleasesStoreOnError(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	pub, _ := ts.RandBLSKeyPair()
+	acc := account.NewAccount(0)
+	acc.AddToBalance(21 * 1e14)
+	val := validator.NewValidator(pub, 0)
+	gen := genesis.MakeGenesis(time.Now(),
+		map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc},
+		[]*validator.Validator{val}, genesis.DefaultGenesisParams())
+	conf := config.DefaultConfigForChain(genesis.Mainnet)
+	conf.Logger.Filename = util.TempFilePath()
+	conf.Store.Path = util.TempDirPath()
+	conf.Network.EnableRelay = false
+	// The network key can't be read, because its path is a directory.
+	conf.Network.NetworkKey = util.TempDirPath()
+	conf.Network.PeerStorePath = util.TempFilePath()
+	conf.WalletManager.WalletsDir = util.TempDirPath()
+
+	valKeys := []*bls.ValidatorKey{ts.RandValKey()}
+	rewardAddrs := []crypto.Address{ts.RandAccAddress()}
+
+	_, err := NewNode(t.Context(), gen, conf, valKeys, rewardAddrs)
+	require.Error(t, err)
+
+	// The store must be released, so it can be opened again.
+	str, err := store.NewStore(conf.Store)
+	require.NoError(t, err, "the store is still locked after NewNode has failed")
+	str.Close()
 }

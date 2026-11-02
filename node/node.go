@@ -71,6 +71,15 @@ func NewNode(ctx context.Context, genDoc *genesis.Genesis, conf *config.Config,
 		return nil, err
 	}
 
+	// Release the store if the node can't be created. Otherwise the database
+	// stays locked and the same data directory can't be opened again.
+	created := false
+	defer func() {
+		if !created {
+			store.Close()
+		}
+	}()
+
 	logger.Info("You are running a Pactus blockchain",
 		"version", version.NodeVersion().StringWithAlias(),
 		"network", chainType, "pruned", store.IsPruned())
@@ -142,6 +151,7 @@ func NewNode(ctx context.Context, genDoc *genesis.Genesis, conf *config.Config,
 		networkPipe:   networkPipe,
 		eventPipe:     eventPipe,
 	}
+	created = true
 
 	return node, nil
 }
