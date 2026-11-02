@@ -174,7 +174,7 @@ func TestPublicKeyVerifyInvalidSignatureTypes(t *testing.T) {
 	var nilSig *secp256k1.Signature
 	_, edPrv := ts.RandEd25519KeyPair()
 
-	assert.ErrorIs(t, pub.Verify(msg, nil), crypto.ErrInvalidSignature)
-	assert.ErrorIs(t, pub.Verify(msg, nilSig), crypto.ErrInvalidSignature)
-	assert.ErrorIs(t, pub.Verify(msg, edPrv.Sign(msg)), crypto.ErrInvalidSignature)
+	require.ErrorIs(t, pub.Verify(msg, nil), crypto.ErrInvalidSignature)
+	require.ErrorIs(t, pub.Verify(msg, nilSig), crypto.ErrInvalidSignature)
+	require.ErrorIs(t, pub.Verify(msg, edPrv.Sign(msg)), crypto.ErrInvalidSignature)
 }

@@ -185,13 +185,11 @@ func TestSignatureConcurrentPointG1(t *testing.T) {
 
 	const workers = 32
 	wg := sync.WaitGroup{}
-	wg.Add(workers)
 	for i := 0; i < workers; i++ {
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			_, err := fresh.PointG1()
 			assert.NoError(t, err)
-		}()
+		})
 	}
 	wg.Wait()
 }

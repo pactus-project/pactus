@@ -15,9 +15,7 @@ func TestHRPSwitchIsRaceFree(t *testing.T) {
 	addr := crypto.NewAddress(crypto.AddressTypeBLSAccount, make([]byte, 20))
 
 	wg := sync.WaitGroup{}
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	wg.Go(func() {
 		for i := 0; i < 200; i++ {
 			if i%2 == 0 {
 				crypto.ToTestnetHRP()
@@ -25,7 +23,7 @@ func TestHRPSwitchIsRaceFree(t *testing.T) {
 				crypto.ToMainnetHRP()
 			}
 		}
-	}()
+	})
 
 	for i := 0; i < 200; i++ {
 		_ = addr.String()

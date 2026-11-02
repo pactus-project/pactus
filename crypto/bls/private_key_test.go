@@ -170,10 +170,10 @@ func TestPrivateKeyFromBytesRange(t *testing.T) {
 	}
 
 	_, err := bls.PrivateKeyFromBytes(make([]byte, bls.PrivateKeySize))
-	assert.ErrorIs(t, err, crypto.ErrInvalidPrivateKey, "zero")
+	require.ErrorIs(t, err, crypto.ErrInvalidPrivateKey, "zero")
 
 	_, err = bls.PrivateKeyFromBytes(encode(order))
-	assert.ErrorIs(t, err, crypto.ErrInvalidPrivateKey, "order reduces to zero")
+	require.ErrorIs(t, err, crypto.ErrInvalidPrivateKey, "order reduces to zero")
 
 	one, err := bls.PrivateKeyFromBytes(encode(big.NewInt(1)))
 	require.NoError(t, err)
@@ -184,5 +184,5 @@ func TestPrivateKeyFromBytesRange(t *testing.T) {
 	assert.Equal(t, one.Bytes(), oneAlias.Bytes())
 
 	_, err = bls.PrivateKeyFromBytes(encode(new(big.Int).Sub(order, big.NewInt(1))))
-	assert.NoError(t, err, "order-1")
+	require.NoError(t, err, "order-1")
 }

@@ -244,13 +244,11 @@ func TestPublicKeyConcurrentPointG2(t *testing.T) {
 
 	const workers = 32
 	wg := sync.WaitGroup{}
-	wg.Add(workers)
 	for i := 0; i < workers; i++ {
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			_, err := fresh.PointG2()
 			assert.NoError(t, err)
-		}()
+		})
 	}
 	wg.Wait()
 }
@@ -264,7 +262,7 @@ func TestPublicKeyVerifyInvalidSignatureTypes(t *testing.T) {
 	var nilSig *bls.Signature
 	_, edPrv := ts.RandEd25519KeyPair()
 
-	assert.ErrorIs(t, pub.Verify(msg, nil), crypto.ErrInvalidSignature)
-	assert.ErrorIs(t, pub.Verify(msg, nilSig), crypto.ErrInvalidSignature)
-	assert.ErrorIs(t, pub.Verify(msg, edPrv.Sign(msg)), crypto.ErrInvalidSignature)
+	require.ErrorIs(t, pub.Verify(msg, nil), crypto.ErrInvalidSignature)
+	require.ErrorIs(t, pub.Verify(msg, nilSig), crypto.ErrInvalidSignature)
+	require.ErrorIs(t, pub.Verify(msg, edPrv.Sign(msg)), crypto.ErrInvalidSignature)
 }
