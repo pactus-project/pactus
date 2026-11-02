@@ -284,3 +284,45 @@ func TestBootstrapInfoStructure(t *testing.T) {
 	assert.IsType(t, "", firstNode.Website)
 	assert.IsType(t, "", firstNode.Address)
 }
+
+func TestLoadFromTomlDoesNotModifyDefaultConfig(t *testing.T) {
+	defConf := defaultConfigMainnet()
+	original := defaultConfigMainnet()
+
+	t.Run("failed load", func(t *testing.T) {
+		toml := `
+[store]
+  path = 'user_data'
+  unknown_option = 1
+`
+		conf, err := LoadFromToml(toml, true, defConf)
+		require.Error(t, err)
+		assert.Nil(t, conf)
+		assert.Equal(t, original, defConf)
+	})
+
+	t.Run("successful load", func(t *testing.T) {
+		toml := `
+[store]
+  path = 'user_data'
+[sync]
+  moniker = 'custom'
+  [sync.firewall]
+    [sync.firewall.rate_limit]
+      block_topic = 7
+[tx_pool]
+  [tx_pool.fee]
+    fixed_fee = 0.5
+`
+		conf, err := LoadFromToml(toml, true, defConf)
+		require.NoError(t, err)
+
+		assert.Equal(t, "user_data", conf.Store.Path)
+		assert.Equal(t, "custom", conf.Sync.Moniker)
+		assert.Equal(t, 7, conf.Sync.Firewall.RateLimit.BlockTopic)
+		assert.InDelta(t, 0.5, conf.TxPool.Fee.FixedFee, 0)
+		assert.Equal(t, defConf.Consensus, conf.Consensus)
+		assert.Equal(t, defConf.ConsensusV2, conf.ConsensusV2)
+		assert.Equal(t, original, defConf)
+	})
+}
