@@ -72,8 +72,7 @@ func TestMaxConnection(t *testing.T) {
 	cmaPublic := &mockConnMultiaddrs{remote: maPublic}
 	pid := ts.RandPeerID()
 
-	net.peerMgr.SetPeerConnected(ts.RandPeerID(), aMultiAddr, lp2pnetwork.DirOutbound)
-	net.peerMgr.SetPeerConnected(ts.RandPeerID(), aMultiAddr, lp2pnetwork.DirInbound)
+	// With MaxConns = 4 the dial limit is 1 and the accept limit is 4.
 	net.peerMgr.SetPeerConnected(ts.RandPeerID(), aMultiAddr, lp2pnetwork.DirInbound)
 	net.peerMgr.SetPeerConnected(ts.RandPeerID(), aMultiAddr, lp2pnetwork.DirInbound)
 	net.peerMgr.SetPeerConnected(ts.RandPeerID(), aMultiAddr, lp2pnetwork.DirInbound)
