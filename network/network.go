@@ -336,11 +336,7 @@ func makeNetwork(ctx context.Context, conf *Config,
 		return nil, LibP2PError{Err: err}
 	}
 	self.stream = newStreamService(ctx, host, conf, streamProtocolID, self.networkPipe, self.logger)
-	self.sender = newOrderedSender(ctx, func(msg []byte, pid lp2ppeer.ID) error {
-		_, err := self.stream.SendTo(msg, pid)
-
-		return err
-	}, self.logger)
+	self.sender = newOrderedSender(ctx, self.sendStream, self.logger)
 	self.gossip, err = newGossipService(ctx, host, conf, self.networkPipe, self.logger)
 	if err != nil {
 		return nil, LibP2PError{Err: err}
@@ -464,6 +460,13 @@ func (n *network) SelfID() lp2ppeer.ID {
 
 func (n *network) Protect(pid lp2pcore.PeerID, tag string) {
 	n.host.ConnManager().Protect(pid, tag)
+}
+
+// sendStream sends a message to the peer over a new stream and waits until it is written.
+func (n *network) sendStream(msg []byte, pid lp2ppeer.ID) error {
+	_, err := n.stream.SendTo(msg, pid)
+
+	return err
 }
 
 // SendTo sends a message to a specific peer identified by pid asynchronously.
