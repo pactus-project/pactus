@@ -42,6 +42,7 @@ type network struct {
 	peerMgr     *peerMgr
 	connGater   *ConnectionGater
 	stream      *streamService
+	sender      *orderedSender
 	gossip      *gossipService
 	notifee     *NotifeeService
 	networkPipe pipeline.Pipeline[Event]
@@ -332,6 +333,11 @@ func makeNetwork(ctx context.Context, conf *Config,
 		return nil, LibP2PError{Err: err}
 	}
 	self.stream = newStreamService(ctx, host, conf, streamProtocolID, self.networkPipe, self.logger)
+	self.sender = newOrderedSender(ctx, func(msg []byte, pid lp2ppeer.ID) error {
+		_, err := self.stream.SendTo(msg, pid)
+
+		return err
+	}, self.logger)
 	self.gossip, err = newGossipService(ctx, host, conf, self.networkPipe, self.logger)
 	if err != nil {
 		return nil, LibP2PError{Err: err}
@@ -458,14 +464,11 @@ func (n *network) Protect(pid lp2pcore.PeerID, tag string) {
 }
 
 // SendTo sends a message to a specific peer identified by pid asynchronously.
-// It uses a goroutine to ensure that if sending is blocked, receiving messages won't be blocked.
+// The messages for the same peer are sent one after another in the order of the calls,
+// so a response that is split into several messages keeps its order. A slow peer only
+// delays its own messages, and sending never blocks the caller.
 func (n *network) SendTo(msg []byte, pid lp2pcore.PeerID) {
-	go func() {
-		_, err := n.stream.SendTo(msg, pid)
-		if err != nil {
-			n.logger.Warn("error on sending msg", "pid", pid, "error", err)
-		}
-	}()
+	n.sender.enqueue(msg, pid)
 }
 
 // Broadcast sends a message to all peers subscribed to a specific topic asynchronously.
