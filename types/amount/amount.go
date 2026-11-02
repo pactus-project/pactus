@@ -82,8 +82,8 @@ func round(f float64) Amount {
 }
 
 // NewAmount creates an Amount from a floating-point value representing
-// an amount in PAC.  NewAmount returns an error if f is NaN or +-Infinity,
-// but it does not check whether the amount is within the total amount of PAC
+// an amount in PAC.  NewAmount returns an error if f is NaN, +-Infinity or too large to be
+// converted safely, but it does not check whether the amount is within the total amount of PAC
 // producible, as it may not refer to an amount at a single moment in time.
 //
 // NewAmount is specifically for converting PAC to NanoPAC.
@@ -99,7 +99,18 @@ func NewAmount(pac float64) (Amount, error) {
 		return 0, errors.New("invalid PAC amount")
 	}
 
-	return round(pac * float64(NanoPACPerPAC)), nil
+	nanoPAC := pac * float64(NanoPACPerPAC)
+
+	// Converting a float64 outside the int64 range is implementation-defined
+	// (saturates on arm64, wraps to MinInt64 on amd64). maxSafeNanoPAC is far
+	// above MaxNanoPAC (the real total supply) but far enough below the
+	// int64/float64 range limits to make that conversion always well-defined.
+	const maxSafeNanoPAC = 1e18
+	if nanoPAC >= maxSafeNanoPAC || nanoPAC <= -maxSafeNanoPAC {
+		return 0, errors.New("PAC amount out of range")
+	}
+
+	return round(nanoPAC), nil
 }
 
 // FromString parses a string representing a value in PAC.
