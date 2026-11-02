@@ -124,6 +124,7 @@ func NewNetwork(ctx context.Context, conf *Config, networkPipe pipeline.Pipeline
 	return makeNetwork(ctx, conf, log, networkPipe, []lp2p.Option{})
 }
 
+//nolint:gocognit // sequential libp2p setup, each step only adds a guard or an option
 func makeNetwork(ctx context.Context, conf *Config,
 	log *logger.SubLogger, networkPipe pipeline.Pipeline[Event], opts []lp2p.Option,
 ) (*network, error) {

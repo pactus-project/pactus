@@ -52,15 +52,15 @@ func newPeerMgr(ctx context.Context, host lp2phost.Host,
 	peerStore = append(peerStore, conf.BootstrapAddrInfos()...)
 
 	peers := make(map[lp2ppeer.ID]*peerInfo)
-	for _, ai := range peerStore {
-		if len(ai.Addrs) == 0 {
-			log.Warn("ignoring a peer without address", "id", ai.ID)
+	for _, addrInfo := range peerStore {
+		if len(addrInfo.Addrs) == 0 {
+			log.Warn("ignoring a peer without address", "id", addrInfo.ID)
 
 			continue
 		}
 
-		peers[ai.ID] = &peerInfo{
-			MultiAddress: ai.Addrs[0],
+		peers[addrInfo.ID] = &peerInfo{
+			MultiAddress: addrInfo.Addrs[0],
 			Connected:    false,
 			Direction:    lp2pnet.DirUnknown,
 		}
