@@ -88,7 +88,7 @@ func TestDeriveMaxDepth(t *testing.T) {
 	assert.Len(t, child.Path(), maxDepth)
 
 	_, err = child.Derive(hardenedKeyStart)
-	assert.ErrorIs(t, err, ErrMaxDepthExceeded)
+	require.ErrorIs(t, err, ErrMaxDepthExceeded)
 
 	parsed, err := NewKeyFromString(child.String())
 	require.NoError(t, err)
