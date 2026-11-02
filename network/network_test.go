@@ -4,6 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
+	"path/filepath"
+	"runtime"
 	"testing"
 	"time"
 
@@ -551,4 +554,106 @@ func TestLoadOrCreateKey(t *testing.T) {
 		require.NoError(t, err)
 		assert.NotNil(t, key)
 	})
+}
+
+func TestWriteFileAtomic(t *testing.T) {
+	t.Run("creates the directory and the file", func(t *testing.T) {
+		path := filepath.Join(t.TempDir(), "sub", "key")
+
+		require.NoError(t, writeFileAtomic(path, []byte("content")))
+
+		data, err := os.ReadFile(path)
+		require.NoError(t, err)
+		assert.Equal(t, []byte("content"), data)
+
+		if runtime.GOOS != "windows" {
+			info, err := os.Stat(path)
+			require.NoError(t, err)
+			assert.Equal(t, os.FileMode(0o600), info.Mode().Perm())
+		}
+	})
+
+	t.Run("replaces the whole content and leaves no temporary file", func(t *testing.T) {
+		dir := t.TempDir()
+		path := filepath.Join(dir, "key")
+
+		require.NoError(t, writeFileAtomic(path, []byte("a long previous content")))
+		require.NoError(t, writeFileAtomic(path, []byte("new")))
+
+		data, err := os.ReadFile(path)
+		require.NoError(t, err)
+		assert.Equal(t, []byte("new"), data)
+
+		entries, err := os.ReadDir(dir)
+		require.NoError(t, err)
+		require.Len(t, entries, 1)
+		assert.Equal(t, "key", entries[0].Name())
+	})
+
+	t.Run("a failed write keeps the destination and leaves no temporary file", func(t *testing.T) {
+		dir := t.TempDir()
+		path := filepath.Join(dir, "key")
+		// A non-empty directory can't be replaced by a file.
+		require.NoError(t, os.MkdirAll(filepath.Join(path, "child"), 0o750))
+
+		require.Error(t, writeFileAtomic(path, []byte("content")))
+
+		assert.DirExists(t, path)
+		entries, err := os.ReadDir(dir)
+		require.NoError(t, err)
+		require.Len(t, entries, 1)
+		assert.Equal(t, "key", entries[0].Name())
+	})
+}
+
+func TestLoadOrCreateKeyLeavesNoTemporaryFile(t *testing.T) {
+	dir := t.TempDir()
+	keyPath := filepath.Join(dir, "network_key")
+
+	key, err := loadOrCreateKey(keyPath)
+	require.NoError(t, err)
+	assert.NotNil(t, key)
+
+	entries, err := os.ReadDir(dir)
+	require.NoError(t, err)
+	require.Len(t, entries, 1)
+	assert.Equal(t, "network_key", entries[0].Name())
+}
+
+type failingMdnsService struct{}
+
+func (*failingMdnsService) Start() error {
+	return errors.New("mdns failed")
+}
+
+func (*failingMdnsService) Close() error {
+	return nil
+}
+
+func TestFailedStartReleasesResources(t *testing.T) {
+	log := logger.NewSubLogger(t.Context(), "_network", nil)
+	pipe := pipeline.New[Event](t.Context())
+	net, err := makeNetwork(t.Context(), testConfig(), log, pipe, nil)
+	require.NoError(t, err)
+
+	net.mdns = &mdnsService{
+		ctx:      t.Context(),
+		host:     net.host,
+		service:  &failingMdnsService{},
+		logger:   log,
+		inFlight: make(map[lp2ppeer.ID]struct{}),
+	}
+	//nolint:staticcheck // The context is the only way to observe the DHT shutdown.
+	require.NoError(t, net.dht.kademlia.Context().Err())
+	require.NotEmpty(t, net.host.Network().ListenAddresses())
+
+	require.Error(t, net.Start())
+
+	// The DHT is stopped and the host is closed.
+	//nolint:staticcheck // The context is the only way to observe the DHT shutdown.
+	require.Error(t, net.dht.kademlia.Context().Err())
+	assert.Empty(t, net.host.Network().ListenAddresses())
+
+	// Stopping afterwards is harmless.
+	net.Stop()
 }

@@ -5,6 +5,8 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -73,12 +75,46 @@ func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 		return nil, err
 	}
 	h := hex.EncodeToString(bs)
-	err = util.WriteFile(path, []byte(h))
+	err = writeFileAtomic(path, []byte(h))
 	if err != nil {
 		return nil, err
 	}
 
 	return key, nil
+}
+
+// writeFileAtomic writes the data to a temporary file in the same directory
+// and then renames it to path, so path never contains a partial content.
+func writeFileAtomic(path string, data []byte) error {
+	if err := util.Mkdir(filepath.Dir(path)); err != nil {
+		return err
+	}
+
+	tmp, err := os.CreateTemp(filepath.Dir(path), filepath.Base(path)+".tmp-*")
+	if err != nil {
+		return fmt.Errorf("failed to write to %s: %w", path, err)
+	}
+	// After a successful rename the temporary file no longer exists.
+	defer func() { _ = os.Remove(tmp.Name()) }()
+
+	if _, err := tmp.Write(data); err != nil {
+		_ = tmp.Close()
+
+		return fmt.Errorf("failed to write to %s: %w", path, err)
+	}
+	if err := tmp.Sync(); err != nil {
+		_ = tmp.Close()
+
+		return fmt.Errorf("failed to write to %s: %w", path, err)
+	}
+	if err := tmp.Close(); err != nil {
+		return fmt.Errorf("failed to write to %s: %w", path, err)
+	}
+	if err := os.Rename(tmp.Name(), path); err != nil {
+		return fmt.Errorf("failed to write to %s: %w", path, err)
+	}
+
+	return nil
 }
 
 func NewNetwork(ctx context.Context, conf *Config, networkPipe pipeline.Pipeline[Event]) (Network, error) {
@@ -184,8 +220,14 @@ func makeNetwork(ctx context.Context, conf *Config,
 	networkReady := make(chan struct{})
 	defer close(networkReady)
 
+	// constructed is set before networkReady is closed, only if the network is created.
+	constructed := false
+
 	networkGetter := func() *network {
-		<-networkReady              // Closed when newNetwork is finished
+		<-networkReady // Closed when newNetwork is finished
+		if !constructed {
+			return nil
+		}
 		time.Sleep(1 * time.Second) // Adding a safety delay
 
 		return self
@@ -249,6 +291,23 @@ func makeNetwork(ctx context.Context, conf *Config,
 		return nil, LibP2PError{Err: err}
 	}
 
+	// Release what is created below if the network can't be fully created.
+	defer func() {
+		if constructed {
+			return
+		}
+
+		if self.notifee != nil {
+			self.notifee.Stop()
+		}
+		if self.dht != nil {
+			self.dht.Stop()
+		}
+		if err := host.Close(); err != nil {
+			log.Error("unable to close the host", "error", err)
+		}
+	}()
+
 	self.ctx = ctx
 	self.config = conf
 	self.logger = log
@@ -287,6 +346,8 @@ func makeNetwork(ctx context.Context, conf *Config,
 		"address", conf.ListenAddrs(),
 		"bootstrapper", conf.IsBootstrapper,
 		"maxConns", conf.MaxConns)
+
+	constructed = true
 
 	return self, nil
 }
@@ -339,10 +400,14 @@ func findRelayPeers(networkGetter func() *network) func(ctx context.Context,
 
 func (n *network) Start() error {
 	if err := n.dht.Start(); err != nil {
+		n.abortStart()
+
 		return LibP2PError{Err: err}
 	}
 	if n.mdns != nil {
 		if err := n.mdns.Start(); err != nil {
+			n.abortStart()
+
 			return LibP2PError{Err: err}
 		}
 	}
@@ -357,6 +422,15 @@ func (n *network) Start() error {
 	n.logger.Info("network started", "addr", n.host.Addrs(), "id", n.host.ID())
 
 	return nil
+}
+
+// abortStart releases the resources that are created when the network fails to start.
+func (n *network) abortStart() {
+	n.dht.Stop()
+
+	if err := n.host.Close(); err != nil {
+		n.logger.Error("unable to close the host", "error", err)
+	}
 }
 
 func (n *network) Stop() {
