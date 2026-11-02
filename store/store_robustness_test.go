@@ -322,3 +322,22 @@ func TestCorruptedLastInfo(t *testing.T) {
 		store.Close()
 	})
 }
+
+func TestCheckPrunedMissingFirstBlock(t *testing.T) {
+	td := setup(t, nil)
+
+	require.NoError(t, td.store.db.Delete(blockKey(1), nil))
+
+	require.NoError(t, td.store.checkPruned())
+	assert.True(t, td.store.IsPruned())
+}
+
+func TestCheckPrunedKeepsFullNodeOnReadError(t *testing.T) {
+	td := setup(t, nil)
+
+	// A closed database makes every read fail with an error other than "not found".
+	require.NoError(t, td.store.db.Close())
+
+	require.Error(t, td.store.checkPruned())
+	assert.False(t, td.store.IsPruned())
+}

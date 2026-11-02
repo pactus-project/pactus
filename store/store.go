@@ -127,9 +127,10 @@ func NewStore(conf *Config) (Store, error) {
 	}
 
 	// Check if the node is pruned by checking genesis block.
-	cBlkOne, _ := store.block(1)
-	if cBlkOne == nil {
-		store.isPruned = true
+	if err := store.checkPruned(); err != nil {
+		_ = db.Close()
+
+		return nil, fmt.Errorf("unable to read the first block: %w", err)
 	}
 
 	currentHeight := lastCert.Height()
@@ -163,6 +164,24 @@ func NewStore(conf *Config) (Store, error) {
 	}
 
 	return store, nil
+}
+
+// checkPruned marks the store as pruned when the first block is missing.
+// Any other failure to read the block is returned, because it doesn't prove
+// that the block has been pruned.
+func (s *store) checkPruned() error {
+	_, err := s.block(1)
+	if err != nil {
+		if errors.Is(err, leveldb.ErrNotFound) {
+			s.isPruned = true
+
+			return nil
+		}
+
+		return err
+	}
+
+	return nil
 }
 
 func (s *store) Close() {
