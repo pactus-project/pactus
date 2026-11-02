@@ -3,6 +3,7 @@ package bls_test
 import (
 	"encoding/hex"
 	"strings"
+	"sync"
 	"testing"
 
 	cbor "github.com/fxamacker/cbor/v2"
@@ -173,4 +174,24 @@ func TestPointG1(t *testing.T) {
 			assert.Contains(t, err.Error(), tt.errMsg, "test %v: error not matched", no)
 		}
 	}
+}
+
+func TestSignatureConcurrentPointG1(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	sig := ts.RandBLSSignature()
+	fresh, err := bls.SignatureFromBytes(sig.Bytes())
+	require.NoError(t, err)
+
+	const workers = 32
+	wg := sync.WaitGroup{}
+	wg.Add(workers)
+	for i := 0; i < workers; i++ {
+		go func() {
+			defer wg.Done()
+			_, err := fresh.PointG1()
+			assert.NoError(t, err)
+		}()
+	}
+	wg.Wait()
 }

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/subtle"
 	"io"
+	"sync/atomic"
 
 	bls12381 "github.com/consensys/gnark-crypto/ecc/bls12-381"
 	cbor "github.com/fxamacker/cbor/v2"
@@ -18,8 +19,8 @@ var _ crypto.PublicKey = &PublicKey{}
 const PublicKeySize = 96
 
 type PublicKey struct {
-	pointG2 *bls12381.G2Affine // Lazily initialized point on G2.
-	data    []byte             // Raw public key data.
+	pointG2 atomic.Pointer[bls12381.G2Affine] // Lazily initialized point on G2.
+	data    []byte                            // Raw public key data.
 }
 
 // PublicKeyFromString decodes the input string and returns the PublicKey
@@ -101,8 +102,11 @@ func (pub *PublicKey) Decode(r io.Reader) error {
 		return err
 	}
 
-	p, _ := PublicKeyFromBytes(data)
-	*pub = *p
+	// data is always exactly PublicKeySize bytes here, so this can only
+	// fail on length, which never happens; pointG2 is lazy and never
+	// populated by PublicKeyFromBytes, so there's nothing to carry over.
+	pub.data = data
+	pub.pointG2.Store(nil)
 
 	return nil
 }
@@ -196,8 +200,8 @@ func (pub *PublicKey) VerifyAddress(addr crypto.Address) error {
 
 // PointG2 returns the point on G2 for the public key.
 func (pub *PublicKey) PointG2() (*bls12381.G2Affine, error) {
-	if pub.pointG2 != nil {
-		return pub.pointG2, nil
+	if g2Aff := pub.pointG2.Load(); g2Aff != nil {
+		return g2Aff, nil
 	}
 
 	g2Aff := new(bls12381.G2Affine)
@@ -209,7 +213,10 @@ func (pub *PublicKey) PointG2() (*bls12381.G2Affine, error) {
 		return nil, crypto.ErrInvalidPublicKey
 	}
 
-	pub.pointG2 = g2Aff
+	// Concurrent calls may each compute g2Aff (the result is deterministic,
+	// so a lost race just means a harmless recomputation); atomic.Pointer
+	// makes the eventual read/write itself race-free.
+	pub.pointG2.Store(g2Aff)
 
 	return g2Aff, nil
 }
