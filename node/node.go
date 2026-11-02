@@ -162,7 +162,11 @@ func (n *Node) Start() error {
 	if genTime.After(now) {
 		logger.Info("💤 Genesis time is in the future. Sleeping until then...",
 			"duration", genTime.Sub(now), "genesis_hash", n.genesisDoc.Hash())
-		time.Sleep(genTime.Sub(now) - 1*time.Second)
+		select {
+		case <-time.After(genTime.Sub(now) - 1*time.Second):
+		case <-n.ctx.Done():
+			return n.ctx.Err()
+		}
 	}
 
 	if err := n.network.Start(); err != nil {

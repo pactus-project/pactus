@@ -1,6 +1,7 @@
 package node
 
 import (
+	"context"
 	"path/filepath"
 	"testing"
 	"time"
@@ -115,4 +116,43 @@ func TestNewNodeReleasesStoreOnError(t *testing.T) {
 	str, err := store.NewStore(conf.Store)
 	require.NoError(t, err, "the store is still locked after NewNode has failed")
 	str.Close()
+}
+
+func TestStartStopsWaitingForGenesisOnCancel(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	pub, _ := ts.RandBLSKeyPair()
+	acc := account.NewAccount(0)
+	acc.AddToBalance(21 * 1e14)
+	val := validator.NewValidator(pub, 0)
+	gen := genesis.MakeGenesis(time.Now().Add(time.Hour),
+		map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc},
+		[]*validator.Validator{val}, genesis.DefaultGenesisParams())
+	conf := config.DefaultConfigForChain(genesis.Mainnet)
+	conf.Logger.Filename = util.TempFilePath()
+	conf.Store.Path = util.TempDirPath()
+	conf.Network.EnableRelay = false
+	conf.Network.NetworkKey = util.TempFilePath()
+	conf.Network.PeerStorePath = util.TempFilePath()
+	conf.WalletManager.WalletsDir = util.TempDirPath()
+
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+
+	valKeys := []*bls.ValidatorKey{ts.RandValKey()}
+	rewardAddrs := []crypto.Address{ts.RandAccAddress()}
+	node, err := NewNode(ctx, gen, conf, valKeys, rewardAddrs)
+	require.NoError(t, err)
+
+	done := make(chan error, 1)
+	go func() { done <- node.Start() }()
+
+	cancel()
+
+	select {
+	case err := <-done:
+		require.ErrorIs(t, err, context.Canceled)
+	case <-time.After(10 * time.Second):
+		t.Fatal("Start is still waiting for the genesis time after the context was canceled")
+	}
 }
