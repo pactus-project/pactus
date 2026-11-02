@@ -104,14 +104,28 @@ func NewStore(conf *Config) (Store, error) {
 		return nil, err
 	}
 
+	accountStore, err := newAccountStore(db, conf.AccountCacheSize)
+	if err != nil {
+		_ = db.Close()
+
+		return nil, err
+	}
+
+	validatorStore, err := newValidatorStore(db)
+	if err != nil {
+		_ = db.Close()
+
+		return nil, err
+	}
+
 	store := &store{
 		config:         conf,
 		db:             db,
 		batch:          new(leveldb.Batch),
 		blockStore:     blockStore,
 		txStore:        newTxStore(db, conf.TxCacheWindow),
-		accountStore:   newAccountStore(db, conf.AccountCacheSize),
-		validatorStore: newValidatorStore(db),
+		accountStore:   accountStore,
+		validatorStore: validatorStore,
 		isPruned:       false,
 	}
 

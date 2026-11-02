@@ -3,6 +3,7 @@ package store
 import (
 	"cmp"
 	"errors"
+	"fmt"
 	"slices"
 
 	lru "github.com/hashicorp/golang-lru/v2"
@@ -30,7 +31,7 @@ type anchorEntry struct {
 
 func accountKey(addr crypto.Address) []byte { return append(accountPrefix, addr.Bytes()...) }
 
-func newAccountStore(db *leveldb.DB, cacheSize int) *accountStore {
+func newAccountStore(db *leveldb.DB, cacheSize int) (*accountStore, error) {
 	total := int32(0)
 	addrLruCache, err := lru.New[crypto.Address, *account.Account](cacheSize)
 	if err != nil {
@@ -59,7 +60,11 @@ func newAccountStore(db *leveldb.DB, cacheSize int) *accountStore {
 			anchors = append(anchors, anchorEntry{number: acc.Number(), addr: addr})
 		}
 	}
+	err = iter.Error()
 	iter.Release()
+	if err != nil {
+		return nil, fmt.Errorf("unable to load accounts: %w", err)
+	}
 
 	slices.SortFunc(anchors, func(left, right anchorEntry) int {
 		return cmp.Compare(left.number, right.number)
@@ -70,7 +75,7 @@ func newAccountStore(db *leveldb.DB, cacheSize int) *accountStore {
 		total:    total,
 		accCache: addrLruCache,
 		anchors:  anchors,
-	}
+	}, nil
 }
 
 func (as *accountStore) hasAccount(addr crypto.Address) bool {
@@ -128,6 +133,10 @@ func (as *accountStore) iterateAccounts(consumer func(crypto.Address, *account.A
 		if stopped {
 			return
 		}
+	}
+
+	if err := iter.Error(); err != nil {
+		logger.Error("unable to iterate accounts", "error", err)
 	}
 }
 

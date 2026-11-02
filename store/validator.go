@@ -1,6 +1,8 @@
 package store
 
 import (
+	"fmt"
+
 	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/protocol"
@@ -19,7 +21,7 @@ type validatorStore struct {
 
 func valKey(addr crypto.Address) []byte { return append(validatorPrefix, addr.Bytes()...) }
 
-func newValidatorStore(db *leveldb.DB) *validatorStore {
+func newValidatorStore(db *leveldb.DB) (*validatorStore, error) {
 	total := int32(0)
 	active := int32(0)
 	numberMap := make(map[int32]*validator.Validator)
@@ -42,7 +44,11 @@ func newValidatorStore(db *leveldb.DB) *validatorStore {
 			active++
 		}
 	}
+	err := iter.Error()
 	iter.Release()
+	if err != nil {
+		return nil, fmt.Errorf("unable to load validators: %w", err)
+	}
 
 	return &validatorStore{
 		db:         db,
@@ -50,7 +56,7 @@ func newValidatorStore(db *leveldb.DB) *validatorStore {
 		active:     active,
 		numberMap:  numberMap,
 		addressMap: addressMap,
-	}
+	}, nil
 }
 
 func (vs *validatorStore) hasValidator(addr crypto.Address) bool {

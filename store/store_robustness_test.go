@@ -341,3 +341,31 @@ func TestCheckPrunedKeepsFullNodeOnReadError(t *testing.T) {
 	require.Error(t, td.store.checkPruned())
 	assert.False(t, td.store.IsPruned())
 }
+
+func TestLoadAccountsFailsOnIteratorError(t *testing.T) {
+	td := setup(t, nil)
+
+	td.store.UpdateAccount(td.RandAccAddress(), account.NewAccount(1))
+	require.NoError(t, td.store.WriteBatch())
+
+	// An iterator over a closed database reports an error instead of items.
+	require.NoError(t, td.store.db.Close())
+
+	as, err := newAccountStore(td.store.db, 16)
+	require.Error(t, err)
+	assert.Nil(t, as)
+}
+
+func TestLoadValidatorsFailsOnIteratorError(t *testing.T) {
+	td := setup(t, nil)
+
+	pub, _ := td.RandBLSKeyPair()
+	td.store.UpdateValidator(validator.NewValidator(pub, 0))
+	require.NoError(t, td.store.WriteBatch())
+
+	require.NoError(t, td.store.db.Close())
+
+	vs, err := newValidatorStore(td.store.db)
+	require.Error(t, err)
+	assert.Nil(t, vs)
+}
