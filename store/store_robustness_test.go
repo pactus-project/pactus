@@ -272,7 +272,7 @@ func TestClosedStoreDoesNotPanic(t *testing.T) {
 func TestAccountStoreWithoutCache(t *testing.T) {
 	td := setup(t, nil)
 
-	assert.Panics(t, func() { newAccountStore(td.store.db, 0) })
+	assert.Panics(t, func() { _, _ = newAccountStore(td.store.db, 0) })
 }
 
 func TestErrorMessages(t *testing.T) {
