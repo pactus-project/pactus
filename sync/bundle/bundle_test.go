@@ -180,3 +180,21 @@ func TestCompressedBundle(t *testing.T) {
 		require.Error(t, err)
 	})
 }
+
+func TestDecodeFailureLeavesBundleUntouched(t *testing.T) {
+	data, err := cbor.Marshal(&_Bundle{
+		Flags:           BundleFlagCarrierLibP2P,
+		MessageType:     message.TypeVote,
+		MessageData:     []byte{0xff, 0xff, 0xff},
+		ConsensusHeight: 1234,
+	})
+	require.NoError(t, err)
+
+	bdl := &Bundle{Flags: BundleFlagNetworkMainnet, ConsensusHeight: 42}
+	_, err = bdl.Decode(bytes.NewReader(data))
+	require.Error(t, err)
+
+	assert.Equal(t, BundleFlagNetworkMainnet, bdl.Flags)
+	assert.Nil(t, bdl.Message)
+	assert.Equal(t, types.Height(42), bdl.ConsensusHeight)
+}

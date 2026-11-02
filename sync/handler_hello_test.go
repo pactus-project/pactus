@@ -13,17 +13,20 @@ import (
 	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/version"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )
 
-func (td *testData) validHelloMessage() *message.HelloMessage {
+func (td *testData) validHelloMessage(t *testing.T) *message.HelloMessage {
+	t.Helper()
+
 	valKey1 := td.RandValKey()
 	valKey2 := td.RandValKey()
 	msg := message.NewHelloMessage(td.RandPeerID(), td.RandString(12),
 		service.New(service.FullNode),
 		td.RandHeight(), td.RandHash(), td.state.Genesis().Hash())
 
-	msg.Sign([]*bls.ValidatorKey{valKey1, valKey2})
+	require.NoError(t, msg.Sign([]*bls.ValidatorKey{valKey1, valKey2}))
 
 	return msg
 }
@@ -48,7 +51,7 @@ func TestHandlerHelloParsingMessages(t *testing.T) {
 
 	t.Run("Receiving Hello message from a peer. Genesis hash is wrong.",
 		func(t *testing.T) {
-			msg := td.validHelloMessage()
+			msg := td.validHelloMessage(t)
 
 			td.sync.peerSet.UpdateAddress(msg.PeerID, "some-address", lp2pnetwork.DirInbound)
 			td.sync.peerSet.UpdateStatus(msg.PeerID, status.StatusConnected)
@@ -62,7 +65,7 @@ func TestHandlerHelloParsingMessages(t *testing.T) {
 
 	t.Run("Receiving a Hello message from a peer. The time difference is greater than or equal to -10",
 		func(t *testing.T) {
-			msg := td.validHelloMessage()
+			msg := td.validHelloMessage(t)
 
 			td.sync.peerSet.UpdateAddress(msg.PeerID, "some-address", lp2pnetwork.DirInbound)
 			td.sync.peerSet.UpdateStatus(msg.PeerID, status.StatusConnected)
@@ -76,7 +79,7 @@ func TestHandlerHelloParsingMessages(t *testing.T) {
 
 	t.Run("Receiving Hello message from a peer. Difference is less or equal than 20 seconds.",
 		func(t *testing.T) {
-			msg := td.validHelloMessage()
+			msg := td.validHelloMessage(t)
 
 			td.sync.peerSet.UpdateAddress(msg.PeerID, "some-address", lp2pnetwork.DirInbound)
 			td.sync.peerSet.UpdateStatus(msg.PeerID, status.StatusConnected)
@@ -90,7 +93,7 @@ func TestHandlerHelloParsingMessages(t *testing.T) {
 
 	t.Run("Non supporting version",
 		func(t *testing.T) {
-			msg := td.validHelloMessage()
+			msg := td.validHelloMessage(t)
 
 			td.sync.peerSet.UpdateAddress(msg.PeerID, "some-address", lp2pnetwork.DirInbound)
 			td.sync.peerSet.UpdateStatus(msg.PeerID, status.StatusConnected)
@@ -110,7 +113,7 @@ func TestHandlerHelloParsingMessages(t *testing.T) {
 
 	t.Run("Invalid agent",
 		func(t *testing.T) {
-			msg := td.validHelloMessage()
+			msg := td.validHelloMessage(t)
 
 			td.sync.peerSet.UpdateAddress(msg.PeerID, "some-address", lp2pnetwork.DirInbound)
 			td.sync.peerSet.UpdateStatus(msg.PeerID, status.StatusConnected)
@@ -124,7 +127,7 @@ func TestHandlerHelloParsingMessages(t *testing.T) {
 
 	t.Run("Outdated protocol version, network not upgraded",
 		func(t *testing.T) {
-			msg := td.validHelloMessage()
+			msg := td.validHelloMessage(t)
 
 			td.sync.peerSet.UpdateAddress(msg.PeerID, "some-address", lp2pnetwork.DirInbound)
 			td.sync.peerSet.UpdateStatus(msg.PeerID, status.StatusConnected)
@@ -142,7 +145,7 @@ func TestHandlerHelloParsingMessages(t *testing.T) {
 
 	t.Run("Outdated protocol version, network upgraded",
 		func(t *testing.T) {
-			msg := td.validHelloMessage()
+			msg := td.validHelloMessage(t)
 
 			td.sync.peerSet.UpdateAddress(msg.PeerID, "some-address", lp2pnetwork.DirInbound)
 			td.sync.peerSet.UpdateStatus(msg.PeerID, status.StatusConnected)
@@ -159,7 +162,7 @@ func TestHandlerHelloParsingMessages(t *testing.T) {
 
 	t.Run("Receiving Hello message from a peer. It should be acknowledged and updates the peer info",
 		func(t *testing.T) {
-			msg := td.validHelloMessage()
+			msg := td.validHelloMessage(t)
 
 			td.sync.peerSet.UpdateAddress(msg.PeerID, "some-address", lp2pnetwork.DirInbound)
 			td.sync.peerSet.UpdateStatus(msg.PeerID, status.StatusConnected)
@@ -187,7 +190,7 @@ func TestHandlerHelloHandshaking(t *testing.T) {
 	td.state.EXPECT().UpdateValidatorProtocolVersion(gomock.Any(), protocol.ProtocolVersionLatest).AnyTimes()
 
 	t.Run("Unknown Direction", func(t *testing.T) {
-		msg := td.validHelloMessage()
+		msg := td.validHelloMessage(t)
 
 		td.connectPeer(msg.PeerID, lp2pnetwork.DirUnknown, false)
 		td.receivingNewMessage(td.sync, msg, msg.PeerID)
@@ -195,7 +198,7 @@ func TestHandlerHelloHandshaking(t *testing.T) {
 	})
 
 	t.Run("Inbound Direction, Outbound Hello Not Sent", func(t *testing.T) {
-		msg := td.validHelloMessage()
+		msg := td.validHelloMessage(t)
 
 		td.connectPeer(msg.PeerID, lp2pnetwork.DirInbound, false)
 		td.receivingNewMessage(td.sync, msg, msg.PeerID)
@@ -205,7 +208,7 @@ func TestHandlerHelloHandshaking(t *testing.T) {
 	})
 
 	t.Run("Outbound Direction, Outbound Hello Not Sent", func(t *testing.T) {
-		msg := td.validHelloMessage()
+		msg := td.validHelloMessage(t)
 
 		td.connectPeer(msg.PeerID, lp2pnetwork.DirOutbound, false)
 		td.receivingNewMessage(td.sync, msg, msg.PeerID)
@@ -214,7 +217,7 @@ func TestHandlerHelloHandshaking(t *testing.T) {
 	})
 
 	t.Run("Inbound Direction, Outbound Hello Sent", func(t *testing.T) {
-		msg := td.validHelloMessage()
+		msg := td.validHelloMessage(t)
 
 		td.connectPeer(msg.PeerID, lp2pnetwork.DirInbound, true)
 		td.receivingNewMessage(td.sync, msg, msg.PeerID)
@@ -223,7 +226,7 @@ func TestHandlerHelloHandshaking(t *testing.T) {
 	})
 
 	t.Run("Outbound Direction, Outbound Hello Sent", func(t *testing.T) {
-		msg := td.validHelloMessage()
+		msg := td.validHelloMessage(t)
 
 		td.connectPeer(msg.PeerID, lp2pnetwork.DirOutbound, true)
 		td.receivingNewMessage(td.sync, msg, msg.PeerID)

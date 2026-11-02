@@ -24,7 +24,7 @@ func TestHelloMessage(t *testing.T) {
 		valKey := ts.RandValKey()
 		msg := NewHelloMessage(ts.RandPeerID(), "Oscar", service.New(service.FullNode),
 			ts.RandHeight(), ts.RandHash(), ts.RandHash())
-		msg.Sign([]*bls.ValidatorKey{valKey})
+		require.NoError(t, msg.Sign([]*bls.ValidatorKey{valKey}))
 		msg.Signature = ts.RandBLSSignature()
 
 		err := msg.BasicCheck()
@@ -35,7 +35,7 @@ func TestHelloMessage(t *testing.T) {
 		valKey := ts.RandValKey()
 		msg := NewHelloMessage(ts.RandPeerID(), "Oscar", service.New(service.FullNode),
 			ts.RandHeight(), ts.RandHash(), ts.RandHash())
-		msg.Sign([]*bls.ValidatorKey{valKey})
+		require.NoError(t, msg.Sign([]*bls.ValidatorKey{valKey}))
 		msg.Signature = nil
 
 		err := msg.BasicCheck()
@@ -46,7 +46,7 @@ func TestHelloMessage(t *testing.T) {
 		valKey := ts.RandValKey()
 		msg := NewHelloMessage(ts.RandPeerID(), "Oscar", service.New(service.FullNode),
 			ts.RandHeight(), ts.RandHash(), ts.RandHash())
-		msg.Sign([]*bls.ValidatorKey{valKey})
+		require.NoError(t, msg.Sign([]*bls.ValidatorKey{valKey}))
 		msg.PublicKeys = make([]*bls.PublicKey, 0)
 
 		err := msg.BasicCheck()
@@ -57,7 +57,7 @@ func TestHelloMessage(t *testing.T) {
 		valKey := ts.RandValKey()
 		msg := NewHelloMessage(ts.RandPeerID(), "Oscar", service.New(service.FullNode),
 			ts.RandHeight(), ts.RandHash(), ts.RandHash())
-		msg.Sign([]*bls.ValidatorKey{valKey})
+		require.NoError(t, msg.Sign([]*bls.ValidatorKey{valKey}))
 		msg.PublicKeys = []*bls.PublicKey{{}}
 
 		err := msg.BasicCheck()
@@ -88,11 +88,22 @@ func TestHelloMessage(t *testing.T) {
 		valKey := ts.RandValKey()
 		msg := NewHelloMessage(ts.RandPeerID(), "Alice", service.New(service.FullNode),
 			ts.RandHeight(), ts.RandHash(), ts.RandHash())
-		msg.Sign([]*bls.ValidatorKey{valKey})
+		require.NoError(t, msg.Sign([]*bls.ValidatorKey{valKey}))
 
 		require.NoError(t, msg.BasicCheck())
 		assert.Zero(t, msg.ConsensusHeight())
 		assert.Contains(t, msg.LogString(), "Alice")
 		assert.Contains(t, msg.LogString(), "FULL")
 	})
+}
+
+func TestHelloSignWithoutKeys(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	msg := NewHelloMessage(ts.RandPeerID(), "Oscar", service.New(service.FullNode),
+		ts.RandHeight(), ts.RandHash(), ts.RandHash())
+
+	require.Error(t, msg.Sign(nil))
+	assert.Nil(t, msg.Signature)
+	assert.Empty(t, msg.PublicKeys)
 }

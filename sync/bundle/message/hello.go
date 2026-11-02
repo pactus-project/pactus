@@ -92,7 +92,9 @@ func (m *HelloMessage) LogString() string {
 	return fmt.Sprintf("{%s %d %s}", m.Moniker, m.Height, m.Services)
 }
 
-func (m *HelloMessage) Sign(valKeys []*bls.ValidatorKey) {
+// Sign signs the message with the given validator keys.
+// The message is left unchanged if signing fails.
+func (m *HelloMessage) Sign(valKeys []*bls.ValidatorKey) error {
 	signatures := make([]*bls.Signature, len(valKeys))
 	publicKeys := make([]*bls.PublicKey, len(valKeys))
 	signBytes := m.SignBytes()
@@ -100,7 +102,13 @@ func (m *HelloMessage) Sign(valKeys []*bls.ValidatorKey) {
 		signatures[i] = key.Sign(signBytes)
 		publicKeys[i] = key.PublicKey()
 	}
-	aggSig, _ := bls.SignatureAggregate(signatures...)
+	aggSig, err := bls.SignatureAggregate(signatures...)
+	if err != nil {
+		return err
+	}
+
 	m.Signature = aggSig
 	m.PublicKeys = publicKeys
+
+	return nil
 }

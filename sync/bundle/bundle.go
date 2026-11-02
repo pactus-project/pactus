@@ -109,9 +109,13 @@ func (b *Bundle) Decode(r io.Reader) (int, error) {
 		data = c
 	}
 
+	if err := cbor.Unmarshal(data, msg); err != nil {
+		return bytesRead, err
+	}
+
 	b.Flags = bdl.Flags
 	b.Message = msg
 	b.ConsensusHeight = types.Height(bdl.ConsensusHeight)
 
-	return bytesRead, cbor.Unmarshal(data, msg)
+	return bytesRead, nil
 }
