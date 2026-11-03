@@ -1,6 +1,7 @@
 package state
 
 import (
+	"errors"
 	"testing"
 	"time"
 
@@ -782,6 +783,24 @@ func TestCalculateFee(t *testing.T) {
 	fee := td.state.CalculateFee(td.RandAmount(), payload.TypeTransfer)
 
 	assert.Equal(t, expectedFee, fee)
+}
+
+func TestCalculateFeeForTx(t *testing.T) {
+	td := setup(t)
+
+	trx := td.GenerateTestTransferTx()
+	expectedFee := td.RandFee()
+	td.fakeTxPool.EXPECT().EstimatedFeeForTx(trx).Return(expectedFee, nil).Times(1)
+
+	fee, err := td.state.CalculateFeeForTx(trx)
+	require.NoError(t, err)
+	assert.Equal(t, expectedFee, fee)
+
+	expectedErr := errors.New("out of range")
+	td.fakeTxPool.EXPECT().EstimatedFeeForTx(trx).Return(amount.Amount(0), expectedErr).Times(1)
+
+	_, err = td.state.CalculateFeeForTx(trx)
+	require.ErrorIs(t, err, expectedErr)
 }
 
 func TestCheckMaximumTransactionPerBlock(t *testing.T) {

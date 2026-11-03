@@ -785,6 +785,10 @@ func (st *state) CalculateFee(amt amount.Amount, payloadType payload.Type) amoun
 	return st.txPool.EstimatedFee(amt, payloadType)
 }
 
+func (st *state) CalculateFeeForTx(trx *tx.Tx) (amount.Amount, error) {
+	return st.txPool.EstimatedFeeForTx(trx)
+}
+
 func (st *state) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {
 	st.lk.RLock()
 	defer st.lk.RUnlock()

@@ -21,6 +21,19 @@ import (
 	"github.com/pactus-project/pactus/util/linkedmap"
 )
 
+// payloadTypeOrder is a fixed iteration order over the sub-pools, matching
+// the order PrepareBlockTransactions assembles them in. Iterating p.pools
+// directly (a map) gives a different, random order on every call.
+var payloadTypeOrder = []payload.Type{
+	payload.TypeSortition,
+	payload.TypeBond,
+	payload.TypeUnbond,
+	payload.TypeWithdraw,
+	payload.TypeTransfer,
+	payload.TypeBatchTransfer,
+	payload.TypeAnchor,
+}
+
 type txPool struct {
 	lk sync.RWMutex
 
@@ -61,7 +74,46 @@ func NewTxPool(ctx context.Context, conf *Config, storeReader store.Reader,
 
 	pool.logger = logger.NewSubLogger(ctx, "_pool", pool)
 
+	if conf.calculateConsumption() {
+		pool.rebuildConsumption()
+	}
+
 	return pool
+}
+
+// rebuildConsumption replays the committed blocks that are still inside the
+// consumption window, so that after a restart the consumption map matches the
+// one of a node that stayed up. Without it, blocks that leave the window later
+// would be subtracted although they were never added.
+func (p *txPool) rebuildConsumption() {
+	lastCert := p.store.LastCertificate()
+	if lastCert == nil {
+		return
+	}
+
+	lastHeight := lastCert.Height()
+	firstHeight := types.Height(1)
+	if lastHeight > types.Height(p.config.ConsumptionWindow) {
+		firstHeight = lastHeight - types.Height(p.config.ConsumptionWindow) + 1
+	}
+
+	for height := firstHeight; height <= lastHeight; height++ {
+		committedBlock, err := p.store.Block(height)
+		if err != nil {
+			p.logger.Error("failed to read block", "height", height, "err", err)
+
+			continue
+		}
+
+		blk, err := committedBlock.ToBlock()
+		if err != nil {
+			p.logger.Error("failed to parse block", "height", height, "err", err)
+
+			continue
+		}
+
+		p.increaseConsumption(blk)
+	}
 }
 
 // SetNewSandboxAndRecheck updates the sandbox and rechecks all transactions,
@@ -74,14 +126,15 @@ func (p *txPool) SetNewSandboxAndRecheck(sbx sandbox.Sandbox) {
 	p.logger.Debug("set new sandbox")
 
 	var next *linkedlist.Element[linkedmap.Pair[tx.ID, *tx.Tx]]
-	for _, pool := range p.pools {
-		for e := pool.list.HeadNode(); e != nil; e = next {
+	for _, payloadType := range payloadTypeOrder {
+		subPool := p.pools[payloadType]
+		for e := subPool.list.HeadNode(); e != nil; e = next {
 			next = e.Next
 			trx := e.Data.Value
 
 			if err := p.checkTx(trx); err != nil {
 				p.logger.Debug("invalid transaction after rechecking", "id", trx.ID())
-				pool.list.Remove(trx.ID())
+				subPool.list.Remove(trx.ID())
 			}
 		}
 	}
@@ -140,7 +193,12 @@ func (p *txPool) appendTx(trx *tx.Tx) {
 
 func (p *txPool) checkFee(trx *tx.Tx) error {
 	if !trx.IsFreeTx() {
-		minFee := p.estimatedMinimumFee(trx)
+		minFee, err := p.estimatedMinimumFee(trx)
+		if err != nil {
+			p.logger.Warn("unable to calculate the minimum fee", "txs", trx, "error", err)
+
+			return err
+		}
 
 		if trx.Fee() < minFee {
 			p.logger.Warn("low fee transaction", "txs", trx, "minFee", minFee)
@@ -189,6 +247,20 @@ func (p *txPool) EstimatedFee(_ amount.Amount, payloadType payload.Type) amount.
 	}
 
 	return selectedPool.estimatedFee()
+}
+
+// EstimatedFeeForTx returns the minimum fee the pool requires for the given
+// transaction. Unlike EstimatedFee, it includes the consumption-based part of the
+// fee, which depends on the signer and on the size of the transaction.
+func (p *txPool) EstimatedFeeForTx(trx *tx.Tx) (amount.Amount, error) {
+	p.lk.RLock()
+	defer p.lk.RUnlock()
+
+	if _, ok := p.pools[trx.Payload().Type()]; !ok || trx.IsFreeTx() {
+		return 0, nil
+	}
+
+	return p.estimatedMinimumFee(trx)
 }
 
 func (p *txPool) HandleCommittedBlock(blk *block.Block) {
@@ -355,8 +427,13 @@ func (p *txPool) size() int {
 	return size
 }
 
-func (p *txPool) estimatedMinimumFee(trx *tx.Tx) amount.Amount {
-	return p.fixedFee() + p.consumptionalFee(trx)
+func (p *txPool) estimatedMinimumFee(trx *tx.Tx) (amount.Amount, error) {
+	consumptionalFee, err := p.consumptionalFee(trx)
+	if err != nil {
+		return 0, err
+	}
+
+	return p.fixedFee() + consumptionalFee, nil
 }
 
 func (p *txPool) fixedFee() amount.Amount {
@@ -365,9 +442,9 @@ func (p *txPool) fixedFee() amount.Amount {
 
 // consumptionalFee calculates the dynamic fee based on the amount of data an
 // address consumes daily.
-func (p *txPool) consumptionalFee(trx *tx.Tx) amount.Amount {
+func (p *txPool) consumptionalFee(trx *tx.Tx) (amount.Amount, error) {
 	if !p.config.calculateConsumption() {
-		return 0
+		return 0, nil
 	}
 
 	var consumption int
@@ -382,9 +459,7 @@ func (p *txPool) consumptionalFee(trx *tx.Tx) amount.Amount {
 
 	coefficient := consumption / p.config.Fee.DailyLimit
 
-	consumptionalFee, _ := amount.NewAmount(float64(coefficient) * float64(consumption) * p.config.Fee.UnitPrice)
-
-	return consumptionalFee
+	return amount.NewAmount(float64(coefficient) * float64(consumption) * p.config.Fee.UnitPrice)
 }
 
 func (p *txPool) AllPendingTxs() []*tx.Tx {

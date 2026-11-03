@@ -15,6 +15,7 @@ type TxPoolReader interface {
 	HasTx(txID tx.ID) bool
 	Size() int
 	EstimatedFee(amt amount.Amount, payloadType payload.Type) amount.Amount
+	EstimatedFeeForTx(trx *tx.Tx) (amount.Amount, error)
 	AllPendingTxs() []*tx.Tx
 }
 

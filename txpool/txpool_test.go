@@ -3,6 +3,7 @@ package txpool
 import (
 	"bytes"
 	"errors"
+	"math"
 	"testing"
 	"time"
 
@@ -208,7 +209,9 @@ func TestDisableConsumption(t *testing.T) {
 	td := setup(t, testDefaultConfig())
 
 	trx := td.GenerateTestTransferTx()
-	assert.Zero(t, td.pool.consumptionalFee(trx))
+	fee, err := td.pool.consumptionalFee(trx)
+	require.NoError(t, err)
+	assert.Zero(t, fee)
 }
 
 func TestCalculatingConsumption(t *testing.T) {
@@ -278,6 +281,43 @@ func TestCalculatingConsumption(t *testing.T) {
 	}
 
 	require.Equal(t, expected, td.pool.consumptionMap)
+}
+
+// TestConsumptionAfterRestart checks that a pool created over a store that
+// already holds blocks counts the blocks inside the consumption window, so a
+// block leaving the window is subtracted only if it was counted.
+func TestConsumptionAfterRestart(t *testing.T) {
+	td := setup(t, testConsumptionalConfig()) // window of 3 blocks
+
+	pub, prv := td.RandEd25519KeyPair()
+	signer := pub.AccountAddress()
+
+	beforeRestart := td.makeTransferTx(testsuite.TransactionWithSigner(prv))
+	afterRestart := td.makeTransferTx(testsuite.TransactionWithSigner(prv))
+
+	// Block 1 is committed before the restart: it is only in the store.
+	blk1, cert1 := td.GenerateTestBlock(1,
+		testsuite.BlockWithTransactions([]*tx.Tx{td.makeSubsidyTx(), beforeRestart}))
+	td.fakeStore.SaveBlock(blk1, cert1)
+
+	// Restart: a new pool is created over the same store.
+	restarted := NewTxPool(t.Context(), testConsumptionalConfig(), td.fakeStore,
+		td.broadcastPipe, td.eventPipe).(*txPool)
+	assert.Equal(t, beforeRestart.SerializeSize(), restarted.consumptionMap[signer])
+
+	blocks := [][]*tx.Tx{
+		{td.makeSubsidyTx(), afterRestart}, // block 2
+		{td.makeSubsidyTx()},               // block 3
+		{td.makeSubsidyTx()},               // block 4: block 1 leaves the window
+	}
+	for i, txs := range blocks {
+		blk, cert := td.GenerateTestBlock(types.Height(i+2), testsuite.BlockWithTransactions(txs))
+		td.fakeStore.SaveBlock(blk, cert)
+		restarted.HandleCommittedBlock(blk)
+	}
+
+	// Blocks 2, 3 and 4 are in the window: only the transaction of block 2 counts.
+	assert.Equal(t, afterRestart.SerializeSize(), restarted.consumptionMap[signer])
 }
 
 func TestEstimatedConsumptionalFee(t *testing.T) {
@@ -541,4 +581,79 @@ func TestEstimatedFee(t *testing.T) {
 	estimatedFee := td.pool.EstimatedFee(td.RandAmount(), payload.TypeTransfer)
 	assert.Equal(t, td.pool.config.fixedFee(), estimatedFee)
 	assert.Equal(t, estimatedFee, td.pool.EstimatedFee(td.RandAmount(), payload.TypeAnchor))
+}
+
+func TestEstimatedFeeForTx(t *testing.T) {
+	t.Run("Without consumption fee", func(t *testing.T) {
+		td := setup(t, nil)
+
+		trx := td.makeTransferTx()
+		minFee, err := td.pool.EstimatedFeeForTx(trx)
+		require.NoError(t, err)
+		assert.Equal(t, td.pool.EstimatedFee(trx.Payload().Value(), payload.TypeTransfer), minFee)
+
+		unbondTrx := td.makeUnbondTx()
+		minFee, err = td.pool.EstimatedFeeForTx(unbondTrx)
+		require.NoError(t, err)
+		assert.Zero(t, minFee)
+	})
+
+	t.Run("With consumption fee", func(t *testing.T) {
+		td := setup(t, testConsumptionalConfig())
+
+		accPub, accPrv := td.RandEd25519KeyPair()
+		td.fakeStore.EXPECT().HasPublicKey(accPub.AccountAddress()).Return(true).AnyTimes()
+
+		// Fill the signer's pending consumption until the dynamic fee is non-zero.
+		for i := 0; i < 3; i++ {
+			pending := td.makeTransferTx(testsuite.TransactionWithSigner(accPrv), testsuite.TransactionWithFee(10_000_000))
+			td.mockExecution(pending, nil)
+			require.NoError(t, td.pool.AppendTx(pending))
+		}
+
+		// The minimum fee depends on the size of the transaction, which grows with its fee.
+		// Estimate with a fee that is encoded with the same number of bytes as the minimum.
+		trx := td.makeTransferTx(testsuite.TransactionWithSigner(accPrv), testsuite.TransactionWithFee(10_000_000))
+
+		minFee, err := td.pool.EstimatedFeeForTx(trx)
+		require.NoError(t, err)
+		require.Positive(t, minFee)
+		assert.Greater(t, minFee, td.pool.EstimatedFee(trx.Payload().Value(), payload.TypeTransfer),
+			"the estimate for a transaction includes the consumption fee")
+
+		// The estimate is accepted by the pool, and one NanoPAC less is not.
+		low := td.makeTransferTx(testsuite.TransactionWithSigner(accPrv), testsuite.TransactionWithFee(minFee-1))
+		td.mockExecution(low, nil)
+		require.ErrorIs(t, td.pool.AppendTx(low), InvalidFeeError{MinimumFee: minFee})
+
+		ok := td.makeTransferTx(testsuite.TransactionWithSigner(accPrv), testsuite.TransactionWithFee(minFee))
+		td.mockExecution(ok, nil)
+		require.NoError(t, td.pool.AppendTx(ok))
+	})
+
+	t.Run("Free transaction", func(t *testing.T) {
+		td := setup(t, testConsumptionalConfig())
+		td.fakeStore.EXPECT().HasPublicKey(gomock.Any()).Return(false).AnyTimes()
+
+		minFee, err := td.pool.EstimatedFeeForTx(td.makeUnbondTx())
+		require.NoError(t, err)
+		assert.Zero(t, minFee)
+	})
+}
+
+func TestConsumptionalFeeOutOfRange(t *testing.T) {
+	conf := testConsumptionalConfig()
+	conf.Fee.UnitPrice = math.MaxFloat64
+	td := setup(t, conf)
+	td.fakeStore.EXPECT().HasPublicKey(gomock.Any()).Return(false).AnyTimes()
+
+	trx := td.makeTransferTx(testsuite.TransactionWithFee(0))
+	td.mockExecution(trx, nil)
+
+	_, err := td.pool.EstimatedFeeForTx(trx)
+	require.Error(t, err)
+
+	// A fee that cannot be calculated must not turn into a free transaction.
+	require.Error(t, td.pool.AppendTx(trx))
+	assert.Zero(t, td.pool.Size())
 }

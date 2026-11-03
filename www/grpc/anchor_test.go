@@ -768,6 +768,8 @@ func TestGetRawAnchorFeeAndLockTime(t *testing.T) {
 	root := bytesRepeat(0x11, 32)
 	td.FakeState.FakeHeight = 77
 	td.FakeState.EXPECT().CalculateFee(amount.Amount(5), payload.TypeAnchor).Return(amount.Amount(4242))
+	td.FakeState.EXPECT().CalculateFeeForTx(gomock.Any()).DoAndReturn(
+		func(trx *tx.Tx) (amount.Amount, error) { return trx.Fee(), nil })
 
 	res, err := client.GetRawAnchorTransaction(t.Context(), &pactus.GetRawAnchorTransactionRequest{
 		Sender:   from,

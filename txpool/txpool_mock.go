@@ -72,6 +72,21 @@ func (mr *MockTxPoolReaderMockRecorder) EstimatedFee(amt, payloadType any) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EstimatedFee", reflect.TypeOf((*MockTxPoolReader)(nil).EstimatedFee), amt, payloadType)
 }
 
+// EstimatedFeeForTx mocks base method.
+func (m *MockTxPoolReader) EstimatedFeeForTx(trx *tx.Tx) (amount.Amount, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "EstimatedFeeForTx", trx)
+	ret0, _ := ret[0].(amount.Amount)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// EstimatedFeeForTx indicates an expected call of EstimatedFeeForTx.
+func (mr *MockTxPoolReaderMockRecorder) EstimatedFeeForTx(trx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EstimatedFeeForTx", reflect.TypeOf((*MockTxPoolReader)(nil).EstimatedFeeForTx), trx)
+}
+
 // HasTx mocks base method.
 func (m *MockTxPoolReader) HasTx(txID tx.ID) bool {
 	m.ctrl.T.Helper()
@@ -206,6 +221,21 @@ func (m *MockTxPool) EstimatedFee(amt amount.Amount, payloadType payload.Type) a
 func (mr *MockTxPoolMockRecorder) EstimatedFee(amt, payloadType any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EstimatedFee", reflect.TypeOf((*MockTxPool)(nil).EstimatedFee), amt, payloadType)
+}
+
+// EstimatedFeeForTx mocks base method.
+func (m *MockTxPool) EstimatedFeeForTx(trx *tx.Tx) (amount.Amount, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "EstimatedFeeForTx", trx)
+	ret0, _ := ret[0].(amount.Amount)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// EstimatedFeeForTx indicates an expected call of EstimatedFeeForTx.
+func (mr *MockTxPoolMockRecorder) EstimatedFeeForTx(trx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EstimatedFeeForTx", reflect.TypeOf((*MockTxPool)(nil).EstimatedFeeForTx), trx)
 }
 
 // HandleCommittedBlock mocks base method.
