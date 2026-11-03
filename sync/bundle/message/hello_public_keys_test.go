@@ -38,7 +38,7 @@ func TestHelloRejectsExcessivePublicKeyCount(t *testing.T) {
 	for i := range repeated {
 		repeated[i] = valKey
 	}
-	msg.Sign(repeated)
+	require.NoError(t, msg.Sign(repeated))
 
 	require.Len(t, msg.PublicKeys, forgedKeyCount)
 
