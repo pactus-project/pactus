@@ -401,3 +401,27 @@ func TestCapacity(t *testing.T) {
 		assert.True(t, lmp.Empty())
 	})
 }
+
+func TestLinkedMapDefensive(t *testing.T) {
+	t.Run("removing from an empty map", func(t *testing.T) {
+		lmp := New[int, string](3)
+
+		assert.NotPanics(t, lmp.RemoveHead)
+		assert.NotPanics(t, lmp.RemoveTail)
+		assert.True(t, lmp.Empty())
+	})
+
+	t.Run("a negative capacity means no limit", func(t *testing.T) {
+		lmp := New[int, string](-1)
+
+		assert.NotPanics(t, func() {
+			lmp.PushBack(1, "a")
+			lmp.PushBack(2, "b")
+		})
+		assert.Equal(t, 2, lmp.Size())
+
+		lmp.SetCapacity(-5)
+		assert.Equal(t, 0, lmp.Capacity())
+		assert.Equal(t, 2, lmp.Size())
+	})
+}

@@ -4,6 +4,9 @@ type Element[T any] struct {
 	Data T
 	Next *Element[T]
 	Prev *Element[T]
+
+	// list is the list that the element belongs to. It is nil for a removed element.
+	list *LinkedList[T]
 }
 
 func NewElement[T any](data T) *Element[T] {
@@ -32,6 +35,7 @@ func New[T any]() *LinkedList[T] {
 // InsertAtHead inserts a new element at the head of the list.
 func (ll *LinkedList[T]) InsertAtHead(data T) *Element[T] {
 	elm := NewElement(data)
+	elm.list = ll
 	if ll.Head == nil {
 		// Empty list case
 		ll.Head = elm
@@ -50,6 +54,7 @@ func (ll *LinkedList[T]) InsertAtHead(data T) *Element[T] {
 // InsertAtTail appends a new element at the tail of the list.
 func (ll *LinkedList[T]) InsertAtTail(data T) *Element[T] {
 	elm := NewElement(data)
+	elm.list = ll
 	if ll.Head == nil {
 		// Empty list case
 		ll.Head = elm
@@ -65,8 +70,15 @@ func (ll *LinkedList[T]) InsertAtTail(data T) *Element[T] {
 	return elm
 }
 
+// InsertBefore inserts a new element before pos. If pos is not an element of the list,
+// the new element is inserted at the head.
 func (ll *LinkedList[T]) InsertBefore(data T, pos *Element[T]) *Element[T] {
+	if pos == nil || pos.list != ll {
+		return ll.InsertAtHead(data)
+	}
+
 	elm := NewElement[T](data)
+	elm.list = ll
 	if pos == ll.Head {
 		ll.Head = elm
 		elm.Next = pos
@@ -82,8 +94,15 @@ func (ll *LinkedList[T]) InsertBefore(data T, pos *Element[T]) *Element[T] {
 	return elm
 }
 
+// InsertAfter inserts a new element after pos. If pos is not an element of the list,
+// the new element is inserted at the tail.
 func (ll *LinkedList[T]) InsertAfter(data T, pos *Element[T]) *Element[T] {
+	if pos == nil || pos.list != ll {
+		return ll.InsertAtTail(data)
+	}
+
 	elm := NewElement[T](data)
+	elm.list = ll
 	if pos == ll.Tail {
 		ll.Tail = elm
 		elm.Prev = pos
@@ -106,12 +125,14 @@ func (ll *LinkedList[T]) DeleteAtHead() {
 		return
 	}
 
+	removed := ll.Head
 	ll.Head = ll.Head.Next
 	if ll.Head != nil {
 		ll.Head.Prev = nil
 	} else {
 		ll.Tail = nil
 	}
+	removed.list = nil
 
 	ll.length--
 }
@@ -123,18 +144,26 @@ func (ll *LinkedList[T]) DeleteAtTail() {
 		return
 	}
 
+	removed := ll.Tail
 	ll.Tail = ll.Tail.Prev
 	if ll.Tail != nil {
 		ll.Tail.Next = nil
 	} else {
 		ll.Head = nil
 	}
+	removed.list = nil
 
 	ll.length--
 }
 
 // Delete removes a specific element from the list.
+// It does nothing if the element is nil, was already removed, or belongs to another list.
 func (ll *LinkedList[T]) Delete(elm *Element[T]) {
+	if elm == nil || elm.list != ll {
+		return
+	}
+	elm.list = nil
+
 	if elm.Prev != nil {
 		elm.Prev.Next = elm.Next
 	} else {
@@ -169,6 +198,10 @@ func (ll *LinkedList[T]) Values() []T {
 
 // Clear removes all elements from the list, making it empty.
 func (ll *LinkedList[T]) Clear() {
+	for elm := ll.Head; elm != nil; elm = elm.Next {
+		elm.list = nil
+	}
+
 	ll.Head = nil
 	ll.Tail = nil
 	ll.length = 0

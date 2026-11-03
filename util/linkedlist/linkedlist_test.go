@@ -135,3 +135,58 @@ func TestInsertBefore(t *testing.T) {
 
 	assert.Equal(t, []int{4, 3, 2, 5, 1}, list.Values())
 }
+
+func TestDefensiveOperations(t *testing.T) {
+	t.Run("Delete is idempotent and ignores nil", func(t *testing.T) {
+		list := linkedlist.New[int]()
+		head := list.InsertAtTail(1)
+		tailElm := list.InsertAtTail(2)
+
+		list.Delete(nil)
+		list.Delete(head)
+		list.Delete(head) // The second delete has no effect.
+
+		assert.Equal(t, 1, list.Length())
+		assert.Equal(t, []int{2}, list.Values())
+
+		list.Delete(tailElm)
+		assert.Zero(t, list.Length())
+		assert.Nil(t, list.Head)
+		assert.Nil(t, list.Tail)
+	})
+
+	t.Run("an element of another list is ignored", func(t *testing.T) {
+		first := linkedlist.New[int]()
+		second := linkedlist.New[int]()
+		first.InsertAtTail(1)
+		foreign := second.InsertAtTail(2)
+
+		first.Delete(foreign)
+		assert.Equal(t, 1, first.Length())
+		assert.Equal(t, 1, second.Length())
+	})
+
+	t.Run("inserting at a nil or removed position", func(t *testing.T) {
+		list := linkedlist.New[int]()
+		head := list.InsertAtTail(1)
+		list.Delete(head)
+
+		list.InsertBefore(2, nil)
+		list.InsertAfter(3, head) // a is not in the list anymore.
+		list.InsertBefore(4, head)
+
+		assert.Equal(t, 3, list.Length())
+		assert.Len(t, list.Values(), 3)
+	})
+
+	t.Run("elements removed by Clear can't corrupt the list", func(t *testing.T) {
+		list := linkedlist.New[int]()
+		head := list.InsertAtTail(1)
+		list.Clear()
+		list.InsertAtTail(2)
+
+		list.Delete(head)
+		assert.Equal(t, 1, list.Length())
+		assert.Equal(t, []int{2}, list.Values())
+	})
+}
