@@ -292,25 +292,31 @@ func TestGetRandomPeer(t *testing.T) {
 	assert.Greater(t, hits[peer.ID("peer_4")], hits[peer.ID("peer_6")])
 }
 
-func TestGetRandomPeerConnected(t *testing.T) {
+func TestGetRandomPeerOnlyKnown(t *testing.T) {
 	peerSet := NewPeerSet(time.Minute)
 
-	pidBanned := peer.ID("known")
+	pidBanned := peer.ID("banned")
 	pidConnected := peer.ID("connected")
 	pidDisconnected := peer.ID("disconnected")
-	peerSet.UpdateInfo(pidBanned, "moniker", "agent", nil, service.New())
-	peerSet.UpdateInfo(pidConnected, "moniker", "agent", nil, service.New())
-	peerSet.UpdateInfo(pidDisconnected, "moniker", "agent", nil, service.New())
+	pidKnown := peer.ID("known")
+	for _, pid := range []peer.ID{pidBanned, pidConnected, pidDisconnected, pidKnown} {
+		peerSet.UpdateInfo(pid, "moniker", "agent", nil, service.New())
+	}
 
 	peerSet.UpdateStatus(pidBanned, status.StatusBanned)
 	peerSet.UpdateStatus(pidConnected, status.StatusConnected)
 	peerSet.UpdateStatus(pidDisconnected, status.StatusDisconnected)
+	peerSet.UpdateStatus(pidKnown, status.StatusKnown)
 
-	peer := peerSet.GetRandomPeer()
+	for i := 0; i < 100; i++ {
+		assert.Equal(t, pidKnown, peerSet.GetRandomPeer().PeerID)
+	}
 
-	assert.NotEqual(t, peer.PeerID, pidBanned)
-	assert.NotEqual(t, peer.PeerID, pidDisconnected)
-	assert.Equal(t, peer.PeerID, pidConnected)
+	// Peers that did not complete the handshake are never chosen.
+	other := NewPeerSet(time.Minute)
+	other.UpdateInfo(pidConnected, "moniker", "agent", nil, service.New())
+	other.UpdateStatus(pidConnected, status.StatusConnected)
+	assert.Nil(t, other.GetRandomPeer())
 }
 
 func TestGetRandomPeerNoPeer(t *testing.T) {
