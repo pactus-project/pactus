@@ -64,6 +64,11 @@ func (sig *Signature) UnmarshalCBOR(bs []byte) error {
 		return err
 	}
 
+	// The encoding of a valid value has no byte to spare.
+	if len(data) != SignatureSize {
+		return crypto.InvalidLengthError(len(data))
+	}
+
 	return sig.Decode(bytes.NewReader(data))
 }
 
