@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"math"
+	"strings"
 
 	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/pactus/crypto"
@@ -372,13 +373,18 @@ func (s *transactionServer) getLockTime(lockTime uint32) types.Height {
 
 func transactionToProto(trx *tx.Tx, blockHeight types.Height, confirmations int) *pactus.TransactionInfo {
 	trxInfo := &pactus.TransactionInfo{
-		Id:            trx.ID().String(),
-		Version:       int32(trx.Version()),
-		LockTime:      uint32(trx.LockTime()),
-		Fee:           trx.Fee().ToNanoPAC(),
-		Value:         trx.Payload().Value().ToNanoPAC(),
-		PayloadType:   pactus.PayloadType(trx.Payload().Type()),
-		Memo:          trx.Memo(),
+		Id:          trx.ID().String(),
+		Version:     int32(trx.Version()),
+		LockTime:    uint32(trx.LockTime()),
+		Fee:         trx.Fee().ToNanoPAC(),
+		Value:       trx.Payload().Value().ToNanoPAC(),
+		PayloadType: pactus.PayloadType(trx.Payload().Type()),
+		// BasicCheck only bounds the memo's length, not that it is valid
+		// UTF-8 (a transaction with an invalid one can already be on the
+		// chain). A proto3 string field must be valid UTF-8, or marshaling
+		// this response fails outright, so sanitize it here rather than at
+		// the chain level.
+		Memo:          strings.ToValidUTF8(trx.Memo(), ""),
 		BlockHeight:   uint32(blockHeight),
 		Confirmed:     confirmations > 0,
 		Confirmations: int32(confirmations),
