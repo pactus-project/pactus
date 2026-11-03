@@ -70,7 +70,13 @@ func (s *cpPreVoteState) decideNextRounds() {
 	cpMainVotes := s.log.CPMainVoteVoteSet(s.round)
 	switch {
 	case cpMainVotes.HasAnyVoteFor(s.cpRound-1, vote.CPValueNo):
-		s.logger.Panic("unreachable state: decide on 'no (biased)' should be handled in main-vote state")
+		s.logger.Debug("cp: one main-vote for no (biased)", "b", "0", "cpRound", s.cpRound)
+
+		vote0 := cpMainVotes.GetRandomVote(s.cpRound-1, vote.CPValueNo)
+		just0 := &vote.JustPreVoteHard{
+			QCert: vote0.CPJust().(*vote.JustMainVoteNoConflict).QCert,
+		}
+		s.signAddCPPreVote(s.cpWeakValidity, s.cpRound, vote.CPValueNo, just0)
 
 	case cpMainVotes.HasAnyVoteFor(s.cpRound-1, vote.CPValueYes):
 		s.logger.Debug("cp: one main-vote for yes", "b", "1", "cpRound", s.cpRound)
