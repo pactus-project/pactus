@@ -1,6 +1,7 @@
 package consensus
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"sync"
@@ -449,7 +450,32 @@ func (cs *consensus) signAddPrecommitVote(h hash.Hash) {
 	cs.signAddVote(v)
 }
 
+// isPrepareForDecidedBlock reports whether the vote is a prepare vote for the block that the
+// change-proposer phase of this round decided to keep.
+//
+// It is the one case where the protocol makes a validator prepare again in the same round.
+// After a double proposal, a validator may have prepared the proposal that the other
+// validators didn't. When the change-proposer phase decides to keep the proposer, it proves
+// which block was prepared by a quorum, the validator drops its proposal, and it must prepare
+// that block: without its vote, the other honest validators may not reach a quorum.
+func (cs *consensus) isPrepareForDecidedBlock(vte *vote.Vote) bool {
+	return vte.Type() == vote.VoteTypePrepare &&
+		cs.cpDecided == 0 &&
+		cs.cpWeakValidity != nil &&
+		vte.Round() == cs.round &&
+		vte.BlockHash() == *cs.cpWeakValidity
+}
+
 func (cs *consensus) signAddVote(vte *vote.Vote) {
+	// A validator never signs two different votes for the same place:
+	// that is an equivocation, even if the first vote was made for a proposal we dropped.
+	if prev := cs.log.FindVote(vte); prev != nil && !bytes.Equal(prev.SignBytes(), vte.SignBytes()) &&
+		!cs.isPrepareForDecidedBlock(vte) {
+		cs.logger.Warn("we have already voted differently, our vote is not signed", "vote", vte, "previous", prev)
+
+		return
+	}
+
 	sig := cs.valKey.Sign(vte.SignBytes())
 	vte.SetSignature(sig)
 	cs.logger.Info("our vote signed and broadcasted", "vote", vte)
