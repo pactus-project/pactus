@@ -274,7 +274,7 @@ func (tx *Tx) SerializeSize() int {
 	if tx.data.Signature != nil {
 		size += tx.data.Signature.SerializeSize()
 	}
-	if tx.data.PublicKey != nil {
+	if tx.IsSigned() && tx.data.PublicKey != nil {
 		size += tx.data.PublicKey.SerializeSize()
 	}
 
@@ -339,7 +339,8 @@ func (tx *Tx) Encode(w io.Writer, opts ...EncodeOption) error {
 			return err
 		}
 	}
-	if tx.data.PublicKey != nil && !encOpts.stripPublicKey {
+	// Decode reads the public key only for a signed transaction.
+	if tx.IsSigned() && tx.data.PublicKey != nil && !encOpts.stripPublicKey {
 		err = tx.data.PublicKey.Encode(w)
 		if err != nil {
 			return err
@@ -374,7 +375,21 @@ func (tx *Tx) encodeWithNoSignatory(w io.Writer) error {
 	return nil
 }
 
+// Decode reads a transaction. The transaction is changed only if the whole
+// data is decoded: it never keeps a partial state or the caches of its previous content.
 func (tx *Tx) Decode(r io.Reader) error {
+	decoded := new(Tx)
+	if err := decoded.decode(r); err != nil {
+		return err
+	}
+
+	tx.data = decoded.data
+	tx.memorizedID = nil
+
+	return nil
+}
+
+func (tx *Tx) decode(r io.Reader) error {
 	flags := uint8(0)
 	err := encoding.ReadElements(r, &flags, &tx.data.Version, &tx.data.LockTime)
 	if err != nil {
@@ -530,7 +545,14 @@ func (tx *Tx) ID() ID {
 	if tx.memorizedID != nil {
 		return *tx.memorizedID
 	}
-	id := hash.CalcHash(tx.SignBytes())
+
+	signBytes := tx.SignBytes()
+	if signBytes == nil {
+		// A transaction that can't be encoded doesn't share the identifier of the empty data.
+		return hash.UndefHash
+	}
+
+	id := hash.CalcHash(signBytes)
 	tx.memorizedID = &id
 
 	return id
