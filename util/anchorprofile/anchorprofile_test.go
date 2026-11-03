@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"slices"
+	"strconv"
 	"strings"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -411,10 +413,15 @@ func TestProofDocumentRejects(t *testing.T) {
 		"negative index":  change(func(d *ProofDocument) { d.Index = -1 }),
 		"index too large": change(func(d *ProofDocument) { d.Index = d.Size }),
 		"no item":         change(func(d *ProofDocument) { d.Size = 0 }),
-		"size too large":  change(func(d *ProofDocument) { d.Size = MaxProofSize + 1 }),
 		"path too long": change(func(d *ProofDocument) {
 			d.Path = slices.Repeat([]string{d.Path[0]}, maxPathLen+1)
 		}),
+	}
+	// An int holds at most 2^31-1 on a 32-bit architecture, so the size limit
+	// can only be reached on a 64-bit one.
+	maxSize := uint64(MaxProofSize)
+	if strconv.IntSize == 64 {
+		bad["size too large"] = change(func(d *ProofDocument) { d.Size = int(maxSize + 1) })
 	}
 	for name, doc := range bad {
 		_, _, err := doc.Decode()
@@ -422,10 +429,53 @@ func TestProofDocumentRejects(t *testing.T) {
 		require.False(t, doc.Verify(root), name)
 	}
 
-	largest := change(func(d *ProofDocument) { d.Size = MaxProofSize })
-	_, _, err = largest.Decode()
-	require.NoError(t, err, "the largest size decodes, it just does not verify here")
-	require.False(t, largest.Verify(root))
+	if strconv.IntSize == 64 {
+		largest := change(func(d *ProofDocument) { d.Size = int(maxSize) })
+		_, _, err = largest.Decode()
+		require.NoError(t, err, "the largest size decodes, it just does not verify here")
+		require.False(t, largest.Verify(root))
+	}
+}
+
+// Upper-case hex decodes to the same digest, so accepting it would give one
+// manifest or one proof several byte forms.
+func TestHashesMustBeLowerCase(t *testing.T) {
+	items := namedItems(3)
+
+	t.Run("manifest", func(t *testing.T) {
+		manifest, err := NewManifest(items)
+		require.NoError(t, err)
+		_, err = manifest.Entries()
+		require.NoError(t, err)
+
+		manifest.Items[1].Hash = strings.ToUpper(manifest.Items[1].Hash)
+		_, err = manifest.Entries()
+		require.ErrorIs(t, err, ErrInvalidManifest)
+		_, err = manifest.Root()
+		require.ErrorIs(t, err, ErrInvalidManifest)
+	})
+
+	t.Run("proof document", func(t *testing.T) {
+		proof, err := Prove(items, items[1].Name)
+		require.NoError(t, err)
+		root, err := Root(items)
+		require.NoError(t, err)
+		valid := NewProofDocument("", items[1], proof)
+		require.True(t, valid.Verify(root))
+
+		itemHash := valid
+		itemHash.Item.Hash = strings.ToUpper(valid.Item.Hash)
+		_, _, err = itemHash.Decode()
+		require.ErrorIs(t, err, ErrInvalidProof)
+		require.False(t, itemHash.Verify(root))
+
+		pathHash := valid
+		pathHash.Path = slices.Clone(valid.Path)
+		pathHash.Path[0] = strings.ToUpper(valid.Path[0])
+		_, _, err = pathHash.Decode()
+		require.ErrorIs(t, err, ErrInvalidProof)
+		require.False(t, pathHash.Verify(root))
+	})
 }
 
 // FuzzProofDocument feeds arbitrary JSON to a verifier. It must never panic, and
@@ -462,4 +512,35 @@ func FuzzProofDocument(f *testing.F) {
 		require.Equal(t, genuine.Index, proof.Index)
 		require.Equal(t, genuine.Size, proof.Size)
 	})
+}
+
+func TestNamesAreOpaque(t *testing.T) {
+	// The profile accepts any UTF-8 name and does not treat it as a path.
+	// Tightening this is a change of the profile, because it changes which
+	// roots are valid, so it must be a deliberate decision.
+	names := []string{"../escape", "dir/file", "a\x00b", "tab\tname", "..", "C:\\file"}
+
+	items := make([]Item, 0, len(names))
+	for _, name := range names {
+		items = append(items, NewItem(name, []byte(name)))
+	}
+
+	root, err := Root(items)
+	require.NoError(t, err)
+
+	manifest, err := NewManifest(items)
+	require.NoError(t, err)
+	entries, err := manifest.Entries()
+	require.NoError(t, err)
+	assert.Len(t, entries, len(names))
+
+	manifestRoot, err := manifest.Root()
+	require.NoError(t, err)
+	assert.Equal(t, root, manifestRoot)
+
+	for _, item := range items {
+		proof, err := Prove(items, item.Name)
+		require.NoError(t, err)
+		assert.True(t, Verify(root, item, proof), item.Name)
+	}
 }

@@ -108,7 +108,7 @@ func TestNTPChecker(t *testing.T) {
 		require.Eventually(t, func() bool {
 			_, err := td.checker.ClockOffset()
 
-			return err != nil
+			return errors.Is(err, QueryError{})
 		}, 5*time.Second, 100*time.Millisecond)
 
 		offset, err := td.checker.ClockOffset()
@@ -131,7 +131,7 @@ func TestNTPChecker(t *testing.T) {
 		require.Eventually(t, func() bool {
 			_, err := td.checker.ClockOffset()
 
-			return err != nil
+			return errors.Is(err, QueryError{})
 		}, 5*time.Second, 100*time.Millisecond)
 
 		offset, err := td.checker.ClockOffset()

@@ -3,8 +3,10 @@ package util
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -28,7 +30,9 @@ func TestWriteFile(t *testing.T) {
 func TestEmptyPath(t *testing.T) {
 	p := TempDirPath()
 	assert.Equal(t, p, MakeAbs(p))
-	assert.True(t, IsDirEmpty(p))
+	empty, err := IsDirEmpty(p)
+	require.NoError(t, err)
+	assert.True(t, empty)
 
 	f := TempFilePath()
 	d := []byte("pactus")
@@ -42,7 +46,9 @@ func TestAbsPath(t *testing.T) {
 	abs := MakeAbs(".")
 	assert.True(t, IsAbsPath(abs))
 	assert.False(t, IsAbsPath("abs"))
-	assert.False(t, IsDirEmpty(abs))
+	empty, err := IsDirEmpty(abs)
+	require.NoError(t, err)
+	assert.False(t, empty)
 	assert.False(t, IsDirNotExistsOrEmpty(abs))
 }
 
@@ -50,7 +56,9 @@ func TestTempDir(t *testing.T) {
 	tmpDir := TempDirPath()
 
 	assert.True(t, IsAbsPath(tmpDir))
-	assert.True(t, IsDirEmpty(tmpDir))
+	empty, err := IsDirEmpty(tmpDir)
+	require.NoError(t, err)
+	assert.True(t, empty)
 	assert.True(t, PathExists(tmpDir))
 	assert.True(t, IsDirNotExistsOrEmpty(tmpDir))
 }
@@ -59,19 +67,40 @@ func TestTempFile(t *testing.T) {
 	tmpFile := TempFilePath()
 
 	assert.True(t, IsAbsPath(tmpFile))
-	t.Run("Should panic because it doesn't exist", func(t *testing.T) {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Error("The code did not panic")
-			}
-		}()
-		IsDirEmpty(tmpFile)
+	t.Run("Should fail because it doesn't exist", func(t *testing.T) {
+		_, err := IsDirEmpty(tmpFile)
+		require.ErrorIs(t, err, fs.ErrNotExist)
 	})
 	assert.False(t, PathExists(tmpFile))
 	assert.True(t, IsDirNotExistsOrEmpty(tmpFile))
 	require.NoError(t, Mkdir(tmpFile))
 	assert.True(t, IsDirNotExistsOrEmpty(tmpFile))
-	assert.True(t, IsDirEmpty(tmpFile)) // no panic now
+	empty, err := IsDirEmpty(tmpFile)
+	require.NoError(t, err)
+	assert.True(t, empty)
+}
+
+func TestMakeTempDirFailure(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("the temporary directory is not taken from TMPDIR on Windows")
+	}
+
+	t.Setenv("TMPDIR", filepath.Join(TempDirPath(), "missing"))
+
+	dir, err := MakeTempDir()
+	require.Error(t, err)
+	assert.Empty(t, dir)
+}
+
+func TestMakeAbsWithoutWorkingDir(t *testing.T) {
+	getwd := func() (string, error) { return "", errors.New("no working directory") }
+
+	assert.NotPanics(t, func() {
+		assert.Equal(t, filepath.Join("a", "b"), makeAbs("a/../a/b", getwd))
+	})
+
+	abs := TempDirPath()
+	assert.Equal(t, abs, makeAbs(abs, getwd))
 }
 
 func isRoot() bool {

@@ -18,6 +18,20 @@
 // is ever duplicated, and leaves and nodes cannot be confused, so two different
 // item lists never share a root, no inner node can pass for a file, and a proof
 // cannot claim another number of files.
+//
+// The root of a single file and the root of a set of files are built in
+// different ways, and nothing in a root tells which one it is: a file of the
+// right shape (0x02, a count and a tree root) has the same root as a set. A
+// verifier must know whether an anchor commits to a single file or to a
+// manifest, and must not guess it from the root.
+//
+// Hashes in a manifest or a proof document are lower-case hex, so a document
+// has one form only.
+//
+// An item name is an opaque, non-empty UTF-8 string of at most MaxNameLen bytes.
+// The profile does not treat it as a path: "/", ".." and control characters are
+// accepted and part of the name. A client that writes files from a manifest or a
+// proof document must check every name itself before using it as a path.
 package anchorprofile
 
 import (
@@ -61,6 +75,7 @@ var (
 	ErrDuplicateName = errors.New("duplicate item name")
 
 	// ErrInvalidName is returned when a name is empty, too long or not valid UTF-8.
+	// Names are not checked as paths, see the package documentation.
 	ErrInvalidName = errors.New("invalid item name")
 
 	// ErrItemNotFound is returned when no item has the requested name.
@@ -73,7 +88,8 @@ var (
 	ErrInvalidProof = errors.New("invalid proof document")
 )
 
-// BlobRoot returns the root hash that commits to a single file.
+// BlobRoot returns the root hash that commits to a single file. A verifier must
+// know that the anchor is a single file, see the package documentation.
 func BlobRoot(content []byte) hash.Hash {
 	return hash.CalcHash(content)
 }
@@ -142,6 +158,20 @@ func sortedLeaves(items []Item) ([]Item, []hash.Hash, error) {
 	}
 
 	return sorted, leaves, nil
+}
+
+// parseHash decodes a hex digest and refuses any form other than lower-case,
+// so two documents with the same content can't differ in their bytes.
+func parseHash(str string) (hash.Hash, error) {
+	digest, err := hash.FromString(str)
+	if err != nil {
+		return hash.Hash{}, err
+	}
+	if digest.String() != str {
+		return hash.Hash{}, errors.New("hash is not in lower-case hex")
+	}
+
+	return digest, nil
 }
 
 func validName(name string) bool {
@@ -282,7 +312,7 @@ func NewManifest(items []Item) (*Manifest, error) {
 }
 
 // Entries returns the manifest items, checking the version, the algorithm, every
-// name and every hash. The items must be in strict name order, so a manifest has
+// name and every hash, which must be in lower-case hex. The items must be in strict name order, so a manifest has
 // one form only and a duplicate name is rejected.
 func (m *Manifest) Entries() ([]Item, error) {
 	if m.Version != ManifestVersion || m.Alg != ManifestAlg {
@@ -302,7 +332,7 @@ func (m *Manifest) Entries() ([]Item, error) {
 		case i > 0 && entry.Name < m.Items[i-1].Name:
 			return nil, fmt.Errorf("%w: %q is not in name order", ErrInvalidManifest, entry.Name)
 		}
-		digest, err := hash.FromString(entry.Hash)
+		digest, err := parseHash(entry.Hash)
 		if err != nil {
 			return nil, fmt.Errorf("%w: item %q: %w", ErrInvalidManifest, entry.Name, err)
 		}
@@ -355,26 +385,26 @@ func NewProofDocument(address string, item Item, proof Proof) ProofDocument {
 }
 
 // Decode returns the item and the proof, checking the version, the algorithm,
-// the name, every hash, the index range and the size limit.
+// the name, every hash (lower-case hex), the index range and the size limit.
 func (d *ProofDocument) Decode() (Item, Proof, error) {
 	switch {
 	case d.Version != ManifestVersion || d.Alg != ManifestAlg:
 		return Item{}, Proof{}, fmt.Errorf("%w: version %d, algorithm %q", ErrInvalidProof, d.Version, d.Alg)
 	case !validName(d.Item.Name):
 		return Item{}, Proof{}, fmt.Errorf("%w: item name %q", ErrInvalidProof, d.Item.Name)
-	case d.Size < 1 || d.Size > MaxProofSize || d.Index < 0 || d.Index >= d.Size:
+	case d.Size < 1 || uint64(d.Size) > MaxProofSize || d.Index < 0 || d.Index >= d.Size:
 		return Item{}, Proof{}, fmt.Errorf("%w: index %d of %d items", ErrInvalidProof, d.Index, d.Size)
 	case len(d.Path) > maxPathLen:
 		return Item{}, Proof{}, fmt.Errorf("%w: path of %d hashes", ErrInvalidProof, len(d.Path))
 	}
 
-	digest, err := hash.FromString(d.Item.Hash)
+	digest, err := parseHash(d.Item.Hash)
 	if err != nil {
 		return Item{}, Proof{}, fmt.Errorf("%w: item hash: %w", ErrInvalidProof, err)
 	}
 	path := make([]hash.Hash, 0, len(d.Path))
 	for i, sibling := range d.Path {
-		node, err := hash.FromString(sibling)
+		node, err := parseHash(sibling)
 		if err != nil {
 			return Item{}, Proof{}, fmt.Errorf("%w: path[%d]: %w", ErrInvalidProof, i, err)
 		}

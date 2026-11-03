@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,13 +15,20 @@ func IsAbsPath(path string) bool {
 	return filepath.IsAbs(path)
 }
 
+// MakeAbs returns the absolute form of path. If the working directory can't be
+// determined, the cleaned relative path is returned, so the error shows up where
+// the path is used instead of aborting the process here.
 func MakeAbs(path string) string {
+	return makeAbs(path, os.Getwd)
+}
+
+func makeAbs(path string, getwd func() (string, error)) string {
 	if IsAbsPath(path) {
 		return path
 	}
-	wd, err := os.Getwd()
+	wd, err := getwd()
 	if err != nil {
-		panic(err)
+		return filepath.Clean(path)
 	}
 
 	return filepath.Clean(filepath.Join(wd, path))
@@ -69,8 +77,16 @@ func PathExists(path string) bool {
 	return err == nil
 }
 
+// MakeTempDir creates a new temporary directory and returns its path.
+func MakeTempDir() (string, error) {
+	return os.MkdirTemp("", "pactus*")
+}
+
+// TempDirPath creates a new temporary directory and returns its path.
+// It panics if the directory can't be created, so it is meant for tests;
+// other code should use MakeTempDir.
 func TempDirPath() string {
-	path, err := os.MkdirTemp("", "pactus*")
+	path, err := MakeTempDir()
 	if err != nil {
 		panic(err)
 	}
@@ -83,10 +99,27 @@ func TempFilePath() string {
 }
 
 // IsDirEmpty checks if a directory is empty.
-func IsDirEmpty(path string) bool {
+// It returns an error if the directory can't be read, for example when it doesn't exist.
+func IsDirEmpty(path string) (bool, error) {
+	return dirEmpty(path)
+}
+
+// IsDirNotExistsOrEmpty checks if the path exists and, if so, whether the directory is empty.
+// A path that can't be inspected, for example because of its permissions, is not reported as missing.
+func IsDirNotExistsOrEmpty(path string) bool {
+	if _, err := os.Stat(path); err != nil {
+		return errors.Is(err, fs.ErrNotExist)
+	}
+
+	empty, err := dirEmpty(path)
+
+	return err == nil && empty
+}
+
+func dirEmpty(path string) (bool, error) {
 	file, err := os.Open(path)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 	defer func() {
 		_ = file.Close()
@@ -96,41 +129,42 @@ func IsDirEmpty(path string) bool {
 	_, err = file.Readdir(1)
 
 	// and if the file is EOF... well, the dir is empty.
-	return errors.Is(err, io.EOF)
+	return errors.Is(err, io.EOF), nil
 }
 
-// IsDirNotExistsOrEmpty checks if the path exists and, if so, whether the directory is empty.
-func IsDirNotExistsOrEmpty(path string) bool {
-	if !PathExists(path) {
-		return true
+// IsValidDirPath checks if a directory exists, or could be created, and is writable.
+// It doesn't create anything: a missing directory is checked through its closest existing parent.
+func IsValidDirPath(path string) bool {
+	if strings.ContainsRune(path, 0) {
+		return false
 	}
 
-	return IsDirEmpty(path)
-}
-
-func IsValidDirPath(path string) bool {
-	fi, err := os.Stat(path)
-	if err == nil {
-		if fi.IsDir() {
-			// A temporary file with a unique name checks that the directory is writable,
-			// without overwriting or removing the files of the user.
-			file, err := os.CreateTemp(path, ".write-check-*")
-			if err != nil {
-				return false
-			}
-			_ = file.Close()
-			_ = os.Remove(file.Name())
-
-			return true
+	for current := path; ; {
+		fi, err := os.Stat(current)
+		if err == nil {
+			return fi.IsDir() && isWritableDir(current)
+		}
+		if !errors.Is(err, fs.ErrNotExist) {
+			return false
 		}
 
-		return false
+		parent := filepath.Dir(current)
+		if parent == current {
+			return false
+		}
+		current = parent
 	}
+}
 
-	if err := Mkdir(path); err != nil {
+// isWritableDir creates a temporary file with a unique name to check that the directory is writable,
+// without overwriting or removing the files of the user.
+func isWritableDir(path string) bool {
+	file, err := os.CreateTemp(path, ".write-check-*")
+	if err != nil {
 		return false
 	}
-	_ = os.Remove(path)
+	_ = file.Close()
+	_ = os.Remove(file.Name())
 
 	return true
 }
@@ -229,14 +263,24 @@ func MoveDirectory(srcDir, dstDir string) error {
 	err := os.Rename(srcDir, dstDir)
 	if err != nil {
 		// To prevent invalid cross-device link perform a manual copy
-		if err := CopyDirectory(srcDir, dstDir); err != nil {
-			return fmt.Errorf("failed to move directory from %s to %s: %w", srcDir, dstDir, err)
-		}
+		return moveByCopy(srcDir, dstDir)
+	}
 
-		// Remove source directory after successful copy
-		if err := os.RemoveAll(srcDir); err != nil {
-			return fmt.Errorf("failed to remove source directory %s: %w", srcDir, err)
-		}
+	return nil
+}
+
+// moveByCopy copies srcDir to dstDir and removes srcDir once the copy is complete.
+// A partial copy is removed, and srcDir is kept, when the copy fails.
+func moveByCopy(srcDir, dstDir string) error {
+	if err := CopyDirectory(srcDir, dstDir); err != nil {
+		_ = os.RemoveAll(dstDir)
+
+		return fmt.Errorf("failed to move directory from %s to %s: %w", srcDir, dstDir, err)
+	}
+
+	// Remove source directory after successful copy
+	if err := os.RemoveAll(srcDir); err != nil {
+		return fmt.Errorf("failed to remove source directory %s: %w", srcDir, err)
 	}
 
 	return nil
@@ -267,29 +311,47 @@ func CopyFile(src, dst string) error {
 	if err != nil {
 		return err
 	}
+	defer func() {
+		_ = input.Close()
+	}()
+
 	info, err := input.Stat()
 	if err != nil {
 		return err
 	}
 
-	defer func() {
-		_ = input.Close()
-	}()
-
 	out, err := os.Create(dst)
 	if err != nil {
 		return err
 	}
-	defer func() {
-		_ = out.Close()
-	}()
 
-	if _, err = io.Copy(out, input); err != nil {
+	if err := copyAndClose(out, input); err != nil {
 		return err
 	}
 
 	// Preserve file permissions
 	return os.Chmod(dst, info.Mode())
+}
+
+// copyAndClose copies the data to out, flushes it to the disk and closes it.
+// Errors reported while flushing or closing are returned like write errors.
+func copyAndClose(out interface {
+	io.WriteCloser
+	Sync() error
+}, input io.Reader,
+) error {
+	if _, err := io.Copy(out, input); err != nil {
+		_ = out.Close()
+
+		return err
+	}
+	if err := out.Sync(); err != nil {
+		_ = out.Close()
+
+		return err
+	}
+
+	return out.Close()
 }
 
 // SecureJoinPath mitigates the "Zip Slip" vulnerability by sanitizing archive file paths.

@@ -326,7 +326,7 @@ func TestClockOffset(t *testing.T) {
 		require.Eventually(t, func() bool {
 			_, err := td.sync.ClockOffset()
 
-			return err != nil
+			return errors.Is(err, ntp.QueryError{})
 		}, 5*time.Second, 20*time.Millisecond)
 		assert.True(t, td.sync.IsClockOutOfSync())
 	})
