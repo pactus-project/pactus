@@ -1,6 +1,7 @@
 package types_test
 
 import (
+	"math"
 	"testing"
 
 	"github.com/pactus-project/pactus/types"
@@ -53,4 +54,13 @@ func TestRoundSafeDecrease(t *testing.T) {
 	assert.Equal(t, types.Round(0), types.Round(10).SafeDecrease(10))
 	assert.Equal(t, types.Round(0), types.Round(10).SafeDecrease(11))
 	assert.Equal(t, types.Round(0), types.Round(0).SafeDecrease(1))
+}
+
+func TestRoundSafeHelpersAtTheLimits(t *testing.T) {
+	maxRound := types.Round(math.MaxInt16)
+
+	assert.Equal(t, maxRound, maxRound.SafeIncrease(1), "saturates instead of wrapping around")
+	assert.Equal(t, maxRound, types.Round(0).SafeIncrease(math.MaxUint32))
+	assert.Equal(t, types.Round(0), types.Round(-5).SafeDecrease(1), "a negative round gives 0")
+	assert.Equal(t, uint32(math.MaxInt16)+uint32(math.MaxInt16), maxRound.SafeSub(-maxRound))
 }

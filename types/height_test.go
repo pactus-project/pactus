@@ -1,6 +1,7 @@
 package types_test
 
 import (
+	"math"
 	"testing"
 
 	"github.com/pactus-project/pactus/types"
@@ -55,4 +56,11 @@ func TestHeightSafeDecrease(t *testing.T) {
 	assert.Equal(t, types.Height(0), types.Height(10).SafeDecrease(11))
 	assert.Equal(t, types.Height(0), types.Height(0).SafeDecrease(1))
 	assert.Equal(t, types.Height(0), types.Height(5).SafeDecrease(1<<32-1))
+}
+
+func TestHeightSafeIncreaseSaturates(t *testing.T) {
+	assert.Equal(t, types.Height(math.MaxUint32), types.Height(math.MaxUint32).SafeIncrease(2))
+	assert.Equal(t, types.Height(math.MaxUint32), types.Height(1).SafeIncrease(math.MaxUint32))
+	assert.Equal(t, types.Height(math.MaxUint32), types.Height(math.MaxUint32-1).SafeIncrease(1))
+	assert.Equal(t, types.Height(15), types.Height(10).SafeIncrease(5))
 }
