@@ -20,6 +20,19 @@ import (
 	"github.com/pactus-project/pactus/util/ratelimit"
 )
 
+// maxRateLimitedPeers bounds the number of peers that have their own rate limit.
+const maxRateLimitedPeers = 1024
+
+// newPeerRateLimit creates the limiter of a single peer on a topic. A peer may use only a
+// share of the node's budget, so one peer can't exhaust it for everybody else.
+func newPeerRateLimit(threshold int) *ratelimit.KeyedRateLimit[peer.ID] {
+	if threshold > 0 {
+		threshold = max(1, threshold/4)
+	}
+
+	return ratelimit.NewKeyedRateLimit[peer.ID](threshold, time.Second, maxRateLimitedPeers)
+}
+
 // Firewall check packets before passing them to sync module.
 type Firewall struct {
 	config               *Config
@@ -30,6 +43,9 @@ type Firewall struct {
 	blockRateLimit       *ratelimit.RateLimit
 	transactionRateLimit *ratelimit.RateLimit
 	consensusRateLimit   *ratelimit.RateLimit
+	peerBlockLimit       *ratelimit.KeyedRateLimit[peer.ID]
+	peerTransactionLimit *ratelimit.KeyedRateLimit[peer.ID]
+	peerConsensusLimit   *ratelimit.KeyedRateLimit[peer.ID]
 	logger               *logger.SubLogger
 }
 
@@ -47,6 +63,9 @@ func NewFirewall(ctx context.Context,
 	consensusRateLimit := ratelimit.NewRateLimit(conf.RateLimit.ConsensusTopic, time.Second)
 
 	return &Firewall{
+		peerBlockLimit:       newPeerRateLimit(conf.RateLimit.BlockTopic),
+		peerTransactionLimit: newPeerRateLimit(conf.RateLimit.TransactionTopic),
+		peerConsensusLimit:   newPeerRateLimit(conf.RateLimit.ConsensusTopic),
 		config:               conf,
 		network:              network,
 		peerSet:              peerSet,
@@ -254,15 +273,15 @@ func (f *Firewall) AllowBlockRequest(gossipMsg *network.GossipMessage) network.P
 		return network.Drop
 	}
 
-	if !f.blockRateLimit.AllowRequest() {
+	if !f.peerBlockLimit.AllowRequest(gossipMsg.From) || !f.blockRateLimit.AllowRequest() {
 		return network.DropButConsume
 	}
 
 	return network.Propagate
 }
 
-func (f *Firewall) AllowTransactionRequest(_ *network.GossipMessage) network.PropagationPolicy {
-	if !f.transactionRateLimit.AllowRequest() {
+func (f *Firewall) AllowTransactionRequest(gossipMsg *network.GossipMessage) network.PropagationPolicy {
+	if !f.peerTransactionLimit.AllowRequest(gossipMsg.From) || !f.transactionRateLimit.AllowRequest() {
 		return network.DropButConsume
 	}
 
@@ -274,7 +293,7 @@ func (f *Firewall) AllowConsensusRequest(gossipMsg *network.GossipMessage) netwo
 		return network.Drop
 	}
 
-	if !f.consensusRateLimit.AllowRequest() {
+	if !f.peerConsensusLimit.AllowRequest(gossipMsg.From) || !f.consensusRateLimit.AllowRequest() {
 		return network.DropButConsume
 	}
 

@@ -551,3 +551,28 @@ func TestExpiredMessageAtGenesis(t *testing.T) {
 	assert.False(t, td.firewall.isExpiredMessage(makeTestGossipMessage(0).Data))
 	assert.False(t, td.firewall.isExpiredMessage(makeTestGossipMessage(50).Data))
 }
+
+func TestOnePeerCannotExhaustTheRateLimit(t *testing.T) {
+	conf := DefaultConfig()
+	conf.RateLimit.TransactionTopic = 8 // 2 per peer.
+
+	td := setup(t, conf)
+	td.state.EXPECT().LastBlockHeight().Return(td.RandHeight()).AnyTimes()
+
+	flooder, honest := td.RandPeerID(), td.RandPeerID()
+
+	msg := makeTestGossipMessage(uint32(td.state.LastBlockHeight()))
+	msg.From = flooder
+	propagated := 0
+	for range 50 {
+		if td.firewall.AllowTransactionRequest(msg) == network.Propagate {
+			propagated++
+		}
+	}
+	assert.Equal(t, 2, propagated, "a peer is limited to its share")
+
+	msg.From = honest
+	assert.Equal(t, network.Propagate, td.firewall.AllowTransactionRequest(msg))
+	assert.Equal(t, network.Propagate, td.firewall.AllowTransactionRequest(msg))
+	assert.Equal(t, network.DropButConsume, td.firewall.AllowTransactionRequest(msg))
+}
