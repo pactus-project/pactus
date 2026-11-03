@@ -113,8 +113,12 @@ func (s *NotifeeService) Disconnected(_ lp2pnetwork.Network, conn lp2pnetwork.Co
 	pid := conn.RemotePeer()
 	s.logger.Info("disconnected from peer", "pid", pid)
 
-	s.peerMgr.SetPeerDisconnected(pid)
-	s.sendDisconnectEvent(pid)
+	// libp2p calls Disconnected once per *connection*; a peer can hold more
+	// than one at a time (simultaneous dial, TCP + QUIC), so only treat it
+	// as gone, and tell the rest of the node so, once its last one closes.
+	if s.peerMgr.SetPeerDisconnected(pid) {
+		s.sendDisconnectEvent(pid)
+	}
 }
 
 func (s *NotifeeService) Listen(_ lp2pnetwork.Network, ma multiaddr.Multiaddr) {
