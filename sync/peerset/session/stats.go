@@ -9,7 +9,7 @@ type Stats struct {
 	Uncompleted int
 }
 
-func (ss *Stats) String() string {
+func (ss Stats) String() string {
 	return fmt.Sprintf("total: %v, open: %v, completed: %v, uncompleted: %v",
 		ss.Total, ss.Open, ss.Completed, ss.Uncompleted)
 }

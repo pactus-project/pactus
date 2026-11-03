@@ -1,6 +1,7 @@
 package message
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/pactus-project/pactus/types/tx"
@@ -50,5 +51,7 @@ func TestTransactionsMessage(t *testing.T) {
 		require.NoError(t, msg.BasicCheck())
 		assert.Zero(t, msg.ConsensusHeight())
 		assert.Contains(t, msg.LogString(), trx.ID().LogString())
+		assert.Equal(t, fmt.Sprintf("{1: ⌘ [%s]}", trx.ID().LogString()), msg.LogString(),
+			"the log string is a count and the list of the identifiers")
 	})
 }

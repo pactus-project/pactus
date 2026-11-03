@@ -456,6 +456,8 @@ func (sync *synchronizer) downloadBlocks(from types.Height, onlyFullNodes bool) 
 }
 
 func (sync *synchronizer) sendBlockRequestToRandomPeer(from types.Height, count uint32, onlyFullNodes bool) bool {
+	requestedFrom := from
+
 	// Prevent downloading blocks that might be cached before
 	for sync.cache.HasBlockInCache(from) {
 		from++
@@ -463,7 +465,7 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from types.Height, count 
 
 		if count == 0 {
 			// we have blocks inside the cache
-			sync.logger.Debug("sending download request ignored", "from", from+1)
+			sync.logger.Debug("sending download request ignored", "from", requestedFrom)
 
 			return true
 		}
