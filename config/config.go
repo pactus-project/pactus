@@ -56,55 +56,6 @@ type Config struct {
 	ConsensusV2 *consensusv2.Config `toml:"-"`
 }
 
-// clone returns a copy of conf in which every nested config struct is copied by value,
-// so decoding into the copy never modifies conf. Consensus and ConsensusV2 are not
-// decoded from TOML and are shared as-is.
-func (conf *Config) clone() *Config {
-	clone := *conf
-
-	node := *conf.Node
-	clone.Node = &node
-
-	st := *conf.Store
-	clone.Store = &st
-
-	net := *conf.Network
-	clone.Network = &net
-
-	snc := *conf.Sync
-	fw := *conf.Sync.Firewall
-	snc.Firewall = &fw
-	clone.Sync = &snc
-
-	tp := *conf.TxPool
-	fee := *conf.TxPool.Fee
-	tp.Fee = &fee
-	clone.TxPool = &tp
-
-	lg := *conf.Logger
-	clone.Logger = &lg
-
-	grpcConf := *conf.GRPC
-	clone.GRPC = &grpcConf
-
-	jrpc := *conf.JSONRPC
-	clone.JSONRPC = &jrpc
-
-	httpConf := *conf.HTTP
-	clone.HTTP = &httpConf
-
-	htmlConf := *conf.HTML
-	clone.HTML = &htmlConf
-
-	zmqConf := *conf.ZeroMq
-	clone.ZeroMq = &zmqConf
-
-	wm := *conf.WalletManager
-	clone.WalletManager = &wm
-
-	return &clone
-}
-
 type BootstrapInfo struct {
 	Name    string `json:"name"`
 	Email   string `json:"email"`
@@ -362,8 +313,7 @@ func LoadFromFile(file string, strict bool, defaultConfig *Config) (*Config, err
 }
 
 func LoadFromToml(str string, strict bool, defaultConfig *Config) (*Config, error) {
-	// Decode into a copy so that a failed load leaves defaultConfig untouched.
-	conf := defaultConfig.clone()
+	conf := defaultConfig
 	buf := bytes.NewBufferString(str)
 	decoder := toml.NewDecoder(buf)
 	if strict {
