@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
 	"math/big"
 	"math/bits"
 	"net"
@@ -59,6 +60,10 @@ func Min[T constraints.Integer](a, b T) T {
 // RandInt16 returns a random int16 in between 0 and max.
 // If max set to zero or negative, the max will set to MaxInt16.
 func RandInt16(max int16) int16 {
+	if max <= 0 {
+		max = math.MaxInt16
+	}
+
 	return int16(RandUint64(uint64(max)))
 }
 
@@ -71,6 +76,10 @@ func RandUint16(max uint32) uint16 {
 // RandInt32 returns a random int32 in between 0 and max.
 // If max set to zero or negative, the max will set to MaxInt32.
 func RandInt32(max int32) int32 {
+	if max <= 0 {
+		max = math.MaxInt32
+	}
+
 	return int32(RandUint64(uint64(max)))
 }
 
@@ -83,6 +92,10 @@ func RandUint32(max uint32) uint32 {
 // RandInt64 returns a random int64 in between 0 and max.
 // If max set to zero or negative, the max will set to MaxInt64.
 func RandInt64(max int64) int64 {
+	if max <= 0 {
+		max = math.MaxInt64
+	}
+
 	return int64(RandUint64(uint64(max)))
 }
 
@@ -124,7 +137,8 @@ func OS2IP(x []byte) *big.Int {
 // I2OSP converts a nonnegative integer to an octet string of a specified length.
 // https://datatracker.ietf.org/doc/html/rfc8017#section-4.1
 func I2OSP(num *big.Int, len int) []byte {
-	if num.Sign() == -1 {
+	if num.Sign() == -1 || len < 0 || num.BitLen() > len*8 {
+		// The integer is negative or doesn't fit in the requested length.
 		return nil
 	}
 	buf := make([]byte, len)

@@ -3,6 +3,7 @@ package store
 import (
 	"bytes"
 	"errors"
+	"fmt"
 
 	lru "github.com/hashicorp/golang-lru/v2"
 	"github.com/pactus-project/pactus/crypto"
@@ -127,6 +128,11 @@ func (bs *blockStore) blockHeight(h hash.Hash) (types.Height, error) {
 		}
 
 		return 0, err
+	}
+
+	// The data of a corrupted database must not panic the node.
+	if len(data) != 4 {
+		return 0, fmt.Errorf("invalid height in the database: %d bytes", len(data))
 	}
 
 	return types.HeightFromBytesLE(data), nil
