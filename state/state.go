@@ -777,8 +777,14 @@ func (st *state) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 	return st.txPool.AppendTxAndBroadcast(trx)
 }
 
+// Params returns a copy of the parameters: the block version changes when a block is committed.
 func (st *state) Params() *param.Params {
-	return st.params
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
+	params := *st.params
+
+	return &params
 }
 
 func (st *state) CalculateFee(amt amount.Amount, payloadType payload.Type) amount.Amount {
