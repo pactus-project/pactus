@@ -24,4 +24,8 @@ type Committee interface {
 	Reader
 
 	Update(lastRound types.Round, joined []*validator.Validator)
+
+	// UpdateProtocolVersion sets the protocol version that a member of the committee announced.
+	// It does nothing if the validator is not in the committee.
+	UpdateProtocolVersion(addr crypto.Address, ver protocol.Version)
 }

@@ -333,6 +333,18 @@ func (mr *MockCommitteeMockRecorder) SupportProtocolVersion(version any) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SupportProtocolVersion", reflect.TypeOf((*MockCommittee)(nil).SupportProtocolVersion), version)
 }
 
+// UpdateProtocolVersion mocks base method.
+func (m *MockCommittee) UpdateProtocolVersion(addr crypto.Address, ver protocol.Version) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "UpdateProtocolVersion", addr, ver)
+}
+
+// UpdateProtocolVersion indicates an expected call of UpdateProtocolVersion.
+func (mr *MockCommitteeMockRecorder) UpdateProtocolVersion(addr, ver any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateProtocolVersion", reflect.TypeOf((*MockCommittee)(nil).UpdateProtocolVersion), addr, ver)
+}
+
 // Update mocks base method.
 func (m *MockCommittee) Update(lastRound types.Round, joined []*validator.Validator) {
 	m.ctrl.T.Helper()

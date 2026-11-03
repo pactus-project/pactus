@@ -113,6 +113,13 @@ func (c *committee) Update(lastRound types.Round, joined []*validator.Validator)
 	}
 }
 
+// UpdateProtocolVersion sets the protocol version that a member of the committee announced.
+func (c *committee) UpdateProtocolVersion(addr crypto.Address, ver protocol.Version) {
+	if val := c.find(addr); val != nil {
+		val.UpdateProtocolVersion(ver)
+	}
+}
+
 // Validators retrieves a list of all validators in the committee.
 // A cloned instance of each validator is returned to avoid modification of the original objects.
 func (c *committee) Validators() []*validator.Validator {

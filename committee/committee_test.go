@@ -422,3 +422,26 @@ func TestSupportProtocolVersion(t *testing.T) {
 	assert.True(t, supportVer1)
 	assert.False(t, supportVer2)
 }
+
+func TestUpdateProtocolVersionOfAMember(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	val1 := ts.GenerateTestValidator(testsuite.ValidatorWithStake(1000))
+	val2 := ts.GenerateTestValidator(testsuite.ValidatorWithStake(1000))
+	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2}, 2, val1.Address())
+	require.NoError(t, err)
+
+	require.False(t, cmt.SupportProtocolVersion(protocol.ProtocolVersion2))
+
+	cmt.UpdateProtocolVersion(val1.Address(), protocol.ProtocolVersion2)
+	assert.False(t, cmt.SupportProtocolVersion(protocol.ProtocolVersion2), "half of the power is not enough")
+
+	cmt.UpdateProtocolVersion(val2.Address(), protocol.ProtocolVersion2)
+	assert.True(t, cmt.SupportProtocolVersion(protocol.ProtocolVersion2))
+
+	// An address that is not in the committee is ignored.
+	require.NotPanics(t, func() {
+		cmt.UpdateProtocolVersion(ts.RandValAddress(), protocol.ProtocolVersion3)
+	})
+	assert.Zero(t, cmt.ProtocolVersions()[protocol.ProtocolVersion3])
+}

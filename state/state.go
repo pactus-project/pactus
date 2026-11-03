@@ -815,7 +815,13 @@ func (st *state) publishEvent(msg any) {
 }
 
 func (st *state) UpdateValidatorProtocolVersion(addr crypto.Address, ver protocol.Version) {
+	st.lk.Lock()
+	defer st.lk.Unlock()
+
 	st.store.UpdateValidatorProtocolVersion(addr, ver)
+
+	// The proposer decides on the version of the block with the committee in memory.
+	st.committee.UpdateProtocolVersion(addr, ver)
 }
 
 func (st *state) CommitteeInfo() *CommitteeInfo {
