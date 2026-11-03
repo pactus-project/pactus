@@ -94,7 +94,7 @@ func (vs *BlockVoteSet) AddVote(vote *vote.Vote) (bool, error) {
 
 	existingVote, ok := vs.allVotes[vote.Signer()]
 	if ok {
-		if existingVote.Hash() == vote.Hash() {
+		if sameSignedContent(existingVote, vote) {
 			// The vote is already added
 			return false, nil
 		}

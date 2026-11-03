@@ -117,7 +117,7 @@ func (vs *BinaryVoteSet) AddVote(vote *vote.Vote) (bool, error) {
 	roundVotes := vs.mustGetRoundVotes(vote.CPRound())
 	existingVote, ok := roundVotes.allVotes[vote.Signer()]
 	if ok {
-		if existingVote.Hash() == vote.Hash() {
+		if sameSignedContent(existingVote, vote) {
 			// The vote is already added
 			return false, nil
 		}
