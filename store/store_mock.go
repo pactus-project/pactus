@@ -123,11 +123,12 @@ func (mr *MockReaderMockRecorder) BlockHash(height any) *gomock.Call {
 }
 
 // BlockHeight mocks base method.
-func (m *MockReader) BlockHeight(h hash.Hash) types.Height {
+func (m *MockReader) BlockHeight(h hash.Hash) (types.Height, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "BlockHeight", h)
 	ret0, _ := ret[0].(types.Height)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // BlockHeight indicates an expected call of BlockHeight.
@@ -137,11 +138,12 @@ func (mr *MockReaderMockRecorder) BlockHeight(h any) *gomock.Call {
 }
 
 // HasAccount mocks base method.
-func (m *MockReader) HasAccount(arg0 crypto.Address) bool {
+func (m *MockReader) HasAccount(arg0 crypto.Address) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HasAccount", arg0)
 	ret0, _ := ret[0].(bool)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // HasAccount indicates an expected call of HasAccount.
@@ -486,11 +488,12 @@ func (mr *MockStoreMockRecorder) BlockHash(height any) *gomock.Call {
 }
 
 // BlockHeight mocks base method.
-func (m *MockStore) BlockHeight(h hash.Hash) types.Height {
+func (m *MockStore) BlockHeight(h hash.Hash) (types.Height, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "BlockHeight", h)
 	ret0, _ := ret[0].(types.Height)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // BlockHeight indicates an expected call of BlockHeight.
@@ -512,11 +515,12 @@ func (mr *MockStoreMockRecorder) Close() *gomock.Call {
 }
 
 // HasAccount mocks base method.
-func (m *MockStore) HasAccount(arg0 crypto.Address) bool {
+func (m *MockStore) HasAccount(arg0 crypto.Address) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HasAccount", arg0)
 	ret0, _ := ret[0].(bool)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // HasAccount indicates an expected call of HasAccount.

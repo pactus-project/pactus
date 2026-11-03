@@ -259,16 +259,20 @@ func TestClosedStoreDoesNotPanic(t *testing.T) {
 		require.Error(t, err)
 
 		assert.Equal(t, hash.UndefHash, td.store.BlockHash(1))
-		assert.Zero(t, td.store.BlockHeight(blk.BlockHash))
+		_, err = td.store.BlockHeight(blk.BlockHash)
+		require.Error(t, err)
+		assert.NotErrorIs(t, err, ErrNotFound)
 		assert.False(t, td.store.HasPublicKey(unknownAddr))
-		assert.False(t, td.store.HasAccount(unknownAddr))
+		has, err := td.store.HasAccount(unknownAddr)
+		require.Error(t, err)
+		assert.False(t, has)
 	})
 }
 
 func TestAccountStoreWithoutCache(t *testing.T) {
 	td := setup(t, nil)
 
-	assert.Panics(t, func() { newAccountStore(td.store.db, 0) })
+	assert.Panics(t, func() { _, _ = newAccountStore(td.store.db, 0) })
 }
 
 func TestErrorMessages(t *testing.T) {
@@ -321,4 +325,137 @@ func TestCorruptedLastInfo(t *testing.T) {
 		assert.Equal(t, types.Height(10), store.LastCertificate().Height())
 		store.Close()
 	})
+}
+
+func TestCheckPrunedMissingFirstBlock(t *testing.T) {
+	td := setup(t, nil)
+
+	require.NoError(t, td.store.db.Delete(blockKey(1), nil))
+
+	require.NoError(t, td.store.checkPruned())
+	assert.True(t, td.store.IsPruned())
+}
+
+func TestCheckPrunedKeepsFullNodeOnReadError(t *testing.T) {
+	td := setup(t, nil)
+
+	// A closed database makes every read fail with an error other than "not found".
+	require.NoError(t, td.store.db.Close())
+
+	require.Error(t, td.store.checkPruned())
+	assert.False(t, td.store.IsPruned())
+}
+
+func TestLoadAccountsFailsOnIteratorError(t *testing.T) {
+	td := setup(t, nil)
+
+	td.store.UpdateAccount(td.RandAccAddress(), account.NewAccount(1))
+	require.NoError(t, td.store.WriteBatch())
+
+	// An iterator over a closed database reports an error instead of items.
+	require.NoError(t, td.store.db.Close())
+
+	as, err := newAccountStore(td.store.db, 16)
+	require.Error(t, err)
+	assert.Nil(t, as)
+}
+
+func TestLoadValidatorsFailsOnIteratorError(t *testing.T) {
+	td := setup(t, nil)
+
+	pub, _ := td.RandBLSKeyPair()
+	td.store.UpdateValidator(validator.NewValidator(pub, 0))
+	require.NoError(t, td.store.WriteBatch())
+
+	require.NoError(t, td.store.db.Close())
+
+	vs, err := newValidatorStore(td.store.db)
+	require.Error(t, err)
+	assert.Nil(t, vs)
+}
+
+func TestCommittedTxCorruptedPublicKeyIsNotReportedAsAbsent(t *testing.T) {
+	td := setup(t, nil)
+
+	trx := td.GenerateTestTransferTx()
+	addr := trx.Payload().Signer()
+	trx.StripPublicKey()
+	data, err := trx.Bytes()
+	require.NoError(t, err)
+
+	cTx := &CommittedTx{store: td.store, Data: data}
+
+	// The public key is not indexed: it is absent.
+	_, err = cTx.ToTx()
+	require.ErrorIs(t, err, PublicKeyNotFoundError{Address: addr})
+
+	// The public key is indexed but can't be decoded: it is not absent.
+	require.NoError(t, td.store.db.Put(publicKeyKey(addr), []byte{1, 2, 3}, nil))
+
+	_, err = cTx.ToTx()
+	require.Error(t, err)
+	assert.NotErrorIs(t, err, PublicKeyNotFoundError{Address: addr})
+}
+
+func TestPruningHeightWithUnreadableLastCertificate(t *testing.T) {
+	td := setup(t, nil)
+
+	td.store.isPruned = true
+	require.NoError(t, td.store.db.Close())
+
+	require.NotPanics(t, func() {
+		assert.Zero(t, td.store.PruningHeight())
+	})
+}
+
+func TestHasAccountReportsReadError(t *testing.T) {
+	td := setup(t, nil)
+
+	addr := td.RandAccAddress()
+	td.store.UpdateAccount(addr, account.NewAccount(1))
+	require.NoError(t, td.store.WriteBatch())
+
+	has, err := td.store.HasAccount(addr)
+	require.NoError(t, err)
+	assert.True(t, has)
+
+	has, err = td.store.HasAccount(td.RandAccAddress())
+	require.NoError(t, err)
+	assert.False(t, has)
+
+	// A failed read must be reported, not mistaken for a missing account.
+	td.store.Close()
+
+	has, err = td.store.HasAccount(td.RandAccAddress())
+	require.Error(t, err)
+	assert.False(t, has)
+}
+
+func TestUpdateAccountDoesNotCountAfterReadError(t *testing.T) {
+	td := setup(t, nil)
+
+	total := td.store.TotalAccounts()
+	td.store.Close()
+
+	// The account lookup fails, so the store can't tell whether the account is
+	// new. It must not guess, as that would shift the numbers of future accounts.
+	assert.Panics(t, func() {
+		td.store.UpdateAccount(td.RandAccAddress(), account.NewAccount(total))
+	})
+	assert.Equal(t, total, td.store.TotalAccounts())
+}
+
+func TestPruneBlockReportsReadError(t *testing.T) {
+	td := setup(t, nil)
+
+	pruned, err := td.store.pruneBlock(td.RandHeight() + 1_000_000)
+	require.NoError(t, err)
+	assert.False(t, pruned, "a block that doesn't exist is not pruned")
+
+	// A failed read must not be mistaken for a block that doesn't exist.
+	td.store.Close()
+
+	pruned, err = td.store.pruneBlock(1)
+	require.Error(t, err)
+	assert.False(t, pruned)
 }

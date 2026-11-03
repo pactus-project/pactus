@@ -62,8 +62,16 @@ func tryGet(db *leveldb.DB, key []byte) ([]byte, error) {
 	return data, nil
 }
 
+// hasKey reports whether the key exists in the database. An I/O failure is
+// returned as an error instead of being read as "the key doesn't exist".
+func hasKey(db *leveldb.DB, key []byte) (bool, error) {
+	return db.Has(key, nil)
+}
+
+// tryHas is like hasKey, but it logs a failure and reports the key as absent.
+// Only use it where "absent" is the safe answer, because it hides read errors.
 func tryHas(db *leveldb.DB, key []byte) bool {
-	has, err := db.Has(key, nil)
+	has, err := hasKey(db, key)
 	if err != nil {
 		logger.Error("database `has` error", "error", err, "key", key)
 
@@ -96,14 +104,36 @@ func NewStore(conf *Config) (Store, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	blockStore, err := newBlockStore(db, conf.SeedCacheWindow, conf.PublicKeyCacheSize)
+	if err != nil {
+		_ = db.Close()
+
+		return nil, err
+	}
+
+	accountStore, err := newAccountStore(db, conf.AccountCacheSize)
+	if err != nil {
+		_ = db.Close()
+
+		return nil, err
+	}
+
+	validatorStore, err := newValidatorStore(db)
+	if err != nil {
+		_ = db.Close()
+
+		return nil, err
+	}
+
 	store := &store{
 		config:         conf,
 		db:             db,
 		batch:          new(leveldb.Batch),
-		blockStore:     newBlockStore(db, conf.SeedCacheWindow, conf.PublicKeyCacheSize),
+		blockStore:     blockStore,
 		txStore:        newTxStore(db, conf.TxCacheWindow),
-		accountStore:   newAccountStore(db, conf.AccountCacheSize),
-		validatorStore: newValidatorStore(db),
+		accountStore:   accountStore,
+		validatorStore: validatorStore,
 		isPruned:       false,
 	}
 
@@ -119,9 +149,10 @@ func NewStore(conf *Config) (Store, error) {
 	}
 
 	// Check if the node is pruned by checking genesis block.
-	cBlkOne, _ := store.block(1)
-	if cBlkOne == nil {
-		store.isPruned = true
+	if err := store.checkPruned(); err != nil {
+		_ = db.Close()
+
+		return nil, fmt.Errorf("unable to read the first block: %w", err)
 	}
 
 	currentHeight := lastCert.Height()
@@ -155,6 +186,24 @@ func NewStore(conf *Config) (Store, error) {
 	}
 
 	return store, nil
+}
+
+// checkPruned marks the store as pruned when the first block is missing.
+// Any other failure to read the block is returned, because it doesn't prove
+// that the block has been pruned.
+func (s *store) checkPruned() error {
+	_, err := s.block(1)
+	if err != nil {
+		if errors.Is(err, leveldb.ErrNotFound) {
+			s.isPruned = true
+
+			return nil
+		}
+
+		return err
+	}
+
+	return nil
 }
 
 func (s *store) Close() {
@@ -230,7 +279,7 @@ func (s *store) block(height types.Height) (*CommittedBlock, error) {
 	}, nil
 }
 
-func (s *store) BlockHeight(h hash.Hash) types.Height {
+func (s *store) BlockHeight(h hash.Hash) (types.Height, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -312,7 +361,7 @@ func (s *store) RecentTransaction(txID tx.ID) bool {
 	return s.txStore.recentTransaction(txID)
 }
 
-func (s *store) HasAccount(addr crypto.Address) bool {
+func (s *store) HasAccount(addr crypto.Address) (bool, error) {
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 
@@ -517,6 +566,9 @@ func (s *store) PruningHeight() types.Height {
 
 	// TODO: it can be optimized (and safer?) by keeping the last block height in memory.
 	cert := s.lastCertificate()
+	if cert == nil {
+		return 0
+	}
 
 	return cert.Height().SafeDecrease(s.config.RetentionBlocks())
 }
@@ -566,7 +618,11 @@ func (s *store) Prune(callback func(pruned bool, pruningHeight types.Height) boo
 // indicate whether the block at the specified height existed and pruned,
 // or did not exist, along with any encountered errors.
 func (s *store) pruneBlock(blockHeight types.Height) (bool, error) {
-	if !s.blockStore.hasBlock(blockHeight) {
+	exists, err := s.blockStore.hasBlock(blockHeight)
+	if err != nil {
+		return false, err
+	}
+	if !exists {
 		return false, nil
 	}
 

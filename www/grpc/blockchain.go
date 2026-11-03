@@ -156,9 +156,13 @@ func (s *blockchainServer) GetBlockHeight(_ context.Context,
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid hash: %v", err)
 	}
-	height := s.state.BlockHeight(h)
-	if height == 0 {
-		return nil, status.Errorf(codes.NotFound, "block not found with this hash")
+	height, err := s.state.BlockHeight(h)
+	if err != nil {
+		if errors.Is(err, store.ErrNotFound) {
+			return nil, status.Errorf(codes.NotFound, "block not found with this hash")
+		}
+
+		return nil, status.Errorf(codes.Internal, "unable to read the block height: %v", err)
 	}
 
 	return &pactus.GetBlockHeightResponse{

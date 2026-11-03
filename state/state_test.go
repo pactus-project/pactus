@@ -831,7 +831,8 @@ func TestCommittedBlock(t *testing.T) {
 		require.Error(t, err)
 		assert.Nil(t, cBlkZero)
 		assert.Equal(t, hash.UndefHash, td.state.BlockHash(0))
-		assert.Equal(t, types.Height(0), td.state.BlockHeight(hash.UndefHash))
+		_, err = td.state.BlockHeight(hash.UndefHash)
+		require.ErrorIs(t, err, store.ErrNotFound)
 	})
 
 	t.Run("First block (Genesis)", func(t *testing.T) {

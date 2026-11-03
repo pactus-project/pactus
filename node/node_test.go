@@ -1,6 +1,10 @@
 package node
 
 import (
+	"context"
+	"fmt"
+	"net"
+	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -10,12 +14,15 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet"
+	wltmgr "github.com/pactus-project/pactus/wallet/manager"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -83,4 +90,281 @@ func TestRunningNode(t *testing.T) {
 	assert.NotEmpty(t, wallets)
 
 	node.Stop()
+}
+
+func TestNewNodeReleasesStoreOnError(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	pub, _ := ts.RandBLSKeyPair()
+	acc := account.NewAccount(0)
+	acc.AddToBalance(21 * 1e14)
+	val := validator.NewValidator(pub, 0)
+	gen := genesis.MakeGenesis(time.Now(),
+		map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc},
+		[]*validator.Validator{val}, genesis.DefaultGenesisParams())
+	conf := config.DefaultConfigForChain(genesis.Mainnet)
+	conf.Logger.Filename = util.TempFilePath()
+	conf.Store.Path = util.TempDirPath()
+	conf.Network.EnableRelay = false
+	// The network key can't be read, because its path is a directory.
+	conf.Network.NetworkKey = util.TempDirPath()
+	conf.Network.PeerStorePath = util.TempFilePath()
+	conf.WalletManager.WalletsDir = util.TempDirPath()
+
+	valKeys := []*bls.ValidatorKey{ts.RandValKey()}
+	rewardAddrs := []crypto.Address{ts.RandAccAddress()}
+
+	_, err := NewNode(t.Context(), gen, conf, valKeys, rewardAddrs)
+	require.Error(t, err)
+
+	// The store must be released, so it can be opened again.
+	str, err := store.NewStore(conf.Store)
+	require.NoError(t, err, "the store is still locked after NewNode has failed")
+	str.Close()
+}
+
+func TestStartStopsWaitingForGenesisOnCancel(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	pub, _ := ts.RandBLSKeyPair()
+	acc := account.NewAccount(0)
+	acc.AddToBalance(21 * 1e14)
+	val := validator.NewValidator(pub, 0)
+	gen := genesis.MakeGenesis(time.Now().Add(time.Hour),
+		map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc},
+		[]*validator.Validator{val}, genesis.DefaultGenesisParams())
+	conf := config.DefaultConfigForChain(genesis.Mainnet)
+	conf.Logger.Filename = util.TempFilePath()
+	conf.Store.Path = util.TempDirPath()
+	conf.Network.EnableRelay = false
+	conf.Network.NetworkKey = util.TempFilePath()
+	conf.Network.PeerStorePath = util.TempFilePath()
+	conf.WalletManager.WalletsDir = util.TempDirPath()
+
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+
+	valKeys := []*bls.ValidatorKey{ts.RandValKey()}
+	rewardAddrs := []crypto.Address{ts.RandAccAddress()}
+	node, err := NewNode(ctx, gen, conf, valKeys, rewardAddrs)
+	require.NoError(t, err)
+
+	done := make(chan error, 1)
+	go func() { done <- node.Start() }()
+
+	cancel()
+
+	select {
+	case err := <-done:
+		require.ErrorIs(t, err, context.Canceled)
+	case <-time.After(10 * time.Second):
+		t.Fatal("Start is still waiting for the genesis time after the context was canceled")
+	}
+}
+
+// freeTCPPort returns a TCP port on the loopback interface that is not in use.
+func freeTCPPort(t *testing.T) int {
+	t.Helper()
+
+	lc := net.ListenConfig{}
+	lis, err := lc.Listen(t.Context(), "tcp", "127.0.0.1:0")
+	require.NoError(t, err)
+	defer func() { _ = lis.Close() }()
+
+	tcpAddr, ok := lis.Addr().(*net.TCPAddr)
+	require.True(t, ok)
+
+	return tcpAddr.Port
+}
+
+func TestNewNodeReleasesNetworkOnError(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	pub, _ := ts.RandBLSKeyPair()
+	acc := account.NewAccount(0)
+	acc.AddToBalance(21 * 1e14)
+	val := validator.NewValidator(pub, 0)
+	gen := genesis.MakeGenesis(time.Now(),
+		map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc},
+		[]*validator.Validator{val}, genesis.DefaultGenesisParams())
+
+	netPort := freeTCPPort(t)
+	zmqPort := freeTCPPort(t)
+
+	conf := config.DefaultConfigForChain(genesis.Mainnet)
+	conf.Logger.Filename = util.TempFilePath()
+	conf.Store.Path = util.TempDirPath()
+	conf.Network.EnableRelay = false
+	conf.Network.ListenAddrStrings = []string{fmt.Sprintf("/ip4/127.0.0.1/tcp/%d", netPort)}
+	conf.Network.NetworkKey = util.TempFilePath()
+	conf.Network.PeerStorePath = util.TempFilePath()
+	conf.ZeroMq.ZmqPubBlockInfo = fmt.Sprintf("tcp://127.0.0.1:%d", zmqPort)
+
+	// The wallet manager is the last component to be created, and it can't
+	// work on a file.
+	walletsFile := util.TempFilePath()
+	require.NoError(t, os.WriteFile(walletsFile, []byte("not a directory"), 0o600))
+	conf.WalletManager.WalletsDir = walletsFile
+
+	valKeys := []*bls.ValidatorKey{ts.RandValKey()}
+	rewardAddrs := []crypto.Address{ts.RandAccAddress()}
+
+	_, err := NewNode(t.Context(), gen, conf, valKeys, rewardAddrs)
+	require.Error(t, err)
+
+	// The network and the ZeroMQ sockets must be released: nothing is
+	// listening on their ports anymore.
+	for _, port := range []int{netPort, zmqPort} {
+		lc := net.ListenConfig{}
+		lis, err := lc.Listen(t.Context(), "tcp", fmt.Sprintf("127.0.0.1:%d", port))
+		require.NoError(t, err, "port %d is still in use after NewNode has failed", port)
+		_ = lis.Close()
+	}
+}
+
+type closeHookState struct {
+	state.State
+
+	onClose func()
+}
+
+func (s *closeHookState) Close() {
+	s.onClose()
+	s.State.Close()
+}
+
+type stopHookWalletManager struct {
+	wltmgr.WalletManager
+
+	onStop func()
+}
+
+func (m *stopHookWalletManager) Stop() {
+	m.onStop()
+	m.WalletManager.Stop()
+}
+
+// loopbackAddr returns the loopback address with the port of the given listen address.
+func loopbackAddr(t *testing.T, listenAddr string) string {
+	t.Helper()
+
+	_, port, err := net.SplitHostPort(listenAddr)
+	require.NoError(t, err)
+
+	return net.JoinHostPort("127.0.0.1", port)
+}
+
+func TestStopShutsDownTheAPIBeforeClosingTheState(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	pub, _ := ts.RandBLSKeyPair()
+	acc := account.NewAccount(0)
+	acc.AddToBalance(21 * 1e14)
+	val := validator.NewValidator(pub, 0)
+	gen := genesis.MakeGenesis(time.Now(),
+		map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc},
+		[]*validator.Validator{val}, genesis.DefaultGenesisParams())
+	conf := config.DefaultConfigForChain(genesis.Mainnet)
+	conf.Logger.Filename = util.TempFilePath()
+	conf.GRPC.Enable = true
+	conf.GRPC.Listen = "127.0.0.1:0"
+	conf.JSONRPC.Enable = true
+	conf.JSONRPC.Listen = "127.0.0.1:0"
+	conf.Store.Path = util.TempDirPath()
+	conf.Network.EnableRelay = false
+	conf.Network.NetworkKey = util.TempFilePath()
+	conf.Network.PeerStorePath = util.TempFilePath()
+	conf.WalletManager.WalletsDir = util.TempDirPath()
+
+	valKeys := []*bls.ValidatorKey{ts.RandValKey()}
+	rewardAddrs := []crypto.Address{ts.RandAccAddress()}
+	node, err := NewNode(t.Context(), gen, conf, valKeys, rewardAddrs)
+	require.NoError(t, err)
+	require.NoError(t, node.Start())
+
+	dialer := net.Dialer{Timeout: time.Second}
+	servers := map[string]string{
+		"gRPC":     loopbackAddr(t, node.GRPC().Address()),
+		"JSON-RPC": loopbackAddr(t, node.jsonrpc.Address()),
+	}
+	for name, addr := range servers {
+		conn, err := dialer.DialContext(t.Context(), "tcp", addr)
+		require.NoError(t, err, "%s server is not running", name)
+		_ = conn.Close()
+	}
+
+	events := make([]string, 0)
+	stillServing := make([]string, 0)
+	node.walletMgr = &stopHookWalletManager{
+		WalletManager: node.walletMgr,
+		onStop:        func() { events = append(events, "wallet manager") },
+	}
+	node.state = &closeHookState{
+		State: node.state,
+		onClose: func() {
+			events = append(events, "state")
+			// Requests must not reach a state that is being closed.
+			for name, addr := range servers {
+				conn, err := dialer.DialContext(t.Context(), "tcp", addr)
+				if err == nil {
+					_ = conn.Close()
+					stillServing = append(stillServing, name)
+				}
+			}
+		},
+	}
+
+	node.Stop()
+
+	assert.Empty(t, stillServing, "these servers were still running when the state was closed")
+	assert.Equal(t, []string{"wallet manager", "state"}, events)
+}
+
+func TestNewNodeValidatesKeysAndRewardAddresses(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	pub, _ := ts.RandBLSKeyPair()
+	acc := account.NewAccount(0)
+	acc.AddToBalance(21 * 1e14)
+	val := validator.NewValidator(pub, 0)
+	gen := genesis.MakeGenesis(time.Now(),
+		map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc},
+		[]*validator.Validator{val}, genesis.DefaultGenesisParams())
+
+	tests := []struct {
+		name        string
+		valKeys     []*bls.ValidatorKey
+		rewardAddrs []crypto.Address
+	}{
+		{"no validator key", nil, nil},
+		{"no reward address", []*bls.ValidatorKey{ts.RandValKey()}, nil},
+		{
+			"missing reward address",
+			[]*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()},
+			[]crypto.Address{ts.RandAccAddress()},
+		},
+		{
+			"too many reward addresses",
+			[]*bls.ValidatorKey{ts.RandValKey()},
+			[]crypto.Address{ts.RandAccAddress(), ts.RandAccAddress()},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			conf := config.DefaultConfigForChain(genesis.Mainnet)
+			conf.Logger.Filename = util.TempFilePath()
+			conf.Store.Path = util.TempDirPath()
+			conf.Network.EnableRelay = false
+			conf.Network.NetworkKey = util.TempFilePath()
+			conf.Network.PeerStorePath = util.TempFilePath()
+			conf.WalletManager.WalletsDir = util.TempDirPath()
+
+			var err error
+			require.NotPanics(t, func() {
+				_, err = NewNode(t.Context(), gen, conf, tt.valKeys, tt.rewardAddrs)
+			})
+			require.Error(t, err)
+		})
+	}
 }

@@ -38,7 +38,9 @@ func TestAccountCounter(t *testing.T) {
 
 		assert.Equal(t, acc1.Hash(), acc.Hash())
 		assert.Equal(t, int32(1), td.store.TotalAccounts())
-		assert.True(t, td.store.HasAccount(addr))
+		has, err := td.store.HasAccount(addr)
+		require.NoError(t, err)
+		assert.True(t, has)
 	})
 }
 
@@ -81,8 +83,9 @@ func TestAccountByAddress(t *testing.T) {
 	t.Run("Non existing account", func(t *testing.T) {
 		addr := td.RandAccAddress()
 		acc, err := td.store.Account(addr)
-		has := td.store.HasAccount(addr)
+		has, hasErr := td.store.HasAccount(addr)
 
+		require.NoError(t, hasErr)
 		assert.False(t, has)
 		require.Error(t, err)
 		assert.Nil(t, acc)

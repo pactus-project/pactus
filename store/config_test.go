@@ -36,10 +36,28 @@ func TestConfigBasicCheck(t *testing.T) {
 		{
 			name: "Invalid AccountCacheSize",
 			expectedErr: ConfigError{
-				Reason: "cache size set to zero",
+				Reason: "cache size must be positive",
 			},
 			updateFn: func(c *Config) {
 				c.AccountCacheSize = 0
+			},
+		},
+		{
+			name: "Negative AccountCacheSize",
+			expectedErr: ConfigError{
+				Reason: "cache size must be positive",
+			},
+			updateFn: func(c *Config) {
+				c.AccountCacheSize = -1
+			},
+		},
+		{
+			name: "Negative PublicKeyCacheSize",
+			expectedErr: ConfigError{
+				Reason: "cache size must be positive",
+			},
+			updateFn: func(c *Config) {
+				c.PublicKeyCacheSize = -1
 			},
 		},
 		{
@@ -49,6 +67,15 @@ func TestConfigBasicCheck(t *testing.T) {
 			},
 			updateFn: func(c *Config) {
 				c.RetentionDays = 1
+			},
+		},
+		{
+			name: "Too large RetentionDays",
+			expectedErr: ConfigError{
+				Reason: "retention days can't be more than 497102 days",
+			},
+			updateFn: func(c *Config) {
+				c.RetentionDays = 497103
 			},
 		},
 		{
@@ -71,6 +98,14 @@ func TestConfigBasicCheck(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestRetentionBlocksDoesNotOverflow(t *testing.T) {
+	conf := DefaultConfig()
+	conf.RetentionDays = maxRetentionDays
+	require.NoError(t, conf.BasicCheck())
+	assert.Equal(t, uint32(maxRetentionDays*blockPerDay), conf.RetentionBlocks())
+	assert.Greater(t, conf.RetentionBlocks(), uint32(maxRetentionDays-1)*blockPerDay)
 }
 
 func TestConfigStorePath(t *testing.T) {

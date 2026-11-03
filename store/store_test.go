@@ -83,11 +83,19 @@ func TestBlockHash(t *testing.T) {
 func TestBlockHeight(t *testing.T) {
 	td := setup(t, nil)
 
-	sb, _ := td.store.Block(1)
+	firstBlock, _ := td.store.Block(1)
 
-	assert.Equal(t, types.Height(0), td.store.BlockHeight(hash.UndefHash))
-	assert.Equal(t, types.Height(0), td.store.BlockHeight(td.RandHash()))
-	assert.Equal(t, types.Height(1), td.store.BlockHeight(sb.BlockHash))
+	height, err := td.store.BlockHeight(hash.UndefHash)
+	require.ErrorIs(t, err, ErrNotFound)
+	assert.Equal(t, types.Height(0), height)
+
+	height, err = td.store.BlockHeight(td.RandHash())
+	require.ErrorIs(t, err, ErrNotFound)
+	assert.Equal(t, types.Height(0), height)
+
+	height, err = td.store.BlockHeight(firstBlock.BlockHash)
+	require.NoError(t, err)
+	assert.Equal(t, types.Height(1), height)
 }
 
 func TestUnknownTransactionID(t *testing.T) {

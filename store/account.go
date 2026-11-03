@@ -3,6 +3,7 @@ package store
 import (
 	"cmp"
 	"errors"
+	"fmt"
 	"slices"
 
 	lru "github.com/hashicorp/golang-lru/v2"
@@ -30,7 +31,7 @@ type anchorEntry struct {
 
 func accountKey(addr crypto.Address) []byte { return append(accountPrefix, addr.Bytes()...) }
 
-func newAccountStore(db *leveldb.DB, cacheSize int) *accountStore {
+func newAccountStore(db *leveldb.DB, cacheSize int) (*accountStore, error) {
 	total := int32(0)
 	addrLruCache, err := lru.New[crypto.Address, *account.Account](cacheSize)
 	if err != nil {
@@ -59,7 +60,11 @@ func newAccountStore(db *leveldb.DB, cacheSize int) *accountStore {
 			anchors = append(anchors, anchorEntry{number: acc.Number(), addr: addr})
 		}
 	}
+	err = iter.Error()
 	iter.Release()
+	if err != nil {
+		return nil, fmt.Errorf("unable to load accounts: %w", err)
+	}
 
 	slices.SortFunc(anchors, func(left, right anchorEntry) int {
 		return cmp.Compare(left.number, right.number)
@@ -70,16 +75,15 @@ func newAccountStore(db *leveldb.DB, cacheSize int) *accountStore {
 		total:    total,
 		accCache: addrLruCache,
 		anchors:  anchors,
-	}
+	}, nil
 }
 
-func (as *accountStore) hasAccount(addr crypto.Address) bool {
-	ok := as.accCache.Contains(addr)
-	if !ok {
-		ok = tryHas(as.db, accountKey(addr))
+func (as *accountStore) hasAccount(addr crypto.Address) (bool, error) {
+	if as.accCache.Contains(addr) {
+		return true, nil
 	}
 
-	return ok
+	return hasKey(as.db, accountKey(addr))
 }
 
 func (as *accountStore) account(addr crypto.Address) (*account.Account, error) {
@@ -129,6 +133,10 @@ func (as *accountStore) iterateAccounts(consumer func(crypto.Address, *account.A
 			return
 		}
 	}
+
+	if err := iter.Error(); err != nil {
+		logger.Error("unable to iterate accounts", "error", err)
+	}
 }
 
 // This function takes ownership of the account pointer.
@@ -139,7 +147,13 @@ func (as *accountStore) updateAccount(batch *leveldb.Batch, addr crypto.Address,
 	if err != nil {
 		logger.Panic("unable to encode account", "error", err)
 	}
-	if !as.hasAccount(addr) {
+	// Counting a new account depends on the lookup, so a failed read must not
+	// be mistaken for a missing account: that would corrupt the account numbers.
+	exists, err := as.hasAccount(addr)
+	if err != nil {
+		logger.Panic("unable to check the account", "error", err)
+	}
+	if !exists {
 		as.total++
 	}
 	as.accCache.Add(addr, acc)

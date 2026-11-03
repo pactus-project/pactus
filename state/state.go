@@ -733,7 +733,7 @@ func (st *state) BlockHash(height types.Height) hash.Hash {
 	return st.store.BlockHash(height)
 }
 
-func (st *state) BlockHeight(h hash.Hash) types.Height {
+func (st *state) BlockHeight(h hash.Hash) (types.Height, error) {
 	return st.store.BlockHeight(h)
 }
 

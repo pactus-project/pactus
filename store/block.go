@@ -2,6 +2,7 @@ package store
 
 import (
 	"bytes"
+	"errors"
 
 	lru "github.com/hashicorp/golang-lru/v2"
 	"github.com/pactus-project/pactus/crypto"
@@ -37,10 +38,10 @@ type blockStore struct {
 	seedCacheWindow uint32
 }
 
-func newBlockStore(db *leveldb.DB, seedCacheWindow uint32, publicKeyCacheSize int) *blockStore {
+func newBlockStore(db *leveldb.DB, seedCacheWindow uint32, publicKeyCacheSize int) (*blockStore, error) {
 	pubKeyCache, err := lru.New[crypto.Address, crypto.PublicKey](publicKeyCacheSize)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
 	return &blockStore{
@@ -48,7 +49,7 @@ func newBlockStore(db *leveldb.DB, seedCacheWindow uint32, publicKeyCacheSize in
 		seedCache:       pairslice.New[types.Height, *sortition.VerifiableSeed](int(seedCacheWindow)),
 		pubKeyCache:     pubKeyCache,
 		seedCacheWindow: seedCacheWindow,
-	}
+	}, nil
 }
 
 func (bs *blockStore) saveBlock(batch *leveldb.Batch, height types.Height, blk *block.Block) []blockRegion {
@@ -115,13 +116,20 @@ func (bs *blockStore) block(height types.Height) ([]byte, error) {
 	return data, nil
 }
 
-func (bs *blockStore) blockHeight(h hash.Hash) types.Height {
+// blockHeight returns the height of the block with the given hash.
+// It returns ErrNotFound if there is no such block, and any other error
+// if the database couldn't be read.
+func (bs *blockStore) blockHeight(h hash.Hash) (types.Height, error) {
 	data, err := tryGet(bs.db, blockHashKey(h))
 	if err != nil {
-		return 0
+		if errors.Is(err, leveldb.ErrNotFound) {
+			return 0, ErrNotFound
+		}
+
+		return 0, err
 	}
 
-	return types.HeightFromBytesLE(data)
+	return types.HeightFromBytesLE(data), nil
 }
 
 func (bs *blockStore) sortitionSeed(blockHeight types.Height) *sortition.VerifiableSeed {
@@ -140,8 +148,8 @@ func (bs *blockStore) sortitionSeed(blockHeight types.Height) *sortition.Verifia
 	return sortitionSeed
 }
 
-func (bs *blockStore) hasBlock(height types.Height) bool {
-	return tryHas(bs.db, blockKey(height))
+func (bs *blockStore) hasBlock(height types.Height) (bool, error) {
+	return hasKey(bs.db, blockKey(height))
 }
 
 func (bs *blockStore) publicKey(addr crypto.Address) (crypto.PublicKey, error) {

@@ -83,6 +83,16 @@ func (*sandbox) shouldPanicForDuplicatedAddress() {
 	logger.Panic("duplicated address")
 }
 
+func (*sandbox) shouldPanicForStoreError(err error) {
+	//
+	// Why is it necessary to panic here?
+	//
+	// A failed lookup says nothing about the account. Treating it as a missing
+	// account would create a new one over the existing data.
+	//
+	logger.Panic("unable to read the account from the store", "error", err)
+}
+
 func (*sandbox) shouldPanicForUnknownAddress() {
 	//
 	// Why is it necessary to panic here?
@@ -118,7 +128,11 @@ func (sb *sandbox) MakeNewAccount(addr crypto.Address) *account.Account {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
-	if sb.store.HasAccount(addr) {
+	exists, err := sb.store.HasAccount(addr)
+	if err != nil {
+		sb.shouldPanicForStoreError(err)
+	}
+	if exists {
 		sb.shouldPanicForDuplicatedAddress()
 	}
 

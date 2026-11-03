@@ -1,6 +1,9 @@
 package store
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
@@ -11,7 +14,24 @@ import (
 	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
+	"github.com/syndtr/goleveldb/leveldb"
 )
+
+// publicKeyError converts the error of a public key lookup for the given address.
+// Only a missing key is reported as PublicKeyNotFoundError; any other failure
+// (for example a read or decoding error) is wrapped, so it is not mistaken for an absent key.
+func publicKeyError(addr crypto.Address, err error) error {
+	var notFoundErr PublicKeyNotFoundError
+	if errors.As(err, &notFoundErr) {
+		return err
+	}
+
+	if errors.Is(err, leveldb.ErrNotFound) || errors.Is(err, ErrNotFound) {
+		return PublicKeyNotFoundError{Address: addr}
+	}
+
+	return fmt.Errorf("unable to read the public key of %s: %w", addr, err)
+}
 
 // CommittedBlock is a lazy reference to a committed block stored in the database.
 // It carries raw serialized bytes and metadata, but does not parse or deserialize
@@ -38,9 +58,7 @@ func (s *CommittedBlock) ToBlock() (*block.Block, error) {
 		if trx.IsPublicKeyStriped() {
 			pub, err := s.store.PublicKey(trx.Payload().Signer())
 			if err != nil {
-				return nil, PublicKeyNotFoundError{
-					Address: trx.Payload().Signer(),
-				}
+				return nil, publicKeyError(trx.Payload().Signer(), err)
 			}
 			trx.SetPublicKey(pub)
 		}
@@ -67,9 +85,7 @@ func (s *CommittedTx) ToTx() (*tx.Tx, error) {
 	if trx.IsPublicKeyStriped() {
 		pub, err := s.store.PublicKey(trx.Payload().Signer())
 		if err != nil {
-			return nil, PublicKeyNotFoundError{
-				Address: trx.Payload().Signer(),
-			}
+			return nil, publicKeyError(trx.Payload().Signer(), err)
 		}
 		trx.SetPublicKey(pub)
 	}
@@ -79,14 +95,14 @@ func (s *CommittedTx) ToTx() (*tx.Tx, error) {
 
 type Reader interface {
 	Block(height types.Height) (*CommittedBlock, error)
-	BlockHeight(h hash.Hash) types.Height
+	BlockHeight(h hash.Hash) (types.Height, error)
 	BlockHash(height types.Height) hash.Hash
 	SortitionSeed(height types.Height) *sortition.VerifiableSeed
 	Transaction(txID tx.ID) (*CommittedTx, error)
 	RecentTransaction(txID tx.ID) bool
 	PublicKey(addr crypto.Address) (crypto.PublicKey, error)
 	HasPublicKey(addr crypto.Address) bool
-	HasAccount(crypto.Address) bool
+	HasAccount(crypto.Address) (bool, error)
 	Account(addr crypto.Address) (*account.Account, error)
 	TotalAccounts() int32
 	HasValidator(addr crypto.Address) bool

@@ -84,14 +84,14 @@ func NewFakeStore(ts *testsuite.TestSuite) *FakeStore {
 	).AnyTimes()
 
 	fake.EXPECT().BlockHeight(gomock.Any()).DoAndReturn(
-		func(h hash.Hash) types.Height {
+		func(h hash.Hash) (types.Height, error) {
 			for height, blk := range fake.FakeBlocks {
 				if blk.Hash() == h {
-					return height
+					return height, nil
 				}
 			}
 
-			return 0
+			return 0, ErrNotFound
 		},
 	).AnyTimes()
 
@@ -117,10 +117,10 @@ func NewFakeStore(ts *testsuite.TestSuite) *FakeStore {
 	).AnyTimes()
 
 	fake.EXPECT().HasAccount(gomock.Any()).DoAndReturn(
-		func(addr crypto.Address) bool {
+		func(addr crypto.Address) (bool, error) {
 			_, ok := fake.FakeAccounts[addr]
 
-			return ok
+			return ok, nil
 		},
 	).AnyTimes()
 

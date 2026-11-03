@@ -54,6 +54,15 @@ type Node struct {
 func NewNode(ctx context.Context, genDoc *genesis.Genesis, conf *config.Config,
 	valKeys []*bls.ValidatorKey, rewardAddrs []crypto.Address,
 ) (*Node, error) {
+	// Each validator key is paired with a reward address by its index.
+	if len(valKeys) == 0 {
+		return nil, errors.New("at least one validator key is required")
+	}
+	if len(rewardAddrs) != len(valKeys) {
+		return nil, errors.Errorf("expected %d reward addresses, but got %d",
+			len(valKeys), len(rewardAddrs))
+	}
+
 	// Initialize the logger
 	logger.InitGlobalLogger(ctx, conf.Logger)
 
@@ -66,10 +75,38 @@ func NewNode(ctx context.Context, genDoc *genesis.Genesis, conf *config.Config,
 	eventPipe := pipeline.New[any](ctx,
 		pipeline.WithName("Event Pipeline"), pipeline.WithBufferSize(512))
 
+	// Release what has been created so far if the node can't be created.
+	// Otherwise the database stays locked, the listening ports stay in use,
+	// and the same data directory or addresses can't be used again.
+	created := false
+	defer func() {
+		if !created {
+			eventPipe.Close()
+			networkPipe.Close()
+			broadcastPipe.Close()
+		}
+	}()
+
 	store, err := store.NewStore(conf.Store)
 	if err != nil {
 		return nil, err
 	}
+
+	var (
+		net          network.Network
+		zeromqServer *zmq.Server
+	)
+	defer func() {
+		if !created {
+			if zeromqServer != nil {
+				zeromqServer.Close()
+			}
+			if net != nil {
+				net.Stop()
+			}
+			store.Close()
+		}
+	}()
 
 	logger.Info("You are running a Pactus blockchain",
 		"version", version.NodeVersion().StringWithAlias(),
@@ -82,10 +119,13 @@ func NewNode(ctx context.Context, genDoc *genesis.Genesis, conf *config.Config,
 		return nil, err
 	}
 
-	net, err := network.NewNetwork(ctx, conf.Network, networkPipe)
+	// A failed NewNetwork returns a nil pointer inside a non-nil interface,
+	// so keep it out of net: the deferred cleanup must only stop a real network.
+	createdNet, err := network.NewNetwork(ctx, conf.Network, networkPipe)
 	if err != nil {
 		return nil, err
 	}
+	net = createdNet
 
 	consV1Mgr := consmgr.NewManagerV1(ctx, conf.Consensus, state, valKeys, rewardAddrs, broadcastPipe)
 	consV2Mgr := consmgr.NewManagerV2(ctx, conf.ConsensusV2, state, valKeys, rewardAddrs, broadcastPipe)
@@ -101,7 +141,7 @@ func NewNode(ctx context.Context, genDoc *genesis.Genesis, conf *config.Config,
 
 	enableHTTPAuth := (conf.GRPC.BasicAuth != "")
 
-	zeromqServer, err := zmq.New(ctx, conf.ZeroMq, eventPipe)
+	zeromqServer, err = zmq.New(ctx, conf.ZeroMq, eventPipe)
 	if err != nil {
 		return nil, err
 	}
@@ -142,6 +182,7 @@ func NewNode(ctx context.Context, genDoc *genesis.Genesis, conf *config.Config,
 		networkPipe:   networkPipe,
 		eventPipe:     eventPipe,
 	}
+	created = true
 
 	return node, nil
 }
@@ -152,7 +193,11 @@ func (n *Node) Start() error {
 	if genTime.After(now) {
 		logger.Info("💤 Genesis time is in the future. Sleeping until then...",
 			"duration", genTime.Sub(now), "genesis_hash", n.genesisDoc.Hash())
-		time.Sleep(genTime.Sub(now) - 1*time.Second)
+		select {
+		case <-time.After(genTime.Sub(now) - 1*time.Second):
+		case <-n.ctx.Done():
+			return n.ctx.Err()
+		}
 	}
 
 	if err := n.network.Start(); err != nil {
@@ -202,6 +247,15 @@ func (n *Node) Start() error {
 func (n *Node) Stop() {
 	logger.Info("stopping Node")
 
+	// Stop the components that serve requests first, in the reverse order of
+	// their start. Otherwise a request can reach the state and the store after
+	// they have been closed.
+	n.jsonrpc.StopServer()
+	n.http.StopServer()
+	n.html.StopServer()
+	n.grpc.StopServer()
+	n.walletMgr.Stop()
+
 	n.broadcastPipe.Close()
 	n.networkPipe.Close()
 	n.eventPipe.Close()
@@ -217,11 +271,6 @@ func (n *Node) Stop() {
 	n.sync.Stop()
 	n.state.Close()
 	n.store.Close()
-	n.walletMgr.Stop()
-	n.grpc.StopServer()
-	n.html.StopServer()
-	n.http.StopServer()
-	n.jsonrpc.StopServer()
 	n.zeromq.Close()
 }
 
