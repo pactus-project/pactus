@@ -85,10 +85,13 @@ func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) (*bundle.Bundle, 
 	}
 
 	if !bdl.Message.ShouldBroadcast() {
+		// `from` is libp2p's ReceivedFrom, the neighbour that relayed this
+		// message to us -- not its author (pubsub here is StrictNoSign +
+		// NoAuthor). The topic validators propagate without decoding, so an
+		// honest relay forwards whatever a misbehaving peer published; it
+		// must not be punished for a message it did not write.
 		f.logger.Warn("firewall: receive stream message as gossip message",
 			"error", err, "bundle", bdl, "from", from)
-
-		f.closeConnection(from)
 
 		return nil, ErrGossipMessage
 	}

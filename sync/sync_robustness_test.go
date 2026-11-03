@@ -207,14 +207,17 @@ func TestProcessNetworkMessages(t *testing.T) {
 		assert.Equal(t, int64(1), td.sync.peerSet.GetPeer(pid).Metric.TotalInvalid.Bundles)
 	})
 
-	t.Run("stream message received as gossip, the connection is closed", func(t *testing.T) {
+	t.Run("stream message received as gossip, the relaying peer is not punished", func(t *testing.T) {
 		pid := td.RandPeerID()
 		td.registerConnection(pid)
 		data := encodeBundle(t, message.NewBlocksRequestMessage(1, 5, 10))
 
 		td.sync.processGossipMessage(&network.GossipMessage{From: pid, Data: data})
 
-		assert.True(t, td.network.IsClosed(pid))
+		// `pid` here is only the peer that relayed the message to us
+		// (libp2p's ReceivedFrom), not necessarily its author: it must not
+		// be punished for a message it did not write.
+		assert.False(t, td.network.IsClosed(pid))
 		td.shouldNotPublishAnyMessage(t)
 	})
 

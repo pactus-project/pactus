@@ -223,7 +223,12 @@ func TestGossipMessage(t *testing.T) {
 		assert.False(t, td.network.IsClosed(td.unknownPeerID))
 		_, err := td.firewall.OpenGossipBundle(data, td.unknownPeerID)
 		require.ErrorIs(t, err, ErrGossipMessage)
-		assert.True(t, td.network.IsClosed(td.unknownPeerID))
+		// `unknownPeerID` here is only the peer that relayed the message to
+		// us (libp2p's ReceivedFrom), not necessarily its author: the topic
+		// validators propagate without decoding, so an honest relay
+		// forwards whatever a misbehaving peer published. It must not be
+		// punished for a message it did not write.
+		assert.False(t, td.network.IsClosed(td.unknownPeerID))
 	})
 
 	t.Run("Ok", func(t *testing.T) {
