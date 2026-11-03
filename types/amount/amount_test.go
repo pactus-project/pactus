@@ -97,6 +97,21 @@ func TestAmountCreation(t *testing.T) {
 			amount: math.Inf(1),
 			valid:  false,
 		},
+		{
+			name:   "too large for int64",
+			amount: 1e30,
+			valid:  false,
+		},
+		{
+			name:   "too small for int64",
+			amount: -1e30,
+			valid:  false,
+		},
+		{
+			name:   "just above int64 in nanoPAC",
+			amount: 1e10,
+			valid:  false,
+		},
 	}
 
 	for _, tt := range tests {
@@ -395,6 +410,13 @@ func TestFromString(t *testing.T) {
 		} else {
 			require.ErrorIs(t, err, tt.parsErr)
 		}
+	}
+}
+
+func TestFromStringOutOfRange(t *testing.T) {
+	for _, str := range []string{"1e30", "-1e30", "100000000000 PAC"} {
+		_, err := amount.FromString(str)
+		require.Error(t, err, str)
 	}
 }
 

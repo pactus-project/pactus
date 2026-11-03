@@ -898,5 +898,11 @@ func (st *state) CheckTransaction(trx *tx.Tx) error {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
+	// CheckAndExecute does not run the self-contained checks (signature,
+	// sizes, payload shape), so run them here first.
+	if err := trx.BasicCheck(); err != nil {
+		return err
+	}
+
 	return execution.CheckAndExecute(trx, st.concreteSandbox(), false)
 }
