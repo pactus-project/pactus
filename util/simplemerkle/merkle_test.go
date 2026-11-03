@@ -174,3 +174,22 @@ func TestHashMerkleBranches(t *testing.T) {
 	assert.NotEqual(t, *HashMerkleBranches(&left, &right), *HashMerkleBranches(&right, &left),
 		"the order of the branches matters")
 }
+
+func TestTreeIsNotAffectedByTheCallerSlice(t *testing.T) {
+	hashes := []hash.Hash{hash.CalcHash([]byte("a")), hash.CalcHash([]byte("b")), hash.CalcHash([]byte("c"))}
+	tree := NewTreeFromHashes(hashes)
+	root := tree.Root()
+
+	hashes[0] = hash.CalcHash([]byte("changed"))
+
+	assert.Equal(t, root, tree.Root())
+}
+
+// The root does not tell [A, B, C] from [A, B, C, C]: users must commit to the number of leaves.
+func TestRootIgnoresTheDuplicatedLastLeaf(t *testing.T) {
+	a, b, c := hash.CalcHash([]byte("a")), hash.CalcHash([]byte("b")), hash.CalcHash([]byte("c"))
+
+	assert.Equal(t,
+		NewTreeFromHashes([]hash.Hash{a, b, c}).Root(),
+		NewTreeFromHashes([]hash.Hash{a, b, c, c}).Root())
+}
