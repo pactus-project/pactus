@@ -155,6 +155,24 @@ func TestCompressedBundle(t *testing.T) {
 		assert.Equal(t, msg, bdl.Message)
 	})
 
+	t.Run("compressed message expanding beyond the limit is rejected", func(t *testing.T) {
+		compressed, err := util.CompressBuffer(msgData)
+		require.NoError(t, err)
+		data, err := cbor.Marshal(&_Bundle{
+			Flags:       BundleFlagCompressed,
+			MessageType: msg.Type(),
+			MessageData: compressed,
+		})
+		require.NoError(t, err)
+
+		bdl := new(Bundle)
+		_, err = bdl.DecodeWithLimit(bytes.NewReader(data), len(msgData)-1)
+		require.ErrorIs(t, err, util.ErrDecompressedSizeExceedsLimit)
+
+		_, err = bdl.DecodeWithLimit(bytes.NewReader(data), len(msgData))
+		require.NoError(t, err)
+	})
+
 	t.Run("message data is not compressed, but the flag is set", func(t *testing.T) {
 		data, err := cbor.Marshal(&_Bundle{
 			Flags:       BundleFlagCompressed,

@@ -83,6 +83,12 @@ func (b *Bundle) Encode() ([]byte, error) {
 }
 
 func (b *Bundle) Decode(r io.Reader) (int, error) {
+	return b.DecodeWithLimit(r, util.DefaultMaxDecompressedSize)
+}
+
+// DecodeWithLimit decodes a bundle. A compressed message is rejected if it
+// expands to more than maxMessageSize bytes.
+func (b *Bundle) DecodeWithLimit(r io.Reader, maxMessageSize int) (int, error) {
 	var bdl _Bundle
 	decOpts := cbor.DecOptions{}
 	decOpts.MaxArrayElements = 65_536 // default in 131072
@@ -102,7 +108,7 @@ func (b *Bundle) Decode(r io.Reader) (int, error) {
 	}
 
 	if util.IsFlagSet(bdl.Flags, BundleFlagCompressed) {
-		c, err := util.DecompressBuffer(bdl.MessageData)
+		c, err := util.DecompressBuffer(bdl.MessageData, util.WithMaxDecompressedSize(maxMessageSize))
 		if err != nil {
 			return bytesRead, err
 		}

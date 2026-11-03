@@ -59,8 +59,15 @@ func NewFirewall(ctx context.Context,
 	}, nil
 }
 
+// The largest message a bundle may expand to, per channel. They match the
+// default limits of the network layer: nothing legitimate is bigger once decompressed.
+const (
+	maxGossipBundleSize = 1 << 20 // 1 MiB
+	maxStreamBundleSize = 8 << 20 // 8 MiB
+)
+
 func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) (*bundle.Bundle, error) {
-	bdl, err := f.openBundle(bytes.NewReader(data), from)
+	bdl, err := f.openBundle(bytes.NewReader(data), from, maxGossipBundleSize)
 	if err != nil {
 		return bdl, err
 	}
@@ -104,7 +111,7 @@ func (f *Firewall) IsBannedAddress(remoteAddr string) bool {
 }
 
 func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) (*bundle.Bundle, error) {
-	bdl, err := f.openBundle(r, from)
+	bdl, err := f.openBundle(r, from, maxStreamBundleSize)
 	if err != nil {
 		f.logger.Debug("firewall: unable to open a stream bundle",
 			"error", err, "bundle", bdl, "from", from)
@@ -124,7 +131,7 @@ func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) (*bundle.Bundle, 
 	return bdl, nil
 }
 
-func (f *Firewall) openBundle(r io.Reader, from peer.ID) (*bundle.Bundle, error) {
+func (f *Firewall) openBundle(r io.Reader, from peer.ID, maxSize int) (*bundle.Bundle, error) {
 	f.peerSet.UpdateLastReceived(from)
 
 	peer := f.peerSet.GetPeer(from)
@@ -147,7 +154,7 @@ func (f *Firewall) openBundle(r io.Reader, from peer.ID) (*bundle.Bundle, error)
 		}
 	}
 
-	bdl, bytesRead, err := f.decodeBundle(r)
+	bdl, bytesRead, err := f.decodeBundle(r, maxSize)
 	if err != nil {
 		f.peerSet.UpdateInvalidMetric(from, int64(bytesRead))
 
@@ -165,9 +172,9 @@ func (f *Firewall) openBundle(r io.Reader, from peer.ID) (*bundle.Bundle, error)
 	return bdl, nil
 }
 
-func (*Firewall) decodeBundle(r io.Reader) (*bundle.Bundle, int, error) {
+func (*Firewall) decodeBundle(r io.Reader, maxSize int) (*bundle.Bundle, int, error) {
 	bdl := new(bundle.Bundle)
-	bytesRead, err := bdl.Decode(r)
+	bytesRead, err := bdl.DecodeWithLimit(r, maxSize)
 	if err != nil {
 		return nil, bytesRead, err
 	}
