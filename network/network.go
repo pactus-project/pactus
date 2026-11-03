@@ -5,6 +5,8 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -40,6 +42,7 @@ type network struct {
 	peerMgr     *peerMgr
 	connGater   *ConnectionGater
 	stream      *streamService
+	sender      *orderedSender
 	gossip      *gossipService
 	notifee     *NotifeeService
 	networkPipe pipeline.Pipeline[Event]
@@ -73,12 +76,46 @@ func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 		return nil, err
 	}
 	h := hex.EncodeToString(bs)
-	err = util.WriteFile(path, []byte(h))
+	err = writeFileAtomic(path, []byte(h))
 	if err != nil {
 		return nil, err
 	}
 
 	return key, nil
+}
+
+// writeFileAtomic writes the data to a temporary file in the same directory
+// and then renames it to path, so path never contains a partial content.
+func writeFileAtomic(path string, data []byte) error {
+	if err := util.Mkdir(filepath.Dir(path)); err != nil {
+		return err
+	}
+
+	tmp, err := os.CreateTemp(filepath.Dir(path), filepath.Base(path)+".tmp-*")
+	if err != nil {
+		return fmt.Errorf("failed to write to %s: %w", path, err)
+	}
+	// After a successful rename the temporary file no longer exists.
+	defer func() { _ = os.Remove(tmp.Name()) }()
+
+	if _, err := tmp.Write(data); err != nil {
+		_ = tmp.Close()
+
+		return fmt.Errorf("failed to write to %s: %w", path, err)
+	}
+	if err := tmp.Sync(); err != nil {
+		_ = tmp.Close()
+
+		return fmt.Errorf("failed to write to %s: %w", path, err)
+	}
+	if err := tmp.Close(); err != nil {
+		return fmt.Errorf("failed to write to %s: %w", path, err)
+	}
+	if err := os.Rename(tmp.Name(), path); err != nil {
+		return fmt.Errorf("failed to write to %s: %w", path, err)
+	}
+
+	return nil
 }
 
 func NewNetwork(ctx context.Context, conf *Config, networkPipe pipeline.Pipeline[Event]) (Network, error) {
@@ -152,40 +189,21 @@ func makeNetwork(ctx context.Context, conf *Config,
 		lp2p.Transport(lp2ptcp.NewTCPTransport),
 	)
 
-	if conf.EnableUDP {
-		log.Info("UDP is enabled")
-		opts = append(opts,
-			lp2p.Transport(lp2quic.NewTransport))
-	}
+	opts = append(opts, transportAndNATOptions(conf, log)...)
 
-	if conf.EnableNATService {
-		log.Info("Nat service enabled")
-		opts = append(
-			opts,
-			lp2p.EnableNATService(),
-		)
-	} else {
-		log.Info("AutoNATv2 enabled")
-		opts = append(
-			opts,
-			lp2p.EnableAutoNATv2(),
-		)
-	}
-
-	if conf.EnableUPnP {
-		log.Info("UPnP enabled")
-		opts = append(
-			opts,
-			lp2p.NATPortMap(),
-		)
-	}
 	// networkReady is a channel used to wait until the network is ready.
 	// This is primarily to avoid reading while writing.
 	networkReady := make(chan struct{})
 	defer close(networkReady)
 
+	// constructed is set before networkReady is closed, only if the network is created.
+	constructed := false
+
 	networkGetter := func() *network {
-		<-networkReady              // Closed when newNetwork is finished
+		<-networkReady // Closed when newNetwork is finished
+		if !constructed {
+			return nil
+		}
 		time.Sleep(1 * time.Second) // Adding a safety delay
 
 		return self
@@ -249,6 +267,12 @@ func makeNetwork(ctx context.Context, conf *Config,
 		return nil, LibP2PError{Err: err}
 	}
 
+	defer func() {
+		if !constructed {
+			self.releasePartial(host)
+		}
+	}()
+
 	self.ctx = ctx
 	self.config = conf
 	self.logger = log
@@ -264,14 +288,15 @@ func makeNetwork(ctx context.Context, conf *Config,
 	streamProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/stream/v1", conf.NetworkName))
 
 	if conf.EnableMdns {
+		if warning := mdnsWarning(conf); warning != "" {
+			self.logger.Warn(warning)
+		}
 		self.mdns = newMdnsService(ctx, self.host, self.logger)
 	}
 
-	self.peerMgr = newPeerMgr(ctx, host, conf, self.logger)
-	self.dht = newDHTService(ctx, host, conf, kadProtocolID, self.logger)
-	self.stream = newStreamService(ctx, host, conf, streamProtocolID, self.networkPipe, self.logger)
-	self.gossip = newGossipService(ctx, host, conf, self.networkPipe, self.logger)
-	self.notifee = newNotifeeService(ctx, host, self.networkPipe, self.peerMgr, streamProtocolID, self.logger)
+	if err := self.setupServices(host, kadProtocolID, streamProtocolID); err != nil {
+		return nil, err
+	}
 
 	self.logger.Info("network setup", "id", self.host.ID(),
 		"name", conf.NetworkName,
@@ -279,7 +304,81 @@ func makeNetwork(ctx context.Context, conf *Config,
 		"bootstrapper", conf.IsBootstrapper,
 		"maxConns", conf.MaxConns)
 
+	constructed = true
+
 	return self, nil
+}
+
+// transportAndNATOptions returns the libp2p options for the optional transports and NAT handling.
+func transportAndNATOptions(conf *Config, log *logger.SubLogger) []lp2p.Option {
+	opts := []lp2p.Option{}
+
+	if conf.EnableUDP {
+		log.Info("UDP is enabled")
+		opts = append(opts,
+			lp2p.Transport(lp2quic.NewTransport))
+	}
+
+	if conf.EnableNATService {
+		log.Info("Nat service enabled")
+		opts = append(
+			opts,
+			lp2p.EnableNATService(),
+		)
+	} else {
+		log.Info("AutoNATv2 enabled")
+		opts = append(
+			opts,
+			lp2p.EnableAutoNATv2(),
+		)
+	}
+
+	if conf.EnableUPnP {
+		log.Info("UPnP enabled")
+		opts = append(
+			opts,
+			lp2p.NATPortMap(),
+		)
+	}
+
+	return opts
+}
+
+// releasePartial releases what was created if the network can't be fully created.
+func (n *network) releasePartial(host lp2phost.Host) {
+	if n.notifee != nil {
+		n.notifee.Stop()
+	}
+	if n.dht != nil {
+		n.dht.Stop()
+	}
+	if err := host.Close(); err != nil {
+		n.logger.Error("unable to close the host", "error", err)
+	}
+}
+
+// setupServices creates the services of the network on top of the host.
+func (n *network) setupServices(host lp2phost.Host, kadProtocolID, streamProtocolID lp2pcore.ProtocolID) error {
+	var err error
+	ctx, conf := n.ctx, n.config
+
+	n.peerMgr = newPeerMgr(ctx, host, conf, n.logger)
+	n.dht, err = newDHTService(ctx, host, conf, kadProtocolID, n.logger)
+	if err != nil {
+		return LibP2PError{Err: err}
+	}
+	n.stream = newStreamService(ctx, host, conf, streamProtocolID, n.networkPipe, n.logger)
+	n.sender = newOrderedSender(ctx, n.sendStream, n.logger)
+	n.gossip, err = newGossipService(ctx, host, conf, n.networkPipe, n.logger)
+	if err != nil {
+		return LibP2PError{Err: err}
+	}
+	n.notifee, err = newNotifeeService(ctx, host, n.networkPipe, n.peerMgr, streamProtocolID, n.logger)
+	if err != nil {
+		return LibP2PError{Err: err}
+	}
+
+	return nil
 }
 
 func findRelayPeers(networkGetter func() *network) func(ctx context.Context,
@@ -330,10 +429,14 @@ func findRelayPeers(networkGetter func() *network) func(ctx context.Context,
 
 func (n *network) Start() error {
 	if err := n.dht.Start(); err != nil {
+		n.abortStart()
+
 		return LibP2PError{Err: err}
 	}
 	if n.mdns != nil {
 		if err := n.mdns.Start(); err != nil {
+			n.abortStart()
+
 			return LibP2PError{Err: err}
 		}
 	}
@@ -348,6 +451,15 @@ func (n *network) Start() error {
 	n.logger.Info("network started", "addr", n.host.Addrs(), "id", n.host.ID())
 
 	return nil
+}
+
+// abortStart releases the resources that are created when the network fails to start.
+func (n *network) abortStart() {
+	n.dht.Stop()
+
+	if err := n.host.Close(); err != nil {
+		n.logger.Error("unable to close the host", "error", err)
+	}
 }
 
 func (n *network) Stop() {
@@ -374,15 +486,19 @@ func (n *network) Protect(pid lp2pcore.PeerID, tag string) {
 	n.host.ConnManager().Protect(pid, tag)
 }
 
+// sendStream sends a message to the peer over a new stream and waits until it is written.
+func (n *network) sendStream(msg []byte, pid lp2ppeer.ID) error {
+	_, err := n.stream.SendTo(msg, pid)
+
+	return err
+}
+
 // SendTo sends a message to a specific peer identified by pid asynchronously.
-// It uses a goroutine to ensure that if sending is blocked, receiving messages won't be blocked.
+// The messages for the same peer are sent one after another in the order of the calls,
+// so a response that is split into several messages keeps its order. A slow peer only
+// delays its own messages, and sending never blocks the caller.
 func (n *network) SendTo(msg []byte, pid lp2pcore.PeerID) {
-	go func() {
-		_, err := n.stream.SendTo(msg, pid)
-		if err != nil {
-			n.logger.Warn("error on sending msg", "pid", pid, "error", err)
-		}
-	}()
+	n.sender.enqueue(msg, pid)
 }
 
 // Broadcast sends a message to all peers subscribed to a specific topic asynchronously.

@@ -79,6 +79,30 @@ func TestConfigBasicCheck(t *testing.T) {
 			},
 		},
 		{
+			name: "BootstrapAddrStrings without a transport address",
+			expectedErr: ConfigError{
+				Reason: "address is not valid: /p2p/12D3KooWQBpPV6NtZy1dvN2oF7dJdLoooRZfEmwtHiDUf42ArDjT " +
+					"has no transport address",
+			},
+			updateFn: func(c *Config) {
+				c.BootstrapAddrStrings = []string{
+					"/p2p/12D3KooWQBpPV6NtZy1dvN2oF7dJdLoooRZfEmwtHiDUf42ArDjT",
+				}
+			},
+		},
+		{
+			name: "DefaultBootstrapAddrStrings without a transport address",
+			expectedErr: ConfigError{
+				Reason: "address is not valid: /p2p/12D3KooWQBpPV6NtZy1dvN2oF7dJdLoooRZfEmwtHiDUf42ArDjT " +
+					"has no transport address",
+			},
+			updateFn: func(c *Config) {
+				c.DefaultBootstrapAddrStrings = []string{
+					"/p2p/12D3KooWQBpPV6NtZy1dvN2oF7dJdLoooRZfEmwtHiDUf42ArDjT",
+				}
+			},
+		},
+		{
 			name: "Low MaxConns",
 			expectedErr: ConfigError{
 				Reason: "maximum connection should be greater than 16",

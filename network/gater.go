@@ -54,7 +54,7 @@ func (g *ConnectionGater) onDialLimit() bool {
 		return false
 	}
 
-	return g.peerMgr.NumOutbound() > g.dialLimit
+	return g.peerMgr.NumOutbound() >= g.dialLimit
 }
 
 func (g *ConnectionGater) onAcceptLimit() bool {
@@ -62,7 +62,7 @@ func (g *ConnectionGater) onAcceptLimit() bool {
 		return false
 	}
 
-	return g.peerMgr.NumInbound() > g.acceptLimit
+	return g.peerMgr.NumInbound() >= g.acceptLimit
 }
 
 func (g *ConnectionGater) InterceptPeerDial(pid lp2ppeer.ID) bool {

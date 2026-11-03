@@ -75,10 +75,18 @@ func validateMultiAddr(addrs ...string) error {
 }
 
 func validateAddrInfo(addrs ...string) error {
-	_, err := MakeAddrInfos(addrs)
+	addrInfos, err := MakeAddrInfos(addrs)
 	if err != nil {
 		return ConfigError{
 			Reason: fmt.Sprintf("address is not valid: %s", err.Error()),
+		}
+	}
+
+	for i, addrInfo := range addrInfos {
+		if len(addrInfo.Addrs) == 0 {
+			return ConfigError{
+				Reason: fmt.Sprintf("address is not valid: %s has no transport address", addrs[i]),
+			}
 		}
 	}
 

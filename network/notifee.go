@@ -2,6 +2,7 @@ package network
 
 import (
 	"context"
+	"sync/atomic"
 
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2pevent "github.com/libp2p/go-libp2p/core/event"
@@ -22,13 +23,13 @@ type NotifeeService struct {
 	logger           *logger.SubLogger
 	streamProtocolID lp2pcore.ProtocolID
 	peerMgr          *peerMgr
-	reachability     lp2pnetwork.Reachability
+	reachability     atomic.Int32
 }
 
 func newNotifeeService(ctx context.Context, host lp2phost.Host, networkPipe pipeline.Pipeline[Event],
 	peerMgr *peerMgr,
 	protocolID lp2pcore.ProtocolID, log *logger.SubLogger,
-) *NotifeeService {
+) (*NotifeeService, error) {
 	events := []any{
 		new(lp2pevent.EvtLocalReachabilityChanged),
 		new(lp2pevent.EvtPeerIdentificationCompleted),
@@ -40,7 +41,7 @@ func newNotifeeService(ctx context.Context, host lp2phost.Host, networkPipe pipe
 	}
 	eventSub, err := host.EventBus().Subscribe(events, subOptions...)
 	if err != nil {
-		logger.Error("failed to register for libp2p events")
+		return nil, err
 	}
 	notifee := &NotifeeService{
 		ctx:              ctx,
@@ -50,21 +51,25 @@ func newNotifeeService(ctx context.Context, host lp2phost.Host, networkPipe pipe
 		streamProtocolID: protocolID,
 		peerMgr:          peerMgr,
 		logger:           log,
-		reachability:     lp2pnetwork.ReachabilityUnknown,
 	}
 
-	return notifee
+	return notifee, nil
 }
 
 func (s *NotifeeService) Start() {
 	go func() {
 		for {
 			select {
-			case evt := <-s.lp2pEventSub.Out():
+			case evt, ok := <-s.lp2pEventSub.Out():
+				if !ok {
+					// The subscription is closed.
+					return
+				}
+
 				switch evt := evt.(type) {
 				case lp2pevent.EvtLocalReachabilityChanged:
 					s.logger.Info("reachability changed", "reachability", evt.Reachability)
-					s.reachability = evt.Reachability
+					s.reachability.Store(int32(evt.Reachability))
 
 				case lp2pevent.EvtPeerIdentificationCompleted:
 					s.logger.Debug("identification completed", "pid", evt.Peer)
@@ -93,7 +98,7 @@ func (s *NotifeeService) Stop() {
 }
 
 func (s *NotifeeService) Reachability() lp2pnetwork.Reachability {
-	return s.reachability
+	return lp2pnetwork.Reachability(s.reachability.Load())
 }
 
 func (s *NotifeeService) Connected(_ lp2pnetwork.Network, conn lp2pnetwork.Conn) {
