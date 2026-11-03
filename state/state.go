@@ -278,10 +278,9 @@ func (st *state) LastCertificate() *certificate.Certificate {
 	return st.lastInfo.Certificate()
 }
 
-func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
-	st.lk.Lock()
-	defer st.lk.Unlock()
-
+// checkVoteForCertificate checks that the vote is a precommit of the last certificate.
+// The caller must hold the lock.
+func (st *state) checkVoteForCertificate(vte *vote.Vote) error {
 	lastCert := st.lastInfo.Certificate()
 	if lastCert == nil {
 		// Only the genesis block has no certificate.
@@ -298,6 +297,27 @@ func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
 			Vote: vte,
 		}
 	}
+
+	return nil
+}
+
+func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
+	// The cheap checks run under the read lock: a burst of useless votes
+	// must not contend with the commit of blocks for the write lock.
+	st.lk.RLock()
+	err := st.checkVoteForCertificate(vte)
+	st.lk.RUnlock()
+	if err != nil {
+		return err
+	}
+
+	st.lk.Lock()
+	defer st.lk.Unlock()
+
+	if err := st.checkVoteForCertificate(vte); err != nil {
+		return err
+	}
+	lastCert := st.lastInfo.Certificate()
 
 	val, err := st.store.Validator(vte.Signer())
 	if err != nil {
