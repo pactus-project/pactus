@@ -13,6 +13,11 @@ import (
 	"github.com/pactus-project/pactus/version"
 )
 
+const (
+	maxHelloMonikerLength = 128
+	maxHelloAgentLength   = 256
+)
+
 type HelloMessage struct {
 	PeerID          peer.ID          `cbor:"1,keyasint"`
 	Agent           string           `cbor:"2,keyasint"`
@@ -42,6 +47,12 @@ func NewHelloMessage(pid peer.ID, moniker string,
 }
 
 func (m *HelloMessage) BasicCheck() error {
+	if len(m.Moniker) > maxHelloMonikerLength {
+		return BasicCheckError{"moniker is too long"}
+	}
+	if len(m.Agent) > maxHelloAgentLength {
+		return BasicCheckError{"agent is too long"}
+	}
 	if m.Signature == nil {
 		return BasicCheckError{"no signature"}
 	}

@@ -78,6 +78,7 @@ func TestHandlerHelloAckHandshaking(t *testing.T) {
 		td.connectPeer(pid, lp2pnetwork.DirOutbound, true)
 		td.receivingNewMessage(td.sync, msg, pid)
 		td.shouldNotPublishAnyMessage(t)
-		td.checkPeerStatus(t, pid, status.StatusKnown)
+		// An outbound peer is known only after its own Hello message is accepted.
+		td.checkPeerStatus(t, pid, status.StatusConnected)
 	})
 }

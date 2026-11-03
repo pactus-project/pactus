@@ -64,17 +64,14 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 	msg := m.(*message.HelloMessage)
 	handler.logger.Trace("parsing Hello message", "msg", msg)
 
-	handler.logger.Debug("updating peer info",
-		"pid", pid,
-		"moniker", msg.Moniker,
-		"services", msg.Services)
+	if msg.PeerID != pid {
+		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
+			"peer ID doesn't match the connection", 0)
 
-	handler.peerSet.UpdateInfo(pid,
-		msg.Moniker,
-		msg.Agent,
-		msg.PublicKeys,
-		msg.Services)
-	handler.peerSet.UpdateHeight(pid, msg.Height, msg.BlockHash)
+		handler.acknowledge(response, pid)
+
+		return
+	}
 
 	if msg.GenesisHash != handler.state.Genesis().Hash() {
 		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
@@ -95,7 +92,16 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 		return
 	}
 
-	agent, _ := version.ParseAgent(msg.Agent)
+	agent, err := version.ParseAgent(msg.Agent)
+	if err != nil {
+		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
+			"invalid agent", 0)
+
+		handler.acknowledge(response, pid)
+
+		return
+	}
+
 	if agent.Version.Compare(handler.config.LatestSupportingVer) == -1 {
 		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
 			"not supporting Pactus version", 0)
@@ -103,10 +109,6 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 		handler.acknowledge(response, pid)
 
 		return
-	}
-
-	for _, pub := range msg.PublicKeys {
-		handler.state.UpdateValidatorProtocolVersion(pub.ValidatorAddress(), agent.ProtocolVersion)
 	}
 
 	if handler.state.Params().BlockVersion == protocol.ProtocolVersionLatest &&
@@ -120,6 +122,12 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 	}
 
 	peer := handler.peerSet.GetPeer(pid)
+	if peer == nil {
+		handler.logger.Warn("received Hello message from unknown peer", "pid", pid)
+		handler.network.CloseConnection(pid)
+
+		return
+	}
 
 	switch peer.Direction {
 	case lp2pnetwork.DirUnknown:
@@ -137,6 +145,8 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 			return
 		}
 
+		handler.updatePeer(pid, msg, &agent)
+
 		// Mark that we've received the hello message from the outbound peer
 		handler.peerSet.UpdateOutboundHelloSent(pid, true)
 
@@ -151,11 +161,31 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 			return
 		}
 
+		handler.updatePeer(pid, msg, &agent)
 		handler.peerSet.UpdateStatus(pid, status.StatusKnown)
 	}
 
 	response := message.NewHelloAckMessage(message.ResponseCodeOK, "Ok", handler.state.LastBlockHeight())
 	handler.acknowledge(response, pid)
+}
+
+// updatePeer records what a peer told about itself in a Hello message that was accepted.
+func (handler *helloHandler) updatePeer(pid peer.ID, msg *message.HelloMessage, agent *version.Agent) {
+	handler.logger.Debug("updating peer info",
+		"pid", pid,
+		"moniker", msg.Moniker,
+		"services", msg.Services)
+
+	handler.peerSet.UpdateInfo(pid,
+		msg.Moniker,
+		msg.Agent,
+		msg.PublicKeys,
+		msg.Services)
+	handler.peerSet.UpdateHeight(pid, msg.Height, msg.BlockHash)
+
+	for _, pub := range msg.PublicKeys {
+		handler.state.UpdateValidatorProtocolVersion(pub.ValidatorAddress(), agent.ProtocolVersion)
+	}
 }
 
 func (*helloHandler) PrepareBundle(m message.Message) *bundle.Bundle {
