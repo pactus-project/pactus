@@ -730,11 +730,11 @@ func TestLoadState(t *testing.T) {
 	td := setup(t)
 
 	// Add a bond transactions to change total power (stake)
-	pub, prv := td.RandBLSKeyPair()
+	pub, _ := td.RandBLSKeyPair()
 	lockTime := td.state.LastBlockHeight()
 	bondTrx := tx.NewBondTx(lockTime, td.genAccKey.PublicKeyNative().AccountAddress(),
 		pub.ValidatorAddress(), pub, 1000000000, 100000)
-	td.HelperSignTransaction(prv, bondTrx)
+	td.HelperSignTransaction(td.genAccKey, bondTrx) // Signed by the sender.
 
 	td.fakeTxPool.EXPECT().PrepareBlockTransactions().Return(block.Txs{bondTrx}).Times(1)
 	blk5, cert5 := td.makeBlockAndCertificate(t, 1)
