@@ -43,43 +43,8 @@ func WriteFile(filename string, data []byte) error {
 	if err := Mkdir(filepath.Dir(filename)); err != nil {
 		return err
 	}
-	if err := writeFileAtomic(filename, data); err != nil {
+	if err := os.WriteFile(filename, data, 0o600); err != nil {
 		return fmt.Errorf("failed to write to %s: %w", filename, err)
-	}
-
-	return nil
-}
-
-// writeFileAtomic writes the data to a temporary file next to the destination
-// and renames it, so an interrupted write never leaves a truncated file.
-func writeFileAtomic(filename string, data []byte) error {
-	// Write through a symbolic link instead of replacing it.
-	if resolved, err := filepath.EvalSymlinks(filename); err == nil {
-		filename = resolved
-	}
-
-	perm := os.FileMode(0o600)
-	if info, err := os.Stat(filename); err == nil {
-		perm = info.Mode().Perm()
-	}
-
-	tmp, err := os.CreateTemp(filepath.Dir(filename), "."+filepath.Base(filename)+".tmp-*")
-	if err != nil {
-		return err
-	}
-	tmpName := tmp.Name()
-
-	err = copyAndClose(tmp, bytes.NewReader(data))
-	if err == nil {
-		err = os.Chmod(tmpName, perm)
-	}
-	if err == nil {
-		err = os.Rename(tmpName, filename)
-	}
-	if err != nil {
-		_ = os.Remove(tmpName)
-
-		return err
 	}
 
 	return nil
