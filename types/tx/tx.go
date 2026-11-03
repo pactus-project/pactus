@@ -401,7 +401,10 @@ func (tx *Tx) decode(r io.Reader) error {
 		return err
 	}
 
-	tx.data.Memo, err = encoding.ReadVarString(r)
+	// A valid memo is never longer than maxMemoLength (enforced by
+	// BasicCheck), so reject anything past it here, before allocating a
+	// buffer for whatever length a hostile message announces.
+	tx.data.Memo, err = encoding.ReadVarStringMax(r, maxMemoLength)
 	if err != nil {
 		return err
 	}
