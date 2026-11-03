@@ -219,3 +219,36 @@ func TestMediator(t *testing.T) {
 		testMediator.OnBlockAnnounce(sender)
 	})
 }
+
+// After the change-proposer phase decided to keep a block, a node must neither vote for
+// nor commit another block that an equivocating proposer sent to it.
+func TestPrecommitOnlyForTheDecidedBlock(t *testing.T) {
+	td := setup(t)
+
+	td.commitBlockForAllStates(t)
+	height := types.Height(2)
+	round := types.Round(0)
+
+	td.enterNewHeight(td.consP)
+	prop := td.makeProposal(t, height, round)
+
+	td.consP.lk.Lock()
+	td.consP.cpDecidedCert = td.GenerateTestCertificate(height)
+	td.consP.cpWeakValidity = td.RandHash() // The decided block is not the proposal.
+	td.consP.log.SetRoundProposal(round, prop)
+	td.consP.enterNewState(td.consP.precommitState)
+	td.consP.lk.Unlock()
+
+	td.shouldNotPublish(t, td.consP, message.TypeVote)
+	assert.Nil(t, td.consP.Proposal(), "the proposal is dropped")
+	assert.Equal(t, "precommit", td.consP.currentState.name())
+
+	// The decided block is voted.
+	td.consP.lk.Lock()
+	td.consP.cpWeakValidity = prop.Block().Hash()
+	td.consP.log.SetRoundProposal(round, prop)
+	td.consP.enterNewState(td.consP.precommitState)
+	td.consP.lk.Unlock()
+
+	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, prop.Block().Hash())
+}
