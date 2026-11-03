@@ -112,6 +112,23 @@ func (ps *PeerSet) SetSessionCompleted(sid int) {
 	}
 }
 
+// SetSessionOnlyFullNodes records that the blocks of the session
+// must be requested from full nodes only.
+func (ps *PeerSet) SetSessionOnlyFullNodes(sid int) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	ps.sessionManager.SetSessionOnlyFullNodes(sid)
+}
+
+// RemoveSession removes the session with the given id.
+func (ps *PeerSet) RemoveSession(sid int) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	ps.sessionManager.RemoveSession(sid)
+}
+
 func (ps *PeerSet) RemoveAllSessions() {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
@@ -138,7 +155,21 @@ func (ps *PeerSet) GetPeer(pid peer.ID) *peer.Peer {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	return ps.findPeer(pid)
+	return copyPeer(ps.findPeer(pid))
+}
+
+// copyPeer returns a snapshot of the given peer, so that callers can read it
+// without holding the lock and without observing later updates.
+// It returns nil if the peer is nil.
+func copyPeer(live *peer.Peer) *peer.Peer {
+	if live == nil {
+		return nil
+	}
+
+	snapshot := *live
+	snapshot.Metric = live.Metric.Clone()
+
+	return &snapshot
 }
 
 // HasPeer checks if a peer with the given id exists in the set.
@@ -332,11 +363,19 @@ func (ps *PeerSet) IteratePeers(consumer func(p *peer.Peer) (stop bool)) {
 	}
 }
 
+// Sessions returns a snapshot of the sessions.
 func (ps *PeerSet) Sessions() []*session.Session {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	return ps.sessionManager.Sessions()
+	sessions := ps.sessionManager.Sessions()
+	snapshots := make([]*session.Session, len(sessions))
+	for i, ssn := range sessions {
+		snapshot := *ssn
+		snapshots[i] = &snapshot
+	}
+
+	return snapshots
 }
 
 func (ps *PeerSet) Metric() metric.Metric {
@@ -385,7 +424,7 @@ func (ps *PeerSet) GetRandomPeer() *peer.Peer {
 		totalScore -= p.score
 
 		if rnd >= totalScore {
-			return p.peer
+			return copyPeer(p.peer)
 		}
 	}
 	panic("unreachable code")

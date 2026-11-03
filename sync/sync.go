@@ -175,7 +175,12 @@ func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
 
 func (sync *synchronizer) sendTo(msg message.Message, pid peer.ID) {
 	bdl := sync.prepareBundle(msg)
-	data, _ := bdl.Encode()
+	data, err := bdl.Encode()
+	if err != nil {
+		sync.logger.Error("unable to encode the bundle", "to", pid, "error", err)
+
+		return
+	}
 
 	sync.network.SendTo(data, pid)
 	sync.peerSet.UpdateLastSent(pid)
@@ -201,7 +206,13 @@ func (sync *synchronizer) broadcast(msg message.Message) {
 	bdl := sync.prepareBundle(msg)
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagBroadcasted)
 
-	data, _ := bdl.Encode()
+	data, err := bdl.Encode()
+	if err != nil {
+		sync.logger.Error("unable to encode the bundle", "error", err)
+
+		return
+	}
+
 	sync.network.Broadcast(data, msg.TopicID())
 	sync.peerSet.UpdateSentMetric(nil, msg.Type(), int64(len(data)))
 
@@ -238,7 +249,11 @@ func (sync *synchronizer) sayHello(pid peer.ID) {
 		sync.state.LastBlockHash(),
 		sync.state.Genesis().Hash(),
 	)
-	msg.Sign(sync.valKeys)
+	if err := msg.Sign(sync.valKeys); err != nil {
+		sync.logger.Error("unable to sign the hello message", "to", pid, "error", err)
+
+		return
+	}
 
 	sync.sendTo(msg, pid)
 }
@@ -368,10 +383,13 @@ func (sync *synchronizer) updateBlockchain() {
 				"sid", ssn.SessionID, "pid", ssn.PeerID,
 				"stats", sync.peerSet.SessionStats())
 
-			sent := sync.sendBlockRequestToRandomPeer(ssn.From, ssn.Count, false)
+			sent := sync.sendBlockRequestToRandomPeer(ssn.From, ssn.Count, ssn.OnlyFullNodes)
 			if !sent {
 				break
 			}
+
+			// The blocks are requested again, so the old session is replaced.
+			sync.peerSet.RemoveSession(ssn.SessionID)
 		}
 	}
 
@@ -481,6 +499,9 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from types.Height, count 
 		}
 
 		sid := sync.peerSet.OpenSession(peer.PeerID, from, count)
+		if onlyFullNodes {
+			sync.peerSet.SetSessionOnlyFullNodes(sid)
+		}
 		msg := message.NewBlocksRequestMessage(sid, from, count)
 		sync.sendTo(msg, peer.PeerID)
 

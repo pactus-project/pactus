@@ -19,6 +19,7 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset/peer"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
+	"github.com/pactus-project/pactus/sync/peerset/session"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
@@ -392,6 +393,53 @@ func TestUpdateBlockchain(t *testing.T) {
 		msg := bdl.Message.(*message.BlocksRequestMessage)
 		assert.Equal(t, uint32(101), uint32(msg.From))
 		assert.Equal(t, uint32(10), msg.Count)
+	})
+
+	t.Run("uncompleted session is requested only once", func(t *testing.T) {
+		td := setup(t, conf)
+		pid := td.addPeer(t, status.StatusKnown, service.New(service.FullNode))
+		td.addPeer(t, status.StatusKnown, service.New(service.FullNode))
+
+		sid := td.sync.peerSet.OpenSession(pid, 101, 10)
+		td.sync.peerSet.SetSessionUncompleted(sid)
+
+		td.sync.updateBlockchain()
+		td.sync.updateBlockchain()
+		td.sync.updateBlockchain()
+
+		requests := 0
+		for len(td.network.PublishCh) > 0 {
+			data := <-td.network.PublishCh
+			bdl := new(bundle.Bundle)
+			_, err := bdl.Decode(bytes.NewReader(data.Data))
+			require.NoError(t, err)
+
+			if msg, ok := bdl.Message.(*message.BlocksRequestMessage); ok &&
+				msg.From == 101 && msg.Count == 10 {
+				requests++
+			}
+		}
+
+		assert.Equal(t, 1, requests)
+		assert.Zero(t, td.sync.peerSet.SessionStats().Uncompleted)
+	})
+
+	t.Run("full node only requirement is kept for the new session", func(t *testing.T) {
+		td := setup(t, conf)
+		pid := td.addPeer(t, status.StatusKnown, service.New(service.FullNode))
+
+		sid := td.sync.peerSet.OpenSession(pid, 101, 10)
+		td.sync.peerSet.SetSessionOnlyFullNodes(sid)
+		td.sync.peerSet.SetSessionUncompleted(sid)
+
+		td.sync.updateBlockchain()
+
+		td.shouldPublishMessageWithThisType(t, message.TypeBlocksRequest)
+
+		sessions := td.sync.peerSet.Sessions()
+		require.Len(t, sessions, 1)
+		assert.Equal(t, session.Open, sessions[0].Status)
+		assert.True(t, sessions[0].OnlyFullNodes)
 	})
 
 	t.Run("open sessions are not duplicated", func(t *testing.T) {

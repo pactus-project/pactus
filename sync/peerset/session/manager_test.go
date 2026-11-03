@@ -121,3 +121,33 @@ func TestStatsString(t *testing.T) {
 
 	assert.Equal(t, "total: 4, open: 1, completed: 2, uncompleted: 1", stats.String())
 }
+
+func TestRemoveSession(t *testing.T) {
+	mgr := NewManager(time.Minute)
+	ssn1 := mgr.OpenSession("peer1", 100, 10)
+	ssn2 := mgr.OpenSession("peer2", 110, 10)
+
+	mgr.RemoveSession(ssn1.SessionID)
+	assert.Equal(t, 1, mgr.NumberOfSessions())
+	assert.Nil(t, mgr.SetSessionCompleted(ssn1.SessionID))
+	assert.NotNil(t, mgr.SetSessionCompleted(ssn2.SessionID))
+
+	require.NotPanics(t, func() {
+		mgr.RemoveSession(12345)
+	})
+}
+
+func TestSetSessionOnlyFullNodes(t *testing.T) {
+	mgr := NewManager(time.Minute)
+	ssn1 := mgr.OpenSession("peer1", 100, 10)
+	ssn2 := mgr.OpenSession("peer2", 110, 10)
+
+	mgr.SetSessionOnlyFullNodes(ssn1.SessionID)
+
+	assert.True(t, ssn1.OnlyFullNodes)
+	assert.False(t, ssn2.OnlyFullNodes)
+
+	require.NotPanics(t, func() {
+		mgr.SetSessionOnlyFullNodes(12345)
+	})
+}

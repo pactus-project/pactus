@@ -111,6 +111,20 @@ func (sm *Manager) SetSessionCompleted(sid int) *Session {
 	return ssn
 }
 
+// SetSessionOnlyFullNodes records that the blocks of the session
+// must be requested from full nodes only.
+func (sm *Manager) SetSessionOnlyFullNodes(sid int) {
+	ssn := sm.sessions[sid]
+	if ssn != nil {
+		ssn.OnlyFullNodes = true
+	}
+}
+
+// RemoveSession removes the session with the given id.
+func (sm *Manager) RemoveSession(sid int) {
+	delete(sm.sessions, sid)
+}
+
 func (sm *Manager) RemoveAllSessions() {
 	sm.sessions = make(map[int]*Session)
 }

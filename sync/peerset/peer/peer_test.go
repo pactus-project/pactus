@@ -59,6 +59,9 @@ func TestDownloadScore(t *testing.T) {
 		{5, 4, 83},
 		{6, 5, 85},
 		{7, 6, 87},
+		{99, 0, 1},
+		{100, 0, 1},
+		{1000, 0, 1},
 	}
 
 	for no, tt := range tests {

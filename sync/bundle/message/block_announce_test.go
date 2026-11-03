@@ -77,6 +77,28 @@ func TestBlockAnnounceMessage(t *testing.T) {
 		})
 	})
 
+	t.Run("Block and certificate heights differ", func(t *testing.T) {
+		height := ts.RandHeight()
+		blk, _ := ts.GenerateTestBlock(height)
+		cert := ts.GenerateTestCertificate(height + 1)
+		msg := NewBlockAnnounceMessage(blk, cert, nil)
+
+		require.ErrorIs(t, msg.BasicCheck(), BasicCheckError{
+			Reason: "block height does not match certificate height",
+		})
+	})
+
+	t.Run("Proof and certificate heights differ", func(t *testing.T) {
+		height := ts.RandHeight()
+		blk, cert := ts.GenerateTestBlock(height)
+		proof := ts.GenerateTestCertificate(height + 1)
+		msg := NewBlockAnnounceMessage(blk, cert, proof)
+
+		require.ErrorIs(t, msg.BasicCheck(), BasicCheckError{
+			Reason: "proof height does not match certificate height",
+		})
+	})
+
 	t.Run("OK", func(t *testing.T) {
 		blk, cert := ts.GenerateTestBlock(ts.RandHeight())
 		msg := NewBlockAnnounceMessage(blk, cert, nil)

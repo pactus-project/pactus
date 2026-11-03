@@ -50,6 +50,11 @@ func (p *Peer) IsFullNode() bool {
 	return p.Services.IsFullNode()
 }
 
+// DownloadScore returns a score between 1 and 100 based on the ratio of
+// completed sessions. The score never drops to zero, so a connected peer
+// remains selectable for new sessions.
 func (p *Peer) DownloadScore() int {
-	return (p.CompletedSessions + 1) * 100 / (p.TotalSessions + 1)
+	score := (p.CompletedSessions + 1) * 100 / (p.TotalSessions + 1)
+
+	return max(score, 1)
 }

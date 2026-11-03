@@ -467,3 +467,44 @@ func TestCompletedSessionIsNotRequestedAgain(t *testing.T) {
 	assert.True(t, td.sync.peerSet.HasOpenSession(pidBusy))
 	assert.False(t, td.sync.peerSet.HasOpenSession(pidDone))
 }
+
+// unencodableMessage is a message that cannot be encoded.
+type unencodableMessage struct {
+	Ch chan int
+}
+
+func (*unencodableMessage) BasicCheck() error             { return nil }
+func (*unencodableMessage) Type() message.Type            { return message.TypeTransaction }
+func (*unencodableMessage) TopicID() network.TopicID      { return network.TopicIDTransaction }
+func (*unencodableMessage) ShouldBroadcast() bool         { return true }
+func (*unencodableMessage) ConsensusHeight() types.Height { return 0 }
+func (*unencodableMessage) LogString() string             { return "unencodable" }
+
+func TestSendFailures(t *testing.T) {
+	t.Run("a message that can't be encoded is not sent", func(t *testing.T) {
+		td := setup(t, nil)
+		pid := td.addPeer(t, status.StatusKnown, service.New(service.FullNode))
+
+		td.sync.sendTo(&unencodableMessage{Ch: make(chan int)}, pid)
+
+		td.shouldNotPublishAnyMessage(t)
+	})
+
+	t.Run("a message that can't be encoded is not broadcasted", func(t *testing.T) {
+		td := setup(t, nil)
+
+		td.sync.broadcast(&unencodableMessage{Ch: make(chan int)})
+
+		td.shouldNotPublishAnyMessage(t)
+	})
+
+	t.Run("hello is not sent without a validator key", func(t *testing.T) {
+		td := setup(t, nil)
+		td.sync.valKeys = nil
+		pid := td.addPeer(t, status.StatusConnected, service.New(service.FullNode))
+
+		td.sync.sayHello(pid)
+
+		td.shouldNotPublishAnyMessage(t)
+	})
+}

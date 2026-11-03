@@ -22,6 +22,8 @@ type Session struct {
 	From         types.Height
 	Count        uint32
 	LastActivity time.Time
+	// OnlyFullNodes is set when the blocks must be requested from full nodes only.
+	OnlyFullNodes bool
 }
 
 func NewSession(id int, peerID peer.ID, from types.Height, count uint32) *Session {
