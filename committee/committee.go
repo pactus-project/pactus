@@ -287,14 +287,23 @@ func (c *committee) ProtocolVersions() map[protocol.Version]float64 {
 // SupportProtocolVersion checks if more than 75% of the committee's total power
 // supports the given protocol version.
 func (c *committee) SupportProtocolVersion(version protocol.Version) bool {
-	versions := c.ProtocolVersions() // It takes the lock.
-	supported := float64(0)
+	c.lk.RLock()
+	defer c.lk.RUnlock()
 
-	for ver, percent := range versions {
-		if ver >= version {
-			supported += percent
+	supportedPower := int64(0)
+	totalPower := int64(0)
+
+	c.iterate(func(v *validator.Validator) bool {
+		totalPower += v.Power()
+		if v.ProtocolVersion() >= version {
+			supportedPower += v.Power()
 		}
-	}
 
-	return supported > 75.0
+		return false
+	})
+
+	// Integer comparison: supportedPower/totalPower > 75/100, cross-multiplied.
+	// Summing per-version float percentages in the random order of a map
+	// accumulates rounding errors.
+	return supportedPower*100 > totalPower*75
 }
