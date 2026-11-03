@@ -220,6 +220,11 @@ func (cs *consensus) handleTimeout(ticker *ticker) {
 	cs.currentState.onTimeout(ticker)
 }
 
+// isFutureRound checks if the round is too far ahead of the current round.
+func (cs *consensus) isFutureRound(round types.Round) bool {
+	return int(round) > int(cs.round)+int(maxFutureRounds)
+}
+
 func (cs *consensus) SetProposal(prop *proposal.Proposal) {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
@@ -238,6 +243,12 @@ func (cs *consensus) SetProposal(prop *proposal.Proposal) {
 		return
 	}
 
+	if cs.isFutureRound(prop.Round()) {
+		cs.logger.Debug("proposal for a round too far ahead", "proposal", prop)
+
+		return
+	}
+
 	if err := prop.BasicCheck(); err != nil {
 		cs.logger.Warn("invalid proposal", "proposal", prop, "error", err)
 
@@ -251,55 +262,73 @@ func (cs *consensus) SetProposal(prop *proposal.Proposal) {
 		return
 	}
 
-	if prop.Height() == cs.bcState.LastBlockHeight() {
-		// A slow node might receive a proposal after committing the proposed block.
-		// In this case, we accept the proposal and allow nodes to continue.
-		// By doing so, we enable the validator to broadcast its votes and
-		// prevent it from being marked as absent in the block certificate.
-		cs.logger.Warn("block committed before receiving proposal", "proposal", prop)
-		if prop.Block().Hash() != cs.bcState.LastBlockHash() {
-			cs.logger.Warn("proposal is not for the committed block", "proposal", prop)
-
-			return
-		}
-
-		// The block hash matches the already-committed block, so prop.Block()
-		// is byte-identical to it (any difference would change the hash) --
-		// including its ProposerAddress(), the validator who actually
-		// proposed it. cs.proposer(round) cannot be used here: it reflects
-		// the next height's committee, not the one the committed block (a
-		// past height) was proposed under.
-		proposerAddr := prop.Block().Header().ProposerAddress()
-		proposer := cs.findCommitteeValidator(proposerAddr)
-		if proposer == nil {
-			cs.logger.Warn("unknown proposer for the committed block", "proposal", prop)
-
-			return
-		}
-		if err := prop.Verify(proposer.PublicKey()); err != nil {
-			cs.logger.Warn("invalid proposer", "proposal", prop, "error", err)
-
-			return
-		}
-	} else {
-		proposer := cs.proposer(prop.Round())
-		if err := prop.Verify(proposer.PublicKey()); err != nil {
-			cs.logger.Warn("invalid proposer", "proposal", prop, "error", err)
-
-			return
-		}
-
-		if err := cs.bcState.ValidateBlock(prop.Block(), prop.Round()); err != nil {
-			cs.logger.Warn("invalid proposed block", "proposal", prop, "error", err)
-
-			return
-		}
+	if !cs.isAcceptableProposal(prop) {
+		return
 	}
 
 	cs.logger.Info("proposal set", "proposal", prop)
 	cs.log.SetRoundProposal(prop.Round(), prop)
 
 	cs.currentState.onSetProposal(prop)
+}
+
+// isAcceptableProposal checks that the proposal is signed by its proposer,
+// and that its block is valid.
+func (cs *consensus) isAcceptableProposal(prop *proposal.Proposal) bool {
+	if prop.Height() == cs.bcState.LastBlockHeight() {
+		return cs.isCommittedProposal(prop)
+	}
+
+	proposer := cs.proposer(prop.Round())
+	if err := prop.Verify(proposer.PublicKey()); err != nil {
+		cs.logger.Warn("invalid proposer", "proposal", prop, "error", err)
+
+		return false
+	}
+
+	if err := cs.bcState.ValidateBlock(prop.Block(), prop.Round()); err != nil {
+		cs.logger.Warn("invalid proposed block", "proposal", prop, "error", err)
+
+		return false
+	}
+
+	return true
+}
+
+// isCommittedProposal checks a proposal that is received after its block is committed.
+//
+// A slow node might receive a proposal after committing the proposed block.
+// In this case, we accept the proposal and allow nodes to continue.
+// By doing so, we enable the validator to broadcast its votes and
+// prevent it from being marked as absent in the block certificate.
+func (cs *consensus) isCommittedProposal(prop *proposal.Proposal) bool {
+	cs.logger.Warn("block committed before receiving proposal", "proposal", prop)
+	if prop.Block().Hash() != cs.bcState.LastBlockHash() {
+		cs.logger.Warn("proposal is not for the committed block", "proposal", prop)
+
+		return false
+	}
+
+	// The block hash matches the already-committed block, so prop.Block()
+	// is byte-identical to it (any difference would change the hash) --
+	// including its ProposerAddress(), the validator who actually
+	// proposed it. cs.proposer(round) cannot be used here: it reflects
+	// the next height's committee, not the one the committed block (a
+	// past height) was proposed under.
+	proposerAddr := prop.Block().Header().ProposerAddress()
+	proposer := cs.findCommitteeValidator(proposerAddr)
+	if proposer == nil {
+		cs.logger.Warn("unknown proposer for the committed block", "proposal", prop)
+
+		return false
+	}
+	if err := prop.Verify(proposer.PublicKey()); err != nil {
+		cs.logger.Warn("invalid proposer", "proposal", prop, "error", err)
+
+		return false
+	}
+
+	return true
 }
 
 func (cs *consensus) AddVote(vte *vote.Vote) {
@@ -332,6 +361,14 @@ func (cs *consensus) AddVote(vte *vote.Vote) {
 	if vte.Type() == vote.VoteTypeCPPreVote ||
 		vte.Type() == vote.VoteTypeCPMainVote ||
 		vte.Type() == vote.VoteTypeCPDecided {
+		// The justification is a certificate, which is expensive to validate.
+		// Authenticate the vote first, so that only committee members can make us pay for it.
+		if err := cs.log.VerifyVote(vte); err != nil {
+			cs.logger.Warn("error on verifying a cp vote", "vote", vte, "error", err)
+
+			return
+		}
+
 		err := cs.changeProposer.checkJust(vte)
 		if err != nil {
 			cs.logger.Warn("error on adding a cp vote", "vote", vte, "error", err)

@@ -116,6 +116,16 @@ func (log *Log) MoveToNewHeight(validators []*validator.Validator) {
 	}
 }
 
+// VerifyVote checks that the signer of the vote is in the committee and the signature is valid.
+func (log *Log) VerifyVote(vte *vote.Vote) error {
+	val, ok := log.validators[vte.Signer()]
+	if !ok {
+		return voteset.IneligibleVoterError{Address: vte.Signer()}
+	}
+
+	return vte.Verify(val.PublicKey())
+}
+
 func (log *Log) CanVote(addr crypto.Address) bool {
 	_, ok := log.validators[addr]
 
