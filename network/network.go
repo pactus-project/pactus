@@ -118,6 +118,20 @@ func writeFileAtomic(path string, data []byte) error {
 	return nil
 }
 
+// resourceLimits returns the hard limits of the libp2p resource manager.
+// They scale with the memory and file descriptors of the host, and the number of
+// inbound connections and streams is never lower than what the connection manager allows.
+func resourceLimits(conf *Config) lp2prcmgr.ConcreteLimitConfig {
+	limits := lp2prcmgr.DefaultLimits
+	lp2p.SetDefaultServiceLimits(&limits)
+
+	highWM := conf.MaxConns + (conf.MaxConns / 4)
+	limits.SystemBaseLimit.ConnsInbound = max(limits.SystemBaseLimit.ConnsInbound, highWM)
+	limits.SystemBaseLimit.Conns = max(limits.SystemBaseLimit.Conns, 2*highWM)
+
+	return limits.AutoScale()
+}
+
 func NewNetwork(ctx context.Context, conf *Config, networkPipe pipeline.Pipeline[Event]) (Network, error) {
 	log := logger.NewSubLogger(ctx, "_network", nil)
 
@@ -155,7 +169,7 @@ func makeNetwork(ctx context.Context, conf *Config,
 	}
 
 	resMgr, err := lp2prcmgr.NewResourceManager(
-		lp2prcmgr.NewFixedLimiter(lp2prcmgr.InfiniteLimits),
+		lp2prcmgr.NewFixedLimiter(resourceLimits(conf)),
 		rcMgrOpt...,
 	)
 	if err != nil {
