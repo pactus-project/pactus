@@ -110,3 +110,105 @@ func TestGenesisTestnet(t *testing.T) {
 	// reset address HRP global variable to miannet to prevent next tests failing.
 	crypto.SetAddressHRP("pc")
 }
+
+func TestValidate(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	pubKey, _ := ts.RandBLSKeyPair()
+	pubKey2, _ := ts.RandBLSKeyPair()
+	addr := ts.RandAccAddress().String()
+	addr2 := ts.RandAccAddress().String()
+
+	makeJSON := func(params, accounts, validators string) []byte {
+		return []byte(`{
+  "genesis_time": "2024-01-24T20:24:00Z",
+  "params": ` + params + `,
+  "accounts": [` + accounts + `],
+  "validators": [` + validators + `]
+}`)
+	}
+	validParams := `{"block_version": 1, "block_interval_in_second": 10, "committee_size": 4}`
+	acc := func(address string) string {
+		return `{"address": "` + address + `", "balance": 1}`
+	}
+	val := func(pub string) string {
+		return `{"public_key": "` + pub + `"}`
+	}
+
+	tests := []struct {
+		name  string
+		data  []byte
+		valid bool
+	}{
+		{
+			"valid genesis",
+			makeJSON(validParams, acc(addr)+","+acc(addr2), val(pubKey.String())+","+val(pubKey2.String())),
+			true,
+		},
+		{
+			"no accounts and validators",
+			makeJSON(validParams, "", ""),
+			true,
+		},
+		{
+			"missing params",
+			[]byte(`{"genesis_time": "2024-01-24T20:24:00Z", "accounts": [], "validators": []}`),
+			false,
+		},
+		{
+			"zero block interval",
+			makeJSON(`{"block_version": 1, "block_interval_in_second": 0, "committee_size": 4}`, "", ""),
+			false,
+		},
+		{
+			"zero committee size",
+			makeJSON(`{"block_version": 1, "block_interval_in_second": 10, "committee_size": 0}`, "", ""),
+			false,
+		},
+		{
+			"invalid account address",
+			makeJSON(validParams, acc("not-an-address"), ""),
+			false,
+		},
+		{
+			"duplicated account address",
+			makeJSON(validParams, acc(addr)+","+acc(addr), ""),
+			false,
+		},
+		{
+			"invalid validator public key",
+			makeJSON(validParams, "", val("not-a-public-key")),
+			false,
+		},
+		{
+			"duplicated validator public key",
+			makeJSON(validParams, "", val(pubKey.String())+","+val(pubKey.String())),
+			false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			file := util.TempFilePath()
+			require.NoError(t, util.WriteFile(file, tt.data))
+
+			gen, err := genesis.LoadFromFile(file)
+			require.NoError(t, err)
+
+			err = gen.Validate()
+			if tt.valid {
+				require.NoError(t, err)
+			} else {
+				require.ErrorAs(t, err, &genesis.InvalidGenesisError{})
+			}
+		})
+	}
+}
+
+func TestValidateEmbeddedGenesis(t *testing.T) {
+	require.NoError(t, genesis.MainnetGenesis().Validate())
+
+	crypto.ToTestnetHRP()
+	t.Cleanup(crypto.ToMainnetHRP)
+	require.NoError(t, genesis.TestnetGenesis().Validate())
+}

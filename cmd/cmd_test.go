@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/config"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -46,6 +47,23 @@ func TestMakeConfig(t *testing.T) {
 
 		_, _, err = MakeConfig(workingDir)
 		require.NoError(t, err)
+	})
+
+	t.Run("Invalid custom genesis file, Should return error", func(t *testing.T) {
+		t.Cleanup(crypto.ToMainnetHRP)
+
+		workingDir := util.TempDirPath()
+		genPath := PactusGenesisPath(workingDir)
+		data := `{
+  "genesis_time": "2024-01-24T20:24:00Z",
+  "params": {"block_version": 1, "block_interval_in_second": 10, "committee_size": 4},
+  "accounts": [{"address": "not-an-address", "balance": 1}],
+  "validators": []
+}`
+		require.NoError(t, util.WriteFile(genPath, []byte(data)))
+
+		_, _, err := MakeConfig(workingDir)
+		require.ErrorAs(t, err, &genesis.InvalidGenesisError{})
 	})
 
 	t.Run("Everything is good", func(t *testing.T) {

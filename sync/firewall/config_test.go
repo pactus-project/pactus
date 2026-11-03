@@ -39,6 +39,36 @@ func TestConfigBasicCheck(t *testing.T) {
 	})
 }
 
+func TestConfigBasicCheckRateLimits(t *testing.T) {
+	tests := []struct {
+		name     string
+		updateFn func(c *Config)
+		valid    bool
+	}{
+		{"zero limits mean unlimited", func(c *Config) { c.RateLimit = RateLimit{} }, true},
+		{"positive limits", func(c *Config) {
+			c.RateLimit = RateLimit{BlockTopic: 1, TransactionTopic: 5, ConsensusTopic: 10}
+		}, true},
+		{"negative block limit", func(c *Config) { c.RateLimit.BlockTopic = -1 }, false},
+		{"negative transaction limit", func(c *Config) { c.RateLimit.TransactionTopic = -1 }, false},
+		{"negative consensus limit", func(c *Config) { c.RateLimit.ConsensusTopic = -1 }, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			conf := DefaultConfig()
+			tt.updateFn(conf)
+
+			err := conf.BasicCheck()
+			if tt.valid {
+				require.NoError(t, err)
+			} else {
+				require.ErrorAs(t, err, &ConfigError{})
+			}
+		})
+	}
+}
+
 func TestNewFirewallWithInvalidConfig(t *testing.T) {
 	conf := DefaultConfig()
 	conf.BannedNets = []string{"not-a-network"}

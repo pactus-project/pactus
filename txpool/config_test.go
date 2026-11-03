@@ -1,6 +1,7 @@
 package txpool
 
 import (
+	"math"
 	"testing"
 
 	"github.com/pactus-project/pactus/types/amount"
@@ -81,6 +82,51 @@ func TestConfigBasicCheck(t *testing.T) {
 			},
 			updateFn: func(c *Config) {
 				c.Fee.DailyLimit = -1
+			},
+		},
+		{
+			name: "Negative FixedFee",
+			expectedErr: ConfigError{
+				Reason: "fixedFee should be a finite non-negative number",
+			},
+			updateFn: func(c *Config) {
+				c.Fee.FixedFee = -0.01
+			},
+		},
+		{
+			name: "NaN FixedFee",
+			expectedErr: ConfigError{
+				Reason: "fixedFee should be a finite non-negative number",
+			},
+			updateFn: func(c *Config) {
+				c.Fee.FixedFee = math.NaN()
+			},
+		},
+		{
+			name: "Infinite FixedFee",
+			expectedErr: ConfigError{
+				Reason: "fixedFee should be a finite non-negative number",
+			},
+			updateFn: func(c *Config) {
+				c.Fee.FixedFee = math.Inf(1)
+			},
+		},
+		{
+			name: "Negative UnitPrice",
+			expectedErr: ConfigError{
+				Reason: "unitPrice should be a finite non-negative number",
+			},
+			updateFn: func(c *Config) {
+				c.Fee.UnitPrice = -1
+			},
+		},
+		{
+			name: "NaN UnitPrice",
+			expectedErr: ConfigError{
+				Reason: "unitPrice should be a finite non-negative number",
+			},
+			updateFn: func(c *Config) {
+				c.Fee.UnitPrice = math.NaN()
 			},
 		},
 		{

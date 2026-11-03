@@ -192,6 +192,34 @@ func TestParseGRPCAddr(t *testing.T) {
 			addr: "\x00", insecure: false,
 			wantTarget: "", wantPrefix: "", wantError: true,
 		},
+		{
+			addr: "https://example.com/", insecure: false,
+			wantTarget: "example.com:443", wantPrefix: "", wantError: false,
+		},
+		{
+			addr: "https://example.com/path/", insecure: false,
+			wantTarget: "example.com:443", wantPrefix: "/path", wantError: false,
+		},
+		{
+			addr: "example.com:", insecure: false,
+			wantTarget: "example.com:443", wantPrefix: "", wantError: false,
+		},
+		{
+			addr: "http://example.com:50051/path", insecure: true,
+			wantTarget: "example.com:50051", wantPrefix: "/path", wantError: false,
+		},
+		{
+			addr: "[::1]:50051", insecure: true,
+			wantTarget: "[::1]:50051", wantPrefix: "", wantError: false,
+		},
+		{
+			addr: "", insecure: false,
+			wantTarget: "", wantPrefix: "", wantError: true,
+		},
+		{
+			addr: "", insecure: true,
+			wantTarget: "", wantPrefix: "", wantError: true,
+		},
 	}
 
 	for _, tt := range tests {

@@ -2,6 +2,7 @@ package genesis
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"time"
 
@@ -164,6 +165,54 @@ func LoadFromFile(file string) (*Genesis, error) {
 	}
 
 	return &gen, nil
+}
+
+// Validate checks that the genesis document is well-formed: the parameters are
+// present and usable, and every account address and validator public key can be
+// parsed and appears only once.
+// Addresses and keys are parsed with the currently active HRP, so call it after the
+// network type has been selected.
+func (gen *Genesis) Validate() error {
+	params := gen.data.Params
+	if params == nil {
+		return InvalidGenesisError{Reason: "params are missing"}
+	}
+
+	if params.BlockIntervalInSecond <= 0 {
+		return InvalidGenesisError{Reason: "block interval should be positive"}
+	}
+
+	if params.CommitteeSize <= 0 {
+		return InvalidGenesisError{Reason: "committee size should be positive"}
+	}
+
+	addrs := make(map[crypto.Address]struct{}, len(gen.data.Accounts))
+	for i, genAcc := range gen.data.Accounts {
+		addr, err := crypto.AddressFromString(genAcc.Address)
+		if err != nil {
+			return InvalidGenesisError{Reason: fmt.Sprintf("account %d has an invalid address: %v", i, err)}
+		}
+
+		if _, ok := addrs[addr]; ok {
+			return InvalidGenesisError{Reason: fmt.Sprintf("account %d has a duplicated address: %s", i, genAcc.Address)}
+		}
+		addrs[addr] = struct{}{}
+	}
+
+	pubKeys := make(map[string]struct{}, len(gen.data.Validators))
+	for i, genVal := range gen.data.Validators {
+		pub, err := bls.PublicKeyFromString(genVal.PublicKey)
+		if err != nil {
+			return InvalidGenesisError{Reason: fmt.Sprintf("validator %d has an invalid public key: %v", i, err)}
+		}
+
+		if _, ok := pubKeys[pub.String()]; ok {
+			return InvalidGenesisError{Reason: fmt.Sprintf("validator %d has a duplicated public key", i)}
+		}
+		pubKeys[pub.String()] = struct{}{}
+	}
+
+	return nil
 }
 
 // SaveToFile saves the genesis into a JSON file.
