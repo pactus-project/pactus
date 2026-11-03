@@ -144,9 +144,11 @@ func TestTopicEvaluators(t *testing.T) {
 	t.Run("transaction topic", func(t *testing.T) {
 		eval := topicNet.evaluators[network.TopicIDTransaction]
 
+		// Every peer has its own share of the budget, so the budget is spent by different peers.
 		for i := 0; i < td.config.Firewall.RateLimit.TransactionTopic; i++ {
-			assert.Equal(t, network.Propagate, eval(gossipWithConsensusHeight(from, 0)))
+			assert.Equal(t, network.Propagate, eval(gossipWithConsensusHeight(td.RandPeerID(), 0)))
 		}
+		assert.Equal(t, network.DropButConsume, eval(gossipWithConsensusHeight(td.RandPeerID(), 0)), "rate limit")
 		assert.Equal(t, network.DropButConsume, eval(gossipWithConsensusHeight(from, 0)), "rate limit")
 	})
 

@@ -15,6 +15,7 @@ func TestHandlerBlocksRequestParsingMessages(t *testing.T) {
 	t.Run("NetworkLimited service is enabled", func(t *testing.T) {
 		config := testConfig()
 		config.Services = service.Services(service.PrunedNode)
+		config.MaxSessions = 32 // The sub-tests send many requests from the same peer.
 
 		td := setup(t, config)
 		sid := td.RandIntMax(100)
@@ -140,4 +141,36 @@ func TestHandlerBlocksRequestParsingMessages(t *testing.T) {
 			assert.Equal(t, message.ResponseCodeNoMoreBlocks, msg2.Message.(*message.BlocksResponseMessage).ResponseCode)
 		})
 	})
+}
+
+func TestHandlerBlocksRequestRateLimit(t *testing.T) {
+	config := testConfig()
+	config.MaxSessions = 3
+
+	td := setup(t, config)
+	curHeight := td.state.LastBlockHeight()
+	pid := td.addPeer(t, status.StatusKnown, service.New(service.None))
+
+	for range config.MaxSessions {
+		msg := message.NewBlocksRequestMessage(td.RandIntMax(100), curHeight, 1)
+		td.receivingNewMessage(td.sync, msg, pid)
+
+		bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
+		assert.NotEqual(t, message.ResponseCodeRejected, bdl.Message.(*message.BlocksResponseMessage).ResponseCode)
+		td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse) // synced
+	}
+
+	msg := message.NewBlocksRequestMessage(td.RandIntMax(100), curHeight, 1)
+	td.receivingNewMessage(td.sync, msg, pid)
+
+	bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
+	res := bdl.Message.(*message.BlocksResponseMessage)
+	assert.Equal(t, message.ResponseCodeRejected, res.ResponseCode)
+	assert.Contains(t, res.Reason, "too many blocks requests")
+
+	// Another peer isn't affected.
+	other := td.addPeer(t, status.StatusKnown, service.New(service.None))
+	td.receivingNewMessage(td.sync, msg, other)
+	bdl = td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
+	assert.NotEqual(t, message.ResponseCodeRejected, bdl.Message.(*message.BlocksResponseMessage).ResponseCode)
 }

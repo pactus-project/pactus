@@ -25,6 +25,7 @@ import (
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/ntp"
+	"github.com/pactus-project/pactus/util/ratelimit"
 )
 
 // IMPORTANT NOTES:
@@ -34,6 +35,9 @@ import (
 //
 // 2. The Synchronizer should not have any locks to prevent deadlocks. All submodules,
 // such as state or consensus, should be thread-safe.
+
+// maxBlocksRequestPeers bounds the number of peers tracked by the blocks request limit.
+const maxBlocksRequestPeers = 1024
 
 type synchronizer struct {
 	config        *Config
@@ -50,6 +54,11 @@ type synchronizer struct {
 	network       network.Network
 	logger        *logger.SubLogger
 	ntp           *ntp.Checker
+
+	// blocksRequestLimit limits how many blocks requests a peer can send.
+	// A syncing node has at most MaxSessions sessions open and each ends
+	// within the session timeout, so it never needs more.
+	blocksRequestLimit *ratelimit.KeyedRateLimit[peer.ID]
 }
 
 //nolint:revive // arguments can't be reduced.
@@ -77,6 +86,8 @@ func NewSynchronizer(
 	}
 
 	sync.peerSet = peerset.NewPeerSet(conf.SessionTimeout())
+	sync.blocksRequestLimit = ratelimit.NewKeyedRateLimit[peer.ID](
+		conf.MaxSessions, conf.SessionTimeout(), maxBlocksRequestPeers)
 	sync.logger = logger.NewSubLogger(ctx, "_sync", sync)
 	fw, err := firewall.NewFirewall(ctx, conf.Firewall, network, sync.peerSet, state)
 	if err != nil {
