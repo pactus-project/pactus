@@ -590,6 +590,14 @@ func (sync *synchronizer) tryCommitBlocks() {
 			}
 		}
 
+		// The block hash doesn't cover the signatures and public keys of the transactions,
+		// so a block received from a peer must be checked before being committed.
+		if err := blk.BasicCheck(); err != nil {
+			onError(height, err)
+
+			return
+		}
+
 		sync.logger.Trace("committing block", "height", height, "block", blk)
 		if err := sync.state.CommitBlock(blk, cert); err != nil {
 			onError(height, err)

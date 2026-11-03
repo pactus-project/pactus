@@ -82,12 +82,12 @@ func TestHandlerBlocksResponseStrippedPublicKey(t *testing.T) {
 
 	trx1 := td.GenerateTestTransferTx(testsuite.TransactionWithSigner(rndPrv))
 	trx1.StripPublicKey()
-	trxs1 := []*tx.Tx{trx1}
+	trxs1 := []*tx.Tx{td.GenerateTestSubsidyTx(), trx1}
 	blk1, _ := td.GenerateTestBlock(lastHeight+1, testsuite.BlockWithTransactions(trxs1))
 
 	trx2 := td.GenerateTestTransferTx(testsuite.TransactionWithSigner(indexedPrv))
 	trx2.StripPublicKey()
-	trxs2 := []*tx.Tx{trx2}
+	trxs2 := []*tx.Tx{td.GenerateTestSubsidyTx(), trx2}
 	blk2, _ := td.GenerateTestBlock(lastHeight+1, testsuite.BlockWithTransactions(trxs2))
 
 	tests := []struct {
@@ -341,4 +341,36 @@ func TestHandlerBlocksResponseSyncingHasBlockInCache(t *testing.T) {
 	assert.Eventually(t, func() bool {
 		return nets.syncAlice.state.LastBlockHeight() == nets.syncBob.state.LastBlockHeight()
 	}, 2*time.Second, 100*time.Millisecond)
+}
+
+// The block hash doesn't cover the signatures of the transactions: a block with
+// forged signatures has the hash that the certificate signs, but it is not valid.
+func TestHandlerBlocksResponseForgedSignature(t *testing.T) {
+	td := setup(t, nil)
+
+	lastHeight := td.state.LastBlockHeight()
+	trx := td.GenerateTestTransferTx()
+	blk, cert := td.GenerateTestBlock(lastHeight+1,
+		testsuite.BlockWithTransactions([]*tx.Tx{td.GenerateTestSubsidyTx(), trx}))
+
+	data, err := blk.Bytes()
+	require.NoError(t, err)
+	forged, err := block.FromBytes(data)
+	require.NoError(t, err)
+	for _, trx := range forged.Transactions() {
+		if !trx.IsSubsidyTx() {
+			trx.SetSignature(td.RandBLSSignature())
+		}
+	}
+	require.Equal(t, blk.Hash(), forged.Hash(), "the hash doesn't cover the signature")
+
+	pid := td.addPeer(t, status.StatusKnown, service.New(service.None))
+	forgedData, err := forged.Bytes()
+	require.NoError(t, err)
+	msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, t.Name(),
+		td.RandIntMax(1000), lastHeight+1, [][]byte{forgedData}, cert)
+	td.receivingNewMessage(td.sync, msg, pid)
+
+	assert.Equal(t, lastHeight, td.state.LastBlockHeight(), "the forged block should not be committed")
+	assert.Nil(t, td.sync.cache.GetBlock(lastHeight+1), "the forged block should be removed from the cache")
 }
