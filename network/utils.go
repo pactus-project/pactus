@@ -134,8 +134,14 @@ func SubnetsToFilters(subnets []*net.IPNet, action multiaddr.Action) *multiaddr.
 	return filters
 }
 
+// MessageIDFunc returns the gossip identifier of a message. It covers the topic as well
+// as the data, so a message published on one topic can't hide the same bytes on another.
 func MessageIDFunc(m *lp2pspb.Message) string {
-	h := hash.CalcHash(m.Data)
+	data := make([]byte, 0, len(m.GetTopic())+1+len(m.Data))
+	data = append(data, m.GetTopic()...)
+	data = append(data, 0) // Topic names don't contain a zero byte.
+	data = append(data, m.Data...)
+	h := hash.CalcHash(data)
 
 	return string(h[:20])
 }

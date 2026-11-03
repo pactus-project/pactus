@@ -157,11 +157,14 @@ func TestSubnetsToFilters(t *testing.T) {
 }
 
 func TestMessageIdFunc(t *testing.T) {
-	m := &lp2pspb.Message{Data: []byte("pactus")}
-	id := MessageIDFunc(m)
+	topicA, topicB := "topic_a", "topic_b"
+	data := []byte("pactus")
 
-	assert.Equal(t, id, string([]byte{
-		0xea, 0x02, 0x0a, 0xce, 0x5c, 0x96, 0x8f, 0x75,
-		0x5d, 0xfc, 0x1b, 0x59, 0x21, 0xe5, 0x74, 0x19, 0x1c, 0xd9, 0xff, 0x43,
-	}))
+	idA := MessageIDFunc(&lp2pspb.Message{Topic: &topicA, Data: data})
+	idB := MessageIDFunc(&lp2pspb.Message{Topic: &topicB, Data: data})
+
+	assert.Len(t, idA, 20)
+	assert.NotEqual(t, idA, idB, "the same data on two topics should have two identifiers")
+	assert.Equal(t, idA, MessageIDFunc(&lp2pspb.Message{Topic: &topicA, Data: data}))
+	assert.NotEqual(t, idA, MessageIDFunc(&lp2pspb.Message{Topic: &topicA, Data: []byte("other")}))
 }
