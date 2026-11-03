@@ -156,6 +156,11 @@ func TestValidate(t *testing.T) {
 			false,
 		},
 		{
+			"block interval is not a divisor of 60",
+			makeJSON(`{"block_version": 1, "block_interval_in_second": 7, "committee_size": 4}`, "", ""),
+			false,
+		},
+		{
 			"zero block interval",
 			makeJSON(`{"block_version": 1, "block_interval_in_second": 0, "committee_size": 4}`, "", ""),
 			false,

@@ -182,6 +182,11 @@ func (gen *Genesis) Validate() error {
 		return InvalidGenesisError{Reason: "block interval should be positive"}
 	}
 
+	// Block times are rounded to the interval inside the minute.
+	if 60%params.BlockIntervalInSecond != 0 {
+		return InvalidGenesisError{Reason: "block interval should be a divisor of 60 seconds"}
+	}
+
 	if params.CommitteeSize <= 0 {
 		return InvalidGenesisError{Reason: "committee size should be positive"}
 	}

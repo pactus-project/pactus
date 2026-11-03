@@ -68,6 +68,11 @@ func (st *state) validatePrevCertificate(cert *certificate.Certificate, blockHas
 
 // validateCurCertificate validates certificate for the current height.
 func (st *state) validateCurCertificate(cert *certificate.Certificate, blockHash hash.Hash) error {
+	// The aggregated signature doesn't cover the list of absentees: it must be checked on its own.
+	if err := cert.BasicCheck(); err != nil {
+		return err
+	}
+
 	err := cert.ValidatePrecommit(st.committee.Validators(), blockHash)
 	if err != nil {
 		return err

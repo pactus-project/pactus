@@ -102,11 +102,8 @@ func LoadOrNewState(
 	// Restoring score manager
 	state.logger.Info("calculating the availability scores...")
 	scoreWindow := uint32(60000)
-	startHeight := types.Height(2)
 	endHeight := state.lastInfo.BlockHeight()
-	if uint32(endHeight) > scoreWindow {
-		startHeight = endHeight.SafeDecrease(scoreWindow)
-	}
+	startHeight := scoreStartHeight(endHeight, scoreWindow)
 
 	scoreMgr := score.NewScoreManager(scoreWindow)
 	for h := startHeight; h <= endHeight; h++ {
@@ -240,8 +237,8 @@ func (st *state) stateRoot() hash.Hash {
 }
 
 func (st *state) Close() {
-	st.lk.RLock()
-	defer st.lk.RUnlock()
+	st.lk.Lock()
+	defer st.lk.Unlock()
 
 	st.store.Close()
 }
@@ -461,11 +458,26 @@ func (st *state) ValidateBlock(blk *block.Block, round types.Round) error {
 	return st.executeBlock(blk, sb, true)
 }
 
+// scoreStartHeight returns the first block that is needed to restore the availability score.
+// The first block has no previous certificate, so the score starts from the second one.
+func scoreStartHeight(endHeight types.Height, scoreWindow uint32) types.Height {
+	if uint32(endHeight) > scoreWindow {
+		return max(2, endHeight.SafeDecrease(scoreWindow))
+	}
+
+	return 2
+}
+
 func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
 	height := cert.Height()
+	if height > st.lastInfo.BlockHeight()+1 {
+		// The block is not the next one: it can't be validated nor applied yet.
+		return FutureBlockError{Height: height, LastHeight: st.lastInfo.BlockHeight()}
+	}
+
 	if height != st.lastInfo.BlockHeight()+1 {
 		st.logger.Debug("block is committed before", "height", height)
 
