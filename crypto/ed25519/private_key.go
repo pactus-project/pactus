@@ -26,7 +26,7 @@ func PrivateKeyFromString(text string) (*PrivateKey, error) {
 	}
 
 	// Check if hrp is valid
-	if hrp != crypto.PrivateKeyHRP {
+	if hrp != crypto.PrivateKeyHRP() {
 		return nil, crypto.InvalidHRPError(hrp)
 	}
 
@@ -50,7 +50,7 @@ func PrivateKeyFromBytes(data []byte) (*PrivateKey, error) {
 // String returns a human-readable string for the ED25519 private key.
 func (prv *PrivateKey) String() string {
 	str, _ := bech32m.EncodeFromBase256WithType(
-		crypto.PrivateKeyHRP,
+		crypto.PrivateKeyHRP(),
 		byte(crypto.SignatureTypeEd25519),
 		prv.Bytes(),
 	)

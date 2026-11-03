@@ -48,10 +48,10 @@ func SignatureAggregate(sigs ...*Signature) (*Signature, error) {
 
 	data := aggPointG1.Bytes()
 
-	return &Signature{
-		data:    data[:],
-		pointG1: aggPointG1,
-	}, nil
+	sig := &Signature{data: data[:]}
+	sig.pointG1.Store(aggPointG1)
+
+	return sig, nil
 }
 
 // PublicKeyAggregate aggregates one or more BLS public keys into a single
@@ -76,8 +76,8 @@ func PublicKeyAggregate(pubs ...*PublicKey) (*PublicKey, error) {
 
 	data := aggPointG2.Bytes()
 
-	return &PublicKey{
-		data:    data[:],
-		pointG2: aggPointG2,
-	}, nil
+	pub := &PublicKey{data: data[:]}
+	pub.pointG2.Store(aggPointG2)
+
+	return pub, nil
 }

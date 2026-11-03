@@ -35,7 +35,7 @@ func TestPrivateKeyFromString(t *testing.T) {
 			false, nil,
 		},
 		{
-			"invalid checksum (expected uuk3y0 got uuk30y)",
+			"invalid checksum (got uuk30y)",
 			"SECRET1RYY62A96X25ZAL4DPL5Z63G83GCSFCCQ7K0CMQD3MFNLYK3A6R26QUUK30Y",
 			false, nil,
 		},

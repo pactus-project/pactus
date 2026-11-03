@@ -32,7 +32,7 @@ func PublicKeyFromString(text string) (*PublicKey, error) {
 	}
 
 	// Check if hrp is valid
-	if hrp != crypto.PublicKeyHRP {
+	if hrp != crypto.PublicKeyHRP() {
 		return nil, crypto.InvalidHRPError(hrp)
 	}
 
@@ -73,7 +73,7 @@ func (pub *PublicKey) Bytes() []byte {
 // String returns a human-readable string for the secp256k1 public key.
 func (pub *PublicKey) String() string {
 	str, _ := bech32m.EncodeFromBase256WithType(
-		crypto.PublicKeyHRP,
+		crypto.PublicKeyHRP(),
 		byte(crypto.SignatureTypeSecp256k1),
 		pub.Bytes(),
 	)
@@ -125,12 +125,8 @@ func (*PublicKey) SerializeSize() int {
 // Verify checks that a signature is valid for the given message and public key.
 // It's defined in section 2.6 of the spec: CoreVerify.
 func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
-	if sig == nil {
-		return crypto.ErrInvalidPublicKey
-	}
-
 	sigSecp, ok := sig.(*Signature)
-	if !ok {
+	if !ok || sigSecp == nil {
 		return crypto.ErrInvalidSignature
 	}
 	rBytes := sigSecp.data[:32]

@@ -21,6 +21,13 @@ const (
 	// hardenedKeyStart is the index at which a hardened key starts.
 	hardenedKeyStart = uint32(0x80000000) // 2^31
 
+	// maxDepth is the maximum depth of a derivation path: the depth is
+	// serialized in a single byte.
+	maxDepth = 255
+
+	// chainCodeSize is the size of the chain code in bytes.
+	chainCodeSize = 32
+
 	// MinSeedBytes is the minimum number of bytes allowed for a seed to
 	// a master node.
 	MinSeedBytes = 16 // 128 bits
@@ -71,6 +78,10 @@ func (k *ExtendedKey) DerivePath(path []uint32) (*ExtendedKey, error) {
 // For this reason, our scheme for ed25519 and curve25519 does not support public key derivation and
 // uses the produced hashes directly as private keys.
 func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
+	if len(k.path) >= maxDepth {
+		return nil, ErrMaxDepthExceeded
+	}
+
 	isChildHardened := index >= hardenedKeyStart
 
 	if !isChildHardened {
@@ -172,7 +183,7 @@ func (k *ExtendedKey) String() string {
 		return err.Error()
 	}
 
-	str, err := bech32m.EncodeFromBase256WithType(crypto.XPrivateKeyHRP,
+	str, err := bech32m.EncodeFromBase256WithType(crypto.XPrivateKeyHRP(),
 		byte(crypto.SignatureTypeEd25519), buf.Bytes())
 	if err != nil {
 		return err.Error()
@@ -194,7 +205,7 @@ func NewKeyFromString(str string) (*ExtendedKey, error) {
 		return nil, ErrInvalidKeyData
 	}
 
-	if hrp != crypto.XPrivateKeyHRP {
+	if hrp != crypto.XPrivateKeyHRP() {
 		return nil, crypto.InvalidHRPError(hrp)
 	}
 
@@ -227,6 +238,10 @@ func NewKeyFromString(str string) (*ExtendedKey, error) {
 	key, err := encoding.ReadVarBytes(reader)
 	if err != nil {
 		return nil, err
+	}
+
+	if len(chainCode) != chainCodeSize || res != 0 || len(key) != 32 || reader.Len() != 0 {
+		return nil, ErrInvalidKeyData
 	}
 
 	return newExtendedKey(key, chainCode, path), nil

@@ -111,7 +111,7 @@ func TestPublicKeyFromString(t *testing.T) {
 			false, nil,
 		},
 		{
-			"invalid checksum (expected ztd56p got ztd5p6)",
+			"invalid checksum (got ztd5p6)",
 			"public1rafnl324uwngqdq455ax4e52fedmfcvskkwas6wsau0u0nwj4g96qztd5p6",
 			false, nil,
 		},
@@ -152,4 +152,18 @@ func TestPublicKeyFromString(t *testing.T) {
 			assert.Contains(t, err.Error(), tt.errMsg, "test %v: error not matched", no)
 		}
 	}
+}
+
+func TestPublicKeyVerifyInvalidSignatureTypes(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	pub, _ := ts.RandEd25519KeyPair()
+	msg := ts.RandBytes(16)
+
+	var nilSig *ed25519.Signature
+	_, secpPrv := ts.RandSecp256k1KeyPair()
+
+	require.ErrorIs(t, pub.Verify(msg, nil), crypto.ErrInvalidSignature)
+	require.ErrorIs(t, pub.Verify(msg, nilSig), crypto.ErrInvalidSignature)
+	require.ErrorIs(t, pub.Verify(msg, secpPrv.Sign(msg)), crypto.ErrInvalidSignature)
 }

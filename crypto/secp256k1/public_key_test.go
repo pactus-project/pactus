@@ -164,3 +164,17 @@ func TestPublicKeyFromBytesInvalidHexPattern(t *testing.T) {
 	_, err := secp256k1.PublicKeyFromBytes(make([]byte, secp256k1.PublicKeySize))
 	require.Error(t, err)
 }
+
+func TestPublicKeyVerifyInvalidSignatureTypes(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	pub, _ := ts.RandSecp256k1KeyPair()
+	msg := ts.RandBytes(16)
+
+	var nilSig *secp256k1.Signature
+	_, edPrv := ts.RandEd25519KeyPair()
+
+	require.ErrorIs(t, pub.Verify(msg, nil), crypto.ErrInvalidSignature)
+	require.ErrorIs(t, pub.Verify(msg, nilSig), crypto.ErrInvalidSignature)
+	require.ErrorIs(t, pub.Verify(msg, edPrv.Sign(msg)), crypto.ErrInvalidSignature)
+}

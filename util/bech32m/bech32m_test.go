@@ -686,7 +686,7 @@ func TestErrorMessages(t *testing.T) {
 		{InvalidCharacterError('~'), "invalid character in string: '~'"},
 		{InvalidSeparatorIndexError(7), "invalid separator index 7"},
 		{NonCharsetCharError(3), "not part of charset: 3"},
-		{InvalidChecksumError{Expected: "abc", Actual: "xyz"}, "expected abc got xyz"},
+		{InvalidChecksumError{Expected: "abc", Actual: "xyz"}, "invalid checksum (got xyz)"},
 		{InvalidDataByteError(9), "invalid data byte: 9"},
 	}
 
@@ -694,5 +694,47 @@ func TestErrorMessages(t *testing.T) {
 		if !strings.Contains(tt.err.Error(), tt.contains) {
 			t.Errorf("error %q should contain %q", tt.err.Error(), tt.contains)
 		}
+	}
+}
+
+func TestInvalidChecksumErrorHidesExpected(t *testing.T) {
+	err := InvalidChecksumError{Expected: "abcdef", Actual: "uvwxyz"}
+	if strings.Contains(err.Error(), "abcdef") {
+		t.Errorf("error %q should not reveal the expected checksum", err.Error())
+	}
+}
+
+func TestEncodeRejectsInvalidHRP(t *testing.T) {
+	tests := []struct {
+		hrp string
+	}{
+		{"a b"},
+		{"a\x7fb"},
+		{"\x01"},
+	}
+
+	for _, tt := range tests {
+		if _, err := Encode(tt.hrp, []byte{1, 2, 3}); err == nil {
+			t.Errorf("Encode(%q) should fail", tt.hrp)
+		}
+	}
+
+	str, err := Encode("pc", []byte{1, 2, 3})
+	if err != nil {
+		t.Fatalf("Encode with a valid hrp failed: %v", err)
+	}
+	if _, _, err := Decode(str); err != nil {
+		t.Errorf("Decode(Encode(x)) failed: %v", err)
+	}
+}
+
+func TestConvertBitsRejectsOutOfRangeBytes(t *testing.T) {
+	// 33 does not fit in 5 bits: it must not be silently truncated.
+	if _, err := ConvertBits([]byte{33, 1, 2}, 5, 8, false); err == nil {
+		t.Error("ConvertBits should reject a byte that does not fit in fromBits")
+	}
+
+	if _, err := ConvertBits([]byte{31, 1, 2}, 5, 8, true); err != nil {
+		t.Errorf("ConvertBits should accept a valid 5-bit group: %v", err)
 	}
 }

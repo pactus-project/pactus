@@ -5,6 +5,7 @@ import (
 	"crypto/subtle"
 	"encoding/hex"
 	"io"
+	"sync/atomic"
 
 	bls12381 "github.com/consensys/gnark-crypto/ecc/bls12-381"
 	cbor "github.com/fxamacker/cbor/v2"
@@ -17,8 +18,8 @@ var _ crypto.Signature = &Signature{}
 const SignatureSize = 48
 
 type Signature struct {
-	pointG1 *bls12381.G1Affine // Lazily initialized point on G1.
-	data    []byte             // Raw signature data.
+	pointG1 atomic.Pointer[bls12381.G1Affine] // Lazily initialized point on G1.
+	data    []byte                            // Raw signature data.
 }
 
 // SignatureFromString decodes the input string and returns the Signature
@@ -79,8 +80,11 @@ func (sig *Signature) Decode(r io.Reader) error {
 		return err
 	}
 
-	s, _ := SignatureFromBytes(data)
-	*sig = *s
+	// data is always exactly SignatureSize bytes here, so this can only
+	// fail on length, which never happens; pointG1 is lazy and never
+	// populated by SignatureFromBytes, so there's nothing to carry over.
+	sig.data = data
+	sig.pointG1.Store(nil)
 
 	return nil
 }
@@ -92,7 +96,7 @@ func (*Signature) SerializeSize() int {
 // EqualsTo checks if the current signature is equal to another signature.
 func (sig *Signature) EqualsTo(x crypto.Signature) bool {
 	xBLS, ok := x.(*Signature)
-	if !ok {
+	if !ok || xBLS == nil {
 		return false
 	}
 
@@ -101,8 +105,8 @@ func (sig *Signature) EqualsTo(x crypto.Signature) bool {
 
 // PointG1 returns the point on G1 for the signature.
 func (sig *Signature) PointG1() (*bls12381.G1Affine, error) {
-	if sig.pointG1 != nil {
-		return sig.pointG1, nil
+	if g1Aff := sig.pointG1.Load(); g1Aff != nil {
+		return g1Aff, nil
 	}
 
 	g1Aff := new(bls12381.G1Affine)
@@ -114,7 +118,10 @@ func (sig *Signature) PointG1() (*bls12381.G1Affine, error) {
 		return nil, crypto.ErrInvalidSignature
 	}
 
-	sig.pointG1 = g1Aff
+	// Concurrent calls may each compute g1Aff (the result is deterministic,
+	// so a lost race just means a harmless recomputation); atomic.Pointer
+	// makes the eventual read/write itself race-free.
+	sig.pointG1.Store(g1Aff)
 
 	return g1Aff, nil
 }

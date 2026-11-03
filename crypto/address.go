@@ -32,7 +32,7 @@ func AddressFromString(text string) (Address, error) {
 	}
 
 	// Check if hrp is valid
-	if hrp != AddressHRP {
+	if hrp != AddressHRP() {
 		return Address{}, InvalidHRPError(hrp)
 	}
 
@@ -78,7 +78,7 @@ func (addr Address) String() string {
 	}
 
 	str, _ := bech32m.EncodeFromBase256WithType(
-		AddressHRP,
+		AddressHRP(),
 		addr[0],
 		addr[1:],
 	)

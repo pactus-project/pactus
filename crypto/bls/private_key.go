@@ -32,7 +32,7 @@ func PrivateKeyFromString(text string) (*PrivateKey, error) {
 	}
 
 	// Check if hrp is valid
-	if hrp != crypto.PrivateKeyHRP {
+	if hrp != crypto.PrivateKeyHRP() {
 		return nil, crypto.InvalidHRPError(hrp)
 	}
 
@@ -93,8 +93,13 @@ func PrivateKeyFromBytes(data []byte) (*PrivateKey, error) {
 		return nil, crypto.InvalidLengthError(len(data))
 	}
 
-	scalar := new(big.Int)
-	scalar = scalar.SetBytes(data)
+	// Reduce the scalar modulo the curve order, so every encoding of a secret
+	// maps to the same key, and reject the zero key.
+	scalar := new(big.Int).SetBytes(data)
+	scalar.Mod(scalar, fr.Modulus())
+	if scalar.Sign() == 0 {
+		return nil, crypto.ErrInvalidPrivateKey
+	}
 
 	return &PrivateKey{scalar: scalar}, nil
 }
@@ -102,7 +107,7 @@ func PrivateKeyFromBytes(data []byte) (*PrivateKey, error) {
 // String returns a human-readable string for the BLS private key.
 func (prv *PrivateKey) String() string {
 	str, _ := bech32m.EncodeFromBase256WithType(
-		crypto.PrivateKeyHRP,
+		crypto.PrivateKeyHRP(),
 		byte(crypto.SignatureTypeBLS),
 		prv.Bytes(),
 	)
@@ -134,10 +139,10 @@ func (prv *PrivateKey) SignNative(msg []byte) *Signature {
 	sigAffine := new(bls12381.G1Affine).FromJacobian(sigJac)
 	data := sigAffine.Bytes()
 
-	return &Signature{
-		data:    data[:],
-		pointG1: sigAffine,
-	}
+	sig := &Signature{data: data[:]}
+	sig.pointG1.Store(sigAffine)
+
+	return sig
 }
 
 func (prv *PrivateKey) PublicKeyNative() *PublicKey {
@@ -145,10 +150,10 @@ func (prv *PrivateKey) PublicKeyNative() *PublicKey {
 	pkAffine := new(bls12381.G2Affine).FromJacobian(pkJac)
 	data := pkAffine.Bytes()
 
-	return &PublicKey{
-		data:    data[:],
-		pointG2: pkAffine,
-	}
+	pub := &PublicKey{data: data[:]}
+	pub.pointG2.Store(pkAffine)
+
+	return pub
 }
 
 func (prv *PrivateKey) PublicKey() crypto.PublicKey {

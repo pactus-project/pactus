@@ -3,6 +3,7 @@ package bls_test
 import (
 	"encoding/hex"
 	"strings"
+	"sync"
 	"testing"
 
 	cbor "github.com/fxamacker/cbor/v2"
@@ -143,7 +144,7 @@ func TestPublicKeyFromString(t *testing.T) {
 			false, nil,
 		},
 		{
-			"invalid checksum (expected jhx47a got jhx470)",
+			"invalid checksum (got jhx470)",
 			"public1p4u8hfytl2pj6l9rj0t54gxcdmna4hq52ncqkkqjf3arha5mlk3x4mzpyjkhmdl20jae7f65aamjr" +
 				"vqcvf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg7v5jhx470",
 			false, nil,
@@ -232,4 +233,36 @@ func TestPointG2(t *testing.T) {
 			assert.Contains(t, err.Error(), tt.errMsg, "test %v: error not matched", no)
 		}
 	}
+}
+
+func TestPublicKeyConcurrentPointG2(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	pub, _ := ts.RandBLSKeyPair()
+	fresh, err := bls.PublicKeyFromBytes(pub.Bytes())
+	require.NoError(t, err)
+
+	const workers = 32
+	wg := sync.WaitGroup{}
+	for i := 0; i < workers; i++ {
+		wg.Go(func() {
+			_, err := fresh.PointG2()
+			assert.NoError(t, err)
+		})
+	}
+	wg.Wait()
+}
+
+func TestPublicKeyVerifyInvalidSignatureTypes(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	pub, _ := ts.RandBLSKeyPair()
+	msg := ts.RandBytes(16)
+
+	var nilSig *bls.Signature
+	_, edPrv := ts.RandEd25519KeyPair()
+
+	require.ErrorIs(t, pub.Verify(msg, nil), crypto.ErrInvalidSignature)
+	require.ErrorIs(t, pub.Verify(msg, nilSig), crypto.ErrInvalidSignature)
+	require.ErrorIs(t, pub.Verify(msg, edPrv.Sign(msg)), crypto.ErrInvalidSignature)
 }

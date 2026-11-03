@@ -18,4 +18,8 @@ var (
 	// ErrNonHardenedPath is returned when a non-hardened derivation path is used,
 	// which is not supported by ed25519.
 	ErrNonHardenedPath = errors.New("non-hardened derivation not supported")
+
+	// ErrMaxDepthExceeded is returned when deriving a child would make the
+	// derivation path longer than the 255 levels the serialized format can hold.
+	ErrMaxDepthExceeded = errors.New("maximum derivation depth exceeded")
 )
