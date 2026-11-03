@@ -657,3 +657,20 @@ func TestFailedStartReleasesResources(t *testing.T) {
 	// Stopping afterwards is harmless.
 	net.Stop()
 }
+
+func TestConnectionsBeforeStartAreCounted(t *testing.T) {
+	pipe := pipeline.New[Event](t.Context())
+	log := logger.NewSubLogger(t.Context(), "_network", nil)
+	notStarted, err := makeNetwork(t.Context(), testConfig(), log, pipe, nil)
+	require.NoError(t, err)
+
+	other := makeTestNetwork(t, testConfig(), nil)
+	require.NoError(t, other.host.Connect(t.Context(), lp2ppeer.AddrInfo{
+		ID:    notStarted.host.ID(),
+		Addrs: notStarted.host.Addrs(),
+	}))
+
+	assert.Eventually(t, func() bool {
+		return notStarted.NumInbound() == 1
+	}, 5*time.Second, 50*time.Millisecond, "an inbound connection made before Start should be counted")
+}

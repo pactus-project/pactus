@@ -392,6 +392,11 @@ func (n *network) setupServices(host lp2phost.Host, kadProtocolID, streamProtoco
 		return LibP2PError{Err: err}
 	}
 
+	// The host accepts connections as soon as it is created: the peer manager and the
+	// notifee must observe them before Start, otherwise those connections are uncounted.
+	n.connGater.SetPeerManager(n.peerMgr)
+	host.Network().Notify(n.notifee)
+
 	return nil
 }
 
@@ -458,9 +463,6 @@ func (n *network) Start() error {
 	n.stream.Start()
 	n.peerMgr.Start()
 	n.notifee.Start()
-
-	n.host.Network().Notify(n.notifee)
-	n.connGater.SetPeerManager(n.peerMgr)
 
 	n.logger.Info("network started", "addr", n.host.Addrs(), "id", n.host.ID())
 
