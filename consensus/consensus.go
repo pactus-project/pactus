@@ -154,8 +154,9 @@ func (cs *consensus) HasVote(h hash.Hash) bool {
 // the current consensus round.
 // Valid votes from subsequent rounds are not included.
 func (cs *consensus) AllVotes() []*vote.Vote {
-	cs.lk.RLock()
-	defer cs.lk.RUnlock()
+	// The log creates the entry of a round that does not exist yet.
+	cs.lk.Lock()
+	defer cs.lk.Unlock()
 
 	votes := []*vote.Vote{}
 	for r := types.Round(0); r <= cs.round; r++ {
@@ -458,15 +459,17 @@ func (cs *consensus) IsActive() bool {
 }
 
 func (cs *consensus) Proposal() *proposal.Proposal {
-	cs.lk.RLock()
-	defer cs.lk.RUnlock()
+	// The log creates the entry of a round that does not exist yet.
+	cs.lk.Lock()
+	defer cs.lk.Unlock()
 
 	return cs.log.RoundProposal(cs.round)
 }
 
 func (cs *consensus) HandleQueryProposal(height types.Height, round types.Round) *proposal.Proposal {
-	cs.lk.RLock()
-	defer cs.lk.RUnlock()
+	// The log creates the entry of a round that does not exist yet.
+	cs.lk.Lock()
+	defer cs.lk.Unlock()
 
 	if !cs.active {
 		return nil
@@ -496,8 +499,9 @@ func (cs *consensus) HandleQueryProposal(height types.Height, round types.Round)
 
 // TODO: Improve the performance?
 func (cs *consensus) HandleQueryVote(height types.Height, round types.Round) *vote.Vote {
-	cs.lk.RLock()
-	defer cs.lk.RUnlock()
+	// The log creates the entry of a round that does not exist yet.
+	cs.lk.Lock()
+	defer cs.lk.Unlock()
 
 	if !cs.active {
 		return nil
