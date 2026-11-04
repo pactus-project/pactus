@@ -4,7 +4,9 @@ import (
 	"encoding/hex"
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNodeID(t *testing.T) {
@@ -89,4 +91,35 @@ func TestMerkleTree(t *testing.T) {
 	tree.SetData(21, []byte("v"))
 	expected, _ := hex.DecodeString("ec4446ea16b8f82083cc2d727b8f9e7b9c318e35bb37295a2e87064393572800")
 	assert.Equal(t, expected, tree.Root().Bytes())
+}
+
+func TestRootOfAnEmptyTree(t *testing.T) {
+	tree := New()
+
+	require.NotPanics(t, func() {
+		assert.Equal(t, hash.UndefHash, tree.Root())
+	})
+}
+
+// A root doesn't depend on which nodes were already hashed when it is asked for.
+func TestRootDoesNotDependOnTheCallOrder(t *testing.T) {
+	makeTree := func() *Tree {
+		tree := New()
+		for i := int32(0); i < 5; i++ {
+			tree.SetData(i, []byte{byte(i)})
+		}
+
+		return tree
+	}
+
+	fresh := makeTree()
+	root := fresh.Root()
+
+	// Hash the tree, then change a leaf and go back: the same data gives the same root.
+	other := makeTree()
+	_ = other.Root()
+	other.SetData(4, []byte{99})
+	assert.NotEqual(t, root, other.Root())
+	other.SetData(4, []byte{4})
+	assert.Equal(t, root, other.Root())
 }

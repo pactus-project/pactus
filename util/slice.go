@@ -165,7 +165,7 @@ func DecompressBuffer(compressed []byte, opts ...DecompressOption) ([]byte, erro
 func Subtracts(slice1, slice2 []int32) []int32 {
 	sub := []int32{}
 	if slice2 == nil {
-		return slice1
+		return slices.Clone(slice1)
 	}
 
 	for _, num1 := range slice1 {
@@ -259,10 +259,14 @@ func IsSubset[T comparable](parentSet, subSet []T) bool {
 
 // RemoveFirstOccurrenceOf removes the first occurrence of element from slice.
 // It returns the modified slice and a boolean indicating whether an element was removed.
+// The slice of the caller is not modified: a new slice is returned.
 func RemoveFirstOccurrenceOf[T comparable](slice []T, element T) ([]T, bool) {
 	for i, v := range slice {
 		if v == element {
-			return append(slice[:i], slice[i+1:]...), true
+			res := make([]T, 0, len(slice)-1)
+			res = append(res, slice[:i]...)
+
+			return append(res, slice[i+1:]...), true
 		}
 	}
 
@@ -270,7 +274,12 @@ func RemoveFirstOccurrenceOf[T comparable](slice []T, element T) ([]T, bool) {
 }
 
 // Trim truncates a slice to the given length.
+// A negative length gives an empty slice.
 func Trim[T any](slice []T, newLength int) []T {
+	if newLength < 0 {
+		return slice[:0]
+	}
+
 	if newLength <= len(slice) {
 		return slice[:newLength]
 	}
@@ -286,6 +295,10 @@ func Shuffle[T any](slice []T) {
 }
 
 // Prepend adds elements to the beginning of a slice and returns the modified slice.
+// Neither the slice nor the elements of the caller are modified.
 func Prepend[T any](slice []T, elements ...T) []T {
-	return append(elements, slice...)
+	res := make([]T, 0, len(elements)+len(slice))
+	res = append(res, elements...)
+
+	return append(res, slice...)
 }

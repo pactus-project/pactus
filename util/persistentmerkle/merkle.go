@@ -93,17 +93,25 @@ func (t *Tree) SetHash(leaf int32, h hash.Hash) {
 	}
 }
 
+// Root returns the root of the tree. The root of an empty tree is the undefined hash.
 func (t *Tree) Root() hash.Hash {
+	if t.maxHeight == 0 {
+		return hash.UndefHash
+	}
+
 	return t.nodeHash(0, t.maxHeight-1)
 }
 
 func (t *Tree) nodeHash(width, height int32) hash.Hash {
 	node := t.getNode(width, height)
 	if node == nil {
-		node = t.getNode(width-1, height)
-		if node == nil {
+		// There is no node on the right: the node on the left is used instead.
+		// It is hashed from its own children, never from the ones of this position.
+		if t.getNode(width-1, height) == nil {
 			panic("invalid merkle tree")
 		}
+
+		return t.nodeHash(width-1, height)
 	}
 	if node.hash != nil {
 		return *node.hash

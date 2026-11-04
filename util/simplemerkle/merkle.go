@@ -59,6 +59,13 @@ func NewTreeFromSlices(slices [][]byte) *Tree {
 	return NewTreeFromHashes(hashes)
 }
 
+// NewTreeFromHashes creates a tree from the hashes of the leaves.
+//
+// Note that a node without a right child is hashed with itself, so the root of [A, B, C]
+// and the root of [A, B, C, C] are the same. The number of leaves is not part of the root:
+// whoever uses the root must commit to the number of leaves, like a block hash does.
+//
+// The hashes are copied: the tree is not affected by a later change of the slice.
 func NewTreeFromHashes(hashes []hash.Hash) *Tree {
 	if len(hashes) == 0 {
 		return nil
@@ -70,7 +77,8 @@ func NewTreeFromHashes(hashes []hash.Hash) *Tree {
 	merkles := make([]*hash.Hash, arraySize)
 
 	for i := range hashes {
-		merkles[i] = &hashes[i]
+		leaf := hashes[i]
+		merkles[i] = &leaf
 	}
 
 	// Start the array offset after the last transaction and adjusted to the

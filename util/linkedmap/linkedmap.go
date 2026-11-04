@@ -16,17 +16,18 @@ type LinkedMap[K comparable, V any] struct {
 }
 
 // New creates a new LinkedMap with the specified capacity.
+// A capacity of zero or less means that there is no limit.
 func New[K comparable, V any](capacity int) *LinkedMap[K, V] {
 	return &LinkedMap[K, V]{
 		list:     linkedlist.New[Pair[K, V]](),
 		hashmap:  make(map[K]*linkedlist.Element[Pair[K, V]]),
-		capacity: capacity,
+		capacity: max(capacity, 0),
 	}
 }
 
 // SetCapacity sets the capacity of the LinkedMap and prunes the excess elements if needed.
 func (lm *LinkedMap[K, V]) SetCapacity(capacity int) {
-	lm.capacity = capacity
+	lm.capacity = max(capacity, 0)
 
 	lm.prune()
 }
@@ -56,6 +57,7 @@ func (lm *LinkedMap[K, V]) PushBack(key K, value V) {
 }
 
 // PushFront adds a new key-value pair to the beginning of the LinkedMap.
+// If the map is full, the pair at the head is pruned: that is the new pair.
 func (lm *LinkedMap[K, V]) PushFront(key K, value V) {
 	node, found := lm.hashmap[key]
 	if found {
@@ -123,6 +125,10 @@ func (lm *LinkedMap[K, V]) Remove(key K) bool {
 
 // remove removes the specified element pair from the LinkedMap.
 func (lm *LinkedMap[K, V]) remove(element *linkedlist.Element[Pair[K, V]]) {
+	if element == nil {
+		return
+	}
+
 	lm.list.Delete(element)
 	delete(lm.hashmap, element.Data.Key)
 }
@@ -153,16 +159,21 @@ func (lm *LinkedMap[K, V]) Clear() {
 	lm.hashmap = make(map[K]*linkedlist.Element[Pair[K, V]])
 }
 
-// prune removes excess elements from the LinkedMap if its size exceeds the capacity.
+// prune removes excess elements from the head of the LinkedMap if its size exceeds the capacity.
+// Note that a pair pushed at the front of a full map is pruned at once.
 func (lm *LinkedMap[K, V]) prune() {
 	if lm.capacity == 0 {
 		return
 	}
 
 	for lm.list.Length() > lm.capacity {
-		head := lm.list.Head
-		key := head.Data.Key
-		lm.list.Delete(head)
+		elm := lm.list.Head
+		if elm == nil {
+			return
+		}
+
+		key := elm.Data.Key
+		lm.list.Delete(elm)
 		delete(lm.hashmap, key)
 	}
 }

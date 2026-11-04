@@ -52,6 +52,9 @@ func (ts *txStore) saveTxs(batch *leveldb.Batch, txs block.Txs, regs []blockRegi
 func (ts *txStore) pruneCache(currentHeight types.Height) {
 	for {
 		head := ts.txCache.HeadNode()
+		if head == nil {
+			return
+		}
 		txHeight := head.Data.Value
 
 		if currentHeight.SafeSub(txHeight) <= ts.txCacheWindow {
