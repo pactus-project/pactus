@@ -64,7 +64,11 @@ func (handler *helloAckHandler) ParseMessage(m message.Message, pid peer.ID) {
 		}
 	}
 
-	handler.peerSet.UpdateStatus(pid, status.StatusKnown)
+	// An outbound peer becomes known when it sends its own valid Hello message,
+	// an acknowledgement only says that it accepted ours.
+	if peer.Direction == lp2pnetwork.DirInbound {
+		handler.peerSet.UpdateStatus(pid, status.StatusKnown)
+	}
 	handler.logger.Info("hello message acknowledged", "pid", pid, "reason", msg.Reason)
 
 	if msg.Height > handler.state.LastBlockHeight() {

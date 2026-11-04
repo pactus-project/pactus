@@ -13,6 +13,11 @@ import (
 	"github.com/pactus-project/pactus/version"
 )
 
+const (
+	maxHelloMonikerLength = 128
+	maxHelloAgentLength   = 256
+)
+
 type HelloMessage struct {
 	PeerID          peer.ID          `cbor:"1,keyasint"`
 	Agent           string           `cbor:"2,keyasint"`
@@ -41,12 +46,29 @@ func NewHelloMessage(pid peer.ID, moniker string,
 	}
 }
 
+// maxHelloPublicKeys bounds the number of keys a Hello can list. An honest
+// node runs at most 32 validators (cmd.MakeValidatorKey truncates a wallet
+// to its first 32 validator addresses), while the wire format allows up to
+// bundle.MaxArrayElements (65536). Without this bound, PublicKeyAggregate
+// below pays one expensive subgroup check per listed key, so a single Hello
+// can tie up the receiver's event loop for hundreds of milliseconds.
+const maxHelloPublicKeys = 32
+
 func (m *HelloMessage) BasicCheck() error {
+	if len(m.Moniker) > maxHelloMonikerLength {
+		return BasicCheckError{"moniker is too long"}
+	}
+	if len(m.Agent) > maxHelloAgentLength {
+		return BasicCheckError{"agent is too long"}
+	}
 	if m.Signature == nil {
 		return BasicCheckError{"no signature"}
 	}
 	if len(m.PublicKeys) == 0 {
 		return BasicCheckError{"no public key"}
+	}
+	if len(m.PublicKeys) > maxHelloPublicKeys {
+		return BasicCheckError{"too many public keys"}
 	}
 
 	for _, pub := range m.PublicKeys {

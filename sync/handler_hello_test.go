@@ -234,3 +234,53 @@ func TestHandlerHelloHandshaking(t *testing.T) {
 		td.checkPeerStatus(t, msg.PeerID, status.StatusKnown)
 	})
 }
+
+func TestHandlerHelloIsBoundToTheConnection(t *testing.T) {
+	td := setup(t, nil)
+
+	td.state.EXPECT().UpdateValidatorProtocolVersion(gomock.Any(), gomock.Any()).AnyTimes()
+
+	t.Run("Hello replayed by another peer", func(t *testing.T) {
+		msg := td.validHelloMessage(t)
+		replayer := td.RandPeerID()
+
+		td.connectPeer(replayer, lp2pnetwork.DirInbound, false)
+		td.receivingNewMessage(td.sync, msg, replayer)
+
+		td.shouldPublishHelloAck(t, message.ResponseCodeRejected)
+		td.checkPeerStatus(t, replayer, status.StatusBanned)
+		assert.Empty(t, td.sync.peerSet.GetPeer(replayer).ConsensusKeys)
+		assert.Empty(t, td.sync.peerSet.GetPeer(replayer).Moniker)
+	})
+
+	t.Run("Rejected Hello doesn't record the peer info", func(t *testing.T) {
+		msg := td.validHelloMessage(t)
+		msg.GenesisHash = td.RandHash()
+
+		td.connectPeer(msg.PeerID, lp2pnetwork.DirInbound, false)
+		td.receivingNewMessage(td.sync, msg, msg.PeerID)
+
+		td.shouldPublishHelloAck(t, message.ResponseCodeRejected)
+		peer := td.sync.peerSet.GetPeer(msg.PeerID)
+		assert.Empty(t, peer.ConsensusKeys)
+		assert.Empty(t, peer.Moniker)
+		assert.Zero(t, peer.Height)
+	})
+
+	t.Run("Unexpected Hello doesn't overwrite the peer info", func(t *testing.T) {
+		first := td.validHelloMessage(t)
+
+		td.connectPeer(first.PeerID, lp2pnetwork.DirInbound, false)
+		td.receivingNewMessage(td.sync, first, first.PeerID)
+		td.shouldPublishMessageWithThisType(t, message.TypeHello)
+		td.shouldPublishHelloAck(t, message.ResponseCodeOK)
+
+		second := td.validHelloMessage(t)
+		second.PeerID = first.PeerID
+		second.Moniker = "other"
+		td.receivingNewMessage(td.sync, second, first.PeerID)
+
+		assert.Equal(t, first.Moniker, td.sync.peerSet.GetPeer(first.PeerID).Moniker)
+		assert.Equal(t, first.PublicKeys, td.sync.peerSet.GetPeer(first.PeerID).ConsensusKeys)
+	})
+}

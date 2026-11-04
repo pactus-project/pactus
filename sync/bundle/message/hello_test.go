@@ -1,6 +1,7 @@
 package message
 
 import (
+	"strings"
 	"testing"
 	"time"
 
@@ -29,6 +30,21 @@ func TestHelloMessage(t *testing.T) {
 
 		err := msg.BasicCheck()
 		require.ErrorIs(t, err, crypto.ErrInvalidSignature)
+	})
+
+	t.Run("Moniker and agent are bounded", func(t *testing.T) {
+		valKey := ts.RandValKey()
+		msg := NewHelloMessage(ts.RandPeerID(), strings.Repeat("a", maxHelloMonikerLength),
+			service.New(service.FullNode), ts.RandHeight(), ts.RandHash(), ts.RandHash())
+		require.NoError(t, msg.Sign([]*bls.ValidatorKey{valKey}))
+		require.NoError(t, msg.BasicCheck())
+
+		msg.Moniker += "a"
+		require.ErrorIs(t, msg.BasicCheck(), BasicCheckError{"moniker is too long"})
+
+		msg.Moniker = "Oscar"
+		msg.Agent = strings.Repeat("a", maxHelloAgentLength+1)
+		require.ErrorIs(t, msg.BasicCheck(), BasicCheckError{"agent is too long"})
 	})
 
 	t.Run("Signature is nil", func(t *testing.T) {

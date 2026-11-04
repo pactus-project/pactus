@@ -7,6 +7,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"io"
+	"math"
 	"math/rand"
 	"slices"
 )
@@ -135,7 +136,12 @@ func DecompressBuffer(compressed []byte, opts ...DecompressOption) ([]byte, erro
 	// more than maxSize, the stream is over the cap and we reject it instead
 	// of silently truncating. The LimitReader stops reading at the cap, so no
 	// unbounded allocation occurs.
-	limited := io.LimitReader(reader, int64(cfg.maxSize+1))
+	// One more byte than the cap is read, unless that would overflow.
+	readLimit := int64(max(cfg.maxSize, 0))
+	if readLimit < math.MaxInt64 {
+		readLimit++
+	}
+	limited := io.LimitReader(reader, readLimit)
 
 	var res bytes.Buffer
 	if _, err = res.ReadFrom(limited); err != nil {
