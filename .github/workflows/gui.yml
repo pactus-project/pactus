@@ -33,7 +33,7 @@ jobs:
         if: runner.os != 'Windows'
         uses: actions/setup-go@v7
         with:
-          go-version: "1.27.1"
+          go-version: "1.27.3"
 
       - name: Install Dependencies (Linux)
         if: runner.os == 'Linux'
@@ -74,7 +74,7 @@ jobs:
 
       # Example for caching Go dependencies:
       # https://github.com/actions/cache/blob/main/examples.md#go---modules
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         id: cache
         with:
           path: |
@@ -101,5 +101,5 @@ jobs:
         if: runner.os == 'Linux'
         uses: golangci/golangci-lint-action@v9
         with:
-          version: v2.14.0
+          version: v2.15.0
           args: --build-tags gtk

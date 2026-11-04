@@ -57,13 +57,13 @@ plugins:
   - remote: buf.build/protocolbuffers/java:v36.2
     out: ./gen/java
     # https://buf.build/grpc/java
-  - remote: buf.build/grpc/java:v1.84.0
+  - remote: buf.build/grpc/java:v1.85.1
     out: ./gen/java
     # https://buf.build/protocolbuffers/python
   - remote: buf.build/protocolbuffers/python:v36.2
     out: ./gen/python
     # https://buf.build/grpc/python
-  - remote: buf.build/grpc/python:v1.84.0
+  - remote: buf.build/grpc/python:v1.85.1
     out: ./gen/python
     # https://buf.build/protocolbuffers/pyi
   - remote: buf.build/protocolbuffers/pyi:v36.2

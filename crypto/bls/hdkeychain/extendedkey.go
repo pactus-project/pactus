@@ -137,7 +137,7 @@ func (k *ExtendedKey) DerivePath(path []uint32) (*ExtendedKey, error) {
 // knowledge of the parent private key) whereas hardened extended keys may not
 // be.
 //
-//nolint:nestif // complexity can't be reduced more.
+//nolint:all // complexity can't be reduced more.
 func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 	if len(k.path) >= maxDepth {
 		return nil, ErrMaxDepthExceeded
