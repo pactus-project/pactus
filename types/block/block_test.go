@@ -73,6 +73,26 @@ func TestBasicCheck(t *testing.T) {
 		require.ErrorIs(t, err, block.ErrTooManyTransactions)
 	})
 
+	t.Run("The first transaction is not a subsidy transaction", func(t *testing.T) {
+		blk, _ := ts.GenerateTestBlock(ts.RandHeight(), testsuite.BlockWithTransactions(
+			block.Txs{ts.GenerateTestTransferTx(), ts.GenerateTestSubsidyTx()}))
+
+		err := blk.BasicCheck()
+		require.ErrorIs(t, err, block.BasicCheckError{
+			Reason: "the first transaction is not a subsidy transaction",
+		})
+	})
+
+	t.Run("Duplicated subsidy transaction", func(t *testing.T) {
+		blk, _ := ts.GenerateTestBlock(ts.RandHeight(), testsuite.BlockWithTransactions(
+			block.Txs{ts.GenerateTestSubsidyTx(), ts.GenerateTestTransferTx(), ts.GenerateTestSubsidyTx()}))
+
+		err := blk.BasicCheck()
+		require.ErrorIs(t, err, block.BasicCheckError{
+			Reason: "duplicated subsidy transaction",
+		})
+	})
+
 	t.Run("Without the previous certificate", func(t *testing.T) {
 		blk, _ := ts.GenerateTestBlock(ts.RandHeight(), testsuite.BlockWithPrevCert(nil))
 

@@ -102,11 +102,8 @@ func LoadOrNewState(
 	// Restoring score manager
 	state.logger.Info("calculating the availability scores...")
 	scoreWindow := uint32(60000)
-	startHeight := types.Height(2)
 	endHeight := state.lastInfo.BlockHeight()
-	if uint32(endHeight) > scoreWindow {
-		startHeight = endHeight.SafeDecrease(scoreWindow)
-	}
+	startHeight := scoreStartHeight(endHeight, scoreWindow)
 
 	scoreMgr := score.NewScoreManager(scoreWindow)
 	for h := startHeight; h <= endHeight; h++ {
@@ -240,8 +237,8 @@ func (st *state) stateRoot() hash.Hash {
 }
 
 func (st *state) Close() {
-	st.lk.RLock()
-	defer st.lk.RUnlock()
+	st.lk.Lock()
+	defer st.lk.Unlock()
 
 	st.store.Close()
 }
@@ -281,10 +278,9 @@ func (st *state) LastCertificate() *certificate.Certificate {
 	return st.lastInfo.Certificate()
 }
 
-func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
-	st.lk.Lock()
-	defer st.lk.Unlock()
-
+// checkVoteForCertificate checks that the vote is a precommit of the last certificate.
+// The caller must hold the lock.
+func (st *state) checkVoteForCertificate(vte *vote.Vote) error {
 	lastCert := st.lastInfo.Certificate()
 	if lastCert == nil {
 		// Only the genesis block has no certificate.
@@ -295,11 +291,33 @@ func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
 
 	if vte.Type() != vote.VoteTypePrecommit ||
 		vte.Height() != lastCert.Height() ||
-		vte.Round() != lastCert.Round() {
+		vte.Round() != lastCert.Round() ||
+		vte.BlockHash() != st.lastInfo.BlockHash() {
 		return InvalidVoteForCertificateError{
 			Vote: vte,
 		}
 	}
+
+	return nil
+}
+
+func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
+	// The cheap checks run under the read lock: a burst of useless votes
+	// must not contend with the commit of blocks for the write lock.
+	st.lk.RLock()
+	err := st.checkVoteForCertificate(vte)
+	st.lk.RUnlock()
+	if err != nil {
+		return err
+	}
+
+	st.lk.Lock()
+	defer st.lk.Unlock()
+
+	if err := st.checkVoteForCertificate(vte); err != nil {
+		return err
+	}
+	lastCert := st.lastInfo.Certificate()
 
 	val, err := st.store.Validator(vte.Signer())
 	if err != nil {
@@ -461,11 +479,26 @@ func (st *state) ValidateBlock(blk *block.Block, round types.Round) error {
 	return st.executeBlock(blk, sb, true)
 }
 
+// scoreStartHeight returns the first block that is needed to restore the availability score.
+// The first block has no previous certificate, so the score starts from the second one.
+func scoreStartHeight(endHeight types.Height, scoreWindow uint32) types.Height {
+	if uint32(endHeight) > scoreWindow {
+		return max(2, endHeight.SafeDecrease(scoreWindow))
+	}
+
+	return 2
+}
+
 func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
 	height := cert.Height()
+	if height > st.lastInfo.BlockHeight()+1 {
+		// The block is not the next one: it can't be validated nor applied yet.
+		return FutureBlockError{Height: height, LastHeight: st.lastInfo.BlockHeight()}
+	}
+
 	if height != st.lastInfo.BlockHeight()+1 {
 		st.logger.Debug("block is committed before", "height", height)
 

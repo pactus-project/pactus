@@ -162,6 +162,9 @@ func (sb *sandbox) UpdateAccount(addr crypto.Address, acc *account.Account) {
 }
 
 func (sb *sandbox) RecentTransaction(txID tx.ID) bool {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
 	if sb.committedTrxs[txID] != nil {
 		return true
 	}

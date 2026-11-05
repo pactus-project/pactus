@@ -100,6 +100,18 @@ func (b *Block) BasicCheck() error {
 			Reason: "block is full",
 		}
 	}
+	if !b.Transactions()[0].IsSubsidyTx() {
+		return BasicCheckError{
+			Reason: "the first transaction is not a subsidy transaction",
+		}
+	}
+	for _, trx := range b.Transactions()[1:] {
+		if trx.IsSubsidyTx() {
+			return BasicCheckError{
+				Reason: "duplicated subsidy transaction",
+			}
+		}
+	}
 	if b.PrevCertificate() != nil {
 		if err := b.PrevCertificate().BasicCheck(); err != nil {
 			return BasicCheckError{

@@ -6,6 +6,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/vote"
@@ -102,4 +103,14 @@ type ForkDetectedError struct {
 func (e ForkDetectedError) Error() string {
 	return fmt.Sprintf("a possible fork is detected, the last block hash is %s, but the block follows %s",
 		e.Expected, e.Got)
+}
+
+// FutureBlockError is returned when a block to commit is ahead of the next block of the chain.
+type FutureBlockError struct {
+	Height     types.Height
+	LastHeight types.Height
+}
+
+func (e FutureBlockError) Error() string {
+	return fmt.Sprintf("block %d is ahead of the chain, the last block is %d", e.Height, e.LastHeight)
 }

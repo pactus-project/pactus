@@ -10,6 +10,12 @@ import (
 )
 
 func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool) error {
+	if blk.Transactions().Len() == 0 {
+		// There is no subsidy transaction. The blocks of the network are checked
+		// before, but a block certified by a committee is not trusted blindly.
+		return ErrInvalidSubsidyTransaction
+	}
+
 	proposerAddr := blk.Header().ProposerAddress()
 	for i, trx := range blk.Transactions() {
 		if check {
@@ -67,6 +73,10 @@ func (st *state) checkSubsidy(trx *tx.Tx, proposerAddr crypto.Address, shouldBeS
 	lockTime := trx.LockTime()
 	batchTrx, ok := trx.Payload().(*payload.BatchTransferPayload)
 	if !ok {
+		return ErrInvalidSubsidyTransaction
+	}
+
+	if len(batchTrx.Recipients) < 2 {
 		return ErrInvalidSubsidyTransaction
 	}
 
