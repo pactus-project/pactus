@@ -276,6 +276,10 @@ func (cp *changeProposer) cpCheckJustDecide(just vote.Just,
 }
 
 func (cp *changeProposer) cpCheckJust(vte *vote.Vote) error {
+	if err := cpCheckJustForVoteType(vte); err != nil {
+		return err
+	}
+
 	switch vte.CPJust().Type() {
 	case vote.JustTypeInitYes:
 		return cp.cpCheckJustInitYes(vte.CPJust(),
@@ -325,4 +329,31 @@ func (cp *changeProposer) cpStrongTermination() {
 			cp.enterNewState(cp.proposeState)
 		}
 	}
+}
+
+// cpCheckJustForVoteType checks that the justification type is one that an
+// honest validator uses for this type of vote.
+func cpCheckJustForVoteType(vte *vote.Vote) error {
+	var allowed []vote.JustType
+	switch vte.Type() { //nolint:exhaustive // only the change-proposer votes have a justification.
+	case vote.VoteTypeCPPreVote:
+		allowed = []vote.JustType{
+			vote.JustTypeInitNo, vote.JustTypeInitYes,
+			vote.JustTypePreVoteSoft, vote.JustTypePreVoteHard,
+		}
+	case vote.VoteTypeCPMainVote:
+		allowed = []vote.JustType{
+			vote.JustTypeMainVoteNoConflict, vote.JustTypeMainVoteConflict,
+		}
+	case vote.VoteTypeCPDecided:
+		allowed = []vote.JustType{vote.JustTypeDecided}
+	}
+
+	if !slices.Contains(allowed, vte.CPJust().Type()) {
+		return InvalidJustificationError{
+			Reason: fmt.Sprintf("unexpected justification %s for %s", vte.CPJust().Type(), vte.Type()),
+		}
+	}
+
+	return nil
 }

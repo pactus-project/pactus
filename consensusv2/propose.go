@@ -20,6 +20,12 @@ func (s *proposeState) decide() {
 	s.cpRound = 0
 	s.cpDecidedCert = nil
 	s.cpWeakValidity = hash.UndefHash
+	// precommitState.hasVoted reflects whether THIS round's precommit vote
+	// has been cast, so it must be cleared for every new round -- not only
+	// when entering precommitState, since a low availability score below
+	// skips straight to the change-proposer phase without ever entering it,
+	// which otherwise leaves hasVoted stuck at true from a previous round.
+	s.precommitState.hasVoted = false
 
 	// Based on PIP-19, if the Availability Score is less than the Minimum threshold,
 	// we initiate the Change-Proposer phase.

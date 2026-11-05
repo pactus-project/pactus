@@ -31,39 +31,70 @@ func (s *precommitState) decide() {
 	// the proof of the change-proposer phase.
 	//
 	if s.cpDecidedCert != nil {
-		prop := s.log.RoundProposal(s.round)
-		if prop == nil {
-			s.queryProposal()
+		s.commitDecidedBlock()
 
-			return
-		}
-
-		precommits := s.log.PrecommitVoteSet(s.round)
-		if !precommits.Has2FP1VotesFor(prop.Block().Hash()) {
-			s.queryVote()
-
-			return
-		}
-
-		s.enterNewState(s.commitState)
-	} else {
-		//
-		// If a validator receives a set of `f+1` valid `cp:PRE-VOTE` votes for this round,
-		// it starts changing the proposer phase, even if its timer has not expired;
-		// This prevents it from starting the change-proposer phase too late.
-		//
-		cpPreVotes := s.log.CPPreVoteVoteSet(s.round)
-		if cpPreVotes.Has1FP1VotesFor(0, vote.CPValueYes) {
-			s.startChangingProposer()
-		}
-
-		// TODO: write test for me
-		cpDecide := s.log.CPDecidedVoteSet(s.round)
-		if cpDecide.Has2FP1VotesFor(s.cpRound, vote.CPValueYes) {
-			s.startChangingProposer()
-		}
+		return
 	}
 
+	//
+	// If a validator receives a set of `f+1` valid `cp:PRE-VOTE` votes for this round,
+	// it starts changing the proposer phase, even if its timer has not expired;
+	// This prevents it from starting the change-proposer phase too late.
+	//
+	cpPreVotes := s.log.CPPreVoteVoteSet(s.round)
+	if cpPreVotes.Has1FP1VotesFor(0, vote.CPValueYes) {
+		s.startChangingProposer()
+	}
+
+	// TODO: write test for me
+	cpDecide := s.log.CPDecidedVoteSet(s.round)
+	if cpDecide.Has2FP1VotesFor(s.cpRound, vote.CPValueYes) {
+		s.startChangingProposer()
+	}
+
+	s.absoluteCommit()
+}
+
+// isDecidedBlock checks that the proposal is for the block that the change-proposer phase decided on.
+// Otherwise, the proposal is dropped and requested again: an equivocating proposer
+// could have sent another block to this node.
+func (s *precommitState) isDecidedBlock(prop *proposal.Proposal) bool {
+	if s.cpDecidedCert == nil || s.cpWeakValidity.IsUndef() {
+		return true
+	}
+
+	if prop.IsForBlock(s.cpWeakValidity) {
+		return true
+	}
+
+	s.logger.Warn("proposal is not for the decided block",
+		"proposal", prop, "decided", s.cpWeakValidity)
+	s.log.SetRoundProposal(s.round, nil)
+	s.queryProposal()
+
+	return false
+}
+
+func (s *precommitState) commitDecidedBlock() {
+	prop := s.log.RoundProposal(s.round)
+	if prop == nil {
+		s.queryProposal()
+
+		return
+	}
+
+	if !s.isDecidedBlock(prop) {
+		return
+	}
+
+	precommits := s.log.PrecommitVoteSet(s.round)
+	if !precommits.Has2FP1VotesFor(prop.Block().Hash()) {
+		s.queryVote()
+
+		return
+	}
+
+	s.enterNewState(s.commitState)
 	s.absoluteCommit()
 }
 
@@ -76,6 +107,10 @@ func (s *precommitState) vote() {
 	if roundProposal == nil {
 		s.logger.Debug("no proposal yet")
 
+		return
+	}
+
+	if !s.isDecidedBlock(roundProposal) {
 		return
 	}
 
