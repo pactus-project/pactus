@@ -167,6 +167,12 @@ func TestUpdateValidatorProtocolVersion(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, protocol.ProtocolVersion3, val.ProtocolVersion())
 
+	// The committee in memory is updated too: the proposer decides on the block version with it.
+	for _, key := range td.genValKeys {
+		td.state.UpdateValidatorProtocolVersion(key.Address(), protocol.ProtocolVersion3)
+	}
+	assert.True(t, td.state.committee.SupportProtocolVersion(protocol.ProtocolVersion3))
+
 	// An unknown validator is ignored.
 	require.NotPanics(t, func() {
 		td.state.UpdateValidatorProtocolVersion(td.RandValAddress(), protocol.ProtocolVersion3)

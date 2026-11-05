@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"slices"
 	"strings"
+	"sync"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types"
@@ -17,6 +18,10 @@ import (
 var _ Committee = &committee{}
 
 type committee struct {
+	// lk protects the list: the committee is updated by the state when a block is committed,
+	// while the sandboxes of the transaction pool and the API read it.
+	lk sync.RWMutex
+
 	committeeSize int
 	validatorList *linkedlist.LinkedList[*validator.Validator]
 	proposerPos   *linkedlist.Element[*validator.Validator]
@@ -47,6 +52,9 @@ func NewCommittee(validators []*validator.Validator, committeeSize int,
 }
 
 func (c *committee) Power() int64 {
+	c.lk.RLock()
+	defer c.lk.RUnlock()
+
 	power := int64(0)
 	c.iterate(func(v *validator.Validator) bool {
 		power += v.Power()
@@ -58,6 +66,9 @@ func (c *committee) Power() int64 {
 }
 
 func (c *committee) Update(lastRound types.Round, joined []*validator.Validator) {
+	c.lk.Lock()
+	defer c.lk.Unlock()
+
 	slices.SortStableFunc(joined, func(a, b *validator.Validator) int {
 		return cmp.Compare(a.Number(), b.Number())
 	})
@@ -113,9 +124,22 @@ func (c *committee) Update(lastRound types.Round, joined []*validator.Validator)
 	}
 }
 
+// UpdateProtocolVersion sets the protocol version that a member of the committee announced.
+func (c *committee) UpdateProtocolVersion(addr crypto.Address, ver protocol.Version) {
+	c.lk.Lock()
+	defer c.lk.Unlock()
+
+	if val := c.find(addr); val != nil {
+		val.UpdateProtocolVersion(ver)
+	}
+}
+
 // Validators retrieves a list of all validators in the committee.
 // A cloned instance of each validator is returned to avoid modification of the original objects.
 func (c *committee) Validators() []*validator.Validator {
+	c.lk.RLock()
+	defer c.lk.RUnlock()
+
 	vals := make([]*validator.Validator, c.validatorList.Length())
 	i := 0
 	c.iterate(func(v *validator.Validator) bool {
@@ -129,6 +153,9 @@ func (c *committee) Validators() []*validator.Validator {
 }
 
 func (c *committee) Contains(addr crypto.Address) bool {
+	c.lk.RLock()
+	defer c.lk.RUnlock()
+
 	return c.find(addr) != nil
 }
 
@@ -149,6 +176,9 @@ func (c *committee) find(addr crypto.Address) *validator.Validator {
 
 // IsProposer checks if the given address is the proposer for the specified round.
 func (c *committee) IsProposer(addr crypto.Address, round types.Round) bool {
+	c.lk.RLock()
+	defer c.lk.RUnlock()
+
 	p := c.proposer(round)
 
 	return p.Address() == addr
@@ -157,6 +187,9 @@ func (c *committee) IsProposer(addr crypto.Address, round types.Round) bool {
 // Proposer returns an instance of the proposer validator for the specified round.
 // A cloned instance of the proposer is returned to avoid modification of the original object.
 func (c *committee) Proposer(round types.Round) *validator.Validator {
+	c.lk.RLock()
+	defer c.lk.RUnlock()
+
 	return c.proposer(round).Clone()
 }
 
@@ -173,6 +206,9 @@ func (c *committee) proposer(round types.Round) *validator.Validator {
 }
 
 func (c *committee) Committers() []int32 {
+	c.lk.RLock()
+	defer c.lk.RUnlock()
+
 	committers := make([]int32, c.validatorList.Length())
 	i := 0
 	c.iterate(func(v *validator.Validator) bool {
@@ -186,16 +222,23 @@ func (c *committee) Committers() []int32 {
 }
 
 func (c *committee) Size() int {
+	c.lk.RLock()
+	defer c.lk.RUnlock()
+
 	return c.validatorList.Length()
 }
 
 func (c *committee) String() string {
+	c.lk.RLock()
+	defer c.lk.RUnlock()
+
 	var builder strings.Builder
 
 	builder.WriteString("[ ")
-	for _, v := range c.Validators() {
+	for e := c.validatorList.Head; e != nil; e = e.Next {
+		v := e.Data
 		fmt.Fprintf(&builder, "%v(%v)", v.Number(), v.LastSortitionHeight())
-		if c.IsProposer(v.Address(), 0) {
+		if c.proposer(0).Address() == v.Address() {
 			builder.WriteString("*")
 		}
 		builder.WriteString(" ")
@@ -219,6 +262,9 @@ func (c *committee) iterate(consumer func(*validator.Validator) (stop bool)) {
 // ProtocolVersions returns a map of protocol version to the percentage of validators
 // in the committee that have that version.
 func (c *committee) ProtocolVersions() map[protocol.Version]float64 {
+	c.lk.RLock()
+	defer c.lk.RUnlock()
+
 	powers := make(map[protocol.Version]int64)
 	total := int64(0)
 
@@ -241,14 +287,23 @@ func (c *committee) ProtocolVersions() map[protocol.Version]float64 {
 // SupportProtocolVersion checks if more than 75% of the committee's total power
 // supports the given protocol version.
 func (c *committee) SupportProtocolVersion(version protocol.Version) bool {
-	versions := c.ProtocolVersions()
-	supported := float64(0)
+	c.lk.RLock()
+	defer c.lk.RUnlock()
 
-	for ver, percent := range versions {
-		if ver >= version {
-			supported += percent
+	supportedPower := int64(0)
+	totalPower := int64(0)
+
+	c.iterate(func(v *validator.Validator) bool {
+		totalPower += v.Power()
+		if v.ProtocolVersion() >= version {
+			supportedPower += v.Power()
 		}
-	}
 
-	return supported > 75.0
+		return false
+	})
+
+	// Integer comparison: supportedPower/totalPower > 75/100, cross-multiplied.
+	// Summing per-version float percentages in the random order of a map
+	// accumulates rounding errors.
+	return supportedPower*100 > totalPower*75
 }

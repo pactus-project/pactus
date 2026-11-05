@@ -810,8 +810,14 @@ func (st *state) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 	return st.txPool.AppendTxAndBroadcast(trx)
 }
 
+// Params returns a copy of the parameters: the block version changes when a block is committed.
 func (st *state) Params() *param.Params {
-	return st.params
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
+	params := *st.params
+
+	return &params
 }
 
 func (st *state) CalculateFee(amt amount.Amount, payloadType payload.Type) amount.Amount {
@@ -848,7 +854,13 @@ func (st *state) publishEvent(msg any) {
 }
 
 func (st *state) UpdateValidatorProtocolVersion(addr crypto.Address, ver protocol.Version) {
+	st.lk.Lock()
+	defer st.lk.Unlock()
+
 	st.store.UpdateValidatorProtocolVersion(addr, ver)
+
+	// The proposer decides on the version of the block with the committee in memory.
+	st.committee.UpdateProtocolVersion(addr, ver)
 }
 
 func (st *state) CommitteeInfo() *CommitteeInfo {

@@ -2,9 +2,11 @@ package committee_test
 
 import (
 	"fmt"
+	"sync"
 	"testing"
 
 	"github.com/pactus-project/pactus/committee"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -421,4 +423,62 @@ func TestSupportProtocolVersion(t *testing.T) {
 
 	assert.True(t, supportVer1)
 	assert.False(t, supportVer2)
+}
+
+func TestUpdateProtocolVersionOfAMember(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	val1 := ts.GenerateTestValidator(testsuite.ValidatorWithStake(1000))
+	val2 := ts.GenerateTestValidator(testsuite.ValidatorWithStake(1000))
+	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2}, 2, val1.Address())
+	require.NoError(t, err)
+
+	require.False(t, cmt.SupportProtocolVersion(protocol.ProtocolVersion2))
+
+	cmt.UpdateProtocolVersion(val1.Address(), protocol.ProtocolVersion2)
+	assert.False(t, cmt.SupportProtocolVersion(protocol.ProtocolVersion2), "half of the power is not enough")
+
+	cmt.UpdateProtocolVersion(val2.Address(), protocol.ProtocolVersion2)
+	assert.True(t, cmt.SupportProtocolVersion(protocol.ProtocolVersion2))
+
+	// An address that is not in the committee is ignored.
+	require.NotPanics(t, func() {
+		cmt.UpdateProtocolVersion(ts.RandValAddress(), protocol.ProtocolVersion3)
+	})
+	assert.Zero(t, cmt.ProtocolVersions()[protocol.ProtocolVersion3])
+}
+
+// The committee is read by the transaction pool and the API while a block is committed.
+func TestConcurrentReadsAndUpdates(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	vals := make([]*validator.Validator, 0, 5)
+	for range 5 {
+		vals = append(vals, ts.GenerateTestValidator())
+	}
+	cmt, err := committee.NewCommittee(vals, 5, vals[0].Address())
+	require.NoError(t, err)
+
+	var wg sync.WaitGroup
+	wg.Go(func() {
+		for i := range 200 {
+			cmt.Update(types.Round(i%3), []*validator.Validator{vals[i%5]})
+			cmt.UpdateProtocolVersion(vals[i%5].Address(), protocol.ProtocolVersion2)
+		}
+	})
+	wg.Go(func() {
+		for range 200 {
+			_ = cmt.Validators()
+			_ = cmt.Contains(vals[1].Address())
+			_ = cmt.Power()
+			_ = cmt.Size()
+			_ = cmt.Committers()
+			_ = cmt.Proposer(1)
+			_ = cmt.IsProposer(vals[2].Address(), 0)
+			_ = cmt.ProtocolVersions()
+			_ = cmt.SupportProtocolVersion(protocol.ProtocolVersion2)
+			_ = cmt.String()
+		}
+	})
+	wg.Wait()
 }
