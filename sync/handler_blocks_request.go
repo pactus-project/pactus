@@ -43,6 +43,15 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 		return
 	}
 
+	if !handler.blocksRequestLimit.AllowRequest(pid) {
+		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
+			"too many blocks requests", msg.SessionID, 0, nil, nil)
+
+		handler.respond(response, pid)
+
+		return
+	}
+
 	ourHeight := handler.state.LastBlockHeight()
 	if msg.From > ourHeight {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,

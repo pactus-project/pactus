@@ -53,18 +53,17 @@ func (*TransactionsMessage) ConsensusHeight() types.Height {
 
 // LogString returns a concise string representation intended for use in logs.
 func (m *TransactionsMessage) LogString() string {
-	var builder strings.Builder
+	var list strings.Builder
 
 	for _, trx := range m.Transactions {
 		if trx == nil {
-			fmt.Fprint(&builder, "nil-tx ")
+			fmt.Fprint(&list, "nil-tx ")
 
 			continue
 		}
 
-		fmt.Fprintf(&builder, "%v ", trx.ID().LogString())
+		fmt.Fprintf(&list, "%v ", trx.ID().LogString())
 	}
-	fmt.Fprintf(&builder, "{%v: ⌘ [%v]}", len(m.Transactions), builder.String())
 
-	return builder.String()
+	return fmt.Sprintf("{%v: ⌘ [%v]}", len(m.Transactions), strings.TrimSpace(list.String()))
 }

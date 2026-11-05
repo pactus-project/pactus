@@ -144,9 +144,11 @@ func TestTopicEvaluators(t *testing.T) {
 	t.Run("transaction topic", func(t *testing.T) {
 		eval := topicNet.evaluators[network.TopicIDTransaction]
 
+		// Every peer has its own share of the budget, so the budget is spent by different peers.
 		for i := 0; i < td.config.Firewall.RateLimit.TransactionTopic; i++ {
-			assert.Equal(t, network.Propagate, eval(gossipWithConsensusHeight(from, 0)))
+			assert.Equal(t, network.Propagate, eval(gossipWithConsensusHeight(td.RandPeerID(), 0)))
 		}
+		assert.Equal(t, network.DropButConsume, eval(gossipWithConsensusHeight(td.RandPeerID(), 0)), "rate limit")
 		assert.Equal(t, network.DropButConsume, eval(gossipWithConsensusHeight(from, 0)), "rate limit")
 	})
 
@@ -207,14 +209,17 @@ func TestProcessNetworkMessages(t *testing.T) {
 		assert.Equal(t, int64(1), td.sync.peerSet.GetPeer(pid).Metric.TotalInvalid.Bundles)
 	})
 
-	t.Run("stream message received as gossip, the connection is closed", func(t *testing.T) {
+	t.Run("stream message received as gossip, the relaying peer is not punished", func(t *testing.T) {
 		pid := td.RandPeerID()
 		td.registerConnection(pid)
 		data := encodeBundle(t, message.NewBlocksRequestMessage(1, 5, 10))
 
 		td.sync.processGossipMessage(&network.GossipMessage{From: pid, Data: data})
 
-		assert.True(t, td.network.IsClosed(pid))
+		// `pid` here is only the peer that relayed the message to us
+		// (libp2p's ReceivedFrom), not necessarily its author: it must not
+		// be punished for a message it did not write.
+		assert.False(t, td.network.IsClosed(pid))
 		td.shouldNotPublishAnyMessage(t)
 	})
 

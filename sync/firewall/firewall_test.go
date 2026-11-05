@@ -223,7 +223,12 @@ func TestGossipMessage(t *testing.T) {
 		assert.False(t, td.network.IsClosed(td.unknownPeerID))
 		_, err := td.firewall.OpenGossipBundle(data, td.unknownPeerID)
 		require.ErrorIs(t, err, ErrGossipMessage)
-		assert.True(t, td.network.IsClosed(td.unknownPeerID))
+		// `unknownPeerID` here is only the peer that relayed the message to
+		// us (libp2p's ReceivedFrom), not necessarily its author: the topic
+		// validators propagate without decoding, so an honest relay
+		// forwards whatever a misbehaving peer published. It must not be
+		// punished for a message it did not write.
+		assert.False(t, td.network.IsClosed(td.unknownPeerID))
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -550,4 +555,29 @@ func TestExpiredMessageAtGenesis(t *testing.T) {
 	// All the messages are fine, because the state has not any block.
 	assert.False(t, td.firewall.isExpiredMessage(makeTestGossipMessage(0).Data))
 	assert.False(t, td.firewall.isExpiredMessage(makeTestGossipMessage(50).Data))
+}
+
+func TestOnePeerCannotExhaustTheRateLimit(t *testing.T) {
+	conf := DefaultConfig()
+	conf.RateLimit.TransactionTopic = 8 // 2 per peer.
+
+	td := setup(t, conf)
+	td.state.EXPECT().LastBlockHeight().Return(td.RandHeight()).AnyTimes()
+
+	flooder, honest := td.RandPeerID(), td.RandPeerID()
+
+	msg := makeTestGossipMessage(uint32(td.state.LastBlockHeight()))
+	msg.From = flooder
+	propagated := 0
+	for range 50 {
+		if td.firewall.AllowTransactionRequest(msg) == network.Propagate {
+			propagated++
+		}
+	}
+	assert.Equal(t, 2, propagated, "a peer is limited to its share")
+
+	msg.From = honest
+	assert.Equal(t, network.Propagate, td.firewall.AllowTransactionRequest(msg))
+	assert.Equal(t, network.Propagate, td.firewall.AllowTransactionRequest(msg))
+	assert.Equal(t, network.DropButConsume, td.firewall.AllowTransactionRequest(msg))
 }

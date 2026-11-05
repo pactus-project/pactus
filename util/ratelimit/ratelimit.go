@@ -28,6 +28,14 @@ func (r *RateLimit) diff() time.Duration {
 	return time.Since(r.referenceTime)
 }
 
+// expired reports whether the window of the limiter is over.
+func (r *RateLimit) expired() bool {
+	r.lk.RLock()
+	defer r.lk.RUnlock()
+
+	return r.diff() > r.window
+}
+
 func (r *RateLimit) reset() {
 	r.counter = 0
 	r.referenceTime = time.Now()

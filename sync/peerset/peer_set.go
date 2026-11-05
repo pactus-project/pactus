@@ -401,7 +401,8 @@ func (ps *PeerSet) GetRandomPeer() *peer.Peer {
 	totalScore := 0
 	peers := make([]scoredPeer, 0, len(ps.peers))
 	for _, peer := range ps.peers {
-		if !peer.Status.IsConnectedOrKnown() {
+		// Only peers that completed the handshake can serve blocks.
+		if !peer.Status.IsKnown() {
 			continue
 		}
 

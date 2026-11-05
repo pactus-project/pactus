@@ -25,6 +25,7 @@ import (
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/ntp"
+	"github.com/pactus-project/pactus/util/ratelimit"
 )
 
 // IMPORTANT NOTES:
@@ -34,6 +35,9 @@ import (
 //
 // 2. The Synchronizer should not have any locks to prevent deadlocks. All submodules,
 // such as state or consensus, should be thread-safe.
+
+// maxBlocksRequestPeers bounds the number of peers tracked by the blocks request limit.
+const maxBlocksRequestPeers = 1024
 
 type synchronizer struct {
 	config        *Config
@@ -50,6 +54,11 @@ type synchronizer struct {
 	network       network.Network
 	logger        *logger.SubLogger
 	ntp           *ntp.Checker
+
+	// blocksRequestLimit limits how many blocks requests a peer can send.
+	// A syncing node has at most MaxSessions sessions open and each ends
+	// within the session timeout, so it never needs more.
+	blocksRequestLimit *ratelimit.KeyedRateLimit[peer.ID]
 }
 
 //nolint:revive // arguments can't be reduced.
@@ -77,6 +86,8 @@ func NewSynchronizer(
 	}
 
 	sync.peerSet = peerset.NewPeerSet(conf.SessionTimeout())
+	sync.blocksRequestLimit = ratelimit.NewKeyedRateLimit[peer.ID](
+		conf.MaxSessions, conf.SessionTimeout(), maxBlocksRequestPeers)
 	sync.logger = logger.NewSubLogger(ctx, "_sync", sync)
 	fw, err := firewall.NewFirewall(ctx, conf.Firewall, network, sync.peerSet, state)
 	if err != nil {
@@ -339,10 +350,21 @@ func (sync *synchronizer) processProtocolsEvent(eve *network.ProtocolsEvents) {
 	}
 }
 
-func (sync *synchronizer) processDisconnectEvent(de *network.DisconnectEvent) {
-	sync.logger.Debug("processing disconnect event", "pid", de.PeerID)
+func (sync *synchronizer) processDisconnectEvent(disconnect *network.DisconnectEvent) {
+	sync.logger.Debug("processing disconnect event", "pid", disconnect.PeerID)
 
-	sync.peerSet.UpdateStatus(de.PeerID, status.StatusDisconnected)
+	if !sync.peerSet.GetPeerStatus(disconnect.PeerID).IsKnown() {
+		// This peer never completed the handshake, so there's nothing
+		// about it worth remembering: a peer ID costs nothing to
+		// generate, so keeping a record per connection attempt (metrics,
+		// moniker, agent, keys) would let that cost nothing to the other
+		// side either.
+		sync.peerSet.RemovePeer(disconnect.PeerID)
+
+		return
+	}
+
+	sync.peerSet.UpdateStatus(disconnect.PeerID, status.StatusDisconnected)
 }
 
 func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle, from peer.ID) {
@@ -456,6 +478,8 @@ func (sync *synchronizer) downloadBlocks(from types.Height, onlyFullNodes bool) 
 }
 
 func (sync *synchronizer) sendBlockRequestToRandomPeer(from types.Height, count uint32, onlyFullNodes bool) bool {
+	requestedFrom := from
+
 	// Prevent downloading blocks that might be cached before
 	for sync.cache.HasBlockInCache(from) {
 		from++
@@ -463,7 +487,7 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from types.Height, count 
 
 		if count == 0 {
 			// we have blocks inside the cache
-			sync.logger.Debug("sending download request ignored", "from", from+1)
+			sync.logger.Debug("sending download request ignored", "from", requestedFrom)
 
 			return true
 		}
