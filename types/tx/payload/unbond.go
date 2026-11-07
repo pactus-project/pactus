@@ -80,6 +80,15 @@ func (p *UnbondPayload) Decode(ctx DecodeContext, r io.Reader) error {
 		if err := p.DelegateOwner.Decode(r); err != nil {
 			return err
 		}
+		// The delegation flag claims a delegate owner, but IsDelegated()
+		// (used to decide whether to encode this field at all) says
+		// otherwise for the treasury address: re-encoding would silently
+		// drop both the flag and this field, a non-canonical round trip.
+		if p.DelegateOwner == crypto.TreasuryAddress {
+			return BasicCheckError{
+				Reason: "delegation flag is set with a treasury delegate owner",
+			}
+		}
 	}
 
 	return nil

@@ -187,8 +187,46 @@ func (p *txPool) appendTx(trx *tx.Tx) {
 	payloadType := trx.Payload().Type()
 	payloadPool := p.pools[payloadType]
 
+	if payloadPool.list.Full() {
+		// Non-strict admission (pool entry) never bounds LockTime from
+		// above, so a sub-pool can fill up with transactions that can
+		// never become eligible to be mined -- free for their sender,
+		// since they're never actually charged. Left to PushBack's own
+		// eviction below, that spam would evict the oldest entry
+		// regardless of how close it is to becoming mineable. Evict the
+		// worst unreachable-LockTime entry here first, if one exists, so
+		// a transaction that could actually be mined soon isn't the one
+		// that pays for it.
+		p.evictUnreachableLockTime(payloadPool)
+	}
+
 	payloadPool.list.PushBack(trx.ID(), trx)
 	p.logger.Debug("transaction appended into pool", "trx", trx)
+}
+
+// evictUnreachableLockTime removes, if one exists, the pool's entry whose
+// LockTime is furthest beyond what CheckLockTime's own strict-mode bound
+// would ever allow to be mined (height + TransactionToLiveInterval): see
+// appendTx.
+func (p *txPool) evictUnreachableLockTime(payloadPool pool) {
+	threshold := p.sbx.CurrentHeight().SafeIncrease(p.sbx.Params().TransactionToLiveInterval)
+
+	var worstID tx.ID
+	var worstLockTime types.Height
+	found := false
+
+	for e := payloadPool.list.HeadNode(); e != nil; e = e.Next {
+		lockTime := e.Data.Value.LockTime()
+		if lockTime > threshold && (!found || lockTime > worstLockTime) {
+			worstID = e.Data.Key
+			worstLockTime = lockTime
+			found = true
+		}
+	}
+
+	if found {
+		payloadPool.list.Remove(worstID)
+	}
 }
 
 func (p *txPool) checkFee(trx *tx.Tx) error {

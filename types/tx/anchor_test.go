@@ -222,21 +222,19 @@ func TestAnchorPayloadCarriesNoTimestamp(t *testing.T) {
 	inserted = append(inserted, signed[:cut]...)
 	inserted = append(inserted, bytes.Repeat([]byte{0xAB}, 16)...)
 	inserted = append(inserted, signed[cut:]...)
-	forged, err := tx.FromBytes(inserted)
-	require.NoError(t, err)
-	require.Equal(t, setTx.Payload(), forged.Payload(), "inserted bytes must not reach the payload")
-	require.Error(t, forged.BasicCheck(), "they shift the signature, so verification fails")
+	// The insertion shifts the fixed-size signature/public-key fields, so
+	// decoding no longer consumes the whole input: rejected as trailing
+	// bytes, not read into the payload or silently misinterpreted.
+	_, err = tx.FromBytes(inserted)
+	require.Error(t, err, "inserted bytes shift the signature out of place, leaving trailing bytes")
 
+	// Flag bits not covered by SignBytes (here, the delegation flag on a
+	// payload type that doesn't support delegation) must not be silently
+	// ignored: a non-canonical encoding of the same transaction is rejected.
 	delegated := append([]byte{}, signed...)
 	delegated[0] |= 0x04
-	decoded, err := tx.FromBytes(delegated)
-	require.NoError(t, err)
-	got := decoded.Payload().(*payload.AnchorPayload)
-	require.Equal(t, from, got.From)
-	require.Equal(t, payload.AnchorActionSet, got.Action)
-	require.Equal(t, bytes.Repeat([]byte{0x11}, 32), got.RootHash)
-	require.Equal(t, "abc", got.ManifestURI)
-	require.Equal(t, amount.Amount(300), got.Deposit)
+	_, err = tx.FromBytes(delegated)
+	require.Error(t, err, "the delegation flag is set on an Anchor payload, which never carries one")
 
 	flipped := append([]byte{}, signed...)
 	flippedAt := anchorTypeIndex(1, "")

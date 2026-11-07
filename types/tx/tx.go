@@ -86,6 +86,9 @@ func FromBytes(bs []byte) (*Tx, error) {
 	if err := trx.Decode(r); err != nil {
 		return nil, err
 	}
+	if r.Len() != 0 {
+		return nil, BasicCheckError{Reason: fmt.Sprintf("%d trailing byte(s) after the transaction", r.Len())}
+	}
 
 	return trx, nil
 }
@@ -260,7 +263,14 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 	}
 	buf := bytes.NewBuffer(data)
 
-	return tx.Decode(buf)
+	if err := tx.Decode(buf); err != nil {
+		return err
+	}
+	if buf.Len() != 0 {
+		return BasicCheckError{Reason: fmt.Sprintf("%d trailing byte(s) after the transaction", buf.Len())}
+	}
+
+	return nil
 }
 
 // SerializeSize returns the number of bytes it would take to serialize the transaction.
@@ -274,7 +284,7 @@ func (tx *Tx) SerializeSize() int {
 	if tx.data.Signature != nil {
 		size += tx.data.Signature.SerializeSize()
 	}
-	if tx.data.PublicKey != nil {
+	if tx.IsSigned() && tx.data.PublicKey != nil {
 		size += tx.data.PublicKey.SerializeSize()
 	}
 
@@ -339,7 +349,8 @@ func (tx *Tx) Encode(w io.Writer, opts ...EncodeOption) error {
 			return err
 		}
 	}
-	if tx.data.PublicKey != nil && !encOpts.stripPublicKey {
+	// Decode reads the public key only for a signed transaction.
+	if tx.IsSigned() && tx.data.PublicKey != nil && !encOpts.stripPublicKey {
 		err = tx.data.PublicKey.Encode(w)
 		if err != nil {
 			return err
@@ -374,11 +385,35 @@ func (tx *Tx) encodeWithNoSignatory(w io.Writer) error {
 	return nil
 }
 
+// Decode reads a transaction. The transaction is changed only if the whole
+// data is decoded: it never keeps a partial state or the caches of its previous content.
 func (tx *Tx) Decode(r io.Reader) error {
+	decoded := new(Tx)
+	if err := decoded.decode(r); err != nil {
+		return err
+	}
+
+	tx.data = decoded.data
+	tx.memorizedID = nil
+
+	return nil
+}
+
+func (tx *Tx) decode(r io.Reader) error {
 	flags := uint8(0)
 	err := encoding.ReadElements(r, &flags, &tx.data.Version, &tx.data.LockTime)
 	if err != nil {
 		return err
+	}
+
+	// flags is not covered by SignBytes or the tx ID, so an unknown bit (or
+	// the delegation bit on a payload type that doesn't support delegation)
+	// lets a byte sequence other than the canonical one decode to the same
+	// transaction: silently accepting it would let that bit be flipped
+	// without invalidating the signature.
+	const knownFlags = flagStripedPublicKey | flagNotSigned | flagWithDelegation
+	if flags&^knownFlags != 0 {
+		return BasicCheckError{Reason: fmt.Sprintf("unknown flag bits: %#x", flags)}
 	}
 
 	err = tx.data.Fee.Decode(r)
@@ -386,7 +421,10 @@ func (tx *Tx) Decode(r io.Reader) error {
 		return err
 	}
 
-	tx.data.Memo, err = encoding.ReadVarString(r)
+	// A valid memo is never longer than maxMemoLength (enforced by
+	// BasicCheck), so reject anything past it here, before allocating a
+	// buffer for whatever length a hostile message announces.
+	tx.data.Memo, err = encoding.ReadVarStringMax(r, maxMemoLength)
 	if err != nil {
 		return err
 	}
@@ -397,7 +435,8 @@ func (tx *Tx) Decode(r io.Reader) error {
 		return err
 	}
 
-	switch typ := payload.Type(payloadType); typ {
+	typ := payload.Type(payloadType)
+	switch typ {
 	case payload.TypeTransfer:
 		tx.data.Payload = new(payload.TransferPayload)
 	case payload.TypeBond:
@@ -419,8 +458,19 @@ func (tx *Tx) Decode(r io.Reader) error {
 		}
 	}
 
+	withDelegation := util.IsFlagSet(flags, flagWithDelegation)
+	if withDelegation {
+		switch typ { //nolint:exhaustive // only these payloads can have a delegation.
+		case payload.TypeBond, payload.TypeUnbond, payload.TypeWithdraw:
+		default:
+			return BasicCheckError{
+				Reason: fmt.Sprintf("delegation flag is set on a %s payload", typ),
+			}
+		}
+	}
+
 	ctx := payload.DecodeContext{
-		WithDelegation: util.IsFlagSet(flags, flagWithDelegation),
+		WithDelegation: withDelegation,
 	}
 	err = tx.data.Payload.Decode(ctx, r)
 	if err != nil {
@@ -530,7 +580,14 @@ func (tx *Tx) ID() ID {
 	if tx.memorizedID != nil {
 		return *tx.memorizedID
 	}
-	id := hash.CalcHash(tx.SignBytes())
+
+	signBytes := tx.SignBytes()
+	if signBytes == nil {
+		// A transaction that can't be encoded doesn't share the identifier of the empty data.
+		return hash.UndefHash
+	}
+
+	id := hash.CalcHash(signBytes)
 	tx.memorizedID = &id
 
 	return id
