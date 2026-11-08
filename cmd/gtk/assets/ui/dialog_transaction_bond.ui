@@ -72,6 +72,124 @@
                   </object>
                 </child>
                 <child>
+                  <object class="GtkCheckButton" id="id_check_delegate">
+                    <property name="label">Delegate to an operator (PIP-49)</property>
+                    <property name="tooltip-text">Stake on a validator someone else runs and stay the stake owner</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox" id="id_box_delegate">
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">8</property>
+                    <property name="margin-bottom">8</property>
+                    <property name="visible">False</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="css-classes">notice-info</property>
+                        <property name="label">You bond 1,000 PAC to a validator an operator runs and stay the stake owner. Only you can unbond it (after the term ends) and withdraw the stake.</property>
+                        <property name="wrap">True</property>
+                        <property name="xalign">0</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="id_label_owner">
+                        <property name="halign">start</property>
+                        <property name="use-markup">True</property>
+                        <property name="wrap">True</property>
+                        <property name="wrap-mode">char</property>
+                        <property name="xalign">0</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkGrid">
+                        <property name="column-spacing">10</property>
+                        <property name="row-spacing">4</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="halign">start</property>
+                            <property name="label">Your reward share (%):</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="halign">start</property>
+                            <property name="label">Delegation term:</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="id_entry_share">
+                            <property name="input-purpose">number</property>
+                            <property name="text">50</property>
+                            <property name="tooltip-text">0 to 70 percent of each block reward</property>
+                            <property name="width-chars">6</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="hexpand">True</property>
+                            <property name="spacing">6</property>
+                            <child>
+                              <object class="GtkDropDown" id="id_drop_term">
+                                <property name="hexpand">True</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="id_entry_expiry">
+                                <property name="input-purpose">digits</property>
+                                <property name="placeholder-text">Block height</property>
+                                <property name="visible">False</property>
+                                <property name="width-chars">10</property>
+                              </object>
+                            </child>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="id_hint_share">
+                            <property name="halign">start</property>
+                            <property name="use-markup">True</property>
+                            <property name="wrap">True</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">2</property>
+                              <property name="column-span">2</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="id_hint_expiry">
+                            <property name="halign">start</property>
+                            <property name="use-markup">True</property>
+                            <property name="wrap">True</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">3</property>
+                              <property name="column-span">2</property>
+                            </layout>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
                   <object class="GtkLabel">
                     <property name="halign">start</property>
                     <property name="label">Amount:</property>

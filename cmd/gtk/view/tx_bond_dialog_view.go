@@ -26,6 +26,16 @@ type TxBondDialogView struct {
 	FeeHint         *gtk.Label
 	MemoEntry       *gtk.Entry
 
+	// Delegation (PIP-49)
+	DelegateCheck *gtk.CheckButton
+	DelegateBox   *gtk.Box
+	OwnerLabel    *gtk.Label
+	ShareEntry    *gtk.Entry
+	ShareHint     *gtk.Label
+	TermDrop      *gtk.DropDown
+	ExpiryEntry   *gtk.Entry
+	ExpiryHint    *gtk.Label
+
 	ButtonCancel *gtk.Button
 	ButtonSend   *gtk.Button
 }
@@ -48,6 +58,15 @@ func NewTxBondDialogView() *TxBondDialogView {
 		FeeEntry:        builder.GetEntryObj("id_entry_fee"),
 		FeeHint:         builder.GetLabelObj("id_hint_fee"),
 		MemoEntry:       builder.GetEntryObj("id_entry_memo"),
+
+		DelegateCheck: GetObj[*gtk.CheckButton](builder.Builder(), "id_check_delegate"),
+		DelegateBox:   builder.GetBoxObj("id_box_delegate"),
+		OwnerLabel:    builder.GetLabelObj("id_label_owner"),
+		ShareEntry:    builder.GetEntryObj("id_entry_share"),
+		ShareHint:     builder.GetLabelObj("id_hint_share"),
+		TermDrop:      builder.GetDropDownObj("id_drop_term"),
+		ExpiryEntry:   builder.GetEntryObj("id_entry_expiry"),
+		ExpiryHint:    builder.GetLabelObj("id_hint_expiry"),
 
 		ButtonCancel: builder.GetButtonObj("id_button_cancel"),
 		ButtonSend:   builder.GetButtonObj("id_button_send"),

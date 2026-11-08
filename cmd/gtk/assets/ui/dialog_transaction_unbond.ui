@@ -30,13 +30,28 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkDropDown" id="id_drop_validator">
+                  <object class="GtkComboBoxText" id="id_combo_validator">
+                    <property name="has-entry">True</property>
+                    <property name="tooltip-text">Pick one of your validators, or paste the address of a validator delegated to one of your accounts</property>
                   </object>
                 </child>
                 <child>
                   <object class="GtkLabel" id="id_hint_validator">
                     <property name="halign">start</property>
                     <property name="margin-bottom">8</property>
+                    <property name="use-markup">True</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="id_hint_delegation">
+                    <property name="css-classes">notice-info</property>
+                    <property name="halign">fill</property>
+                    <property name="margin-bottom">8</property>
+                    <property name="use-markup">True</property>
+                    <property name="visible">False</property>
+                    <property name="wrap">True</property>
+                    <property name="wrap-mode">word-char</property>
+                    <property name="xalign">0</property>
                   </object>
                 </child>
                 <child>

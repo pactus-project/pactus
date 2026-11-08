@@ -40,6 +40,11 @@ func ComboBoxSetup(combo *gtk.ComboBoxText, names []string) {
 	}
 }
 
+// ComboBoxSelectFirst selects the first item of the combo box, if it has one.
+func ComboBoxSelectFirst(combo *gtk.ComboBoxText) {
+	combo.SetActive(0)
+}
+
 func ComboBoxGetSelectedText(combo *gtk.ComboBoxText) string {
 	return combo.ActiveText()
 }

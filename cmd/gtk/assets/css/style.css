@@ -298,6 +298,13 @@ frame > label {
     background-color: alpha(#e8a33d, 0.12);
 }
 
+/* A neutral information banner inside a dialog. */
+.notice-info {
+    padding: 10px 12px;
+    border-radius: 10px;
+    background-color: alpha(@pactus_accent, 0.10);
+}
+
 /* The scrolled field area of a transaction dialog. The scrollbar takes its own
    column (no overlay), so the fields narrow only while it is shown. The margin
    keeps it off the fields. */
