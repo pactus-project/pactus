@@ -150,6 +150,18 @@ func (n *Navigator) ShowTransactionWithdraw() {
 	}()
 }
 
+func (n *Navigator) ShowTransactionAnchor() {
+	gtkutil.IdleAddSync(func() {
+		dialogView := view.NewTxAnchorDialogView()
+		ctrl := NewTxAnchorDialogController(dialogView, n.walletModel)
+		ctrl.Show()
+	})
+
+	go func() {
+		n.walletCtrl.RefreshTransactions()
+	}()
+}
+
 func (n *Navigator) BrowseWebsite() {
 	n.openWebsite("https://pactus.org/")
 }
@@ -232,6 +244,7 @@ func (n *Navigator) CreateMenu(isLocal bool) *gio.Menu {
 	createAppAction("bond", n.ShowTransactionBond)
 	createAppAction("unbond", n.ShowTransactionUnbond)
 	createAppAction("withdraw", n.ShowTransactionWithdraw)
+	createAppAction("anchor", n.ShowTransactionAnchor)
 	createAppAction("website", n.BrowseWebsite)
 	createAppAction("explorer", n.BrowseExplorer)
 	createAppAction("docs", n.BrowseDocs)
@@ -276,6 +289,7 @@ func (n *Navigator) CreateMenu(isLocal bool) *gio.Menu {
 	transactionMenu.Append("_Bond", "app.bond")
 	transactionMenu.Append("_Unbond", "app.unbond")
 	transactionMenu.Append("_Withdraw", "app.withdraw")
+	transactionMenu.Append("_Anchor", "app.anchor")
 
 	transactionItem := gio.NewMenuItem("_Transaction", "")
 	transactionItem.SetSubmenu(transactionMenu)

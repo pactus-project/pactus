@@ -58,6 +58,9 @@ var TxUnbondDialogUI []byte
 //go:embed ui/dialog_transaction_withdraw.ui
 var TxWithdrawDialogUI []byte
 
+//go:embed ui/dialog_transaction_anchor.ui
+var TxAnchorDialogUI []byte
+
 // Config editor dialog.
 
 //go:embed ui/dialog_config_editor.ui

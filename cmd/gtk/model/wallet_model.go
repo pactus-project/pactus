@@ -12,6 +12,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/secp256k1"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util/bech32m"
 	"github.com/pactus-project/pactus/wallet/types"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -414,4 +415,73 @@ func (model *WalletModel) Transactions(count, skip int) ([]*pactus.WalletTransac
 	}
 
 	return res.Txs, nil
+}
+
+// WalletNetwork returns the network name of the wallet addresses, as used by
+// anchor links (PIP-57).
+func (*WalletModel) WalletNetwork() string {
+	if crypto.AddressHRP() == "pc" {
+		return NetworkMainnet
+	}
+
+	return NetworkTestnet
+}
+
+// Anchor returns the anchor of the account (PIP-50). found is false when the
+// account has none.
+func (model *WalletModel) Anchor(addr string) (anchor *pactus.AnchorInfo, found bool, err error) {
+	res, err := model.blockchainClient.GetAnchor(model.ctx, &pactus.GetAnchorRequest{
+		Address: addr,
+	})
+	if err != nil {
+		return nil, false, err
+	}
+
+	return res.Anchor, res.Found, nil
+}
+
+// MakeAnchorSetTx builds a transaction that creates or updates the sender's
+// anchor. The deposit is added to the amount already locked.
+func (model *WalletModel) MakeAnchorSetTx(
+	sender string,
+	anchorType uint8,
+	rootHash []byte,
+	manifestURI string,
+	deposit amount.Amount,
+	fee amount.Amount,
+	memo string,
+) (*tx.Tx, error) {
+	res, err := model.transactionClient.GetRawAnchorTransaction(model.ctx,
+		&pactus.GetRawAnchorTransactionRequest{
+			Sender:      sender,
+			Action:      uint32(payload.AnchorActionSet),
+			RootHash:    rootHash,
+			ManifestUri: manifestURI,
+			AnchorType:  uint32(anchorType),
+			Deposit:     int64(deposit),
+			Fee:         int64(fee),
+			Memo:        memo,
+		})
+	if err != nil {
+		return nil, err
+	}
+
+	return tx.FromString(res.RawTransaction)
+}
+
+// MakeAnchorDeleteTx builds a transaction that deletes the sender's anchor.
+// The locked deposit, minus the fee, returns to the balance.
+func (model *WalletModel) MakeAnchorDeleteTx(sender string, fee amount.Amount, memo string) (*tx.Tx, error) {
+	res, err := model.transactionClient.GetRawAnchorTransaction(model.ctx,
+		&pactus.GetRawAnchorTransactionRequest{
+			Sender: sender,
+			Action: uint32(payload.AnchorActionDelete),
+			Fee:    int64(fee),
+			Memo:   memo,
+		})
+	if err != nil {
+		return nil, err
+	}
+
+	return tx.FromString(res.RawTransaction)
 }
