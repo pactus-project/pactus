@@ -240,11 +240,21 @@ func (gen *Genesis) TotalSupply() amount.Amount {
 	return totalSuppyly
 }
 
+// mainnetHash and testnetHash are the hashes of the published genesis documents.
+// They never change, so they are computed once, when the package is loaded:
+// ChainType is called for every gossip bundle, and parsing both documents each
+// time is costly. The documents hold no address or key in a parsed form, so
+// their hashes do not depend on the address prefix of the network.
+var (
+	mainnetHash = MainnetGenesis().Hash()
+	testnetHash = TestnetGenesis().Hash()
+)
+
 func (gen *Genesis) ChainType() ChainType {
 	switch gen.Hash() {
-	case MainnetGenesis().Hash():
+	case mainnetHash:
 		return Mainnet
-	case TestnetGenesis().Hash():
+	case testnetHash:
 		return Testnet
 	default:
 		return Localnet
