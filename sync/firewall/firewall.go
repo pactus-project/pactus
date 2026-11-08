@@ -46,6 +46,8 @@ type Firewall struct {
 	peerBlockLimit       *ratelimit.KeyedRateLimit[peer.ID]
 	peerTransactionLimit *ratelimit.KeyedRateLimit[peer.ID]
 	peerConsensusLimit   *ratelimit.KeyedRateLimit[peer.ID]
+	committee            committeeKeys
+	peerSignatureChecks  *ratelimit.KeyedRateLimit[peer.ID]
 	logger               *logger.SubLogger
 }
 
@@ -74,7 +76,9 @@ func NewFirewall(ctx context.Context,
 		blockRateLimit:       blockRateLimit,
 		transactionRateLimit: transactionRateLimit,
 		consensusRateLimit:   consensusRateLimit,
-		logger:               logger.NewSubLogger(ctx, "_firewall", nil),
+		peerSignatureChecks: ratelimit.NewKeyedRateLimit[peer.ID](
+			maxSignatureChecksPerPeer, time.Second, maxRateLimitedPeers),
+		logger: logger.NewSubLogger(ctx, "_firewall", nil),
 	}, nil
 }
 
@@ -305,6 +309,18 @@ func (f *Firewall) AllowConsensusRequest(gossipMsg *network.GossipMessage) netwo
 
 	if !f.peerConsensusLimit.AllowRequest(gossipMsg.From) || !f.consensusRateLimit.AllowRequest() {
 		return network.DropButConsume
+	}
+
+	if !f.peerSignatureChecks.AllowRequest(gossipMsg.From) {
+		// Past its budget of signature checks, a peer's messages are processed
+		// as before, but not relayed until they are checked.
+		return network.DropButConsume
+	}
+
+	if f.hasForgedSignature(gossipMsg.Data) {
+		f.logger.Debug("firewall: consensus message with a forged signature", "from", gossipMsg.From)
+
+		return network.Drop
 	}
 
 	return network.Propagate
