@@ -26,11 +26,16 @@ import (
 //     before any signature verification, and a slot that is already filled is
 //     never verified again;
 //   - signature verifications are rate limited for the whole node;
-//   - only the two highest rounds keep their votes; older rounds are folded into
-//     tallies, and only a bounded number of rounds is kept;
+//   - only a bounded number of rounds is kept, and the round with the least
+//     voting power goes first, only after a verified vote of a new round;
 //   - everything is dropped when the node moves to a new height.
+//
+// An observation shows each vote of two rounds and sums the other rounds into
+// tallies. The two rounds are the highest ones that more than a third of the
+// committee power voted on, so a byzantine member, who has less, cannot push
+// the rounds the committee works on out of view by signing votes for far rounds.
 const (
-	// observerFullRounds is how many of the highest rounds keep each vote.
+	// observerFullRounds is how many rounds an observation shows vote by vote.
 	observerFullRounds = 2
 	// observerMaxRounds bounds the rounds kept, with votes or as tallies.
 	observerMaxRounds = 16
@@ -79,9 +84,9 @@ type Observation struct {
 	Height types.Height
 	// TotalPower is the power of the committee of this height.
 	TotalPower int64
-	// Votes are the votes of the highest rounds, ordered by round.
+	// Votes are the votes of the rounds shown in full, ordered by round.
 	Votes []ObservedVote
-	// Tallies sum the votes of older rounds, ordered by round.
+	// Tallies sum the votes of the other rounds, ordered by round.
 	Tallies []ObservedTally
 	// Proposals are ordered by round.
 	Proposals []ObservedProposal
@@ -106,41 +111,36 @@ type tallyKey struct {
 }
 
 type observedRound struct {
-	votes   map[voteSlot]ObservedVote
-	tallies map[tallyKey]*ObservedTally
-	power   int64
-	folded  bool
+	votes map[voteSlot]ObservedVote
+	// power is the voting power of the members that voted in this round,
+	// each counted once whatever the number of their votes.
+	power  int64
+	voters map[crypto.Address]struct{}
 }
 
-// addToTally counts a vote in the tally of its type, round, value and block hash.
-func (r *observedRound) addToTally(vte *ObservedVote, power int64) {
-	key := tallyKey{typ: vte.Type, cpRound: vte.CPRound, cpValue: vte.CPValue, blockHash: vte.BlockHash}
-	tally, found := r.tallies[key]
-	if !found {
-		tally = &ObservedTally{
-			Round: vte.Round, Type: vte.Type, CPRound: vte.CPRound,
-			CPValue: vte.CPValue, BlockHash: vte.BlockHash,
-		}
-		r.tallies[key] = tally
-	}
-	tally.Votes++
-	tally.Power += power
-}
-
-func (r *observedRound) fold(powers map[crypto.Address]int64) {
-	if r.folded {
-		return
-	}
-	r.tallies = make(map[tallyKey]*ObservedTally)
+// tallies sums the votes of the round by type, change-proposer round, value and block hash.
+func (r *observedRound) tallies(powers map[crypto.Address]int64) []ObservedTally {
+	sums := make(map[tallyKey]*ObservedTally)
 	for _, vte := range r.votes {
-		r.addToTally(&vte, powers[vte.Signer])
+		key := tallyKey{typ: vte.Type, cpRound: vte.CPRound, cpValue: vte.CPValue, blockHash: vte.BlockHash}
+		tally, found := sums[key]
+		if !found {
+			tally = &ObservedTally{
+				Round: vte.Round, Type: vte.Type, CPRound: vte.CPRound,
+				CPValue: vte.CPValue, BlockHash: vte.BlockHash,
+			}
+			sums[key] = tally
+		}
+		tally.Votes++
+		tally.Power += powers[vte.Signer]
 	}
-	// The slots stay, without their votes, so a folded round still ignores
-	// duplicates before verifying them.
-	for slot := range r.votes {
-		r.votes[slot] = ObservedVote{}
+
+	result := make([]ObservedTally, 0, len(sums))
+	for _, tally := range sums {
+		result = append(result, *tally)
 	}
-	r.folded = true
+
+	return result
 }
 
 type observer struct {
@@ -361,32 +361,43 @@ func (o *observer) storeVote(slot voteSlot, vte ObservedVote) {
 		if len(o.rounds) >= observerMaxRounds {
 			o.evictWeakestRound()
 		}
-		rnd = &observedRound{votes: make(map[voteSlot]ObservedVote)}
+		rnd = &observedRound{
+			votes:  make(map[voteSlot]ObservedVote),
+			voters: make(map[crypto.Address]struct{}),
+		}
 		o.rounds[vte.Round] = rnd
 	}
-	rnd.power += o.powers[vte.Signer]
-
-	if rnd.folded {
-		rnd.votes[slot] = ObservedVote{}
-		rnd.addToTally(&vte, o.powers[vte.Signer])
-
-		return
-	}
 	rnd.votes[slot] = vte
-
-	o.foldOldRounds()
+	if _, voted := rnd.voters[vte.Signer]; !voted {
+		rnd.voters[vte.Signer] = struct{}{}
+		rnd.power += o.powers[vte.Signer]
+	}
 }
 
-// foldOldRounds keeps the votes of the highest rounds only.
-func (o *observer) foldOldRounds() {
+// fullRounds picks the rounds an observation shows vote by vote: the highest
+// rounds that more than a third of the committee power voted on, then, if
+// fewer qualify, the highest of the others.
+func (o *observer) fullRounds() map[types.Round]bool {
 	rounds := make([]types.Round, 0, len(o.rounds))
 	for rnd := range o.rounds {
 		rounds = append(rounds, rnd)
 	}
 	slices.Sort(rounds)
-	for i := 0; i < len(rounds)-observerFullRounds; i++ {
-		o.rounds[rounds[i]].fold(o.powers)
+	slices.Reverse(rounds)
+
+	full := make(map[types.Round]bool, observerFullRounds)
+	for _, rnd := range rounds {
+		if len(full) < observerFullRounds && o.rounds[rnd].power*3 > o.totalPower {
+			full[rnd] = true
+		}
 	}
+	for _, rnd := range rounds {
+		if len(full) < observerFullRounds {
+			full[rnd] = true
+		}
+	}
+
+	return full
 }
 
 func (o *observer) rememberBad(msgHash hash.Hash) {
@@ -416,17 +427,10 @@ func (o *observer) observation() *Observation {
 		Dropped:    o.dropped,
 	}
 
-	rounds := make([]types.Round, 0, len(o.rounds))
-	for rnd := range o.rounds {
-		rounds = append(rounds, rnd)
-	}
-	slices.Sort(rounds)
-	for _, rnd := range rounds {
-		data := o.rounds[rnd]
-		if data.folded {
-			for _, tally := range data.tallies {
-				obs.Tallies = append(obs.Tallies, *tally)
-			}
+	full := o.fullRounds()
+	for rnd, data := range o.rounds {
+		if !full[rnd] {
+			obs.Tallies = append(obs.Tallies, data.tallies(o.powers)...)
 
 			continue
 		}

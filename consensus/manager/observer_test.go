@@ -166,39 +166,76 @@ func TestObserverIgnoresFilledSlot(t *testing.T) {
 	assert.Equal(t, first.BlockHash(), obs.Votes[0].BlockHash)
 }
 
-func TestObserverFoldsOlderRounds(t *testing.T) {
+func TestObserverSumsOtherRounds(t *testing.T) {
 	td := setupObserver(t)
 
+	// Round 2 has the votes of three members, rounds 3 and 4 one vote each.
+	blockHash := td.RandHash()
+	for _, key := range td.keys[:3] {
+		vte := vote.NewPrecommitVote(blockHash, td.height, 2, key.Address())
+		td.HelperSignVote(key, vte)
+		td.observer.addVote(vte)
+	}
+	td.observer.addVote(td.precommit(td.keys[0], 3))
+	td.observer.addVote(td.precommit(td.keys[0], 4))
+
+	// Round 2 is shown in full, since more than a third of the power voted on
+	// it, and round 4 as the highest of the others. Round 3 is summed.
+	obs := td.observer.observation()
+	require.Len(t, obs.Votes, 4)
+	shown := map[types.Round]int{}
+	for _, vte := range obs.Votes {
+		shown[vte.Round]++
+	}
+	assert.Equal(t, map[types.Round]int{2: 3, 4: 1}, shown)
+
+	require.Len(t, obs.Tallies, 1)
+	assert.Equal(t, types.Round(3), obs.Tallies[0].Round)
+	assert.Equal(t, 1, obs.Tallies[0].Votes)
+	assert.Equal(t, int64(1000e9), obs.Tallies[0].Power)
+}
+
+func TestObserverByzantineCannotHideCommitteeRounds(t *testing.T) {
+	td := setupObserver(t)
+
+	// The committee works on round 0.
 	blockHash := td.RandHash()
 	for _, key := range td.keys[:3] {
 		vte := vote.NewPrecommitVote(blockHash, td.height, 0, key.Address())
 		td.HelperSignVote(key, vte)
 		td.observer.addVote(vte)
 	}
-	td.observer.addVote(td.precommit(td.keys[0], 1))
-	td.observer.addVote(td.precommit(td.keys[0], 2))
+
+	// A byzantine member signs valid votes for many far rounds.
+	byzantine := td.keys[3]
+	for round := types.Round(400); round < 400+3*observerMaxRounds; round++ {
+		td.observer.addVote(td.precommit(byzantine, round))
+		td.observer.addVote(td.cpPreVote(byzantine, round, 1))
+	}
+
+	assert.LessOrEqual(t, len(td.observer.rounds), observerMaxRounds)
+	assert.Contains(t, td.observer.rounds, types.Round(0),
+		"the round with the most power is never evicted by a single member")
 
 	obs := td.observer.observation()
-	assert.Len(t, obs.Votes, 2, "only the two highest rounds keep their votes")
+	committeeVotes := 0
 	for _, vte := range obs.Votes {
-		assert.GreaterOrEqual(t, vte.Round, types.Round(1))
+		if vte.Round == 0 {
+			committeeVotes++
+		}
 	}
-	require.Len(t, obs.Tallies, 1)
-	assert.Equal(t, types.Round(0), obs.Tallies[0].Round)
-	assert.Equal(t, 3, obs.Tallies[0].Votes)
-	assert.Equal(t, int64(3*1000e9), obs.Tallies[0].Power)
-	assert.Equal(t, blockHash, obs.Tallies[0].BlockHash)
+	assert.Equal(t, 3, committeeVotes, "the committee round is still shown vote by vote")
+}
 
-	t.Run("a late vote of a folded round adds to its tally", func(t *testing.T) {
-		late := vote.NewPrecommitVote(blockHash, td.height, 0, td.keys[3].Address())
-		td.HelperSignVote(td.keys[3], late)
-		td.observer.addVote(late)
-		td.observer.addVote(late)
+func TestObserverRoundPowerCountsEachMemberOnce(t *testing.T) {
+	td := setupObserver(t)
 
-		after := td.observer.observation()
-		require.Len(t, after.Tallies, 1)
-		assert.Equal(t, 4, after.Tallies[0].Votes)
-	})
+	// One member casting many votes in a round does not reach a third of the power.
+	for cpRound := int16(0); cpRound < 5; cpRound++ {
+		td.observer.addVote(td.cpPreVote(td.keys[0], 0, cpRound))
+	}
+
+	assert.Equal(t, int64(1000e9), td.observer.rounds[0].power)
 }
 
 func TestObserverBoundsRounds(t *testing.T) {
