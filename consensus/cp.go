@@ -190,6 +190,27 @@ func (cp *changeProposer) checkJustMainVoteConflict(just vote.Just,
 	return nil
 }
 
+// checkJustPreVoteInitYes checks the `yes` pre-vote of the first round.
+func (cp *changeProposer) checkJustPreVoteInitYes(vte *vote.Vote) error {
+	just := vte.CPJust()
+
+	err := cp.checkCPValue(vte, vote.CPValueYes)
+	if err != nil {
+		return err
+	}
+
+	// The `yes` pre-vote of the first round is for no block.
+	// A block hash makes the pre-votes counted as `yes`, but they can't make a valid certificate.
+	if cp.hardenedRules() && !vte.BlockHash().IsUndef() {
+		return InvalidJustificationError{
+			JustType: just.Type(),
+			Reason:   fmt.Sprintf("invalid block hash: %s", vte.BlockHash()),
+		}
+	}
+
+	return cp.checkJustInitYes(just)
+}
+
 //nolint:exhaustive // refactor me; check just by just_type, not vote_type
 func (cp *changeProposer) checkJustPreVote(vte *vote.Vote) error {
 	just := vte.CPJust()
@@ -204,12 +225,8 @@ func (cp *changeProposer) checkJustPreVote(vte *vote.Vote) error {
 			return cp.checkJustInitNo(just, vte.BlockHash())
 
 		case vote.JustTypeInitYes:
-			err := cp.checkCPValue(vte, vote.CPValueYes)
-			if err != nil {
-				return err
-			}
+			return cp.checkJustPreVoteInitYes(vte)
 
-			return cp.checkJustInitYes(just)
 		default:
 			return InvalidJustificationError{
 				JustType: just.Type(),
@@ -327,4 +344,10 @@ func (cp *changeProposer) cpStrongTermination(round types.Round, cpRound int16) 
 
 		cp.enterNewState(cp.proposeState)
 	}
+}
+
+// hardenedRules returns true if the chain is at the protocol version that enforces the hardened rules.
+// All the nodes have the same version at the same height, so the votes are validated the same way.
+func (cp *changeProposer) hardenedRules() bool {
+	return cp.bcState.Params().BlockVersion.HasHardenedRules()
 }
