@@ -490,19 +490,31 @@ func scoreStartHeight(endHeight types.Height, scoreWindow uint32) types.Height {
 }
 
 func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) error {
+	committed, err := st.commitBlock(blk, cert)
+	if committed {
+		// Publish the event after releasing the lock: event receivers, like the wallet,
+		// may call the state, and the event pipe blocks when its buffer is full.
+		st.publishEvent(blk)
+	}
+
+	return err
+}
+
+// commitBlock commits the block and reports whether it was committed.
+func (st *state) commitBlock(blk *block.Block, cert *certificate.Certificate) (bool, error) {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
 	height := cert.Height()
 	if height > st.lastInfo.BlockHeight()+1 {
 		// The block is not the next one: it can't be validated nor applied yet.
-		return FutureBlockError{Height: height, LastHeight: st.lastInfo.BlockHeight()}
+		return false, FutureBlockError{Height: height, LastHeight: st.lastInfo.BlockHeight()}
 	}
 
 	if height != st.lastInfo.BlockHeight()+1 {
 		st.logger.Debug("block is committed before", "height", height)
 
-		return nil
+		return false, nil
 	}
 
 	// Rollback chain to block 7406820.
@@ -517,7 +529,7 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 
 	err := st.validateCurCertificate(cert, blk.Hash())
 	if err != nil {
-		return err
+		return false, err
 	}
 
 	// There are two modules that can commit a block: Consensus and Sync.
@@ -534,7 +546,7 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 			"our hash", st.lastInfo.BlockHash(),
 			"block hash", blk.Header().PrevBlockHash())
 
-		return ForkDetectedError{
+		return false, ForkDetectedError{
 			Expected: st.lastInfo.BlockHash(),
 			Got:      blk.Header().PrevBlockHash(),
 		}
@@ -542,14 +554,14 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 
 	err = st.validateBlock(blk, cert.Round())
 	if err != nil {
-		return err
+		return false, err
 	}
 
 	// -----------------------------------
 	// Execute block
 	sbx := st.makeSandbox(blk.Header().Version(), blk.Header().UnixTime())
 	if err := st.executeBlock(blk, sbx, false); err != nil {
-		return err
+		return false, err
 	}
 
 	// -----------------------------------
@@ -598,10 +610,7 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 		}
 	}
 
-	// publish committed block to event channel zeromq
-	st.publishEvent(blk)
-
-	return nil
+	return true, nil
 }
 
 func (st *state) evaluateSortition() bool {

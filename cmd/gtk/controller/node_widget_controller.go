@@ -20,10 +20,6 @@ import (
 // clockOutOfSyncThreshold is the clock offset above which we show a warning.
 const clockOutOfSyncThreshold = 5 * time.Second
 
-// syncProgressWindowBlocks is the number of blocks behind that maps to 0% sync progress (~10 min at 10s/block).
-// Used as a fallback when the server does not provide SyncProgress (backward compatibility).
-const syncProgressWindowBlocks = 60
-
 type NodeWidgetController struct {
 	view  *view.NodeWidgetView
 	model *model.NodeModel
@@ -77,22 +73,9 @@ func (c *NodeWidgetController) timeoutProgress() {
 		c.view.LabelLastBlockTime.SetText(lastBlockTime.Format("02 Jan 06 15:04:05 MST"))
 		c.view.LabelLastBlockHeight.SetText(strconv.FormatInt(int64(chainInfo.LastBlockHeight), 10))
 
-		percentage := chainInfo.SyncProgress
-		if percentage == 0 {
-			// Backward compatibility: old servers do not send SyncProgress.
-			// Fall back to the local blocks-left heuristic.
-			// TODO: remove this fallback in a future release.
-			blocksLeft := (time.Now().Unix() - lastBlockTime.Unix()) / 10
-			if blocksLeft > syncProgressWindowBlocks {
-				blocksLeft = syncProgressWindowBlocks
-			}
-			percentage = 1.0 - float64(blocksLeft)/float64(syncProgressWindowBlocks)
-			c.view.LabelBlocksLeft.SetText(strconv.FormatInt(blocksLeft, 10))
-		} else {
-			c.view.LabelBlocksLeft.SetText(strconv.FormatInt(chainInfo.BlocksLeft, 10))
-		}
-		c.view.ProgressSynced.SetFraction(percentage)
-		c.setSyncStatus(percentage)
+		c.view.LabelBlocksLeft.SetText(strconv.FormatInt(chainInfo.BlocksLeft, 10))
+		c.view.ProgressSynced.SetFraction(chainInfo.SyncProgress)
+		c.setSyncStatus(chainInfo.SyncProgress)
 	})
 }
 

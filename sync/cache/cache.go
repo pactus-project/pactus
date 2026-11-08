@@ -49,7 +49,14 @@ func (c *Cache) AddBlock(blk *block.Block) {
 		c.blocks.Add(1, blk)
 	} else {
 		c.blocks.Add(prvCert.Height()+1, blk)
-		c.certs.Add(prvCert.Height(), prvCert)
+
+		// The certificate of the previous block is not verified yet.
+		// It should not replace a certificate that is cached already,
+		// which can be verified, or made by the peers that we trust more.
+		// `AddCertificate` replaces it.
+		if !c.certs.Contains(prvCert.Height()) {
+			c.certs.Add(prvCert.Height(), prvCert)
+		}
 	}
 }
 

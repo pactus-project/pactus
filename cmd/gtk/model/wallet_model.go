@@ -5,6 +5,7 @@ package model
 import (
 	"context"
 	"encoding/hex"
+	"errors"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -299,11 +300,24 @@ func (model *WalletModel) MakeTransferTx(
 	return tx.FromString(res.RawTransaction)
 }
 
+// Delegation holds the PIP-49 fields of a delegated bond.
+type Delegation struct {
+	// Owner is the stake owner account. Only it can unbond and withdraw.
+	Owner string
+	// Share is the owner's part of each block reward, in nano PAC.
+	Share amount.Amount
+	// Expiry is the height at which the delegation ends.
+	Expiry uint32
+}
+
+// MakeBondTx builds a bond transaction. A non-nil delegation makes it a
+// delegated bond (PIP-49).
 func (model *WalletModel) MakeBondTx(
 	sender, receiver, publicKey string,
 	amt amount.Amount,
 	fee amount.Amount,
 	memo string,
+	delegation *Delegation,
 ) (*tx.Tx, error) {
 	if publicKey == "" {
 		valInfo := model.ValidatorInfo(receiver)
@@ -315,15 +329,20 @@ func (model *WalletModel) MakeBondTx(
 			}
 		}
 	}
-	res, err := model.transactionClient.GetRawBondTransaction(model.ctx,
-		&pactus.GetRawBondTransactionRequest{
-			Sender:    sender,
-			Receiver:  receiver,
-			PublicKey: publicKey,
-			Stake:     int64(amt),
-			Fee:       int64(fee),
-			Memo:      memo,
-		})
+	req := &pactus.GetRawBondTransactionRequest{
+		Sender:    sender,
+		Receiver:  receiver,
+		PublicKey: publicKey,
+		Stake:     int64(amt),
+		Fee:       int64(fee),
+		Memo:      memo,
+	}
+	if delegation != nil {
+		req.DelegateOwner = delegation.Owner
+		req.DelegateShare = int64(delegation.Share)
+		req.DelegateExpiry = delegation.Expiry
+	}
+	res, err := model.transactionClient.GetRawBondTransaction(model.ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -331,11 +350,14 @@ func (model *WalletModel) MakeBondTx(
 	return tx.FromString(res.RawTransaction)
 }
 
-func (model *WalletModel) MakeUnbondTx(validatorAddr, memo string) (*tx.Tx, error) {
+// MakeUnbondTx builds an unbond transaction. For a delegated validator
+// (PIP-49), delegateOwner is the stake owner that signs it; otherwise it is empty.
+func (model *WalletModel) MakeUnbondTx(validatorAddr, delegateOwner, memo string) (*tx.Tx, error) {
 	res, err := model.transactionClient.GetRawUnbondTransaction(model.ctx,
 		&pactus.GetRawUnbondTransactionRequest{
 			ValidatorAddress: validatorAddr,
 			Memo:             memo,
+			DelegateOwner:    delegateOwner,
 		})
 	if err != nil {
 		return nil, err
@@ -344,11 +366,14 @@ func (model *WalletModel) MakeUnbondTx(validatorAddr, memo string) (*tx.Tx, erro
 	return tx.FromString(res.RawTransaction)
 }
 
+// MakeWithdrawTx builds a withdraw transaction. For a delegated validator
+// (PIP-49), delegateOwner is the stake owner that signs it; otherwise it is empty.
 func (model *WalletModel) MakeWithdrawTx(
 	sender, receiver string,
 	amt amount.Amount,
 	fee amount.Amount,
 	memo string,
+	delegateOwner string,
 ) (*tx.Tx, error) {
 	res, err := model.transactionClient.GetRawWithdrawTransaction(model.ctx,
 		&pactus.GetRawWithdrawTransactionRequest{
@@ -362,7 +387,39 @@ func (model *WalletModel) MakeWithdrawTx(
 		return nil, err
 	}
 
-	return tx.FromString(res.RawTransaction)
+	trx, err := tx.FromString(res.RawTransaction)
+	if err != nil || delegateOwner == "" {
+		return trx, err
+	}
+
+	return withWithdrawDelegateOwner(trx, delegateOwner)
+}
+
+// withWithdrawDelegateOwner sets the stake owner of an unsigned withdraw.
+// GetRawWithdrawTransaction has no delegate owner field yet, so the wallet adds
+// it here. The owner then signs the transaction, as PIP-49 requires.
+func withWithdrawDelegateOwner(trx *tx.Tx, delegateOwner string) (*tx.Tx, error) {
+	owner, err := crypto.AddressFromString(delegateOwner)
+	if err != nil {
+		return nil, err
+	}
+	pld, ok := trx.Payload().(*payload.WithdrawPayload)
+	if !ok {
+		return nil, errors.New("not a withdraw transaction")
+	}
+	pld.DelegateOwner = owner
+	if err := pld.BasicCheck(); err != nil {
+		return nil, err
+	}
+
+	// Encode and decode again, so the transaction has the delegation flag
+	// and no cached ID of the transaction without the owner.
+	raw, err := trx.Bytes()
+	if err != nil {
+		return nil, err
+	}
+
+	return tx.FromBytes(raw)
 }
 
 func (model *WalletModel) SignTransaction(password string, trx *tx.Tx) error {
@@ -425,6 +482,18 @@ func (*WalletModel) WalletNetwork() string {
 	}
 
 	return NetworkTestnet
+}
+
+// ChainStatus reads the last block height of the node and how far it is behind.
+// It can wait while the node commits blocks, for example while it syncs, so
+// never call it on the UI thread.
+func (model *WalletModel) ChainStatus() (ChainStatus, error) {
+	res, err := model.blockchainClient.GetBlockchainInfo(model.ctx, &pactus.GetBlockchainInfoRequest{})
+	if err != nil {
+		return ChainStatus{}, err
+	}
+
+	return ChainStatus{Height: res.LastBlockHeight, BlocksLeft: res.BlocksLeft}, nil
 }
 
 // Anchor returns the anchor of the account (PIP-50). found is false when the
