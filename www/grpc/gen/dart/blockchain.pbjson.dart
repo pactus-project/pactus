@@ -459,6 +459,14 @@ const GetConsensusInfoResponse$json = {
       '6': '.pactus.ConsensusInfo',
       '10': 'instances'
     },
+    {
+      '1': 'observed',
+      '3': 3,
+      '4': 1,
+      '5': 11,
+      '6': '.pactus.ObservedConsensusInfo',
+      '10': 'observed'
+    },
   ],
 };
 
@@ -466,7 +474,8 @@ const GetConsensusInfoResponse$json = {
 final $typed_data.Uint8List getConsensusInfoResponseDescriptor = $convert.base64Decode(
     'ChhHZXRDb25zZW5zdXNJbmZvUmVzcG9uc2USMAoIcHJvcG9zYWwYASABKAsyFC5wYWN0dXMuUH'
     'JvcG9zYWxJbmZvUghwcm9wb3NhbBIzCglpbnN0YW5jZXMYAiADKAsyFS5wYWN0dXMuQ29uc2Vu'
-    'c3VzSW5mb1IJaW5zdGFuY2Vz');
+    'c3VzSW5mb1IJaW5zdGFuY2VzEjkKCG9ic2VydmVkGAMgASgLMh0ucGFjdHVzLk9ic2VydmVkQ2'
+    '9uc2Vuc3VzSW5mb1IIb2JzZXJ2ZWQ=');
 
 @$core.Deprecated('Use getTxPoolContentRequestDescriptor instead')
 const GetTxPoolContentRequest$json = {
@@ -785,6 +794,91 @@ final $typed_data.Uint8List voteInfoDescriptor = $convert.base64Decode(
     'BCABKAVSBXJvdW5kEhkKCGNwX3JvdW5kGAUgASgFUgdjcFJvdW5kEhkKCGNwX3ZhbHVlGAYgAS'
     'gFUgdjcFZhbHVl');
 
+@$core.Deprecated('Use observedConsensusInfoDescriptor instead')
+const ObservedConsensusInfo$json = {
+  '1': 'ObservedConsensusInfo',
+  '2': [
+    {'1': 'height', '3': 1, '4': 1, '5': 13, '10': 'height'},
+    {'1': 'total_power', '3': 2, '4': 1, '5': 3, '10': 'totalPower'},
+    {
+      '1': 'votes',
+      '3': 3,
+      '4': 3,
+      '5': 11,
+      '6': '.pactus.VoteInfo',
+      '10': 'votes'
+    },
+    {
+      '1': 'tallies',
+      '3': 4,
+      '4': 3,
+      '5': 11,
+      '6': '.pactus.VoteTally',
+      '10': 'tallies'
+    },
+    {
+      '1': 'proposals',
+      '3': 5,
+      '4': 3,
+      '5': 11,
+      '6': '.pactus.ObservedProposalInfo',
+      '10': 'proposals'
+    },
+    {'1': 'dropped', '3': 6, '4': 1, '5': 4, '10': 'dropped'},
+  ],
+};
+
+/// Descriptor for `ObservedConsensusInfo`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List observedConsensusInfoDescriptor = $convert.base64Decode(
+    'ChVPYnNlcnZlZENvbnNlbnN1c0luZm8SFgoGaGVpZ2h0GAEgASgNUgZoZWlnaHQSHwoLdG90YW'
+    'xfcG93ZXIYAiABKANSCnRvdGFsUG93ZXISJgoFdm90ZXMYAyADKAsyEC5wYWN0dXMuVm90ZUlu'
+    'Zm9SBXZvdGVzEisKB3RhbGxpZXMYBCADKAsyES5wYWN0dXMuVm90ZVRhbGx5Ugd0YWxsaWVzEj'
+    'oKCXByb3Bvc2FscxgFIAMoCzIcLnBhY3R1cy5PYnNlcnZlZFByb3Bvc2FsSW5mb1IJcHJvcG9z'
+    'YWxzEhgKB2Ryb3BwZWQYBiABKARSB2Ryb3BwZWQ=');
+
+@$core.Deprecated('Use voteTallyDescriptor instead')
+const VoteTally$json = {
+  '1': 'VoteTally',
+  '2': [
+    {
+      '1': 'type',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.pactus.VoteType',
+      '10': 'type'
+    },
+    {'1': 'round', '3': 2, '4': 1, '5': 5, '10': 'round'},
+    {'1': 'cp_round', '3': 3, '4': 1, '5': 5, '10': 'cpRound'},
+    {'1': 'cp_value', '3': 4, '4': 1, '5': 5, '10': 'cpValue'},
+    {'1': 'block_hash', '3': 5, '4': 1, '5': 9, '10': 'blockHash'},
+    {'1': 'votes', '3': 6, '4': 1, '5': 5, '10': 'votes'},
+    {'1': 'power', '3': 7, '4': 1, '5': 3, '10': 'power'},
+  ],
+};
+
+/// Descriptor for `VoteTally`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List voteTallyDescriptor = $convert.base64Decode(
+    'CglWb3RlVGFsbHkSJAoEdHlwZRgBIAEoDjIQLnBhY3R1cy5Wb3RlVHlwZVIEdHlwZRIUCgVyb3'
+    'VuZBgCIAEoBVIFcm91bmQSGQoIY3Bfcm91bmQYAyABKAVSB2NwUm91bmQSGQoIY3BfdmFsdWUY'
+    'BCABKAVSB2NwVmFsdWUSHQoKYmxvY2tfaGFzaBgFIAEoCVIJYmxvY2tIYXNoEhQKBXZvdGVzGA'
+    'YgASgFUgV2b3RlcxIUCgVwb3dlchgHIAEoA1IFcG93ZXI=');
+
+@$core.Deprecated('Use observedProposalInfoDescriptor instead')
+const ObservedProposalInfo$json = {
+  '1': 'ObservedProposalInfo',
+  '2': [
+    {'1': 'round', '3': 1, '4': 1, '5': 5, '10': 'round'},
+    {'1': 'block_hash', '3': 2, '4': 1, '5': 9, '10': 'blockHash'},
+    {'1': 'proposer', '3': 3, '4': 1, '5': 9, '10': 'proposer'},
+  ],
+};
+
+/// Descriptor for `ObservedProposalInfo`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List observedProposalInfoDescriptor = $convert.base64Decode(
+    'ChRPYnNlcnZlZFByb3Bvc2FsSW5mbxIUCgVyb3VuZBgBIAEoBVIFcm91bmQSHQoKYmxvY2tfaG'
+    'FzaBgCIAEoCVIJYmxvY2tIYXNoEhoKCHByb3Bvc2VyGAMgASgJUghwcm9wb3Nlcg==');
+
 @$core.Deprecated('Use consensusInfoDescriptor instead')
 const ConsensusInfo$json = {
   '1': 'ConsensusInfo',
@@ -935,6 +1029,9 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>>
   '.pactus.ProposalInfo': ProposalInfo$json,
   '.pactus.ConsensusInfo': ConsensusInfo$json,
   '.pactus.VoteInfo': VoteInfo$json,
+  '.pactus.ObservedConsensusInfo': ObservedConsensusInfo$json,
+  '.pactus.VoteTally': VoteTally$json,
+  '.pactus.ObservedProposalInfo': ObservedProposalInfo$json,
   '.pactus.GetAccountRequest': GetAccountRequest$json,
   '.pactus.GetAccountResponse': GetAccountResponse$json,
   '.pactus.AccountInfo': AccountInfo$json,

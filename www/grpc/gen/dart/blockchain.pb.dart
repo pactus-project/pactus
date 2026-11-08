@@ -1521,10 +1521,12 @@ class GetConsensusInfoResponse extends $pb.GeneratedMessage {
   factory GetConsensusInfoResponse({
     ProposalInfo? proposal,
     $core.Iterable<ConsensusInfo>? instances,
+    ObservedConsensusInfo? observed,
   }) {
     final result = GetConsensusInfoResponse._();
     if (proposal != null) result.proposal = proposal;
     if (instances != null) result.instances.addAll(instances);
+    if (observed != null) result.observed = observed;
     return result;
   }
 
@@ -1545,6 +1547,8 @@ class GetConsensusInfoResponse extends $pb.GeneratedMessage {
         subBuilder: ProposalInfo.$_createMessage)
     ..pPM<ConsensusInfo>(2, _omitFieldNames ? '' : 'instances',
         subBuilder: ConsensusInfo.$_createMessage)
+    ..aOM<ObservedConsensusInfo>(3, _omitFieldNames ? '' : 'observed',
+        subBuilder: ObservedConsensusInfo.$_createMessage)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1587,6 +1591,19 @@ class GetConsensusInfoResponse extends $pb.GeneratedMessage {
   /// List of consensus instances.
   @$pb.TagNumber(2)
   $pb.PbList<ConsensusInfo> get instances => $_getList(1);
+
+  /// What the node observed for the current height, when its consensus observer
+  /// is on and none of its validators is in the committee. Unset otherwise.
+  @$pb.TagNumber(3)
+  ObservedConsensusInfo get observed => $_getN(2);
+  @$pb.TagNumber(3)
+  set observed(ObservedConsensusInfo value) => $_setField(3, value);
+  @$pb.TagNumber(3)
+  $core.bool hasObserved() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearObserved() => $_clearField(3);
+  @$pb.TagNumber(3)
+  ObservedConsensusInfo ensureObserved() => $_ensure(2);
 }
 
 /// Request message for retrieving transactions in the transaction pool.
@@ -2927,6 +2944,342 @@ class VoteInfo extends $pb.GeneratedMessage {
   $core.bool hasCpValue() => $_has(5);
   @$pb.TagNumber(6)
   void clearCpValue() => $_clearField(6);
+}
+
+/// Message contains the consensus votes and proposals a node observed for the
+/// current height without taking part in consensus.
+class ObservedConsensusInfo extends $pb.GeneratedMessage {
+  factory ObservedConsensusInfo({
+    $core.int? height,
+    $fixnum.Int64? totalPower,
+    $core.Iterable<VoteInfo>? votes,
+    $core.Iterable<VoteTally>? tallies,
+    $core.Iterable<ObservedProposalInfo>? proposals,
+    $fixnum.Int64? dropped,
+  }) {
+    final result = ObservedConsensusInfo._();
+    if (height != null) result.height = height;
+    if (totalPower != null) result.totalPower = totalPower;
+    if (votes != null) result.votes.addAll(votes);
+    if (tallies != null) result.tallies.addAll(tallies);
+    if (proposals != null) result.proposals.addAll(proposals);
+    if (dropped != null) result.dropped = dropped;
+    return result;
+  }
+
+  ObservedConsensusInfo._();
+
+  factory ObservedConsensusInfo.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      ObservedConsensusInfo()..mergeFromBuffer(data, registry);
+  factory ObservedConsensusInfo.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      ObservedConsensusInfo()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'ObservedConsensusInfo',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: ObservedConsensusInfo.$_createMessage)
+    ..aI(1, _omitFieldNames ? '' : 'height', fieldType: $pb.PbFieldType.OU3)
+    ..aInt64(2, _omitFieldNames ? '' : 'totalPower')
+    ..pPM<VoteInfo>(3, _omitFieldNames ? '' : 'votes',
+        subBuilder: VoteInfo.$_createMessage)
+    ..pPM<VoteTally>(4, _omitFieldNames ? '' : 'tallies',
+        subBuilder: VoteTally.$_createMessage)
+    ..pPM<ObservedProposalInfo>(5, _omitFieldNames ? '' : 'proposals',
+        subBuilder: ObservedProposalInfo.$_createMessage)
+    ..a<$fixnum.Int64>(6, _omitFieldNames ? '' : 'dropped', $pb.PbFieldType.OU6,
+        defaultOrMaker: $fixnum.Int64.ZERO)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ObservedConsensusInfo clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ObservedConsensusInfo copyWith(
+          void Function(ObservedConsensusInfo) updates) =>
+      super.copyWith((message) => updates(message as ObservedConsensusInfo))
+          as ObservedConsensusInfo;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use ObservedConsensusInfo() / ObservedConsensusInfo.new instead')
+  static ObservedConsensusInfo create() => ObservedConsensusInfo._();
+  static $pb.GeneratedMessage $_createMessage() => ObservedConsensusInfo._();
+  @$core.override
+  ObservedConsensusInfo createEmptyInstance() => ObservedConsensusInfo._();
+  @$core.pragma('dart2js:noInline')
+  static ObservedConsensusInfo getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ObservedConsensusInfo>(
+          ObservedConsensusInfo.$_createMessage);
+  static ObservedConsensusInfo? _defaultInstance;
+
+  /// The height the votes and proposals are for.
+  @$pb.TagNumber(1)
+  $core.int get height => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set height($core.int value) => $_setUnsignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasHeight() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearHeight() => $_clearField(1);
+
+  /// The total power of the committee of this height.
+  @$pb.TagNumber(2)
+  $fixnum.Int64 get totalPower => $_getI64(1);
+  @$pb.TagNumber(2)
+  set totalPower($fixnum.Int64 value) => $_setInt64(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasTotalPower() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearTotalPower() => $_clearField(2);
+
+  /// The verified votes of the highest rounds.
+  @$pb.TagNumber(3)
+  $pb.PbList<VoteInfo> get votes => $_getList(2);
+
+  /// The votes of older rounds, summed by type, change-proposer round, value and block hash.
+  @$pb.TagNumber(4)
+  $pb.PbList<VoteTally> get tallies => $_getList(3);
+
+  /// The proposals signed by the proposer of their round. Their blocks are not validated.
+  @$pb.TagNumber(5)
+  $pb.PbList<ObservedProposalInfo> get proposals => $_getList(4);
+
+  /// The number of messages skipped because of the observer's bounds or rate limit.
+  @$pb.TagNumber(6)
+  $fixnum.Int64 get dropped => $_getI64(5);
+  @$pb.TagNumber(6)
+  set dropped($fixnum.Int64 value) => $_setInt64(5, value);
+  @$pb.TagNumber(6)
+  $core.bool hasDropped() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearDropped() => $_clearField(6);
+}
+
+/// Message contains the sum of the observed votes that share the same type,
+/// round, change-proposer round, value and block hash.
+class VoteTally extends $pb.GeneratedMessage {
+  factory VoteTally({
+    VoteType? type,
+    $core.int? round,
+    $core.int? cpRound,
+    $core.int? cpValue,
+    $core.String? blockHash,
+    $core.int? votes,
+    $fixnum.Int64? power,
+  }) {
+    final result = VoteTally._();
+    if (type != null) result.type = type;
+    if (round != null) result.round = round;
+    if (cpRound != null) result.cpRound = cpRound;
+    if (cpValue != null) result.cpValue = cpValue;
+    if (blockHash != null) result.blockHash = blockHash;
+    if (votes != null) result.votes = votes;
+    if (power != null) result.power = power;
+    return result;
+  }
+
+  VoteTally._();
+
+  factory VoteTally.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      VoteTally()..mergeFromBuffer(data, registry);
+  factory VoteTally.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      VoteTally()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'VoteTally',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: VoteTally.$_createMessage)
+    ..aE<VoteType>(1, _omitFieldNames ? '' : 'type',
+        enumValues: VoteType.values)
+    ..aI(2, _omitFieldNames ? '' : 'round')
+    ..aI(3, _omitFieldNames ? '' : 'cpRound')
+    ..aI(4, _omitFieldNames ? '' : 'cpValue')
+    ..aOS(5, _omitFieldNames ? '' : 'blockHash')
+    ..aI(6, _omitFieldNames ? '' : 'votes')
+    ..aInt64(7, _omitFieldNames ? '' : 'power')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  VoteTally clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  VoteTally copyWith(void Function(VoteTally) updates) =>
+      super.copyWith((message) => updates(message as VoteTally)) as VoteTally;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  @$core.Deprecated('Use VoteTally() / VoteTally.new instead')
+  static VoteTally create() => VoteTally._();
+  static $pb.GeneratedMessage $_createMessage() => VoteTally._();
+  @$core.override
+  VoteTally createEmptyInstance() => VoteTally._();
+  @$core.pragma('dart2js:noInline')
+  static VoteTally getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<VoteTally>(VoteTally.$_createMessage);
+  static VoteTally? _defaultInstance;
+
+  /// The type of the votes.
+  @$pb.TagNumber(1)
+  VoteType get type => $_getN(0);
+  @$pb.TagNumber(1)
+  set type(VoteType value) => $_setField(1, value);
+  @$pb.TagNumber(1)
+  $core.bool hasType() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearType() => $_clearField(1);
+
+  /// The consensus round of the votes.
+  @$pb.TagNumber(2)
+  $core.int get round => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set round($core.int value) => $_setSignedInt32(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasRound() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearRound() => $_clearField(2);
+
+  /// The change-proposer round of the votes.
+  @$pb.TagNumber(3)
+  $core.int get cpRound => $_getIZ(2);
+  @$pb.TagNumber(3)
+  set cpRound($core.int value) => $_setSignedInt32(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasCpRound() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearCpRound() => $_clearField(3);
+
+  /// The change-proposer value of the votes.
+  @$pb.TagNumber(4)
+  $core.int get cpValue => $_getIZ(3);
+  @$pb.TagNumber(4)
+  set cpValue($core.int value) => $_setSignedInt32(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasCpValue() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearCpValue() => $_clearField(4);
+
+  /// The hash of the block being voted on.
+  @$pb.TagNumber(5)
+  $core.String get blockHash => $_getSZ(4);
+  @$pb.TagNumber(5)
+  set blockHash($core.String value) => $_setString(4, value);
+  @$pb.TagNumber(5)
+  $core.bool hasBlockHash() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearBlockHash() => $_clearField(5);
+
+  /// The number of votes.
+  @$pb.TagNumber(6)
+  $core.int get votes => $_getIZ(5);
+  @$pb.TagNumber(6)
+  set votes($core.int value) => $_setSignedInt32(5, value);
+  @$pb.TagNumber(6)
+  $core.bool hasVotes() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearVotes() => $_clearField(6);
+
+  /// The total power of the voters.
+  @$pb.TagNumber(7)
+  $fixnum.Int64 get power => $_getI64(6);
+  @$pb.TagNumber(7)
+  set power($fixnum.Int64 value) => $_setInt64(6, value);
+  @$pb.TagNumber(7)
+  $core.bool hasPower() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearPower() => $_clearField(7);
+}
+
+/// Message contains an observed proposal.
+class ObservedProposalInfo extends $pb.GeneratedMessage {
+  factory ObservedProposalInfo({
+    $core.int? round,
+    $core.String? blockHash,
+    $core.String? proposer,
+  }) {
+    final result = ObservedProposalInfo._();
+    if (round != null) result.round = round;
+    if (blockHash != null) result.blockHash = blockHash;
+    if (proposer != null) result.proposer = proposer;
+    return result;
+  }
+
+  ObservedProposalInfo._();
+
+  factory ObservedProposalInfo.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      ObservedProposalInfo()..mergeFromBuffer(data, registry);
+  factory ObservedProposalInfo.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      ObservedProposalInfo()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'ObservedProposalInfo',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: ObservedProposalInfo.$_createMessage)
+    ..aI(1, _omitFieldNames ? '' : 'round')
+    ..aOS(2, _omitFieldNames ? '' : 'blockHash')
+    ..aOS(3, _omitFieldNames ? '' : 'proposer')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ObservedProposalInfo clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ObservedProposalInfo copyWith(void Function(ObservedProposalInfo) updates) =>
+      super.copyWith((message) => updates(message as ObservedProposalInfo))
+          as ObservedProposalInfo;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  @$core.Deprecated(
+      'Use ObservedProposalInfo() / ObservedProposalInfo.new instead')
+  static ObservedProposalInfo create() => ObservedProposalInfo._();
+  static $pb.GeneratedMessage $_createMessage() => ObservedProposalInfo._();
+  @$core.override
+  ObservedProposalInfo createEmptyInstance() => ObservedProposalInfo._();
+  @$core.pragma('dart2js:noInline')
+  static ObservedProposalInfo getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ObservedProposalInfo>(
+          ObservedProposalInfo.$_createMessage);
+  static ObservedProposalInfo? _defaultInstance;
+
+  /// The round of the proposal.
+  @$pb.TagNumber(1)
+  $core.int get round => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set round($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasRound() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearRound() => $_clearField(1);
+
+  /// The hash of the proposed block.
+  @$pb.TagNumber(2)
+  $core.String get blockHash => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set blockHash($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasBlockHash() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearBlockHash() => $_clearField(2);
+
+  /// The address of the proposer.
+  @$pb.TagNumber(3)
+  $core.String get proposer => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set proposer($core.String value) => $_setString(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasProposer() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearProposer() => $_clearField(3);
 }
 
 /// Message contains information about a consensus instance.

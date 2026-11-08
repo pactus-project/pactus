@@ -5,6 +5,8 @@ import (
 	"errors"
 	"testing"
 
+	consmgr "github.com/pactus-project/pactus/consensus/manager"
+	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/vote"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -376,6 +378,7 @@ func TestConsensusInfo(t *testing.T) {
 	td.FakeCons.EXPECT().AllVotes().Return([]*vote.Vote{vote1, vote2}).Times(1)
 	td.FakeCons.EXPECT().IsActive().Return(true).Times(1)
 	td.FakeConsMgr.EXPECT().Proposal().Return(prop).Times(1)
+	td.FakeConsMgr.EXPECT().Observation().Return(nil).Times(1)
 
 	res, err := client.GetConsensusInfo(t.Context(), &pactus.GetConsensusInfoRequest{})
 
@@ -392,6 +395,62 @@ func TestConsensusInfo(t *testing.T) {
 	assert.Equal(t, uint32(height), res.Proposal.Height)
 	assert.Equal(t, int32(round), res.Proposal.Round)
 	assert.Equal(t, prop.Signature().String(), res.Proposal.Signature)
+	assert.Nil(t, res.Observed, "the observer is off")
+}
+
+func TestConsensusInfoObserved(t *testing.T) {
+	td := setup(t, nil)
+	client := td.blockchainClient(t)
+
+	height := td.RandHeight()
+	signer := td.RandValAddress()
+	proposer := td.RandValAddress()
+	blockHash := td.RandHash()
+	obs := &consmgr.Observation{
+		Height:     height,
+		TotalPower: 51_000,
+		Votes: []consmgr.ObservedVote{{
+			Type: vote.VoteTypeCPPreVote, Signer: signer, BlockHash: blockHash,
+			Round: 3, CPRound: 1, CPValue: vote.CPValueYes,
+		}},
+		Tallies: []consmgr.ObservedTally{{
+			Round: 1, Type: vote.VoteTypePrecommit, BlockHash: blockHash, Votes: 20, Power: 20_000,
+		}},
+		Proposals: []consmgr.ObservedProposal{{Round: 3, BlockHash: blockHash, Proposer: proposer}},
+		Dropped:   7,
+	}
+
+	td.FakeCons.EXPECT().HeightRound().Return(height, types.Round(3)).Times(1)
+	td.FakeCons.EXPECT().AllVotes().Return(nil).Times(1)
+	td.FakeCons.EXPECT().IsActive().Return(false).Times(1)
+	td.FakeConsMgr.EXPECT().Proposal().Return(nil).Times(1)
+	td.FakeConsMgr.EXPECT().Observation().Return(obs).Times(1)
+
+	res, err := client.GetConsensusInfo(t.Context(), &pactus.GetConsensusInfoRequest{})
+	require.NoError(t, err)
+	require.NotNil(t, res.Observed)
+
+	observed := res.Observed
+	assert.Equal(t, uint32(height), observed.Height)
+	assert.Equal(t, int64(51_000), observed.TotalPower)
+	assert.Equal(t, uint64(7), observed.Dropped)
+
+	require.Len(t, observed.Votes, 1)
+	assert.Equal(t, pactus.VoteType_VOTE_TYPE_CP_PRE_VOTE, observed.Votes[0].Type)
+	assert.Equal(t, signer.String(), observed.Votes[0].Voter)
+	assert.Equal(t, blockHash.String(), observed.Votes[0].BlockHash)
+	assert.Equal(t, int32(3), observed.Votes[0].Round)
+	assert.Equal(t, int32(1), observed.Votes[0].CpRound)
+	assert.Equal(t, int32(vote.CPValueYes), observed.Votes[0].CpValue)
+
+	require.Len(t, observed.Tallies, 1)
+	assert.Equal(t, pactus.VoteType_VOTE_TYPE_PRECOMMIT, observed.Tallies[0].Type)
+	assert.Equal(t, int32(20), observed.Tallies[0].Votes)
+	assert.Equal(t, int64(20_000), observed.Tallies[0].Power)
+
+	require.Len(t, observed.Proposals, 1)
+	assert.Equal(t, proposer.String(), observed.Proposals[0].Proposer)
+	assert.Equal(t, blockHash.String(), observed.Proposals[0].BlockHash)
 }
 
 func TestGetTxPoolContent(t *testing.T) {

@@ -220,6 +220,9 @@ message GetConsensusInfoResponse {
   ProposalInfo proposal = 1;
   // List of consensus instances.
   repeated ConsensusInfo instances = 2;
+  // What the node observed for the current height, when its consensus observer
+  // is on and none of its validators is in the committee. Unset otherwise.
+  ObservedConsensusInfo observed = 3;
 }
 
 // Request message for retrieving transactions in the transaction pool.
@@ -386,6 +389,52 @@ message VoteInfo {
   int32 cp_round = 5;
   // The change-proposer value of the vote.
   int32 cp_value = 6;
+}
+
+// Message contains the consensus votes and proposals a node observed for the
+// current height without taking part in consensus.
+message ObservedConsensusInfo {
+  // The height the votes and proposals are for.
+  uint32 height = 1;
+  // The total power of the committee of this height.
+  int64 total_power = 2;
+  // The verified votes of the highest rounds.
+  repeated VoteInfo votes = 3;
+  // The votes of older rounds, summed by type, change-proposer round, value and block hash.
+  repeated VoteTally tallies = 4;
+  // The proposals signed by the proposer of their round. Their blocks are not validated.
+  repeated ObservedProposalInfo proposals = 5;
+  // The number of messages skipped because of the observer's bounds or rate limit.
+  uint64 dropped = 6;
+}
+
+// Message contains the sum of the observed votes that share the same type,
+// round, change-proposer round, value and block hash.
+message VoteTally {
+  // The type of the votes.
+  VoteType type = 1;
+  // The consensus round of the votes.
+  int32 round = 2;
+  // The change-proposer round of the votes.
+  int32 cp_round = 3;
+  // The change-proposer value of the votes.
+  int32 cp_value = 4;
+  // The hash of the block being voted on.
+  string block_hash = 5;
+  // The number of votes.
+  int32 votes = 6;
+  // The total power of the voters.
+  int64 power = 7;
+}
+
+// Message contains an observed proposal.
+message ObservedProposalInfo {
+  // The round of the proposal.
+  int32 round = 1;
+  // The hash of the proposed block.
+  string block_hash = 2;
+  // The address of the proposer.
+  string proposer = 3;
 }
 
 // Message contains information about a consensus instance.

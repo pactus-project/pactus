@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"errors"
 
+	consmgr "github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/store"
@@ -132,6 +133,7 @@ func (s *blockchainServer) GetConsensusInfo(_ context.Context,
 	return &pactus.GetConsensusInfoResponse{
 		Instances: instances,
 		Proposal:  proposalInfo,
+		Observed:  observedToProto(s.consMgr.Observation()),
 	}, nil
 }
 
@@ -467,6 +469,57 @@ func anchorToProto(acc *account.Account) *pactus.AnchorInfo {
 		CreatedAtTime:   acc.CreatedAtTime(),
 		UpdatedAtHeight: uint32(acc.UpdatedAtHeight()),
 		UpdatedAtTime:   acc.UpdatedAtTime(),
+	}
+}
+
+// observedToProto converts what the consensus observer saw, or returns nil when
+// the observer is off or a local validator is in the committee.
+func observedToProto(obs *consmgr.Observation) *pactus.ObservedConsensusInfo {
+	if obs == nil {
+		return nil
+	}
+
+	votes := make([]*pactus.VoteInfo, 0, len(obs.Votes))
+	for _, vte := range obs.Votes {
+		votes = append(votes, &pactus.VoteInfo{
+			Type:      pactus.VoteType(vte.Type),
+			Voter:     vte.Signer.String(),
+			BlockHash: vte.BlockHash.String(),
+			Round:     int32(vte.Round),
+			CpRound:   int32(vte.CPRound),
+			CpValue:   int32(vte.CPValue),
+		})
+	}
+
+	tallies := make([]*pactus.VoteTally, 0, len(obs.Tallies))
+	for _, tally := range obs.Tallies {
+		tallies = append(tallies, &pactus.VoteTally{
+			Type:      pactus.VoteType(tally.Type),
+			Round:     int32(tally.Round),
+			CpRound:   int32(tally.CPRound),
+			CpValue:   int32(tally.CPValue),
+			BlockHash: tally.BlockHash.String(),
+			Votes:     int32(tally.Votes),
+			Power:     tally.Power,
+		})
+	}
+
+	proposals := make([]*pactus.ObservedProposalInfo, 0, len(obs.Proposals))
+	for _, prop := range obs.Proposals {
+		proposals = append(proposals, &pactus.ObservedProposalInfo{
+			Round:     int32(prop.Round),
+			BlockHash: prop.BlockHash.String(),
+			Proposer:  prop.Proposer.String(),
+		})
+	}
+
+	return &pactus.ObservedConsensusInfo{
+		Height:     uint32(obs.Height),
+		TotalPower: obs.TotalPower,
+		Votes:      votes,
+		Tallies:    tallies,
+		Proposals:  proposals,
+		Dropped:    obs.Dropped,
 	}
 }
 
