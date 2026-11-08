@@ -77,6 +77,11 @@ func (vs *BlockVoteSet) AllVotes() []*vote.Vote {
 // AddVote attempts to add a vote to the VoteSet. Returns an error if the vote is invalid.
 func (vs *BlockVoteSet) AddVote(vote *vote.Vote) (bool, error) {
 	if vs.duplicated[vote.Signer()] {
+		if existingVote := vs.allVotes[vote.Signer()]; existingVote.Hash() == vote.Hash() {
+			// A resent copy of the first vote, for example after a restart.
+			return false, nil
+		}
+
 		// The signer already has two verified votes here, so a third one is
 		// rejected whatever its signature.
 		return false, ErrDuplicatedVote

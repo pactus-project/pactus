@@ -98,6 +98,12 @@ func (vs *BinaryVoteSet) AllVotes() []*vote.Vote {
 // AddVote attempts to add a vote to the VoteSet. Returns an error if the vote is invalid.
 func (vs *BinaryVoteSet) AddVote(vote *vote.Vote) (bool, error) {
 	if int(vote.CPRound()) < len(vs.roundVotes) && vs.roundVotes[vote.CPRound()].duplicated[vote.Signer()] {
+		existingVote := vs.roundVotes[vote.CPRound()].allVotes[vote.Signer()]
+		if existingVote.Hash() == vote.Hash() {
+			// A resent copy of the first vote, for example after a restart.
+			return false, nil
+		}
+
 		// The signer already has two verified votes in this change-proposer
 		// round, so a third one is rejected whatever its signature.
 		return false, ErrDoubleVote

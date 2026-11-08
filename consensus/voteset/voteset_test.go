@@ -156,6 +156,11 @@ func TestDuplicateBlockVote(t *testing.T) {
 	require.ErrorIs(t, err, ErrDuplicatedVote)
 	assert.False(t, added)
 
+	// A resent copy of the first vote is still ignored without an error.
+	added, err = voteSet.AddVote(correctVote)
+	require.NoError(t, err)
+	assert.False(t, added)
+
 	bv1 := voteSet.BlockVotes(hash1)
 	bv2 := voteSet.BlockVotes(hash2)
 	bv3 := voteSet.BlockVotes(hash3)
@@ -197,6 +202,11 @@ func TestDuplicateBinaryVote(t *testing.T) {
 	// enough to show the double vote, and more would only fill the memory.
 	added, err = voteSet.AddVote(duplicatedVote2)
 	require.ErrorIs(t, err, ErrDuplicatedVote)
+	assert.False(t, added)
+
+	// A resent copy of the first vote is still ignored without an error.
+	added, err = voteSet.AddVote(correctVote)
+	require.NoError(t, err)
 	assert.False(t, added)
 
 	assert.False(t, voteSet.HasOneThirdOfTotalPower(0))
