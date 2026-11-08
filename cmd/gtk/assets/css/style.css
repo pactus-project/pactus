@@ -289,6 +289,15 @@ frame > label {
     border-bottom: 1px solid @hairline;
 }
 
+/* ---- Dialog notices ----------------------------------------------------- */
+
+/* The scrolled field area of a transaction dialog. The scrollbar takes its own
+   column (no overlay), so the fields narrow only while it is shown. The margin
+   keeps it off the fields. */
+.dialog-scroll > scrollbar.vertical {
+    margin-left: 6px;
+}
+
 /* ---- TextView ----------------------------------------------------------- */
 
 textview.view {

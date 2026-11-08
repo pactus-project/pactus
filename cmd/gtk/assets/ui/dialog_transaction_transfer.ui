@@ -12,116 +12,126 @@
         <property name="css-classes">dialog-box</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkBox">
-            <property name="orientation">vertical</property>
-            <property name="spacing">4</property>
-            <child>
-              <object class="GtkLabel">
-                <property name="halign">start</property>
-                <property name="label">Sender:</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkDropDown" id="id_drop_sender"/>
-            </child>
-            <child>
-              <object class="GtkLabel" id="id_hint_sender">
-                <property name="halign">start</property>
-                <property name="margin-bottom">8</property>
-                <property name="use-markup">True</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="halign">start</property>
-                <property name="label">Receiver:</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkEntry" id="id_entry_receiver">
-                <property name="hexpand">True</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="id_hint_receiver">
-                <property name="halign">start</property>
-                <property name="margin-bottom">8</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="halign">start</property>
-                <property name="label">Amount:</property>
-              </object>
-            </child>
+          <object class="GtkScrolledWindow">
+            <property name="css-classes">dialog-scroll</property>
+            <property name="hscrollbar-policy">never</property>
+            <property name="overlay-scrolling">False</property>
+            <property name="max-content-height">460</property>
+            <property name="propagate-natural-height">True</property>
+            <property name="vexpand">True</property>
             <child>
               <object class="GtkBox">
-                <property name="spacing">6</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">4</property>
                 <child>
-                  <object class="GtkEntry" id="id_entry_amount">
+                  <object class="GtkLabel">
+                    <property name="halign">start</property>
+                    <property name="label">Sender:</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkDropDown" id="id_drop_sender"/>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="id_hint_sender">
+                    <property name="halign">start</property>
+                    <property name="margin-bottom">8</property>
+                    <property name="use-markup">True</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="halign">start</property>
+                    <property name="label">Receiver:</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="id_entry_receiver">
                     <property name="hexpand">True</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="id_hint_receiver">
+                    <property name="halign">start</property>
+                    <property name="margin-bottom">8</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="halign">start</property>
+                    <property name="label">Amount:</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="spacing">6</property>
+                    <child>
+                      <object class="GtkEntry" id="id_entry_amount">
+                        <property name="hexpand">True</property>
+                        <property name="input-purpose">number</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="id_button_amount_max">
+                        <property name="label">Max</property>
+                        <property name="tooltip-text">Use the whole balance, minus the fee</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="id_hint_amount">
+                    <property name="halign">start</property>
+                    <property name="margin-bottom">8</property>
+                    <property name="use-markup">True</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="halign">start</property>
+                    <property name="label">Fee:</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="id_entry_fee">
                     <property name="input-purpose">number</property>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkButton" id="id_button_amount_max">
-                    <property name="label">Max</property>
-                    <property name="tooltip-text">Use the whole balance, minus the fee</property>
+                  <object class="GtkLabel" id="id_hint_fee">
+                    <property name="halign">start</property>
+                    <property name="margin-bottom">8</property>
+                    <property name="use-markup">True</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="halign">start</property>
+                    <property name="label">Memo (Up to 64 characters, Optional):</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="id_entry_memo">
+                    <property name="hexpand">True</property>
                   </object>
                 </child>
               </object>
             </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSeparator"/>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="css-classes">dialog-action-bar</property>
+            <property name="halign">end</property>
+            <property name="spacing">4</property>
             <child>
-              <object class="GtkLabel" id="id_hint_amount">
-                <property name="halign">start</property>
-                <property name="margin-bottom">8</property>
-                <property name="use-markup">True</property>
-              </object>
+              <object class="GtkButton" id="id_button_cancel"/>
             </child>
             <child>
-              <object class="GtkLabel">
-                <property name="halign">start</property>
-                <property name="label">Fee:</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkEntry" id="id_entry_fee">
-                <property name="input-purpose">number</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="id_hint_fee">
-                <property name="halign">start</property>
-                <property name="margin-bottom">8</property>
-                <property name="use-markup">True</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="halign">start</property>
-                <property name="label">Memo (Up to 64 characters, Optional):</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkEntry" id="id_entry_memo">
-                <property name="hexpand">True</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkSeparator"/>
-            </child>
-            <child>
-              <object class="GtkBox">
-                <property name="css-classes">dialog-action-bar</property>
-                <property name="halign">end</property>
-                <property name="spacing">4</property>
-                <child>
-                  <object class="GtkButton" id="id_button_cancel"/>
-                </child>
-                <child>
-                  <object class="GtkButton" id="id_button_send"/>
-                </child>
-              </object>
+              <object class="GtkButton" id="id_button_send"/>
             </child>
           </object>
         </child>
