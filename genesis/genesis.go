@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"sync"
 	"time"
 
 	"github.com/fxamacker/cbor/v2"
@@ -242,18 +241,20 @@ func (gen *Genesis) TotalSupply() amount.Amount {
 }
 
 // mainnetHash and testnetHash are the hashes of the published genesis documents.
-// They never change, so they are computed once: ChainType is called for every
-// gossip bundle, and parsing both documents each time is costly.
+// They never change, so they are computed once, when the package is loaded:
+// ChainType is called for every gossip bundle, and parsing both documents each
+// time is costly. The documents hold no address or key in a parsed form, so
+// their hashes do not depend on the address prefix of the network.
 var (
-	mainnetHash = sync.OnceValue(func() hash.Hash { return MainnetGenesis().Hash() })
-	testnetHash = sync.OnceValue(func() hash.Hash { return TestnetGenesis().Hash() })
+	mainnetHash = MainnetGenesis().Hash()
+	testnetHash = TestnetGenesis().Hash()
 )
 
 func (gen *Genesis) ChainType() ChainType {
 	switch gen.Hash() {
-	case mainnetHash():
+	case mainnetHash:
 		return Mainnet
-	case testnetHash():
+	case testnetHash:
 		return Testnet
 	default:
 		return Localnet
