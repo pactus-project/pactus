@@ -1,5 +1,6 @@
 //go:build gtk
 
+//nolint:staticcheck // Using depreciated widgets
 package view
 
 import (
@@ -13,9 +14,10 @@ type TxUnbondDialogView struct {
 
 	Window *gtk.Window
 
-	ValidatorDrop *gtk.DropDown
-	ValidatorHint *gtk.Label
-	MemoEntry     *gtk.Entry
+	ValidatorCombo *gtk.ComboBoxText
+	ValidatorHint  *gtk.Label
+	DelegationHint *gtk.Label
+	MemoEntry      *gtk.Entry
 
 	ButtonCancel *gtk.Button
 	ButtonSend   *gtk.Button
@@ -28,9 +30,10 @@ func NewTxUnbondDialogView() *TxUnbondDialogView {
 		ViewBuilder: builder,
 		Window:      builder.GetWindowObj("id_dialog_transaction_unbond"),
 
-		ValidatorDrop: builder.GetDropDownObj("id_drop_validator"),
-		ValidatorHint: builder.GetLabelObj("id_hint_validator"),
-		MemoEntry:     builder.GetEntryObj("id_entry_memo"),
+		ValidatorCombo: builder.GetComboBoxTextObj("id_combo_validator"),
+		ValidatorHint:  builder.GetLabelObj("id_hint_validator"),
+		DelegationHint: builder.GetLabelObj("id_hint_delegation"),
+		MemoEntry:      builder.GetEntryObj("id_entry_memo"),
 
 		ButtonCancel: builder.GetButtonObj("id_button_cancel"),
 		ButtonSend:   builder.GetButtonObj("id_button_send"),
