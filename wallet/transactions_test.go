@@ -116,7 +116,7 @@ func TestProcessBlockPendingTransactions(t *testing.T) {
 	pendingTxs := map[string]*wtypes.TransactionInfo{pendingInfo.TxID: pendingInfo}
 	blk, _ := td.GenerateTestBlock(td.RandHeight())
 
-	t.Run("committed transaction is confirmed, not checked again", func(t *testing.T) {
+	t.Run("committed transaction is confirmed, not checked again", func(_ *testing.T) {
 		height := td.RandHeight()
 
 		td.mockStorage.EXPECT().IsLegacy().Return(false)
@@ -130,7 +130,7 @@ func TestProcessBlockPendingTransactions(t *testing.T) {
 		td.wallet.processEvent(blk)
 	})
 
-	t.Run("uncommitted transaction is checked and re-broadcast", func(t *testing.T) {
+	t.Run("uncommitted transaction is checked and re-broadcast", func(_ *testing.T) {
 		td.mockStorage.EXPECT().IsLegacy().Return(false)
 		td.mockStorage.EXPECT().GetPendingTransactions().Return(pendingTxs, nil)
 		td.mockProvider.EXPECT().
