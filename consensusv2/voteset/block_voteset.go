@@ -15,6 +15,10 @@ type BlockVoteSet struct {
 	blockVotes map[hash.Hash]*voteBox
 	allVotes   map[crypto.Address]*vote.Vote
 	votedPower int64
+	// duplicated marks the signers that already have a second, conflicting vote
+	// here. One is enough to show the double vote; more would only let a
+	// byzantine member fill the memory with votes for other blocks.
+	duplicated map[crypto.Address]bool
 }
 
 func NewPrecommitVoteSet(round types.Round, totalPower int64,
@@ -31,6 +35,7 @@ func newBlockVoteSet(voteSet *voteSet) *BlockVoteSet {
 		blockVotes: make(map[hash.Hash]*voteBox),
 		allVotes:   make(map[crypto.Address]*vote.Vote),
 		votedPower: 0,
+		duplicated: make(map[crypto.Address]bool),
 	}
 }
 
@@ -65,6 +70,12 @@ func (vs *BlockVoteSet) AllVotes() []*vote.Vote {
 // AddVote attempts to add a vote to the VoteSet.
 // Returns an error if the vote is invalid or if it is a double vote.
 func (vs *BlockVoteSet) AddVote(vote *vote.Vote) (bool, error) {
+	if vs.duplicated[vote.Signer()] {
+		// The signer already has two verified votes here, so a third one is
+		// rejected whatever its signature.
+		return false, ErrDoubleVote
+	}
+
 	power, err := vs.voteSet.verifyVote(vote)
 	if err != nil {
 		return false, err
@@ -79,6 +90,7 @@ func (vs *BlockVoteSet) AddVote(vote *vote.Vote) (bool, error) {
 
 		// It is a double vote
 		err = ErrDoubleVote
+		vs.duplicated[vote.Signer()] = true
 	} else {
 		vs.allVotes[vote.Signer()] = vote
 		vs.votedPower += power

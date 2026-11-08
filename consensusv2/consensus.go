@@ -27,6 +27,12 @@ import (
 
 type broadcaster func(crypto.Address, message.Message)
 
+// maxFutureRounds bounds how far ahead of the current round a vote is kept.
+// Honest validators move through the rounds together, and a node behind
+// catches up by querying the votes of its own round, so votes for rounds far
+// ahead are not needed; keeping them would let a member fill the memory.
+const maxFutureRounds = types.Round(10)
+
 type consensusV2 struct {
 	lk sync.RWMutex
 
@@ -286,6 +292,15 @@ func (cs *consensusV2) AddVote(vte *vote.Vote) {
 
 	if vte.Round() < cs.round {
 		cs.logger.Debug("vote for expired round", "vote", vte)
+
+		return
+	}
+
+	if int(vte.Round()) > int(cs.round)+int(maxFutureRounds) {
+		// The log keeps every round it receives a vote for, so votes for far
+		// rounds would let a member fill the memory. A node behind catches up
+		// round by round by querying the votes of its own round.
+		cs.logger.Debug("vote for a round too far ahead", "vote", vte)
 
 		return
 	}
