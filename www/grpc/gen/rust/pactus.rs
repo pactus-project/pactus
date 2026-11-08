@@ -748,6 +748,10 @@ pub struct GetConsensusInfoResponse {
     /// List of consensus instances.
     #[prost(message, repeated, tag="2")]
     pub instances: ::prost::alloc::vec::Vec<ConsensusInfo>,
+    /// What the node observed for the current height, when its consensus observer
+    /// is on and none of its validators is in the committee. Unset otherwise.
+    #[prost(message, optional, tag="3")]
+    pub observed: ::core::option::Option<ObservedConsensusInfo>,
 }
 /// Request message for retrieving transactions in the transaction pool.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
@@ -971,6 +975,68 @@ pub struct VoteInfo {
     /// The change-proposer value of the vote.
     #[prost(int32, tag="6")]
     pub cp_value: i32,
+}
+/// Message contains the consensus votes and proposals a node observed for the
+/// current height without taking part in consensus.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ObservedConsensusInfo {
+    /// The height the votes and proposals are for.
+    #[prost(uint32, tag="1")]
+    pub height: u32,
+    /// The total power of the committee of this height.
+    #[prost(int64, tag="2")]
+    pub total_power: i64,
+    /// The verified votes of the highest rounds.
+    #[prost(message, repeated, tag="3")]
+    pub votes: ::prost::alloc::vec::Vec<VoteInfo>,
+    /// The votes of older rounds, summed by type, change-proposer round, value and block hash.
+    #[prost(message, repeated, tag="4")]
+    pub tallies: ::prost::alloc::vec::Vec<VoteTally>,
+    /// The proposals signed by the proposer of their round. Their blocks are not validated.
+    #[prost(message, repeated, tag="5")]
+    pub proposals: ::prost::alloc::vec::Vec<ObservedProposalInfo>,
+    /// The number of messages skipped because of the observer's bounds or rate limit.
+    #[prost(uint64, tag="6")]
+    pub dropped: u64,
+}
+/// Message contains the sum of the observed votes that share the same type,
+/// round, change-proposer round, value and block hash.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct VoteTally {
+    /// The type of the votes.
+    #[prost(enumeration="VoteType", tag="1")]
+    pub r#type: i32,
+    /// The consensus round of the votes.
+    #[prost(int32, tag="2")]
+    pub round: i32,
+    /// The change-proposer round of the votes.
+    #[prost(int32, tag="3")]
+    pub cp_round: i32,
+    /// The change-proposer value of the votes.
+    #[prost(int32, tag="4")]
+    pub cp_value: i32,
+    /// The hash of the block being voted on.
+    #[prost(string, tag="5")]
+    pub block_hash: ::prost::alloc::string::String,
+    /// The number of votes.
+    #[prost(int32, tag="6")]
+    pub votes: i32,
+    /// The total power of the voters.
+    #[prost(int64, tag="7")]
+    pub power: i64,
+}
+/// Message contains an observed proposal.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ObservedProposalInfo {
+    /// The round of the proposal.
+    #[prost(int32, tag="1")]
+    pub round: i32,
+    /// The hash of the proposed block.
+    #[prost(string, tag="2")]
+    pub block_hash: ::prost::alloc::string::String,
+    /// The address of the proposer.
+    #[prost(string, tag="3")]
+    pub proposer: ::prost::alloc::string::String,
 }
 /// Message contains information about a consensus instance.
 #[derive(Clone, PartialEq, ::prost::Message)]

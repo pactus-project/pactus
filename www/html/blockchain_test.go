@@ -288,6 +288,7 @@ func TestConsensusInfo(t *testing.T) {
 	td.gRPCServer.FakeCons.EXPECT().AllVotes().Return([]*vote.Vote{vote1, vote2}).Times(1)
 	td.gRPCServer.FakeCons.EXPECT().IsActive().Return(true).Times(1)
 	td.gRPCServer.FakeConsMgr.EXPECT().Proposal().Return(prop).Times(1)
+	td.gRPCServer.FakeConsMgr.EXPECT().Observation().Return(nil).Times(1)
 
 	w := httptest.NewRecorder()
 	r := new(http.Request)

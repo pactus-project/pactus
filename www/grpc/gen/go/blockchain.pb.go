@@ -1318,7 +1318,10 @@ type GetConsensusInfoResponse struct {
 	// The proposal of the consensus info.
 	Proposal *ProposalInfo `protobuf:"bytes,1,opt,name=proposal,proto3" json:"proposal,omitempty"`
 	// List of consensus instances.
-	Instances     []*ConsensusInfo `protobuf:"bytes,2,rep,name=instances,proto3" json:"instances,omitempty"`
+	Instances []*ConsensusInfo `protobuf:"bytes,2,rep,name=instances,proto3" json:"instances,omitempty"`
+	// What the node observed for the current height, when its consensus observer
+	// is on and none of its validators is in the committee. Unset otherwise.
+	Observed      *ObservedConsensusInfo `protobuf:"bytes,3,opt,name=observed,proto3" json:"observed,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1363,6 +1366,13 @@ func (x *GetConsensusInfoResponse) GetProposal() *ProposalInfo {
 func (x *GetConsensusInfoResponse) GetInstances() []*ConsensusInfo {
 	if x != nil {
 		return x.Instances
+	}
+	return nil
+}
+
+func (x *GetConsensusInfoResponse) GetObserved() *ObservedConsensusInfo {
+	if x != nil {
+		return x.Observed
 	}
 	return nil
 }
@@ -2361,6 +2371,263 @@ func (x *VoteInfo) GetCpValue() int32 {
 	return 0
 }
 
+// Message contains the consensus votes and proposals a node observed for the
+// current height without taking part in consensus.
+type ObservedConsensusInfo struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The height the votes and proposals are for.
+	Height uint32 `protobuf:"varint,1,opt,name=height,proto3" json:"height,omitempty"`
+	// The total power of the committee of this height.
+	TotalPower int64 `protobuf:"varint,2,opt,name=total_power,json=totalPower,proto3" json:"total_power,omitempty"`
+	// The verified votes of the highest rounds.
+	Votes []*VoteInfo `protobuf:"bytes,3,rep,name=votes,proto3" json:"votes,omitempty"`
+	// The votes of older rounds, summed by type, change-proposer round, value and block hash.
+	Tallies []*VoteTally `protobuf:"bytes,4,rep,name=tallies,proto3" json:"tallies,omitempty"`
+	// The proposals signed by the proposer of their round. Their blocks are not validated.
+	Proposals []*ObservedProposalInfo `protobuf:"bytes,5,rep,name=proposals,proto3" json:"proposals,omitempty"`
+	// The number of messages skipped because of the observer's bounds or rate limit.
+	Dropped       uint64 `protobuf:"varint,6,opt,name=dropped,proto3" json:"dropped,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ObservedConsensusInfo) Reset() {
+	*x = ObservedConsensusInfo{}
+	mi := &file_blockchain_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ObservedConsensusInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ObservedConsensusInfo) ProtoMessage() {}
+
+func (x *ObservedConsensusInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_blockchain_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ObservedConsensusInfo.ProtoReflect.Descriptor instead.
+func (*ObservedConsensusInfo) Descriptor() ([]byte, []int) {
+	return file_blockchain_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *ObservedConsensusInfo) GetHeight() uint32 {
+	if x != nil {
+		return x.Height
+	}
+	return 0
+}
+
+func (x *ObservedConsensusInfo) GetTotalPower() int64 {
+	if x != nil {
+		return x.TotalPower
+	}
+	return 0
+}
+
+func (x *ObservedConsensusInfo) GetVotes() []*VoteInfo {
+	if x != nil {
+		return x.Votes
+	}
+	return nil
+}
+
+func (x *ObservedConsensusInfo) GetTallies() []*VoteTally {
+	if x != nil {
+		return x.Tallies
+	}
+	return nil
+}
+
+func (x *ObservedConsensusInfo) GetProposals() []*ObservedProposalInfo {
+	if x != nil {
+		return x.Proposals
+	}
+	return nil
+}
+
+func (x *ObservedConsensusInfo) GetDropped() uint64 {
+	if x != nil {
+		return x.Dropped
+	}
+	return 0
+}
+
+// Message contains the sum of the observed votes that share the same type,
+// round, change-proposer round, value and block hash.
+type VoteTally struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The type of the votes.
+	Type VoteType `protobuf:"varint,1,opt,name=type,proto3,enum=pactus.VoteType" json:"type,omitempty"`
+	// The consensus round of the votes.
+	Round int32 `protobuf:"varint,2,opt,name=round,proto3" json:"round,omitempty"`
+	// The change-proposer round of the votes.
+	CpRound int32 `protobuf:"varint,3,opt,name=cp_round,json=cpRound,proto3" json:"cp_round,omitempty"`
+	// The change-proposer value of the votes.
+	CpValue int32 `protobuf:"varint,4,opt,name=cp_value,json=cpValue,proto3" json:"cp_value,omitempty"`
+	// The hash of the block being voted on.
+	BlockHash string `protobuf:"bytes,5,opt,name=block_hash,json=blockHash,proto3" json:"block_hash,omitempty"`
+	// The number of votes.
+	Votes int32 `protobuf:"varint,6,opt,name=votes,proto3" json:"votes,omitempty"`
+	// The total power of the voters.
+	Power         int64 `protobuf:"varint,7,opt,name=power,proto3" json:"power,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *VoteTally) Reset() {
+	*x = VoteTally{}
+	mi := &file_blockchain_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *VoteTally) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*VoteTally) ProtoMessage() {}
+
+func (x *VoteTally) ProtoReflect() protoreflect.Message {
+	mi := &file_blockchain_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use VoteTally.ProtoReflect.Descriptor instead.
+func (*VoteTally) Descriptor() ([]byte, []int) {
+	return file_blockchain_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *VoteTally) GetType() VoteType {
+	if x != nil {
+		return x.Type
+	}
+	return VoteType_VOTE_TYPE_UNSPECIFIED
+}
+
+func (x *VoteTally) GetRound() int32 {
+	if x != nil {
+		return x.Round
+	}
+	return 0
+}
+
+func (x *VoteTally) GetCpRound() int32 {
+	if x != nil {
+		return x.CpRound
+	}
+	return 0
+}
+
+func (x *VoteTally) GetCpValue() int32 {
+	if x != nil {
+		return x.CpValue
+	}
+	return 0
+}
+
+func (x *VoteTally) GetBlockHash() string {
+	if x != nil {
+		return x.BlockHash
+	}
+	return ""
+}
+
+func (x *VoteTally) GetVotes() int32 {
+	if x != nil {
+		return x.Votes
+	}
+	return 0
+}
+
+func (x *VoteTally) GetPower() int64 {
+	if x != nil {
+		return x.Power
+	}
+	return 0
+}
+
+// Message contains an observed proposal.
+type ObservedProposalInfo struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The round of the proposal.
+	Round int32 `protobuf:"varint,1,opt,name=round,proto3" json:"round,omitempty"`
+	// The hash of the proposed block.
+	BlockHash string `protobuf:"bytes,2,opt,name=block_hash,json=blockHash,proto3" json:"block_hash,omitempty"`
+	// The address of the proposer.
+	Proposer      string `protobuf:"bytes,3,opt,name=proposer,proto3" json:"proposer,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ObservedProposalInfo) Reset() {
+	*x = ObservedProposalInfo{}
+	mi := &file_blockchain_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ObservedProposalInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ObservedProposalInfo) ProtoMessage() {}
+
+func (x *ObservedProposalInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_blockchain_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ObservedProposalInfo.ProtoReflect.Descriptor instead.
+func (*ObservedProposalInfo) Descriptor() ([]byte, []int) {
+	return file_blockchain_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *ObservedProposalInfo) GetRound() int32 {
+	if x != nil {
+		return x.Round
+	}
+	return 0
+}
+
+func (x *ObservedProposalInfo) GetBlockHash() string {
+	if x != nil {
+		return x.BlockHash
+	}
+	return ""
+}
+
+func (x *ObservedProposalInfo) GetProposer() string {
+	if x != nil {
+		return x.Proposer
+	}
+	return ""
+}
+
 // Message contains information about a consensus instance.
 type ConsensusInfo struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -2380,7 +2647,7 @@ type ConsensusInfo struct {
 
 func (x *ConsensusInfo) Reset() {
 	*x = ConsensusInfo{}
-	mi := &file_blockchain_proto_msgTypes[34]
+	mi := &file_blockchain_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2392,7 +2659,7 @@ func (x *ConsensusInfo) String() string {
 func (*ConsensusInfo) ProtoMessage() {}
 
 func (x *ConsensusInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_blockchain_proto_msgTypes[34]
+	mi := &file_blockchain_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2405,7 +2672,7 @@ func (x *ConsensusInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConsensusInfo.ProtoReflect.Descriptor instead.
 func (*ConsensusInfo) Descriptor() ([]byte, []int) {
-	return file_blockchain_proto_rawDescGZIP(), []int{34}
+	return file_blockchain_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *ConsensusInfo) GetAddress() string {
@@ -2460,7 +2727,7 @@ type ProposalInfo struct {
 
 func (x *ProposalInfo) Reset() {
 	*x = ProposalInfo{}
-	mi := &file_blockchain_proto_msgTypes[35]
+	mi := &file_blockchain_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2472,7 +2739,7 @@ func (x *ProposalInfo) String() string {
 func (*ProposalInfo) ProtoMessage() {}
 
 func (x *ProposalInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_blockchain_proto_msgTypes[35]
+	mi := &file_blockchain_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2485,7 +2752,7 @@ func (x *ProposalInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProposalInfo.ProtoReflect.Descriptor instead.
 func (*ProposalInfo) Descriptor() ([]byte, []int) {
-	return file_blockchain_proto_rawDescGZIP(), []int{35}
+	return file_blockchain_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *ProposalInfo) GetHeight() uint32 {
@@ -2594,10 +2861,11 @@ const file_blockchain_proto_rawDesc = "" +
 	"\x15ProtocolVersionsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\x05R\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\x01R\x05value:\x028\x01\"\x19\n" +
-	"\x17GetConsensusInfoRequest\"\x81\x01\n" +
+	"\x17GetConsensusInfoRequest\"\xbc\x01\n" +
 	"\x18GetConsensusInfoResponse\x120\n" +
 	"\bproposal\x18\x01 \x01(\v2\x14.pactus.ProposalInfoR\bproposal\x123\n" +
-	"\tinstances\x18\x02 \x03(\v2\x15.pactus.ConsensusInfoR\tinstances\"Q\n" +
+	"\tinstances\x18\x02 \x03(\v2\x15.pactus.ConsensusInfoR\tinstances\x129\n" +
+	"\bobserved\x18\x03 \x01(\v2\x1d.pactus.ObservedConsensusInfoR\bobserved\"Q\n" +
 	"\x17GetTxPoolContentRequest\x126\n" +
 	"\fpayload_type\x18\x01 \x01(\x0e2\x13.pactus.PayloadTypeR\vpayloadType\"E\n" +
 	"\x18GetTxPoolContentResponse\x12)\n" +
@@ -2676,7 +2944,29 @@ const file_blockchain_proto_rawDesc = "" +
 	"block_hash\x18\x03 \x01(\tR\tblockHash\x12\x14\n" +
 	"\x05round\x18\x04 \x01(\x05R\x05round\x12\x19\n" +
 	"\bcp_round\x18\x05 \x01(\x05R\acpRound\x12\x19\n" +
-	"\bcp_value\x18\x06 \x01(\x05R\acpValue\"\x97\x01\n" +
+	"\bcp_value\x18\x06 \x01(\x05R\acpValue\"\xfb\x01\n" +
+	"\x15ObservedConsensusInfo\x12\x16\n" +
+	"\x06height\x18\x01 \x01(\rR\x06height\x12\x1f\n" +
+	"\vtotal_power\x18\x02 \x01(\x03R\n" +
+	"totalPower\x12&\n" +
+	"\x05votes\x18\x03 \x03(\v2\x10.pactus.VoteInfoR\x05votes\x12+\n" +
+	"\atallies\x18\x04 \x03(\v2\x11.pactus.VoteTallyR\atallies\x12:\n" +
+	"\tproposals\x18\x05 \x03(\v2\x1c.pactus.ObservedProposalInfoR\tproposals\x12\x18\n" +
+	"\adropped\x18\x06 \x01(\x04R\adropped\"\xc8\x01\n" +
+	"\tVoteTally\x12$\n" +
+	"\x04type\x18\x01 \x01(\x0e2\x10.pactus.VoteTypeR\x04type\x12\x14\n" +
+	"\x05round\x18\x02 \x01(\x05R\x05round\x12\x19\n" +
+	"\bcp_round\x18\x03 \x01(\x05R\acpRound\x12\x19\n" +
+	"\bcp_value\x18\x04 \x01(\x05R\acpValue\x12\x1d\n" +
+	"\n" +
+	"block_hash\x18\x05 \x01(\tR\tblockHash\x12\x14\n" +
+	"\x05votes\x18\x06 \x01(\x05R\x05votes\x12\x14\n" +
+	"\x05power\x18\a \x01(\x03R\x05power\"g\n" +
+	"\x14ObservedProposalInfo\x12\x14\n" +
+	"\x05round\x18\x01 \x01(\x05R\x05round\x12\x1d\n" +
+	"\n" +
+	"block_hash\x18\x02 \x01(\tR\tblockHash\x12\x1a\n" +
+	"\bproposer\x18\x03 \x01(\tR\bproposer\"\x97\x01\n" +
 	"\rConsensusInfo\x12\x18\n" +
 	"\aaddress\x18\x01 \x01(\tR\aaddress\x12\x16\n" +
 	"\x06active\x18\x02 \x01(\bR\x06active\x12\x16\n" +
@@ -2736,7 +3026,7 @@ func file_blockchain_proto_rawDescGZIP() []byte {
 }
 
 var file_blockchain_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_blockchain_proto_msgTypes = make([]protoimpl.MessageInfo, 37)
+var file_blockchain_proto_msgTypes = make([]protoimpl.MessageInfo, 40)
 var file_blockchain_proto_goTypes = []any{
 	(ChainType)(0),                        // 0: pactus.ChainType
 	(BlockVerbosity)(0),                   // 1: pactus.BlockVerbosity
@@ -2775,11 +3065,14 @@ var file_blockchain_proto_goTypes = []any{
 	(*BlockHeaderInfo)(nil),               // 34: pactus.BlockHeaderInfo
 	(*CertificateInfo)(nil),               // 35: pactus.CertificateInfo
 	(*VoteInfo)(nil),                      // 36: pactus.VoteInfo
-	(*ConsensusInfo)(nil),                 // 37: pactus.ConsensusInfo
-	(*ProposalInfo)(nil),                  // 38: pactus.ProposalInfo
-	nil,                                   // 39: pactus.GetCommitteeInfoResponse.ProtocolVersionsEntry
-	(*TransactionInfo)(nil),               // 40: pactus.TransactionInfo
-	(PayloadType)(0),                      // 41: pactus.PayloadType
+	(*ObservedConsensusInfo)(nil),         // 37: pactus.ObservedConsensusInfo
+	(*VoteTally)(nil),                     // 38: pactus.VoteTally
+	(*ObservedProposalInfo)(nil),          // 39: pactus.ObservedProposalInfo
+	(*ConsensusInfo)(nil),                 // 40: pactus.ConsensusInfo
+	(*ProposalInfo)(nil),                  // 41: pactus.ProposalInfo
+	nil,                                   // 42: pactus.GetCommitteeInfoResponse.ProtocolVersionsEntry
+	(*TransactionInfo)(nil),               // 43: pactus.TransactionInfo
+	(PayloadType)(0),                      // 44: pactus.PayloadType
 }
 var file_blockchain_proto_depIdxs = []int32{
 	33, // 0: pactus.GetAccountResponse.account:type_name -> pactus.AccountInfo
@@ -2787,53 +3080,58 @@ var file_blockchain_proto_depIdxs = []int32{
 	1,  // 2: pactus.GetBlockRequest.verbosity:type_name -> pactus.BlockVerbosity
 	34, // 3: pactus.GetBlockResponse.header:type_name -> pactus.BlockHeaderInfo
 	35, // 4: pactus.GetBlockResponse.prev_cert:type_name -> pactus.CertificateInfo
-	40, // 5: pactus.GetBlockResponse.txs:type_name -> pactus.TransactionInfo
+	43, // 5: pactus.GetBlockResponse.txs:type_name -> pactus.TransactionInfo
 	0,  // 6: pactus.GetBlockchainInfoResponse.chain_type:type_name -> pactus.ChainType
 	26, // 7: pactus.GetCommitteeInfoResponse.validators:type_name -> pactus.ValidatorInfo
-	39, // 8: pactus.GetCommitteeInfoResponse.protocol_versions:type_name -> pactus.GetCommitteeInfoResponse.ProtocolVersionsEntry
-	38, // 9: pactus.GetConsensusInfoResponse.proposal:type_name -> pactus.ProposalInfo
-	37, // 10: pactus.GetConsensusInfoResponse.instances:type_name -> pactus.ConsensusInfo
-	41, // 11: pactus.GetTxPoolContentRequest.payload_type:type_name -> pactus.PayloadType
-	40, // 12: pactus.GetTxPoolContentResponse.txs:type_name -> pactus.TransactionInfo
-	32, // 13: pactus.GetAnchorResponse.anchor:type_name -> pactus.AnchorInfo
-	31, // 14: pactus.ListAnchorsResponse.items:type_name -> pactus.AnchorListItem
-	32, // 15: pactus.AnchorListItem.anchor:type_name -> pactus.AnchorInfo
-	32, // 16: pactus.AccountInfo.anchor:type_name -> pactus.AnchorInfo
-	2,  // 17: pactus.VoteInfo.type:type_name -> pactus.VoteType
-	36, // 18: pactus.ConsensusInfo.votes:type_name -> pactus.VoteInfo
-	12, // 19: pactus.Blockchain.GetBlock:input_type -> pactus.GetBlockRequest
-	14, // 20: pactus.Blockchain.GetBlockHash:input_type -> pactus.GetBlockHashRequest
-	16, // 21: pactus.Blockchain.GetBlockHeight:input_type -> pactus.GetBlockHeightRequest
-	18, // 22: pactus.Blockchain.GetBlockchainInfo:input_type -> pactus.GetBlockchainInfoRequest
-	20, // 23: pactus.Blockchain.GetCommitteeInfo:input_type -> pactus.GetCommitteeInfoRequest
-	22, // 24: pactus.Blockchain.GetConsensusInfo:input_type -> pactus.GetConsensusInfoRequest
-	3,  // 25: pactus.Blockchain.GetAccount:input_type -> pactus.GetAccountRequest
-	27, // 26: pactus.Blockchain.GetAnchor:input_type -> pactus.GetAnchorRequest
-	29, // 27: pactus.Blockchain.ListAnchors:input_type -> pactus.ListAnchorsRequest
-	7,  // 28: pactus.Blockchain.GetValidator:input_type -> pactus.GetValidatorRequest
-	8,  // 29: pactus.Blockchain.GetValidatorByNumber:input_type -> pactus.GetValidatorByNumberRequest
-	5,  // 30: pactus.Blockchain.GetValidatorAddresses:input_type -> pactus.GetValidatorAddressesRequest
-	10, // 31: pactus.Blockchain.GetPublicKey:input_type -> pactus.GetPublicKeyRequest
-	24, // 32: pactus.Blockchain.GetTxPoolContent:input_type -> pactus.GetTxPoolContentRequest
-	13, // 33: pactus.Blockchain.GetBlock:output_type -> pactus.GetBlockResponse
-	15, // 34: pactus.Blockchain.GetBlockHash:output_type -> pactus.GetBlockHashResponse
-	17, // 35: pactus.Blockchain.GetBlockHeight:output_type -> pactus.GetBlockHeightResponse
-	19, // 36: pactus.Blockchain.GetBlockchainInfo:output_type -> pactus.GetBlockchainInfoResponse
-	21, // 37: pactus.Blockchain.GetCommitteeInfo:output_type -> pactus.GetCommitteeInfoResponse
-	23, // 38: pactus.Blockchain.GetConsensusInfo:output_type -> pactus.GetConsensusInfoResponse
-	4,  // 39: pactus.Blockchain.GetAccount:output_type -> pactus.GetAccountResponse
-	28, // 40: pactus.Blockchain.GetAnchor:output_type -> pactus.GetAnchorResponse
-	30, // 41: pactus.Blockchain.ListAnchors:output_type -> pactus.ListAnchorsResponse
-	9,  // 42: pactus.Blockchain.GetValidator:output_type -> pactus.GetValidatorResponse
-	9,  // 43: pactus.Blockchain.GetValidatorByNumber:output_type -> pactus.GetValidatorResponse
-	6,  // 44: pactus.Blockchain.GetValidatorAddresses:output_type -> pactus.GetValidatorAddressesResponse
-	11, // 45: pactus.Blockchain.GetPublicKey:output_type -> pactus.GetPublicKeyResponse
-	25, // 46: pactus.Blockchain.GetTxPoolContent:output_type -> pactus.GetTxPoolContentResponse
-	33, // [33:47] is the sub-list for method output_type
-	19, // [19:33] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	42, // 8: pactus.GetCommitteeInfoResponse.protocol_versions:type_name -> pactus.GetCommitteeInfoResponse.ProtocolVersionsEntry
+	41, // 9: pactus.GetConsensusInfoResponse.proposal:type_name -> pactus.ProposalInfo
+	40, // 10: pactus.GetConsensusInfoResponse.instances:type_name -> pactus.ConsensusInfo
+	37, // 11: pactus.GetConsensusInfoResponse.observed:type_name -> pactus.ObservedConsensusInfo
+	44, // 12: pactus.GetTxPoolContentRequest.payload_type:type_name -> pactus.PayloadType
+	43, // 13: pactus.GetTxPoolContentResponse.txs:type_name -> pactus.TransactionInfo
+	32, // 14: pactus.GetAnchorResponse.anchor:type_name -> pactus.AnchorInfo
+	31, // 15: pactus.ListAnchorsResponse.items:type_name -> pactus.AnchorListItem
+	32, // 16: pactus.AnchorListItem.anchor:type_name -> pactus.AnchorInfo
+	32, // 17: pactus.AccountInfo.anchor:type_name -> pactus.AnchorInfo
+	2,  // 18: pactus.VoteInfo.type:type_name -> pactus.VoteType
+	36, // 19: pactus.ObservedConsensusInfo.votes:type_name -> pactus.VoteInfo
+	38, // 20: pactus.ObservedConsensusInfo.tallies:type_name -> pactus.VoteTally
+	39, // 21: pactus.ObservedConsensusInfo.proposals:type_name -> pactus.ObservedProposalInfo
+	2,  // 22: pactus.VoteTally.type:type_name -> pactus.VoteType
+	36, // 23: pactus.ConsensusInfo.votes:type_name -> pactus.VoteInfo
+	12, // 24: pactus.Blockchain.GetBlock:input_type -> pactus.GetBlockRequest
+	14, // 25: pactus.Blockchain.GetBlockHash:input_type -> pactus.GetBlockHashRequest
+	16, // 26: pactus.Blockchain.GetBlockHeight:input_type -> pactus.GetBlockHeightRequest
+	18, // 27: pactus.Blockchain.GetBlockchainInfo:input_type -> pactus.GetBlockchainInfoRequest
+	20, // 28: pactus.Blockchain.GetCommitteeInfo:input_type -> pactus.GetCommitteeInfoRequest
+	22, // 29: pactus.Blockchain.GetConsensusInfo:input_type -> pactus.GetConsensusInfoRequest
+	3,  // 30: pactus.Blockchain.GetAccount:input_type -> pactus.GetAccountRequest
+	27, // 31: pactus.Blockchain.GetAnchor:input_type -> pactus.GetAnchorRequest
+	29, // 32: pactus.Blockchain.ListAnchors:input_type -> pactus.ListAnchorsRequest
+	7,  // 33: pactus.Blockchain.GetValidator:input_type -> pactus.GetValidatorRequest
+	8,  // 34: pactus.Blockchain.GetValidatorByNumber:input_type -> pactus.GetValidatorByNumberRequest
+	5,  // 35: pactus.Blockchain.GetValidatorAddresses:input_type -> pactus.GetValidatorAddressesRequest
+	10, // 36: pactus.Blockchain.GetPublicKey:input_type -> pactus.GetPublicKeyRequest
+	24, // 37: pactus.Blockchain.GetTxPoolContent:input_type -> pactus.GetTxPoolContentRequest
+	13, // 38: pactus.Blockchain.GetBlock:output_type -> pactus.GetBlockResponse
+	15, // 39: pactus.Blockchain.GetBlockHash:output_type -> pactus.GetBlockHashResponse
+	17, // 40: pactus.Blockchain.GetBlockHeight:output_type -> pactus.GetBlockHeightResponse
+	19, // 41: pactus.Blockchain.GetBlockchainInfo:output_type -> pactus.GetBlockchainInfoResponse
+	21, // 42: pactus.Blockchain.GetCommitteeInfo:output_type -> pactus.GetCommitteeInfoResponse
+	23, // 43: pactus.Blockchain.GetConsensusInfo:output_type -> pactus.GetConsensusInfoResponse
+	4,  // 44: pactus.Blockchain.GetAccount:output_type -> pactus.GetAccountResponse
+	28, // 45: pactus.Blockchain.GetAnchor:output_type -> pactus.GetAnchorResponse
+	30, // 46: pactus.Blockchain.ListAnchors:output_type -> pactus.ListAnchorsResponse
+	9,  // 47: pactus.Blockchain.GetValidator:output_type -> pactus.GetValidatorResponse
+	9,  // 48: pactus.Blockchain.GetValidatorByNumber:output_type -> pactus.GetValidatorResponse
+	6,  // 49: pactus.Blockchain.GetValidatorAddresses:output_type -> pactus.GetValidatorAddressesResponse
+	11, // 50: pactus.Blockchain.GetPublicKey:output_type -> pactus.GetPublicKeyResponse
+	25, // 51: pactus.Blockchain.GetTxPoolContent:output_type -> pactus.GetTxPoolContentResponse
+	38, // [38:52] is the sub-list for method output_type
+	24, // [24:38] is the sub-list for method input_type
+	24, // [24:24] is the sub-list for extension type_name
+	24, // [24:24] is the sub-list for extension extendee
+	0,  // [0:24] is the sub-list for field type_name
 }
 
 func init() { file_blockchain_proto_init() }
@@ -2849,7 +3147,7 @@ func file_blockchain_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_blockchain_proto_rawDesc), len(file_blockchain_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   37,
+			NumMessages:   40,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

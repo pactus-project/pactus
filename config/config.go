@@ -65,11 +65,18 @@ type BootstrapInfo struct {
 
 type NodeConfig struct {
 	RewardAddresses []string `toml:"reward_addresses"`
+
+	// ConsensusObserver keeps the votes and proposals of the current height
+	// while none of the node's validators is in the committee, so
+	// GetConsensusInfo can show a round in progress. It costs CPU for signature
+	// checks, so it is off by default.
+	ConsensusObserver bool `toml:"consensus_observer"`
 }
 
 func DefaultNodeConfig() *NodeConfig {
 	return &NodeConfig{
-		RewardAddresses: []string{},
+		RewardAddresses:   []string{},
+		ConsensusObserver: false,
 	}
 }
 

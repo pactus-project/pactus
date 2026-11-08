@@ -25,6 +25,22 @@ type manager struct {
 	upcomingVotes     []*vote.Vote         // Map to cache votes for future block heights
 	upcomingProposals []*proposal.Proposal // Map to cache proposals for future block heights
 	state             state.State
+
+	// observer keeps the votes and proposals of the current height while no
+	// local validator is in the committee. It is off unless WithObserver is set.
+	observer *observer
+}
+
+// Option configures a consensus manager.
+type Option func(*manager)
+
+// WithObserver turns on the observer mode: while none of the local validators
+// is in the committee, the manager verifies and keeps the votes and proposals
+// of the current height, without taking part in consensus. See Observation.
+func WithObserver(enabled bool) Option {
+	return func(mgr *manager) {
+		mgr.observer = newObserver(enabled)
+	}
 }
 
 // maxUpcomingVotes and maxUpcomingProposals bound upcomingVotes and
@@ -50,6 +66,7 @@ func NewManagerV1(
 	valKeys []*bls.ValidatorKey,
 	rewardAddrs []crypto.Address,
 	broadcastPipe pipeline.Pipeline[message.Message],
+	opts ...Option,
 ) ConsensusManager {
 	instances := make([]consensus.Consensus, len(valKeys))
 	mediatorConcrete := consensus.NewConcreteMediator()
@@ -59,7 +76,7 @@ func NewManagerV1(
 		)
 	}
 
-	return NewManager(state, instances)
+	return NewManager(state, instances, opts...)
 }
 
 func NewManagerV2(
@@ -69,6 +86,7 @@ func NewManagerV2(
 	valKeys []*bls.ValidatorKey,
 	rewardAddrs []crypto.Address,
 	broadcastPipe pipeline.Pipeline[message.Message],
+	opts ...Option,
 ) ConsensusManager {
 	instances := make([]consensus.Consensus, len(valKeys))
 	mediatorConcrete := consensus.NewConcreteMediator()
@@ -79,16 +97,22 @@ func NewManagerV2(
 		)
 	}
 
-	return NewManager(state, instances)
+	return NewManager(state, instances, opts...)
 }
 
-func NewManager(state state.State, instances []consensus.Consensus) ConsensusManager {
-	return &manager{
+func NewManager(state state.State, instances []consensus.Consensus, opts ...Option) ConsensusManager {
+	mgr := &manager{
 		instances:         instances,
 		upcomingVotes:     make([]*vote.Vote, 0),
 		upcomingProposals: make([]*proposal.Proposal, 0),
 		state:             state,
+		observer:          newObserver(false),
 	}
+	for _, opt := range opts {
+		opt(mgr)
+	}
+
+	return mgr
 }
 
 // Instances return all consensus instances that are read-only and
@@ -153,11 +177,18 @@ func (mgr *manager) MoveToNewHeight() {
 		cons.MoveToNewHeight()
 	}
 
+	if mgr.observer.enabled {
+		newHeight, _ := mgr.getBestInstance().HeightRound()
+		mgr.observer.moveToHeight(newHeight, mgr.state.CommitteeValidators(),
+			mgr.state.Proposer, mgr.HasActiveInstance())
+	}
+
 	for index := len(mgr.upcomingProposals) - 1; index >= 0; index-- {
 		prop := mgr.upcomingProposals[index]
 		for _, cons := range mgr.instances {
 			cons.SetProposal(prop)
 		}
+		mgr.observer.setProposal(prop)
 
 		mgr.upcomingProposals = slices.Delete(mgr.upcomingProposals, index, index+1)
 	}
@@ -167,6 +198,7 @@ func (mgr *manager) MoveToNewHeight() {
 		for _, cons := range mgr.instances {
 			cons.AddVote(vote)
 		}
+		mgr.observer.addVote(vote)
 
 		mgr.upcomingVotes = slices.Delete(mgr.upcomingVotes, index, index+1)
 	}
@@ -189,6 +221,7 @@ func (mgr *manager) AddVote(vote *vote.Vote) {
 		for _, cons := range mgr.instances {
 			cons.AddVote(vote)
 		}
+		mgr.observer.addVote(vote)
 	}
 }
 
@@ -206,7 +239,15 @@ func (mgr *manager) SetProposal(prop *proposal.Proposal) {
 		for _, cons := range mgr.instances {
 			cons.SetProposal(prop)
 		}
+		mgr.observer.setProposal(prop)
 	}
+}
+
+// Observation returns what the observer saw for the current height, or nil
+// when the observer is off or a local validator is in the committee.
+// It is safe to call from any goroutine.
+func (mgr *manager) Observation() *Observation {
+	return mgr.observer.observation()
 }
 
 // getBestInstance iterates through all consensus instances and returns the instance

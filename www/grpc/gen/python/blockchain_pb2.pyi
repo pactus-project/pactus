@@ -213,12 +213,14 @@ class GetConsensusInfoRequest(_message.Message):
     def __init__(self) -> None: ...
 
 class GetConsensusInfoResponse(_message.Message):
-    __slots__ = ("proposal", "instances")
+    __slots__ = ("proposal", "instances", "observed")
     PROPOSAL_FIELD_NUMBER: _ClassVar[int]
     INSTANCES_FIELD_NUMBER: _ClassVar[int]
+    OBSERVED_FIELD_NUMBER: _ClassVar[int]
     proposal: ProposalInfo
     instances: _containers.RepeatedCompositeFieldContainer[ConsensusInfo]
-    def __init__(self, proposal: _Optional[_Union[ProposalInfo, _Mapping]] = ..., instances: _Optional[_Iterable[_Union[ConsensusInfo, _Mapping]]] = ...) -> None: ...
+    observed: ObservedConsensusInfo
+    def __init__(self, proposal: _Optional[_Union[ProposalInfo, _Mapping]] = ..., instances: _Optional[_Iterable[_Union[ConsensusInfo, _Mapping]]] = ..., observed: _Optional[_Union[ObservedConsensusInfo, _Mapping]] = ...) -> None: ...
 
 class GetTxPoolContentRequest(_message.Message):
     __slots__ = ("payload_type",)
@@ -385,6 +387,50 @@ class VoteInfo(_message.Message):
     cp_round: int
     cp_value: int
     def __init__(self, type: _Optional[_Union[VoteType, str]] = ..., voter: _Optional[str] = ..., block_hash: _Optional[str] = ..., round: _Optional[int] = ..., cp_round: _Optional[int] = ..., cp_value: _Optional[int] = ...) -> None: ...
+
+class ObservedConsensusInfo(_message.Message):
+    __slots__ = ("height", "total_power", "votes", "tallies", "proposals", "dropped")
+    HEIGHT_FIELD_NUMBER: _ClassVar[int]
+    TOTAL_POWER_FIELD_NUMBER: _ClassVar[int]
+    VOTES_FIELD_NUMBER: _ClassVar[int]
+    TALLIES_FIELD_NUMBER: _ClassVar[int]
+    PROPOSALS_FIELD_NUMBER: _ClassVar[int]
+    DROPPED_FIELD_NUMBER: _ClassVar[int]
+    height: int
+    total_power: int
+    votes: _containers.RepeatedCompositeFieldContainer[VoteInfo]
+    tallies: _containers.RepeatedCompositeFieldContainer[VoteTally]
+    proposals: _containers.RepeatedCompositeFieldContainer[ObservedProposalInfo]
+    dropped: int
+    def __init__(self, height: _Optional[int] = ..., total_power: _Optional[int] = ..., votes: _Optional[_Iterable[_Union[VoteInfo, _Mapping]]] = ..., tallies: _Optional[_Iterable[_Union[VoteTally, _Mapping]]] = ..., proposals: _Optional[_Iterable[_Union[ObservedProposalInfo, _Mapping]]] = ..., dropped: _Optional[int] = ...) -> None: ...
+
+class VoteTally(_message.Message):
+    __slots__ = ("type", "round", "cp_round", "cp_value", "block_hash", "votes", "power")
+    TYPE_FIELD_NUMBER: _ClassVar[int]
+    ROUND_FIELD_NUMBER: _ClassVar[int]
+    CP_ROUND_FIELD_NUMBER: _ClassVar[int]
+    CP_VALUE_FIELD_NUMBER: _ClassVar[int]
+    BLOCK_HASH_FIELD_NUMBER: _ClassVar[int]
+    VOTES_FIELD_NUMBER: _ClassVar[int]
+    POWER_FIELD_NUMBER: _ClassVar[int]
+    type: VoteType
+    round: int
+    cp_round: int
+    cp_value: int
+    block_hash: str
+    votes: int
+    power: int
+    def __init__(self, type: _Optional[_Union[VoteType, str]] = ..., round: _Optional[int] = ..., cp_round: _Optional[int] = ..., cp_value: _Optional[int] = ..., block_hash: _Optional[str] = ..., votes: _Optional[int] = ..., power: _Optional[int] = ...) -> None: ...
+
+class ObservedProposalInfo(_message.Message):
+    __slots__ = ("round", "block_hash", "proposer")
+    ROUND_FIELD_NUMBER: _ClassVar[int]
+    BLOCK_HASH_FIELD_NUMBER: _ClassVar[int]
+    PROPOSER_FIELD_NUMBER: _ClassVar[int]
+    round: int
+    block_hash: str
+    proposer: str
+    def __init__(self, round: _Optional[int] = ..., block_hash: _Optional[str] = ..., proposer: _Optional[str] = ...) -> None: ...
 
 class ConsensusInfo(_message.Message):
     __slots__ = ("address", "active", "height", "round", "votes")

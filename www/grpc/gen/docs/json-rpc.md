@@ -2649,7 +2649,169 @@ Parameters has no fields.
     <td>
   The change-proposer value of the vote.
     </td>
-  </tr></tbody>
+  </tr><tr>
+    <td class="fw-bold">observed</td>
+    <td> object (ObservedConsensusInfo)</td>
+    <td>
+  What the node observed for the current height, when its consensus observer
+is on and none of its validators is in the committee. Unset otherwise.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">observed.height</td>
+    <td> numeric</td>
+    <td>
+  The height the votes and proposals are for.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">observed.total_power</td>
+    <td> numeric</td>
+    <td>
+  The total power of the committee of this height.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">observed.votes</td>
+    <td>repeated object (VoteInfo)</td>
+    <td>
+  The verified votes of the highest rounds.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">observed.votes[].type</td>
+    <td> numeric</td>
+    <td>
+  (Enum)The type of the vote.
+      <br>Available values:<ul>
+      <li>VOTE_TYPE_UNSPECIFIED = 0 (Unspecified vote type.)</li>
+      <li>VOTE_TYPE_PREPARE = 1 (Prepare vote type.)</li>
+      <li>VOTE_TYPE_PRECOMMIT = 2 (Precommit vote type.)</li>
+      <li>VOTE_TYPE_CP_PRE_VOTE = 3 (Change-proposer:pre-vote vote type.)</li>
+      <li>VOTE_TYPE_CP_MAIN_VOTE = 4 (Change-proposer:main-vote vote type.)</li>
+      <li>VOTE_TYPE_CP_DECIDED = 5 (Change-proposer:decided vote type.)</li>
+      </ul>
+    </td>
+  </tr><tr>
+    <td class="fw-bold">observed.votes[].voter</td>
+    <td> string</td>
+    <td>
+  The address of the voter.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">observed.votes[].block_hash</td>
+    <td> string</td>
+    <td>
+  The hash of the block being voted on.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">observed.votes[].round</td>
+    <td> numeric</td>
+    <td>
+  The consensus round of the vote.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">observed.votes[].cp_round</td>
+    <td> numeric</td>
+    <td>
+  The change-proposer round of the vote.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">observed.votes[].cp_value</td>
+    <td> numeric</td>
+    <td>
+  The change-proposer value of the vote.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">observed.tallies</td>
+    <td>repeated object (VoteTally)</td>
+    <td>
+  The votes of older rounds, summed by type, change-proposer round, value and block hash.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">observed.tallies[].type</td>
+    <td> numeric</td>
+    <td>
+  (Enum)The type of the votes.
+      <br>Available values:<ul>
+      <li>VOTE_TYPE_UNSPECIFIED = 0 (Unspecified vote type.)</li>
+      <li>VOTE_TYPE_PREPARE = 1 (Prepare vote type.)</li>
+      <li>VOTE_TYPE_PRECOMMIT = 2 (Precommit vote type.)</li>
+      <li>VOTE_TYPE_CP_PRE_VOTE = 3 (Change-proposer:pre-vote vote type.)</li>
+      <li>VOTE_TYPE_CP_MAIN_VOTE = 4 (Change-proposer:main-vote vote type.)</li>
+      <li>VOTE_TYPE_CP_DECIDED = 5 (Change-proposer:decided vote type.)</li>
+      </ul>
+    </td>
+  </tr><tr>
+    <td class="fw-bold">observed.tallies[].round</td>
+    <td> numeric</td>
+    <td>
+  The consensus round of the votes.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">observed.tallies[].cp_round</td>
+    <td> numeric</td>
+    <td>
+  The change-proposer round of the votes.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">observed.tallies[].cp_value</td>
+    <td> numeric</td>
+    <td>
+  The change-proposer value of the votes.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">observed.tallies[].block_hash</td>
+    <td> string</td>
+    <td>
+  The hash of the block being voted on.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">observed.tallies[].votes</td>
+    <td> numeric</td>
+    <td>
+  The number of votes.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">observed.tallies[].power</td>
+    <td> numeric</td>
+    <td>
+  The total power of the voters.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">observed.proposals</td>
+    <td>repeated object (ObservedProposalInfo)</td>
+    <td>
+  The proposals signed by the proposer of their round. Their blocks are not validated.
+    </td>
+  </tr>
+   <tr>
+    <td class="fw-bold">observed.proposals[].round</td>
+    <td> numeric</td>
+    <td>
+  The round of the proposal.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">observed.proposals[].block_hash</td>
+    <td> string</td>
+    <td>
+  The hash of the proposed block.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">observed.proposals[].proposer</td>
+    <td> string</td>
+    <td>
+  The address of the proposer.
+    </td>
+  </tr><tr>
+    <td class="fw-bold">observed.dropped</td>
+    <td> numeric</td>
+    <td>
+  The number of messages skipped because of the observer's bounds or rate limit.
+    </td>
+  </tr>
+   </tbody>
 </table>
 
 #### pactus.blockchain.get_account <span id="pactus.blockchain.get_account" class="rpc-badge"></span>

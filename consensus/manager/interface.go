@@ -14,6 +14,7 @@ type ConsensusManagerReader interface {
 	Proposal() *proposal.Proposal
 	HeightRound() (types.Height, types.Round)
 	HasActiveInstance() bool
+	Observation() *Observation
 }
 
 type ConsensusManager interface {

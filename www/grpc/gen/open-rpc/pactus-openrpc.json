@@ -548,7 +548,7 @@
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object","required": ["proposal","instances"],
+          "type": "object","required": ["proposal","instances","observed"],
           "properties": {"proposal": {
   "type": "object","required": ["height","round","block_data","signature"],
   "properties": {"height": { "type": "integer" },"round": { "type": "integer" },"block_data": { "type": "string" },"signature": { "type": "string" }}
@@ -564,6 +564,27 @@
 }
 }}
 }
+},"observed": {
+  "type": "object","required": ["height","total_power","votes","tallies","proposals","dropped"],
+  "properties": {"height": { "type": "integer" },"total_power": { "type": "integer" },"votes": {
+  "type": "array",
+  "items": {
+  "type": "object","required": ["type","voter","block_hash","round","cp_round","cp_value"],
+  "properties": {"type": { "type": "integer" },"voter": { "type": "string" },"block_hash": { "type": "string" },"round": { "type": "integer" },"cp_round": { "type": "integer" },"cp_value": { "type": "integer" }}
+}
+},"tallies": {
+  "type": "array",
+  "items": {
+  "type": "object","required": ["type","round","cp_round","cp_value","block_hash","votes","power"],
+  "properties": {"type": { "type": "integer" },"round": { "type": "integer" },"cp_round": { "type": "integer" },"cp_value": { "type": "integer" },"block_hash": { "type": "string" },"votes": { "type": "integer" },"power": { "type": "integer" }}
+}
+},"proposals": {
+  "type": "array",
+  "items": {
+  "type": "object","required": ["round","block_hash","proposer"],
+  "properties": {"round": { "type": "integer" },"block_hash": { "type": "string" },"proposer": { "type": "string" }}
+}
+},"dropped": { "type": "integer" }}
 }}
           }
         }

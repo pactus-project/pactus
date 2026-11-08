@@ -2404,6 +2404,10 @@
             "$ref": "#/definitions/pactusConsensusInfo"
           },
           "description": "List of consensus instances."
+        },
+        "observed": {
+          "$ref": "#/definitions/pactusObservedConsensusInfo",
+          "description": "What the node observed for the current height, when its consensus observer\nis on and none of its validators is in the committee. Unset otherwise."
         }
       },
       "description": "Response message contains consensus information."
@@ -3078,6 +3082,70 @@
         }
       },
       "description": "Response message confirming wallet migration."
+    },
+    "pactusObservedConsensusInfo": {
+      "type": "object",
+      "properties": {
+        "height": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The height the votes and proposals are for."
+        },
+        "totalPower": {
+          "type": "string",
+          "format": "int64",
+          "description": "The total power of the committee of this height."
+        },
+        "votes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusVoteInfo"
+          },
+          "description": "The verified votes of the highest rounds."
+        },
+        "tallies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusVoteTally"
+          },
+          "description": "The votes of older rounds, summed by type, change-proposer round, value and block hash."
+        },
+        "proposals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusObservedProposalInfo"
+          },
+          "description": "The proposals signed by the proposer of their round. Their blocks are not validated."
+        },
+        "dropped": {
+          "type": "string",
+          "format": "uint64",
+          "description": "The number of messages skipped because of the observer's bounds or rate limit."
+        }
+      },
+      "description": "Message contains the consensus votes and proposals a node observed for the\ncurrent height without taking part in consensus."
+    },
+    "pactusObservedProposalInfo": {
+      "type": "object",
+      "properties": {
+        "round": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The round of the proposal."
+        },
+        "blockHash": {
+          "type": "string",
+          "description": "The hash of the proposed block."
+        },
+        "proposer": {
+          "type": "string",
+          "description": "The address of the proposer."
+        }
+      },
+      "description": "Message contains an observed proposal."
     },
     "pactusPayloadAnchor": {
       "type": "object",
@@ -3878,6 +3946,45 @@
         }
       },
       "description": "Message contains information about a vote."
+    },
+    "pactusVoteTally": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/pactusVoteType",
+          "description": "The type of the votes."
+        },
+        "round": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The consensus round of the votes."
+        },
+        "cpRound": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The change-proposer round of the votes."
+        },
+        "cpValue": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The change-proposer value of the votes."
+        },
+        "blockHash": {
+          "type": "string",
+          "description": "The hash of the block being voted on."
+        },
+        "votes": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The number of votes."
+        },
+        "power": {
+          "type": "string",
+          "format": "int64",
+          "description": "The total power of the voters."
+        }
+      },
+      "description": "Message contains the sum of the observed votes that share the same type,\nround, change-proposer round, value and block hash."
     },
     "pactusVoteType": {
       "type": "string",

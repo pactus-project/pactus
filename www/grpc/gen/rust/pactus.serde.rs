@@ -4911,12 +4911,18 @@ impl serde::Serialize for GetConsensusInfoResponse {
         if !self.instances.is_empty() {
             len += 1;
         }
+        if self.observed.is_some() {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.GetConsensusInfoResponse", len)?;
         if let Some(v) = self.proposal.as_ref() {
             struct_ser.serialize_field("proposal", v)?;
         }
         if !self.instances.is_empty() {
             struct_ser.serialize_field("instances", &self.instances)?;
+        }
+        if let Some(v) = self.observed.as_ref() {
+            struct_ser.serialize_field("observed", v)?;
         }
         struct_ser.end()
     }
@@ -4930,12 +4936,14 @@ impl<'de> serde::Deserialize<'de> for GetConsensusInfoResponse {
         const FIELDS: &[&str] = &[
             "proposal",
             "instances",
+            "observed",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             Proposal,
             Instances,
+            Observed,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -4959,6 +4967,7 @@ impl<'de> serde::Deserialize<'de> for GetConsensusInfoResponse {
                         match value {
                             "proposal" => Ok(GeneratedField::Proposal),
                             "instances" => Ok(GeneratedField::Instances),
+                            "observed" => Ok(GeneratedField::Observed),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -4980,6 +4989,7 @@ impl<'de> serde::Deserialize<'de> for GetConsensusInfoResponse {
             {
                 let mut proposal__ = None;
                 let mut instances__ = None;
+                let mut observed__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Proposal => {
@@ -4994,11 +5004,18 @@ impl<'de> serde::Deserialize<'de> for GetConsensusInfoResponse {
                             }
                             instances__ = Some(map_.next_value()?);
                         }
+                        GeneratedField::Observed => {
+                            if observed__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("observed"));
+                            }
+                            observed__ = map_.next_value()?;
+                        }
                     }
                 }
                 Ok(GetConsensusInfoResponse {
                     proposal: proposal__,
                     instances: instances__.unwrap_or_default(),
+                    observed: observed__,
                 })
             }
         }
@@ -11207,6 +11224,321 @@ impl<'de> serde::Deserialize<'de> for MigrateWalletResponse {
         deserializer.deserialize_struct("pactus.MigrateWalletResponse", FIELDS, GeneratedVisitor)
     }
 }
+impl serde::Serialize for ObservedConsensusInfo {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.height != 0 {
+            len += 1;
+        }
+        if self.total_power != 0 {
+            len += 1;
+        }
+        if !self.votes.is_empty() {
+            len += 1;
+        }
+        if !self.tallies.is_empty() {
+            len += 1;
+        }
+        if !self.proposals.is_empty() {
+            len += 1;
+        }
+        if self.dropped != 0 {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.ObservedConsensusInfo", len)?;
+        if self.height != 0 {
+            struct_ser.serialize_field("height", &self.height)?;
+        }
+        if self.total_power != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("totalPower", ToString::to_string(&self.total_power).as_str())?;
+        }
+        if !self.votes.is_empty() {
+            struct_ser.serialize_field("votes", &self.votes)?;
+        }
+        if !self.tallies.is_empty() {
+            struct_ser.serialize_field("tallies", &self.tallies)?;
+        }
+        if !self.proposals.is_empty() {
+            struct_ser.serialize_field("proposals", &self.proposals)?;
+        }
+        if self.dropped != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("dropped", ToString::to_string(&self.dropped).as_str())?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for ObservedConsensusInfo {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "height",
+            "total_power",
+            "totalPower",
+            "votes",
+            "tallies",
+            "proposals",
+            "dropped",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Height,
+            TotalPower,
+            Votes,
+            Tallies,
+            Proposals,
+            Dropped,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "height" => Ok(GeneratedField::Height),
+                            "totalPower" | "total_power" => Ok(GeneratedField::TotalPower),
+                            "votes" => Ok(GeneratedField::Votes),
+                            "tallies" => Ok(GeneratedField::Tallies),
+                            "proposals" => Ok(GeneratedField::Proposals),
+                            "dropped" => Ok(GeneratedField::Dropped),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = ObservedConsensusInfo;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.ObservedConsensusInfo")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ObservedConsensusInfo, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut height__ = None;
+                let mut total_power__ = None;
+                let mut votes__ = None;
+                let mut tallies__ = None;
+                let mut proposals__ = None;
+                let mut dropped__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::Height => {
+                            if height__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("height"));
+                            }
+                            height__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::TotalPower => {
+                            if total_power__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("totalPower"));
+                            }
+                            total_power__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::Votes => {
+                            if votes__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("votes"));
+                            }
+                            votes__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Tallies => {
+                            if tallies__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("tallies"));
+                            }
+                            tallies__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Proposals => {
+                            if proposals__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("proposals"));
+                            }
+                            proposals__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Dropped => {
+                            if dropped__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("dropped"));
+                            }
+                            dropped__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                    }
+                }
+                Ok(ObservedConsensusInfo {
+                    height: height__.unwrap_or_default(),
+                    total_power: total_power__.unwrap_or_default(),
+                    votes: votes__.unwrap_or_default(),
+                    tallies: tallies__.unwrap_or_default(),
+                    proposals: proposals__.unwrap_or_default(),
+                    dropped: dropped__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.ObservedConsensusInfo", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for ObservedProposalInfo {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.round != 0 {
+            len += 1;
+        }
+        if !self.block_hash.is_empty() {
+            len += 1;
+        }
+        if !self.proposer.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.ObservedProposalInfo", len)?;
+        if self.round != 0 {
+            struct_ser.serialize_field("round", &self.round)?;
+        }
+        if !self.block_hash.is_empty() {
+            struct_ser.serialize_field("blockHash", &self.block_hash)?;
+        }
+        if !self.proposer.is_empty() {
+            struct_ser.serialize_field("proposer", &self.proposer)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for ObservedProposalInfo {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "round",
+            "block_hash",
+            "blockHash",
+            "proposer",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Round,
+            BlockHash,
+            Proposer,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "round" => Ok(GeneratedField::Round),
+                            "blockHash" | "block_hash" => Ok(GeneratedField::BlockHash),
+                            "proposer" => Ok(GeneratedField::Proposer),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = ObservedProposalInfo;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.ObservedProposalInfo")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ObservedProposalInfo, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut round__ = None;
+                let mut block_hash__ = None;
+                let mut proposer__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::Round => {
+                            if round__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("round"));
+                            }
+                            round__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::BlockHash => {
+                            if block_hash__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("blockHash"));
+                            }
+                            block_hash__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Proposer => {
+                            if proposer__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("proposer"));
+                            }
+                            proposer__ = Some(map_.next_value()?);
+                        }
+                    }
+                }
+                Ok(ObservedProposalInfo {
+                    round: round__.unwrap_or_default(),
+                    block_hash: block_hash__.unwrap_or_default(),
+                    proposer: proposer__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.ObservedProposalInfo", FIELDS, GeneratedVisitor)
+    }
+}
 impl serde::Serialize for PayloadAnchor {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
@@ -16659,6 +16991,216 @@ impl<'de> serde::Deserialize<'de> for VoteInfo {
             }
         }
         deserializer.deserialize_struct("pactus.VoteInfo", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for VoteTally {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.r#type != 0 {
+            len += 1;
+        }
+        if self.round != 0 {
+            len += 1;
+        }
+        if self.cp_round != 0 {
+            len += 1;
+        }
+        if self.cp_value != 0 {
+            len += 1;
+        }
+        if !self.block_hash.is_empty() {
+            len += 1;
+        }
+        if self.votes != 0 {
+            len += 1;
+        }
+        if self.power != 0 {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.VoteTally", len)?;
+        if self.r#type != 0 {
+            let v = VoteType::try_from(self.r#type)
+                .map_err(|_| serde::ser::Error::custom(format!("Invalid variant {}", self.r#type)))?;
+            struct_ser.serialize_field("type", &v)?;
+        }
+        if self.round != 0 {
+            struct_ser.serialize_field("round", &self.round)?;
+        }
+        if self.cp_round != 0 {
+            struct_ser.serialize_field("cpRound", &self.cp_round)?;
+        }
+        if self.cp_value != 0 {
+            struct_ser.serialize_field("cpValue", &self.cp_value)?;
+        }
+        if !self.block_hash.is_empty() {
+            struct_ser.serialize_field("blockHash", &self.block_hash)?;
+        }
+        if self.votes != 0 {
+            struct_ser.serialize_field("votes", &self.votes)?;
+        }
+        if self.power != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("power", ToString::to_string(&self.power).as_str())?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for VoteTally {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "type",
+            "round",
+            "cp_round",
+            "cpRound",
+            "cp_value",
+            "cpValue",
+            "block_hash",
+            "blockHash",
+            "votes",
+            "power",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Type,
+            Round,
+            CpRound,
+            CpValue,
+            BlockHash,
+            Votes,
+            Power,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "type" => Ok(GeneratedField::Type),
+                            "round" => Ok(GeneratedField::Round),
+                            "cpRound" | "cp_round" => Ok(GeneratedField::CpRound),
+                            "cpValue" | "cp_value" => Ok(GeneratedField::CpValue),
+                            "blockHash" | "block_hash" => Ok(GeneratedField::BlockHash),
+                            "votes" => Ok(GeneratedField::Votes),
+                            "power" => Ok(GeneratedField::Power),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = VoteTally;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.VoteTally")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<VoteTally, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut r#type__ = None;
+                let mut round__ = None;
+                let mut cp_round__ = None;
+                let mut cp_value__ = None;
+                let mut block_hash__ = None;
+                let mut votes__ = None;
+                let mut power__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::Type => {
+                            if r#type__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("type"));
+                            }
+                            r#type__ = Some(map_.next_value::<VoteType>()? as i32);
+                        }
+                        GeneratedField::Round => {
+                            if round__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("round"));
+                            }
+                            round__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::CpRound => {
+                            if cp_round__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("cpRound"));
+                            }
+                            cp_round__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::CpValue => {
+                            if cp_value__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("cpValue"));
+                            }
+                            cp_value__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::BlockHash => {
+                            if block_hash__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("blockHash"));
+                            }
+                            block_hash__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Votes => {
+                            if votes__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("votes"));
+                            }
+                            votes__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::Power => {
+                            if power__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("power"));
+                            }
+                            power__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                    }
+                }
+                Ok(VoteTally {
+                    r#type: r#type__.unwrap_or_default(),
+                    round: round__.unwrap_or_default(),
+                    cp_round: cp_round__.unwrap_or_default(),
+                    cp_value: cp_value__.unwrap_or_default(),
+                    block_hash: block_hash__.unwrap_or_default(),
+                    votes: votes__.unwrap_or_default(),
+                    power: power__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.VoteTally", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for VoteType {
