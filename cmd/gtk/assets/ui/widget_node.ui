@@ -46,6 +46,13 @@
             <property name="action-name">app.withdraw</property>
           </object>
         </child>
+        <child>
+          <object class="GtkButton">
+            <property name="label">Anchor</property>
+            <property name="action-name">app.anchor</property>
+            <property name="tooltip-text">Create, update or delete the anchor of an account (PIP-50)</property>
+          </object>
+        </child>
       </object>
     </child>
 

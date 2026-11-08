@@ -289,6 +289,28 @@ frame > label {
     border-bottom: 1px solid @hairline;
 }
 
+/* ---- Dialog notices ----------------------------------------------------- */
+
+/* A warning banner inside a dialog, for consequences the user must read. */
+.notice-warning {
+    padding: 10px 12px;
+    border-radius: 10px;
+    background-color: alpha(#e8a33d, 0.12);
+}
+
+/* The scrolled field area of a transaction dialog. The scrollbar takes its own
+   column (no overlay), so the fields narrow only while it is shown. The margin
+   keeps it off the fields. */
+.dialog-scroll > scrollbar.vertical {
+    margin-left: 6px;
+}
+
+/* The current anchor card in the anchor dialog. */
+.anchor-card {
+    min-width: 0;
+    padding: 12px 14px;
+}
+
 /* ---- TextView ----------------------------------------------------------- */
 
 textview.view {

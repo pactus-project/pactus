@@ -1,0 +1,449 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<interface>
+  <!-- interface-name dialog_transaction_anchor.ui -->
+  <requires lib="gtk" version="4.14"/>
+  <object class="GtkWindow" id="id_dialog_transaction_anchor">
+    <property name="default-width">560</property>
+    <property name="modal">True</property>
+    <property name="title">Broadcasting Anchor Transaction</property>
+    <child>
+      <object class="GtkBox">
+        <property name="css-classes">dialog-box</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="css-classes">dialog-scroll</property>
+            <property name="hscrollbar-policy">never</property>
+            <property name="overlay-scrolling">False</property>
+            <property name="max-content-height">460</property>
+            <property name="propagate-natural-height">True</property>
+            <property name="vexpand">True</property>
+            <child>
+              <object class="GtkBox">
+                <property name="css-classes">dialog-grid</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">8</property>
+
+                <!-- Anchor link (PIP-57) -->
+                <child>
+                  <object class="GtkLabel">
+                    <property name="halign">start</property>
+                    <property name="label">Anchor link (Optional; fills in the form from a pactus:anchor link):</property>
+                    <property name="wrap">True</property>
+                    <property name="xalign">0</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="spacing">6</property>
+                    <child>
+                      <object class="GtkEntry" id="id_entry_link">
+                        <property name="hexpand">True</property>
+                        <property name="placeholder-text">pactus:anchor?network=...&amp;action=...</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="id_button_link_apply">
+                        <property name="label">Apply</property>
+                        <property name="tooltip-text">Check the link and fill in the form. Nothing is signed yet.</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="id_hint_link">
+                    <property name="halign">start</property>
+                    <property name="margin-bottom">8</property>
+                    <property name="use-markup">True</property>
+                    <property name="wrap">True</property>
+                    <property name="xalign">0</property>
+                  </object>
+                </child>
+
+                <!-- Account -->
+                <child>
+                  <object class="GtkLabel">
+                    <property name="halign">start</property>
+                    <property name="label">Account address:</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkDropDown" id="id_drop_sender"/>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="id_hint_sender">
+                    <property name="halign">start</property>
+                    <property name="margin-bottom">4</property>
+                    <property name="use-markup">True</property>
+                  </object>
+                </child>
+
+                <!-- Current anchor -->
+                <child>
+                  <object class="GtkBox">
+                    <property name="css-classes">card anchor-card</property>
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">6</property>
+                    <property name="margin-bottom">8</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="css-classes">section-title</property>
+                        <property name="halign">start</property>
+                        <property name="label">CURRENT ANCHOR</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="id_label_no_anchor">
+                        <property name="css-classes">info-key</property>
+                        <property name="halign">start</property>
+                        <property name="label">This account has no anchor yet.</property>
+                        <property name="wrap">True</property>
+                        <property name="xalign">0</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkGrid" id="id_grid_current">
+                        <property name="column-spacing">14</property>
+                        <property name="row-spacing">4</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="css-classes">info-key</property>
+                            <property name="halign">start</property>
+                            <property name="valign">start</property>
+                            <property name="label">Type</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="id_val_type">
+                            <property name="css-classes">info-val</property>
+                            <property name="halign">start</property>
+                            <property name="hexpand">True</property>
+                            <property name="selectable">True</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="css-classes">info-key</property>
+                            <property name="halign">start</property>
+                            <property name="valign">start</property>
+                            <property name="label">Root hash</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="id_val_root">
+                            <property name="css-classes">info-mono</property>
+                            <property name="halign">start</property>
+                            <property name="selectable">True</property>
+                            <property name="wrap">True</property>
+                            <property name="wrap-mode">char</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="css-classes">info-key</property>
+                            <property name="halign">start</property>
+                            <property name="valign">start</property>
+                            <property name="label">Manifest URI</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">2</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="id_val_uri">
+                            <property name="css-classes">info-mono</property>
+                            <property name="halign">start</property>
+                            <property name="selectable">True</property>
+                            <property name="wrap">True</property>
+                            <property name="wrap-mode">char</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">2</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="css-classes">info-key</property>
+                            <property name="halign">start</property>
+                            <property name="valign">start</property>
+                            <property name="label">Locked deposit</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">3</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="id_val_locked">
+                            <property name="css-classes">info-val</property>
+                            <property name="halign">start</property>
+                            <property name="selectable">True</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">3</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="css-classes">info-key</property>
+                            <property name="halign">start</property>
+                            <property name="valign">start</property>
+                            <property name="label">Updated at</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">4</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="id_val_updated">
+                            <property name="css-classes">info-val</property>
+                            <property name="halign">start</property>
+                            <property name="selectable">True</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">4</property>
+                            </layout>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+
+                <!-- Action: segmented Set / Delete -->
+                <child>
+                  <object class="GtkLabel">
+                    <property name="halign">start</property>
+                    <property name="label">Action:</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="css-classes">linked</property>
+                    <property name="halign">start</property>
+                    <property name="margin-bottom">8</property>
+                    <child>
+                      <object class="GtkToggleButton" id="id_toggle_set">
+                        <property name="active">True</property>
+                        <property name="label">Set (create or update)</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkToggleButton" id="id_toggle_delete">
+                        <property name="group">id_toggle_set</property>
+                        <property name="label">Delete (remove and refund)</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+
+                <!-- Set fields -->
+                <child>
+                  <object class="GtkBox" id="id_box_set">
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">8</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="halign">start</property>
+                        <property name="label">Anchor type:</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="spacing">6</property>
+                        <child>
+                          <object class="GtkDropDown" id="id_drop_type">
+                            <property name="hexpand">True</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="id_spin_type">
+                            <property name="numeric">True</property>
+                            <property name="tooltip-text">Anchor type number, 0 to 255</property>
+                            <property name="adjustment">
+                              <object class="GtkAdjustment">
+                                <property name="lower">0</property>
+                                <property name="upper">255</property>
+                                <property name="step-increment">1</property>
+                                <property name="page-increment">10</property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="id_hint_type">
+                        <property name="halign">start</property>
+                        <property name="margin-bottom">8</property>
+                        <property name="use-markup">True</property>
+                        <property name="wrap">True</property>
+                        <property name="xalign">0</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="halign">start</property>
+                        <property name="label">Root hash (hex, 32 to 64 bytes):</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="id_entry_root">
+                        <property name="css-classes">info-mono</property>
+                        <property name="placeholder-text">64 to 128 hex characters</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="id_hint_root">
+                        <property name="halign">start</property>
+                        <property name="margin-bottom">8</property>
+                        <property name="use-markup">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="halign">start</property>
+                        <property name="label">Manifest URI (Up to 128 bytes, Optional):</property>
+                        <property name="wrap">True</property>
+                        <property name="xalign">0</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="id_entry_uri">
+                        <property name="placeholder-text">ipfs://...</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="id_hint_uri">
+                        <property name="halign">start</property>
+                        <property name="margin-bottom">8</property>
+                        <property name="use-markup">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="halign">start</property>
+                        <property name="label">Deposit to add:</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="id_entry_deposit">
+                        <property name="input-purpose">number</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="id_hint_deposit">
+                        <property name="halign">start</property>
+                        <property name="margin-bottom">8</property>
+                        <property name="use-markup">True</property>
+                        <property name="wrap">True</property>
+                        <property name="xalign">0</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+
+                <!-- Delete summary -->
+                <child>
+                  <object class="GtkLabel" id="id_label_delete_info">
+                    <property name="halign">start</property>
+                    <property name="margin-bottom">8</property>
+                    <property name="use-markup">True</property>
+                    <property name="visible">False</property>
+                    <property name="wrap">True</property>
+                    <property name="xalign">0</property>
+                  </object>
+                </child>
+
+                <!-- Warning banner -->
+                <child>
+                  <object class="GtkLabel" id="id_label_warning">
+                    <property name="css-classes">notice-warning</property>
+                    <property name="halign">fill</property>
+                    <property name="margin-bottom">8</property>
+                    <property name="use-markup">True</property>
+                    <property name="visible">False</property>
+                    <property name="wrap">True</property>
+                    <property name="xalign">0</property>
+                  </object>
+                </child>
+
+                <!-- Fee and memo -->
+                <child>
+                  <object class="GtkLabel">
+                    <property name="halign">start</property>
+                    <property name="label">Fee:</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="id_entry_fee">
+                    <property name="input-purpose">number</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="id_hint_fee">
+                    <property name="halign">start</property>
+                    <property name="margin-bottom">8</property>
+                    <property name="use-markup">True</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="halign">start</property>
+                    <property name="label">Memo (Up to 64 characters, Optional):</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="id_entry_memo">
+                    <property name="hexpand">True</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSeparator"/>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="css-classes">dialog-action-bar</property>
+            <property name="halign">end</property>
+            <property name="spacing">4</property>
+            <child>
+              <object class="GtkButton" id="id_button_cancel"/>
+            </child>
+            <child>
+              <object class="GtkButton" id="id_button_send"/>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

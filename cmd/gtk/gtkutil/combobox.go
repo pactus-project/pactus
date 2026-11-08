@@ -5,6 +5,7 @@ package gtkutil
 
 import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
+	"github.com/diamondburned/gotk4/pkg/pango"
 	"github.com/pactus-project/pactus/types/amount"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
@@ -25,9 +26,17 @@ func ComboBoxFromAddressListWithAmount(combo *gtk.ComboBoxText, infos []*pactus.
 	ComboBoxSetup(combo, AddressItems(infos, getAmount))
 }
 
+// ComboBoxSetup fills the combo box with the given items. Its text cells are
+// ellipsized in the middle, so a long address does not set the minimum width
+// of the dialog.
 func ComboBoxSetup(combo *gtk.ComboBoxText, names []string) {
 	for _, name := range names {
 		combo.AppendText(name)
+	}
+	for _, cell := range combo.Cells() {
+		if text, ok := cell.(*gtk.CellRendererText); ok {
+			text.SetObjectProperty("ellipsize", pango.EllipsizeMiddle)
+		}
 	}
 }
 

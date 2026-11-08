@@ -3,7 +3,9 @@
 package controller
 
 import (
+	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
@@ -11,6 +13,11 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 )
+
+// errTxMismatch is returned when the node builds a transaction that differs
+// from what the user filled in. The node may be remote, so such a transaction
+// is never signed.
+var errTxMismatch = errors.New("the node built a transaction that does not match the form; it was not signed")
 
 func confirmAndSend(parent *gtk.Window, model *model.WalletModel,
 	msg string, trx *tx.Tx,
@@ -79,4 +86,13 @@ func setHint(lbl *gtk.Label, hint string) {
 		return
 	}
 	lbl.SetMarkup(gtkutil.SmallGray(hint))
+}
+
+// upperFirst capitalizes the first letter of an error message to show it as a sentence.
+func upperFirst(text string) string {
+	if text == "" {
+		return text
+	}
+
+	return strings.ToUpper(text[:1]) + text[1:]
 }

@@ -24,6 +24,12 @@ func escapeMarkup(text string) string {
 	return r.Replace(text)
 }
 
+// EscapeMarkup escapes text so Pango shows it as it is. Use it for any value
+// that comes from the user, the blockchain or a link before putting it in markup.
+func EscapeMarkup(text string) string {
+	return escapeMarkup(text)
+}
+
 // SmallGray wraps text in a small gray Pango markup span.
 func SmallGray(text string) string {
 	return fmt.Sprintf("<span foreground='gray' size='small'>%s</span>", escapeMarkup(text))
