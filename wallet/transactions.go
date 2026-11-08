@@ -154,6 +154,21 @@ func (t *transactions) getPendingTransaction() map[string]*wtypes.TransactionInf
 			continue
 		}
 
+		// A committed transaction is not pending anymore, and checking it again fails.
+		// The wallet can miss its block, for example when the node restarts.
+		_, height, err := t.provider.GetTransaction(pendingInfo.TxID)
+		if err == nil {
+			err = t.storage.UpdateTransactionStatus(pendingInfo.No,
+				wtypes.TransactionStatusConfirmed, height)
+			if err != nil {
+				logger.Warn("failed to update transaction status", "error", err, "id", pendingInfo.TxID)
+			}
+
+			logger.Info("confirmed pending transaction", "id", pendingInfo.TxID, "blockHeight", height)
+
+			continue
+		}
+
 		err = t.provider.CheckTransaction(pendingInfo.Data)
 		if err != nil {
 			logger.Warn("pending transaction is invalid", "error", err, "id", pendingInfo.TxID)
