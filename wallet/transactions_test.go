@@ -106,3 +106,40 @@ func TestAddTransaction(t *testing.T) {
 		require.NoError(t, err)
 	})
 }
+
+func TestProcessBlockPendingTransactions(t *testing.T) {
+	td := setup(t)
+
+	trx := td.GenerateTestTransferTx()
+	data, _ := trx.Bytes()
+	pendingInfo := &wtypes.TransactionInfo{No: 1, TxID: trx.ID().String(), Data: data}
+	pendingTxs := map[string]*wtypes.TransactionInfo{pendingInfo.TxID: pendingInfo}
+	blk, _ := td.GenerateTestBlock(td.RandHeight())
+
+	t.Run("committed transaction is confirmed, not checked again", func(_ *testing.T) {
+		height := td.RandHeight()
+
+		td.mockStorage.EXPECT().IsLegacy().Return(false)
+		td.mockStorage.EXPECT().GetPendingTransactions().Return(pendingTxs, nil)
+		td.mockProvider.EXPECT().GetTransaction(pendingInfo.TxID).Return(trx, height, nil)
+		td.mockStorage.EXPECT().
+			UpdateTransactionStatus(pendingInfo.No, wtypes.TransactionStatusConfirmed, height).
+			Return(nil)
+		td.mockStorage.EXPECT().HasAddress(gomock.Any()).Return(false).AnyTimes()
+
+		td.wallet.processEvent(blk)
+	})
+
+	t.Run("uncommitted transaction is checked and re-broadcast", func(_ *testing.T) {
+		td.mockStorage.EXPECT().IsLegacy().Return(false)
+		td.mockStorage.EXPECT().GetPendingTransactions().Return(pendingTxs, nil)
+		td.mockProvider.EXPECT().
+			GetTransaction(pendingInfo.TxID).
+			Return(nil, types.Height(0), errors.New("not found"))
+		td.mockProvider.EXPECT().CheckTransaction(data).Return(nil)
+		td.mockProvider.EXPECT().SendTx(gomock.Any()).Return(pendingInfo.TxID, nil)
+		td.mockStorage.EXPECT().HasAddress(gomock.Any()).Return(false).AnyTimes()
+
+		td.wallet.processEvent(blk)
+	})
+}
