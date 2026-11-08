@@ -9,6 +9,13 @@
   # Otherwise, the number of reward addresses should be the same as the number of validators.
   reward_addresses = []
 
+  # `consensus_observer` keeps the consensus votes and proposals of the current height
+  # when none of the node's validators is in the committee, and returns them in `GetConsensusInfo`.
+  # The node never signs or votes for them. It verifies each vote, which costs some CPU,
+  # so it is meant for bootstrap nodes, explorers and monitoring.
+  # Default is `false`.
+  consensus_observer = false
+
 # `store` contains configuration options for the store module, which manages storage and retrieval of blockchain data.
 [store]
 

@@ -127,8 +127,9 @@ func NewNode(ctx context.Context, genDoc *genesis.Genesis, conf *config.Config,
 	}
 	net = createdNet
 
-	consV1Mgr := consmgr.NewManagerV1(ctx, conf.Consensus, state, valKeys, rewardAddrs, broadcastPipe)
-	consV2Mgr := consmgr.NewManagerV2(ctx, conf.ConsensusV2, state, valKeys, rewardAddrs, broadcastPipe)
+	observer := consmgr.WithObserver(conf.Node.ConsensusObserver)
+	consV1Mgr := consmgr.NewManagerV1(ctx, conf.Consensus, state, valKeys, rewardAddrs, broadcastPipe, observer)
+	consV2Mgr := consmgr.NewManagerV2(ctx, conf.ConsensusV2, state, valKeys, rewardAddrs, broadcastPipe, observer)
 
 	if !store.IsPruned() {
 		conf.Sync.Services.Append(service.FullNode)

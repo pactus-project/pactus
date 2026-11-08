@@ -114,6 +114,20 @@ func (mr *MockConsensusManagerReaderMockRecorder) Instances() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Instances", reflect.TypeOf((*MockConsensusManagerReader)(nil).Instances))
 }
 
+// Observation mocks base method.
+func (m *MockConsensusManagerReader) Observation() *Observation {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Observation")
+	ret0, _ := ret[0].(*Observation)
+	return ret0
+}
+
+// Observation indicates an expected call of Observation.
+func (mr *MockConsensusManagerReaderMockRecorder) Observation() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Observation", reflect.TypeOf((*MockConsensusManagerReader)(nil).Observation))
+}
+
 // Proposal mocks base method.
 func (m *MockConsensusManagerReader) Proposal() *proposal.Proposal {
 	m.ctrl.T.Helper()
@@ -259,6 +273,20 @@ func (m *MockConsensusManager) MoveToNewHeight() {
 func (mr *MockConsensusManagerMockRecorder) MoveToNewHeight() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MoveToNewHeight", reflect.TypeOf((*MockConsensusManager)(nil).MoveToNewHeight))
+}
+
+// Observation mocks base method.
+func (m *MockConsensusManager) Observation() *Observation {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Observation")
+	ret0, _ := ret[0].(*Observation)
+	return ret0
+}
+
+// Observation indicates an expected call of Observation.
+func (mr *MockConsensusManagerMockRecorder) Observation() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Observation", reflect.TypeOf((*MockConsensusManager)(nil).Observation))
 }
 
 // Proposal mocks base method.
