@@ -10,39 +10,65 @@ import (
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 )
 
-// ApplyDarkMode forces the light or dark appearance through the libadwaita
-// style manager, independent of the operating system theme.
-func ApplyDarkMode(dark bool) {
-	scheme := adw.ColorSchemeForceLight
-	if dark {
+// ThemeMode is the user's appearance choice.
+type ThemeMode string
+
+const (
+	// ThemeSystem follows the operating system light/dark preference.
+	ThemeSystem ThemeMode = "system"
+	// ThemeLight always uses the light appearance.
+	ThemeLight ThemeMode = "light"
+	// ThemeDark always uses the dark appearance.
+	ThemeDark ThemeMode = "dark"
+)
+
+// ApplyThemeMode sets the appearance through the libadwaita style manager.
+// With ThemeSystem, the appearance also changes when the operating system
+// preference changes while the application is running.
+func ApplyThemeMode(mode ThemeMode) {
+	scheme := adw.ColorSchemeDefault
+	switch mode {
+	case ThemeLight:
+		scheme = adw.ColorSchemeForceLight
+	case ThemeDark:
 		scheme = adw.ColorSchemeForceDark
+	case ThemeSystem:
 	}
 	adw.StyleManagerGetDefault().SetColorScheme(scheme)
 }
 
-// ApplySavedTheme applies the persisted light/dark choice. It must run before
-// the first window is shown, so the startup assistant, the splash screen and
-// the wallet password dialog use the chosen theme too. Without a saved choice
-// the system theme is followed.
+// ApplySavedTheme applies the persisted theme choice. It must run before the
+// first window is shown, so the startup assistant, the splash screen and the
+// wallet password dialog use the chosen theme too.
 func ApplySavedTheme() {
-	if dark, ok := LoadDarkMode(); ok {
-		ApplyDarkMode(dark)
-	}
+	ApplyThemeMode(LoadThemeMode())
 }
 
-// themePrefPath returns the file that stores the user's light/dark choice,
-// kept in the per-user config directory so it is shared across networks.
-func themePrefPath() string {
+// configPath returns a file in the per-user Pactus config directory, which is
+// shared across networks. It returns an empty string when the directory is
+// unknown.
+func configPath(name string) string {
 	dir, err := os.UserConfigDir()
 	if err != nil {
 		return ""
 	}
 
-	return filepath.Join(dir, "pactus", "gui_dark_mode")
+	return filepath.Join(dir, "pactus", name)
 }
 
-// SaveDarkMode persists the user's dark-mode choice.
-func SaveDarkMode(dark bool) {
+// themePrefPath returns the file that stores the user's theme choice.
+func themePrefPath() string {
+	return configPath("gui_theme")
+}
+
+// legacyDarkModePath returns the file used by older versions, which stored
+// only a light ("0") or dark ("1") choice.
+func legacyDarkModePath() string {
+	return configPath("gui_dark_mode")
+}
+
+// SaveThemeMode persists the user's theme choice.
+func SaveThemeMode(mode ThemeMode) {
 	path := themePrefPath()
 	if path == "" {
 		return
@@ -52,26 +78,35 @@ func SaveDarkMode(dark bool) {
 		return
 	}
 
-	value := "0"
-	if dark {
-		value = "1"
+	if err := os.WriteFile(path, []byte(mode), 0o600); err != nil {
+		return
 	}
 
-	_ = os.WriteFile(path, []byte(value), 0o600)
+	// The new file is now the only source of truth.
+	_ = os.Remove(legacyDarkModePath())
 }
 
-// LoadDarkMode returns the persisted dark-mode choice. ok is false when the
-// user has not made a choice yet, in which case the system theme is followed.
-func LoadDarkMode() (dark, ok bool) {
-	path := themePrefPath()
-	if path == "" {
-		return false, false
+// LoadThemeMode returns the persisted theme choice. It falls back to the
+// choice saved by older versions, and to ThemeSystem when there is none.
+func LoadThemeMode() ThemeMode {
+	if path := themePrefPath(); path != "" {
+		if data, err := os.ReadFile(path); err == nil {
+			switch mode := ThemeMode(strings.TrimSpace(string(data))); mode {
+			case ThemeSystem, ThemeLight, ThemeDark:
+				return mode
+			}
+		}
 	}
 
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return false, false
+	if path := legacyDarkModePath(); path != "" {
+		if data, err := os.ReadFile(path); err == nil {
+			if strings.TrimSpace(string(data)) == "1" {
+				return ThemeDark
+			}
+
+			return ThemeLight
+		}
 	}
 
-	return strings.TrimSpace(string(data)) == "1", true
+	return ThemeSystem
 }

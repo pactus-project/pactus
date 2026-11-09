@@ -71,7 +71,8 @@ headerbar {
     color: @theme_fg_color;
 }
 
-.theme-toggle {
+.theme-toggle,
+menubutton.theme-toggle > button {
     margin-right: 4px;
     min-width: 24px;
     min-height: 24px;
