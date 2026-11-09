@@ -6,7 +6,29 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 )
+
+// ApplyDarkMode forces the light or dark appearance through the libadwaita
+// style manager, independent of the operating system theme.
+func ApplyDarkMode(dark bool) {
+	scheme := adw.ColorSchemeForceLight
+	if dark {
+		scheme = adw.ColorSchemeForceDark
+	}
+	adw.StyleManagerGetDefault().SetColorScheme(scheme)
+}
+
+// ApplySavedTheme applies the persisted light/dark choice. It must run before
+// the first window is shown, so the startup assistant, the splash screen and
+// the wallet password dialog use the chosen theme too. Without a saved choice
+// the system theme is followed.
+func ApplySavedTheme() {
+	if dark, ok := LoadDarkMode(); ok {
+		ApplyDarkMode(dark)
+	}
+}
 
 // themePrefPath returns the file that stores the user's light/dark choice,
 // kept in the per-user config directory so it is shared across networks.

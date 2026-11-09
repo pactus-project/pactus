@@ -141,13 +141,9 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 				themeIcon.SetFromPaintable(assets.IconThemeSunTexture)
 			}
 		}
-		// Restore the persisted light/dark choice, falling back to the system
-		// theme when the user has not chosen yet.
+		// The saved theme is already applied at startup, so the toggle only
+		// reflects the current appearance.
 		startDark := adw.StyleManagerGetDefault().Dark()
-		if saved, ok := gtkutil.LoadDarkMode(); ok {
-			startDark = saved
-			nav.SetDarkMode(saved)
-		}
 		themeToggle.SetActive(startDark)
 		applyThemeIcon(startDark)
 		themeToggle.ConnectToggled(func() {

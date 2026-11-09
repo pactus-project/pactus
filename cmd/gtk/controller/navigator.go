@@ -3,7 +3,6 @@
 package controller
 
 import (
-	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
@@ -213,11 +212,7 @@ func (n *Navigator) SetAutostart(enabled bool) {
 // libadwaita style manager, independent of the operating system theme.
 // It must be called on the UI thread.
 func (*Navigator) SetDarkMode(enabled bool) {
-	scheme := adw.ColorSchemeForceLight
-	if enabled {
-		scheme = adw.ColorSchemeForceDark
-	}
-	adw.StyleManagerGetDefault().SetColorScheme(scheme)
+	gtkutil.ApplyDarkMode(enabled)
 	gtkutil.SaveDarkMode(enabled)
 }
 

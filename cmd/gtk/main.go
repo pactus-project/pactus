@@ -76,6 +76,8 @@ func init() {
 	// Initialize libadwaita so its StyleManager controls the light/dark
 	// appearance, independent of the operating system theme.
 	adw.Init()
+	// Apply the user's theme before any window is created.
+	gtkutil.ApplySavedTheme()
 }
 
 //nolint:gocognit // needs refactoring
