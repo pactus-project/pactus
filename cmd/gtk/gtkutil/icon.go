@@ -14,6 +14,10 @@ import (
 const (
 	iconSizeSmall  = 16
 	iconSizeDialog = 48
+
+	// Space above and below the icon of a message dialog.
+	dialogIconMarginTop    = 18
+	dialogIconMarginBottom = 4
 )
 
 // NewIcon returns an image that shows the texture at the given pixel size.
