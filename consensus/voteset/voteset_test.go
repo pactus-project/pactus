@@ -150,16 +150,23 @@ func TestDuplicateBlockVote(t *testing.T) {
 	require.ErrorIs(t, err, ErrDuplicatedVote)
 	assert.True(t, added)
 
+	// A third vote of the same signer is not kept: one conflicting vote is
+	// enough to show the double vote, and more would only fill the memory.
 	added, err = voteSet.AddVote(duplicatedVote2)
 	require.ErrorIs(t, err, ErrDuplicatedVote)
-	assert.True(t, added)
+	assert.False(t, added)
+
+	// A resent copy of the first vote is still ignored without an error.
+	added, err = voteSet.AddVote(correctVote)
+	require.NoError(t, err)
+	assert.False(t, added)
 
 	bv1 := voteSet.BlockVotes(hash1)
 	bv2 := voteSet.BlockVotes(hash2)
 	bv3 := voteSet.BlockVotes(hash3)
 	assert.Equal(t, correctVote, bv1[addr])
 	assert.Equal(t, duplicatedVote1, bv2[addr])
-	assert.Equal(t, duplicatedVote2, bv3[addr])
+	assert.NotContains(t, bv3, addr)
 	assert.False(t, voteSet.HasQuorumHash())
 }
 
@@ -191,9 +198,16 @@ func TestDuplicateBinaryVote(t *testing.T) {
 	require.ErrorIs(t, err, ErrDuplicatedVote)
 	assert.True(t, added)
 
+	// A third vote of the same signer is not kept: one conflicting vote is
+	// enough to show the double vote, and more would only fill the memory.
 	added, err = voteSet.AddVote(duplicatedVote2)
 	require.ErrorIs(t, err, ErrDuplicatedVote)
-	assert.True(t, added)
+	assert.False(t, added)
+
+	// A resent copy of the first vote is still ignored without an error.
+	added, err = voteSet.AddVote(correctVote)
+	require.NoError(t, err)
+	assert.False(t, added)
 
 	assert.False(t, voteSet.HasOneThirdOfTotalPower(0))
 }

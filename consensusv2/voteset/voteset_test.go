@@ -148,9 +148,16 @@ func TestDoubleBlockVote(t *testing.T) {
 	require.ErrorIs(t, err, ErrDoubleVote)
 	assert.True(t, added)
 
+	// A third vote of the same signer is not kept: one conflicting vote is
+	// enough to show the double vote, and more would only fill the memory.
 	added, err = voteSet.AddVote(doubleVote2)
 	require.ErrorIs(t, err, ErrDoubleVote)
-	assert.True(t, added)
+	assert.False(t, added)
+
+	// A resent copy of the first vote is still ignored without an error.
+	added, err = voteSet.AddVote(correctVote)
+	require.NoError(t, err)
+	assert.False(t, added)
 
 	assert.Contains(t, voteSet.AllVotes(), correctVote)
 	assert.NotContains(t, voteSet.AllVotes(), doubleVote1)
@@ -185,9 +192,16 @@ func TestDoubleBinaryVote(t *testing.T) {
 	require.ErrorIs(t, err, ErrDoubleVote)
 	assert.True(t, added)
 
+	// A third vote of the same signer is not kept: one conflicting vote is
+	// enough to show the double vote, and more would only fill the memory.
 	added, err = voteSet.AddVote(doubleVote2)
 	require.ErrorIs(t, err, ErrDoubleVote)
-	assert.True(t, added)
+	assert.False(t, added)
+
+	// A resent copy of the first vote is still ignored without an error.
+	added, err = voteSet.AddVote(correctVote)
+	require.NoError(t, err)
+	assert.False(t, added)
 
 	assert.Contains(t, voteSet.AllVotes(), correctVote)
 	assert.NotContains(t, voteSet.AllVotes(), doubleVote1)

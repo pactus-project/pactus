@@ -14,6 +14,9 @@ type roundVotes struct {
 	voteBoxes  [3]*voteBox
 	allVotes   map[crypto.Address]*vote.Vote
 	votedPower int64
+	// duplicated marks the signers that already have a second, conflicting
+	// vote in this change-proposer round. See BlockVoteSet.duplicated.
+	duplicated map[crypto.Address]bool
 }
 
 func newRoundVotes() *roundVotes {
@@ -26,6 +29,7 @@ func newRoundVotes() *roundVotes {
 		voteBoxes:  voteBoxes,
 		allVotes:   make(map[crypto.Address]*vote.Vote),
 		votedPower: 0,
+		duplicated: make(map[crypto.Address]bool),
 	}
 }
 
@@ -93,6 +97,18 @@ func (vs *BinaryVoteSet) AllVotes() []*vote.Vote {
 
 // AddVote attempts to add a vote to the VoteSet. Returns an error if the vote is invalid.
 func (vs *BinaryVoteSet) AddVote(vote *vote.Vote) (bool, error) {
+	if int(vote.CPRound()) < len(vs.roundVotes) && vs.roundVotes[vote.CPRound()].duplicated[vote.Signer()] {
+		existingVote := vs.roundVotes[vote.CPRound()].allVotes[vote.Signer()]
+		if existingVote.Hash() == vote.Hash() {
+			// A resent copy of the first vote, for example after a restart.
+			return false, nil
+		}
+
+		// The signer already has two verified votes in this change-proposer
+		// round, so a third one is rejected whatever its signature.
+		return false, ErrDuplicatedVote
+	}
+
 	power, err := vs.voteSet.verifyVote(vote)
 	if err != nil {
 		return false, err
@@ -108,6 +124,7 @@ func (vs *BinaryVoteSet) AddVote(vote *vote.Vote) (bool, error) {
 
 		// It is a duplicated vote
 		err = ErrDuplicatedVote
+		roundVotes.duplicated[vote.Signer()] = true
 	} else {
 		roundVotes.allVotes[vote.Signer()] = vote
 		roundVotes.votedPower += power

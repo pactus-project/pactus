@@ -761,8 +761,17 @@ func TestVoteWithBigRound(t *testing.T) {
 
 	td.enterNewHeight(td.consX)
 
-	v := td.addPrepareVote(td.consX, td.RandHash(), 1, types.Round(util.MaxInt16), tIndexB)
-	assert.True(t, td.consX.HasVote(v.Hash()))
+	// A vote for a round far ahead is ignored, without any overflow.
+	far := td.addPrepareVote(td.consX, td.RandHash(), 1, types.Round(util.MaxInt16), tIndexB)
+	assert.False(t, td.consX.HasVote(far.Hash()))
+
+	// A vote within maxFutureRounds of the current round is kept.
+	near := td.addPrepareVote(td.consX, td.RandHash(), 1, maxFutureRounds, tIndexB)
+	assert.True(t, td.consX.HasVote(near.Hash()))
+
+	// A vote just past the bound is ignored.
+	beyond := td.addPrepareVote(td.consX, td.RandHash(), 1, maxFutureRounds+1, tIndexB)
+	assert.False(t, td.consX.HasVote(beyond.Hash()))
 }
 
 func TestProposalWithBigRound(t *testing.T) {
