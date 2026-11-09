@@ -157,6 +157,14 @@ func (c *WalletWidgetController) BuildView(ctx context.Context, nav *Navigator) 
 		gtkutil.ConnectButtonSignal(c.view.BtnTxPrev, c.prevTransactionsPage)
 
 		gtkutil.CaptureDoubleClick(&c.view.ColViewAddresses.Widget, c.ShowAddressDetails)
+
+		// The periodic refresh below skips the parts that are not on screen,
+		// so refresh each part as soon as it is shown again. Otherwise the
+		// wallet page shows stale values until the next refresh tick.
+		// The refresh runs in the background to keep page switching smooth.
+		c.view.BoxInfo.ConnectMap(func() { go c.RefreshInfo() })
+		c.view.BoxAddresses.ConnectMap(func() { go c.RefreshAddresses() })
+		c.view.BoxTransactions.ConnectMap(func() { go c.RefreshTransactions() })
 	})
 
 	scheduler.Every(refreshWalletInterval).Do(ctx, func(context.Context) {
