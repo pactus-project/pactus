@@ -87,9 +87,13 @@ func showMessageDialog(dlg *gtk.MessageDialog, icon *gdk.Texture, title, msg str
 	dlg.SetObjectProperty("secondary-text", msg)
 
 	// GTK 4 message dialogs have no icon of their own, so put the SVG icon
-	// above the title.
+	// above the title. The message area has no top padding of its own, so
+	// add some space above the icon to keep it off the dialog edge.
 	if area, ok := dlg.MessageArea().(*gtk.Box); ok && icon != nil {
-		area.Prepend(NewIcon(icon, iconSizeDialog))
+		img := NewIcon(icon, iconSizeDialog)
+		img.SetMarginTop(dialogIconMarginTop)
+		img.SetMarginBottom(dialogIconMarginBottom)
+		area.Prepend(img)
 	}
 
 	dlg.ConnectResponse(func(responseID int) {
