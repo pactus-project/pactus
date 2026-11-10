@@ -117,6 +117,10 @@ var (
 	iconThemeMoonData    []byte
 	IconThemeMoonTexture *gdk.Texture
 
+	//go:embed icons/theme_system.svg
+	iconThemeSystemData    []byte
+	IconThemeSystemTexture *gdk.Texture
+
 	//go:embed icons/copy.svg
 	iconCopyData    []byte
 	IconCopyTexture *gdk.Texture
@@ -178,6 +182,7 @@ func initIcons() {
 	IconStatusErrorTexture = TextureFromBytes(iconStatusErrorData)
 	IconThemeSunTexture = TextureFromBytes(iconThemeSunData)
 	IconThemeMoonTexture = TextureFromBytes(iconThemeMoonData)
+	IconThemeSystemTexture = TextureFromBytes(iconThemeSystemData)
 	IconCopyTexture = TextureFromBytes(iconCopyData)
 	IconDownloadTexture = TextureFromBytes(iconDownloadData)
 	IconLoadingTexture = TextureFromBytes(iconLoadingData)

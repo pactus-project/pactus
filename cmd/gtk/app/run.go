@@ -6,7 +6,6 @@ import (
 	"context"
 	"runtime"
 
-	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/gogpu/systray"
@@ -127,35 +126,33 @@ func Run(ctx context.Context, conn grpc.ClientConnInterface,
 		// Suppress the centered window title so the brand stays left-aligned.
 		header.SetTitleWidget(gtk.NewLabel(""))
 
-		themeToggle := gtk.NewToggleButton()
-		themeToggle.AddCSSClass("theme-toggle")
-		themeToggle.AddCSSClass("circular")
-		themeToggle.SetVAlign(gtk.AlignCenter)
-		themeToggle.SetTooltipText("Toggle light / dark mode")
+		// Round appearance button: its icon shows the current choice and it
+		// opens the same Light / Dark / System menu as File > Appearance.
+		themeButton := gtk.NewMenuButton()
+		themeButton.AddCSSClass("theme-toggle")
+		themeButton.AddCSSClass("circular")
+		themeButton.SetVAlign(gtk.AlignCenter)
 		themeIcon := gtkutil.NewIcon(assets.IconThemeSunTexture, 14)
-		themeToggle.SetChild(themeIcon)
-		applyThemeIcon := func(dark bool) {
-			if dark {
+		themeButton.SetChild(themeIcon)
+		themeButton.SetMenuModel(controller.ThemeMenu())
+		applyThemeIcon := func(mode gtkutil.ThemeMode) {
+			switch mode {
+			case gtkutil.ThemeDark:
 				themeIcon.SetFromPaintable(assets.IconThemeMoonTexture)
-			} else {
+				themeButton.SetTooltipText("Appearance: Dark")
+			case gtkutil.ThemeLight:
 				themeIcon.SetFromPaintable(assets.IconThemeSunTexture)
+				themeButton.SetTooltipText("Appearance: Light")
+			case gtkutil.ThemeSystem:
+				themeIcon.SetFromPaintable(assets.IconThemeSystemTexture)
+				themeButton.SetTooltipText("Appearance: System")
 			}
 		}
-		// Restore the persisted light/dark choice, falling back to the system
-		// theme when the user has not chosen yet.
-		startDark := adw.StyleManagerGetDefault().Dark()
-		if saved, ok := gtkutil.LoadDarkMode(); ok {
-			startDark = saved
-			nav.SetDarkMode(saved)
-		}
-		themeToggle.SetActive(startDark)
-		applyThemeIcon(startDark)
-		themeToggle.ConnectToggled(func() {
-			active := themeToggle.Active()
-			nav.SetDarkMode(active)
-			applyThemeIcon(active)
-		})
-		header.PackEnd(themeToggle)
+		// The saved theme is already applied at startup, so the button only
+		// reflects the current choice.
+		applyThemeIcon(gtkutil.LoadThemeMode())
+		nav.OnThemeChanged(applyThemeIcon)
+		header.PackEnd(themeButton)
 
 		mwView.Window.SetTitlebar(header)
 

@@ -3,7 +3,6 @@
 package controller
 
 import (
-	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
@@ -24,6 +23,9 @@ type Navigator struct {
 	autostart          *autostart.Entry
 	autostartAction    *gio.SimpleAction
 	onAutostartChanged func(enabled bool)
+
+	themeAction    *gio.SimpleAction
+	onThemeChanged func(mode gtkutil.ThemeMode)
 }
 
 func NewNavigator(gtkApp *gtk.Application,
@@ -209,16 +211,35 @@ func (n *Navigator) SetAutostart(enabled bool) {
 	}
 }
 
-// SetDarkMode forces the light or dark appearance at runtime through the
-// libadwaita style manager, independent of the operating system theme.
+// OnThemeChanged sets a function that is called on the UI thread after the
+// theme changes, so the title bar can show the new choice.
+func (n *Navigator) OnThemeChanged(callback func(mode gtkutil.ThemeMode)) {
+	n.onThemeChanged = callback
+}
+
+// SetThemeMode applies and persists the light, dark or system appearance.
 // It must be called on the UI thread.
-func (*Navigator) SetDarkMode(enabled bool) {
-	scheme := adw.ColorSchemeForceLight
-	if enabled {
-		scheme = adw.ColorSchemeForceDark
+func (n *Navigator) SetThemeMode(mode gtkutil.ThemeMode) {
+	gtkutil.ApplyThemeMode(mode)
+	gtkutil.SaveThemeMode(mode)
+
+	if n.themeAction != nil {
+		n.themeAction.SetState(glib.NewVariantString(string(mode)))
 	}
-	adw.StyleManagerGetDefault().SetColorScheme(scheme)
-	gtkutil.SaveDarkMode(enabled)
+	if n.onThemeChanged != nil {
+		n.onThemeChanged(mode)
+	}
+}
+
+// ThemeMenu returns the Light / Dark / System choices as radio items. It is
+// shared by the File menu and the title bar button, so both stay in sync.
+func ThemeMenu() *gio.Menu {
+	menu := gio.NewMenu()
+	menu.Append("_Light", "app.theme::"+string(gtkutil.ThemeLight))
+	menu.Append("_Dark", "app.theme::"+string(gtkutil.ThemeDark))
+	menu.Append("_System", "app.theme::"+string(gtkutil.ThemeSystem))
+
+	return menu
 }
 
 func (n *Navigator) CreateMenu(isLocal bool) *gio.Menu {
@@ -259,12 +280,23 @@ func (n *Navigator) CreateMenu(isLocal bool) *gio.Menu {
 	})
 	n.gtkApp.AddAction(n.autostartAction)
 
+	// A stateful string action is shown as a group of radio items.
+	n.themeAction = gio.NewSimpleActionStateful("theme", glib.NewVariantType("s"),
+		glib.NewVariantString(string(gtkutil.LoadThemeMode())))
+	n.themeAction.ConnectActivate(func(param *glib.Variant) {
+		if param != nil {
+			n.SetThemeMode(gtkutil.ThemeMode(param.String()))
+		}
+	})
+	n.gtkApp.AddAction(n.themeAction)
+
 	menubar := gio.NewMenu()
 
 	// --- File Menu ---
 	fileMenu := gio.NewMenu()
 	fileMenu.Append("Edit _Config", "app.config")
 	fileMenu.Append("Start on System _Startup", "app.autostart")
+	fileMenu.AppendSubmenu("_Appearance", ThemeMenu())
 	fileMenu.AppendSection("", gio.NewMenu()) // separator
 	fileMenu.Append("_Quit", "app.quit")
 
