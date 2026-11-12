@@ -734,6 +734,7 @@ func TestGetRawAnchorRejectsBadSender(t *testing.T) {
 
 func TestGetRawAnchorRejectsWideAnchorType(t *testing.T) {
 	td := setup(t, nil)
+	td.FakeState.FakeHeight = td.RandHeight()
 	client := td.transactionClient(t)
 	from := td.RandAccAddress().String()
 	root := bytesRepeat(0x11, 32)

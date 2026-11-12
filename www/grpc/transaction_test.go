@@ -3,6 +3,7 @@ package grpc_test
 import (
 	"encoding/hex"
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/pactus-project/pactus/types/amount"
@@ -13,6 +14,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func TestGetTransaction(t *testing.T) {
@@ -126,6 +129,8 @@ func TestSendRawTransaction(t *testing.T) {
 func TestGetRawTransaction(t *testing.T) {
 	td := setup(t, nil)
 	client := td.transactionClient(t)
+	// A transaction without a lock time is invalid: the chain must have a block.
+	td.FakeState.FakeHeight = td.RandHeight()
 
 	td.FakeState.EXPECT().CalculateFee(gomock.Any(), gomock.Any()).Return(td.RandFee()).AnyTimes()
 	td.FakeState.EXPECT().CalculateFeeForTx(gomock.Any()).DoAndReturn(
@@ -195,7 +200,7 @@ func TestGetRawTransaction(t *testing.T) {
 		res, err := client.GetRawBondTransaction(t.Context(),
 			&pactus.GetRawBondTransactionRequest{
 				Sender:    td.RandAccAddress().String(),
-				Receiver:  td.RandValAddress().String(),
+				Receiver:  pub.ValidatorAddress().String(),
 				Stake:     amt.ToNanoPAC(),
 				PublicKey: pub.String(),
 				Memo:      td.RandString(32),
@@ -284,6 +289,7 @@ func TestGetRawTransaction(t *testing.T) {
 func TestGetRawTransactionFollowsMinimumFee(t *testing.T) {
 	td := setup(t, nil)
 	client := td.transactionClient(t)
+	td.FakeState.FakeHeight = td.RandHeight()
 
 	const estimated = amount.Amount(1_000)
 	const required = amount.Amount(5_000)
@@ -323,7 +329,11 @@ func TestGetRawTransactionFollowsMinimumFee(t *testing.T) {
 		{"Batch transfer", func(fee int64) (string, error) {
 			res, err := client.GetRawBatchTransferTransaction(t.Context(), &pactus.GetRawBatchTransferTransactionRequest{
 				Sender: sender, Fee: fee,
-				Recipients: []*pactus.Recipient{{Receiver: td.RandAccAddress().String(), Amount: 10}},
+				// A batch transfer has between 2 and 8 recipients.
+				Recipients: []*pactus.Recipient{
+					{Receiver: td.RandAccAddress().String(), Amount: 10},
+					{Receiver: td.RandAccAddress().String(), Amount: 10},
+				},
 			})
 
 			return rawOf(res, err)
@@ -470,4 +480,32 @@ func TestCheckTransaction(t *testing.T) {
 		assert.False(t, res.IsValid)
 		assert.Equal(t, "insufficient funds", res.ErrorMessage)
 	})
+}
+
+// A transaction that the node would refuse once it is signed is reported when it is built.
+func TestGetRawTransactionRejectsInvalid(t *testing.T) {
+	td := setup(t, nil)
+	client := td.transactionClient(t)
+	td.FakeState.FakeHeight = td.RandHeight()
+	td.FakeState.EXPECT().CalculateFee(gomock.Any(), gomock.Any()).Return(td.RandFee()).AnyTimes()
+	td.FakeState.EXPECT().CalculateFeeForTx(gomock.Any()).DoAndReturn(
+		func(trx *tx.Tx) (amount.Amount, error) { return trx.Fee(), nil }).AnyTimes()
+
+	tests := map[string]*pactus.GetRawTransferTransactionRequest{
+		"negative amount": {Sender: td.RandAccAddress().String(), Receiver: td.RandAccAddress().String(), Amount: -1},
+		"negative fee": {
+			Sender: td.RandAccAddress().String(), Receiver: td.RandAccAddress().String(), Amount: 1, Fee: -1,
+		},
+		"memo too long": {
+			Sender: td.RandAccAddress().String(), Receiver: td.RandAccAddress().String(), Amount: 1,
+			Memo: strings.Repeat("m", 65),
+		},
+	}
+
+	for name, req := range tests {
+		t.Run(name, func(t *testing.T) {
+			_, err := client.GetRawTransferTransaction(t.Context(), req)
+			require.Equal(t, codes.InvalidArgument, status.Code(err))
+		})
+	}
 }

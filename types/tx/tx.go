@@ -143,6 +143,21 @@ func (tx *Tx) BasicCheck() error {
 	if tx.basicChecked.Load() {
 		return nil
 	}
+	if err := tx.BasicCheckUnsigned(); err != nil {
+		return err
+	}
+	if err := tx.checkSignature(); err != nil {
+		return err
+	}
+
+	tx.basicChecked.Store(true)
+
+	return nil
+}
+
+// BasicCheckUnsigned runs the checks of BasicCheck that don't need the signature.
+// It checks a transaction before it is signed.
+func (tx *Tx) BasicCheckUnsigned() error {
 	if tx.Version() != versionLatest {
 		return BasicCheckError{
 			Reason: fmt.Sprintf("invalid version: %d", tx.Version()),
@@ -168,16 +183,8 @@ func (tx *Tx) BasicCheck() error {
 			Reason: fmt.Sprintf("invalid payload: %s", err.Error()),
 		}
 	}
-	if err := tx.checkFee(); err != nil {
-		return err
-	}
-	if err := tx.checkSignature(); err != nil {
-		return err
-	}
 
-	tx.basicChecked.Store(true)
-
-	return nil
+	return tx.checkFee()
 }
 
 func (tx *Tx) checkFee() error {
