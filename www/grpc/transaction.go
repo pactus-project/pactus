@@ -526,15 +526,14 @@ func (s *transactionServer) CheckTransaction(_ context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
 	}
 
-	err = s.state.CheckTransaction(trx)
-	if err != nil {
-		return &pactus.CheckTransactionResponse{
-			IsValid:      false,
-			ErrorMessage: err.Error(),
-		}, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
+	// The transaction is decoded, and the answer says whether it is valid.
+	// Returning an error for a transaction that is not valid would discard the answer
+	// on the client side.
+	res := &pactus.CheckTransactionResponse{IsValid: true}
+	if err := s.state.CheckTransaction(trx); err != nil {
+		res.IsValid = false
+		res.ErrorMessage = err.Error()
 	}
 
-	return &pactus.CheckTransactionResponse{
-		IsValid: true,
-	}, nil
+	return res, nil
 }

@@ -440,3 +440,34 @@ func TestDecodeRawTransaction(t *testing.T) {
 		assert.Nil(t, res)
 	})
 }
+
+func TestCheckTransaction(t *testing.T) {
+	td := setup(t, nil)
+	client := td.transactionClient(t)
+
+	trx := td.GenerateTestTransferTx()
+	data, _ := trx.Bytes()
+	req := &pactus.CheckTransactionRequest{RawTransaction: hex.EncodeToString(data)}
+
+	t.Run("a transaction that can't be decoded is an error", func(t *testing.T) {
+		_, err := client.CheckTransaction(t.Context(), &pactus.CheckTransactionRequest{RawTransaction: "00"})
+		require.Error(t, err)
+	})
+
+	t.Run("a valid transaction", func(t *testing.T) {
+		td.FakeState.EXPECT().CheckTransaction(gomock.Any()).Return(nil).Times(1)
+
+		res, err := client.CheckTransaction(t.Context(), req)
+		require.NoError(t, err)
+		assert.True(t, res.IsValid)
+	})
+
+	t.Run("an invalid transaction is in the answer, not an error", func(t *testing.T) {
+		td.FakeState.EXPECT().CheckTransaction(gomock.Any()).Return(errors.New("insufficient funds")).Times(1)
+
+		res, err := client.CheckTransaction(t.Context(), req)
+		require.NoError(t, err)
+		assert.False(t, res.IsValid)
+		assert.Equal(t, "insufficient funds", res.ErrorMessage)
+	})
+}
