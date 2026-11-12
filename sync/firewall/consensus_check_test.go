@@ -8,6 +8,8 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types"
+	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
@@ -146,4 +148,53 @@ func TestConsensusRequestSignatureBudget(t *testing.T) {
 	assert.Equal(t, maxSignatureChecksPerPeer, results[network.Drop])
 	assert.Equal(t, 10, results[network.DropButConsume])
 	assert.Zero(t, results[network.Propagate])
+}
+
+func TestConsensusRequestBudgetCountsForgedOnly(t *testing.T) {
+	td, keys, height := setupCommitteeCheck(t)
+
+	// The peer is the relay of the messages, not their author.
+	// Messages that can't be checked, and valid messages, must not use up its budget:
+	// its authentic votes would no longer be relayed.
+	for range 2 * maxSignatureChecksPerPeer {
+		query := message.NewQueryVoteMessage(height, 0, keys[0].Address())
+		require.Equal(t, network.Propagate,
+			td.firewall.AllowConsensusRequest(consensusGossip(t, td, query)))
+
+		next := vote.NewPrecommitVote(td.RandHash(), height+1, 0, keys[1].Address())
+		td.HelperSignVote(keys[2], next)
+		require.Equal(t, network.Propagate,
+			td.firewall.AllowConsensusRequest(consensusGossip(t, td, message.NewVoteMessage(next))))
+	}
+
+	for range maxSignatureChecksPerPeer + 10 {
+		vte := vote.NewPrecommitVote(td.RandHash(), height, 0, keys[1].Address())
+		td.HelperSignVote(keys[1], vte)
+		require.Equal(t, network.Propagate,
+			td.firewall.AllowConsensusRequest(consensusGossip(t, td, message.NewVoteMessage(vte))))
+	}
+}
+
+func TestConsensusRequestForgedProposalSkipsBlockCheck(t *testing.T) {
+	td, keys, height := setupCommitteeCheck(t)
+
+	// The block holds a transaction with an invalid signature.
+	// A forged proposal is dropped for its own signature, and a proposal of the proposer
+	// is relayed: the block is checked by the consensus, not by the gossip validator.
+	trx := td.GenerateTestTransferTx()
+	trx.SetSignature(td.RandBLSSignature())
+	blk, _ := td.GenerateTestBlock(height,
+		testsuite.BlockWithTransactions(block.Txs{trx}),
+		testsuite.BlockWithProposer(keys[0].Address()))
+	require.Error(t, blk.BasicCheck())
+
+	forged := proposal.NewProposal(height, 0, blk)
+	forged.SetSignature(keys[1].Sign(forged.SignBytes()))
+	assert.Equal(t, network.Drop,
+		td.firewall.AllowConsensusRequest(consensusGossip(t, td, message.NewProposalMessage(forged))))
+
+	signed := proposal.NewProposal(height, 0, blk)
+	signed.SetSignature(keys[0].Sign(signed.SignBytes()))
+	assert.Equal(t, network.Propagate,
+		td.firewall.AllowConsensusRequest(consensusGossip(t, td, message.NewProposalMessage(signed))))
 }
