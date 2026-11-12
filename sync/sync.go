@@ -320,8 +320,31 @@ func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
 func (sync *synchronizer) processConnectEvent(eve *network.ConnectEvent) {
 	sync.logger.Debug("processing connect event", "pid", eve.PeerID)
 
-	sync.peerSet.UpdateAddress(eve.PeerID, eve.RemoteAddress, eve.Direction)
-	sync.peerSet.UpdateStatus(eve.PeerID, status.StatusConnected)
+	prev := sync.peerSet.GetPeer(eve.PeerID)
+	if prev == nil || !prev.Status.IsConnectedOrKnown() {
+		// A new connection: the handshake starts with it.
+		sync.peerSet.UpdateAddress(eve.PeerID, eve.RemoteAddress, eve.Direction)
+		sync.peerSet.UpdateStatus(eve.PeerID, status.StatusConnected)
+
+		return
+	}
+
+	// Another connection to a connected peer: the two peers dialed each other at the same time.
+	// The handshake follows the direction of the first connection: the outbound side sends
+	// the first Hello. Taking the direction of the last connection could make each side wait
+	// for, or refuse, the Hello of the other.
+	//
+	// Each side may have seen the connection of the other first: both wait for the first Hello.
+	// The connection that this node made is outbound, so it sends the first Hello now.
+	if eve.Direction == lp2pnetwork.DirOutbound && prev.Direction == lp2pnetwork.DirInbound &&
+		!prev.OutboundHelloSent && !prev.Status.IsKnown() {
+		sync.logger.Info("both peers dialed each other, sending Hello message", "to", eve.PeerID)
+		sync.peerSet.UpdateAddress(eve.PeerID, eve.RemoteAddress, eve.Direction)
+		if len(prev.Protocols) > 0 {
+			sync.sayHello(eve.PeerID)
+			sync.peerSet.UpdateOutboundHelloSent(eve.PeerID, true)
+		}
+	}
 }
 
 func (sync *synchronizer) processProtocolsEvent(eve *network.ProtocolsEvents) {
