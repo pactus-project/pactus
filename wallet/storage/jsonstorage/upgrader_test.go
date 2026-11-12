@@ -1,6 +1,8 @@
 package jsonstorage
 
 import (
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/pactus-project/pactus/genesis"
@@ -106,6 +108,58 @@ func TestUpgrade(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, VersionLatest, strg.WalletInfo().Version)
 	})
+}
+
+func TestOpenDoesNotRewriteWallet(t *testing.T) {
+	// The first opening removes the unused `xpub_secp256k1` field and saves the wallet.
+	path := util.TempFilePath()
+	require.NoError(t, util.CopyFile("./testdata/wallet_version_6", path))
+
+	_, err := Open(path)
+	require.NoError(t, err)
+
+	upgraded, err := util.ReadFile(path)
+	require.NoError(t, err)
+	assert.NotContains(t, string(upgraded), legacyXPubSecp256k1Field)
+
+	// The wallet is at the latest version now: opening it again must not write the file.
+	require.NoError(t, os.Chmod(path, 0o400))
+	stat1, err := os.Stat(path)
+	require.NoError(t, err)
+
+	_, err = Open(path)
+	require.NoError(t, err)
+
+	stat2, err := os.Stat(path)
+	require.NoError(t, err)
+	assert.Equal(t, stat1.ModTime(), stat2.ModTime())
+
+	reopened, err := util.ReadFile(path)
+	require.NoError(t, err)
+	assert.Equal(t, upgraded, reopened)
+}
+
+func TestOpenCorruptedWallet(t *testing.T) {
+	path := util.TempFilePath()
+	require.NoError(t, util.CopyFile("./testdata/wallet_version_6", path))
+
+	_, err := Open(path)
+	require.NoError(t, err)
+
+	// Change the vault without updating the CRC.
+	data, err := util.ReadFile(path)
+	require.NoError(t, err)
+	corrupted := strings.Replace(string(data), `"next_account_index": 1`, `"next_account_index": 7`, 1)
+	require.NotEqual(t, string(data), corrupted)
+	require.NoError(t, util.WriteFile(path, []byte(corrupted)))
+
+	_, err = Open(path)
+	require.ErrorAs(t, err, &CRCNotMatchError{})
+
+	// The corrupted file is reported, not repaired.
+	after, err := util.ReadFile(path)
+	require.NoError(t, err)
+	assert.Equal(t, corrupted, string(after))
 }
 
 func TestUpgradeTestnet(t *testing.T) {
