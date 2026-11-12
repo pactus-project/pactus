@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/types"
+	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -92,4 +93,36 @@ func TestUpcomingProposalsCacheIsUnbounded(t *testing.T) {
 
 	assert.Less(t, len(mgr.upcomingProposals), acceptableBound,
 		"upcomingProposals must not grow without bound from unauthenticated, unsigned proposals")
+}
+
+// The same vote or proposal of the next height, received many times,
+// takes one place in the cache: the ones that come after it are still cached.
+func TestUpcomingCachesIgnoreDuplicates(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	mockState := state.NewMockState(ts.MockController())
+	consA := consensus.NewMockConsensus(ts.MockController())
+
+	height := ts.RandHeight()
+	consA.EXPECT().IsActive().Return(true).AnyTimes()
+	consA.EXPECT().HeightRound().Return(height, ts.RandRound()).AnyTimes()
+
+	mgr, ok := NewManager(mockState, []consensus.Consensus{consA}).(*manager)
+	require.True(t, ok)
+
+	repeated, _ := ts.GenerateTestPrecommitVote(height+1, 0)
+	for range 2 * maxUpcomingVotes {
+		mgr.AddVote(repeated)
+	}
+	other, _ := ts.GenerateTestPrecommitVote(height+1, 0)
+	mgr.AddVote(other)
+	assert.Equal(t, []*vote.Vote{repeated, other}, mgr.upcomingVotes)
+
+	prop := ts.GenerateTestProposal(height+1, 0)
+	for range 2 * maxUpcomingProposals {
+		mgr.SetProposal(prop)
+	}
+	otherProp := ts.GenerateTestProposal(height+1, 1)
+	mgr.SetProposal(otherProp)
+	assert.Equal(t, []*proposal.Proposal{prop, otherProp}, mgr.upcomingProposals)
 }
