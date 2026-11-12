@@ -23,10 +23,12 @@ type manager struct {
 	// Caching future votes and proposals due to potential server time misalignments.
 	// Votes and proposals for upcoming blocks may be received before
 	// the current block's consensus is complete.
-	upcomingVotes     []*vote.Vote           // Map to cache votes for future block heights
-	upcomingSeen      map[hash.Hash]struct{} // the hashes of the cached votes and proposals
-	upcomingProposals []*proposal.Proposal   // Map to cache proposals for future block heights
-	state             state.State
+	upcomingVotes         []*vote.Vote           // Map to cache votes for future block heights
+	upcomingSeen          map[hash.Hash]struct{} // the hashes of the cached votes and proposals
+	upcomingProposals     []*proposal.Proposal   // Map to cache proposals for future block heights
+	upcomingProposalsSize int                    // the size of the blocks of the cached proposals
+	maxProposalsSize      int                    // the bound of upcomingProposalsSize
+	state                 state.State
 
 	// observer keeps the votes and proposals of the current height while no
 	// local validator is in the committee. It is off unless WithObserver is set.
@@ -56,6 +58,9 @@ func WithObserver(enabled bool) Option {
 const (
 	maxUpcomingVotes     = 512
 	maxUpcomingProposals = 100
+	// maxUpcomingProposalsSize bounds the size of the cached proposals: a proposal holds a block,
+	// and a block can be close to the size limit of a gossip message.
+	maxUpcomingProposalsSize = 16 << 20
 )
 
 // NewManagerV1 creates a new manager instance that manages a set of consensus instances,
@@ -107,6 +112,7 @@ func NewManager(state state.State, instances []consensus.Consensus, opts ...Opti
 		instances:         instances,
 		upcomingVotes:     make([]*vote.Vote, 0),
 		upcomingProposals: make([]*proposal.Proposal, 0),
+		maxProposalsSize:  maxUpcomingProposalsSize,
 		state:             state,
 		observer:          newObserver(false),
 	}
@@ -206,6 +212,7 @@ func (mgr *manager) MoveToNewHeight() {
 	}
 
 	clear(mgr.upcomingSeen)
+	mgr.upcomingProposalsSize = 0
 }
 
 // AddVote adds a vote to all consensus instances.
@@ -252,11 +259,20 @@ func (mgr *manager) cacheUpcomingProposal(prop *proposal.Proposal) {
 		return
 	}
 
+	size := 0
+	if prop.Block() != nil {
+		size = prop.Block().SerializeSize()
+	}
+	if mgr.upcomingProposalsSize+size > mgr.maxProposalsSize {
+		return
+	}
+
 	if mgr.seenUpcoming(prop.Hash()) {
 		return
 	}
 
 	mgr.upcomingProposals = append(mgr.upcomingProposals, prop)
+	mgr.upcomingProposalsSize += size
 }
 
 // seenUpcoming records the hash of a vote or a proposal of the next height,
