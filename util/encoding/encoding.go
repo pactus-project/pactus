@@ -407,12 +407,30 @@ func ReadVarStringMax(r io.Reader, maxLen uint64) (string, error) {
 	return string(buf), nil
 }
 
+// smallReadSize is the size up to which readExactly allocates the buffer upfront.
+const smallReadSize = 4096
+
 // readExactly reads exactly n bytes from r, growing its buffer incrementally
 // (as io.ReadAll does) rather than allocating n bytes upfront. A message
 // that announces a length far larger than the data it actually carries
 // would otherwise force that large allocation before the short read is
 // even detected.
 func readExactly(r io.Reader, n uint64) ([]byte, error) {
+	// A small buffer is allocated at once: growing it incrementally starts
+	// with a larger buffer than most of the values need.
+	if n <= smallReadSize {
+		buf := make([]byte, n)
+		if _, err := io.ReadFull(r, buf); err != nil {
+			if errors.Is(err, io.EOF) {
+				return nil, io.ErrUnexpectedEOF
+			}
+
+			return nil, err
+		}
+
+		return buf, nil
+	}
+
 	buf, err := io.ReadAll(io.LimitReader(r, int64(n)))
 	if err != nil {
 		return nil, err
