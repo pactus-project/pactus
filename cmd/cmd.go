@@ -174,6 +174,9 @@ func StartNode(ctx context.Context, workingDir string, passwordFetcher func() (s
 
 	err = node.Start()
 	if err != nil {
+		// Release what the node has opened, like the store and the network.
+		node.Stop()
+
 		return nil, err
 	}
 
