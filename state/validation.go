@@ -67,7 +67,7 @@ func (st *state) validatePrevCertificate(cert *certificate.Certificate, blockHas
 		if !st.lastInfo.BlockHash().IsUndef() {
 			return ErrInvalidCertificate
 		}
-	} else {
+	} else if !st.isLastCertificate(cert) {
 		err := cert.ValidatePrecommit(st.lastInfo.Validators(), blockHash)
 		if err != nil {
 			return err
@@ -75,6 +75,19 @@ func (st *state) validatePrevCertificate(cert *certificate.Certificate, blockHas
 	}
 
 	return nil
+}
+
+// isLastCertificate reports whether the certificate is the one that the state holds
+// for the last block. That certificate is verified already: when the last block was
+// committed, and each time a vote is added to it. While the node synchronizes, the
+// previous certificate of a block is the certificate that committed the block before,
+// so verifying it again doubles the signature verifications of each block.
+//
+// The certificate of a proposer can hold other signers. It is verified as before.
+func (st *state) isLastCertificate(cert *certificate.Certificate) bool {
+	lastCert := st.lastInfo.Certificate()
+
+	return lastCert != nil && cert.Hash() == lastCert.Hash()
 }
 
 // validateCurCertificate validates certificate for the current height.
