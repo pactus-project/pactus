@@ -126,32 +126,42 @@ func MakeTransactionInfos(trx *tx.Tx, status TransactionStatus, blockHeight type
 		return nil, fmt.Errorf("failed to serialize tx: %w", err)
 	}
 
-	receivers := make([]string, 0)
+	type entry struct {
+		receiver string
+		amount   amount.Amount
+	}
+
+	value := trx.Payload().Value()
+	entries := make([]entry, 0, 1)
 	switch pld := trx.Payload().(type) {
 	case *payload.TransferPayload:
-		receivers = append(receivers, pld.To.String())
+		entries = append(entries, entry{pld.To.String(), value})
 	case *payload.BondPayload:
-		receivers = append(receivers, pld.To.String())
+		entries = append(entries, entry{pld.To.String(), value})
 	case *payload.UnbondPayload:
-		receivers = append(receivers, pld.Validator.String())
+		entries = append(entries, entry{pld.Validator.String(), value})
 	case *payload.WithdrawPayload:
-		receivers = append(receivers, pld.To.String())
+		entries = append(entries, entry{pld.To.String(), value})
 	case *payload.SortitionPayload:
-		receivers = append(receivers, "")
+		entries = append(entries, entry{"", value})
+	case *payload.AnchorPayload:
+		// An anchor has no receiver: the deposit stays locked in the account of the sender.
+		entries = append(entries, entry{"", value})
 	case *payload.BatchTransferPayload:
+		// Each recipient has its own entry, with the amount it receives.
 		for _, recipient := range pld.Recipients {
-			receivers = append(receivers, recipient.To.String())
+			entries = append(entries, entry{recipient.To.String(), recipient.Amount})
 		}
 	}
 
-	infos := make([]*TransactionInfo, len(receivers))
-	for i, receiver := range receivers {
+	infos := make([]*TransactionInfo, len(entries))
+	for i, ent := range entries {
 		infos[i] = &TransactionInfo{
 			TxID:        trx.ID().String(),
 			Sender:      trx.Payload().Signer().String(),
-			Receiver:    receiver,
+			Receiver:    ent.receiver,
 			Direction:   TxDirectionAny,
-			Amount:      trx.Payload().Value(),
+			Amount:      ent.amount,
 			Fee:         trx.Fee(),
 			Memo:        trx.Memo(),
 			Status:      status,
