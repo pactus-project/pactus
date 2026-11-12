@@ -5,11 +5,13 @@ package main
 import (
 	"context"
 	"crypto/tls"
+	"errors"
 	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"sync"
 	"time"
 
@@ -32,6 +34,7 @@ import (
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/version"
+	"github.com/pactus-project/pactus/www/grpc/basicauth"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
@@ -45,6 +48,8 @@ var (
 	testnetOpt      *bool
 	grpcAddrOpt     *string
 	grpcInsecureOpt *bool
+	grpcUserOpt     *string
+	grpcPassFileOpt *string
 	snapshotURLOpt  *string
 )
 
@@ -54,6 +59,9 @@ func init() {
 	testnetOpt = flag.Bool("testnet", false, "initializing for the testnet")
 	grpcAddrOpt = flag.String("grpc-addr", "", "connect to remote gRPC server instead of starting local node")
 	grpcInsecureOpt = flag.Bool("grpc-insecure", false, "use insecure connection to gRPC server")
+	grpcUserOpt = flag.String("grpc-user", "", "username for the basic authentication of the remote gRPC server")
+	grpcPassFileOpt = flag.String("grpc-password-file", "",
+		"file containing the password for the basic authentication of the remote gRPC server")
 	snapshotURLOpt = flag.String(
 		"snapshot-url",
 		cmd.DefaultSnapshotURL,
@@ -249,7 +257,7 @@ func main() {
 					grpcInsecure = *grpcInsecureOpt
 				}
 
-				grpcConn, err = newRemoteGRPCConn(grpcAddr, grpcInsecure)
+				grpcConn, err = openGRPCConn(grpcAddr, grpcInsecure, *grpcAddrOpt != "")
 				if err != nil {
 					gtkutil.ShowErrorDialog(splash.Window(), err.Error(),
 						func(_ int) {
@@ -306,8 +314,41 @@ func reportStatus(cb statusReporter, msg string) {
 	}
 }
 
+// openGRPCConn connects to the gRPC server of the node. The local node has its own gRPC
+// server for the GUI, without authentication. A remote server may require it.
+func openGRPCConn(addr string, insecureCredentials, remote bool) (*grpc.ClientConn, error) {
+	var auth *basicauth.BasicAuth
+	if remote {
+		var err error
+		auth, err = remoteBasicAuth(*grpcUserOpt, *grpcPassFileOpt)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return newRemoteGRPCConn(addr, insecureCredentials, auth)
+}
+
+// remoteBasicAuth returns the basic authentication for the remote gRPC server, or nil if no user is set.
+// The password is read from a file: a password on the command line is visible to the other users.
+func remoteBasicAuth(user, passwordFile string) (*basicauth.BasicAuth, error) {
+	if user == "" {
+		return nil, nil //nolint:nilnil // no authentication
+	}
+	if passwordFile == "" {
+		return nil, errors.New("-grpc-user needs -grpc-password-file")
+	}
+
+	data, err := util.ReadFile(passwordFile)
+	if err != nil {
+		return nil, fmt.Errorf("unable to read the gRPC password file: %w", err)
+	}
+
+	return basicauth.New(user, strings.TrimRight(string(data), "\r\n")), nil
+}
+
 // newRemoteGRPCConn creates a gRPC client for a remote URL.
-func newRemoteGRPCConn(addr string, insecureCredentials bool) (*grpc.ClientConn, error) {
+func newRemoteGRPCConn(addr string, insecureCredentials bool, auth *basicauth.BasicAuth) (*grpc.ClientConn, error) {
 	target, prefix, err := util.ParseGRPCAddr(addr, insecureCredentials)
 	if err != nil {
 		return nil, err
@@ -325,6 +366,12 @@ func newRemoteGRPCConn(addr string, insecureCredentials bool) (*grpc.ClientConn,
 		grpc.WithTransportCredentials(creds),
 		grpc.WithUnaryInterceptor(methodPrefixUnaryInterceptor(prefix)),
 		grpc.WithStreamInterceptor(methodPrefixStreamInterceptor(prefix)),
+	}
+	if auth != nil {
+		if insecureCredentials {
+			gtkutil.Logf("The password of the gRPC server is sent without encryption")
+		}
+		opts = append(opts, grpc.WithPerRPCCredentials(auth))
 	}
 
 	return grpc.NewClient(target, opts...)
