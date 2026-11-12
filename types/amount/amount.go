@@ -9,6 +9,7 @@ package amount
 import (
 	"database/sql/driver"
 	"errors"
+	"fmt"
 	"io"
 	"math"
 	"strconv"
@@ -117,16 +118,46 @@ func NewAmount(pac float64) (Amount, error) {
 // It then uses NewAmount to create an Amount based on the parsed
 // floating-point value.
 // If the parsing of the string fails, it returns an error.
-// TODO: Parse Unit and remove delimiters...
+//
+// The value is a decimal number, like "1", "-0.5" or "12.25 PAC".
+// The other forms that a floating-point parser accepts are rejected,
+// because they are easy to misread in an amount: an exponent ("1e3"),
+// a digit separator ("1_0"), a hexadecimal number, "inf" or "nan".
 func FromString(str string) (Amount, error) {
-	str = strings.Replace(str, "PAC", "", 1)
 	str = strings.TrimSpace(str)
+	str = strings.TrimSpace(strings.TrimSuffix(str, "PAC"))
+	if !isDecimal(str) {
+		return 0, fmt.Errorf("invalid PAC amount %q: %w", str, strconv.ErrSyntax)
+	}
+
 	f, err := strconv.ParseFloat(str, 64)
 	if err != nil {
 		return 0, err
 	}
 
 	return NewAmount(f)
+}
+
+// isDecimal reports whether str is an optional sign, digits and an optional fraction.
+func isDecimal(str string) bool {
+	if strings.HasPrefix(str, "+") || strings.HasPrefix(str, "-") {
+		str = str[1:]
+	}
+	if strings.Count(str, ".") > 1 {
+		return false
+	}
+
+	digits := strings.Replace(str, ".", "", 1)
+	if digits == "" {
+		return false
+	}
+	for _, char := range digits {
+		if char < '0' || char > '9' {
+			return false
+		}
+	}
+
+	return true
 }
 
 // ToUnit converts a monetary amount counted in NanoPAC (base units) to a

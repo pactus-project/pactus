@@ -10,6 +10,7 @@ import (
 	"bytes"
 	"math"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/pactus-project/pactus/types/amount"
@@ -399,6 +400,22 @@ func TestFromString(t *testing.T) {
 		{"+123.000000123", 123.000000123, 123000000123, "123.000000123 PAC", nil},
 		{"123.0000001234", 123.000000123, 123000000123, "123.000000123 PAC", nil},
 		{"1coin", 0, 0, "0", strconv.ErrSyntax},
+		{" 2.5 PAC ", 2.5, 2500000000, "2.5 PAC", nil},
+		{"2.5PAC", 2.5, 2500000000, "2.5 PAC", nil},
+		{".5", 0.5, 500000000, "0.5 PAC", nil},
+		{"5.", 5, 5000000000, "5 PAC", nil},
+		// These forms are valid floating-point numbers, but they are not amounts.
+		{"1e3", 0, 0, "0", strconv.ErrSyntax},
+		{"1_0", 0, 0, "0", strconv.ErrSyntax},
+		{"1PAC5", 0, 0, "0", strconv.ErrSyntax},
+		{"0x1p-2 PAC", 0, 0, "0", strconv.ErrSyntax},
+		{"inf", 0, 0, "0", strconv.ErrSyntax},
+		{"NaN", 0, 0, "0", strconv.ErrSyntax},
+		{"+-1", 0, 0, "0", strconv.ErrSyntax},
+		{"1.2.3", 0, 0, "0", strconv.ErrSyntax},
+		{"", 0, 0, "0", strconv.ErrSyntax},
+		{".", 0, 0, "0", strconv.ErrSyntax},
+		{"PAC", 0, 0, "0", strconv.ErrSyntax},
 	}
 	for _, tt := range tests {
 		amt, err := amount.FromString(tt.amount)
@@ -414,7 +431,8 @@ func TestFromString(t *testing.T) {
 }
 
 func TestFromStringOutOfRange(t *testing.T) {
-	for _, str := range []string{"1e30", "-1e30", "100000000000 PAC"} {
+	huge := "1" + strings.Repeat("0", 30)
+	for _, str := range []string{huge, "-" + huge, "100000000000 PAC"} {
 		_, err := amount.FromString(str)
 		require.Error(t, err, str)
 	}
