@@ -208,10 +208,16 @@ func New(ctx context.Context, storage storage.WalletStorage, opts ...OpenWalletO
 	}
 
 	if cfg.eventPipe != nil {
-		cfg.eventPipe.RegisterReceiver(wlt.transactions.processEvent)
+		cfg.eventPipe.RegisterReceiver(wlt.ProcessEvent)
 	}
 
 	return wlt, nil
+}
+
+// ProcessEvent updates the transaction history of the wallet
+// with a block or a transaction that the node reports.
+func (w *Wallet) ProcessEvent(event any) {
+	w.transactions.processEvent(event)
 }
 
 func (w *Wallet) Close() {
