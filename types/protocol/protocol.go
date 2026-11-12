@@ -23,12 +23,13 @@ const (
 	ProtocolVersionLatest = ProtocolVersion5
 )
 
-// HasHardenedRules returns true if the protocol version enforces the hardened rules:
-//   - A delegated validator can only withdraw its whole stake, with a bounded fee.
-//   - The justifications of the change-proposer votes are bound to the height and round of the vote.
-//   - The pre-vote `yes` of the first change-proposer round has no block hash.
+// HasHardenedRules returns true if the protocol version enforces the hardened rules.
+// These are the rules that this version gates, and nothing else:
+//   - A `yes` pre-vote of the change-proposer phase has no block hash, in any round.
 //   - The subsidy transaction pays exactly the expected recipients.
-//   - Transactions that are not free pay a fee, and transfers have a positive amount.
+//
+// A rule that changes the validity of a block, a transaction or a vote must be gated here
+// before it is merged: a node that enforces it earlier rejects what the other nodes accept.
 func (v Version) HasHardenedRules() bool {
 	return v >= ProtocolVersion6
 }
