@@ -1011,3 +1011,24 @@ func TestLockedDeposit(t *testing.T) {
 		assert.Equal(t, anchorDeposit, total)
 	})
 }
+
+// The provider that SetProvider passes is the one that the address list uses.
+func TestSetProviderForAddresses(t *testing.T) {
+	td := setup(t)
+
+	accInfo, _ := td.testVault.NewBLSAccountAddress("account")
+	addr, err := crypto.AddressFromString(accInfo.Address)
+	require.NoError(t, err)
+	_, acc := td.GenerateTestAccount(testsuite.AccountWithAddress(addr))
+
+	newProvider := provider.NewMockWalletProvider(td.MockController())
+	td.wallet.SetProvider(newProvider)
+	defer td.wallet.SetProvider(td.mockProvider)
+
+	td.mockStorage.EXPECT().AllAddresses().Return([]*wtypes.AddressInfo{accInfo})
+	newProvider.EXPECT().GetAccount(accInfo.Address).Return(acc, nil)
+
+	infos := td.wallet.ListAddresses(WithAddressBalance(true))
+	require.Len(t, infos, 1)
+	assert.Equal(t, acc.Balance(), infos[0].Balance)
+}
