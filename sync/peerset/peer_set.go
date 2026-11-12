@@ -1,6 +1,7 @@
 package peerset
 
 import (
+	"slices"
 	"sync"
 	"time"
 
@@ -195,11 +196,44 @@ func (ps *PeerSet) findPeer(pid peer.ID) *peer.Peer {
 func (ps *PeerSet) findOrCreatePeer(pid peer.ID) *peer.Peer {
 	per := ps.findPeer(pid)
 	if per == nil {
+		if len(ps.peers) >= maxPeerRecords {
+			ps.forgetDisconnectedPeers()
+		}
+
 		per = peer.NewPeer(pid)
 		ps.peers[pid] = per
 	}
 
 	return per
+}
+
+// maxPeerRecords bounds the records of the peers. The records of the disconnected peers are kept,
+// for their metrics and their bans, but an identity costs nothing to make: a peer that connects
+// and disconnects again and again, each time with a new identity, would add records without limit.
+const maxPeerRecords = 4096
+
+// forgetDisconnectedPeers removes the records of the disconnected peers that have no open session,
+// the ones that were heard from least recently first, until a quarter of the records is free.
+// It must be called with the lock held.
+func (ps *PeerSet) forgetDisconnectedPeers() {
+	candidates := make([]*peer.Peer, 0, len(ps.peers))
+	for _, per := range ps.peers {
+		if per.Status.IsDisconnected() && !ps.sessionManager.HasOpenSession(per.PeerID) {
+			candidates = append(candidates, per)
+		}
+	}
+
+	slices.SortFunc(candidates, func(a, b *peer.Peer) int {
+		return a.LastReceived.Compare(b.LastReceived)
+	})
+
+	target := maxPeerRecords * 3 / 4
+	for _, per := range candidates {
+		if len(ps.peers) <= target {
+			return
+		}
+		delete(ps.peers, per.PeerID)
+	}
 }
 
 // GetPeerStatus finds a peer by id and returns the status of the Peer.

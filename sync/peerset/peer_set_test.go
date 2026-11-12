@@ -541,3 +541,20 @@ func TestSetSessionOnlyFullNodes(t *testing.T) {
 	assert.True(t, getSessionByID(peerSet, sid1).OnlyFullNodes)
 	assert.False(t, getSessionByID(peerSet, sid2).OnlyFullNodes)
 }
+
+// The records of the peers are bounded: the disconnected peers are forgotten first.
+func TestPeerRecordsAreBounded(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+	peerSet := NewPeerSet(time.Minute)
+
+	connected := ts.RandPeerID()
+	peerSet.UpdateStatus(connected, status.StatusConnected)
+	for range maxPeerRecords {
+		pid := ts.RandPeerID()
+		peerSet.UpdateStatus(pid, status.StatusConnected)
+		peerSet.UpdateStatus(pid, status.StatusDisconnected)
+	}
+
+	assert.LessOrEqual(t, peerSet.Len(), maxPeerRecords)
+	assert.True(t, peerSet.HasPeer(connected), "a connected peer is not forgotten")
+}
