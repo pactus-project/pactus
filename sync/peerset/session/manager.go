@@ -132,6 +132,27 @@ func (sm *Manager) SetSessionOnlyFullNodes(sid int) {
 	}
 }
 
+// RemoveCommittedSessions removes the completed sessions whose blocks are all committed:
+// the last committed height is at least the last height of the session.
+func (sm *Manager) RemoveCommittedSessions(committedHeight types.Height) {
+	for sid, ssn := range sm.sessions {
+		if ssn.Status == Completed && ssn.From+types.Height(ssn.Count) <= committedHeight+1 {
+			delete(sm.sessions, sid)
+		}
+	}
+}
+
+// NextHeight returns the height after the last block requested by the sessions,
+// or zero without session.
+func (sm *Manager) NextHeight() types.Height {
+	next := types.Height(0)
+	for _, ssn := range sm.sessions {
+		next = max(next, ssn.From+types.Height(ssn.Count))
+	}
+
+	return next
+}
+
 // RemoveSession removes the session with the given id.
 func (sm *Manager) RemoveSession(sid int) {
 	delete(sm.sessions, sid)

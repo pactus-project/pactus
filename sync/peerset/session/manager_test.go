@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/sync/peerset/peer"
+	"github.com/pactus-project/pactus/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -169,4 +170,37 @@ func TestSessionLastsTooLong(t *testing.T) {
 
 	assert.Equal(t, Uncompleted, ssn.Status)
 	assert.GreaterOrEqual(t, time.Since(ssn.StartedAt), maxSessionDurationFactor*timeout)
+}
+
+func TestRemoveCommittedSessions(t *testing.T) {
+	mgr := NewManager(time.Second)
+	pid := peer.ID("peer")
+
+	done := mgr.OpenSession(pid, 101, 10) // blocks 101 to 110
+	mgr.SetSessionCompleted(done.SessionID)
+	later := mgr.OpenSession(pid, 111, 10) // blocks 111 to 120
+	mgr.SetSessionCompleted(later.SessionID)
+	open := mgr.OpenSession(pid, 121, 10)
+
+	mgr.RemoveCommittedSessions(109)
+	assert.Equal(t, 3, mgr.NumberOfSessions(), "the block 110 is not committed yet")
+
+	mgr.RemoveCommittedSessions(110)
+	assert.Equal(t, 2, mgr.NumberOfSessions())
+	assert.Nil(t, mgr.sessions[done.SessionID])
+
+	mgr.RemoveCommittedSessions(200)
+	assert.Equal(t, 1, mgr.NumberOfSessions(), "an open session is not removed")
+	assert.NotNil(t, mgr.sessions[open.SessionID])
+}
+
+func TestNextHeight(t *testing.T) {
+	mgr := NewManager(time.Second)
+	pid := peer.ID("peer")
+
+	assert.Zero(t, mgr.NextHeight())
+
+	mgr.OpenSession(pid, 121, 10)
+	mgr.OpenSession(pid, 101, 10)
+	assert.Equal(t, types.Height(131), mgr.NextHeight())
 }

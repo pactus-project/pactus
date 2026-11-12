@@ -130,6 +130,23 @@ func (ps *PeerSet) RemoveSession(sid int) {
 	ps.sessionManager.RemoveSession(sid)
 }
 
+// RemoveCommittedSessions removes the completed sessions whose blocks are all committed.
+func (ps *PeerSet) RemoveCommittedSessions(committedHeight types.Height) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	ps.sessionManager.RemoveCommittedSessions(committedHeight)
+}
+
+// SessionsNextHeight returns the height after the last block requested by the sessions,
+// or zero without session.
+func (ps *PeerSet) SessionsNextHeight() types.Height {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	return ps.sessionManager.NextHeight()
+}
+
 func (ps *PeerSet) RemoveAllSessions() {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
@@ -426,6 +443,23 @@ func (ps *PeerSet) GetRandomPeer() *peer.Peer {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
+	return ps.randomPeer(func(*peer.Peer) bool { return true })
+}
+
+// GetRandomPeerWithoutOpenSession returns a random peer, like GetRandomPeer,
+// among the peers that have no open session.
+func (ps *PeerSet) GetRandomPeerWithoutOpenSession() *peer.Peer {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	return ps.randomPeer(func(p *peer.Peer) bool {
+		return !ps.sessionManager.HasOpenSession(p.PeerID)
+	})
+}
+
+// randomPeer returns a random peer among the known peers that the filter keeps,
+// weighted by their download score. The caller must hold the lock.
+func (ps *PeerSet) randomPeer(keep func(*peer.Peer) bool) *peer.Peer {
 	type scoredPeer struct {
 		peer  *peer.Peer
 		score int
@@ -436,7 +470,7 @@ func (ps *PeerSet) GetRandomPeer() *peer.Peer {
 	peers := make([]scoredPeer, 0, len(ps.peers))
 	for _, peer := range ps.peers {
 		// Only peers that completed the handshake can serve blocks.
-		if !peer.Status.IsKnown() {
+		if !peer.Status.IsKnown() || !keep(peer) {
 			continue
 		}
 
