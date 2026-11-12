@@ -6,7 +6,6 @@ import (
 	"embed"
 	"fmt"
 	"io/fs"
-	"mime"
 	"net"
 	"net/http"
 	"strings"
@@ -16,6 +15,7 @@ import (
 	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/gopkg/netutil"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
+	"github.com/pactus-project/pactus/www/guard"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -127,7 +127,7 @@ func (s *Server) StartServer(grpcAddr string) error {
 		ReadTimeout:       30 * time.Second,
 		WriteTimeout:      60 * time.Second,
 		IdleTimeout:       120 * time.Second,
-		Handler:           guardRequests(httpMux),
+		Handler:           guard.Requests(httpMux),
 	}
 
 	if s.config.EnableCORS {
@@ -177,38 +177,6 @@ func (s *Server) StopServer() {
 	if s.grpcConn != nil {
 		_ = s.grpcConn.Close()
 	}
-}
-
-// maxRequestBodySize is the maximum size of the body of a request.
-// It is the maximum size of a message that the gRPC server accepts.
-const maxRequestBodySize = 4 << 20
-
-// guardRequests rejects the requests that the gateway must not pass to the gRPC server.
-//
-// A request with a body must be a JSON request. A web page can make a browser send
-// a "simple" request (like a text/plain POST) to a local node, without a CORS preflight
-// and whatever the CORS settings are. A JSON content type always needs a preflight.
-//
-// The body is limited as well: the gateway would decode it entirely
-// before the gRPC server rejects a message that is too large.
-func guardRequests(handler http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case http.MethodPost, http.MethodPut, http.MethodPatch, http.MethodDelete:
-			if r.ContentLength != 0 {
-				mediaType, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
-				if err != nil || mediaType != "application/json" {
-					http.Error(w, "content type must be application/json", http.StatusUnsupportedMediaType)
-
-					return
-				}
-			}
-		}
-
-		r.Body = http.MaxBytesReader(w, r.Body, maxRequestBodySize)
-
-		handler.ServeHTTP(w, r)
-	})
 }
 
 // preflightHandler adds the necessary headers in order to serve
