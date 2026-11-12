@@ -230,7 +230,16 @@ func main() {
 						return
 					}
 
-					grpcAddr = guiNode.GRPC().Address()
+					// The GUI talks to its own gRPC server, on the loopback interface.
+					grpcAddr, err = guiNode.StartGUIGRPC()
+					if err != nil {
+						gtkutil.ShowErrorDialog(splash.Window(), err.Error(),
+							func(_ int) {
+								splash.Destroy()
+							})
+
+						return
+					}
 					grpcInsecure = true
 				} else {
 					reportStatus(notify, "Connecting to remote node...")
@@ -371,21 +380,17 @@ func newNode(ctx context.Context, workingDir string, statusCb statusReporter) (*
 		return password, ok
 	}
 
-	configModifier := func(cfg *config.Config) *config.Config {
-		if !cfg.GRPC.Enable {
-			cfg.GRPC.Enable = true
-			cfg.GRPC.Listen = "localhost:0"
-		}
-		cfg.GRPC.EnableWallet = true
-
-		return cfg
-	}
-
 	reportStatus(statusCb, "Starting node services...")
-	n, err := cmd.StartNode(ctx, workingDir, passwordFetcher, configModifier)
+	n, err := cmd.StartNode(ctx, workingDir, passwordFetcher, guiConfig)
 	if err != nil {
 		return nil, err
 	}
 
 	return n, nil
+}
+
+// guiConfig is the config of the node that the GUI runs. The gRPC server of the config is left
+// as the operator set it: the GUI starts its own gRPC server, see Node.StartGUIGRPC.
+func guiConfig(cfg *config.Config) *config.Config {
+	return cfg
 }
