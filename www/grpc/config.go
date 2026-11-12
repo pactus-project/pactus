@@ -1,6 +1,11 @@
 package grpc
 
-import "github.com/pactus-project/pactus/util/htpasswd"
+import (
+	"fmt"
+
+	"github.com/pactus-project/pactus/util/htpasswd"
+	"golang.org/x/crypto/bcrypt"
+)
 
 // Config defines parameters for the gRPC server.
 type Config struct {
@@ -19,8 +24,15 @@ func DefaultConfig() *Config {
 
 func (c *Config) BasicCheck() error {
 	if c.BasicAuth != "" {
-		if _, _, err := htpasswd.ExtractBasicAuth(c.BasicAuth); err != nil {
+		_, passwordHash, err := htpasswd.ExtractBasicAuth(c.BasicAuth)
+		if err != nil {
 			return err
+		}
+
+		// A password that is not a bcrypt hash can never be matched:
+		// the server would start with an authentication that rejects everyone.
+		if _, err := bcrypt.Cost([]byte(passwordHash)); err != nil {
+			return fmt.Errorf("invalid basic auth: the password must be a bcrypt hash: %w", err)
 		}
 	}
 
