@@ -420,6 +420,12 @@ func (tx *Tx) decode(r io.Reader) error {
 		return BasicCheckError{Reason: fmt.Sprintf("unknown flag bits: %#x", flags)}
 	}
 
+	// A transaction that is not signed has no public key to strip. The flag would be ignored,
+	// and it would be a second encoding of the same transaction.
+	if util.IsFlagSet(flags, flagNotSigned) && util.IsFlagSet(flags, flagStripedPublicKey) {
+		return BasicCheckError{Reason: fmt.Sprintf("invalid flags: %#x", flags)}
+	}
+
 	err = tx.data.Fee.Decode(r)
 	if err != nil {
 		return err
