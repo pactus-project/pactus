@@ -33,18 +33,23 @@ func SignatureAggregate(sigs ...*Signature) (*Signature, error) {
 	if len(sigs) == 0 {
 		return nil, errors.New("no signatures provided")
 	}
-	grp1 := new(bls12381.G1Affine)
-	aggPointG1, err := sigs[0].PointG1()
+	firstPointG1, err := sigs[0].PointG1()
 	if err != nil {
 		return nil, err
 	}
+
+	// The points are added in Jacobian coordinates and converted back once:
+	// an addition in affine coordinates needs a field inversion each time.
+	var aggJac bls12381.G1Jac
+	aggJac.FromAffine(firstPointG1)
 	for i := 1; i < len(sigs); i++ {
 		pointG1, err := sigs[i].PointG1()
 		if err != nil {
 			return nil, err
 		}
-		aggPointG1 = grp1.Add(aggPointG1, pointG1)
+		aggJac.AddMixed(pointG1)
 	}
+	aggPointG1 := new(bls12381.G1Affine).FromJacobian(&aggJac)
 
 	data := aggPointG1.Bytes()
 
@@ -61,18 +66,23 @@ func PublicKeyAggregate(pubs ...*PublicKey) (*PublicKey, error) {
 	if len(pubs) == 0 {
 		return nil, errors.New("no public keys provided")
 	}
-	grp2 := new(bls12381.G2Affine)
-	aggPointG2, err := pubs[0].PointG2()
+	firstPointG2, err := pubs[0].PointG2()
 	if err != nil {
 		return nil, err
 	}
+
+	// The points are added in Jacobian coordinates and converted back once:
+	// an addition in affine coordinates needs a field inversion each time.
+	var aggJac bls12381.G2Jac
+	aggJac.FromAffine(firstPointG2)
 	for i := 1; i < len(pubs); i++ {
 		pointG2, err := pubs[i].PointG2()
 		if err != nil {
 			return nil, err
 		}
-		aggPointG2 = grp2.Add(aggPointG2, pointG2)
+		aggJac.AddMixed(pointG2)
 	}
+	aggPointG2 := new(bls12381.G2Affine).FromJacobian(&aggJac)
 
 	data := aggPointG2.Bytes()
 
