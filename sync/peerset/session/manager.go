@@ -85,11 +85,23 @@ func (sm *Manager) UpdateSessionLastActivity(sid int) {
 	}
 }
 
-// SetExpiredSessionsAsUncompleted marks the open sessions without recent activity as uncompleted.
+// maxSessionDurationFactor bounds the duration of a session, as a number of session timeouts.
+// A peer can keep a session active by answering without blocks. As long as a session is open,
+// no other blocks are requested, so a session that lasts too long is closed, whatever its activity.
+// An honest peer sends the blocks of a session within a few seconds.
+const maxSessionDurationFactor = 12
+
+// SetExpiredSessionsAsUncompleted marks as uncompleted the open sessions without recent activity,
+// and the ones that last too long.
 // Completed sessions have downloaded their blocks, and they don't expire.
 func (sm *Manager) SetExpiredSessionsAsUncompleted() {
+	maxDuration := maxSessionDurationFactor * sm.sessionTimeout
 	for _, ssn := range sm.sessions {
-		if ssn.Status == Open && sm.sessionTimeout < time.Since(ssn.LastActivity) {
+		if ssn.Status != Open {
+			continue
+		}
+
+		if sm.sessionTimeout < time.Since(ssn.LastActivity) || maxDuration < time.Since(ssn.StartedAt) {
 			ssn.Status = Uncompleted
 		}
 	}

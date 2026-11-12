@@ -151,3 +151,22 @@ func TestSetSessionOnlyFullNodes(t *testing.T) {
 		mgr.SetSessionOnlyFullNodes(12345)
 	})
 }
+
+// A session that is kept active, but lasts too long, is closed: no other blocks are
+// requested as long as it is open.
+func TestSessionLastsTooLong(t *testing.T) {
+	timeout := 20 * time.Millisecond
+	mgr := NewManager(timeout)
+	ssn := mgr.OpenSession("peer1", 100, 10)
+
+	// The peer keeps the session active.
+	deadline := time.Now().Add(maxSessionDurationFactor*timeout + 5*timeout)
+	for time.Now().Before(deadline) && ssn.Status == Open {
+		mgr.UpdateSessionLastActivity(ssn.SessionID)
+		mgr.SetExpiredSessionsAsUncompleted()
+		time.Sleep(timeout / 4)
+	}
+
+	assert.Equal(t, Uncompleted, ssn.Status)
+	assert.GreaterOrEqual(t, time.Since(ssn.StartedAt), maxSessionDurationFactor*timeout)
+}

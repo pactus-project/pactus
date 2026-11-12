@@ -544,21 +544,43 @@ func TestBlocksResponseSessionStatus(t *testing.T) {
 	openSession := func(pid peer.ID) int {
 		return td.sync.peerSet.OpenSession(pid, td.state.LastBlockHeight()+1, 10)
 	}
+	sessionActivity := func(t *testing.T, sid int) time.Time {
+		t.Helper()
+
+		for _, ssn := range td.sync.peerSet.Sessions() {
+			if ssn.SessionID == sid {
+				return ssn.LastActivity
+			}
+		}
+		require.FailNow(t, "the session is not found")
+
+		return time.Time{}
+	}
 
 	t.Run("response code OK keeps the session open and refreshes its activity", func(t *testing.T) {
 		td.sync.peerSet.RemoveAllSessions()
 		sid := openSession(pid1)
-		for _, ssn := range td.sync.peerSet.Sessions() {
-			ssn.LastActivity = time.Now().Add(-time.Hour)
-		}
+		before := sessionActivity(t, sid)
+		time.Sleep(10 * time.Millisecond)
 
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeOK, "ok", sid, 0, nil, nil)
 		td.receivingNewMessage(td.sync, msg, pid1)
 
 		require.True(t, td.sync.peerSet.HasOpenSession(pid1))
-		for _, ssn := range td.sync.peerSet.Sessions() {
-			assert.WithinDuration(t, time.Now(), ssn.LastActivity, time.Minute)
-		}
+		assert.True(t, sessionActivity(t, sid).After(before))
+	})
+
+	t.Run("more blocks without any block doesn't refresh the activity of the session", func(t *testing.T) {
+		td.sync.peerSet.RemoveAllSessions()
+		sid := openSession(pid1)
+		before := sessionActivity(t, sid)
+		time.Sleep(10 * time.Millisecond)
+
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, "more", sid, 0, nil, nil)
+		td.receivingNewMessage(td.sync, msg, pid1)
+
+		require.True(t, td.sync.peerSet.HasOpenSession(pid1))
+		assert.Equal(t, before, sessionActivity(t, sid))
 	})
 
 	t.Run("no more blocks completes the session, the other sessions continue", func(t *testing.T) {
