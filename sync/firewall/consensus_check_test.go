@@ -2,15 +2,18 @@ package firewall
 
 import (
 	"testing"
+	"time"
 
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/sync/peerset/peer"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/ratelimit"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -133,6 +136,10 @@ func TestCommitteeKeysRefreshPerHeight(t *testing.T) {
 
 func TestConsensusRequestSignatureBudget(t *testing.T) {
 	td, keys, height := setupCommitteeCheck(t)
+	// The budget is per second: the test can take longer than that, for example under the race
+	// detector. The same budget over a long window makes it independent of the speed of the machine.
+	td.firewall.peerSignatureChecks = ratelimit.NewKeyedRateLimit[peer.ID](
+		maxSignatureChecksPerPeer, time.Hour, maxRateLimitedPeers)
 
 	// A peer flooding forged votes gets them checked up to its budget, then
 	// they are no longer relayed, and no longer checked.
