@@ -40,3 +40,22 @@ func TestUpdateLastCertificateInvalidVoteDoesNotTakeTheWriteLock(t *testing.T) {
 		}
 	}
 }
+
+// A block is committed between the verification of a vote for the last certificate and its addition:
+// the vote is for the previous block now, and it is not added to the certificate of the new block.
+func TestVoteForLastCertificateAfterNewBlock(t *testing.T) {
+	td := setupWithBlocks(t, protocol.ProtocolVersionLatest, 2)
+
+	// The last validator is absent from the certificates that the tests make.
+	absentee := td.genValKeys[3]
+	lastCert := td.state.LastCertificate()
+	vte := vote.NewPrecommitVote(td.state.LastBlockHash(), lastCert.Height(), lastCert.Round(), absentee.Address())
+	td.HelperSignVote(absentee, vte)
+	require.NoError(t, td.state.verifyVoteForLastCertificate(vte))
+
+	td.commit(t, td.proposeEmpty(t))
+
+	require.ErrorIs(t, td.state.addVoteToLastCertificate(vte), InvalidVoteForCertificateError{Vote: vte})
+	require.NoError(t, td.state.LastCertificate().ValidatePrecommit(td.state.lastInfo.Validators(),
+		td.state.LastBlockHash()))
+}

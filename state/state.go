@@ -301,39 +301,61 @@ func (st *state) checkVoteForCertificate(vte *vote.Vote) error {
 	return nil
 }
 
+// absentValidator checks that the vote is a precommit for the last block,
+// from a validator that is absent in the last certificate, and returns this validator.
+// It must be called with the lock held.
+func (st *state) absentValidator(vte *vote.Vote) (*validator.Validator, error) {
+	if err := st.checkVoteForCertificate(vte); err != nil {
+		return nil, err
+	}
+
+	val, err := st.store.Validator(vte.Signer())
+	if err != nil {
+		return nil, err
+	}
+
+	if !slices.Contains(st.lastInfo.Certificate().Absentees(), val.Number()) {
+		return nil, InvalidVoteForCertificateError{
+			Vote: vte,
+		}
+	}
+
+	return val, nil
+}
+
 func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
-	// The cheap checks run under the read lock: a burst of useless votes
-	// must not contend with the commit of blocks for the write lock.
+	if err := st.verifyVoteForLastCertificate(vte); err != nil {
+		return err
+	}
+
+	return st.addVoteToLastCertificate(vte)
+}
+
+// verifyVoteForLastCertificate checks the vote and verifies its signature without the write lock:
+// anyone can send a vote with the address of an absent validator, and a burst of
+// such votes must not keep the blocks from being committed nor the state from being read.
+func (st *state) verifyVoteForLastCertificate(vte *vote.Vote) error {
 	st.lk.RLock()
-	err := st.checkVoteForCertificate(vte)
+	val, err := st.absentValidator(vte)
 	st.lk.RUnlock()
 	if err != nil {
 		return err
 	}
 
+	return vte.Verify(val.PublicKey())
+}
+
+// addVoteToLastCertificate adds the signature of a verified vote to the certificate of the last block.
+func (st *state) addVoteToLastCertificate(vte *vote.Vote) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	if err := st.checkVoteForCertificate(vte); err != nil {
+	// The last block or its certificate may have changed since the vote was verified.
+	val, err := st.absentValidator(vte)
+	if err != nil {
 		return err
 	}
 	lastCert := st.lastInfo.Certificate()
-
-	val, err := st.store.Validator(vte.Signer())
-	if err != nil {
-		return err
-	}
-
-	if !slices.Contains(lastCert.Absentees(), val.Number()) {
-		return InvalidVoteForCertificateError{
-			Vote: vte,
-		}
-	}
-
-	err = vte.Verify(val.PublicKey())
-	if err != nil {
-		return err
-	}
 
 	// prevent race condition
 	cloneLastCert := lastCert.Clone()
