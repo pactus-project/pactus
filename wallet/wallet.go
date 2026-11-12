@@ -250,7 +250,14 @@ func (w *Wallet) Neuter(path string) error {
 	vault := cloned.Vault()
 	vault.Neuter()
 
-	return cloned.UpdateVault(vault)
+	if err := cloned.UpdateVault(vault); err != nil {
+		_ = cloned.Close()
+
+		return err
+	}
+
+	// Closing the storage flushes the neutered vault to the wallet file.
+	return cloned.Close()
 }
 
 // RecoveryAddresses recovers active addresses in the wallet.

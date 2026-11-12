@@ -711,6 +711,7 @@ func TestNeuter(t *testing.T) {
 
 		return nil
 	})
+	clonedStorage.EXPECT().Close().Return(nil)
 
 	err := td.wallet.Neuter(path)
 	require.NoError(t, err)
