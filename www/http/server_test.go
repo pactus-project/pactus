@@ -197,3 +197,21 @@ func TestGuardRequests(t *testing.T) {
 		assert.Equal(t, http.StatusRequestEntityTooLarge, code)
 	})
 }
+
+func TestAllowCORSVaryOrigin(t *testing.T) {
+	handler := allowCORS(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	// The response depends on the origin, with or without an Origin header.
+	for _, origin := range []string{"", "https://example.com"} {
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", http.NoBody)
+		if origin != "" {
+			req.Header.Set("Origin", origin)
+		}
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+
+		assert.Equal(t, "Origin", rec.Header().Get("Vary"))
+	}
+}
