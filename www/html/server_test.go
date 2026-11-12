@@ -42,7 +42,7 @@ func setup(t *testing.T) *testData {
 	gRPCServer := fake.NewFakeGRPCServer(t, ts, grpcConf)
 	require.NoError(t, gRPCServer.Server.StartServer())
 
-	httpServer := html.NewServer(t.Context(), httpConf, false)
+	httpServer := html.NewServer(t.Context(), httpConf, "")
 	require.NoError(t, httpServer.StartServer(gRPCServer.Server.Address()))
 
 	t.Cleanup(func() {

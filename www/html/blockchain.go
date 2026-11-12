@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
-	xhtml "html"
 	"net/http"
 	"strconv"
 	"time"
@@ -180,7 +179,7 @@ func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
 	if acc.Anchor != nil {
 		tmk.addRowString("Anchor Type", fmt.Sprintf("%d", acc.Anchor.AnchorType))
 		tmk.addRowString("Root Hash", hex.EncodeToString(acc.Anchor.RootHash))
-		tmk.addRowString("Manifest URI", xhtml.EscapeString(acc.Anchor.ManifestUri))
+		tmk.addRowString("Manifest URI", acc.Anchor.ManifestUri)
 		tmk.addRowAmount("Locked Deposit", amount.Amount(acc.Anchor.LockedDeposit))
 		tmk.addRowInt("Created Height", int(acc.Anchor.CreatedAtHeight))
 		tmk.addRowInt("Updated Height", int(acc.Anchor.UpdatedAtHeight))
