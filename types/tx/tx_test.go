@@ -24,7 +24,7 @@ import (
 )
 
 func TestMemoryAlignment(t *testing.T) {
-	assert.Equal(t, 88, int(unsafe.Sizeof(tx.Tx{})))
+	assert.Equal(t, 96, int(unsafe.Sizeof(tx.Tx{})))
 }
 
 func TestCBORMarshaling(t *testing.T) {

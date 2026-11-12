@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+	"sync/atomic"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/crypto"
@@ -29,14 +30,16 @@ const (
 
 type ID = hash.Hash
 
+// Tx is a transaction.
+// A transaction is shared between the pool, the sync and consensus services and the API,
+// so the values that are computed on first use are stored atomically.
 type Tx struct {
-	memorizedID *ID
-	data        txData
+	memorizedID  atomic.Pointer[ID]
+	basicChecked atomic.Bool
+	data         txData
 }
 
 type txData struct {
-	basicChecked bool
-
 	Version   uint8
 	LockTime  types.Height
 	Fee       amount.Amount
@@ -127,17 +130,17 @@ func (tx *Tx) IsFreeTx() bool {
 }
 
 func (tx *Tx) SetSignature(sig crypto.Signature) {
-	tx.data.basicChecked = false
+	tx.basicChecked.Store(false)
 	tx.data.Signature = sig
 }
 
 func (tx *Tx) SetPublicKey(pub crypto.PublicKey) {
-	tx.data.basicChecked = false
+	tx.basicChecked.Store(false)
 	tx.data.PublicKey = pub
 }
 
 func (tx *Tx) BasicCheck() error {
-	if tx.data.basicChecked {
+	if tx.basicChecked.Load() {
 		return nil
 	}
 	if tx.Version() != versionLatest {
@@ -172,7 +175,7 @@ func (tx *Tx) BasicCheck() error {
 		return err
 	}
 
-	tx.data.basicChecked = true
+	tx.basicChecked.Store(true)
 
 	return nil
 }
@@ -394,7 +397,8 @@ func (tx *Tx) Decode(r io.Reader) error {
 	}
 
 	tx.data = decoded.data
-	tx.memorizedID = nil
+	tx.memorizedID.Store(nil)
+	tx.basicChecked.Store(false)
 
 	return nil
 }
@@ -577,8 +581,8 @@ func (tx *Tx) SignBytes() []byte {
 }
 
 func (tx *Tx) ID() ID {
-	if tx.memorizedID != nil {
-		return *tx.memorizedID
+	if id := tx.memorizedID.Load(); id != nil {
+		return *id
 	}
 
 	signBytes := tx.SignBytes()
@@ -588,7 +592,7 @@ func (tx *Tx) ID() ID {
 	}
 
 	id := hash.CalcHash(signBytes)
-	tx.memorizedID = &id
+	tx.memorizedID.Store(&id)
 
 	return id
 }

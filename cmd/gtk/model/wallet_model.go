@@ -3,6 +3,7 @@
 package model
 
 import (
+	"bytes"
 	"context"
 	"encoding/hex"
 	"errors"
@@ -441,9 +442,14 @@ func (model *WalletModel) SignTransaction(password string, trx *tx.Tx) error {
 		return err
 	}
 
-	*trx = *signedTx
+	// The transaction is replaced by the signed one. A transaction holds values that it
+	// computes on first use, and they must not be copied: it is decoded again instead.
+	signedData, err := signedTx.Bytes()
+	if err != nil {
+		return err
+	}
 
-	return nil
+	return trx.Decode(bytes.NewReader(signedData))
 }
 
 func (model *WalletModel) BroadcastTransaction(trx *tx.Tx) (string, error) {

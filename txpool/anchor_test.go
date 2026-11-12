@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 	"unsafe"
@@ -265,23 +266,24 @@ func (unknownPayload) BasicCheck() error                             { return ni
 func (unknownPayload) LogString() string                             { return "unknown" }
 
 func swapPayload(trx *tx.Tx, pld payload.Payload) {
+	// This mirrors the layout of tx.Tx.
 	type data struct {
-		basicChecked bool
-		Version      uint8
-		LockTime     types.Height
-		Fee          amount.Amount
-		Memo         string
-		Payload      payload.Payload
-		Signature    crypto.Signature
-		PublicKey    crypto.PublicKey
+		Version   uint8
+		LockTime  types.Height
+		Fee       amount.Amount
+		Memo      string
+		Payload   payload.Payload
+		Signature crypto.Signature
+		PublicKey crypto.PublicKey
 	}
 	type exposed struct {
-		memorizedID *tx.ID
-		data        data
+		memorizedID  atomic.Pointer[tx.ID]
+		basicChecked atomic.Bool
+		data         data
 	}
 	raw := (*exposed)(unsafe.Pointer(trx))
-	raw.memorizedID = nil
-	raw.data.basicChecked = false
+	raw.memorizedID.Store(nil)
+	raw.basicChecked.Store(false)
 	raw.data.Payload = pld
 }
 
