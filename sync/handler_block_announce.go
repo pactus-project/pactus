@@ -22,10 +22,15 @@ func (handler *blockAnnounceHandler) ParseMessage(m message.Message, pid peer.ID
 	msg := m.(*message.BlockAnnounceMessage)
 	handler.logger.Trace("parsing BlockAnnounce message", "msg", msg)
 
-	if handler.cache.HasBlockInCache(msg.Height()) {
-		// We have processed this block before.
+	// Only the next block of the state can be verified here.
+	verifiable := msg.Height() == handler.stateHeight()+1
 
-		return
+	if handler.cache.HasBlockInCache(msg.Height()) {
+		// We have processed this block before, unless the cached block comes from
+		// an announcement that was not verified, and this one can be verified now.
+		if !verifiable || !handler.cache.HasAnnouncedBlock(msg.Height()) {
+			return
+		}
 	}
 
 	// The announcements come from any peer. They should be checked before they are cached,
@@ -37,8 +42,12 @@ func (handler *blockAnnounceHandler) ParseMessage(m message.Message, pid peer.ID
 	}
 
 	handler.peerSet.UpdateHeight(pid, msg.Height(), msg.Block.Hash())
-	handler.cache.AddCertificate(msg.Certificate)
-	handler.cache.AddBlock(msg.Block)
+	if verifiable {
+		handler.cache.AddCertificate(msg.Certificate)
+		handler.cache.AddBlock(msg.Block)
+	} else {
+		handler.cache.AddAnnouncedBlock(msg.Block, msg.Certificate)
+	}
 
 	handler.tryCommitBlocks()
 	handler.moveConsensusToNewHeight()
