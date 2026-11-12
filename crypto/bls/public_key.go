@@ -82,7 +82,7 @@ func (pub *PublicKey) MarshalCBOR() ([]byte, error) {
 // UnmarshalCBOR decodes the public key from CBOR format.
 func (pub *PublicKey) UnmarshalCBOR(bs []byte) error {
 	var data []byte
-	if err := cbor.Unmarshal(bs, &data); err != nil {
+	if err := encoding.UnmarshalCBOR(bs, &data); err != nil {
 		return err
 	}
 

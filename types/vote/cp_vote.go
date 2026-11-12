@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/fxamacker/cbor/v2"
+	"github.com/pactus-project/pactus/util/encoding"
 )
 
 type CPValue int8
@@ -115,7 +116,7 @@ func (v *cpVote) MarshalCBOR() ([]byte, error) {
 // UnmarshalCBOR decodes the cpVote from CBOR format.
 func (v *cpVote) UnmarshalCBOR(bs []byte) error {
 	var _cp _cpVote
-	err := cbor.Unmarshal(bs, &_cp)
+	err := encoding.UnmarshalCBOR(bs, &_cp)
 	if err != nil {
 		return err
 	}
@@ -123,19 +124,19 @@ func (v *cpVote) UnmarshalCBOR(bs []byte) error {
 	var just Just
 	if _cp.JustType == JustTypeMainVoteConflict {
 		_conflictingJust := &_JustMainVoteConflict{}
-		err := cbor.Unmarshal(_cp.JustData, _conflictingJust)
+		err := encoding.UnmarshalCBOR(_cp.JustData, _conflictingJust)
 		if err != nil {
 			return err
 		}
 
 		just0 := makeJust(_conflictingJust.Just0Type)
-		err = cbor.Unmarshal(_conflictingJust.Just0Data, just0)
+		err = encoding.UnmarshalCBOR(_conflictingJust.Just0Data, just0)
 		if err != nil {
 			return err
 		}
 
 		just1 := makeJust(_conflictingJust.Just1Type)
-		err = cbor.Unmarshal(_conflictingJust.Just1Data, just1)
+		err = encoding.UnmarshalCBOR(_conflictingJust.Just1Data, just1)
 		if err != nil {
 			return err
 		}
@@ -146,7 +147,7 @@ func (v *cpVote) UnmarshalCBOR(bs []byte) error {
 		}
 	} else {
 		just = makeJust(_cp.JustType)
-		err := cbor.Unmarshal(_cp.JustData, just)
+		err := encoding.UnmarshalCBOR(_cp.JustData, just)
 		if err != nil {
 			return err
 		}
