@@ -108,7 +108,7 @@ const (
 
 	updateTransactionStatusSQL = `
 		UPDATE transactions SET status = ?, block_height = ?
-		WHERE no = ?`
+		WHERE tx_id = (SELECT tx_id FROM transactions WHERE no = ?)`
 
 	selectTransactionByNoSQL = `
 		SELECT

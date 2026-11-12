@@ -529,7 +529,8 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 	for _, info := range txInfos {
 		info.Direction = types.TxDirectionOutgoing
 		err := w.storage.InsertTransaction(info)
-		if err != nil {
+		// The pool can report the transaction before it is recorded here.
+		if err != nil && !w.storage.HasTransaction(info.TxID) {
 			logger.Warn("transaction broadcasted but not recorded in wallet storage", "error", err)
 		}
 	}

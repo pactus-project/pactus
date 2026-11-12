@@ -430,6 +430,7 @@ func (s *Storage) HasAddress(address string) bool {
 }
 
 // InsertTransaction inserts a new transaction.
+// It returns an error if the transaction is already stored for the same receiver.
 func (s *Storage) InsertTransaction(info *wtypes.TransactionInfo) error {
 	result, err := s.db.ExecContext(
 		s.ctx, insertTransactionSQL,
@@ -455,7 +456,8 @@ func (s *Storage) InsertTransaction(info *wtypes.TransactionInfo) error {
 	return nil
 }
 
-// UpdateTransactionStatus updates the status and block height for all transactions with the given primary key.
+// UpdateTransactionStatus updates the status and block height of the transaction with the given primary key.
+// A batch transfer has one entry per recipient, and all of them are updated.
 func (s *Storage) UpdateTransactionStatus(no int64, status wtypes.TransactionStatus, blockHeight types.Height) error {
 	_, err := s.db.ExecContext(s.ctx, updateTransactionStatusSQL, int(status), blockHeight, no)
 
