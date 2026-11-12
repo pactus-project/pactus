@@ -376,7 +376,7 @@ func (s *Storage) InsertAddress(info *wtypes.AddressInfo) error {
 		return err
 	}
 
-	return s.loadAddresses()
+	return s.loadAddress(info.Address)
 }
 
 // UpdateAddress updates an existing address.
@@ -387,7 +387,22 @@ func (s *Storage) UpdateAddress(info *wtypes.AddressInfo) error {
 		return err
 	}
 
-	return s.loadAddresses()
+	return s.loadAddress(info.Address)
+}
+
+// loadAddress reads one address from the database into memory, with the dates the database sets.
+// Reading all the addresses again for each new one made the recovery of a wallet quadratic.
+func (s *Storage) loadAddress(address string) error {
+	info, err := scanAddress(s.db.QueryRowContext(s.ctx, selectAddressSQL, address))
+	if err != nil {
+		return fmt.Errorf("failed to load address: %w", err)
+	}
+
+	s.lk.Lock()
+	s.addressMap[address] = info
+	s.lk.Unlock()
+
+	return nil
 }
 
 // HasAddress checks if an address exists.
