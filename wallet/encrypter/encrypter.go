@@ -242,6 +242,11 @@ func (e *Encrypter) Decrypt(cipherText, password string) (string, error) {
 
 	switch funcs[0] {
 	case nameFuncArgon2ID:
+		// Argon2 panics on these values, and they come from the wallet file.
+		if iterations < 1 || parallelism < 1 {
+			return "", ErrInvalidParam
+		}
+
 		passwordHash = argon2.IDKey([]byte(password), salt, iterations, memory, parallelism, keyLen)
 
 	default:
@@ -274,6 +279,10 @@ func (e *Encrypter) Decrypt(cipherText, password string) (string, error) {
 		msg = aes256CTRCrypt(cipher, initVec, cipherKey)
 
 	case nameFuncAES256CBC:
+		// CBC works on full blocks only.
+		if len(cipher) == 0 || len(cipher)%aes.BlockSize != 0 {
+			return "", ErrInvalidCipher
+		}
 		msg = aes256CBCDecrypt(cipher, initVec, cipherKey)
 
 	default:

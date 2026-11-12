@@ -59,11 +59,12 @@ func FromString(str string) (Path, error) {
 	for i := 1; i < len(sub); i++ {
 		indexStr := sub[i]
 		added := uint32(0)
-		if indexStr[len(indexStr)-1] == '\'' {
+		if strings.HasSuffix(indexStr, "'") {
 			added = hardenedKeyStart
 			indexStr = indexStr[:len(indexStr)-1]
 		}
-		val, err := strconv.ParseInt(indexStr, 10, 32)
+		// An index is below 2^31: the upper half is the hardened range.
+		val, err := strconv.ParseUint(indexStr, 10, 31)
 		if err != nil {
 			return nil, err
 		}
@@ -89,18 +90,37 @@ func (p Path) String() string {
 
 // TODO: we can add IsBLSPurpose or IsImportedPurpose functions
 
+// The accessors below return zero for a path that is too short,
+// like the path of an address in a malformed wallet file.
+
 func (p Path) Purpose() Purpose {
+	if len(p) < 1 {
+		return 0
+	}
+
 	return Purpose(UnHarden(p[0]))
 }
 
 func (p Path) CoinType() CoinType {
+	if len(p) < 3 {
+		return 0
+	}
+
 	return CoinType(UnHarden(p[len(p)-3]))
 }
 
 func (p Path) AddressType() crypto.AddressType {
+	if len(p) < 2 {
+		return 0
+	}
+
 	return crypto.AddressType(UnHarden(p[len(p)-2]))
 }
 
 func (p Path) AddressIndex() uint32 {
+	if len(p) < 1 {
+		return 0
+	}
+
 	return p[len(p)-1]
 }
