@@ -1,7 +1,9 @@
 package state
 
 import (
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
@@ -41,13 +43,29 @@ func (st *state) validateBlock(blk *block.Block, round types.Round) error {
 		}
 	}
 
-	// Validate sortition seed
-	seed := blk.Header().SortitionSeed()
-	if !seed.Verify(proposer.PublicKey(), st.lastInfo.SortitionSeed()) {
+	// The sortition seed and the previous certificate are verified at the same time:
+	// each one costs a pairing. The errors are returned in the same order as before.
+	seedValid := verifySeedAsync(blk.Header().SortitionSeed(), proposer.PublicKey(), st.lastInfo.SortitionSeed())
+	certErr := st.validatePrevCertificate(blk.PrevCertificate(), blk.Header().PrevBlockHash())
+
+	if !<-seedValid {
 		return ErrInvalidSortitionSeed
 	}
 
-	return st.validatePrevCertificate(blk.PrevCertificate(), blk.Header().PrevBlockHash())
+	return certErr
+}
+
+// verifySeedAsync verifies the sortition seed in a goroutine. The result is sent to the
+// returned channel, which is buffered: the goroutine ends even if nobody reads the result.
+func verifySeedAsync(seed sortition.VerifiableSeed, pub *bls.PublicKey,
+	prevSeed sortition.VerifiableSeed,
+) <-chan bool {
+	result := make(chan bool, 1)
+	go func() {
+		result <- seed.Verify(pub, prevSeed)
+	}()
+
+	return result
 }
 
 // validatePrevCertificate validates certificate for the previous block.

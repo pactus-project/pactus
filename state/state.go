@@ -549,8 +549,15 @@ func (st *state) commitBlock(blk *block.Block, cert *certificate.Certificate) (b
 		)
 	}
 
-	err := st.validateCurCertificate(cert, blk.Hash())
-	if err != nil {
+	// The certificate is verified while the block is validated: both cost pairings.
+	// The errors are returned in the same order as before: the certificate first.
+	certErr := make(chan error, 1)
+	go func() {
+		certErr <- st.validateCurCertificate(cert, blk.Hash())
+	}()
+	blockErr := st.validateBlock(blk, cert.Round())
+
+	if err := <-certErr; err != nil {
 		return false, err
 	}
 
@@ -574,9 +581,8 @@ func (st *state) commitBlock(blk *block.Block, cert *certificate.Certificate) (b
 		}
 	}
 
-	err = st.validateBlock(blk, cert.Round())
-	if err != nil {
-		return false, err
+	if blockErr != nil {
+		return false, blockErr
 	}
 
 	// -----------------------------------
