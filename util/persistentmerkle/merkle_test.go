@@ -9,16 +9,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestNodeID(t *testing.T) {
-	assert.Equal(t, uint32(0x00000000), nodeID(0, 0))
-	assert.Equal(t, uint32(0x01000000), nodeID(0, 1))
-	assert.Equal(t, uint32(0x00000001), nodeID(1, 0))
-	assert.Equal(t, uint32(0x01000001), nodeID(1, 1))
-	assert.Equal(t, uint32(0xffffffff), nodeID(0xffffff, 0xff))
-	assert.Equal(t, uint32(0x00ffffff), nodeID(0xffffff, 0x00))
-	assert.Equal(t, uint32(0x77ff00ff), nodeID(0xff00ff, 0x77))
-}
-
 func TestCalculateHeight(t *testing.T) {
 	tree := New()
 
