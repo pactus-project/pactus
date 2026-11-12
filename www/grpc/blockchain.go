@@ -226,7 +226,7 @@ func (s *blockchainServer) GetBlock(_ context.Context,
 		}
 
 		lastBlockHeight := s.state.LastBlockHeight()
-		confirmations := int(lastBlockHeight) - int(cBlk.Height)
+		confirmations := confirmationsOf(lastBlockHeight, cBlk.Height)
 		trxs := make([]*pactus.TransactionInfo, 0, block.Transactions().Len())
 		for _, trx := range block.Transactions() {
 			if req.Verbosity == pactus.BlockVerbosity_BLOCK_VERBOSITY_INFO {

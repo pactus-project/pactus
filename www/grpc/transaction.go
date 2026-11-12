@@ -60,7 +60,7 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 			return nil, status.Errorf(codes.Internal, "%s", err.Error())
 		}
 		lastBlockHeight := s.state.LastBlockHeight()
-		confirmations := int(lastBlockHeight) - int(committedTx.Height)
+		confirmations := confirmationsOf(lastBlockHeight, committedTx.Height)
 		res.Transaction = transactionToProto(trx, committedTx.Height, confirmations)
 	}
 
@@ -369,6 +369,16 @@ func (s *transactionServer) getLockTime(lockTime uint32) types.Height {
 	}
 
 	return types.Height(lockTime)
+}
+
+// confirmationsOf returns the number of blocks that confirm a committed block or transaction.
+// The block that holds the transaction is the first confirmation: a block is final once it is committed.
+func confirmationsOf(lastBlockHeight, blockHeight types.Height) int {
+	if blockHeight == 0 || blockHeight > lastBlockHeight {
+		return 0
+	}
+
+	return int(lastBlockHeight-blockHeight) + 1
 }
 
 func transactionToProto(trx *tx.Tx, blockHeight types.Height, confirmations int) *pactus.TransactionInfo {
