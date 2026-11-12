@@ -17,7 +17,9 @@ import (
 type accountStore struct {
 	db       *leveldb.DB
 	accCache *lru.Cache[crypto.Address, *account.Account]
-	total    int32
+	// pending holds the accounts updated in the current batch, until it is written.
+	pending map[crypto.Address]*account.Account
+	total   int32
 
 	// anchors lists the accounts that hold an anchor, sorted by account number.
 	// It is not consensus data; it only serves anchor listings.
@@ -74,11 +76,16 @@ func newAccountStore(db *leveldb.DB, cacheSize int) (*accountStore, error) {
 		db:       db,
 		total:    total,
 		accCache: addrLruCache,
+		pending:  make(map[crypto.Address]*account.Account),
 		anchors:  anchors,
 	}, nil
 }
 
 func (as *accountStore) hasAccount(addr crypto.Address) (bool, error) {
+	if _, ok := as.pending[addr]; ok {
+		return true, nil
+	}
+
 	if as.accCache.Contains(addr) {
 		return true, nil
 	}
@@ -87,6 +94,10 @@ func (as *accountStore) hasAccount(addr crypto.Address) (bool, error) {
 }
 
 func (as *accountStore) account(addr crypto.Address) (*account.Account, error) {
+	if acc, ok := as.pending[addr]; ok {
+		return acc.Clone(), nil
+	}
+
 	acc, ok := as.accCache.Get(addr)
 	if ok {
 		return acc.Clone(), nil
@@ -156,10 +167,17 @@ func (as *accountStore) updateAccount(batch *leveldb.Batch, addr crypto.Address,
 	if !exists {
 		as.total++
 	}
+	as.pending[addr] = acc
 	as.accCache.Add(addr, acc)
 	as.updateAnchorIndex(addr, acc)
 
 	batch.Put(accountKey(addr), data)
+}
+
+// batchWritten must be called once the batch is written to the database:
+// the database holds the updated accounts from now on.
+func (as *accountStore) batchWritten() {
+	clear(as.pending)
 }
 
 func (as *accountStore) updateAnchorIndex(addr crypto.Address, acc *account.Account) {
