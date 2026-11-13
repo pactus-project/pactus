@@ -2,6 +2,7 @@ package network
 
 import (
 	"context"
+	"sync"
 	"sync/atomic"
 
 	lp2pcore "github.com/libp2p/go-libp2p/core"
@@ -24,6 +25,12 @@ type NotifeeService struct {
 	streamProtocolID lp2pcore.ProtocolID
 	peerMgr          *peerMgr
 	reachability     atomic.Int32
+
+	// The events of the connections that are made before Start are kept in pending,
+	// and they are sent by Start: the receivers of the pipe are registered by then.
+	pendingLock sync.Mutex
+	started     bool
+	pending     []Event
 }
 
 func newNotifeeService(ctx context.Context, host lp2phost.Host, networkPipe pipeline.Pipeline[Event],
@@ -57,6 +64,8 @@ func newNotifeeService(ctx context.Context, host lp2phost.Host, networkPipe pipe
 }
 
 func (s *NotifeeService) Start() {
+	s.sendPendingEvents()
+
 	go func() {
 		for {
 			select {
@@ -144,7 +153,7 @@ func (s *NotifeeService) sendProtocolsEvent(pid lp2pcore.PeerID) {
 		PeerID:    pid,
 		Protocols: protocolsStr,
 	}
-	s.networkPipe.Send(event)
+	s.send(event)
 }
 
 func (s *NotifeeService) sendConnectEvent(pid lp2pcore.PeerID,
@@ -155,12 +164,39 @@ func (s *NotifeeService) sendConnectEvent(pid lp2pcore.PeerID,
 		RemoteAddress: remoteAddress.String(),
 		Direction:     direction,
 	}
-	s.networkPipe.Send(event)
+	s.send(event)
 }
 
 func (s *NotifeeService) sendDisconnectEvent(pid lp2pcore.PeerID) {
 	event := &DisconnectEvent{
 		PeerID: pid,
 	}
+	s.send(event)
+}
+
+// send sends an event to the pipe, or keeps it until the service is started.
+func (s *NotifeeService) send(event Event) {
+	s.pendingLock.Lock()
+	if !s.started {
+		s.pending = append(s.pending, event)
+		s.pendingLock.Unlock()
+
+		return
+	}
+	s.pendingLock.Unlock()
+
 	s.networkPipe.Send(event)
+}
+
+// sendPendingEvents sends the events that were kept before the start, in their order.
+// An event that comes at the same time waits for the lock, so it is sent after them.
+func (s *NotifeeService) sendPendingEvents() {
+	s.pendingLock.Lock()
+	defer s.pendingLock.Unlock()
+
+	for _, event := range s.pending {
+		s.networkPipe.Send(event)
+	}
+	s.pending = nil
+	s.started = true
 }
