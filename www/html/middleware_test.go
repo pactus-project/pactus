@@ -9,11 +9,17 @@ import (
 
 	"github.com/pactus-project/pactus/www/html"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/metadata"
 )
 
 func TestBasicAuthMiddleware(t *testing.T) {
-	handler := html.BasicAuth(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+	hash, err := bcrypt.GenerateFromPassword([]byte("password"), bcrypt.MinCost)
+	require.NoError(t, err)
+	storedCredential := "username:" + string(hash)
+
+	handler := html.BasicAuth(storedCredential, http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		_, err := w.Write([]byte("authorized"))
 		assert.NoError(t, err)
@@ -27,6 +33,26 @@ func TestBasicAuthMiddleware(t *testing.T) {
 
 		assert.Equal(t, http.StatusUnauthorized, rec.Code)
 		assert.Equal(t, `Basic realm="restricted", charset="UTF-8"`, rec.Header().Get("WWW-Authenticate"))
+	})
+
+	t.Run("WrongPassword", func(t *testing.T) {
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", http.NoBody)
+		req.SetBasicAuth("username", "wrong")
+		rec := httptest.NewRecorder()
+
+		handler.ServeHTTP(rec, req)
+
+		assert.Equal(t, http.StatusUnauthorized, rec.Code)
+	})
+
+	t.Run("WrongUser", func(t *testing.T) {
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", http.NoBody)
+		req.SetBasicAuth("someone", "password")
+		rec := httptest.NewRecorder()
+
+		handler.ServeHTTP(rec, req)
+
+		assert.Equal(t, http.StatusUnauthorized, rec.Code)
 	})
 
 	t.Run("WithAuth", func(t *testing.T) {
@@ -45,7 +71,7 @@ func TestBasicAuthMiddleware(t *testing.T) {
 		req.SetBasicAuth("username", "password")
 		rec := httptest.NewRecorder()
 
-		checkMetadataHandler := html.BasicAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		checkMetadata := func(w http.ResponseWriter, r *http.Request) {
 			md, ok := metadata.FromOutgoingContext(r.Context())
 			assert.True(t, ok, "No metadata in context")
 
@@ -62,7 +88,8 @@ func TestBasicAuthMiddleware(t *testing.T) {
 			assert.Equal(t, "password", password)
 
 			w.WriteHeader(http.StatusOK)
-		}))
+		}
+		checkMetadataHandler := html.BasicAuth(storedCredential, http.HandlerFunc(checkMetadata))
 
 		checkMetadataHandler.ServeHTTP(rec, req)
 
