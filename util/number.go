@@ -25,6 +25,12 @@ func FormatFloatWithDelimiters(num float64, prec int) string {
 	return numStr
 }
 
+// FormatNumberStringWithDelimiters adds the thousands delimiters to a number
+// that is written in decimal digits, like "1234567" or "-1234567".
+func FormatNumberStringWithDelimiters(numStr string) string {
+	return formatNumberString(numStr)
+}
+
 func formatNumberString(numStr string) string {
 	var formattedNum string
 	if strings.HasPrefix(numStr, "-") {

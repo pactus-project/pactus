@@ -190,7 +190,7 @@ func TestBasicCheck(t *testing.T) {
 
 		err := trx.BasicCheck()
 		require.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "invalid amount: 42,000,000 PAC",
+			Reason: "invalid amount: 42,000,000.000000001 PAC",
 		})
 	})
 
@@ -576,7 +576,7 @@ func TestCheckFee(t *testing.T) {
 			trx: ts.GenerateTestTransferTx(
 				testsuite.TransactionWithFee(42e15 + 1),
 			),
-			expectedErr: tx.BasicCheckError{Reason: "invalid fee: 42,000,000 PAC"},
+			expectedErr: tx.BasicCheckError{Reason: "invalid fee: 42,000,000.000000001 PAC"},
 		},
 		{
 			name:        "Subsidy transaction with fee",
