@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+	"sync/atomic"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/crypto"
@@ -29,14 +30,16 @@ const (
 
 type ID = hash.Hash
 
+// Tx is a transaction.
+// A transaction is shared between the pool, the sync and consensus services and the API,
+// so the values that are computed on first use are stored atomically.
 type Tx struct {
-	memorizedID *ID
-	data        txData
+	memorizedID  atomic.Pointer[ID]
+	basicChecked atomic.Bool
+	data         txData
 }
 
 type txData struct {
-	basicChecked bool
-
 	Version   uint8
 	LockTime  types.Height
 	Fee       amount.Amount
@@ -127,19 +130,34 @@ func (tx *Tx) IsFreeTx() bool {
 }
 
 func (tx *Tx) SetSignature(sig crypto.Signature) {
-	tx.data.basicChecked = false
+	tx.basicChecked.Store(false)
 	tx.data.Signature = sig
 }
 
 func (tx *Tx) SetPublicKey(pub crypto.PublicKey) {
-	tx.data.basicChecked = false
+	tx.basicChecked.Store(false)
 	tx.data.PublicKey = pub
 }
 
 func (tx *Tx) BasicCheck() error {
-	if tx.data.basicChecked {
+	if tx.basicChecked.Load() {
 		return nil
 	}
+	if err := tx.BasicCheckUnsigned(); err != nil {
+		return err
+	}
+	if err := tx.checkSignature(); err != nil {
+		return err
+	}
+
+	tx.basicChecked.Store(true)
+
+	return nil
+}
+
+// BasicCheckUnsigned runs the checks of BasicCheck that don't need the signature.
+// It checks a transaction before it is signed.
+func (tx *Tx) BasicCheckUnsigned() error {
 	if tx.Version() != versionLatest {
 		return BasicCheckError{
 			Reason: fmt.Sprintf("invalid version: %d", tx.Version()),
@@ -165,16 +183,8 @@ func (tx *Tx) BasicCheck() error {
 			Reason: fmt.Sprintf("invalid payload: %s", err.Error()),
 		}
 	}
-	if err := tx.checkFee(); err != nil {
-		return err
-	}
-	if err := tx.checkSignature(); err != nil {
-		return err
-	}
 
-	tx.data.basicChecked = true
-
-	return nil
+	return tx.checkFee()
 }
 
 func (tx *Tx) checkFee() error {
@@ -394,7 +404,8 @@ func (tx *Tx) Decode(r io.Reader) error {
 	}
 
 	tx.data = decoded.data
-	tx.memorizedID = nil
+	tx.memorizedID.Store(nil)
+	tx.basicChecked.Store(false)
 
 	return nil
 }
@@ -414,6 +425,12 @@ func (tx *Tx) decode(r io.Reader) error {
 	const knownFlags = flagStripedPublicKey | flagNotSigned | flagWithDelegation
 	if flags&^knownFlags != 0 {
 		return BasicCheckError{Reason: fmt.Sprintf("unknown flag bits: %#x", flags)}
+	}
+
+	// A transaction that is not signed has no public key to strip. The flag would be ignored,
+	// and it would be a second encoding of the same transaction.
+	if util.IsFlagSet(flags, flagNotSigned) && util.IsFlagSet(flags, flagStripedPublicKey) {
+		return BasicCheckError{Reason: fmt.Sprintf("invalid flags: %#x", flags)}
 	}
 
 	err = tx.data.Fee.Decode(r)
@@ -577,8 +594,8 @@ func (tx *Tx) SignBytes() []byte {
 }
 
 func (tx *Tx) ID() ID {
-	if tx.memorizedID != nil {
-		return *tx.memorizedID
+	if id := tx.memorizedID.Load(); id != nil {
+		return *id
 	}
 
 	signBytes := tx.SignBytes()
@@ -588,7 +605,7 @@ func (tx *Tx) ID() ID {
 	}
 
 	id := hash.CalcHash(signBytes)
-	tx.memorizedID = &id
+	tx.memorizedID.Store(&id)
 
 	return id
 }

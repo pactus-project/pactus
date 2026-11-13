@@ -24,7 +24,7 @@ import (
 )
 
 func TestMemoryAlignment(t *testing.T) {
-	assert.Equal(t, 88, int(unsafe.Sizeof(tx.Tx{})))
+	assert.Equal(t, 96, int(unsafe.Sizeof(tx.Tx{})))
 }
 
 func TestCBORMarshaling(t *testing.T) {
@@ -617,4 +617,22 @@ func TestCheckFee(t *testing.T) {
 			require.ErrorIs(t, err, tt.expectedErr)
 		})
 	}
+}
+
+// A transaction that is not signed has no public key to strip. With both flags,
+// the same transaction would have a second encoding.
+func TestDecodeNotSignedWithStrippedPublicKey(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	trx := ts.GenerateTestSubsidyTx()
+	data, err := trx.Bytes()
+	require.NoError(t, err)
+	require.Equal(t, byte(0x02), data[0], "the flag of a transaction that is not signed")
+
+	_, err = tx.FromBytes(data)
+	require.NoError(t, err)
+
+	data[0] = 0x03
+	_, err = tx.FromBytes(data)
+	require.ErrorContains(t, err, "invalid flags")
 }

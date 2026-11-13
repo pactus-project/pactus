@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+	"sync/atomic"
 	"time"
 
 	"github.com/fxamacker/cbor/v2"
@@ -19,9 +20,12 @@ import (
 	"github.com/pactus-project/pactus/util/encoding"
 )
 
+// Block is a block of the chain.
+// A block is shared between the sync and consensus services and the API,
+// so the values that are computed on first use are stored atomically.
 type Block struct {
-	memorizedHash *hash.Hash
-	memorizedData []byte
+	memorizedHash atomic.Pointer[hash.Hash]
+	memorizedData atomic.Pointer[[]byte]
 	data          blockData
 }
 
@@ -141,8 +145,8 @@ func (b *Block) BasicCheck() error {
 // Hash returns the hash of the block.
 // The hash is memorized after the first calculation.
 func (b *Block) Hash() hash.Hash {
-	if b.memorizedHash != nil {
-		return *b.memorizedHash
+	if h := b.memorizedHash.Load(); h != nil {
+		return *h
 	}
 
 	buf := bytes.NewBuffer(make([]byte, 0, b.SerializeSize()))
@@ -157,7 +161,7 @@ func (b *Block) Hash() hash.Hash {
 	buf.Write(util.Int32ToBytesLE(int32(b.data.Txs.Len())))
 
 	h := hash.CalcHash(buf.Bytes())
-	b.memorizedHash = &h
+	b.memorizedHash.Store(&h)
 
 	return h
 }
@@ -278,8 +282,8 @@ func (b *Block) SerializeSize() int {
 // result so subsequent calls are more efficient.
 func (b *Block) Bytes() ([]byte, error) {
 	// Return the cached serialized bytes if it has already been generated.
-	if len(b.memorizedData) != 0 {
-		return b.memorizedData, nil
+	if data := b.memorizedData.Load(); data != nil {
+		return *data, nil
 	}
 
 	writer := bytes.NewBuffer(make([]byte, 0, b.SerializeSize()))
@@ -289,7 +293,8 @@ func (b *Block) Bytes() ([]byte, error) {
 	}
 
 	// Cache the serialized bytes and return them.
-	b.memorizedData = writer.Bytes()
+	data := writer.Bytes()
+	b.memorizedData.Store(&data)
 
-	return b.memorizedData, nil
+	return data, nil
 }
