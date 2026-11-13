@@ -6,7 +6,9 @@ import (
 	"testing"
 
 	"github.com/fxamacker/cbor/v2"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -215,4 +217,32 @@ func TestDecodeFailureLeavesBundleUntouched(t *testing.T) {
 	assert.Equal(t, BundleFlagNetworkMainnet, bdl.Flags)
 	assert.Nil(t, bdl.Message)
 	assert.Equal(t, types.Height(42), bdl.ConsensusHeight)
+}
+
+// A text string of a message must be valid UTF-8. The moniker and the agent
+// of a Hello message are stored and then sent to the gRPC clients, and
+// one invalid string makes the encoding of a whole gRPC response fail.
+func TestDecodeInvalidUTF8String(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	encode := func(moniker string) []byte {
+		msg := message.NewHelloMessage(ts.RandPeerID(), moniker, service.New(service.FullNode),
+			ts.RandHeight(), ts.RandHash(), ts.RandHash())
+		require.NoError(t, msg.Sign([]*bls.ValidatorKey{ts.RandValKey()}))
+
+		data, err := NewBundle(msg).Encode()
+		require.NoError(t, err)
+
+		return data
+	}
+
+	bdl := new(Bundle)
+	_, err := bdl.Decode(bytes.NewReader(encode("Alice")))
+	require.NoError(t, err)
+	assert.Equal(t, "Alice", bdl.Message.(*message.HelloMessage).Moniker)
+
+	bdl = new(Bundle)
+	_, err = bdl.Decode(bytes.NewReader(encode("Alice\xff")))
+	require.ErrorContains(t, err, "invalid UTF-8")
+	assert.Nil(t, bdl.Message)
 }

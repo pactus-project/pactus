@@ -91,6 +91,14 @@
 [sync]
 
   # `moniker` is a custom human-readable name for this node.
+  # It can be a plain name, like 'Alice', or a list of key-value pairs, like
+  # 'name=alice;email=alice@example.com;web=https://example.com' (see PIP-45).
+  # All the keys are optional. A key holds letters, digits and '_'. A value holds
+  # letters, digits and the characters '_-.~:/@+', without any space.
+  # An entry that does not follow these rules is ignored by the other nodes.
+  # A name with a space or with non-Latin letters must be a plain moniker.
+  # The moniker is public and it is sent to all the peers: do not put anything
+  # private in it. Its maximum length is 128 bytes.
   moniker = ''
 
   # `session_timeout` is a timeout for a download session to remain open.

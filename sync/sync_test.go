@@ -532,3 +532,33 @@ func TestSendFailures(t *testing.T) {
 		td.shouldNotPublishAnyMessage(t)
 	})
 }
+
+func TestIgnoredMonikerEntries(t *testing.T) {
+	tests := []struct {
+		moniker string
+		ignored int
+	}{
+		{moniker: "", ignored: 0},
+		{moniker: "Alice", ignored: 0},
+		{moniker: "My Pactus Node; the first one", ignored: 0},
+		{moniker: "name=alice;web=https://example.com", ignored: 0},
+		{moniker: "name=alice;", ignored: 0},
+		{moniker: "name=My Node", ignored: 1},
+		{moniker: "name=My Node;web=https://example.com", ignored: 1},
+		{moniker: "name=alice;name=bob;hello", ignored: 2},
+	}
+
+	for _, tt := range tests {
+		assert.Equal(t, tt.ignored, ignoredMonikerEntries(tt.moniker), "moniker: %q", tt.moniker)
+	}
+}
+
+func TestMonikerWithIgnoredEntries(t *testing.T) {
+	config := testConfig()
+	// The name is ignored because of the space; the node starts with a warning.
+	config.Moniker = "name=My Node;web=https://example.com"
+
+	td := setup(t, config)
+
+	assert.Equal(t, config.Moniker, td.sync.Moniker())
+}
