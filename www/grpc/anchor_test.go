@@ -403,7 +403,7 @@ func TestGetAnchorWithoutTxBody(t *testing.T) {
 		Id:        setTx.ID().String(),
 		Verbosity: pactus.TransactionVerbosity_TRANSACTION_VERBOSITY_INFO,
 	})
-	require.Equal(t, codes.InvalidArgument, status.Code(err))
+	require.Equal(t, codes.NotFound, status.Code(err))
 }
 
 func TestListAnchorsWithoutTxBody(t *testing.T) {
@@ -457,7 +457,7 @@ func TestGetAccountAfterPrunedDelete(t *testing.T) {
 		Id:        setTx.ID().String(),
 		Verbosity: pactus.TransactionVerbosity_TRANSACTION_VERBOSITY_INFO,
 	})
-	require.Equal(t, codes.InvalidArgument, status.Code(err))
+	require.Equal(t, codes.NotFound, status.Code(err))
 }
 
 func TestGetAnchorMissingAccount(t *testing.T) {

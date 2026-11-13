@@ -59,9 +59,17 @@ func (*utilServer) VerifyMessage(_ context.Context,
 	}, nil
 }
 
+// maxAggregationItems is the maximum number of public keys or signatures in an aggregation request.
+// Each item is decoded to a curve point, which is costly, and the service may have no authentication.
+const maxAggregationItems = 1024
+
 func (*utilServer) PublicKeyAggregation(_ context.Context,
 	req *pactus.PublicKeyAggregationRequest,
 ) (*pactus.PublicKeyAggregationResponse, error) {
+	if len(req.PublicKeys) > maxAggregationItems {
+		return nil, status.Errorf(codes.InvalidArgument, "too many public keys, maximum is %d", maxAggregationItems)
+	}
+
 	pubs := make([]*bls.PublicKey, len(req.PublicKeys))
 	for i, pubKey := range req.PublicKeys {
 		p, err := bls.PublicKeyFromString(pubKey)
@@ -85,6 +93,10 @@ func (*utilServer) PublicKeyAggregation(_ context.Context,
 func (*utilServer) SignatureAggregation(_ context.Context,
 	req *pactus.SignatureAggregationRequest,
 ) (*pactus.SignatureAggregationResponse, error) {
+	if len(req.Signatures) > maxAggregationItems {
+		return nil, status.Errorf(codes.InvalidArgument, "too many signatures, maximum is %d", maxAggregationItems)
+	}
+
 	sigs := make([]*bls.Signature, len(req.Signatures))
 	for i, sig := range req.Signatures {
 		s, err := bls.SignatureFromString(sig)

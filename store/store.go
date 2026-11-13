@@ -327,6 +327,10 @@ func (s *store) Transaction(txID tx.ID) (*CommittedTx, error) {
 
 	pos, err := s.txStore.tx(txID)
 	if err != nil {
+		if errors.Is(err, leveldb.ErrNotFound) {
+			return nil, ErrNotFound
+		}
+
 		return nil, err
 	}
 	data, err := s.blockStore.block(pos.height)

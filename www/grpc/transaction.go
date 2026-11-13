@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"encoding/hex"
+	"errors"
 	"math"
 	"strings"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
@@ -39,7 +41,11 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 
 	committedTx, err := s.state.CommittedTx(id)
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "transaction not found")
+		if errors.Is(err, store.ErrNotFound) {
+			return nil, status.Errorf(codes.NotFound, "transaction not found")
+		}
+
+		return nil, status.Errorf(codes.Internal, "unable to read the transaction: %v", err)
 	}
 
 	res := &pactus.GetTransactionResponse{
@@ -60,7 +66,7 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 			return nil, status.Errorf(codes.Internal, "%s", err.Error())
 		}
 		lastBlockHeight := s.state.LastBlockHeight()
-		confirmations := int(lastBlockHeight) - int(committedTx.Height)
+		confirmations := confirmationsOf(lastBlockHeight, committedTx.Height)
 		res.Transaction = transactionToProto(trx, committedTx.Height, confirmations)
 	}
 
@@ -76,7 +82,8 @@ func (s *transactionServer) BroadcastTransaction(_ context.Context,
 	}
 
 	if err := s.state.AddPendingTxAndBroadcast(trx); err != nil {
-		return nil, status.Errorf(codes.Canceled, "couldn't add to transaction pool: %v", err.Error())
+		// The pool refused the transaction: it is invalid in the current state, or the pool is full.
+		return nil, status.Errorf(codes.FailedPrecondition, "couldn't add to transaction pool: %v", err.Error())
 	}
 
 	return &pactus.BroadcastTransactionResponse{
@@ -349,6 +356,16 @@ func (s *transactionServer) getLockTime(lockTime uint32) types.Height {
 	}
 
 	return types.Height(lockTime)
+}
+
+// confirmationsOf returns the number of blocks that confirm a committed block or transaction.
+// The block that holds the transaction is the first confirmation: a block is final once it is committed.
+func confirmationsOf(lastBlockHeight, blockHeight types.Height) int {
+	if blockHeight == 0 || blockHeight > lastBlockHeight {
+		return 0
+	}
+
+	return int(lastBlockHeight-blockHeight) + 1
 }
 
 func transactionToProto(trx *tx.Tx, blockHeight types.Height, confirmations int) *pactus.TransactionInfo {
