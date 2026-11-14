@@ -25,6 +25,11 @@ type committee struct {
 	committeeSize int
 	validatorList *linkedlist.LinkedList[*validator.Validator]
 	proposerPos   *linkedlist.Element[*validator.Validator]
+
+	// members indexes the validators of the list by their address. The address of a validator
+	// is a hash of its public key: it is computed once, when the validator joins the committee,
+	// and not for each validator of the list on each lookup.
+	members map[crypto.Address]*validator.Validator
 }
 
 func NewCommittee(validators []*validator.Validator, committeeSize int,
@@ -33,9 +38,13 @@ func NewCommittee(validators []*validator.Validator, committeeSize int,
 	validatorList := linkedlist.New[*validator.Validator]()
 	var proposerPos *linkedlist.Element[*validator.Validator]
 
+	members := make(map[crypto.Address]*validator.Validator, len(validators))
 	for _, val := range validators {
-		el := validatorList.InsertAtTail(val.Clone())
-		if val.Address() == proposerAddress {
+		member := val.Clone()
+		addr := member.Address()
+		el := validatorList.InsertAtTail(member)
+		members[addr] = member
+		if addr == proposerAddress {
 			proposerPos = el
 		}
 	}
@@ -48,6 +57,7 @@ func NewCommittee(validators []*validator.Validator, committeeSize int,
 		committeeSize: committeeSize,
 		validatorList: validatorList,
 		proposerPos:   proposerPos,
+		members:       members,
 	}, nil
 }
 
@@ -75,9 +85,12 @@ func (c *committee) Update(lastRound types.Round, joined []*validator.Validator)
 
 	// First update the validator list
 	for _, val := range joined {
-		committeeVal := c.find(val.Address())
+		addr := val.Address()
+		committeeVal := c.find(addr)
 		if committeeVal == nil {
-			c.validatorList.InsertBefore(val.Clone(), c.proposerPos)
+			member := val.Clone()
+			c.validatorList.InsertBefore(member, c.proposerPos)
+			c.members[addr] = member
 		} else {
 			committeeVal.UpdateLastSortitionHeight(val.LastSortitionHeight())
 			committeeVal.UpdateProtocolVersion(val.ProtocolVersion())
@@ -121,6 +134,7 @@ func (c *committee) Update(lastRound types.Round, joined []*validator.Validator)
 			}
 		}
 		c.validatorList.Delete(oldestFirst[j])
+		delete(c.members, oldestFirst[j].Data.Address())
 	}
 }
 
@@ -160,18 +174,7 @@ func (c *committee) Contains(addr crypto.Address) bool {
 }
 
 func (c *committee) find(addr crypto.Address) *validator.Validator {
-	var found *validator.Validator
-	c.iterate(func(v *validator.Validator) bool {
-		if v.Address() == addr {
-			found = v
-
-			return true
-		}
-
-		return false
-	})
-
-	return found
+	return c.members[addr]
 }
 
 // IsProposer checks if the given address is the proposer for the specified round.
@@ -179,9 +182,9 @@ func (c *committee) IsProposer(addr crypto.Address, round types.Round) bool {
 	c.lk.RLock()
 	defer c.lk.RUnlock()
 
-	p := c.proposer(round)
+	member := c.find(addr)
 
-	return p.Address() == addr
+	return member != nil && member == c.proposer(round)
 }
 
 // Proposer returns an instance of the proposer validator for the specified round.

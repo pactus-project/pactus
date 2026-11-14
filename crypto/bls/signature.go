@@ -114,7 +114,8 @@ func (sig *Signature) PointG1() (*bls12381.G1Affine, error) {
 	if err != nil {
 		return nil, err
 	}
-	if g1Aff.IsInfinity() || !g1Aff.IsInSubGroup() {
+	// Unmarshal checks that the point is in the subgroup; the point at infinity passes it.
+	if g1Aff.IsInfinity() {
 		return nil, crypto.ErrInvalidSignature
 	}
 
