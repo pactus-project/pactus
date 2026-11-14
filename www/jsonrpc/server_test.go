@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/grpc/fake"
+	"github.com/pactus-project/pactus/www/guard"
 	"github.com/pactus-project/pactus/www/jsonrpc"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -106,4 +107,30 @@ func TestBlockchainInfo(t *testing.T) {
 
 	_, hasIsPruned := result["is_pruned"]
 	assert.False(t, hasIsPruned, "is_pruned should be omitted (value is false)")
+}
+
+// The front server checks the requests before the JSON-RPC library sees them.
+func TestRequestGuard(t *testing.T) {
+	td := setup(t)
+
+	body := []byte(`{"jsonrpc":"2.0","id":"1","method":"pactus.blockchain.get_blockchain_info","params":{}}`)
+	post := func(contentType string, data []byte) int {
+		req, err := http.NewRequestWithContext(t.Context(), http.MethodPost,
+			"http://"+td.jsonrpcServer.Address(), bytes.NewReader(data))
+		require.NoError(t, err)
+		req.Header.Set("Content-Type", contentType)
+
+		res, err := http.DefaultClient.Do(req)
+		require.NoError(t, err)
+		defer func() { _ = res.Body.Close() }()
+
+		return res.StatusCode
+	}
+
+	// A web page can send a text/plain request without a CORS preflight.
+	assert.Equal(t, http.StatusUnsupportedMediaType, post("text/plain", body))
+
+	// A body larger than what the gRPC server accepts is not read in full.
+	assert.Equal(t, http.StatusRequestEntityTooLarge,
+		post("application/json", bytes.Repeat([]byte(" "), guard.MaxRequestBodySize+1)))
 }
