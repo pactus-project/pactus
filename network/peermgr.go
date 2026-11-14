@@ -21,6 +21,12 @@ type peerInfo struct {
 	MultiAddress multiaddr.Multiaddr
 	Connected    bool
 	Direction    lp2pnet.Direction
+	// connCount tracks how many simultaneous connections this peer has.
+	// libp2p calls Connected/Disconnected once per *connection*, and a peer
+	// can hold more than one at once (simultaneous dial, TCP + QUIC, a
+	// relayed connection replaced by a direct one): the peer is only
+	// genuinely disconnected once this reaches zero.
+	connCount int
 }
 
 // Peer Manager attempts to establish connections with other nodes when the
@@ -108,6 +114,8 @@ func (mgr *peerMgr) setPeerConnected(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
 ) {
 	pi, exists := mgr.peers[pid]
 	if exists && pi.Connected {
+		pi.connCount++
+
 		return
 	}
 
@@ -126,29 +134,49 @@ func (mgr *peerMgr) setPeerConnected(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
 		Connected:    true,
 		MultiAddress: ma,
 		Direction:    direction,
+		connCount:    1,
 	}
 }
 
-func (mgr *peerMgr) SetPeerDisconnected(pid lp2ppeer.ID) {
+// SetPeerDisconnected reports one of the peer's connections closing. It
+// returns true only once the peer has no connection left, i.e. it is
+// genuinely disconnected; the caller should act on that (e.g. notify other
+// modules) only in that case.
+func (mgr *peerMgr) SetPeerDisconnected(pid lp2ppeer.ID) bool {
 	mgr.lk.Lock()
 	defer mgr.lk.Unlock()
 
-	mgr.setPeerDisconnected(pid)
+	return mgr.setPeerDisconnected(pid)
 }
 
-func (mgr *peerMgr) setPeerDisconnected(pid lp2ppeer.ID) {
+func (mgr *peerMgr) setPeerDisconnected(pid lp2ppeer.ID) bool {
 	peerInfo, exists := mgr.peers[pid]
 	if !exists {
-		return
+		return false
 	}
 
 	if !peerInfo.Connected {
-		return
+		return false
+	}
+
+	peerInfo.connCount--
+	if peerInfo.connCount > 0 {
+		return false
 	}
 
 	switch peerInfo.Direction {
 	case lp2pnet.DirInbound:
 		mgr.numInbound--
+
+		// An inbound peer's remote address is its ephemeral source port,
+		// never useful for dialing it back. Unlike an outbound-dialable
+		// address, there is nothing worth remembering once it disconnects:
+		// keeping the entry would let any inbound stranger (a peer ID
+		// costs nothing to generate) grow this table and peers.json
+		// without limit, and get re-dialled by CheckConnectivity.
+		delete(mgr.peers, pid)
+
+		return true
 
 	case lp2pnet.DirOutbound:
 		mgr.numOutbound--
@@ -159,6 +187,8 @@ func (mgr *peerMgr) setPeerDisconnected(pid lp2ppeer.ID) {
 
 	peerInfo.Connected = false
 	peerInfo.Direction = lp2pnet.DirUnknown
+
+	return true
 }
 
 // CheckConnectivity performs the actual work of maintaining connections.
