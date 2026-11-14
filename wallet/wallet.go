@@ -576,5 +576,6 @@ func (w *Wallet) SetDefaultFee(fee amount.Amount) error {
 // SetProvider sets the blockchain provider for the wallet.
 func (w *Wallet) SetProvider(provider provider.WalletProvider) {
 	w.provider = provider
+	w.addresses.provider = provider
 	w.transactions.provider = provider
 }
