@@ -1,7 +1,9 @@
 package state
 
 import (
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
@@ -41,13 +43,29 @@ func (st *state) validateBlock(blk *block.Block, round types.Round) error {
 		}
 	}
 
-	// Validate sortition seed
-	seed := blk.Header().SortitionSeed()
-	if !seed.Verify(proposer.PublicKey(), st.lastInfo.SortitionSeed()) {
+	// The sortition seed and the previous certificate are verified at the same time:
+	// each one costs a pairing. The errors are returned in the same order as before.
+	seedValid := verifySeedAsync(blk.Header().SortitionSeed(), proposer.PublicKey(), st.lastInfo.SortitionSeed())
+	certErr := st.validatePrevCertificate(blk.PrevCertificate(), blk.Header().PrevBlockHash())
+
+	if !<-seedValid {
 		return ErrInvalidSortitionSeed
 	}
 
-	return st.validatePrevCertificate(blk.PrevCertificate(), blk.Header().PrevBlockHash())
+	return certErr
+}
+
+// verifySeedAsync verifies the sortition seed in a goroutine. The result is sent to the
+// returned channel, which is buffered: the goroutine ends even if nobody reads the result.
+func verifySeedAsync(seed sortition.VerifiableSeed, pub *bls.PublicKey,
+	prevSeed sortition.VerifiableSeed,
+) <-chan bool {
+	result := make(chan bool, 1)
+	go func() {
+		result <- seed.Verify(pub, prevSeed)
+	}()
+
+	return result
 }
 
 // validatePrevCertificate validates certificate for the previous block.
@@ -67,7 +85,7 @@ func (st *state) validatePrevCertificate(cert *certificate.Certificate, blockHas
 		if !st.lastInfo.BlockHash().IsUndef() {
 			return ErrInvalidCertificate
 		}
-	} else {
+	} else if !st.isLastCertificate(cert) {
 		err := cert.ValidatePrecommit(st.lastInfo.Validators(), blockHash)
 		if err != nil {
 			return err
@@ -75,6 +93,19 @@ func (st *state) validatePrevCertificate(cert *certificate.Certificate, blockHas
 	}
 
 	return nil
+}
+
+// isLastCertificate reports whether the certificate is the one that the state holds
+// for the last block. That certificate is verified already: when the last block was
+// committed, and each time a vote is added to it. While the node synchronizes, the
+// previous certificate of a block is the certificate that committed the block before,
+// so verifying it again doubles the signature verifications of each block.
+//
+// The certificate of a proposer can hold other signers. It is verified as before.
+func (st *state) isLastCertificate(cert *certificate.Certificate) bool {
+	lastCert := st.lastInfo.Certificate()
+
+	return lastCert != nil && cert.Hash() == lastCert.Hash()
 }
 
 // validateCurCertificate validates certificate for the current height.
