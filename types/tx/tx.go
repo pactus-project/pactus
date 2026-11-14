@@ -267,7 +267,7 @@ func (tx *Tx) MarshalCBOR() ([]byte, error) {
 
 func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 	data := make([]byte, 0, tx.SerializeSize())
-	err := cbor.Unmarshal(bs, &data)
+	err := encoding.UnmarshalCBOR(bs, &data)
 	if err != nil {
 		return err
 	}
