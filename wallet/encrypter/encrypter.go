@@ -25,6 +25,21 @@ type argon2dParameters struct {
 
 type Option func(p *argon2dParameters)
 
+// maxConcurrentDerivations bounds the Argon2 derivations that run at the same time.
+// A derivation takes 64 MiB and several cores by default, and the wallet service derives
+// a key for each call that carries a password, without authentication when basic auth is off:
+// unbounded, concurrent calls could exhaust the memory of the node.
+const maxConcurrentDerivations = 2
+
+var derivations = make(chan struct{}, maxConcurrentDerivations)
+
+func deriveKey(password, salt []byte, iterations, memory uint32, parallelism uint8, keyLen uint32) []byte {
+	derivations <- struct{}{}
+	defer func() { <-derivations }()
+
+	return argon2.IDKey(password, salt, iterations, memory, parallelism, keyLen)
+}
+
 func OptionIteration(iterations uint32) func(p *argon2dParameters) {
 	return func(p *argon2dParameters) {
 		p.iterations = iterations
@@ -162,7 +177,7 @@ func (e *Encrypter) Encrypt(message, password string) (string, error) {
 		// - data-dependent Argon2d,
 		// - data-independent Argon2i,
 		// - a mix of the two, Argon2id.
-		passwordHash = argon2.IDKey([]byte(password), salt, iterations, memory, parallelism, keyLen)
+		passwordHash = deriveKey([]byte(password), salt, iterations, memory, parallelism, keyLen)
 	default:
 		return "", ErrMethodNotSupported
 	}
@@ -242,7 +257,12 @@ func (e *Encrypter) Decrypt(cipherText, password string) (string, error) {
 
 	switch funcs[0] {
 	case nameFuncArgon2ID:
-		passwordHash = argon2.IDKey([]byte(password), salt, iterations, memory, parallelism, keyLen)
+		// Argon2 panics on these values, and they come from the wallet file.
+		if iterations < 1 || parallelism < 1 {
+			return "", ErrInvalidParam
+		}
+
+		passwordHash = deriveKey([]byte(password), salt, iterations, memory, parallelism, keyLen)
 
 	default:
 		return "", ErrMethodNotSupported
@@ -274,6 +294,10 @@ func (e *Encrypter) Decrypt(cipherText, password string) (string, error) {
 		msg = aes256CTRCrypt(cipher, initVec, cipherKey)
 
 	case nameFuncAES256CBC:
+		// CBC works on full blocks only.
+		if len(cipher) == 0 || len(cipher)%aes.BlockSize != 0 {
+			return "", ErrInvalidCipher
+		}
 		msg = aes256CBCDecrypt(cipher, initVec, cipherKey)
 
 	default:

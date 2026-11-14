@@ -1,6 +1,7 @@
 package jsonstorage
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 
@@ -15,6 +16,9 @@ import (
 	"github.com/pactus-project/pactus/wallet/types"
 	"github.com/pactus-project/pactus/wallet/vault"
 )
+
+// legacyXPubSecp256k1Field is the JSON key of a field that the vault doesn't have anymore.
+const legacyXPubSecp256k1Field = `"xpub_secp256k1"`
 
 type legacyVault struct {
 	Encrypter  encrypter.Encrypter           `json:"encrypter"`
@@ -102,8 +106,13 @@ func upgrade(path string) error {
 		return store.Save(path)
 
 	case Version6:
-		// Recalculate the CRC after removing unused `xpub_secp256k1`, no need to upgrade the version.
-		store.VaultCRC = store.calcVaultCRC()
+		// Wallets that still have the unused `xpub_secp256k1` field are saved again without it,
+		// and with a new CRC. No need to upgrade the version.
+		// Other wallets are left untouched: opening a wallet must not rewrite its file,
+		// and a wrong CRC must be reported, not replaced.
+		if store.ValidateCRC() == nil || !bytes.Contains(data, []byte(legacyXPubSecp256k1Field)) {
+			return nil
+		}
 
 		return store.Save(path)
 

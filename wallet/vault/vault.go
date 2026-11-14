@@ -293,6 +293,9 @@ func (v *Vault) PrivateKeys(password string, paths []addresspath.Path) ([]crypto
 			}
 		case addresspath.PurposeImportPrivateKey:
 			index := addresspath.UnHarden(path.AddressIndex())
+			if int(index) >= len(keyStore.ImportedKeys) {
+				return nil, ErrInvalidPath
+			}
 			str := keyStore.ImportedKeys[index]
 
 			prvKey, err := PrivateKeyFromString(str)

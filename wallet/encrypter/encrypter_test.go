@@ -128,6 +128,52 @@ func TestInvalidDecrypt(t *testing.T) {
 	require.ErrorIs(t, err, ErrInvalidParam)
 }
 
+// A malformed wallet file must be reported as an error, it must not panic.
+func TestDecryptMalformedParams(t *testing.T) {
+	newEncrypter := func(method string) *Encrypter {
+		return &Encrypter{
+			Method: method,
+			Params: params{
+				nameParamIterations:  "1",
+				nameParamMemory:      "8",
+				nameParamParallelism: "1",
+				nameParamKeyLen:      "48",
+			},
+		}
+	}
+	cipherText := "AJFPsGu6bDMJ5iuMWDJS/87xVs7r"
+
+	t.Run("zero iterations", func(t *testing.T) {
+		enc := newEncrypter("ARGON2ID-AES_256_CTR-MACV1")
+		enc.Params.SetUint32(nameParamIterations, 0)
+
+		_, err := enc.Decrypt(cipherText, "password")
+		require.ErrorIs(t, err, ErrInvalidParam)
+	})
+
+	t.Run("zero parallelism", func(t *testing.T) {
+		enc := newEncrypter("ARGON2ID-AES_256_CTR-MACV1")
+		enc.Params.SetUint8(nameParamParallelism, 0)
+
+		_, err := enc.Decrypt(cipherText, "password")
+		require.ErrorIs(t, err, ErrInvalidParam)
+	})
+
+	t.Run("CBC cipher is not a multiple of the block size", func(t *testing.T) {
+		enc := newEncrypter("ARGON2ID-AES_256_CBC-MACV1")
+
+		_, err := enc.Decrypt(cipherText, "password")
+		require.ErrorIs(t, err, ErrInvalidCipher)
+	})
+
+	t.Run("CBC cipher is empty", func(t *testing.T) {
+		enc := newEncrypter("ARGON2ID-AES_256_CBC-MACV1")
+
+		_, err := enc.Decrypt("AJFPsGu6bDMJ5iuMWDJS/87xVs4=", "password")
+		require.ErrorIs(t, err, ErrInvalidCipher)
+	})
+}
+
 func TestAES256CBC(t *testing.T) {
 	enc := &Encrypter{
 		Method: "ARGON2ID-AES_256_CBC-MACV1",
