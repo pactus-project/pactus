@@ -14,7 +14,7 @@ import (
 	lp2pswarm "github.com/libp2p/go-libp2p/p2p/net/swarm"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/gopkg/logger"
-	"github.com/pactus-project/pactus/crypto/hash"
+	"golang.org/x/crypto/blake2b"
 )
 
 // MakeMultiAddrs converts a slice of string peer addresses to MultiAddress.
@@ -136,12 +136,13 @@ func SubnetsToFilters(subnets []*net.IPNet, action multiaddr.Action) *multiaddr.
 
 // MessageIDFunc returns the gossip identifier of a message. It covers the topic as well
 // as the data, so a message published on one topic can't hide the same bytes on another.
-func MessageIDFunc(m *lp2pspb.Message) string {
-	data := make([]byte, 0, len(m.GetTopic())+1+len(m.Data))
-	data = append(data, m.GetTopic()...)
-	data = append(data, 0) // Topic names don't contain a zero byte.
-	data = append(data, m.Data...)
-	h := hash.CalcHash(data)
+func MessageIDFunc(msg *lp2pspb.Message) string {
+	// The topic, a zero byte and the data are hashed one after the other, without
+	// copying the message: topic names don't contain a zero byte.
+	hasher, _ := blake2b.New256(nil)
+	_, _ = hasher.Write([]byte(msg.GetTopic()))
+	_, _ = hasher.Write([]byte{0})
+	_, _ = hasher.Write(msg.Data)
 
-	return string(h[:20])
+	return string(hasher.Sum(nil)[:20])
 }
