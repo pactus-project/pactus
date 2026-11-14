@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -63,12 +64,34 @@ func configurePragmas(ctx context.Context, db *sql.DB, lockingMode string) error
 	return nil
 }
 
+// createDBFile creates an empty database file that only its owner can access.
+// SQLite creates the file with the default permissions otherwise,
+// and the journal files take the permissions of the database file.
+func createDBFile(path string) error {
+	file, err := os.OpenFile(dbPath(path), os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0o600)
+	if err != nil {
+		return fmt.Errorf("failed to create database file: %w", err)
+	}
+
+	return file.Close()
+}
+
 func openDB(ctx context.Context, path string, opts ...Option) (*sql.DB, error) {
+	// Restrict a database file that an older version created with the default permissions.
+	for _, suffix := range []string{"", "-wal", "-shm"} {
+		_ = os.Chmod(dbPath(path)+suffix, 0o600)
+	}
+
 	dsn := fmt.Sprintf("file:%s?_busy_timeout=5000", dbPath(path))
 	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
+
+	// The pragmas below are set on one connection only.
+	// With the exclusive locking mode, a second connection of the pool can never get the lock,
+	// and all its queries fail with "database is locked".
+	db.SetMaxOpenConns(1)
 
 	p := defaultSettings()
 	for _, opt := range opts {
@@ -88,6 +111,10 @@ func Create(ctx context.Context, path string, network genesis.ChainType, vlt *va
 	opts ...Option,
 ) (*Storage, error) {
 	if err := util.Mkdir(path); err != nil {
+		return nil, err
+	}
+
+	if err := createDBFile(path); err != nil {
 		return nil, err
 	}
 
@@ -302,12 +329,38 @@ func (s *Storage) Vault() *vault.Vault {
 
 // UpdateVault updates the vault in storage.
 func (s *Storage) UpdateVault(vlt *vault.Vault) error {
+	// A neutered wallet is given to others, so the key store it replaces must not stay in the file.
+	scrub := vlt.IsNeutered() && !s.info.Neutered
+	if scrub {
+		if _, err := s.db.ExecContext(s.ctx, "PRAGMA secure_delete=ON;"); err != nil {
+			return fmt.Errorf("failed to enable secure delete: %w", err)
+		}
+	}
+
 	if err := s.saveVault(vlt); err != nil {
 		return err
+	}
+
+	if scrub {
+		if err := s.scrub(); err != nil {
+			return err
+		}
 	}
 	s.vlt = vlt
 	s.info.Encrypted = vlt.IsEncrypted()
 	s.info.Neutered = vlt.IsNeutered()
+
+	return nil
+}
+
+// scrub rewrites the database file and empties the write-ahead log,
+// so the replaced values can't be recovered from the free pages or from the log.
+func (s *Storage) scrub() error {
+	for _, query := range []string{"VACUUM;", "PRAGMA wal_checkpoint(TRUNCATE);"} {
+		if _, err := s.db.ExecContext(s.ctx, query); err != nil {
+			return fmt.Errorf("failed to scrub database: %w", err)
+		}
+	}
 
 	return nil
 }
@@ -377,6 +430,7 @@ func (s *Storage) HasAddress(address string) bool {
 }
 
 // InsertTransaction inserts a new transaction.
+// It returns an error if the transaction is already stored for the same receiver.
 func (s *Storage) InsertTransaction(info *wtypes.TransactionInfo) error {
 	result, err := s.db.ExecContext(
 		s.ctx, insertTransactionSQL,
@@ -402,7 +456,8 @@ func (s *Storage) InsertTransaction(info *wtypes.TransactionInfo) error {
 	return nil
 }
 
-// UpdateTransactionStatus updates the status and block height for all transactions with the given primary key.
+// UpdateTransactionStatus updates the status and block height of the transaction with the given primary key.
+// A batch transfer has one entry per recipient, and all of them are updated.
 func (s *Storage) UpdateTransactionStatus(no int64, status wtypes.TransactionStatus, blockHeight types.Height) error {
 	_, err := s.db.ExecContext(s.ctx, updateTransactionStatusSQL, int(status), blockHeight, no)
 
@@ -585,8 +640,12 @@ func (s *Storage) Clone(path string) (storage.WalletStorage, error) {
 		return nil, err
 	}
 
+	if err := createDBFile(path); err != nil {
+		return nil, err
+	}
+
 	// Use VACUUM INTO to create a backup
-	_, err := s.db.ExecContext(s.ctx, fmt.Sprintf("VACUUM INTO '%s'", dbPath(path)))
+	_, err := s.db.ExecContext(s.ctx, "VACUUM INTO ?", dbPath(path))
 	if err != nil {
 		return nil, fmt.Errorf("failed to backup database: %w", err)
 	}

@@ -93,7 +93,10 @@ func (t *transactions) ListTransactions(opts ...ListTransactionsOption) []*wtype
 		Skip:      cfg.skip,
 	}
 
-	txs, _ := t.storage.QueryTransactions(params)
+	txs, err := t.storage.QueryTransactions(params)
+	if err != nil {
+		logger.Warn("failed to query transactions", "error", err)
+	}
 
 	return txs
 }
@@ -229,6 +232,15 @@ func (t *transactions) addTransactionWithStatus(trx *tx.Tx,
 		}
 
 		if err := t.storage.InsertTransaction(info); err != nil {
+			// The storage refuses a transaction that it holds already. It is the case of
+			// a transaction of this wallet: it is recorded when it is broadcast, and
+			// the pool reports it afterwards.
+			if t.storage.HasTransaction(info.TxID) {
+				logger.Debug("transaction is already recorded", "id", trx.ID())
+
+				return nil
+			}
+
 			logger.Warn("failed to insert transaction into storage", "error", err, "id", trx.ID())
 
 			return err
