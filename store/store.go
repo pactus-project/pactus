@@ -545,6 +545,7 @@ func (s *store) writeBatch() error {
 		return err
 	}
 	s.batch.Reset()
+	s.accountStore.batchWritten()
 
 	return nil
 }
