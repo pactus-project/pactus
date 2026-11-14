@@ -1,10 +1,13 @@
 package manager_test
 
 import (
+	"fmt"
 	"path/filepath"
+	"sync"
 	"testing"
 
 	"github.com/pactus-project/gopkg/pipeline"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -14,6 +17,7 @@ import (
 	"github.com/pactus-project/pactus/wallet/provider"
 	"github.com/pactus-project/pactus/wallet/storage/jsonstorage"
 	"github.com/pactus-project/pactus/wallet/vault"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -103,4 +107,93 @@ func TestMigrateWallet(t *testing.T) {
 		err = mgr.MigrateWallet("no-such-wallet.json")
 		require.Error(t, err)
 	})
+}
+
+func TestConcurrentWalletCreation(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	conf := &manager.Config{
+		WalletsDir: util.TempDirPath(),
+		ChainType:  genesis.Mainnet,
+		LockMode:   true,
+	}
+	provider := provider.NewMockWalletProvider(ts.MockController())
+	eventPipe := pipeline.New[any](t.Context())
+	mgr, err := manager.NewManager(t.Context(), conf, provider, eventPipe)
+	require.NoError(t, err)
+
+	// Wallets are created while other calls list them and the node reports transactions.
+	// Run with the race detector: the wallets map and the addresses must be protected.
+	trx := ts.GenerateTestTransferTx()
+	errs := make(chan error, 12)
+	var wg sync.WaitGroup
+	for i := range 4 {
+		wg.Go(func() {
+			name := fmt.Sprintf("wallet-%d", i)
+			_, err := mgr.CreateWallet(name, "password")
+			errs <- err
+
+			_, err = mgr.NewAddress(name, crypto.AddressTypeBLSAccount, "label")
+			errs <- err
+		})
+		wg.Go(func() {
+			_, err := mgr.ListWallets()
+			errs <- err
+
+			eventPipe.Send(trx)
+		})
+	}
+	wg.Wait()
+	close(errs)
+
+	for err := range errs {
+		require.NoError(t, err)
+	}
+
+	wallets, err := mgr.ListWallets()
+	require.NoError(t, err)
+	assert.Len(t, wallets, 4)
+}
+
+// A wallet is added while other calls look up the wallets. These lookups don't derive any key,
+// so nothing else orders them with the creation: run with the race detector.
+func TestWalletLookupDuringCreation(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	conf := &manager.Config{
+		WalletsDir: util.TempDirPath(),
+		ChainType:  genesis.Mainnet,
+	}
+	provider := provider.NewMockWalletProvider(ts.MockController())
+	eventPipe := pipeline.New[any](t.Context())
+	mgr, err := manager.NewManager(t.Context(), conf, provider, eventPipe)
+	require.NoError(t, err)
+
+	_, err = mgr.CreateWallet("existing", "password")
+	require.NoError(t, err)
+
+	done := make(chan struct{})
+	var wg sync.WaitGroup
+	wg.Go(func() {
+		defer close(done)
+
+		_, err := mgr.CreateWallet("new", "password")
+		assert.NoError(t, err)
+	})
+	wg.Go(func() {
+		for {
+			select {
+			case <-done:
+				return
+			default:
+				_, err := mgr.WalletInfo("existing")
+				assert.NoError(t, err)
+			}
+		}
+	})
+	wg.Wait()
+
+	wallets, err := mgr.ListWallets()
+	require.NoError(t, err)
+	assert.Len(t, wallets, 2)
 }
