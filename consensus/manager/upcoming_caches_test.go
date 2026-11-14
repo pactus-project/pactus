@@ -8,10 +8,12 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/types"
+	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/mock/gomock"
 )
 
 // manager.AddVote caches ANY vote for height+1 into
@@ -92,4 +94,89 @@ func TestUpcomingProposalsCacheIsUnbounded(t *testing.T) {
 
 	assert.Less(t, len(mgr.upcomingProposals), acceptableBound,
 		"upcomingProposals must not grow without bound from unauthenticated, unsigned proposals")
+}
+
+// The same vote or proposal of the next height, received many times,
+// takes one place in the cache: the ones that come after it are still cached.
+func TestUpcomingCachesIgnoreDuplicates(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	mockState := state.NewMockState(ts.MockController())
+	consA := consensus.NewMockConsensus(ts.MockController())
+
+	height := ts.RandHeight()
+	consA.EXPECT().IsActive().Return(true).AnyTimes()
+	consA.EXPECT().HeightRound().Return(height, ts.RandRound()).AnyTimes()
+
+	mgr, ok := NewManager(mockState, []consensus.Consensus{consA}).(*manager)
+	require.True(t, ok)
+
+	repeated, _ := ts.GenerateTestPrecommitVote(height+1, 0)
+	for range 2 * maxUpcomingVotes {
+		mgr.AddVote(repeated)
+	}
+	other, _ := ts.GenerateTestPrecommitVote(height+1, 0)
+	mgr.AddVote(other)
+	assert.Equal(t, []*vote.Vote{repeated, other}, mgr.upcomingVotes)
+
+	prop := ts.GenerateTestProposal(height+1, 0)
+	for range 2 * maxUpcomingProposals {
+		mgr.SetProposal(prop)
+	}
+	otherProp := ts.GenerateTestProposal(height+1, 1)
+	mgr.SetProposal(otherProp)
+	assert.Equal(t, []*proposal.Proposal{prop, otherProp}, mgr.upcomingProposals)
+}
+
+// The cached proposals are bounded in bytes too: a proposal holds a block, which can be large.
+func TestUpcomingProposalsBoundedInBytes(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	mockState := state.NewMockState(ts.MockController())
+	consA := consensus.NewMockConsensus(ts.MockController())
+
+	height := ts.RandHeight()
+	consA.EXPECT().IsActive().Return(true).AnyTimes()
+	consA.EXPECT().HeightRound().Return(height, ts.RandRound()).AnyTimes()
+
+	mgr, ok := NewManager(mockState, []consensus.Consensus{consA}).(*manager)
+	require.True(t, ok)
+
+	for round := range maxUpcomingProposals {
+		mgr.SetProposal(ts.GenerateTestProposal(height+1, types.Round(round)))
+	}
+
+	assert.LessOrEqual(t, mgr.upcomingProposalsSize, maxUpcomingProposalsSize)
+	size := 0
+	for _, prop := range mgr.upcomingProposals {
+		size += prop.Block().SerializeSize()
+	}
+	assert.Equal(t, size, mgr.upcomingProposalsSize)
+
+	t.Run("a proposal past the bound is not cached", func(t *testing.T) {
+		bounded, isManager := NewManager(mockState, []consensus.Consensus{consA}).(*manager)
+		require.True(t, isManager)
+
+		first := ts.GenerateTestProposal(height+1, 0)
+		second := ts.GenerateTestProposal(height+1, 1)
+		bounded.maxProposalsSize = first.Block().SerializeSize() + second.Block().SerializeSize() - 1
+
+		bounded.SetProposal(first)
+		bounded.SetProposal(second)
+
+		require.Len(t, bounded.upcomingProposals, 1)
+		assert.Equal(t, first.Hash(), bounded.upcomingProposals[0].Hash())
+		assert.Equal(t, first.Block().SerializeSize(), bounded.upcomingProposalsSize)
+
+		// Once the cached proposals are replayed, the bound counts from zero again.
+		mockState.EXPECT().LastBlockHeight().Return(height).AnyTimes()
+		consA.EXPECT().MoveToNewHeight().AnyTimes()
+		consA.EXPECT().SetProposal(gomock.Any()).AnyTimes()
+		bounded.MoveToNewHeight()
+		assert.Zero(t, bounded.upcomingProposalsSize)
+
+		bounded.SetProposal(second)
+		require.Len(t, bounded.upcomingProposals, 1)
+		assert.Equal(t, second.Hash(), bounded.upcomingProposals[0].Hash())
+	})
 }

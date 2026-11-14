@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/consensusv2"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types"
@@ -22,9 +23,12 @@ type manager struct {
 	// Caching future votes and proposals due to potential server time misalignments.
 	// Votes and proposals for upcoming blocks may be received before
 	// the current block's consensus is complete.
-	upcomingVotes     []*vote.Vote         // Map to cache votes for future block heights
-	upcomingProposals []*proposal.Proposal // Map to cache proposals for future block heights
-	state             state.State
+	upcomingVotes         []*vote.Vote           // Map to cache votes for future block heights
+	upcomingSeen          map[hash.Hash]struct{} // the hashes of the cached votes and proposals
+	upcomingProposals     []*proposal.Proposal   // Map to cache proposals for future block heights
+	upcomingProposalsSize int                    // the size of the blocks of the cached proposals
+	maxProposalsSize      int                    // the bound of upcomingProposalsSize
+	state                 state.State
 
 	// observer keeps the votes and proposals of the current height while no
 	// local validator is in the committee. It is off unless WithObserver is set.
@@ -54,6 +58,9 @@ func WithObserver(enabled bool) Option {
 const (
 	maxUpcomingVotes     = 512
 	maxUpcomingProposals = 100
+	// maxUpcomingProposalsSize bounds the size of the cached proposals: a proposal holds a block,
+	// and a block can be close to the size limit of a gossip message.
+	maxUpcomingProposalsSize = 16 << 20
 )
 
 // NewManagerV1 creates a new manager instance that manages a set of consensus instances,
@@ -105,6 +112,7 @@ func NewManager(state state.State, instances []consensus.Consensus, opts ...Opti
 		instances:         instances,
 		upcomingVotes:     make([]*vote.Vote, 0),
 		upcomingProposals: make([]*proposal.Proposal, 0),
+		maxProposalsSize:  maxUpcomingProposalsSize,
 		state:             state,
 		observer:          newObserver(false),
 	}
@@ -202,6 +210,9 @@ func (mgr *manager) MoveToNewHeight() {
 
 		mgr.upcomingVotes = slices.Delete(mgr.upcomingVotes, index, index+1)
 	}
+
+	clear(mgr.upcomingSeen)
+	mgr.upcomingProposalsSize = 0
 }
 
 // AddVote adds a vote to all consensus instances.
@@ -213,9 +224,7 @@ func (mgr *manager) AddVote(vote *vote.Vote) {
 		_ = mgr.state.UpdateLastCertificate(vote)
 
 	case vote.Height() == curHeight+1:
-		if len(mgr.upcomingVotes) < maxUpcomingVotes {
-			mgr.upcomingVotes = append(mgr.upcomingVotes, vote)
-		}
+		mgr.cacheUpcomingVote(vote)
 
 	case vote.Height() == curHeight:
 		for _, cons := range mgr.instances {
@@ -225,15 +234,69 @@ func (mgr *manager) AddVote(vote *vote.Vote) {
 	}
 }
 
+// cacheUpcomingVote keeps a vote of the next height, unless the cache is full or holds it already.
+// The same vote can be received many times: without this check, sending one vote again
+// and again fills the cache, and the votes that come after it are dropped.
+//
+// The votes are not grouped by signer: they are not verified here, so a forged vote
+// would take the place of the vote of the validator it names.
+func (mgr *manager) cacheUpcomingVote(vte *vote.Vote) {
+	if len(mgr.upcomingVotes) >= maxUpcomingVotes {
+		return
+	}
+
+	if mgr.seenUpcoming(vte.Hash()) {
+		return
+	}
+
+	mgr.upcomingVotes = append(mgr.upcomingVotes, vte)
+}
+
+// cacheUpcomingProposal keeps a proposal of the next height,
+// unless the cache is full or holds it already.
+func (mgr *manager) cacheUpcomingProposal(prop *proposal.Proposal) {
+	if len(mgr.upcomingProposals) >= maxUpcomingProposals {
+		return
+	}
+
+	size := 0
+	if prop.Block() != nil {
+		size = prop.Block().SerializeSize()
+	}
+	if mgr.upcomingProposalsSize+size > mgr.maxProposalsSize {
+		return
+	}
+
+	if mgr.seenUpcoming(prop.Hash()) {
+		return
+	}
+
+	mgr.upcomingProposals = append(mgr.upcomingProposals, prop)
+	mgr.upcomingProposalsSize += size
+}
+
+// seenUpcoming records the hash of a vote or a proposal of the next height,
+// and reports whether it was recorded before.
+func (mgr *manager) seenUpcoming(msgHash hash.Hash) bool {
+	if _, seen := mgr.upcomingSeen[msgHash]; seen {
+		return true
+	}
+
+	if mgr.upcomingSeen == nil {
+		mgr.upcomingSeen = make(map[hash.Hash]struct{})
+	}
+	mgr.upcomingSeen[msgHash] = struct{}{}
+
+	return false
+}
+
 // SetProposal sets the proposal for all consensus instances.
 func (mgr *manager) SetProposal(prop *proposal.Proposal) {
 	cons := mgr.getBestInstance()
 	curHeight, _ := cons.HeightRound()
 	switch {
 	case prop.Height() == curHeight+1:
-		if len(mgr.upcomingProposals) < maxUpcomingProposals {
-			mgr.upcomingProposals = append(mgr.upcomingProposals, prop)
-		}
+		mgr.cacheUpcomingProposal(prop)
 
 	case prop.Height() == curHeight:
 		for _, cons := range mgr.instances {
