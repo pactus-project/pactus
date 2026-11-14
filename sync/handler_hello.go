@@ -87,7 +87,10 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
 			"time discrepancy exceeds 10 seconds", 0)
 
-		handler.acknowledge(response, pid)
+		// The peer is not banned: the difference is measured when the message is handled,
+		// so it includes the time the message waited in our queue, and the clock of an
+		// honest peer can be wrong. The peer can connect again once the clocks agree.
+		handler.reject(response, pid)
 
 		return
 	}
@@ -193,6 +196,14 @@ func (*helloHandler) PrepareBundle(m message.Message) *bundle.Bundle {
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagHandshaking)
 
 	return bdl
+}
+
+// reject sends the rejection to the peer, without banning it.
+func (handler *helloHandler) reject(msg *message.HelloAckMessage, pid peer.ID) {
+	handler.logger.Info("rejecting hello message", "msg", msg,
+		"pid", pid, "reason", msg.Reason)
+
+	handler.sendTo(msg, pid)
 }
 
 func (handler *helloHandler) acknowledge(msg *message.HelloAckMessage, pid peer.ID) {
