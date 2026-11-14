@@ -63,6 +63,26 @@ func (s *streamService) handleStream(stream lp2pnetwork.Stream) {
 	s.networkPipe.Send(event)
 }
 
+// writeMessage writes the message and closes the stream for writing. A stream that fails is reset:
+// it is not used anymore, and its resources are released at once.
+func (s *streamService) writeMessage(stream lp2pnetwork.Stream, msg []byte) error {
+	_ = stream.SetDeadline(time.Now().Add(s.timeout))
+
+	if _, err := stream.Write(msg); err != nil {
+		_ = stream.Reset()
+
+		return LibP2PError{Err: err}
+	}
+
+	if err := stream.CloseWrite(); err != nil {
+		_ = stream.Reset()
+
+		return LibP2PError{Err: err}
+	}
+
+	return nil
+}
+
 // SendTo sends a message to a specific peer, assuming there is already a direct connection.
 //
 // For simplicity, we do not use bi-directional streams.
@@ -88,25 +108,18 @@ func (s *streamService) SendTo(msg []byte, pid lp2peer.ID) (lp2pnetwork.Stream, 
 		return nil, LibP2PError{Err: err}
 	}
 
-	_ = stream.SetDeadline(time.Now().Add(s.timeout))
-
-	_, err = stream.Write(msg)
-	if err != nil {
-		_ = stream.Reset()
-
-		return nil, LibP2PError{Err: err}
-	}
-
-	err = stream.CloseWrite()
-	if err != nil {
-		return nil, LibP2PError{Err: err}
+	if err := s.writeMessage(stream, msg); err != nil {
+		return nil, err
 	}
 
 	// We need to close the stream once it is read by the receiver.
 	// If, for any reason, the receiver doesn't close the stream, we need to close it after a timeout.
 	go func() {
 		timer := time.NewTimer(s.timeout)
-		closed := make(chan bool)
+		defer timer.Stop()
+
+		// The channel is buffered, so the reader never blocks when the timer wins the race.
+		closed := make(chan bool, 1)
 
 		go func() {
 			// We need only one byte to read the EOF.
