@@ -60,7 +60,11 @@ func init() {
 		"snapshot server base URL (network path will be appended automatically)",
 	)
 	version.NodeAgent.AppType = "gui"
+}
 
+// initGTK initializes GTK. It needs a display, so it is called when the GUI starts
+// and not when the package is loaded: the tests of the package run without a display.
+func initGTK() {
 	// The GUI text is English only, so force GTK's built-in widget strings
 	// (assistant navigation, about dialog, file choosers ...) to English too
 	// instead of following the operating system locale. This affects message
@@ -82,6 +86,7 @@ func init() {
 
 //nolint:gocognit // needs refactoring
 func main() {
+	initGTK()
 	flag.Parse()
 
 	gtkutil.Logf("Starting Pactus GUI")
