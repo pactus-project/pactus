@@ -2,6 +2,7 @@ package manager
 
 import (
 	"testing"
+	"time"
 
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/types"
@@ -9,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
+	"github.com/pactus-project/pactus/util/ratelimit"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -273,6 +275,9 @@ func TestObserverForgedVoteCannotEvictRounds(t *testing.T) {
 
 func TestObserverRateLimitsVerification(t *testing.T) {
 	td := setupObserver(t)
+	// The budget is per second: the test can take longer than that, for example under the race
+	// detector. The same budget over a long window makes it independent of the speed of the machine.
+	td.observer.verifyLimit = ratelimit.NewRateLimit(observerMaxVerifications, time.Hour)
 
 	// A flood of distinct forged votes for open slots: each one would cost a
 	// signature check, so the observer stops checking past its budget.
