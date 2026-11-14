@@ -6,61 +6,69 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 )
 
+// Tree is a merkle tree that keeps the hashes of its nodes. Setting a leaf invalidates
+// the nodes above it, and Root only hashes again the invalidated nodes.
+//
+// The nodes are kept in one flat array per height, indexed by their width: a node costs
+// its hash and one byte, where a node of a map cost about 170 bytes per leaf.
 type Tree struct {
-	nodes     map[uint32]*node
+	levels    []level
 	maxWidth  int32
 	maxHeight int32
 }
 
-type node struct {
-	width  int32
-	height int32
-	hash   *hash.Hash
+// level holds the nodes of one height of the tree.
+type level struct {
+	hashes []hash.Hash
+	states []nodeState
 }
 
-// nodeID return the node ID (four bytes):
-// +-+---+
-// |h| w |
-// +-+---+
-// h: height
-// w: width
-func nodeID(width, height int32) uint32 {
-	return (uint32(height&0xff) << 24) | uint32(width&0xffffff)
-}
+type nodeState uint8
+
+const (
+	// nodeAbsent is a position without node. The node on its left is used instead.
+	nodeAbsent nodeState = iota
+	// nodeInvalid is a node whose hash must be computed from its children.
+	nodeInvalid
+	// nodeValid is a node whose hash is computed, or set for a leaf.
+	nodeValid
+)
 
 func New() *Tree {
-	return &Tree{
-		nodes: make(map[uint32]*node),
-	}
+	return &Tree{}
 }
 
-func (*Tree) createNode(width, height int32) *node {
-	return &node{
-		width:  width,
-		height: height,
-	}
-}
-
-func (t *Tree) getNode(width, height int32) *node {
-	id := nodeID(width, height)
-
-	return t.nodes[id]
-}
-
-func (t *Tree) getOrCreateNode(width, height int32) *node {
-	id := nodeID(width, height)
-	node, ok := t.nodes[id]
-	if !ok {
-		node = t.createNode(width, height)
-		t.nodes[id] = node
+func (t *Tree) nodeState(width, height int32) nodeState {
+	if width < 0 || int(height) >= len(t.levels) {
+		return nodeAbsent
 	}
 
-	return node
+	lvl := &t.levels[height]
+	if int(width) >= len(lvl.states) {
+		return nodeAbsent
+	}
+
+	return lvl.states[width]
+}
+
+// setNode creates the node if it doesn't exist, and sets its state and its hash.
+func (t *Tree) setNode(width, height int32, state nodeState, h hash.Hash) {
+	for len(t.levels) <= int(height) {
+		t.levels = append(t.levels, level{})
+	}
+
+	lvl := &t.levels[height]
+	if missing := int(width) + 1 - len(lvl.states); missing > 0 {
+		lvl.hashes = append(lvl.hashes, make([]hash.Hash, missing)...)
+		lvl.states = append(lvl.states, make([]nodeState, missing)...)
+	}
+
+	lvl.states[width] = state
+	lvl.hashes[width] = h
 }
 
 func (t *Tree) invalidateNode(width, height int32) {
-	n := t.getOrCreateNode(width, height)
-	n.hash = nil
+	t.setNode(width, height, nodeInvalid, hash.UndefHash)
 }
 
 func (t *Tree) recalculateHeight(maxWidth int32) {
@@ -83,8 +91,7 @@ func (t *Tree) SetData(leaf int32, data []byte) {
 func (t *Tree) SetHash(leaf int32, h hash.Hash) {
 	t.recalculateHeight(leaf + 1)
 
-	node := t.getOrCreateNode(leaf, 0)
-	node.hash = &h
+	t.setNode(leaf, 0, nodeValid, h)
 
 	w := leaf / 2
 	for h := int32(1); h < t.maxHeight; h++ {
@@ -103,29 +110,32 @@ func (t *Tree) Root() hash.Hash {
 }
 
 func (t *Tree) nodeHash(width, height int32) hash.Hash {
-	node := t.getNode(width, height)
-	if node == nil {
+	switch t.nodeState(width, height) {
+	case nodeAbsent:
 		// There is no node on the right: the node on the left is used instead.
 		// It is hashed from its own children, never from the ones of this position.
-		if t.getNode(width-1, height) == nil {
+		if t.nodeState(width-1, height) == nodeAbsent {
 			panic("invalid merkle tree")
 		}
 
 		return t.nodeHash(width-1, height)
+
+	case nodeValid:
+		return t.levels[height].hashes[width]
+
+	case nodeInvalid:
+		left := t.nodeHash(width*2, height-1)
+		right := t.nodeHash(width*2+1, height-1)
+
+		data := make([]byte, len(left)+len(right))
+		copy(data[:hash.HashSize], left.Bytes())
+		copy(data[hash.HashSize:], right.Bytes())
+
+		h := hash.CalcHash(data)
+		t.setNode(width, height, nodeValid, h)
+
+		return h
 	}
-	if node.hash != nil {
-		return *node.hash
-	}
 
-	left := t.nodeHash(width*2, height-1)
-	right := t.nodeHash(width*2+1, height-1)
-
-	data := make([]byte, len(left)+len(right))
-	copy(data[:hash.HashSize], left.Bytes())
-	copy(data[hash.HashSize:], right.Bytes())
-
-	h := hash.CalcHash(data)
-	node.hash = &h
-
-	return h
+	panic("invalid node state")
 }
