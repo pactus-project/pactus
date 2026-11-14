@@ -23,9 +23,9 @@ func TestParse(t *testing.T) {
 		},
 		{
 			name:        "Plain moniker",
-			raw:         "Javad",
+			raw:         "John Doe",
 			ignored:     1,
-			displayName: "Javad",
+			displayName: "John Doe",
 		},
 		{
 			name:        "Plain moniker with spaces",
@@ -35,13 +35,13 @@ func TestParse(t *testing.T) {
 		},
 		{
 			name: "Structured moniker of PIP-45",
-			raw:  "name=javad;email=ja7ad@live.com;web=https://google.com",
+			raw:  "name=john_doe;email=john.doe@example.com;web=https://example.com",
 			fields: []Field{
-				{Key: "name", Value: "javad"},
-				{Key: "email", Value: "ja7ad@live.com"},
-				{Key: "web", Value: "https://google.com"},
+				{Key: "name", Value: "john_doe"},
+				{Key: "email", Value: "john.doe@example.com"},
+				{Key: "web", Value: "https://example.com"},
 			},
-			displayName: "javad",
+			displayName: "john_doe",
 		},
 		{
 			name:        "Name is not the first field",
@@ -307,8 +307,8 @@ func TestSanitize(t *testing.T) {
 
 func FuzzParse(f *testing.F) {
 	f.Add("")
-	f.Add("Javad")
-	f.Add("name=javad;email=ja7ad@live.com;web=https://google.com")
+	f.Add("John Doe")
+	f.Add("name=john_doe;email=john.doe@example.com;web=https://example.com")
 	f.Add("name=alice;name=bob;;=;a=;=b")
 	f.Add("\x1b[31m\u202ename=alice\xff")
 	f.Add(" \u00a0a\u0301\u0301\u0301\u0301\u0301\u200d\u3164\u2800 ")

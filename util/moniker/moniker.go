@@ -1,9 +1,9 @@
 // Package moniker reads the moniker of a node.
 //
 // A moniker is a free string that a node declares about itself. It can be a
-// plain name like "Javad", or it can follow the structured format of PIP-45:
+// plain name like "John Doe", or it can follow the structured format of PIP-45:
 //
-//	name=javad;email=javad@example.com;web=https://example.com
+//	name=john_doe;email=john.doe@example.com;web=https://example.com
 //
 // A moniker is not verified by anyone: any node can declare any name, email
 // or website. The values must be shown as text that the node itself declared,
