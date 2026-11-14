@@ -75,7 +75,8 @@ func (c *TxBondDialogController) applyDefaults() {
 }
 
 func (c *TxBondDialogController) populateCombos() {
-	gtkutil.DropDownFromAddressListWithAmount(c.view.SenderDrop, c.model.ListAccountAddresses(), c.model.Balance)
+	accounts := c.model.ListAccountAddresses()
+	gtkutil.DropDownFromAddressListWithAmount(c.view.SenderDrop, accounts, gtkutil.ListedBalance(accounts))
 	gtkutil.ComboBoxFromAddressListWithAmount(c.view.ReceiverCombo, c.model.ListValidatorAddresses(), c.model.Stake)
 }
 

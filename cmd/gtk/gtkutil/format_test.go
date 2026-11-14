@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSmallGray_EscapesMarkup(t *testing.T) {
@@ -81,4 +82,23 @@ func TestFormatTimeAgo(t *testing.T) {
 			assert.Equal(t, tt.want, formatTimeAgo(tt.timestamp, now))
 		})
 	}
+}
+
+func TestListedBalance(t *testing.T) {
+	infos := []*pactus.AddressInfo{
+		{Address: "pc1a", Balance: 1_000_000_000},
+		{Address: "pc1b", Balance: 0},
+	}
+	getAmount := ListedBalance(infos)
+
+	amt, err := getAmount("pc1a")
+	require.NoError(t, err)
+	assert.Equal(t, amount.Amount(1_000_000_000), amt)
+
+	amt, err = getAmount("pc1b")
+	require.NoError(t, err)
+	assert.Zero(t, amt)
+
+	_, err = getAmount("pc1c")
+	require.Error(t, err)
 }

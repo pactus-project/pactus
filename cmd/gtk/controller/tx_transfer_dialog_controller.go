@@ -56,7 +56,8 @@ func (c *TxTransferDialogController) applyDefaults() {
 }
 
 func (c *TxTransferDialogController) populateCombos() {
-	gtkutil.DropDownFromAddressListWithAmount(c.view.SenderDrop, c.model.ListAccountAddresses(), c.model.Balance)
+	accounts := c.model.ListAccountAddresses()
+	gtkutil.DropDownFromAddressListWithAmount(c.view.SenderDrop, accounts, gtkutil.ListedBalance(accounts))
 }
 
 func (c *TxTransferDialogController) onSenderChanged() {
