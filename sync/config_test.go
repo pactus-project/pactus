@@ -1,6 +1,7 @@
 package sync
 
 import (
+	"strings"
 	"testing"
 	"time"
 
@@ -33,6 +34,39 @@ func TestConfigBasicCheck(t *testing.T) {
 			expectedErr: "session timeout should be positive",
 			updateFn: func(c *Config) {
 				c.SessionTimeoutStr = "-5s"
+			},
+		},
+		{
+			name:        "Moniker is too long",
+			expectedErr: "moniker is too long: 129 bytes, the maximum is 128 bytes",
+			updateFn: func(c *Config) {
+				c.Moniker = strings.Repeat("a", 129)
+			},
+		},
+		{
+			name:        "Moniker is too long in bytes",
+			expectedErr: "moniker is too long: 130 bytes, the maximum is 128 bytes",
+			updateFn: func(c *Config) {
+				c.Moniker = strings.Repeat("\u00e9", 65)
+			},
+		},
+		{
+			name:        "Moniker is not valid UTF-8",
+			expectedErr: "moniker is not a valid UTF-8 string",
+			updateFn: func(c *Config) {
+				c.Moniker = "alice\xff"
+			},
+		},
+		{
+			name: "Longest moniker",
+			updateFn: func(c *Config) {
+				c.Moniker = strings.Repeat("a", 128)
+			},
+		},
+		{
+			name: "Structured moniker",
+			updateFn: func(c *Config) {
+				c.Moniker = "name=alice;email=alice@example.com;web=https://example.com"
 			},
 		},
 		{

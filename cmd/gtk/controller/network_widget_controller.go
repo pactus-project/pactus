@@ -12,6 +12,7 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
+	"github.com/pactus-project/pactus/util/moniker"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
@@ -62,7 +63,7 @@ func (c *NetworkWidgetController) BuildView(ctx context.Context) error {
 			})
 		gtkutil.ColumnViewAppendTextColumnEx(c.view.ColViewPeers, "Moniker", 0, false, "",
 			func(row peerRow) string {
-				return row.peer.GetMoniker()
+				return moniker.Parse(row.peer.GetMoniker()).DisplayName()
 			})
 		gtkutil.ColumnViewAppendAddressColumn(c.view.ColViewPeers, "Address", func(row peerRow) string {
 			return row.peer.GetAddress()
