@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"errors"
 	"path/filepath"
+	"strings"
 
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/crypto"
@@ -31,7 +33,11 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		"initialize working directory for localnet (for development)")
 
 	restoreOpt := initCmd.Flags().String("restore", "",
-		"restore the 'default_wallet' using a mnemonic or seed phrase")
+		"restore the 'default_wallet' using a mnemonic or seed phrase "+
+			"(visible to the other users of the machine, prefer --restore-from-file)")
+
+	restoreFromFileOpt := initCmd.Flags().String("restore-from-file", "",
+		"restore the 'default_wallet' using the mnemonic or seed phrase in the file")
 
 	passwordOpt := initCmd.Flags().StringP("password", "p", "",
 		"the wallet password")
@@ -50,8 +56,11 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			return
 		}
 
+		restore, err := restorePhrase(*restoreOpt, *restoreFromFileOpt)
+		terminal.FatalErrorCheck(err)
+
 		var mnemonic string
-		if *restoreOpt == "" {
+		if restore == "" {
 			mnemonic, _ = wallet.GenerateMnemonic(*entropyOpt)
 
 			terminal.PrintLine()
@@ -69,8 +78,8 @@ func buildInitCmd(parentCmd *cobra.Command) {
 				return
 			}
 		} else {
-			mnemonic = *restoreOpt
-			err := wallet.CheckMnemonic(*restoreOpt)
+			mnemonic = restore
+			err := wallet.CheckMnemonic(restore)
 			terminal.FatalErrorCheck(err)
 		}
 
@@ -119,7 +128,7 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		terminal.FatalErrorCheck(err)
 
 		// Recovering addresses
-		if *restoreOpt != "" {
+		if restore != "" {
 			cmd.RecoverWalletAddresses(wlt, password)
 		}
 
@@ -142,4 +151,23 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		terminal.PrintInfoMsgf("🚀 To start your node, run:")
 		terminal.PrintInfoMsgBoldf("   %s start -w %s", cmd.PactusDaemonName(), workingDir)
 	}
+}
+
+// restorePhrase returns the seed phrase to restore the wallet with, or an empty string for a new wallet.
+// A seed phrase on the command line is visible to the other users of the machine, and it stays
+// in the shell history: it can be read from a file instead.
+func restorePhrase(restore, restoreFile string) (string, error) {
+	if restoreFile == "" {
+		return restore, nil
+	}
+	if restore != "" {
+		return "", errors.New("use --restore or --restore-from-file, not both")
+	}
+
+	data, err := util.ReadFile(restoreFile)
+	if err != nil {
+		return "", err
+	}
+
+	return strings.Join(strings.Fields(string(data)), " "), nil
 }

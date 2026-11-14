@@ -246,3 +246,26 @@ func TestDecodeInvalidUTF8String(t *testing.T) {
 	require.ErrorContains(t, err, "invalid UTF-8")
 	assert.Nil(t, bdl.Message)
 }
+
+func TestDecodeRejectsOtherEncodings(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	vte, _ := ts.GenerateTestPrecommitVote(ts.RandHeight(), ts.RandRound())
+	bdl := NewBundle(message.NewVoteMessage(vte))
+	wire, err := bdl.Encode()
+	require.NoError(t, err)
+
+	decoded := new(Bundle)
+	_, err = decoded.Decode(bytes.NewReader(wire))
+	require.NoError(t, err)
+
+	// The same bundle as a map of indefinite length: the header of the map is replaced,
+	// and a "break" is appended. It is another message for the network layer,
+	// with the same signed vote.
+	require.Equal(t, byte(0xa0), wire[0]&0xe0, "a bundle is a CBOR map")
+	variant := append([]byte{0xbf}, wire[1:]...)
+	variant = append(variant, 0xff)
+
+	_, err = new(Bundle).Decode(bytes.NewReader(variant))
+	require.Error(t, err)
+}

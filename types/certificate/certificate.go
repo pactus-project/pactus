@@ -134,7 +134,7 @@ func (cert *Certificate) MarshalCBOR() ([]byte, error) {
 
 func (cert *Certificate) UnmarshalCBOR(bs []byte) error {
 	data := make([]byte, 0, cert.SerializeSize())
-	err := cbor.Unmarshal(bs, &data)
+	err := encoding.UnmarshalCBOR(bs, &data)
 	if err != nil {
 		return err
 	}

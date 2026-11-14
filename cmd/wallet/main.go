@@ -64,7 +64,8 @@ func setProvider(ctx context.Context, wlt *wallet.Wallet) error {
 	return nil
 }
 
-func main() {
+// newRootCmd builds the command of the wallet with all its sub-commands.
+func newRootCmd() *cobra.Command {
 	rootCmd := &cobra.Command{
 		Use:               "pactus-wallet",
 		Short:             "Pactus wallet",
@@ -93,8 +94,17 @@ func main() {
 	buildNeuterCmd(rootCmd)
 	buildMigrateCmd(rootCmd)
 
+	return rootCmd
+}
+
+// execute runs the command with the arguments of the process, and prints its error.
+func execute(rootCmd *cobra.Command) {
 	err := rootCmd.Execute()
 	if err != nil {
 		terminal.PrintErrorMsgf(err.Error())
 	}
+}
+
+func main() {
+	execute(newRootCmd())
 }

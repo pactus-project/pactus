@@ -174,6 +174,9 @@ func StartNode(ctx context.Context, workingDir string, passwordFetcher func() (s
 
 	err = node.Start()
 	if err != nil {
+		// Release what the node has opened, like the store and the network.
+		node.Stop()
+
 		return nil, err
 	}
 
@@ -239,7 +242,7 @@ func MakeConfig(workingDir string) (*config.Config, *genesis.Genesis, error) {
 		terminal.PrintWarnMsgf("Unable to load the config: %s", err)
 		terminal.PrintInfoMsgf("Attempting to update or restore the config file...")
 
-		conf, err = RecoverConfig(confPath, defConf, chainType)
+		conf, err = RecoverConfig(confPath, chainType)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -263,9 +266,16 @@ func MakeConfig(workingDir string) (*config.Config, *genesis.Genesis, error) {
 	return conf, gen, nil
 }
 
-func RecoverConfig(confPath string, defConf *config.Config, chainType genesis.ChainType) (*config.Config, error) {
+// RecoverConfig updates a config file that has unknown fields,
+// or replaces a config file that can't be read with the default one.
+// The previous file is kept as a backup.
+//
+// Each load starts from a new default config: a load that fails in the middle of the file
+// leaves the values it has read in the config it was given. Reusing that config would
+// save, and run the node with, a mix of the defaults and a part of the broken file.
+func RecoverConfig(confPath string, chainType genesis.ChainType) (*config.Config, error) {
 	// Try to attempt to load config in non-strict mode
-	conf, err := config.LoadFromFile(confPath, false, defConf)
+	conf, err := config.LoadFromFile(confPath, false, config.DefaultConfigForChain(chainType))
 
 	// Create a backup of the config
 	if util.PathExists(confPath) {
@@ -282,27 +292,28 @@ func RecoverConfig(confPath string, defConf *config.Config, chainType genesis.Ch
 			return nil, err
 		}
 		terminal.PrintSuccessMsgf("Config updated.")
-	} else {
-		switch chainType {
-		case genesis.Mainnet:
-			err = config.SaveMainnetConfig(confPath)
-			if err != nil {
-				return nil, err
-			}
 
-		case genesis.Testnet,
-			genesis.Localnet:
-			err = defConf.Save(confPath)
-			if err != nil {
-				return nil, err
-			}
-		}
-
-		terminal.PrintSuccessMsgf("Config restored to the default values")
-		conf, _ = config.LoadFromFile(confPath, true, defConf) // This time it should be OK
+		return conf, nil
 	}
 
-	return conf, err
+	switch chainType {
+	case genesis.Mainnet:
+		err = config.SaveMainnetConfig(confPath)
+		if err != nil {
+			return nil, err
+		}
+
+	case genesis.Testnet, genesis.Localnet:
+		err = config.DefaultConfigForChain(chainType).Save(confPath)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	terminal.PrintSuccessMsgf("Config restored to the default values")
+
+	// This time it should be OK
+	return config.LoadFromFile(confPath, true, config.DefaultConfigForChain(chainType))
 }
 
 // MakeRewardAddresses generates a list of reward addresses based on wallet and configuration.

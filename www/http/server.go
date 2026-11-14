@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/gopkg/netutil"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
+	"github.com/pactus-project/pactus/www/guard"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -123,7 +124,10 @@ func (s *Server) StartServer(grpcAddr string) error {
 	gwServer := &http.Server{
 		Addr:              s.config.Listen,
 		ReadHeaderTimeout: 3 * time.Second,
-		Handler:           httpMux,
+		ReadTimeout:       30 * time.Second,
+		WriteTimeout:      60 * time.Second,
+		IdleTimeout:       120 * time.Second,
+		Handler:           guard.Requests(httpMux),
 	}
 
 	if s.config.EnableCORS {
@@ -189,6 +193,8 @@ func preflightHandler(w http.ResponseWriter) {
 // Don't do this without consideration in production systems.
 func allowCORS(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// The response depends on the origin of the request: a cache must not serve it to another origin.
+		w.Header().Add("Vary", "Origin")
 		if origin := r.Header.Get("Origin"); origin != "" {
 			w.Header().Set("Access-Control-Allow-Origin", origin)
 			if r.Method == http.MethodOptions && r.Header.Get("Access-Control-Request-Method") != "" {

@@ -47,3 +47,23 @@ func TestKeyedRateLimitDropsExpiredEntries(t *testing.T) {
 	assert.True(t, limit.AllowRequest(100))
 	assert.Len(t, limit.limits, 1)
 }
+
+func TestKeyedRateLimitExceeded(t *testing.T) {
+	limit := NewKeyedRateLimit[string](2, time.Minute, 8)
+
+	// A key that made no request, or that is below the threshold, is not exceeded.
+	assert.False(t, limit.Exceeded("a"))
+	assert.True(t, limit.AllowRequest("a"))
+	assert.False(t, limit.Exceeded("a"))
+	assert.True(t, limit.AllowRequest("a"))
+
+	// Exceeded doesn't count a request.
+	assert.True(t, limit.Exceeded("a"))
+	assert.True(t, limit.Exceeded("a"))
+	assert.False(t, limit.Exceeded("b"))
+
+	// No threshold, no limit.
+	unlimited := NewKeyedRateLimit[string](0, time.Minute, 8)
+	assert.True(t, unlimited.AllowRequest("a"))
+	assert.False(t, unlimited.Exceeded("a"))
+}
