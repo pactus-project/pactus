@@ -47,6 +47,16 @@ func (k *KeyedRateLimit[K]) AllowRequest(key K) bool {
 	return limit.AllowRequest()
 }
 
+// Exceeded reports whether the key has reached its threshold in the current window,
+// without counting a request.
+func (k *KeyedRateLimit[K]) Exceeded(key K) bool {
+	k.lk.Lock()
+	limit, ok := k.limits[key]
+	k.lk.Unlock()
+
+	return ok && limit.Exceeded()
+}
+
 // makeRoom must be called with the lock held.
 func (k *KeyedRateLimit[K]) makeRoom() {
 	if len(k.limits) < k.maxKeys {

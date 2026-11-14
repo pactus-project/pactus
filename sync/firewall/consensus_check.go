@@ -10,10 +10,15 @@ import (
 	"github.com/pactus-project/pactus/types"
 )
 
-// maxSignatureChecksPerPeer bounds the consensus messages per second whose
-// signature the firewall checks for one peer. A committee sends a few dozen
-// votes per second, so an honest peer stays well below it; past it, a flooding
-// peer's messages are no longer relayed, and checking them costs no more.
+// maxSignatureChecksPerPeer bounds the forged consensus messages per second that
+// the firewall checks for one peer. An honest peer relays no forged message,
+// because it checks the messages before relaying them. Past this bound, the
+// messages of a flooding peer are no longer relayed, and checking them costs no more.
+//
+// Only the forged messages count. The peer is the one that relays the message,
+// not its author: counting the valid messages, or the messages that can't be checked,
+// would let anyone use up the budget of an honest relay, whose authentic votes
+// would then no longer be relayed.
 const maxSignatureChecksPerPeer = 100
 
 // committeeKeys keeps the public keys of the committee of the current height,
@@ -25,18 +30,34 @@ type committeeKeys struct {
 	keys   map[crypto.Address]*bls.PublicKey
 }
 
-// hasForgedSignature reports whether a vote or a proposal of the current height
-// carries a signature that its committee signer, or the proposer of its round,
-// did not make. The firewall does not relay such a message, so a flood of
-// forged votes stops at the first node instead of reaching every validator.
+// signatureCheck is the result of checking the signature of a consensus message.
+type signatureCheck int
+
+const (
+	// signatureNotChecked is for a message that the firewall can't check:
+	// it is not a vote or a proposal, or it is for another height.
+	signatureNotChecked signatureCheck = iota
+	signatureValid
+	signatureForged
+)
+
+// checkConsensusSignature checks whether a vote or a proposal of the current height
+// carries the signature of its committee signer, or of the proposer of its round.
+// The firewall does not relay a forged message, so a flood of forged votes stops
+// at the first node instead of reaching every validator.
 //
 // Messages of other heights, and other messages, are left to the consensus
 // as before: the committee of another height may differ.
-func (f *Firewall) hasForgedSignature(data []byte) bool {
+//
+// This runs in the gossip validator of every node, for every message, so it only
+// does what the signature check needs. The block of a proposal is not checked here:
+// checking it verifies the signature of each of its transactions, before knowing
+// that the proposal comes from the proposer. The consensus checks the block.
+func (f *Firewall) checkConsensusSignature(data []byte) signatureCheck {
 	bdl, _, err := f.decodeBundle(bytes.NewReader(data), maxGossipBundleSize)
 	if err != nil {
 		// The bundle is checked again, and rejected, when it is opened.
-		return false
+		return signatureNotChecked
 	}
 
 	height := f.state.LastBlockHeight() + 1
@@ -45,36 +66,42 @@ func (f *Firewall) hasForgedSignature(data []byte) bool {
 	case *message.VoteMessage:
 		vte := msg.Vote
 		if vte == nil || vte.Height() != height {
-			return false
+			return signatureNotChecked
 		}
 		if vte.BasicCheck() != nil {
-			return true
+			return signatureForged
 		}
 		pub := f.committeePublicKey(height, vte.Signer())
 		if pub == nil {
 			// The signer is not in the committee of this height.
-			return true
+			return signatureForged
+		}
+		if vte.Verify(pub) != nil {
+			return signatureForged
 		}
 
-		return vte.Verify(pub) != nil
+		return signatureValid
 
 	case *message.ProposalMessage:
 		prop := msg.Proposal
 		if prop == nil || prop.Height() != height {
-			return false
+			return signatureNotChecked
 		}
-		if prop.BasicCheck() != nil {
-			return true
+		if prop.Block() == nil || prop.Signature() == nil || prop.Round() < 0 {
+			return signatureForged
 		}
 		proposer := f.state.Proposer(prop.Round())
 		if proposer == nil {
-			return false
+			return signatureNotChecked
+		}
+		if prop.Verify(proposer.PublicKey()) != nil {
+			return signatureForged
 		}
 
-		return prop.Verify(proposer.PublicKey()) != nil
+		return signatureValid
 
 	default:
-		return false
+		return signatureNotChecked
 	}
 }
 
