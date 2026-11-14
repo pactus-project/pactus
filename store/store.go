@@ -254,8 +254,8 @@ func (s *store) SaveBlock(blk *block.Block, cert *certificate.Certificate) {
 }
 
 func (s *store) Block(height types.Height) (*CommittedBlock, error) {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	return s.block(height)
 }
@@ -280,15 +280,15 @@ func (s *store) block(height types.Height) (*CommittedBlock, error) {
 }
 
 func (s *store) BlockHeight(h hash.Hash) (types.Height, error) {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	return s.blockStore.blockHeight(h)
 }
 
 func (s *store) BlockHash(height types.Height) hash.Hash {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	data, err := s.blockStore.block(height)
 	if err == nil {
@@ -301,8 +301,8 @@ func (s *store) BlockHash(height types.Height) hash.Hash {
 }
 
 func (s *store) SortitionSeed(blockHeight types.Height) *sortition.VerifiableSeed {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	return s.blockStore.sortitionSeed(blockHeight)
 }
@@ -322,8 +322,8 @@ func (s *store) HasPublicKey(addr crypto.Address) bool {
 }
 
 func (s *store) Transaction(txID tx.ID) (*CommittedTx, error) {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	pos, err := s.txStore.tx(txID)
 	if err != nil {
@@ -381,8 +381,8 @@ func (s *store) Account(addr crypto.Address) (*account.Account, error) {
 
 // TotalAccounts returns the total number of accounts.
 func (s *store) TotalAccounts() int32 {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	return s.accountStore.total
 }
