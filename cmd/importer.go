@@ -82,6 +82,9 @@ func NewImporter(chainType genesis.ChainType, snapshotURL, storeDir string) (*Im
 	}, nil
 }
 
+// maxMetadataSize is the maximum size of the list of the snapshots.
+const maxMetadataSize = 1 << 20
+
 func (i *Importer) GetMetadata(ctx context.Context) ([]Metadata, error) {
 	cli := http.DefaultClient
 	metaURL, err := url.JoinPath(i.snapshotURL, "metadata.json")
@@ -108,7 +111,8 @@ func (i *Importer) GetMetadata(ctx context.Context) ([]Metadata, error) {
 
 	metadata := make([]Metadata, 0)
 
-	dec := json.NewDecoder(resp.Body)
+	// The list of the snapshots is small. The server is not trusted to keep it so.
+	dec := json.NewDecoder(io.LimitReader(resp.Body, maxMetadataSize))
 
 	if err := dec.Decode(&metadata); err != nil {
 		return nil, err
