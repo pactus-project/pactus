@@ -1,6 +1,7 @@
 package peerset
 
 import (
+	"slices"
 	"sync"
 	"time"
 
@@ -129,6 +130,23 @@ func (ps *PeerSet) RemoveSession(sid int) {
 	ps.sessionManager.RemoveSession(sid)
 }
 
+// RemoveCommittedSessions removes the completed sessions whose blocks are all committed.
+func (ps *PeerSet) RemoveCommittedSessions(committedHeight types.Height) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	ps.sessionManager.RemoveCommittedSessions(committedHeight)
+}
+
+// SessionsNextHeight returns the height after the last block requested by the sessions,
+// or zero without session.
+func (ps *PeerSet) SessionsNextHeight() types.Height {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	return ps.sessionManager.NextHeight()
+}
+
 func (ps *PeerSet) RemoveAllSessions() {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
@@ -195,11 +213,44 @@ func (ps *PeerSet) findPeer(pid peer.ID) *peer.Peer {
 func (ps *PeerSet) findOrCreatePeer(pid peer.ID) *peer.Peer {
 	per := ps.findPeer(pid)
 	if per == nil {
+		if len(ps.peers) >= maxPeerRecords {
+			ps.forgetDisconnectedPeers()
+		}
+
 		per = peer.NewPeer(pid)
 		ps.peers[pid] = per
 	}
 
 	return per
+}
+
+// maxPeerRecords bounds the records of the peers. The records of the disconnected peers are kept,
+// for their metrics and their bans, but an identity costs nothing to make: a peer that connects
+// and disconnects again and again, each time with a new identity, would add records without limit.
+const maxPeerRecords = 4096
+
+// forgetDisconnectedPeers removes the records of the disconnected peers that have no open session,
+// the ones that were heard from least recently first, until a quarter of the records is free.
+// It must be called with the lock held.
+func (ps *PeerSet) forgetDisconnectedPeers() {
+	candidates := make([]*peer.Peer, 0, len(ps.peers))
+	for _, per := range ps.peers {
+		if per.Status.IsDisconnected() && !ps.sessionManager.HasOpenSession(per.PeerID) {
+			candidates = append(candidates, per)
+		}
+	}
+
+	slices.SortFunc(candidates, func(a, b *peer.Peer) int {
+		return a.LastReceived.Compare(b.LastReceived)
+	})
+
+	target := maxPeerRecords * 3 / 4
+	for _, per := range candidates {
+		if len(ps.peers) <= target {
+			return
+		}
+		delete(ps.peers, per.PeerID)
+	}
 }
 
 // GetPeerStatus finds a peer by id and returns the status of the Peer.
@@ -392,6 +443,23 @@ func (ps *PeerSet) GetRandomPeer() *peer.Peer {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
+	return ps.randomPeer(func(*peer.Peer) bool { return true })
+}
+
+// GetRandomPeerWithoutOpenSession returns a random peer, like GetRandomPeer,
+// among the peers that have no open session.
+func (ps *PeerSet) GetRandomPeerWithoutOpenSession() *peer.Peer {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	return ps.randomPeer(func(p *peer.Peer) bool {
+		return !ps.sessionManager.HasOpenSession(p.PeerID)
+	})
+}
+
+// randomPeer returns a random peer among the known peers that the filter keeps,
+// weighted by their download score. The caller must hold the lock.
+func (ps *PeerSet) randomPeer(keep func(*peer.Peer) bool) *peer.Peer {
 	type scoredPeer struct {
 		peer  *peer.Peer
 		score int
@@ -402,7 +470,7 @@ func (ps *PeerSet) GetRandomPeer() *peer.Peer {
 	peers := make([]scoredPeer, 0, len(ps.peers))
 	for _, peer := range ps.peers {
 		// Only peers that completed the handshake can serve blocks.
-		if !peer.Status.IsKnown() {
+		if !peer.Status.IsKnown() || !keep(peer) {
 			continue
 		}
 
