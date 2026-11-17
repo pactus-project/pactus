@@ -208,7 +208,8 @@ func (pub *PublicKey) PointG2() (*bls12381.G2Affine, error) {
 	if err != nil {
 		return nil, err
 	}
-	if g2Aff.IsInfinity() || !g2Aff.IsInSubGroup() {
+	// Unmarshal checks that the point is in the subgroup; the point at infinity passes it.
+	if g2Aff.IsInfinity() {
 		return nil, crypto.ErrInvalidPublicKey
 	}
 
