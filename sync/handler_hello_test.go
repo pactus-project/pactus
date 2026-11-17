@@ -72,8 +72,9 @@ func TestHandlerHelloParsingMessages(t *testing.T) {
 
 			msg.MyTimeUnixMilli = msg.MyTime().Add(-10 * time.Second).UnixMilli()
 
+			// The Hello is rejected, but the peer is not banned: the clock of an honest peer can be wrong.
 			td.receivingNewMessage(td.sync, msg, msg.PeerID)
-			td.checkPeerStatus(t, msg.PeerID, status.StatusBanned)
+			td.checkPeerStatus(t, msg.PeerID, status.StatusConnected)
 			td.shouldPublishHelloAck(t, message.ResponseCodeRejected)
 		})
 
@@ -86,8 +87,9 @@ func TestHandlerHelloParsingMessages(t *testing.T) {
 
 			msg.MyTimeUnixMilli = msg.MyTime().Add(20 * time.Second).UnixMilli()
 
+			// The Hello is rejected, but the peer is not banned: the clock of an honest peer can be wrong.
 			td.receivingNewMessage(td.sync, msg, msg.PeerID)
-			td.checkPeerStatus(t, msg.PeerID, status.StatusBanned)
+			td.checkPeerStatus(t, msg.PeerID, status.StatusConnected)
 			td.shouldPublishHelloAck(t, message.ResponseCodeRejected)
 		})
 

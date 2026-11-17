@@ -163,3 +163,82 @@ func TestNewCacheWithInvalidSize(t *testing.T) {
 		assert.Nil(t, c)
 	}
 }
+
+func TestAnnouncedBlockDoesNotMaskTrustedData(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	cache, err := NewCache(10)
+	require.NoError(t, err)
+
+	height := ts.RandHeight()
+	fakeBlk, fakeCert := ts.GenerateTestBlock(height)
+	realBlk, _ := ts.GenerateTestBlock(height)
+	nextBlk, _ := ts.GenerateTestBlock(height + 1)
+	realCert := nextBlk.PrevCertificate()
+	require.Equal(t, height, realCert.Height())
+
+	// An announcement that can't be verified is cached.
+	cache.AddAnnouncedBlock(fakeBlk, fakeCert)
+	assert.True(t, cache.HasAnnouncedBlock(height))
+	assert.Equal(t, fakeBlk, cache.GetBlock(height))
+	assert.Equal(t, fakeCert, cache.GetCertificate(height))
+
+	// Another announcement doesn't replace it.
+	otherBlk, otherCert := ts.GenerateTestBlock(height)
+	cache.AddAnnouncedBlock(otherBlk, otherCert)
+	assert.Equal(t, fakeBlk, cache.GetBlock(height))
+	assert.Equal(t, fakeCert, cache.GetCertificate(height))
+
+	// The blocks that we asked for replace the block and its certificate.
+	cache.AddBlock(realBlk)
+	cache.AddBlock(nextBlk)
+	assert.False(t, cache.HasAnnouncedBlock(height))
+	assert.Equal(t, realBlk, cache.GetBlock(height))
+	assert.Equal(t, realCert, cache.GetCertificate(height))
+
+	// And an announcement doesn't replace them back.
+	cache.AddAnnouncedBlock(fakeBlk, fakeCert)
+	assert.Equal(t, realBlk, cache.GetBlock(height))
+	assert.Equal(t, realCert, cache.GetCertificate(height))
+
+	// The certificate of the previous block of a trusted block doesn't replace
+	// a certificate that was added on its own.
+	verifiedCert := ts.GenerateTestCertificate(height)
+	cache.AddCertificate(verifiedCert)
+	cache.AddBlock(nextBlk)
+	assert.Equal(t, verifiedCert, cache.GetCertificate(height))
+}
+
+func TestCertificateTrustLevels(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	t.Run("a certificate added on its own replaces the one added before", func(t *testing.T) {
+		cache, err := NewCache(10)
+		require.NoError(t, err)
+
+		height := ts.RandHeight()
+		oldCert := ts.GenerateTestCertificate(height)
+		newCert := ts.GenerateTestCertificate(height)
+
+		cache.AddCertificate(oldCert)
+		cache.AddCertificate(newCert)
+		assert.Equal(t, newCert, cache.GetCertificate(height))
+	})
+
+	t.Run("the previous certificate of an announcement is replaced by the one of a trusted block", func(t *testing.T) {
+		cache, err := NewCache(10)
+		require.NoError(t, err)
+
+		height := ts.RandHeight()
+		announced, _ := ts.GenerateTestBlock(height + 1)
+		trusted, _ := ts.GenerateTestBlock(height + 1)
+		require.NotEqual(t, announced.PrevCertificate(), trusted.PrevCertificate())
+
+		// The certificate of the announced block is for another height.
+		cache.AddAnnouncedBlock(announced, ts.GenerateTestCertificate(height+1))
+		assert.Equal(t, announced.PrevCertificate(), cache.GetCertificate(height))
+
+		cache.AddBlock(trusted)
+		assert.Equal(t, trusted.PrevCertificate(), cache.GetCertificate(height))
+	})
+}
