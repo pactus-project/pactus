@@ -3,6 +3,7 @@ package wallet
 import (
 	"cmp"
 	"slices"
+	"sync"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/wallet/addresspath"
@@ -14,6 +15,11 @@ import (
 const MaxValidators = 32
 
 type addresses struct {
+	// lk protects the vault and the wallet info, which the storage shares with its callers:
+	// a call that changes them holds it for writing, a call that reads them holds it for reading.
+	// The wallet methods hold the same lock.
+	lk *sync.RWMutex
+
 	storage  storage.WalletStorage
 	provider provider.WalletProvider
 }
@@ -22,6 +28,7 @@ func newAddresses(storage storage.WalletStorage,
 	provider provider.WalletProvider,
 ) addresses {
 	return addresses{
+		lk:       &sync.RWMutex{},
 		storage:  storage,
 		provider: provider,
 	}
@@ -92,7 +99,9 @@ func (a *addresses) ListAddresses(opts ...ListAddressOption) []*types.AddressInf
 	}
 
 	infos := make([]*types.AddressInfo, 0)
-	for _, info := range a.storage.AllAddresses() {
+	for _, stored := range a.storage.AllAddresses() {
+		// The storage shares its addresses, so the type and the amounts are set on a copy.
+		info := *stored
 		addr, err := crypto.AddressFromString(info.Address)
 		if err != nil {
 			return nil
@@ -115,14 +124,14 @@ func (a *addresses) ListAddresses(opts ...ListAddressOption) []*types.AddressInf
 		}
 
 		if len(cfg.addressTypes) == 0 {
-			infos = append(infos, info)
+			infos = append(infos, &info)
 
 			continue
 		}
 
 		for _, addrType := range cfg.addressTypes {
 			if info.Type == addrType {
-				infos = append(infos, info)
+				infos = append(infos, &info)
 
 				break
 			}
@@ -169,6 +178,9 @@ func (a *addresses) AddressCount() int {
 }
 
 func (a *addresses) ImportPrivateKey(password string, prv crypto.PrivateKey) error {
+	a.lk.Lock()
+	defer a.lk.Unlock()
+
 	pub := prv.PublicKey()
 	accAddr := pub.AccountAddress()
 	if a.HasAddress(accAddr.String()) {
@@ -214,6 +226,9 @@ func (a *addresses) PrivateKeys(password string, addrs []string) ([]crypto.Priva
 		paths[i] = hdPath
 	}
 
+	a.lk.RLock()
+	defer a.lk.RUnlock()
+
 	return a.storage.Vault().PrivateKeys(password, paths)
 }
 
@@ -242,6 +257,10 @@ func (a *addresses) NewAddress(addressType crypto.AddressType, label string, opt
 	for _, opt := range opts {
 		opt(&cfg)
 	}
+
+	// The vault derives the address at its next index and moves the index forward.
+	a.lk.Lock()
+	defer a.lk.Unlock()
 
 	vault := a.storage.Vault()
 	var info *types.AddressInfo
@@ -323,12 +342,14 @@ func (a *addresses) AddressLabel(addr string) string {
 
 // SetAddressLabel updates the label of the given addresa.
 func (a *addresses) SetAddressLabel(addr, label string) error {
-	info, err := a.AddressInfo(addr)
+	stored, err := a.AddressInfo(addr)
 	if err != nil {
 		return err
 	}
 
+	// The storage shares its addresses with the readers, so the label is set on a copy.
+	info := *stored
 	info.Label = label
 
-	return a.storage.UpdateAddress(info)
+	return a.storage.UpdateAddress(&info)
 }
