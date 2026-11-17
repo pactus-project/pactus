@@ -201,6 +201,12 @@ func TestBlockValidation(t *testing.T) {
 
 		err = td.state.CommitBlock(blk, cert)
 		require.ErrorIs(t, err, ErrInvalidSortitionSeed)
+
+		// The seed and the certificate are verified at the same time:
+		// the certificate error is still the one returned.
+		invCert := td.makeCertificateAndSign(t, td.RandHash(), round)
+		err = td.state.CommitBlock(blk, invCert)
+		require.ErrorIs(t, err, crypto.ErrInvalidSignature)
 	})
 
 	t.Run("Ok", func(t *testing.T) {

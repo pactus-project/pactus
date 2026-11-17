@@ -39,14 +39,16 @@ func (e *SortitionExecutor) Check(sbx sandbox.SandboxReader, strict bool) error 
 		return ErrBondingPeriod
 	}
 
+	// Check for the duplicated or expired sortition transactions.
+	// This check is cheap, and the pool checks its transactions again for each block:
+	// it comes before the verification of the proof, which is a signature verification.
+	if e.sortitionHeight <= e.validator.LastSortitionHeight() {
+		return ErrExpiredSortition
+	}
+
 	ok := sbx.VerifyProof(e.sortitionHeight, e.pld.Proof, e.validator)
 	if !ok {
 		return ErrInvalidSortitionProof
-	}
-
-	// Check for the duplicated or expired sortition transactions
-	if e.sortitionHeight <= e.validator.LastSortitionHeight() {
-		return ErrExpiredSortition
 	}
 
 	if strict {
