@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/certificate"
+	"github.com/pactus-project/pactus/util/encoding"
 )
 
 // Vote is a struct that represents a consensus vote.
@@ -175,7 +176,7 @@ func (v *Vote) MarshalCBOR() ([]byte, error) {
 
 // UnmarshalCBOR decodes the vote from CBOR format.
 func (v *Vote) UnmarshalCBOR(bs []byte) error {
-	return cbor.Unmarshal(bs, &v.data)
+	return encoding.UnmarshalCBOR(bs, &v.data)
 }
 
 // Hash calculates the hash of the vote.

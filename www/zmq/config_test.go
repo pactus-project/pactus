@@ -44,6 +44,14 @@ func TestBasicCheck(t *testing.T) {
 			expectErr: true,
 		},
 		{
+			// Zero means no bound in ZeroMQ.
+			name: "Zero ZmqPubHWM",
+			config: &Config{
+				ZmqPubHWM: 0,
+			},
+			expectErr: true,
+		},
+		{
 			name:      "Empty configuration",
 			config:    DefaultConfig(),
 			expectErr: false,

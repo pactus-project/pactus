@@ -9,6 +9,7 @@ package amount
 import (
 	"database/sql/driver"
 	"errors"
+	"fmt"
 	"io"
 	"math"
 	"strconv"
@@ -73,6 +74,16 @@ type Amount int64
 // as an integer, to the Amount integer type by rounding to the nearest integer.
 // This is performed by adding or subtracting 0.5 depending on the sign, and
 // relying on integer truncation to round the value to the nearest Amount.
+const (
+	// maxSafeNanoPAC is the bound of the amounts that are accepted, in NanoPAC.
+	maxSafeNanoPAC = 1e18
+	// nanoPACDigits is the number of decimals of an amount in PAC.
+	nanoPACDigits = 9
+	// maxPACDigits is the number of digits of the integer part of an amount in PAC
+	// that is below maxSafeNanoPAC.
+	maxPACDigits = 9
+)
+
 func round(f float64) Amount {
 	if f < 0 {
 		return Amount(f - 0.5)
@@ -105,7 +116,6 @@ func NewAmount(pac float64) (Amount, error) {
 	// (saturates on arm64, wraps to MinInt64 on amd64). maxSafeNanoPAC is far
 	// above MaxNanoPAC (the real total supply) but far enough below the
 	// int64/float64 range limits to make that conversion always well-defined.
-	const maxSafeNanoPAC = 1e18
 	if nanoPAC >= maxSafeNanoPAC || nanoPAC <= -maxSafeNanoPAC {
 		return 0, errors.New("PAC amount out of range")
 	}
@@ -117,16 +127,78 @@ func NewAmount(pac float64) (Amount, error) {
 // It then uses NewAmount to create an Amount based on the parsed
 // floating-point value.
 // If the parsing of the string fails, it returns an error.
-// TODO: Parse Unit and remove delimiters...
+//
+// The value is a decimal number, like "1", "-0.5" or "12.25 PAC".
+// The other forms that a floating-point parser accepts are rejected,
+// because they are easy to misread in an amount: an exponent ("1e3"),
+// a digit separator ("1_0"), a hexadecimal number, "inf" or "nan".
 func FromString(str string) (Amount, error) {
-	str = strings.Replace(str, "PAC", "", 1)
 	str = strings.TrimSpace(str)
-	f, err := strconv.ParseFloat(str, 64)
+	str = strings.TrimSpace(strings.TrimSuffix(str, "PAC"))
+	if !isDecimal(str) {
+		return 0, fmt.Errorf("invalid PAC amount %q: %w", str, strconv.ErrSyntax)
+	}
+
+	return parseDecimal(str)
+}
+
+// parseDecimal converts a decimal number of PAC to an amount, digit by digit.
+// A floating-point value has 15 to 17 significant digits: it can't hold
+// the 18 digits of an amount of millions of PAC with its 9 decimals.
+// The digits after the ninth decimal are rounded to the nearest NanoPAC.
+func parseDecimal(str string) (Amount, error) {
+	negative := strings.HasPrefix(str, "-")
+	str = strings.TrimPrefix(strings.TrimPrefix(str, "-"), "+")
+
+	intPart, fracPart, _ := strings.Cut(str, ".")
+	intPart = strings.TrimLeft(intPart, "0")
+	if len(intPart) > maxPACDigits {
+		return 0, errors.New("PAC amount out of range")
+	}
+
+	roundUp := len(fracPart) > nanoPACDigits && fracPart[nanoPACDigits] >= '5'
+	if len(fracPart) > nanoPACDigits {
+		fracPart = fracPart[:nanoPACDigits]
+	}
+	fracPart += strings.Repeat("0", nanoPACDigits-len(fracPart))
+
+	nanoPAC, err := strconv.ParseInt(intPart+fracPart, 10, 64)
 	if err != nil {
 		return 0, err
 	}
+	if roundUp {
+		nanoPAC++
+	}
+	if nanoPAC >= maxSafeNanoPAC {
+		return 0, errors.New("PAC amount out of range")
+	}
+	if negative {
+		nanoPAC = -nanoPAC
+	}
 
-	return NewAmount(f)
+	return Amount(nanoPAC), nil
+}
+
+// isDecimal reports whether str is an optional sign, digits and an optional fraction.
+func isDecimal(str string) bool {
+	if strings.HasPrefix(str, "+") || strings.HasPrefix(str, "-") {
+		str = str[1:]
+	}
+	if strings.Count(str, ".") > 1 {
+		return false
+	}
+
+	digits := strings.Replace(str, ".", "", 1)
+	if digits == "" {
+		return false
+	}
+	for _, char := range digits {
+		if char < '0' || char > '9' {
+			return false
+		}
+	}
+
+	return true
 }
 
 // ToUnit converts a monetary amount counted in NanoPAC (base units) to a
@@ -186,21 +258,51 @@ func (a Amount) Format(opts ...FormatOption) string {
 		opt(options)
 	}
 
-	precision := -int(options.unit + 9)
-	value := a.ToUnit(options.unit)
-
-	var formatted string
-	if options.withDelimiters {
-		formatted = util.FormatFloatWithDelimiters(value, precision)
-	} else {
-		formatted = strconv.FormatFloat(value, 'f', precision, 64)
-	}
+	formatted := a.decimalString(options.unit, options.withDelimiters)
 
 	if options.WithUnit {
 		formatted += " " + options.unit.String()
 	}
 
 	return formatted
+}
+
+// decimalString writes the amount in the given unit, digit by digit.
+// A floating-point value can't hold all the digits of a large amount.
+func (a Amount) decimalString(unit Unit, withDelimiters bool) string {
+	// The absolute value, also for the smallest int64.
+	abs := uint64(a)
+	if a < 0 {
+		abs = -abs
+	}
+	digits := strconv.FormatUint(abs, 10)
+
+	// decimals is the number of digits after the decimal point.
+	decimals := int(unit) + nanoPACDigits
+	intPart, fracPart := digits, ""
+	switch {
+	case abs == 0:
+	case decimals > 0:
+		if len(digits) <= decimals {
+			digits = strings.Repeat("0", decimals-len(digits)+1) + digits
+		}
+		intPart = digits[:len(digits)-decimals]
+		fracPart = strings.TrimRight(digits[len(digits)-decimals:], "0")
+	case decimals < 0:
+		intPart = digits + strings.Repeat("0", -decimals)
+	}
+
+	if withDelimiters {
+		intPart = util.FormatNumberStringWithDelimiters(intPart)
+	}
+	if fracPart != "" {
+		intPart += "." + fracPart
+	}
+	if a < 0 {
+		return "-" + intPart
+	}
+
+	return intPart
 }
 
 // String is the equivalent of calling Format with UnitPAC.

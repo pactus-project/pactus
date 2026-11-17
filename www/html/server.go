@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	xhtml "html"
 	"io"
 	"net"
 	"net/http"
@@ -34,6 +35,7 @@ type Server struct {
 	network     pactus.NetworkClient
 	router      *mux.Router
 	enableAuth  bool
+	basicAuth   string
 	logger      *logger.SubLogger
 }
 
@@ -43,11 +45,15 @@ func init() {
 	http.DefaultServeMux = http.NewServeMux()
 }
 
-func NewServer(ctx context.Context, conf *Config, enableAuth bool) *Server {
+// NewServer creates the HTML server.
+// basicAuth is the credential of the gRPC server (username:password_hash),
+// or an empty string if the authentication is disabled.
+func NewServer(ctx context.Context, conf *Config, basicAuth string) *Server {
 	return &Server{
 		ctx:        ctx,
 		config:     conf,
-		enableAuth: enableAuth,
+		enableAuth: basicAuth != "",
+		basicAuth:  basicAuth,
 		logger:     logger.NewSubLogger(ctx, "_html", nil),
 	}
 }
@@ -94,20 +100,22 @@ func (s *Server) StartServer(grpcServer string) error {
 	s.router.HandleFunc("/metrics/prometheus", promhttp.Handler().ServeHTTP)
 
 	if s.config.EnablePprof {
-		http.HandleFunc("/debug/pprof/", pprof.Index)
-		http.HandleFunc("/debug/pprof/profile", pprof.Profile)
-		http.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
-		http.HandleFunc("/debug/pprof/trace", pprof.Trace)
+		// The profiles are registered on the router, so they are behind the authentication
+		// like the other pages.
+		s.router.HandleFunc("/debug/pprof/profile", pprof.Profile)
+		s.router.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
+		s.router.HandleFunc("/debug/pprof/trace", pprof.Trace)
+		s.router.PathPrefix("/debug/pprof/").HandlerFunc(pprof.Index)
 		s.router.HandleFunc("/debug/pprof", func(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/debug/pprof/", http.StatusPermanentRedirect)
 		})
 	}
 
+	var handler http.Handler = s.router
 	if s.enableAuth {
-		http.Handle("/", handlers.RecoveryHandler()(BasicAuth(s.router)))
-	} else {
-		http.Handle("/", handlers.RecoveryHandler()(s.router))
+		handler = BasicAuth(s.basicAuth, handler)
 	}
+	handler = handlers.RecoveryHandler()(handler)
 
 	listener, err := netutil.NetworkListen(s.ctx, "tcp", s.config.Listen)
 	if err != nil {
@@ -115,9 +123,14 @@ func (s *Server) StartServer(grpcServer string) error {
 	}
 
 	s.listener = listener
+	// The server has its own handler: nothing that another package registers
+	// on the default mux is exposed.
 	s.server = &http.Server{
 		Addr:              listener.Addr().String(),
+		Handler:           handler,
 		ReadHeaderTimeout: 3 * time.Second,
+		ReadTimeout:       30 * time.Second,
+		IdleTimeout:       120 * time.Second,
 	}
 
 	go func() {
@@ -208,28 +221,35 @@ func newTableMaker() *tableMaker {
 	return t
 }
 
+// The values of the rows come from the peers and from the transactions,
+// so they are escaped before they are written to the page.
+
 func (t *tableMaker) addRowBlockHash(key, val string) {
+	val = xhtml.EscapeString(val)
 	fmt.Fprintf(t.w, "<tr><td>%s</td><td><a href=\"/block/hash/%s\">%s</a></td></tr>", key, val, val)
 }
 
 func (t *tableMaker) addRowAccAddress(key, val string) {
+	val = xhtml.EscapeString(val)
 	fmt.Fprintf(t.w, "<tr><td>%s</td><td><a href=\"/account/address/%s\">%s</a></td></tr>", key, val, val)
 }
 
 func (t *tableMaker) addRowValAddress(key, val string) {
+	val = xhtml.EscapeString(val)
 	fmt.Fprintf(t.w, "<tr><td>%s</td><td><a href=\"/validator/address/%s\">%s</a></td></tr>", key, val, val)
 }
 
 func (t *tableMaker) addRowTxID(key, val string) {
+	val = xhtml.EscapeString(val)
 	fmt.Fprintf(t.w, "<tr><td>%s</td><td><a href=\"/transaction/id/%s\">%s</a></td></tr>", key, val, val)
 }
 
 func (t *tableMaker) addRowString(key, val string) {
-	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>", key, val)
+	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>", key, xhtml.EscapeString(val))
 }
 
 func (t *tableMaker) addRowStrings(key string, val []string) {
-	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%v</td></tr>", key, strings.Join(val, ","))
+	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%v</td></tr>", key, xhtml.EscapeString(strings.Join(val, ",")))
 }
 
 func (t *tableMaker) addRowTime(key string, sec int64) {

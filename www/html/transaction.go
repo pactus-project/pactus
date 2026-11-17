@@ -3,7 +3,6 @@ package html
 import (
 	"encoding/hex"
 	"fmt"
-	xhtml "html"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -101,7 +100,7 @@ func txToTable(tmk *tableMaker, trx *pactus.TransactionInfo) {
 			tmk.addRowString("Root Hash", hex.EncodeToString(pld.RootHash))
 		}
 		if pld.ManifestUri != "" {
-			tmk.addRowString("Manifest URI", xhtml.EscapeString(pld.ManifestUri))
+			tmk.addRowString("Manifest URI", pld.ManifestUri)
 		}
 		tmk.addRowAmount("Deposit", amount.Amount(pld.Deposit))
 

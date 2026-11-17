@@ -60,8 +60,18 @@ func buildImportCmd(parentCmd *cobra.Command) {
 		)
 		terminal.FatalErrorCheck(err)
 
+		// The downloaded and extracted files are several gigabytes in the temporary directory.
+		// They must not stay there when the import fails.
+		checkErr := func(err error) {
+			if err != nil {
+				_ = importer.Cleanup()
+				_ = fileLock.Unlock()
+			}
+			terminal.FatalErrorCheck(err)
+		}
+
 		metadata, err := importer.GetMetadata(cobra.Context())
-		terminal.FatalErrorCheck(err)
+		checkErr(err)
 
 		snapshots := make([]string, 0, len(metadata))
 
@@ -94,18 +104,18 @@ func buildImportCmd(parentCmd *cobra.Command) {
 				updateProgressBar(bar, selected.Data.Name, stats)
 			})
 		terminal.PrintLine()
-		terminal.FatalErrorCheck(err)
+		checkErr(err)
 
 		terminal.PrintLine()
 		terminal.PrintLine()
 		terminal.PrintInfoMsgf("📦 Extracting snapshot files...")
 
 		err = importer.ExtractAndStoreFiles()
-		terminal.FatalErrorCheck(err)
+		checkErr(err)
 
 		terminal.PrintInfoMsgf("📁 Moving data to node directory...")
 		err = importer.MoveStore()
-		terminal.FatalErrorCheck(err)
+		checkErr(err)
 
 		terminal.PrintInfoMsgf("🧹 Cleaning up temporary files...")
 		err = importer.Cleanup()

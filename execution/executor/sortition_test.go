@@ -73,8 +73,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	t.Run("Should fail, expired sortition", func(t *testing.T) {
 		trx := tx.NewSortitionTx(lockTime-1, val.Address(), proof)
 
-		td.sbx.EXPECT().VerifyProof(lockTime-1, proof, val).Return(true).Times(2)
-
+		// The proof is not verified: the transaction is rejected before.
 		td.check(t, trx, true, ErrExpiredSortition)
 		td.check(t, trx, false, ErrExpiredSortition)
 	})
@@ -82,8 +81,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	t.Run("Should fail, duplicated sortition", func(t *testing.T) {
 		trx := tx.NewSortitionTx(lockTime, val.Address(), proof)
 
-		td.sbx.EXPECT().VerifyProof(lockTime, proof, val).Return(true).Times(2)
-
+		// The proof is not verified: the transaction is rejected before.
 		td.check(t, trx, true, ErrExpiredSortition)
 		td.check(t, trx, false, ErrExpiredSortition)
 	})

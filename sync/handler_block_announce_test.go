@@ -44,6 +44,23 @@ func TestHandlerBlockAnnounceCacheBlock(t *testing.T) {
 	assert.Equal(t, cert1, cachedCert)
 }
 
+// An announcement of a later height can't be verified: it is cached as an announcement,
+// and the blocks that we ask for replace it.
+func TestHandlerBlockAnnounceLaterHeightIsNotTrusted(t *testing.T) {
+	td := setup(t, nil)
+
+	height := td.state.LastBlockHeight() + 2
+	announced, announcedCert := td.GenerateTestBlock(height)
+	td.receivingNewMessage(td.sync, message.NewBlockAnnounceMessage(announced, announcedCert, nil), td.RandPeerID())
+
+	require.Equal(t, announced, td.sync.cache.GetBlock(height))
+	assert.True(t, td.sync.cache.HasAnnouncedBlock(height))
+
+	downloaded, _ := td.GenerateTestBlock(height)
+	td.sync.cache.AddBlock(downloaded)
+	assert.Equal(t, downloaded, td.sync.cache.GetBlock(height))
+}
+
 // setupCommittee replaces the committee of the fake state with the new validators,
 // and returns their keys.
 func (td *testData) setupCommittee() []*bls.ValidatorKey {
@@ -214,4 +231,30 @@ func TestHandlerBlockAnnouncePoisoningPreviousCertificate(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, blk1.Hash(), cBlk.BlockHash)
 	assert.Equal(t, cert1, td.state.FakeStore.FakeCertificates[lastHeight+1])
+}
+
+// A fake announcement for a height that can't be verified yet must not mask
+// the announcement of the committee, which arrives when the height is the next one.
+func TestHandlerBlockAnnounceVerifiableReplacesAnnounced(t *testing.T) {
+	td := setup(t, nil)
+	keys := td.setupCommittee()
+
+	height := td.state.LastBlockHeight() + 1
+	fakeBlk, fakeCert := td.GenerateTestBlock(height)
+
+	// The fake block is cached as an announcement: it is the next block here only
+	// to keep the test short, it is added the way an unverifiable announcement is.
+	td.sync.cache.AddAnnouncedBlock(fakeBlk, fakeCert)
+	require.True(t, td.sync.cache.HasAnnouncedBlock(height))
+
+	realBlk, _ := td.GenerateTestBlock(height)
+	realCert := td.certifyBlock(realBlk, height, keys)
+	td.receivingNewMessage(td.sync, message.NewBlockAnnounceMessage(realBlk, realCert, nil), td.RandPeerID())
+
+	// The verified announcement is not ignored: it replaced the fake one, or it is committed already.
+	if cached := td.sync.cache.GetBlock(height); cached != nil {
+		assert.Equal(t, realBlk.Hash(), cached.Hash())
+		assert.False(t, td.sync.cache.HasAnnouncedBlock(height))
+	}
+	assert.NotEqual(t, fakeCert, td.sync.cache.GetCertificate(height))
 }

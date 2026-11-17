@@ -107,11 +107,7 @@ func (b *Bundle) DecodeWithLimit(r io.Reader, maxMessageSize int) (int, error) {
 	}
 
 	var bdl _Bundle
-	decOpts := cbor.DecOptions{}
-	decOpts.MaxArrayElements = 65_536 // default in 131072
-	decOpts.MaxMapPairs = 65_536      // default in 131072
-	decMode, _ := decOpts.DecMode()
-	d := decMode.NewDecoder(bytes.NewReader(wire))
+	d := encoding.NewCBORDecoder(bytes.NewReader(wire))
 	err = d.Decode(&bdl)
 	bytesRead := d.NumBytesRead()
 	if err != nil {
@@ -142,7 +138,7 @@ func (b *Bundle) DecodeWithLimit(r io.Reader, maxMessageSize int) (int, error) {
 		data = c
 	}
 
-	if err := cbor.Unmarshal(data, msg); err != nil {
+	if err := encoding.UnmarshalCBOR(data, msg); err != nil {
 		return bytesRead, err
 	}
 

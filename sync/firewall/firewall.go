@@ -311,14 +311,15 @@ func (f *Firewall) AllowConsensusRequest(gossipMsg *network.GossipMessage) netwo
 		return network.DropButConsume
 	}
 
-	if !f.peerSignatureChecks.AllowRequest(gossipMsg.From) {
-		// Past its budget of signature checks, a peer's messages are processed
-		// as before, but not relayed until they are checked.
+	if f.peerSignatureChecks.Exceeded(gossipMsg.From) {
+		// Past its budget of forged messages, a peer's messages are processed
+		// as before, but they are no longer checked nor relayed.
 		return network.DropButConsume
 	}
 
-	if f.hasForgedSignature(gossipMsg.Data) {
+	if f.checkConsensusSignature(gossipMsg.Data) == signatureForged {
 		f.logger.Debug("firewall: consensus message with a forged signature", "from", gossipMsg.From)
+		f.peerSignatureChecks.AllowRequest(gossipMsg.From)
 
 		return network.Drop
 	}

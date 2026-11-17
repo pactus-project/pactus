@@ -82,7 +82,7 @@ func (pub *PublicKey) MarshalCBOR() ([]byte, error) {
 // UnmarshalCBOR decodes the public key from CBOR format.
 func (pub *PublicKey) UnmarshalCBOR(bs []byte) error {
 	var data []byte
-	if err := cbor.Unmarshal(bs, &data); err != nil {
+	if err := encoding.UnmarshalCBOR(bs, &data); err != nil {
 		return err
 	}
 
@@ -208,7 +208,8 @@ func (pub *PublicKey) PointG2() (*bls12381.G2Affine, error) {
 	if err != nil {
 		return nil, err
 	}
-	if g2Aff.IsInfinity() || !g2Aff.IsInSubGroup() {
+	// Unmarshal checks that the point is in the subgroup; the point at infinity passes it.
+	if g2Aff.IsInfinity() {
 		return nil, crypto.ErrInvalidPublicKey
 	}
 

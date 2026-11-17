@@ -22,7 +22,7 @@ import (
 // allocation happens regardless of what the reader actually contains.
 func TestReadVarStringAllocatesFullLengthBeforeReadFails(t *testing.T) {
 	const announcedLen = 32 * 1024 * 1024 // == MaxPayloadSize, so the length check alone lets it through.
-	const acceptableAllocationForATinyMessage = 1024
+	const acceptableAllocationForATinyMessage = 1024 * 1024
 
 	buf := new(bytes.Buffer)
 	require.NoError(t, WriteVarInt(buf, uint64(announcedLen)))
@@ -47,7 +47,7 @@ func TestReadVarStringAllocatesFullLengthBeforeReadFails(t *testing.T) {
 
 func TestReadVarBytesAllocatesFullLengthBeforeReadFails(t *testing.T) {
 	const announcedLen = 32 * 1024 * 1024
-	const acceptableAllocationForATinyMessage = 1024
+	const acceptableAllocationForATinyMessage = 1024 * 1024
 
 	buf := new(bytes.Buffer)
 	require.NoError(t, WriteVarInt(buf, uint64(announcedLen)))

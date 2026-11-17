@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/util/encoding"
 )
 
 type Proposal struct {
@@ -80,7 +81,7 @@ func (p *Proposal) MarshalCBOR() ([]byte, error) {
 }
 
 func (p *Proposal) UnmarshalCBOR(bs []byte) error {
-	return cbor.Unmarshal(bs, &p.data)
+	return encoding.UnmarshalCBOR(bs, &p.data)
 }
 
 func (p *Proposal) Verify(pubKey crypto.PublicKey) error {

@@ -1,15 +1,32 @@
 package main
 
 import (
+	"sync"
 	"testing"
 
 	"github.com/spf13/cobra"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
+var (
+	rootCommandOnce sync.Once
+	rootCommand     *cobra.Command
+)
+
+// testRootCommand creates the root command once: the flags of the services are registered
+// in a global binder, and creating the command again would define them twice.
+func testRootCommand() *cobra.Command {
+	rootCommandOnce.Do(func() {
+		rootCommand = createRootCommand()
+	})
+
+	return rootCommand
+}
+
 func TestCreateRootCommand(t *testing.T) {
 	// This executes the ENTIRE main() logic including all changed lines
-	rootCmd := createRootCommand()
+	rootCmd := testRootCommand()
 
 	// Verify the root command properties
 	require.Equal(t, "interactive", rootCmd.Use)
@@ -127,4 +144,70 @@ func TestClsFunction(t *testing.T) {
 	require.NotPanics(t, func() {
 		cls()
 	}, "calling cls() should not panic")
+}
+
+func TestSetFlagDefault(t *testing.T) {
+	var username, password string
+
+	rootCmd := &cobra.Command{Use: "root"}
+	service := &cobra.Command{Use: "service"}
+	service.PersistentFlags().StringVar(&username, "auth-username", "", "")
+	service.PersistentFlags().StringVar(&password, "auth-password", "", "")
+	method := &cobra.Command{Use: "method", Run: func(*cobra.Command, []string) {}}
+	service.AddCommand(method)
+	rootCmd.AddCommand(service)
+
+	setFlagDefault(rootCmd, "auth-username", "user")
+	setFlagDefault(rootCmd, "auth-password", "secret")
+
+	// The interactive shell resets the flags of a command to their defaults before each run.
+	// The credentials of the session must survive it.
+	for range 3 {
+		for _, name := range []string{"auth-username", "auth-password"} {
+			flag := method.InheritedFlags().Lookup(name)
+			require.NotNil(t, flag)
+			require.NoError(t, flag.Value.Set(flag.DefValue))
+		}
+
+		assert.Equal(t, "user", username)
+		assert.Equal(t, "secret", password)
+	}
+
+	// A flag that a command doesn't have is ignored.
+	setFlagDefault(rootCmd, "unknown-flag", "value")
+}
+
+// The credentials given to the interactive shell become the defaults of the commands,
+// which the shell resets before each run.
+func TestInteractiveKeepsTheCredentials(t *testing.T) {
+	rootCmd := testRootCommand()
+
+	var interactiveCmd *cobra.Command
+	for _, cmd := range rootCmd.Commands() {
+		if cmd.Use == "interactive" {
+			interactiveCmd = cmd
+		}
+	}
+	require.NotNil(t, interactiveCmd)
+
+	require.NoError(t, interactiveCmd.Flags().Set("auth-username", "user"))
+	require.NoError(t, interactiveCmd.Flags().Set("auth-password", "secret"))
+	interactiveCmd.PreRun(interactiveCmd, nil)
+
+	found := 0
+	var check func(cmd *cobra.Command)
+	check = func(cmd *cobra.Command) {
+		if cmd != interactiveCmd {
+			if flag := cmd.PersistentFlags().Lookup("auth-username"); flag != nil {
+				assert.Equal(t, "user", flag.DefValue, cmd.CommandPath())
+				assert.Equal(t, "secret", cmd.PersistentFlags().Lookup("auth-password").DefValue)
+				found++
+			}
+		}
+		for _, sub := range cmd.Commands() {
+			check(sub)
+		}
+	}
+	check(rootCmd)
+	assert.Positive(t, found, "the services have the credential flags")
 }

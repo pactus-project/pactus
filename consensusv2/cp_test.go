@@ -269,6 +269,16 @@ func TestCPInvalidJustPreVoteSoft(t *testing.T) {
 		})
 	})
 
+	t.Run("invalid value: yes", func(t *testing.T) {
+		// A soft justification only justifies a `no` pre-vote.
+		v := vote.NewCPPreVote(td.RandHash(), height, round, 1, vote.CPValueYes, just, td.consB.valKey.Address())
+
+		err := td.consP.changeProposer.cpCheckJust(v)
+		require.ErrorIs(t, err, InvalidJustificationError{
+			Reason: "invalid value: yes",
+		})
+	})
+
 	t.Run("cp-round should not be 0", func(t *testing.T) {
 		v := vote.NewCPPreVote(td.RandHash(), height, round, 0, vote.CPValueNo, just, td.consB.valKey.Address())
 

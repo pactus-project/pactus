@@ -26,8 +26,10 @@ func DefaultConfig() *Config {
 }
 
 func (c *Config) BasicCheck() error {
-	if c.ZmqPubHWM < 0 {
-		return fmt.Errorf("invalid publisher hwm %d", c.ZmqPubHWM)
+	// The high water mark bounds the messages queued for a subscriber that doesn't read them.
+	// Zero means no bound: such a subscriber would make the queue grow without limit.
+	if c.ZmqPubHWM <= 0 {
+		return fmt.Errorf("invalid publisher hwm %d: it must be positive", c.ZmqPubHWM)
 	}
 
 	return nil

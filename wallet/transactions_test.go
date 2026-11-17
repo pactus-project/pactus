@@ -143,3 +143,39 @@ func TestProcessBlockPendingTransactions(t *testing.T) {
 		td.wallet.processEvent(blk)
 	})
 }
+
+// The storage refuses a transaction that it holds already. For the wallet it is not an error
+// when the transaction is the one that it recorded at the broadcast.
+func TestAddTransactionThatIsRecorded(t *testing.T) {
+	td := setup(t)
+	trx := td.GenerateTestTransferTx()
+	conflict := errors.New("UNIQUE constraint failed")
+
+	t.Run("the transaction is recorded already", func(t *testing.T) {
+		td.mockStorage.EXPECT().HasAddress(gomock.Any()).Return(true)
+		td.mockStorage.EXPECT().InsertTransaction(gomock.Any()).Return(conflict)
+		td.mockStorage.EXPECT().HasTransaction(trx.ID().String()).Return(true)
+
+		err := td.wallet.addTransactionWithStatus(trx, wtypes.TransactionStatusPending, 0)
+		require.NoError(t, err)
+	})
+
+	t.Run("the insertion fails for another reason", func(t *testing.T) {
+		td.mockStorage.EXPECT().HasAddress(gomock.Any()).Return(true)
+		td.mockStorage.EXPECT().InsertTransaction(gomock.Any()).Return(conflict)
+		td.mockStorage.EXPECT().HasTransaction(trx.ID().String()).Return(false)
+
+		err := td.wallet.addTransactionWithStatus(trx, wtypes.TransactionStatusPending, 0)
+		require.ErrorIs(t, err, conflict)
+	})
+
+	t.Run("the pool reports the transaction before the broadcast records it", func(t *testing.T) {
+		td.mockProvider.EXPECT().SendTx(trx).Return(trx.ID().String(), nil)
+		td.mockStorage.EXPECT().InsertTransaction(gomock.Any()).Return(conflict)
+		td.mockStorage.EXPECT().HasTransaction(trx.ID().String()).Return(true)
+
+		txID, err := td.wallet.BroadcastTransaction(trx)
+		require.NoError(t, err)
+		assert.Equal(t, trx.ID().String(), txID)
+	})
+}

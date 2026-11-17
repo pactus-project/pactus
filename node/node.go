@@ -140,8 +140,6 @@ func NewNode(ctx context.Context, genDoc *genesis.Genesis, conf *config.Config,
 		return nil, err
 	}
 
-	enableHTTPAuth := (conf.GRPC.BasicAuth != "")
-
 	zeromqServer, err = zmq.New(ctx, conf.ZeroMq, eventPipe)
 	if err != nil {
 		return nil, err
@@ -158,7 +156,7 @@ func NewNode(ctx context.Context, genDoc *genesis.Genesis, conf *config.Config,
 	}
 
 	grpcServer := grpc.NewServer(ctx, conf.GRPC, state, sync, net, curConsMgr, walletMgr, zeromqServer.Publishers())
-	htmlServer := html.NewServer(ctx, conf.HTML, enableHTTPAuth)
+	htmlServer := html.NewServer(ctx, conf.HTML, conf.GRPC.BasicAuth)
 	httpServer := http.NewServer(ctx, conf.HTTP)
 	jsonrpcServer := jsonrpc.NewServer(ctx, conf.JSONRPC)
 

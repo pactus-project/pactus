@@ -57,7 +57,7 @@ func (sig *Signature) MarshalCBOR() ([]byte, error) {
 // UnmarshalCBOR decodes the signature from CBOR format.
 func (sig *Signature) UnmarshalCBOR(bs []byte) error {
 	var data []byte
-	if err := cbor.Unmarshal(bs, &data); err != nil {
+	if err := encoding.UnmarshalCBOR(bs, &data); err != nil {
 		return err
 	}
 

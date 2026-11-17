@@ -141,7 +141,11 @@ func (cp *changeProposer) cpCheckJustPreVoteSoft(just vote.Just,
 		}
 	}
 
-	err := cp.cpCheckCPValue(cpValue, vote.CPValueNo, vote.CPValueYes)
+	// A soft justification is the certificate of the `abstain` main-votes of the previous round,
+	// which carry the block hash. An honest validator justifies a `no` pre-vote with it, never
+	// a `yes`: a `yes` pre-vote would carry a block hash, and the main-votes that are justified
+	// with it would be rejected by the other validators.
+	err := cp.cpCheckCPValue(cpValue, vote.CPValueNo)
 	if err != nil {
 		return err
 	}
@@ -325,8 +329,12 @@ func (cp *changeProposer) cpStrongTermination() {
 	cpDecided := cp.log.CPDecidedVoteSet(cp.round)
 	for cpRound := cp.cpRound; cpRound >= 0; cpRound-- {
 		if cpDecided.HasAnyVoteFor(cpRound, vote.CPValueYes) {
+			// One decision is enough. Another `yes` decision of an earlier change-proposer round
+			// must not move the validator to a round further on.
 			cp.round++
 			cp.enterNewState(cp.proposeState)
+
+			return
 		}
 	}
 }

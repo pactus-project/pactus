@@ -437,6 +437,46 @@ func TestInsertDuplicateTransaction(t *testing.T) {
 
 	txInfo := td.InsertRandomTransactionInfo(t, td.RandomDirection(t))
 
-	err := td.storage.InsertTransaction(txInfo)
-	require.Error(t, err)
+	// The storage refuses a transaction that it holds already, whatever its status.
+	dup := *txInfo
+	dup.No = 0
+	require.Error(t, td.storage.InsertTransaction(&dup))
+
+	dup.Status = types.TransactionStatusConfirmed
+	dup.BlockHeight = td.RandHeight()
+	require.Error(t, td.storage.InsertTransaction(&dup))
+
+	// The stored transaction is not changed.
+	stored, err := td.storage.GetTransaction(txInfo.No)
+	require.NoError(t, err)
+	assert.Equal(t, txInfo.Status, stored.Status)
+	assert.Equal(t, txInfo.BlockHeight, stored.BlockHeight)
+}
+
+func TestUpdateBatchTransactionStatus(t *testing.T) {
+	td := setup(t)
+
+	trx := td.GenerateTestBatchTransferTx()
+	txInfos, err := types.MakeTransactionInfos(trx, types.TransactionStatusPending, 0)
+	require.NoError(t, err)
+	require.Greater(t, len(txInfos), 1)
+
+	for _, info := range txInfos {
+		info.Direction = types.TxDirectionOutgoing
+		require.NoError(t, td.storage.InsertTransaction(info))
+	}
+
+	height := td.RandHeight()
+	require.NoError(t, td.storage.UpdateTransactionStatus(txInfos[0].No, types.TransactionStatusConfirmed, height))
+
+	for _, info := range txInfos {
+		stored, err := td.storage.GetTransaction(info.No)
+		require.NoError(t, err)
+		assert.Equal(t, types.TransactionStatusConfirmed, stored.Status)
+		assert.Equal(t, height, stored.BlockHeight)
+	}
+
+	pendings, err := td.storage.GetPendingTransactions()
+	require.NoError(t, err)
+	assert.Empty(t, pendings)
 }

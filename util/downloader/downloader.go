@@ -149,6 +149,12 @@ func (d *Downloader) parseHeaders(ctx context.Context) error {
 		_ = resp.Body.Close()
 	}()
 
+	// Without this check, the size of an error page is taken as the size of the file,
+	// and the download fails later with a checksum error that hides the real one.
+	if resp.StatusCode != http.StatusOK {
+		return &Error{Message: "failed to get header", Reason: errors.New(resp.Status)}
+	}
+
 	d.fileType = resp.Header.Get("Content-Type")
 	d.fileSize = resp.ContentLength
 

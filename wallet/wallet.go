@@ -265,7 +265,14 @@ func (w *Wallet) Neuter(path string) error {
 	vault := cloned.Vault()
 	vault.Neuter()
 
-	return cloned.UpdateVault(vault)
+	if err := cloned.UpdateVault(vault); err != nil {
+		_ = cloned.Close()
+
+		return err
+	}
+
+	// Closing the storage flushes the neutered vault to the wallet file.
+	return cloned.Close()
 }
 
 // RecoveryAddresses recovers active addresses in the wallet.
@@ -540,7 +547,8 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 	for _, info := range txInfos {
 		info.Direction = types.TxDirectionOutgoing
 		err := w.storage.InsertTransaction(info)
-		if err != nil {
+		// The pool can report the transaction before it is recorded here.
+		if err != nil && !w.storage.HasTransaction(info.TxID) {
 			logger.Warn("transaction broadcasted but not recorded in wallet storage", "error", err)
 		}
 	}
@@ -603,5 +611,6 @@ func (w *Wallet) SetDefaultFee(fee amount.Amount) error {
 // SetProvider sets the blockchain provider for the wallet.
 func (w *Wallet) SetProvider(provider provider.WalletProvider) {
 	w.provider = provider
+	w.addresses.provider = provider
 	w.transactions.provider = provider
 }

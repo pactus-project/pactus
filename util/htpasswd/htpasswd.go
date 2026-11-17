@@ -2,6 +2,7 @@ package htpasswd
 
 import (
 	"context"
+	"crypto/subtle"
 	"encoding/base64"
 	"errors"
 	"strings"
@@ -33,11 +34,16 @@ func CompareBasicAuth(storedCredential, user, password string) error {
 		return err
 	}
 
-	if storedUser != user {
+	// The password is checked even when the user is wrong,
+	// so the response time doesn't tell whether the user exists.
+	userMatches := subtle.ConstantTimeCompare([]byte(storedUser), []byte(user)) == 1
+	passwordErr := bcrypt.CompareHashAndPassword([]byte(storedPasswordHash), []byte(password))
+
+	if !userMatches {
 		return ErrInvalidUser
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(storedPasswordHash), []byte(password)); err != nil {
+	if passwordErr != nil {
 		return ErrInvalidPassword
 	}
 

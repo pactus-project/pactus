@@ -20,7 +20,7 @@ import (
 
 func TestMemoryAlignment(t *testing.T) {
 	s1 := unsafe.Sizeof(block.Block{})
-	assert.Equal(t, 72, int(s1))
+	assert.Equal(t, 56, int(s1))
 
 	s2 := unsafe.Sizeof(block.Header{})
 	assert.Equal(t, 140, int(s2))

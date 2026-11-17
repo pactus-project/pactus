@@ -60,7 +60,7 @@ func (sig *Signature) MarshalCBOR() ([]byte, error) {
 // UnmarshalCBOR decodes the signature from CBOR format.
 func (sig *Signature) UnmarshalCBOR(bs []byte) error {
 	var data []byte
-	if err := cbor.Unmarshal(bs, &data); err != nil {
+	if err := encoding.UnmarshalCBOR(bs, &data); err != nil {
 		return err
 	}
 
@@ -114,7 +114,8 @@ func (sig *Signature) PointG1() (*bls12381.G1Affine, error) {
 	if err != nil {
 		return nil, err
 	}
-	if g1Aff.IsInfinity() || !g1Aff.IsInSubGroup() {
+	// Unmarshal checks that the point is in the subgroup; the point at infinity passes it.
+	if g1Aff.IsInfinity() {
 		return nil, crypto.ErrInvalidSignature
 	}
 

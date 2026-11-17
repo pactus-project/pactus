@@ -2,13 +2,19 @@ package jsonrpc
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net"
+	"net/http"
+	"net/http/httputil"
+	"net/url"
+	"time"
 
 	ret "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/gopkg/netutil"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
+	"github.com/pactus-project/pactus/www/guard"
 	"github.com/pacviewer/jrpc-gateway/jrpc"
 	"github.com/rs/cors"
 	"google.golang.org/grpc"
@@ -21,6 +27,8 @@ type Server struct {
 	listener net.Listener
 	address  string
 	server   *jrpc.Server
+	pipe     *pipeListener
+	front    *http.Server
 	grpcConn *grpc.ClientConn
 	logger   *logger.SubLogger
 }
@@ -82,13 +90,45 @@ func (s *Server) StartServer(grpcServer string) error {
 		return err
 	}
 
+	// The JSON-RPC library serves on a listener in memory. The front server listens on the
+	// network: it checks the requests, with the same rules as the HTTP gateway, and it has
+	// the timeouts that the library doesn't set. Then it passes the requests to the library.
+	pipe := newPipeListener()
+	proxy := httputil.NewSingleHostReverseProxy(&url.URL{Scheme: "http", Host: "jsonrpc"})
+	proxy.Transport = &http.Transport{DialContext: pipe.dial}
+	proxy.ErrorHandler = func(w http.ResponseWriter, _ *http.Request, err error) {
+		var tooLarge *http.MaxBytesError
+		if errors.As(err, &tooLarge) {
+			http.Error(w, "request body too large", http.StatusRequestEntityTooLarge)
+
+			return
+		}
+		http.Error(w, "bad gateway", http.StatusBadGateway)
+	}
+
+	front := &http.Server{
+		Handler:           guard.Requests(proxy),
+		ReadHeaderTimeout: 3 * time.Second,
+		ReadTimeout:       30 * time.Second,
+		WriteTimeout:      60 * time.Second,
+		IdleTimeout:       120 * time.Second,
+	}
+
 	s.server = server
+	s.pipe = pipe
+	s.front = front
 	s.listener = listener
 	s.address = listener.Addr().String()
 
 	go func() {
+		if err := server.Serve(pipe); err != nil {
+			s.logger.Debug("error on JSON-RPC backend", "error", err)
+		}
+	}()
+
+	go func() {
 		s.logger.Info("JSON-RPC server start listening", "address", listener.Addr())
-		if err := server.Serve(listener); err != nil {
+		if err := front.Serve(listener); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			s.logger.Debug("error on JSON-RPC server", "error", err)
 		}
 	}()
@@ -97,8 +137,13 @@ func (s *Server) StartServer(grpcServer string) error {
 }
 
 func (s *Server) StopServer() {
+	if s.front != nil {
+		_ = s.front.Close()
+	}
+
 	if s.server != nil {
 		_ = s.server.GracefulStop(s.ctx)
+		_ = s.pipe.Close()
 		_ = s.listener.Close()
 	}
 

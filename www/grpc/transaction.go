@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"encoding/hex"
+	"errors"
 	"math"
 	"strings"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
@@ -39,7 +41,11 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 
 	committedTx, err := s.state.CommittedTx(id)
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "transaction not found")
+		if errors.Is(err, store.ErrNotFound) {
+			return nil, status.Errorf(codes.NotFound, "transaction not found")
+		}
+
+		return nil, status.Errorf(codes.Internal, "unable to read the transaction: %v", err)
 	}
 
 	res := &pactus.GetTransactionResponse{
@@ -60,7 +66,7 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 			return nil, status.Errorf(codes.Internal, "%s", err.Error())
 		}
 		lastBlockHeight := s.state.LastBlockHeight()
-		confirmations := int(lastBlockHeight) - int(committedTx.Height)
+		confirmations := confirmationsOf(lastBlockHeight, committedTx.Height)
 		res.Transaction = transactionToProto(trx, committedTx.Height, confirmations)
 	}
 
@@ -76,7 +82,8 @@ func (s *transactionServer) BroadcastTransaction(_ context.Context,
 	}
 
 	if err := s.state.AddPendingTxAndBroadcast(trx); err != nil {
-		return nil, status.Errorf(codes.Canceled, "couldn't add to transaction pool: %v", err.Error())
+		// The pool refused the transaction: it is invalid in the current state, or the pool is full.
+		return nil, status.Errorf(codes.FailedPrecondition, "couldn't add to transaction pool: %v", err.Error())
 	}
 
 	return &pactus.BroadcastTransactionResponse{
@@ -100,6 +107,24 @@ func (s *transactionServer) CalculateFee(_ context.Context,
 	}, nil
 }
 
+// rawTransactionResponse checks the unsigned transaction and encodes it.
+// A transaction that the node would refuse once it is signed, like one with a negative amount
+// or fee, or a memo that is too long, is reported now.
+func rawTransactionResponse(trx *tx.Tx) (*pactus.GetRawTransactionResponse, error) {
+	if err := trx.BasicCheckUnsigned(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid transaction: %v", err)
+	}
+
+	rawTx, err := trx.Bytes()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pactus.GetRawTransactionResponse{
+		RawTransaction: hex.EncodeToString(rawTx),
+	}, nil
+}
+
 func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 	req *pactus.GetRawTransferTransactionRequest,
 ) (*pactus.GetRawTransactionResponse, error) {
@@ -119,14 +144,8 @@ func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 	transferTx := s.buildTxWithFee(req.Fee, amt, payload.TypeTransfer, func(fee amount.Amount) *tx.Tx {
 		return tx.NewTransferTx(lockTime, sender, receiver, amt, fee, tx.WithMemo(req.Memo))
 	})
-	rawTx, err := transferTx.Bytes()
-	if err != nil {
-		return nil, err
-	}
 
-	return &pactus.GetRawTransactionResponse{
-		RawTransaction: hex.EncodeToString(rawTx),
-	}, nil
+	return rawTransactionResponse(transferTx)
 }
 
 func (s *transactionServer) GetRawBondTransaction(_ context.Context,
@@ -174,14 +193,8 @@ func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 
 		return bondTx
 	})
-	rawTx, err := bondTx.Bytes()
-	if err != nil {
-		return nil, err
-	}
 
-	return &pactus.GetRawTransactionResponse{
-		RawTransaction: hex.EncodeToString(rawTx),
-	}, nil
+	return rawTransactionResponse(bondTx)
 }
 
 func (s *transactionServer) GetRawUnbondTransaction(_ context.Context,
@@ -205,14 +218,7 @@ func (s *transactionServer) GetRawUnbondTransaction(_ context.Context,
 		unbondPld.DelegateOwner = delegateOwner
 	}
 
-	rawTx, err := unbondTx.Bytes()
-	if err != nil {
-		return nil, err
-	}
-
-	return &pactus.GetRawTransactionResponse{
-		RawTransaction: hex.EncodeToString(rawTx),
-	}, nil
+	return rawTransactionResponse(unbondTx)
 }
 
 func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
@@ -234,14 +240,8 @@ func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 	withdrawTx := s.buildTxWithFee(req.Fee, amt, payload.TypeWithdraw, func(fee amount.Amount) *tx.Tx {
 		return tx.NewWithdrawTx(lockTime, validatorAddr, accountAddr, amt, fee, tx.WithMemo(req.Memo))
 	})
-	rawTx, err := withdrawTx.Bytes()
-	if err != nil {
-		return nil, err
-	}
 
-	return &pactus.GetRawTransactionResponse{
-		RawTransaction: hex.EncodeToString(rawTx),
-	}, nil
+	return rawTransactionResponse(withdrawTx)
 }
 
 func (s *transactionServer) GetRawBatchTransferTransaction(_ context.Context,
@@ -276,14 +276,8 @@ func (s *transactionServer) GetRawBatchTransferTransaction(_ context.Context,
 	batchTransferTx := s.buildTxWithFee(req.Fee, totalAmount, payload.TypeBatchTransfer, func(fee amount.Amount) *tx.Tx {
 		return tx.NewBatchTransferTx(lockTime, sender, recipients, fee, tx.WithMemo(req.Memo))
 	})
-	rawTx, err := batchTransferTx.Bytes()
-	if err != nil {
-		return nil, err
-	}
 
-	return &pactus.GetRawTransactionResponse{
-		RawTransaction: hex.EncodeToString(rawTx),
-	}, nil
+	return rawTransactionResponse(batchTransferTx)
 }
 
 func (s *transactionServer) GetRawAnchorTransaction(_ context.Context,
@@ -324,14 +318,7 @@ func (s *transactionServer) GetRawAnchorTransaction(_ context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	rawTx, err := anchorTx.Bytes()
-	if err != nil {
-		return nil, err
-	}
-
-	return &pactus.GetRawTransactionResponse{
-		RawTransaction: hex.EncodeToString(rawTx),
-	}, nil
+	return rawTransactionResponse(anchorTx)
 }
 
 // maxFeeAdjustments bounds how many times a transaction is rebuilt to follow the
@@ -369,6 +356,16 @@ func (s *transactionServer) getLockTime(lockTime uint32) types.Height {
 	}
 
 	return types.Height(lockTime)
+}
+
+// confirmationsOf returns the number of blocks that confirm a committed block or transaction.
+// The block that holds the transaction is the first confirmation: a block is final once it is committed.
+func confirmationsOf(lastBlockHeight, blockHeight types.Height) int {
+	if blockHeight == 0 || blockHeight > lastBlockHeight {
+		return 0
+	}
+
+	return int(lastBlockHeight-blockHeight) + 1
 }
 
 func transactionToProto(trx *tx.Tx, blockHeight types.Height, confirmations int) *pactus.TransactionInfo {
@@ -526,15 +523,14 @@ func (s *transactionServer) CheckTransaction(_ context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
 	}
 
-	err = s.state.CheckTransaction(trx)
-	if err != nil {
-		return &pactus.CheckTransactionResponse{
-			IsValid:      false,
-			ErrorMessage: err.Error(),
-		}, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
+	// The transaction is decoded, and the answer says whether it is valid.
+	// Returning an error for a transaction that is not valid would discard the answer
+	// on the client side.
+	res := &pactus.CheckTransactionResponse{IsValid: true}
+	if err := s.state.CheckTransaction(trx); err != nil {
+		res.IsValid = false
+		res.ErrorMessage = err.Error()
 	}
 
-	return &pactus.CheckTransactionResponse{
-		IsValid: true,
-	}, nil
+	return res, nil
 }

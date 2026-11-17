@@ -127,8 +127,11 @@ func (p *RemoteBlockchainProvider) connect() error {
 
 		// Check if client is responding
 		// TODO: Use Ping API in version 1.11.0
-		_, err = blockchainClient.GetBlockchainInfo(p.ctx,
+		// A server that accepts the connection but never answers must not block the wallet.
+		probeCtx, cancel := context.WithTimeout(p.ctx, p.timeout)
+		_, err = blockchainClient.GetBlockchainInfo(probeCtx,
 			&pactus.GetBlockchainInfoRequest{})
+		cancel()
 		if err != nil {
 			_ = conn.Close()
 
@@ -184,7 +187,7 @@ func (p *RemoteBlockchainProvider) GetAccount(addrStr string) (*account.Account,
 		return nil, err
 	}
 
-	data, err := hex.DecodeString(res.Account.Data)
+	data, err := hex.DecodeString(res.GetAccount().GetData())
 	if err != nil {
 		return nil, err
 	}
@@ -206,7 +209,7 @@ func (p *RemoteBlockchainProvider) GetValidator(addrStr string) (*validator.Vali
 		return nil, err
 	}
 
-	data, err := hex.DecodeString(res.Validator.Data)
+	data, err := hex.DecodeString(res.GetValidator().GetData())
 	if err != nil {
 		return nil, err
 	}
@@ -227,13 +230,14 @@ func (p *RemoteBlockchainProvider) SendTx(trx *tx.Tx) (string, error) {
 	ctx, cancel := context.WithTimeout(p.ctx, p.timeout)
 	defer cancel()
 
-	res, err := p.transactionClient.BroadcastTransaction(ctx,
+	_, err = p.transactionClient.BroadcastTransaction(ctx,
 		&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
 	if err != nil {
 		return "", err
 	}
 
-	return res.Id, nil
+	// The ID is computed locally: the server is not trusted to report it.
+	return trx.ID().String(), nil
 }
 
 func (p *RemoteBlockchainProvider) GetTransaction(txID string) (*tx.Tx, types.Height, error) {
@@ -253,7 +257,7 @@ func (p *RemoteBlockchainProvider) GetTransaction(txID string) (*tx.Tx, types.He
 		return nil, 0, err
 	}
 
-	data, err := hex.DecodeString(res.Transaction.Data)
+	data, err := hex.DecodeString(res.GetTransaction().GetData())
 	if err != nil {
 		return nil, 0, err
 	}

@@ -49,6 +49,37 @@ func TestMakeConfig(t *testing.T) {
 		require.NoError(t, err)
 	})
 
+	t.Run("Broken Config file, Should not keep a part of it", func(t *testing.T) {
+		for _, gen := range []*genesis.Genesis{genesis.MainnetGenesis(), genesis.TestnetGenesis()} {
+			t.Cleanup(crypto.ToMainnetHRP)
+
+			workingDir := util.TempDirPath()
+			confPath := PactusConfigPath(workingDir)
+			require.NoError(t, gen.SaveToFile(PactusGenesisPath(workingDir)))
+
+			// The file is valid up to the last line.
+			// The values before it must not end up in the restored config.
+			broken := "[grpc]\n" +
+				"enable = true\n" +
+				"listen = \"0.0.0.0:50051\"\n" +
+				"enable_wallet = true\n" +
+				"[network]\n" +
+				"max_connections = 'oops'\n"
+			require.NoError(t, util.WriteFile(confPath, []byte(broken)))
+
+			conf, _, err := MakeConfig(workingDir)
+			require.NoError(t, err)
+
+			defConf := config.DefaultConfigForChain(gen.ChainType())
+			assert.Equal(t, defConf.GRPC.Listen, conf.GRPC.Listen)
+			assert.Equal(t, defConf.GRPC.EnableWallet, conf.GRPC.EnableWallet)
+
+			saved, err := util.ReadFile(confPath)
+			require.NoError(t, err)
+			assert.NotContains(t, string(saved), "0.0.0.0:50051")
+		}
+	})
+
 	t.Run("Invalid custom genesis file, Should return error", func(t *testing.T) {
 		t.Cleanup(crypto.ToMainnetHRP)
 

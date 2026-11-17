@@ -185,3 +185,21 @@ func TestErrorMessages(t *testing.T) {
 	assert.Equal(t, "failed to do request: connection reset", err.Error())
 	assert.ErrorIs(t, err, cause)
 }
+
+// The file is not on the server. The error must tell so: the size of the error page
+// must not be taken as the size of the file.
+func TestDownloaderFileNotFound(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+	server := httptest.NewServer(http.NotFoundHandler())
+	t.Cleanup(server.Close)
+
+	d := New(server.URL, util.TempFilePath(), checksumOf(ts.RandBytes(100)),
+		WithCustomClient(server.Client()), WithMaxRetries(1))
+
+	err := downloadWithTimeout(t, d)
+
+	var dlErr *Error
+	require.ErrorAs(t, err, &dlErr)
+	assert.Equal(t, "failed to get header", dlErr.Message)
+	require.ErrorContains(t, err, "404")
+}

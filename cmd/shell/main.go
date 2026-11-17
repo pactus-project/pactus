@@ -61,6 +61,12 @@ func createRootCommand() *cobra.Command {
 		"password for gRPC basic authentication")
 
 	interactive.PreRun = func(_ *cobra.Command, _ []string) {
+		// The flags of a command are reset to their defaults before each run.
+		// The credentials of the session become these defaults,
+		// so they are not lost after the first command.
+		setFlagDefault(rootCmd, "auth-username", username)
+		setFlagDefault(rootCmd, "auth-password", password)
+
 		cls()
 		terminal.PrintInfoMsgf("Welcome to PactusBlockchain interactive mode\n\n- Home: https://pactus.org\n- " +
 			"Docs: https://docs.pactus.org")
@@ -98,6 +104,21 @@ func createRootCommand() *cobra.Command {
 	rootCmd.AddCommand(interactive)
 
 	return rootCmd
+}
+
+// setFlagDefault sets the default value, and the value, of the named flag
+// in the given command and in all its sub-commands.
+func setFlagDefault(cmd *cobra.Command, name, value string) {
+	for _, flags := range []*pflag.FlagSet{cmd.Flags(), cmd.PersistentFlags()} {
+		if flag := flags.Lookup(name); flag != nil {
+			flag.DefValue = value
+			_ = flag.Value.Set(value)
+		}
+	}
+
+	for _, sub := range cmd.Commands() {
+		setFlagDefault(sub, name, value)
+	}
 }
 
 func main() {

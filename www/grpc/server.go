@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"net"
+	"time"
 
 	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/gopkg/netutil"
@@ -14,6 +15,7 @@ import (
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/pactus-project/pactus/www/zmq"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/keepalive"
 )
 
 type Server struct {
@@ -66,6 +68,14 @@ func (s *Server) StartServer() error {
 	return s.StartListening(listener)
 }
 
+const (
+	// maxConcurrentStreams is the maximum number of calls that one connection runs at the same time.
+	maxConcurrentStreams = 256
+	// maxConnectionIdle is the time after which a connection without any call is closed.
+	// A client opens a new connection for its next call.
+	maxConnectionIdle = 15 * time.Minute
+)
+
 func (s *Server) StartListening(listener net.Listener) error {
 	opts := make([]grpc.UnaryServerInterceptor, 0)
 
@@ -75,7 +85,12 @@ func (s *Server) StartListening(listener net.Listener) error {
 
 	opts = append(opts, s.Recovery())
 
-	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(opts...))
+	grpcServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(opts...),
+		// Bound what one connection can keep open on the server.
+		grpc.MaxConcurrentStreams(maxConcurrentStreams),
+		grpc.KeepaliveParams(keepalive.ServerParameters{MaxConnectionIdle: maxConnectionIdle}),
+	)
 
 	blockchainServer := newBlockchainServer(s)
 	transactionServer := newTransactionServer(s)

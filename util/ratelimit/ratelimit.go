@@ -41,6 +41,19 @@ func (r *RateLimit) reset() {
 	r.referenceTime = time.Now()
 }
 
+// Exceeded reports whether the threshold is reached in the current window,
+// without counting a request.
+func (r *RateLimit) Exceeded() bool {
+	r.lk.RLock()
+	defer r.lk.RUnlock()
+
+	if r.threshold == 0 || r.diff() > r.window {
+		return false
+	}
+
+	return r.counter >= r.threshold
+}
+
 // AllowRequest increments the counter and checks if the rate limit is exceeded.
 // If the threshold is zero, it allows all requests.
 func (r *RateLimit) AllowRequest() bool {
