@@ -541,3 +541,45 @@ func TestSetSessionOnlyFullNodes(t *testing.T) {
 	assert.True(t, getSessionByID(peerSet, sid1).OnlyFullNodes)
 	assert.False(t, getSessionByID(peerSet, sid2).OnlyFullNodes)
 }
+
+// The records of the peers are bounded: the disconnected peers are forgotten first.
+func TestPeerRecordsAreBounded(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+	peerSet := NewPeerSet(time.Minute)
+
+	connected := ts.RandPeerID()
+	peerSet.UpdateStatus(connected, status.StatusConnected)
+	for range maxPeerRecords {
+		pid := ts.RandPeerID()
+		peerSet.UpdateStatus(pid, status.StatusConnected)
+		peerSet.UpdateStatus(pid, status.StatusDisconnected)
+	}
+
+	assert.LessOrEqual(t, peerSet.Len(), maxPeerRecords)
+	assert.True(t, peerSet.HasPeer(connected), "a connected peer is not forgotten")
+}
+
+func TestGetRandomPeerWithoutOpenSession(t *testing.T) {
+	peerSet := NewPeerSet(time.Minute)
+
+	pidBusy := peer.ID("busy")
+	pidDone := peer.ID("done")
+	pidFree := peer.ID("free")
+	for _, pid := range []peer.ID{pidBusy, pidDone, pidFree} {
+		peerSet.UpdateInfo(pid, "moniker", "agent", nil, service.New())
+		peerSet.UpdateStatus(pid, status.StatusKnown)
+	}
+	peerSet.OpenSession(pidBusy, 1, 10)
+	sid := peerSet.OpenSession(pidDone, 11, 10)
+	peerSet.SetSessionCompleted(sid)
+
+	for range 100 {
+		randomPeer := peerSet.GetRandomPeerWithoutOpenSession()
+		require.NotNil(t, randomPeer)
+		assert.NotEqual(t, pidBusy, randomPeer.PeerID)
+	}
+
+	peerSet.OpenSession(pidDone, 21, 10)
+	peerSet.OpenSession(pidFree, 31, 10)
+	assert.Nil(t, peerSet.GetRandomPeerWithoutOpenSession(), "every peer has an open session")
+}

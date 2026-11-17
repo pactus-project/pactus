@@ -447,12 +447,80 @@ func TestUpdateBlockchain(t *testing.T) {
 		assert.True(t, sessions[0].OnlyFullNodes)
 	})
 
-	t.Run("open sessions are not duplicated", func(t *testing.T) {
+	t.Run("open sessions are not duplicated, the next blocks are requested", func(t *testing.T) {
+		td := setup(t, conf)
+		pid := td.addPeer(t, status.StatusKnown, service.New(service.FullNode))
+		other := td.addPeer(t, status.StatusKnown, service.New(service.FullNode))
+
+		td.sync.peerSet.OpenSession(pid, 101, 10)
+
+		td.sync.updateBlockchain()
+
+		bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksRequest)
+		msg := bdl.Message.(*message.BlocksRequestMessage)
+		assert.Equal(t, uint32(111), uint32(msg.From), "the blocks after the open session are requested")
+		td.shouldNotPublishAnyMessage(t)
+		assert.Equal(t, 2, td.sync.peerSet.NumberOfSessions())
+		assert.True(t, td.sync.peerSet.HasOpenSession(other))
+	})
+
+	t.Run("completed session stays until its blocks are committed", func(t *testing.T) {
+		td := setup(t, conf)
+		pidDone := td.addPeer(t, status.StatusKnown, service.New(service.FullNode))
+		pidBusy := td.addPeer(t, status.StatusKnown, service.New(service.FullNode))
+
+		// The blocks 101 to 110 are downloaded, but not committed yet.
+		sidDone := td.sync.peerSet.OpenSession(pidDone, 101, 10)
+		td.sync.peerSet.SetSessionCompleted(sidDone)
+		td.sync.peerSet.OpenSession(pidBusy, 111, 10)
+
+		td.sync.updateBlockchain()
+
+		bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksRequest)
+		msg := bdl.Message.(*message.BlocksRequestMessage)
+		assert.Equal(t, uint32(121), uint32(msg.From))
+		assert.Equal(t, 3, td.sync.peerSet.NumberOfSessions())
+
+		// Once its blocks are committed, the completed session is removed.
+		td.state.CommitTestBlocks(10)
+		td.sync.updateBlockchain()
+
+		for _, ssn := range td.sync.peerSet.Sessions() {
+			assert.NotEqual(t, sidDone, ssn.SessionID)
+		}
+	})
+
+	t.Run("no session is opened when the window is full", func(t *testing.T) {
+		smallConf := testConfig()
+		smallConf.MaxSessions = 2
+		td := setup(t, smallConf)
+		pid1 := td.addPeer(t, status.StatusKnown, service.New(service.FullNode))
+		pid2 := td.addPeer(t, status.StatusKnown, service.New(service.FullNode))
+		td.addPeer(t, status.StatusKnown, service.New(service.FullNode))
+
+		sid1 := td.sync.peerSet.OpenSession(pid1, 101, 10)
+		td.sync.peerSet.SetSessionCompleted(sid1)
+		td.sync.peerSet.OpenSession(pid2, 111, 10)
+
+		td.sync.updateBlockchain()
+
+		td.shouldNotPublishAnyMessage(t)
+		assert.Equal(t, 2, td.sync.peerSet.NumberOfSessions())
+	})
+
+	t.Run("no block is requested after the estimated height of the network", func(t *testing.T) {
 		td := setup(t, conf)
 		pid := td.addPeer(t, status.StatusKnown, service.New(service.FullNode))
 		td.addPeer(t, status.StatusKnown, service.New(service.FullNode))
 
-		td.sync.peerSet.OpenSession(pid, 101, 10)
+		// The last block is 5 block intervals old: the network is about 5 blocks ahead.
+		blockInterval := td.state.Params().BlockInterval()
+		blkTime := util.RoundNow(int(blockInterval.Seconds())).Add(-5 * blockInterval)
+		blk, cert := td.GenerateTestBlock(td.state.LastBlockHeight()+1, testsuite.BlockWithTime(blkTime))
+		require.NoError(t, td.state.CommitBlock(blk, cert))
+
+		// These blocks are requested already.
+		td.sync.peerSet.OpenSession(pid, td.state.LastBlockHeight()+1, 10)
 
 		td.sync.updateBlockchain()
 
@@ -544,21 +612,43 @@ func TestBlocksResponseSessionStatus(t *testing.T) {
 	openSession := func(pid peer.ID) int {
 		return td.sync.peerSet.OpenSession(pid, td.state.LastBlockHeight()+1, 10)
 	}
+	sessionActivity := func(t *testing.T, sid int) time.Time {
+		t.Helper()
+
+		for _, ssn := range td.sync.peerSet.Sessions() {
+			if ssn.SessionID == sid {
+				return ssn.LastActivity
+			}
+		}
+		require.FailNow(t, "the session is not found")
+
+		return time.Time{}
+	}
 
 	t.Run("response code OK keeps the session open and refreshes its activity", func(t *testing.T) {
 		td.sync.peerSet.RemoveAllSessions()
 		sid := openSession(pid1)
-		for _, ssn := range td.sync.peerSet.Sessions() {
-			ssn.LastActivity = time.Now().Add(-time.Hour)
-		}
+		before := sessionActivity(t, sid)
+		time.Sleep(10 * time.Millisecond)
 
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeOK, "ok", sid, 0, nil, nil)
 		td.receivingNewMessage(td.sync, msg, pid1)
 
 		require.True(t, td.sync.peerSet.HasOpenSession(pid1))
-		for _, ssn := range td.sync.peerSet.Sessions() {
-			assert.WithinDuration(t, time.Now(), ssn.LastActivity, time.Minute)
-		}
+		assert.True(t, sessionActivity(t, sid).After(before))
+	})
+
+	t.Run("more blocks without any block doesn't refresh the activity of the session", func(t *testing.T) {
+		td.sync.peerSet.RemoveAllSessions()
+		sid := openSession(pid1)
+		before := sessionActivity(t, sid)
+		time.Sleep(10 * time.Millisecond)
+
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, "more", sid, 0, nil, nil)
+		td.receivingNewMessage(td.sync, msg, pid1)
+
+		require.True(t, td.sync.peerSet.HasOpenSession(pid1))
+		assert.Equal(t, before, sessionActivity(t, sid))
 	})
 
 	t.Run("no more blocks completes the session, the other sessions continue", func(t *testing.T) {
@@ -569,10 +659,15 @@ func TestBlocksResponseSessionStatus(t *testing.T) {
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeNoMoreBlocks, "done", sid1, 0, nil, nil)
 		td.receivingNewMessage(td.sync, msg, pid1)
 
+		// The completed session stays until its blocks are committed,
+		// and the blocks after the requested ones are requested.
 		stats := td.sync.peerSet.SessionStats()
 		assert.Equal(t, 1, stats.Completed)
-		assert.Equal(t, 1, stats.Open)
+		assert.Equal(t, 2, stats.Open)
 		assert.True(t, td.sync.peerSet.HasOpenSession(pid2))
+		bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksRequest)
+		req := bdl.Message.(*message.BlocksRequestMessage)
+		assert.Equal(t, td.state.LastBlockHeight()+11, req.From)
 	})
 
 	t.Run("no more blocks with no other open session starts a new download", func(t *testing.T) {

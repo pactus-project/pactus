@@ -45,14 +45,16 @@ func (handler *blocksResponseHandler) ParseMessage(m message.Message, pid peer.I
 		handler.tryCommitBlocks()
 	}
 
-	handler.updateSession(msg.SessionID, msg.ResponseCode)
+	handler.updateSession(msg.SessionID, msg.ResponseCode, len(msg.BlocksData) > 0)
 }
 
 func (*blocksResponseHandler) PrepareBundle(m message.Message) *bundle.Bundle {
 	return bundle.NewBundle(m)
 }
 
-func (handler *blocksResponseHandler) updateSession(sid int, code message.ResponseCode) {
+// updateSession updates the session after a response. A response without blocks doesn't
+// count as an activity: a peer could otherwise keep a session open without sending any block.
+func (handler *blocksResponseHandler) updateSession(sid int, code message.ResponseCode, hasBlocks bool) {
 	switch code {
 	case message.ResponseCodeOK:
 		handler.logger.Debug("session accepted. keep session open", "sid", sid)
@@ -64,7 +66,9 @@ func (handler *blocksResponseHandler) updateSession(sid int, code message.Respon
 
 	case message.ResponseCodeMoreBlocks:
 		handler.logger.Debug("peer responding us. keep session open", "sid", sid)
-		handler.peerSet.UpdateSessionLastActivity(sid)
+		if hasBlocks {
+			handler.peerSet.UpdateSessionLastActivity(sid)
+		}
 
 	case message.ResponseCodeNoMoreBlocks:
 		handler.logger.Debug("peer sent all blocks. close session", "sid", sid)

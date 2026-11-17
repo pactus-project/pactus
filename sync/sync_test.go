@@ -486,10 +486,14 @@ func TestCompletedSessionIsNotRequestedAgain(t *testing.T) {
 
 	td.sync.updateBlockchain()
 
+	// Only the blocks after the sessions are requested.
+	bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksRequest)
+	msg := bdl.Message.(*message.BlocksRequestMessage)
+	assert.Equal(t, uint32(121), uint32(msg.From))
 	td.shouldNotPublishAnyMessage(t)
-	assert.Equal(t, 2, td.sync.peerSet.NumberOfSessions(), "no new session should be opened")
+	assert.Equal(t, 3, td.sync.peerSet.NumberOfSessions())
+	assert.Equal(t, 1, td.sync.peerSet.SessionStats().Completed)
 	assert.True(t, td.sync.peerSet.HasOpenSession(pidBusy))
-	assert.False(t, td.sync.peerSet.HasOpenSession(pidDone))
 }
 
 // unencodableMessage is a message that cannot be encoded.

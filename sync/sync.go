@@ -415,18 +415,25 @@ func (sync *synchronizer) updateBlockchain() {
 		}
 	}
 
-	// Check if there are any open sessions.
-	// If open sessions exist, we should wait for them to close.
-	// Otherwise, we might request to download the same blocks from different peers.
-	// TODO: write test for me
+	// The sessions form a window above the last committed block: a completed session stays
+	// until its blocks are committed, and new sessions are opened after the last one, as long
+	// as the window has room. A slow session doesn't stop the download of the next blocks,
+	// and the blocks that are already requested are not requested again.
 	if sync.peerSet.HasAnyOpenSession() {
-		sync.logger.Debug("we have open session",
+		sync.peerSet.RemoveCommittedSessions(sync.stateHeight())
+	} else {
+		// No session is running. Some blocks of the completed sessions may still miss,
+		// for example if a peer had fewer blocks than requested, or if a block failed to commit:
+		// the download starts again from the next block to commit.
+		sync.peerSet.RemoveAllSessions()
+	}
+
+	if sync.peerSet.NumberOfSessions() >= sync.config.MaxSessions {
+		sync.logger.Debug("the download window is full",
 			"stats", sync.peerSet.SessionStats())
 
 		return
 	}
-
-	sync.peerSet.RemoveAllSessions()
 
 	// TODO: We have similar code in GUI, perhaps we can make a utility common function.
 	blockInterval := sync.state.Params().BlockInterval()
@@ -451,23 +458,35 @@ func (sync *synchronizer) updateBlockchain() {
 		downloadHeight++
 	}
 
+	// The blocks below are requested by the running sessions.
+	downloadHeight = max(downloadHeight, sync.peerSet.SessionsNextHeight())
+
+	// The number of missing blocks is estimated from the time of the last block, and a block
+	// takes at least one block interval: no block is expected after this height.
+	// A session for higher blocks would be rejected, then requested again.
+	maxHeight := sync.state.LastBlockHeight() + types.Height(numOfBlocks)
+	if downloadHeight > maxHeight {
+		return
+	}
+
 	sync.logger.Info("start syncing with the network",
 		"numOfBlocks", numOfBlocks, "height", downloadHeight)
 
 	if numOfBlocks > sync.config.PruneWindow {
 		// Don't have blocks for more than 10 days
-		sync.downloadBlocks(downloadHeight, true)
+		sync.downloadBlocks(downloadHeight, maxHeight, true)
 	} else {
-		sync.downloadBlocks(downloadHeight, false)
+		sync.downloadBlocks(downloadHeight, maxHeight, false)
 	}
 }
 
 // downloadBlocks starts downloading blocks from the network.
-func (sync *synchronizer) downloadBlocks(from types.Height, onlyFullNodes bool) {
+// downloadBlocks opens sessions for the blocks from the given height, up to maxHeight.
+func (sync *synchronizer) downloadBlocks(from, maxHeight types.Height, onlyFullNodes bool) {
 	sync.logger.Debug("downloading blocks", "from", from)
 
-	for i := sync.peerSet.NumberOfSessions(); i < sync.config.MaxSessions; i++ {
-		count := sync.config.BlockPerSession
+	for i := sync.peerSet.NumberOfSessions(); i < sync.config.MaxSessions && from <= maxHeight; i++ {
+		count := min(sync.config.BlockPerSession, uint32(maxHeight-from)+1)
 		sent := sync.sendBlockRequestToRandomPeer(from, count, onlyFullNodes)
 		if !sent {
 			return
@@ -493,16 +512,14 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from types.Height, count 
 		}
 	}
 
-	for i := sync.peerSet.NumberOfSessions(); i < sync.config.MaxSessions; i++ {
-		peer := sync.peerSet.GetRandomPeer()
+	// The number of sessions is bounded by the caller. A few peers are tried,
+	// since a peer can be skipped, for example if it is not a full node.
+	for range sync.config.MaxSessions {
+		// The peers with an open session are not picked: the blocks are downloaded
+		// from different peers.
+		peer := sync.peerSet.GetRandomPeerWithoutOpenSession()
 		if peer == nil {
 			break
-		}
-
-		// Don't open a new session if we already have an open session with the same peer.
-		// This helps us to get blocks from different peers.
-		if sync.peerSet.HasOpenSession(peer.PeerID) {
-			continue
 		}
 
 		// We haven't completed the handshake with this peer.
