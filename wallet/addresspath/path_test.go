@@ -35,6 +35,18 @@ func TestPathToString(t *testing.T) {
 	}
 }
 
+func TestShortPath(t *testing.T) {
+	// The accessors must not panic on a path that is too short.
+	for _, path := range []Path{nil, {}, {1}, {1, 2}} {
+		assert.NotPanics(t, func() {
+			path.Purpose()
+			path.CoinType()
+			path.AddressType()
+			path.AddressIndex()
+		})
+	}
+}
+
 func TestStringToPath(t *testing.T) {
 	h := hardenedKeyStart
 	tests := []struct {
@@ -52,6 +64,10 @@ func TestStringToPath(t *testing.T) {
 		{"i", nil, ErrInvalidPath},
 		{"m/'", nil, strconv.ErrSyntax},
 		{"m/abc'", nil, strconv.ErrSyntax},
+		{"m/", nil, strconv.ErrSyntax},
+		{"m//1", nil, strconv.ErrSyntax},
+		{"m/-1/5", nil, strconv.ErrSyntax},
+		{"m/2147483648", nil, strconv.ErrRange},
 	}
 	for no, tt := range tests {
 		path, err := FromString(tt.str)
