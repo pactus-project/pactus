@@ -61,8 +61,9 @@ func dropDownLabelFactory(ellipsize pango.EllipsizeMode) *gtk.SignalListItemFact
 }
 
 func DropDownGetSelectedItem[T any](drop *gtk.DropDown, values []T) T {
+	// No item is selected when the list is empty: the position is then invalid.
 	idx := drop.Selected()
-	if idx > uint(len(values)) {
+	if idx >= uint(len(values)) {
 		var zero T
 
 		return zero
@@ -71,9 +72,18 @@ func DropDownGetSelectedItem[T any](drop *gtk.DropDown, values []T) T {
 	return values[idx]
 }
 
+// DropDownGetSelectedText returns the text of the selected item,
+// or an empty string if no item is selected, for example when the list is empty.
 func DropDownGetSelectedText(drop *gtk.DropDown) string {
 	item := drop.SelectedItem()
-	str := item.Cast().(*gtk.StringObject)
+	if item == nil {
+		return ""
+	}
+
+	str, ok := item.Cast().(*gtk.StringObject)
+	if !ok {
+		return ""
+	}
 
 	return str.String()
 }

@@ -67,7 +67,9 @@ func ShowWarningDialog(parent *gtk.Window, msg string, onClone func(res int)) {
 	IdleAddSync(func() {
 		dlg := gtk.NewMessageDialog(parent,
 			gtk.DialogModal, gtk.MessageWarning, gtk.ButtonsOK)
-		showMessageDialog(dlg, assets.IconDialogWarningTexture, "Warning", msg, onClone)
+		// The message is plain text: it comes from errors, which can hold "<" or "&",
+		// and from the node, which must not be able to add links to it.
+		showMessageDialog(dlg, assets.IconDialogWarningTexture, "Warning", EscapeMarkup(msg), onClone)
 	})
 }
 
@@ -77,7 +79,9 @@ func ShowErrorDialog(parent *gtk.Window, msg string, onClone func(res int)) {
 	IdleAddSync(func() {
 		dlg := gtk.NewMessageDialog(parent,
 			gtk.DialogModal, gtk.MessageError, gtk.ButtonsOK)
-		showMessageDialog(dlg, assets.IconDialogErrorTexture, "Error", msg, onClone)
+		// The message is plain text: it comes from errors, which can hold "<" or "&",
+		// and from the node, which must not be able to add links to it.
+		showMessageDialog(dlg, assets.IconDialogErrorTexture, "Error", EscapeMarkup(msg), onClone)
 	})
 }
 

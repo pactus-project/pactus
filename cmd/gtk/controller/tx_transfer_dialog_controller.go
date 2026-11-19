@@ -150,7 +150,7 @@ Memo:     %s
 
 You are going to sign and broadcast this transaction.
 <b>This action cannot be undone.</b>
-Do you want to continue with this transaction?`, sender, receiver, amt, trx.Fee(), trx.Memo())
+Do you want to continue with this transaction?`, sender, receiver, amt, trx.Fee(), gtkutil.EscapeMarkup(trx.Memo()))
 
 	confirmAndSend(c.view.Window, c.model, msg, trx)
 }

@@ -305,23 +305,41 @@ func (c *WalletWidgetController) RefreshTransactions() {
 }
 
 func (c *WalletWidgetController) ShowUpdateLabel() {
+	addr := c.getSelectedAddress()
+	if addr == nil {
+		return
+	}
+
 	dlgView := view.NewAddressLabelDialogView()
 	dlgCtrl := NewAddressLabelDialogController(dlgView, c.model)
-	dlgCtrl.Show(c.getSelectedAddress().Address, func() {
+
+	dlgCtrl.Show(addr.Address, func() {
 		go c.RefreshAddresses()
 	})
 }
 
 func (c *WalletWidgetController) ShowAddressDetails() {
+	addr := c.getSelectedAddress()
+	if addr == nil {
+		return
+	}
+
 	dlgView := view.NewAddressDetailsDialogView()
 	dlgCtrl := NewAddressDetailsDialogController(dlgView, c.model)
-	dlgCtrl.Show(c.getSelectedAddress())
+
+	dlgCtrl.Show(addr)
 }
 
 func (c *WalletWidgetController) ShowPrivateKey() {
+	addr := c.getSelectedAddress()
+	if addr == nil {
+		return
+	}
+
 	dlgView := view.NewAddressPrivateKeyDialogView()
 	dlgCtrl := NewAddressPrivateKeyDialogController(dlgView, c.model)
-	dlgCtrl.Show(c.getSelectedAddress().Address)
+
+	dlgCtrl.Show(addr.Address)
 }
 
 func (c *WalletWidgetController) prevTransactionsPage() {
@@ -338,6 +356,8 @@ func (c *WalletWidgetController) nextTransactionsPage() {
 	c.RefreshTransactions()
 }
 
+// getSelectedAddress returns the selected address, or nil when no address is selected,
+// for example when the list is empty.
 func (c *WalletWidgetController) getSelectedAddress() *pactus.AddressInfo {
 	row := gtkutil.ColumnViewGetSelectedItem(c.view.ColViewAddresses, c.lsAddresses)
 
