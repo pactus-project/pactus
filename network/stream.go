@@ -99,6 +99,8 @@ func (s *streamService) SendTo(msg []byte, pid lp2peer.ID) (lp2pnetwork.Stream, 
 
 	err = stream.CloseWrite()
 	if err != nil {
+		_ = stream.Reset()
+
 		return nil, LibP2PError{Err: err}
 	}
 
@@ -106,7 +108,10 @@ func (s *streamService) SendTo(msg []byte, pid lp2peer.ID) (lp2pnetwork.Stream, 
 	// If, for any reason, the receiver doesn't close the stream, we need to close it after a timeout.
 	go func() {
 		timer := time.NewTimer(s.timeout)
-		closed := make(chan bool)
+		defer timer.Stop()
+
+		// The channel is buffered, so the reader never blocks when the timer wins the race.
+		closed := make(chan bool, 1)
 
 		go func() {
 			// We need only one byte to read the EOF.
