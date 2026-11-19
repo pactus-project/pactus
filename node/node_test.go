@@ -89,7 +89,11 @@ func TestRunningNode(t *testing.T) {
 	require.NoError(t, err)
 	assert.NotEmpty(t, wallets)
 
+	// The caller keeps its context: Stop cancels the one of the node.
+	require.NoError(t, node.ctx.Err())
 	node.Stop()
+	require.ErrorIs(t, node.ctx.Err(), context.Canceled)
+	require.NoError(t, t.Context().Err())
 }
 
 func TestNewNodeReleasesStoreOnError(t *testing.T) {
