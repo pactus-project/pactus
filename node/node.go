@@ -31,6 +31,7 @@ import (
 
 type Node struct {
 	ctx           context.Context
+	cancel        context.CancelFunc
 	genesisDoc    *genesis.Genesis
 	config        *config.Config
 	state         state.State
@@ -51,7 +52,26 @@ type Node struct {
 	eventPipe     pipeline.Pipeline[any]
 }
 
+// NewNode creates a node. The node runs on its own context, which Stop cancels:
+// the consensus and the other modules stop their timers before the store is closed,
+// even when the caller keeps its context.
 func NewNode(ctx context.Context, genDoc *genesis.Genesis, conf *config.Config,
+	valKeys []*bls.ValidatorKey, rewardAddrs []crypto.Address,
+) (*Node, error) {
+	ctx, cancel := context.WithCancel(ctx)
+
+	node, err := newNode(ctx, genDoc, conf, valKeys, rewardAddrs)
+	if err != nil {
+		cancel()
+
+		return nil, err
+	}
+	node.cancel = cancel
+
+	return node, nil
+}
+
+func newNode(ctx context.Context, genDoc *genesis.Genesis, conf *config.Config,
 	valKeys []*bls.ValidatorKey, rewardAddrs []crypto.Address,
 ) (*Node, error) {
 	// Each validator key is paired with a reward address by its index.
@@ -245,6 +265,10 @@ func (n *Node) Start() error {
 
 func (n *Node) Stop() {
 	logger.Info("stopping Node")
+
+	// Stop the timers of the consensus and of the other modules first:
+	// a block that is committed while the node stops would find the store closed.
+	n.cancel()
 
 	// Stop the components that serve requests first, in the reverse order of
 	// their start. Otherwise a request can reach the state and the store after
