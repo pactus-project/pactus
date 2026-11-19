@@ -25,10 +25,9 @@ const (
 
 // HasHardenedRules returns true if the protocol version enforces the hardened rules.
 // These are the rules that this version gates, and nothing else:
-//   - A `yes` pre-vote of the change-proposer phase has no block hash, in any round.
 //   - The subsidy transaction pays exactly the expected recipients.
 //
-// A rule that changes the validity of a block, a transaction or a vote must be gated here
+// A rule that changes the validity of a block or a transaction must be gated here
 // before it is merged: a node that enforces it earlier rejects what the other nodes accept.
 func (v Version) HasHardenedRules() bool {
 	return v >= ProtocolVersion6

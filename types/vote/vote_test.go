@@ -466,6 +466,25 @@ func TestBasicCheck(t *testing.T) {
 		require.ErrorIs(t, err, vote.BasicCheckError{Reason: "should not have CP data"})
 	})
 
+	// An honest validator sends a `yes` vote for no block, in every round of the change-proposer phase.
+	t.Run("A yes vote with a block hash", func(t *testing.T) {
+		justs := []vote.Just{&vote.JustInitYes{}, &vote.JustPreVoteSoft{}, &vote.JustPreVoteHard{}}
+		for _, just := range justs {
+			vte := vote.NewCPPreVote(ts.RandHash(), 100, 0, 1, vote.CPValueYes, just, ts.RandAccAddress())
+			vte.SetSignature(ts.RandBLSSignature())
+
+			err := vte.BasicCheck()
+			require.ErrorIs(t, err, vote.BasicCheckError{Reason: "a yes vote should not have a block hash"})
+		}
+	})
+
+	t.Run("A yes vote without a block hash", func(t *testing.T) {
+		vte := vote.NewCPPreVote(hash.UndefHash, 100, 0, 0, vote.CPValueYes, &vote.JustInitYes{}, ts.RandAccAddress())
+		vte.SetSignature(ts.RandBLSSignature())
+
+		require.NoError(t, vte.BasicCheck())
+	})
+
 	t.Run("Ok", func(t *testing.T) {
 		vte := vote.NewPrepareVote(ts.RandHash(), 100, 0, ts.RandAccAddress())
 		vte.SetSignature(ts.RandBLSSignature())
