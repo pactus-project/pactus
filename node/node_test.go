@@ -23,8 +23,11 @@ import (
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet"
 	wltmgr "github.com/pactus-project/pactus/wallet/manager"
+	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	grpclib "google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func TestRunningNode(t *testing.T) {
@@ -88,6 +91,27 @@ func TestRunningNode(t *testing.T) {
 	wallets, err := node.WalletManager().ListWallets()
 	require.NoError(t, err)
 	assert.NotEmpty(t, wallets)
+
+	// The GUI has its own gRPC server: on the loopback interface, with the wallet service.
+	// The gRPC server of the config keeps its own settings.
+	guiAddr, err := node.StartGUIGRPC()
+	require.NoError(t, err)
+	host, _, err := net.SplitHostPort(guiAddr)
+	require.NoError(t, err)
+	assert.Equal(t, "127.0.0.1", host)
+	assert.NotEqual(t, node.GRPC().Address(), guiAddr)
+	assert.False(t, conf.GRPC.EnableWallet)
+
+	again, err := node.StartGUIGRPC()
+	require.NoError(t, err)
+	assert.Equal(t, guiAddr, again, "the server is started once")
+
+	conn, err := grpclib.NewClient(guiAddr, grpclib.WithTransportCredentials(insecure.NewCredentials()))
+	require.NoError(t, err)
+	defer func() { _ = conn.Close() }()
+	res, err := pactus.NewWalletClient(conn).ListWallets(t.Context(), &pactus.ListWalletsRequest{})
+	require.NoError(t, err)
+	assert.NotEmpty(t, res.Wallets)
 
 	node.Stop()
 }

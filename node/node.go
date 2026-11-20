@@ -30,18 +30,21 @@ import (
 )
 
 type Node struct {
-	ctx           context.Context
-	genesisDoc    *genesis.Genesis
-	config        *config.Config
-	state         state.State
-	store         store.Store
-	txPool        txpool.TxPool
-	consV1Mgr     consmgr.ConsensusManager // Deprecated:: replaced by new consensus algorithm
-	consV2Mgr     consmgr.ConsensusManager
-	network       network.Network
-	sync          sync.Synchronizer
-	walletMgr     wltmgr.WalletManager
-	grpc          *grpc.Server
+	ctx        context.Context
+	genesisDoc *genesis.Genesis
+	config     *config.Config
+	state      state.State
+	store      store.Store
+	txPool     txpool.TxPool
+	consV1Mgr  consmgr.ConsensusManager // Deprecated:: replaced by new consensus algorithm
+	consV2Mgr  consmgr.ConsensusManager
+	network    network.Network
+	sync       sync.Synchronizer
+	walletMgr  wltmgr.WalletManager
+	consMgr    consmgr.ConsensusManagerReader
+	grpc       *grpc.Server
+	// guiGRPC is the private gRPC server of the GUI, see StartGUIGRPC.
+	guiGRPC       *grpc.Server
 	html          *html.Server
 	http          *http.Server
 	jsonrpc       *jsonrpc.Server
@@ -171,6 +174,7 @@ func NewNode(ctx context.Context, genDoc *genesis.Genesis, conf *config.Config,
 		consV2Mgr:     consV2Mgr,
 		sync:          sync,
 		store:         store,
+		consMgr:       curConsMgr,
 		walletMgr:     walletMgr,
 		grpc:          grpcServer,
 		html:          htmlServer,
@@ -243,6 +247,32 @@ func (n *Node) Start() error {
 	return nil
 }
 
+// StartGUIGRPC starts a gRPC server for the GUI that runs the node, and returns its address.
+//
+// The server listens on the loopback interface only, on a random port, and serves the wallet,
+// without authentication. The gRPC server of the config is left as the operator set it:
+// it may listen on a public address, without the wallet service or with authentication,
+// and the GUI must neither expose the wallet there nor be locked out by the authentication.
+func (n *Node) StartGUIGRPC() (string, error) {
+	if n.guiGRPC != nil {
+		return n.guiGRPC.Address(), nil
+	}
+
+	conf := grpc.DefaultConfig()
+	conf.Enable = true
+	conf.EnableWallet = true
+	conf.Listen = "127.0.0.1:0"
+
+	server := grpc.NewServer(n.ctx, conf, n.state, n.sync, n.network, n.consMgr,
+		n.walletMgr, n.zeromq.Publishers())
+	if err := server.StartServer(); err != nil {
+		return "", errors.Wrap(err, "could not start the gRPC server of the GUI")
+	}
+	n.guiGRPC = server
+
+	return server.Address(), nil
+}
+
 func (n *Node) Stop() {
 	logger.Info("stopping Node")
 
@@ -252,6 +282,9 @@ func (n *Node) Stop() {
 	n.jsonrpc.StopServer()
 	n.http.StopServer()
 	n.html.StopServer()
+	if n.guiGRPC != nil {
+		n.guiGRPC.StopServer()
+	}
 	n.grpc.StopServer()
 	n.walletMgr.Stop()
 

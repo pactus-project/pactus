@@ -52,7 +52,7 @@ func (c *TxAnchorDialogController) Show() {
 	}
 
 	setDefaultFee(c.model, c.view.FeeEntry)
-	gtkutil.DropDownFromAddressListWithAmount(c.view.SenderDrop, c.accounts, c.model.Balance)
+	gtkutil.DropDownFromAddressListWithAmount(c.view.SenderDrop, c.accounts, gtkutil.ListedBalance(c.accounts))
 	gtkutil.DropDownSetup(c.view.TypeDrop, anchorTypeItems())
 	c.view.TypeDrop.SetSelected(anchorTypeIndex(0x01))
 	c.view.TypeSpin.SetValue(1)
