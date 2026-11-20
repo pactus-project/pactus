@@ -31,14 +31,28 @@ func TestSendToDoesNotLeakGoroutines(t *testing.T) {
 		return len(networkB.host.Network().ConnsToPeer(networkA.SelfID())) > 0
 	}, 5*time.Second, 50*time.Millisecond)
 
-	// Nobody consumes the events of network A: its streams are never read or closed.
+	// The other tests of the package, and the two networks of this one, start and stop
+	// goroutines in the background. Wait until their number is stable before counting.
 	before := runtime.NumGoroutine()
-	for range 40 {
+	stableSince := time.Now()
+	require.Eventually(t, func() bool {
+		if now := runtime.NumGoroutine(); now != before {
+			before = now
+			stableSince = time.Now()
+		}
+
+		return time.Since(stableSince) > 500*time.Millisecond
+	}, 10*time.Second, 50*time.Millisecond)
+
+	// Nobody consumes the events of network A: its streams are never read or closed.
+	// A stream that leaks keeps two goroutines.
+	const streams = 40
+	for range streams {
 		_, err := networkB.stream.SendTo([]byte("hello"), networkA.SelfID())
 		require.NoError(t, err)
 	}
 
 	assert.Eventually(t, func() bool {
-		return runtime.NumGoroutine() <= before+10
+		return runtime.NumGoroutine() < before+streams
 	}, 5*time.Second, 100*time.Millisecond, "the stream goroutines should end after the timeout")
 }

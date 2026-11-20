@@ -72,6 +72,8 @@ func TestNotifeeTwoConnectionsSamePeer(t *testing.T) {
 	assert.Equal(t, 1, notifee.peerMgr.NumInbound(),
 		"one inbound connection is still open")
 
+	notifee.sendPendingEvents()
+
 	disconnects := 0
 	ch := notifee.networkPipe.UnsafeGetChannel()
 drain:
