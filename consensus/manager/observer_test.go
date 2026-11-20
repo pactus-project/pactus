@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/proposal"
@@ -60,7 +61,7 @@ func (td *testData) precommit(key *bls.ValidatorKey, round types.Round) *vote.Vo
 }
 
 func (td *testData) cpPreVote(key *bls.ValidatorKey, round types.Round, cpRound int16) *vote.Vote {
-	vte := vote.NewCPPreVote(td.RandHash(), td.height, round, cpRound,
+	vte := vote.NewCPPreVote(hash.UndefHash, td.height, round, cpRound,
 		vote.CPValueYes, &vote.JustInitYes{}, key.Address())
 	td.HelperSignVote(key, vte)
 
@@ -284,7 +285,7 @@ func TestObserverRateLimitsVerification(t *testing.T) {
 	for i := 0; i < 2*observerMaxVerifications; i++ {
 		round := types.Round(i / observerMaxCPRound)
 		cpRound := int16(i % observerMaxCPRound)
-		forged := vote.NewCPPreVote(td.RandHash(), td.height, round, cpRound,
+		forged := vote.NewCPPreVote(hash.UndefHash, td.height, round, cpRound,
 			vote.CPValueYes, &vote.JustInitYes{}, td.keys[0].Address())
 		td.HelperSignVote(td.keys[2], forged) // signed by another member
 		td.observer.addVote(forged)
@@ -387,7 +388,7 @@ func FuzzObserverAddVote(f *testing.F) {
 	seeds := []*vote.Vote{
 		vote.NewPrecommitVote(ts.RandHash(), height, 0, key.Address()),
 		vote.NewPrepareVote(ts.RandHash(), height, 1, key.Address()),
-		vote.NewCPPreVote(ts.RandHash(), height, 0, 1, vote.CPValueYes, &vote.JustInitYes{}, key.Address()),
+		vote.NewCPPreVote(hash.UndefHash, height, 0, 1, vote.CPValueYes, &vote.JustInitYes{}, key.Address()),
 		vote.NewCPMainVote(ts.RandHash(), height, 0, 2, vote.CPValueAbstain, &vote.JustInitYes{}, key.Address()),
 	}
 	for _, seed := range seeds {

@@ -231,6 +231,13 @@ func (v *Vote) BasicCheck() error {
 				Reason: "should have CP data",
 			}
 		}
+		// A `yes` vote is for no block. With a block hash it is still counted as `yes`,
+		// but it can't be in a certificate, which is for no block.
+		if v.data.CPVote.Value == CPValueYes && !v.data.BlockHash.IsUndef() {
+			return BasicCheckError{
+				Reason: "a yes vote should not have a block hash",
+			}
+		}
 		if err := v.data.CPVote.BasicCheck(); err != nil {
 			return err
 		}
