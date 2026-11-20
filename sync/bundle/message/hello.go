@@ -10,11 +10,12 @@ import (
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/types"
+	"github.com/pactus-project/pactus/util/moniker"
 	"github.com/pactus-project/pactus/version"
 )
 
 const (
-	maxHelloMonikerLength = 128
+	maxHelloMonikerLength = moniker.MaxLength
 	maxHelloAgentLength   = 256
 )
 

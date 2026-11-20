@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/util/moniker"
 )
 
 // clockOutOfSyncThreshold is the clock offset above which we show a warning.
@@ -48,7 +49,11 @@ func (c *NodeWidgetController) BuildView(ctx context.Context, connectionLabel, c
 		c.view.LabelNetworkID.SetText(nodeInfo.PeerId)
 		c.view.LabelAgent.SetText(parseAgent(nodeInfo.Agent))
 		c.view.LabelAgent.SetTooltipText(nodeInfo.Agent)
-		c.view.LabelMoniker.SetText(nodeInfo.Moniker)
+		mon := moniker.Parse(nodeInfo.Moniker)
+		c.view.LabelMoniker.SetText(mon.DisplayName())
+		if mon.IsStructured() {
+			c.view.LabelMoniker.SetTooltipText(moniker.Sanitize(mon.Raw()))
+		}
 		c.view.LabelIsPrune.SetText(strconv.FormatBool(chainInfo.IsPruned))
 	})
 

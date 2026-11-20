@@ -1,11 +1,14 @@
 package sync
 
 import (
+	"fmt"
 	"time"
+	"unicode/utf8"
 
 	"github.com/pactus-project/pactus/sync/firewall"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/moniker"
 	"github.com/pactus-project/pactus/version"
 )
 
@@ -60,6 +63,21 @@ func (conf *Config) BasicCheck() error {
 	if timeout <= 0 {
 		return ConfigError{
 			Reason: "session timeout should be positive",
+		}
+	}
+
+	// The peers drop a Hello message with such a moniker without any answer,
+	// so the node would never complete a handshake.
+	if len(conf.Moniker) > moniker.MaxLength {
+		return ConfigError{
+			Reason: fmt.Sprintf("moniker is too long: %d bytes, the maximum is %d bytes",
+				len(conf.Moniker), moniker.MaxLength),
+		}
+	}
+
+	if !utf8.ValidString(conf.Moniker) {
+		return ConfigError{
+			Reason: "moniker is not a valid UTF-8 string",
 		}
 	}
 
