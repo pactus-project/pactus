@@ -11,9 +11,9 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
+	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pactus-project/pactus/cmd"
@@ -88,6 +88,9 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 	assistant.SetPageType(wgtSummary, gtk.AssistantPageSummary)         // page 8
 
 	mnemonic := ""
+	newSeed := &seedOnce{}
+	// The widgets of the node type page are built once, when the page is first shown.
+	nodeTypePageBuilt := false
 	prevPageIndex := -1
 	prevPageAdjust := 0
 	rewardAddr := ""
@@ -129,7 +132,7 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 				}
 				assistantPageComplete(assistant, wgtSeedGenerate, false)
 			} else {
-				mnemonic, _ = wallet.GenerateMnemonic(128)
+				mnemonic = newSeed.get()
 				gtkutil.SetTextViewContent(txtSeed, mnemonic)
 				assistantPageComplete(assistant, wgtSeedGenerate, true)
 			}
@@ -185,43 +188,12 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 			assistantPageComplete(assistant, wgtNumValidators, true)
 
 		case pageNodeTypeName:
-			assistantPageComplete(assistant, wgtNodeType, true)
-
-			// --- dynamic snapshot UI (only shown when pruned node is selected)
-			ssLabel := gtkutil.NewStatusLabel()
-			ssLabel.SetHAlign(gtk.AlignStart)
-			setDefaultMargin(&ssLabel.Widget)
-
-			listBox := gtk.NewListBox()
-			listBox.SetHAlign(gtk.AlignCenter)
-			listBox.SetSizeRequest(700, -1)
-			setDefaultMargin(&listBox.Widget)
-
-			ssDLBtn := gtkutil.NewIconButton(assets.IconDownloadTexture, "Download")
-			ssDLBtn.SetHAlign(gtk.AlignCenter)
-			ssDLBtn.SetSizeRequest(700, -1)
-			setDefaultMargin(&ssDLBtn.Widget)
-
-			ssPBLabel := gtkutil.NewStatusLabel()
-			ssPBLabel.SetHAlign(gtk.AlignStart)
-			ssPBLabel.Label.SetWrap(true)
-			setDefaultMargin(&ssPBLabel.Widget)
-
-			gridImport.Attach(ssLabel, 0, 1, 1, 1)
-			gridImport.Attach(listBox, 0, 2, 1, 1)
-			gridImport.Attach(ssDLBtn, 0, 3, 1, 1)
-			gridImport.Attach(ssPBLabel, 0, 5, 1, 1)
-
-			ssLabel.SetVisible(false)
-			listBox.SetVisible(false)
-			ssDLBtn.SetVisible(false)
-			ssPBLabel.SetVisible(false)
-
-			snapshotIndex := 0
-
 			// Create wallet and node once (if not already created)
 			if !nodeCreated {
-				numValidatorsStr := comboNumValidators.SelectedItem().Cast().(*gtk.StringObject).String()
+				// The page is complete only once the node is created.
+				assistantPageComplete(assistant, wgtNodeType, false)
+
+				numValidatorsStr := gtkutil.DropDownGetSelectedText(comboNumValidators)
 				numValidators, _ := strconv.Atoi(numValidatorsStr)
 				walletPassword := gtkutil.EntryGetText(entryPassword)
 
@@ -233,143 +205,21 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 					return
 				}
 				nodeCreated = true
+
+				// The wallet, its seed and the config are written now. The pages before this one
+				// can't change them anymore, so the user can't go back to them.
+				assistant.Commit()
 			}
 
-			// Toggle handler for "Pruned node" radio button
-			radioImport.Connect("toggled", func() {
-				ssLabel.SetVisible(true)
-				radioImport.SetSensitive(true)
-				listBox.SetSensitive(true)
-				ssDLBtn.SetSensitive(true)
-				listBox.SetSelectionMode(gtk.SelectionSingle)
+			if nodeTypePageBuilt {
+				// Coming back from the next page: the widgets and their state are kept.
+				return
+			}
+			nodeTypePageBuilt = true
+			assistantPageComplete(assistant, wgtNodeType, true)
 
-				if radioImport.Active() {
-					assistantPageComplete(assistant, wgtNodeType, false)
-
-					ssLabel.SetText(assets.IconLoadingTexture, "Please wait, loading snapshot list...")
-
-					go func() {
-						time.Sleep(1 * time.Second)
-
-						glib.IdleAdd(func() {
-							storeDir := filepath.Join(workingDir, "data")
-							importer, err := cmd.NewImporter(chain, snapshotURL, storeDir)
-							if err != nil {
-								gtkutil.ShowErrorDialog(&assistant.Window, err.Error(), nil)
-
-								return
-							}
-
-							mdCh := getMetadata(ctx, importer, listBox)
-
-							if metadata := <-mdCh; metadata == nil {
-								ssLabel.SetColoredText(assets.IconStatusErrorTexture,
-									"Failed to get snapshot list. Please try again later.", gtkutil.ColorRed)
-							} else {
-								ssLabel.SetText(assets.IconListTexture, "Please select a snapshot to download:")
-								listBox.SetVisible(true)
-
-								listBox.ConnectRowSelected(func(row *gtk.ListBoxRow) {
-									if row != nil && row.IsSelected() {
-										snapshotIndex = row.Index()
-										ssDLBtn.SetVisible(true)
-									}
-								})
-
-								importOnce := new(sync.Once)
-								ssDLBtn.ConnectClicked(func() {
-									importOnce.Do(func() {
-										radioImport.SetSensitive(false)
-										ssLabel.SetSensitive(false)
-										listBox.SetSensitive(false)
-										ssDLBtn.SetSensitive(false)
-
-										ssDLBtn.SetVisible(false)
-										ssPBLabel.SetVisible(true)
-										listBox.SetSelectionMode(gtk.SelectionNone)
-
-										ssPBLabel.Clear()
-
-										go func() {
-											gtkutil.Logf("start downloading...\n")
-											time.Sleep(1 * time.Second)
-
-											snapshot := metadata[snapshotIndex]
-											err := importer.Download(
-												ctx, &snapshot,
-												func(stats downloader.Stats) {
-													if !stats.Completed {
-														percent := int(stats.Percent)
-														glib.IdleAdd(func() {
-															dlMessage := fmt.Sprintf(
-																"Downloading %s | %d%% (%s / %s)",
-																snapshot.Data.Name, percent,
-																util.FormatBytesToHumanReadable(uint64(stats.Downloaded)),
-																util.FormatBytesToHumanReadable(uint64(stats.TotalSize)),
-															)
-															ssPBLabel.SetText(assets.IconDownloadTexture, dlMessage)
-														})
-													}
-												},
-											)
-
-											gtkutil.Logf("downloaded, error: %v", err)
-
-											glib.IdleAdd(func() {
-												if err != nil {
-													ssPBLabel.SetColoredText(assets.IconStatusErrorTexture,
-														fmt.Sprintf("Import failed: %v", err), gtkutil.ColorRed)
-
-													return
-												}
-
-												gtkutil.Logf("extracting data...\n")
-												ssPBLabel.SetText(assets.IconFolderOpenTexture, "Extracting downloaded files...")
-												err = importer.ExtractAndStoreFiles()
-												if err != nil {
-													ssPBLabel.SetColoredText(assets.IconStatusErrorTexture,
-														fmt.Sprintf("Import failed: %v", err), gtkutil.ColorRed)
-
-													return
-												}
-
-												gtkutil.Logf("moving data...\n")
-												ssPBLabel.SetText(assets.IconPackageTexture, "Moving data...")
-												err = importer.MoveStore()
-												if err != nil {
-													ssPBLabel.SetColoredText(assets.IconStatusErrorTexture,
-														fmt.Sprintf("Import failed: %v", err), gtkutil.ColorRed)
-
-													return
-												}
-
-												gtkutil.Logf("cleanup...\n")
-												err = importer.Cleanup()
-												if err != nil {
-													ssPBLabel.SetColoredText(assets.IconStatusErrorTexture,
-														fmt.Sprintf("Import failed: %v", err), gtkutil.ColorRed)
-
-													return
-												}
-
-												ssPBLabel.SetColoredText(assets.IconStatusSuccessTexture, "Import completed.", gtkutil.ColorGreen)
-												assistantPageComplete(assistant, wgtNodeType, true)
-											})
-										}()
-									})
-								})
-							}
-						})
-					}()
-				} else {
-					// Full node selected – no snapshot needed
-					assistantPageComplete(assistant, wgtNodeType, true)
-					ssLabel.SetVisible(false)
-					listBox.SetVisible(false)
-					ssDLBtn.SetVisible(false)
-					ssPBLabel.SetVisible(false)
-				}
-			})
+			buildNodeTypePage(ctx, assistant, wgtNodeType, gridImport, radioImport,
+				chain, snapshotURL, workingDir)
 
 		case pageAddressRecoveryName:
 			if !isRestoreMode {
@@ -456,8 +306,10 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 			}
 
 			nodeInfo += "\nValidator Addresses:\n"
-			for i, info := range nodeWallet.ListAddresses(wallet.OnlyValidatorAddresses()) {
-				nodeInfo += fmt.Sprintf("%v- %s\n", i+1, info.Address)
+			if nodeWallet != nil {
+				for i, info := range nodeWallet.ListAddresses(wallet.OnlyValidatorAddresses()) {
+					nodeInfo += fmt.Sprintf("%v- %s\n", i+1, info.Address)
+				}
 			}
 
 			nodeInfo += "\nReward Address:\n" + rewardAddr + "\n"
@@ -802,36 +654,243 @@ func assistantPageComplete(assistant *gtk.Assistant, page *gtk.Widget, completed
 	assistant.UpdateButtonsState()
 }
 
-// getMetadata fetches snapshot metadata and populates the ListBox.
-func getMetadata(ctx context.Context, importer *cmd.Importer, listBox *gtk.ListBox) <-chan []cmd.Metadata {
-	mdCh := make(chan []cmd.Metadata, 1)
+// metadataTimeout bounds the time to get the list of the snapshots.
+const metadataTimeout = 30 * time.Second
 
-	go func() {
-		defer close(mdCh)
+// buildNodeTypePage builds the widgets of the snapshot import, and connects their handlers once.
+//
+// The network calls, the download and the extraction run on their own goroutine,
+// and only the updates of the widgets run on the main thread: the window stays responsive,
+// and GTK is only called from the main thread.
+//
+//nolint:funlen // the widgets and their handlers share their state.
+func buildNodeTypePage(ctx context.Context, assistant *gtk.Assistant, wgtNodeType *gtk.Widget,
+	gridImport *gtk.Grid, radioImport *gtk.CheckButton,
+	chain genesis.ChainType, snapshotURL, workingDir string,
+) {
+	ssLabel := gtkutil.NewStatusLabel()
+	ssLabel.SetHAlign(gtk.AlignStart)
+	setDefaultMargin(&ssLabel.Widget)
 
-		// Clear existing rows
-		listBox.RemoveAll()
+	listBox := gtk.NewListBox()
+	listBox.SetHAlign(gtk.AlignCenter)
+	listBox.SetSizeRequest(700, -1)
+	setDefaultMargin(&listBox.Widget)
 
-		metadata, err := importer.GetMetadata(ctx)
-		if err != nil {
-			mdCh <- nil
+	ssDLBtn := gtkutil.NewIconButton(assets.IconDownloadTexture, "Download")
+	ssDLBtn.SetHAlign(gtk.AlignCenter)
+	ssDLBtn.SetSizeRequest(700, -1)
+	setDefaultMargin(&ssDLBtn.Widget)
+
+	ssPBLabel := gtkutil.NewStatusLabel()
+	ssPBLabel.SetHAlign(gtk.AlignStart)
+	ssPBLabel.Label.SetWrap(true)
+	setDefaultMargin(&ssPBLabel.Widget)
+
+	gridImport.Attach(ssLabel, 0, 1, 1, 1)
+	gridImport.Attach(listBox, 0, 2, 1, 1)
+	gridImport.Attach(ssDLBtn, 0, 3, 1, 1)
+	gridImport.Attach(ssPBLabel, 0, 5, 1, 1)
+
+	ssLabel.SetVisible(false)
+	listBox.SetVisible(false)
+	ssDLBtn.SetVisible(false)
+	ssPBLabel.SetVisible(false)
+
+	// These are read and written on the main thread only.
+	var importer *cmd.Importer
+	var metadata []cmd.Metadata
+	snapshotIndex := 0
+	loading := false
+	importing := false
+
+	importFailed := func(err error) {
+		ssPBLabel.SetColoredText(assets.IconStatusErrorTexture,
+			fmt.Sprintf("Import failed: %v", err), gtkutil.ColorRed)
+	}
+
+	listBox.ConnectRowSelected(func(row *gtk.ListBoxRow) {
+		if row != nil && row.IsSelected() && !importing {
+			snapshotIndex = row.Index()
+			ssDLBtn.SetVisible(true)
+		}
+	})
+
+	ssDLBtn.ConnectClicked(func() {
+		if importing || importer == nil || snapshotIndex >= len(metadata) {
+			return
+		}
+		importing = true
+
+		radioImport.SetSensitive(false)
+		ssLabel.SetSensitive(false)
+		listBox.SetSensitive(false)
+		ssDLBtn.SetSensitive(false)
+
+		ssDLBtn.SetVisible(false)
+		ssPBLabel.SetVisible(true)
+		listBox.SetSelectionMode(gtk.SelectionNone)
+
+		ssPBLabel.Clear()
+
+		imp := importer
+		snapshot := metadata[snapshotIndex]
+		setStatus := func(icon *gdk.Texture, msg string) {
+			glib.IdleAdd(func() { ssPBLabel.SetText(icon, msg) })
+		}
+
+		go func() {
+			err := importSnapshot(ctx, imp, &snapshot, setStatus)
+
+			glib.IdleAdd(func() {
+				if err != nil {
+					importFailed(err)
+
+					return
+				}
+
+				ssPBLabel.SetColoredText(assets.IconStatusSuccessTexture, "Import completed.", gtkutil.ColorGreen)
+				assistantPageComplete(assistant, wgtNodeType, true)
+			})
+		}()
+	})
+
+	// Toggle handler for "Pruned node" radio button
+	radioImport.Connect("toggled", func() {
+		if !radioImport.Active() {
+			// Full node selected – no snapshot needed
+			assistantPageComplete(assistant, wgtNodeType, true)
+			ssLabel.SetVisible(false)
+			listBox.SetVisible(false)
+			ssDLBtn.SetVisible(false)
+			ssPBLabel.SetVisible(false)
 
 			return
 		}
 
-		for _, md := range metadata {
-			label := gtk.NewLabel(fmt.Sprintf(
-				"Snapshot %s (%s)",
-				md.CreatedAtTime().Format("2006-01-02"),
-				util.FormatBytesToHumanReadable(md.Data.Size),
-			))
-			row := gtk.NewListBoxRow()
-			row.SetChild(label)
-			listBox.Append(row)
-		}
-		listBox.SetVisible(true)
-		mdCh <- metadata
-	}()
+		assistantPageComplete(assistant, wgtNodeType, false)
+		ssLabel.SetVisible(true)
+		if loading || importer != nil {
+			listBox.SetVisible(importer != nil)
 
-	return mdCh
+			return
+		}
+		loading = true
+
+		ssLabel.SetText(assets.IconLoadingTexture, "Please wait, loading snapshot list...")
+
+		go func() {
+			imp, mds, err := loadSnapshotList(ctx, chain, snapshotURL, workingDir)
+
+			glib.IdleAdd(func() {
+				loading = false
+				if err != nil {
+					gtkutil.Logf("unable to get the snapshot list: %v", err)
+					ssLabel.SetColoredText(assets.IconStatusErrorTexture,
+						"Failed to get snapshot list. Please try again later.", gtkutil.ColorRed)
+
+					return
+				}
+
+				importer = imp
+				metadata = mds
+				fillSnapshotList(listBox, metadata)
+				ssLabel.SetText(assets.IconListTexture, "Please select a snapshot to download:")
+				listBox.SetSelectionMode(gtk.SelectionSingle)
+				listBox.SetVisible(true)
+			})
+		}()
+	})
+}
+
+// loadSnapshotList gets the list of the snapshots. It doesn't call GTK, so it can run on any goroutine.
+func loadSnapshotList(ctx context.Context, chain genesis.ChainType, snapshotURL, workingDir string,
+) (*cmd.Importer, []cmd.Metadata, error) {
+	storeDir := filepath.Join(workingDir, "data")
+	imp, err := cmd.NewImporter(chain, snapshotURL, storeDir)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	mdCtx, cancel := context.WithTimeout(ctx, metadataTimeout)
+	defer cancel()
+
+	mds, err := imp.GetMetadata(mdCtx)
+	if err != nil {
+		_ = imp.Cleanup()
+
+		return nil, nil, err
+	}
+
+	return imp, mds, nil
+}
+
+// importSnapshot downloads the snapshot, and moves its data to the node directory.
+// The temporary files are removed whether the import succeeded or not.
+// It doesn't call GTK: setStatus posts the progress to the main thread.
+func importSnapshot(ctx context.Context, imp *cmd.Importer, snapshot *cmd.Metadata,
+	setStatus func(icon *gdk.Texture, msg string),
+) error {
+	gtkutil.Logf("start downloading...\n")
+
+	err := imp.Download(ctx, snapshot, func(stats downloader.Stats) {
+		if !stats.Completed {
+			setStatus(assets.IconDownloadTexture, fmt.Sprintf(
+				"Downloading %s | %d%% (%s / %s)",
+				snapshot.Data.Name, int(stats.Percent),
+				util.FormatBytesToHumanReadable(uint64(stats.Downloaded)),
+				util.FormatBytesToHumanReadable(uint64(stats.TotalSize)),
+			))
+		}
+	})
+	gtkutil.Logf("downloaded, error: %v", err)
+
+	if err == nil {
+		gtkutil.Logf("extracting data...\n")
+		setStatus(assets.IconFolderOpenTexture, "Extracting downloaded files...")
+		err = imp.ExtractAndStoreFiles()
+	}
+	if err == nil {
+		gtkutil.Logf("moving data...\n")
+		setStatus(assets.IconPackageTexture, "Moving data...")
+		err = imp.MoveStore()
+	}
+
+	gtkutil.Logf("cleanup...\n")
+	if cleanupErr := imp.Cleanup(); err == nil {
+		err = cleanupErr
+	}
+
+	return err
+}
+
+// fillSnapshotList shows the snapshots in the list. It must be called on the main thread.
+func fillSnapshotList(listBox *gtk.ListBox, metadata []cmd.Metadata) {
+	listBox.RemoveAll()
+
+	for _, md := range metadata {
+		label := gtk.NewLabel(fmt.Sprintf(
+			"Snapshot %s (%s)",
+			md.CreatedAtTime().Format("2006-01-02"),
+			util.FormatBytesToHumanReadable(md.Data.Size),
+		))
+		row := gtk.NewListBoxRow()
+		row.SetChild(label)
+		listBox.Append(row)
+	}
+}
+
+// seedOnce keeps the seed of a new wallet. It is generated once: going back to its page shows
+// the same seed, since a new one would not be the seed of the wallet that is created later,
+// nor the one the user wrote down.
+type seedOnce struct {
+	phrase string
+}
+
+func (s *seedOnce) get() string {
+	if s.phrase == "" {
+		s.phrase, _ = wallet.GenerateMnemonic(128)
+	}
+
+	return s.phrase
 }
