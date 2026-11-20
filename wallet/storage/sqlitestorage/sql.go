@@ -96,6 +96,10 @@ const (
 		UPDATE addresses SET label = ?, public_key = ?, path = ?
 		WHERE address = ?`
 
+	selectAddressSQL = `
+		SELECT address, public_key, label, path, created_at, updated_at
+		FROM addresses WHERE address = ?`
+
 	selectAllAddressesSQL = `
 		SELECT address, public_key, label, path, created_at, updated_at
 		FROM addresses ORDER BY created_at ASC`

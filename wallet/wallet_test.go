@@ -3,8 +3,10 @@ package wallet
 import (
 	"context"
 	"errors"
+	"fmt"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -1011,6 +1013,49 @@ func TestLockedDeposit(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, anchorDeposit, total)
 	})
+}
+
+// The wallet service can create addresses and read the wallet from several calls at once.
+// Each new address takes the next index of the vault: run with the race detector.
+func TestConcurrentAddressCreation(t *testing.T) {
+	mnemonic, _ := GenerateMnemonic(128)
+	wlt, err := Create(t.Context(), util.TempFilePath(), mnemonic, "password", genesis.Mainnet,
+		WithOfflineProvider())
+	require.NoError(t, err)
+	defer wlt.Close()
+
+	const count = 16
+	addrs := make(chan string, count)
+	errs := make(chan error, 2*count)
+	var wg sync.WaitGroup
+	for i := range count {
+		wg.Go(func() {
+			info, err := wlt.NewBLSAccountAddress(fmt.Sprintf("address-%d", i))
+			errs <- err
+			if err == nil {
+				addrs <- info.Address
+			}
+		})
+		wg.Go(func() {
+			errs <- wlt.SetDefaultFee(amount.Amount(i))
+			_ = wlt.Info().DefaultFee
+			_ = wlt.ListAddresses()
+		})
+	}
+	wg.Wait()
+	close(addrs)
+	close(errs)
+
+	for err := range errs {
+		require.NoError(t, err)
+	}
+
+	unique := make(map[string]bool)
+	for addr := range addrs {
+		unique[addr] = true
+	}
+	assert.Len(t, unique, count)
+	assert.Equal(t, count, wlt.AddressCount())
 }
 
 // The provider that SetProvider passes is the one that the address list uses.

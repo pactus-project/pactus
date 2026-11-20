@@ -208,10 +208,16 @@ func New(ctx context.Context, storage storage.WalletStorage, opts ...OpenWalletO
 	}
 
 	if cfg.eventPipe != nil {
-		cfg.eventPipe.RegisterReceiver(wlt.transactions.processEvent)
+		cfg.eventPipe.RegisterReceiver(wlt.ProcessEvent)
 	}
 
 	return wlt, nil
+}
+
+// ProcessEvent updates the transaction history of the wallet
+// with a block or a transaction that the node reports.
+func (w *Wallet) ProcessEvent(event any) {
+	w.transactions.processEvent(event)
 }
 
 func (w *Wallet) Close() {
@@ -225,23 +231,32 @@ func (w *Wallet) Close() {
 }
 
 func (w *Wallet) Version() int {
-	return w.storage.WalletInfo().Version
+	return w.Info().Version
 }
 
+// Info returns a copy of the wallet information, which the wallet updates in place.
 func (w *Wallet) Info() *types.WalletInfo {
-	return w.storage.WalletInfo()
+	w.lk.RLock()
+	defer w.lk.RUnlock()
+
+	info := *w.storage.WalletInfo()
+
+	return &info
 }
 
 func (w *Wallet) Path() string {
-	return w.storage.WalletInfo().Path
+	return w.Info().Path
 }
 
 func (w *Wallet) IsEncrypted() bool {
-	return w.storage.WalletInfo().Encrypted
+	return w.Info().Encrypted
 }
 
 // Neuter clones the wallet and neuters it and saves it at the given path.
 func (w *Wallet) Neuter(path string) error {
+	w.lk.RLock()
+	defer w.lk.RUnlock()
+
 	cloned, err := w.storage.Clone(path)
 	if err != nil {
 		return err
@@ -264,6 +279,9 @@ func (w *Wallet) Neuter(path string) error {
 func (w *Wallet) RecoveryAddresses(ctx context.Context, password string,
 	eventFunc func(addr string),
 ) error {
+	w.lk.Lock()
+	defer w.lk.Unlock()
+
 	vault := w.storage.Vault()
 	recovered, err := vault.RecoverAddresses(ctx, password, func(addr string) (bool, error) {
 		_, err := w.provider.GetAccount(addr)
@@ -539,6 +557,9 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 }
 
 func (w *Wallet) UpdatePassword(oldPassword, newPassword string, opts ...encrypter.Option) error {
+	w.lk.Lock()
+	defer w.lk.Unlock()
+
 	vlt := w.storage.Vault()
 	err := vlt.UpdatePassword(oldPassword, newPassword, opts...)
 	if err != nil {
@@ -549,6 +570,9 @@ func (w *Wallet) UpdatePassword(oldPassword, newPassword string, opts ...encrypt
 }
 
 func (w *Wallet) Mnemonic(password string) (string, error) {
+	w.lk.RLock()
+	defer w.lk.RUnlock()
+
 	return w.storage.Vault().Mnemonic(password)
 }
 
@@ -565,7 +589,7 @@ func (w *Wallet) SignMessage(password, addr, msg string) (string, error) {
 func (w *Wallet) makeTxBuilder(options ...TxOption) (*txBuilder, error) {
 	builder := &txBuilder{
 		provider: w.provider,
-		fee:      w.storage.WalletInfo().DefaultFee,
+		fee:      w.Info().DefaultFee,
 	}
 	for _, op := range options {
 		err := op(builder)
@@ -578,6 +602,9 @@ func (w *Wallet) makeTxBuilder(options ...TxOption) (*txBuilder, error) {
 }
 
 func (w *Wallet) SetDefaultFee(fee amount.Amount) error {
+	w.lk.Lock()
+	defer w.lk.Unlock()
+
 	return w.storage.SetDefaultFee(fee)
 }
 

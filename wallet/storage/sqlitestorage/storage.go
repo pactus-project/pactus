@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	_ "github.com/glebarez/go-sqlite" // sqlite driver
@@ -41,6 +42,9 @@ type Storage struct {
 	info *wtypes.WalletInfo
 	vlt  *vault.Vault
 
+	// lk protects the addresses: the event pipeline reads them for each block
+	// while the wallet service adds new addresses.
+	lk         sync.RWMutex
 	addressMap map[string]*wtypes.AddressInfo
 }
 
@@ -309,17 +313,25 @@ func (s *Storage) loadAddresses() error {
 	}
 	defer func() { _ = rows.Close() }()
 
-	s.addressMap = make(map[string]*wtypes.AddressInfo)
+	addressMap := make(map[string]*wtypes.AddressInfo)
 	for rows.Next() {
 		addr, err := scanAddress(rows)
 		if err != nil {
 			return fmt.Errorf("failed to scan address: %w", err)
 		}
 
-		s.addressMap[addr.Address] = addr
+		addressMap[addr.Address] = addr
 	}
 
-	return rows.Err()
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	s.lk.Lock()
+	s.addressMap = addressMap
+	s.lk.Unlock()
+
+	return nil
 }
 
 // Vault returns the vault.
@@ -377,6 +389,9 @@ func (s *Storage) SetDefaultFee(fee amount.Amount) error {
 
 // AllAddresses returns all addresses in the wallet.
 func (s *Storage) AllAddresses() []*wtypes.AddressInfo {
+	s.lk.RLock()
+	defer s.lk.RUnlock()
+
 	addresses := make([]*wtypes.AddressInfo, 0, len(s.addressMap))
 	for _, addr := range s.addressMap {
 		addresses = append(addresses, addr)
@@ -387,11 +402,17 @@ func (s *Storage) AllAddresses() []*wtypes.AddressInfo {
 
 // AddressCount returns the number of addresses in the wallet.
 func (s *Storage) AddressCount() int {
+	s.lk.RLock()
+	defer s.lk.RUnlock()
+
 	return len(s.addressMap)
 }
 
 // AddressInfo returns the address information for the given address.
 func (s *Storage) AddressInfo(address string) (*wtypes.AddressInfo, error) {
+	s.lk.RLock()
+	defer s.lk.RUnlock()
+
 	info, exists := s.addressMap[address]
 	if !exists {
 		return nil, storage.ErrNotFound
@@ -408,7 +429,7 @@ func (s *Storage) InsertAddress(info *wtypes.AddressInfo) error {
 		return err
 	}
 
-	return s.loadAddresses()
+	return s.loadAddress(info.Address)
 }
 
 // UpdateAddress updates an existing address.
@@ -419,11 +440,29 @@ func (s *Storage) UpdateAddress(info *wtypes.AddressInfo) error {
 		return err
 	}
 
-	return s.loadAddresses()
+	return s.loadAddress(info.Address)
+}
+
+// loadAddress reads one address from the database into memory, with the dates the database sets.
+// Reading all the addresses again for each new one made the recovery of a wallet quadratic.
+func (s *Storage) loadAddress(address string) error {
+	info, err := scanAddress(s.db.QueryRowContext(s.ctx, selectAddressSQL, address))
+	if err != nil {
+		return fmt.Errorf("failed to load address: %w", err)
+	}
+
+	s.lk.Lock()
+	s.addressMap[address] = info
+	s.lk.Unlock()
+
+	return nil
 }
 
 // HasAddress checks if an address exists.
 func (s *Storage) HasAddress(address string) bool {
+	s.lk.RLock()
+	defer s.lk.RUnlock()
+
 	_, exists := s.addressMap[address]
 
 	return exists
