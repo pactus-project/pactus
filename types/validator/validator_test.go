@@ -5,6 +5,7 @@ import (
 	"testing"
 	"unsafe"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/amount"
@@ -201,4 +202,59 @@ func TestIsActive(t *testing.T) {
 	val.UpdateUnbondingHeight(0)
 	val.SubtractFromStake(val.Stake())
 	assert.False(t, val.IsActive())
+}
+
+func TestFromBytesIsCanonical(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	t.Run("a byte after the data is refused", func(t *testing.T) {
+		val := ts.GenerateTestValidator()
+		data, err := val.Bytes()
+		require.NoError(t, err)
+
+		_, err = validator.FromBytes(append(append([]byte{}, data...), 0))
+		require.Error(t, err)
+
+		val.SetDelegation(ts.RandAccAddress(), 1, 10)
+		data, err = val.Bytes()
+		require.NoError(t, err)
+
+		_, err = validator.FromBytes(append(append([]byte{}, data...), 0))
+		require.ErrorIs(t, err, validator.ErrInvalidData)
+	})
+
+	t.Run("a delegation section with the treasury as owner is refused", func(t *testing.T) {
+		val := ts.GenerateTestValidator()
+		val.SetDelegation(ts.RandAccAddress(), 1, 10)
+		data, err := val.Bytes()
+		require.NoError(t, err)
+
+		// The owner is the first byte of the delegation section; the treasury address is the byte 0.
+		data[120] = 0
+		_, err = validator.FromBytes(data)
+		require.Error(t, err)
+	})
+
+	t.Run("a negative stake is refused", func(t *testing.T) {
+		val := ts.GenerateTestValidator(testsuite.ValidatorWithStake(10))
+		val.AddToStake(-20)
+		data, err := val.Bytes()
+		require.NoError(t, err)
+
+		_, err = validator.FromBytes(data)
+		require.ErrorIs(t, err, validator.ErrInvalidData)
+	})
+}
+
+func TestSetDelegationWithTheTreasuryClearsTheDelegation(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	val := ts.GenerateTestValidator()
+	val.SetDelegation(ts.RandAccAddress(), 5, 10)
+	require.True(t, val.IsDelegated())
+
+	val.SetDelegation(crypto.TreasuryAddress, 5, 10)
+	assert.False(t, val.IsDelegated())
+	assert.Zero(t, val.DelegateShare())
+	assert.Zero(t, val.DelegateExpiry())
 }

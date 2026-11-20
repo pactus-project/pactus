@@ -96,6 +96,11 @@ func newVote(voteType Type, blockHash hash.Hash, height types.Height, round type
 
 // SignBytes generates the bytes to be signed for the vote.
 func (v *Vote) SignBytes() []byte {
+	// A change-proposer vote without its data can't be signed.
+	if v.IsCPVote() && v.data.CPVote == nil {
+		return nil
+	}
+
 	cert := certificate.NewCertificate(v.data.Height, v.data.Round)
 
 	switch typ := v.Type(); typ {
@@ -136,16 +141,28 @@ func (v *Vote) Round() types.Round {
 
 // CPRound returns the change proposer round the vote.
 func (v *Vote) CPRound() int16 {
+	if v.data.CPVote == nil {
+		return 0
+	}
+
 	return v.data.CPVote.Round
 }
 
 // CPValue returns the change proposer value the vote.
 func (v *Vote) CPValue() CPValue {
+	if v.data.CPVote == nil {
+		return CPValueNo
+	}
+
 	return v.data.CPVote.Value
 }
 
 // CPJust returns the change proposer justification for the vote.
 func (v *Vote) CPJust() Just {
+	if v.data.CPVote == nil {
+		return nil
+	}
+
 	return v.data.CPVote.Just
 }
 
@@ -188,6 +205,11 @@ func (v *Vote) Hash() hash.Hash {
 
 // Verify checks the signature of the vote with the given public key.
 func (v *Vote) Verify(pubKey *bls.PublicKey) error {
+	// A nil signature, wrapped in an interface, is not a nil interface.
+	if v.data.Signature == nil {
+		return crypto.ErrInvalidSignature
+	}
+
 	if v.Signer() != pubKey.ValidatorAddress() {
 		return InvalidSignerError{
 			Expected: pubKey.ValidatorAddress(),

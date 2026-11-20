@@ -1,6 +1,10 @@
 package types
 
-import "github.com/pactus-project/pactus/util"
+import (
+	"math"
+
+	"github.com/pactus-project/pactus/util"
+)
 
 type Height uint32
 
@@ -9,9 +13,15 @@ func HeightFromBytesLE(data []byte) Height {
 	return Height(util.BytesToUint32LE(data))
 }
 
-// SafeIncrease returns a new Height that is the result of adding count to h.
+// SafeIncrease returns a new Height that is the result of adding count to h,
+// but it returns the maximum height if the result would overflow.
 func (h Height) SafeIncrease(count uint32) Height {
-	return Height(uint32(h) + count)
+	sum := uint64(h) + uint64(count)
+	if sum > math.MaxUint32 {
+		return Height(math.MaxUint32)
+	}
+
+	return Height(sum)
 }
 
 // SafeDecrease returns the result of subtracting other from h,

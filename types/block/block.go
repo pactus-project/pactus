@@ -63,6 +63,10 @@ func FromBytes(data []byte) (*Block, error) {
 		return nil, err
 	}
 
+	if reader.Len() != 0 {
+		return nil, ErrTrailingBytes
+	}
+
 	return blk, nil
 }
 
@@ -203,8 +207,15 @@ func (b *Block) UnmarshalCBOR(bs []byte) error {
 		return err
 	}
 	buf := bytes.NewBuffer(data)
+	if err := b.Decode(buf); err != nil {
+		return err
+	}
 
-	return b.Decode(buf)
+	if buf.Len() != 0 {
+		return ErrTrailingBytes
+	}
+
+	return nil
 }
 
 func (b *Block) Encode(w io.Writer) error {
@@ -229,13 +240,16 @@ func (b *Block) Encode(w io.Writer) error {
 }
 
 func (b *Block) Decode(r io.Reader) error {
-	b.data.Header = new(Header)
-	if err := b.data.Header.Decode(r); err != nil {
+	// The block is changed only if the whole data is decoded.
+	header := new(Header)
+	if err := header.Decode(r); err != nil {
 		return err
 	}
-	if !b.data.Header.PrevBlockHash().IsUndef() {
-		b.data.PrevCert = new(certificate.Certificate)
-		if err := b.data.PrevCert.Decode(r); err != nil {
+
+	var prevCert *certificate.Certificate
+	if !header.PrevBlockHash().IsUndef() {
+		prevCert = new(certificate.Certificate)
+		if err := prevCert.Decode(r); err != nil {
 			return err
 		}
 	}
@@ -250,14 +264,20 @@ func (b *Block) Decode(r io.Reader) error {
 		return ErrTooManyTransactions
 	}
 
-	b.data.Txs = make([]*tx.Tx, length)
+	txs := make([]*tx.Tx, length)
 	for i := 0; i < int(length); i++ {
 		trx := new(tx.Tx)
 		if err := trx.Decode(r); err != nil {
 			return err
 		}
-		b.data.Txs[i] = trx
+		txs[i] = trx
 	}
+
+	b.data.Header = header
+	b.data.PrevCert = prevCert
+	b.data.Txs = txs
+	b.memorizedHash.Store(nil)
+	b.memorizedData.Store(nil)
 
 	return nil
 }
