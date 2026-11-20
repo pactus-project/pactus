@@ -2,7 +2,7 @@
 
 This directory contains required files for [gRPC](https://github.com/grpc-ecosystem/grpc-gateway) service.
 
-In order to compile [pactus.proto](./proto/pactus.proto) file, run this command:
+To regenerate the bindings from the protocol definitions in [proto/](./proto/), run:
 
 ```bash
 make proto
