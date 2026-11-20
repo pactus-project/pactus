@@ -116,6 +116,40 @@ func (log *Log) MoveToNewHeight(validators []*validator.Validator) {
 	}
 }
 
+// VerifyVote checks that the signer of the vote is in the committee and the signature is valid.
+func (log *Log) VerifyVote(vte *vote.Vote) error {
+	val, ok := log.validators[vte.Signer()]
+	if !ok {
+		return voteset.IneligibleVoterError{Address: vte.Signer()}
+	}
+
+	return vte.Verify(val.PublicKey())
+}
+
+// FindVote returns the vote of the signer that takes the same place as the given vote:
+// the same type, round and change-proposer round. It returns nil if there is no such a vote.
+func (log *Log) FindVote(vte *vote.Vote) *vote.Vote {
+	msgs, ok := log.roundMessages[vte.Round()]
+	if !ok {
+		return nil
+	}
+
+	switch vte.Type() {
+	case vote.VoteTypePrepare:
+		return msgs.prepareVotes.GetVote(vte.Signer())
+	case vote.VoteTypePrecommit:
+		return msgs.precommitVotes.GetVote(vte.Signer())
+	case vote.VoteTypeCPPreVote:
+		return msgs.cpPreVotes.GetVote(vte.CPRound(), vte.Signer())
+	case vote.VoteTypeCPMainVote:
+		return msgs.cpMainVotes.GetVote(vte.CPRound(), vte.Signer())
+	case vote.VoteTypeCPDecided:
+		return msgs.cpDecidedVotes.GetVote(vte.CPRound(), vte.Signer())
+	}
+
+	return nil
+}
+
 func (log *Log) CanVote(addr crypto.Address) bool {
 	_, ok := log.validators[addr]
 

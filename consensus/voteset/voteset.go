@@ -1,6 +1,8 @@
 package voteset
 
 import (
+	"bytes"
+
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/types/validator"
@@ -52,4 +54,11 @@ func (vs *voteSet) isTwoThirdOfTotalPower(power int64) bool {
 
 func (vs *voteSet) isOneThirdOfTotalPower(power int64) bool {
 	return power > (vs.totalPower * 1 / 3)
+}
+
+// sameSignedContent checks if two votes of the same signer say the same thing.
+// The justification of a vote isn't signed: the same signed vote with another valid
+// justification is not an equivocation.
+func sameSignedContent(vote1, vote2 *vote.Vote) bool {
+	return bytes.Equal(vote1.SignBytes(), vote2.SignBytes())
 }

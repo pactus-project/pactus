@@ -64,6 +64,11 @@ func (vs *BlockVoteSet) mustGetBlockVotes(blockHash hash.Hash) *voteBox {
 	return blockVotes
 }
 
+// GetVote returns the vote of the signer, or nil if there is no such a vote.
+func (vs *BlockVoteSet) GetVote(signer crypto.Address) *vote.Vote {
+	return vs.allVotes[signer]
+}
+
 // AllVotes returns a list of all votes in the VoteSet.
 func (vs *BlockVoteSet) AllVotes() []*vote.Vote {
 	votes := make([]*vote.Vote, 0, len(vs.allVotes))
@@ -94,7 +99,7 @@ func (vs *BlockVoteSet) AddVote(vote *vote.Vote) (bool, error) {
 
 	existingVote, ok := vs.allVotes[vote.Signer()]
 	if ok {
-		if existingVote.Hash() == vote.Hash() {
+		if sameSignedContent(existingVote, vote) {
 			// The vote is already added
 			return false, nil
 		}

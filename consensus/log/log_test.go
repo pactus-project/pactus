@@ -166,3 +166,37 @@ func TestMoveToNewHeight(t *testing.T) {
 	require.ErrorIs(t, err, voteset.IneligibleVoterError{Address: val1.Address()})
 	assert.False(t, added)
 }
+
+func TestVerifyVote(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	valKey := ts.RandValKey()
+	val := ts.GenerateTestValidator(
+		testsuite.ValidatorWithPublicKey(valKey.PublicKey()),
+	)
+	log := NewLog()
+	log.MoveToNewHeight([]*validator.Validator{val})
+	height, round := ts.RandHeight(), ts.RandRound()
+
+	t.Run("valid vote", func(t *testing.T) {
+		v := vote.NewPrepareVote(ts.RandHash(), height, round, val.Address())
+		ts.HelperSignVote(valKey, v)
+
+		require.NoError(t, log.VerifyVote(v))
+	})
+
+	t.Run("signer is not in the committee", func(t *testing.T) {
+		otherKey := ts.RandValKey()
+		v := vote.NewPrepareVote(ts.RandHash(), height, round, otherKey.Address())
+		ts.HelperSignVote(otherKey, v)
+
+		require.ErrorAs(t, log.VerifyVote(v), &voteset.IneligibleVoterError{})
+	})
+
+	t.Run("invalid signature", func(t *testing.T) {
+		v := vote.NewPrepareVote(ts.RandHash(), height, round, val.Address())
+		ts.HelperSignVote(ts.RandValKey(), v)
+
+		require.Error(t, log.VerifyVote(v))
+	})
+}

@@ -83,6 +83,16 @@ func (vs *BinaryVoteSet) mustGetRoundVotes(cpRound int16) *roundVotes {
 	return vs.roundVotes[cpRound]
 }
 
+// GetVote returns the vote of the signer in the given change-proposer round,
+// or nil if there is no such a vote.
+func (vs *BinaryVoteSet) GetVote(cpRound int16, signer crypto.Address) *vote.Vote {
+	if cpRound < 0 || int(cpRound) >= len(vs.roundVotes) {
+		return nil
+	}
+
+	return vs.roundVotes[cpRound].allVotes[signer]
+}
+
 // AllVotes returns a list of all votes in the VoteSet.
 func (vs *BinaryVoteSet) AllVotes() []*vote.Vote {
 	votes := make([]*vote.Vote, 0)
@@ -117,7 +127,7 @@ func (vs *BinaryVoteSet) AddVote(vote *vote.Vote) (bool, error) {
 	roundVotes := vs.mustGetRoundVotes(vote.CPRound())
 	existingVote, ok := roundVotes.allVotes[vote.Signer()]
 	if ok {
-		if existingVote.Hash() == vote.Hash() {
+		if sameSignedContent(existingVote, vote) {
 			// The vote is already added
 			return false, nil
 		}

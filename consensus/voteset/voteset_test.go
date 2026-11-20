@@ -427,3 +427,30 @@ func TestRoundAndIneligibleVoterError(t *testing.T) {
 	addr := ts.RandValAddress()
 	assert.Contains(t, IneligibleVoterError{Address: addr}.Error(), addr.String())
 }
+
+// The justification of a vote isn't signed: the same signed vote carrying another
+// justification is the same vote, not a double vote.
+func TestSameVoteWithAnotherJustification(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	valsMap, valKeys, totalPower := setupCommittee(ts, 1, 1, 1, 1)
+	addr := valKeys[0].Address()
+	blockHash := ts.RandHash()
+	voteSet := NewCPPreVoteVoteSet(0, totalPower, valsMap)
+
+	vote1 := vote.NewCPPreVote(blockHash, 1, 0, 0, vote.CPValueNo, &vote.JustInitYes{}, addr)
+	vote2 := vote.NewCPPreVote(blockHash, 1, 0, 0, vote.CPValueNo,
+		&vote.JustInitNo{QCert: ts.GenerateTestCertificate(1)}, addr)
+	ts.HelperSignVote(valKeys[0], vote1)
+	ts.HelperSignVote(valKeys[0], vote2)
+	require.NotEqual(t, vote1.Hash(), vote2.Hash())
+
+	added, err := voteSet.AddVote(vote1)
+	require.NoError(t, err)
+	assert.True(t, added)
+
+	added, err = voteSet.AddVote(vote2)
+	require.NoError(t, err)
+	assert.False(t, added, "the vote is already there")
+	assert.Len(t, voteSet.AllVotes(), 1)
+}
