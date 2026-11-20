@@ -28,6 +28,7 @@ type Config struct {
 	MaxSessions         int              `toml:"-"`
 	BlockPerSession     uint32           `toml:"-"`
 	BlockPerMessage     uint32           `toml:"-"`
+	MaxBlocksDataBytes  int              `toml:"-"`
 	PruneWindow         uint32           `toml:"-"`
 	LatestSupportingVer version.Version  `toml:"-"`
 	Services            service.Services `toml:"-"`
@@ -40,8 +41,13 @@ func DefaultConfig() *Config {
 		MaxSessions:       8,
 		BlockPerSession:   720,
 		BlockPerMessage:   60,
-		PruneWindow:       86_400, // Default retention blocks in prune mode
-		Firewall:          firewall.DefaultConfig(),
+		// Kept well under network.Config.MaxStreamMessageSize (8 MiB) to
+		// leave room for the rest of a BlocksResponseMessage (session ID,
+		// response code, certificate) and the bundle/CBOR framing around
+		// it; see prepareBlocks.
+		MaxBlocksDataBytes: 7 * 1024 * 1024,
+		PruneWindow:        86_400, // Default retention blocks in prune mode
+		Firewall:           firewall.DefaultConfig(),
 		LatestSupportingVer: version.Version{
 			Major: 1,
 			Minor: 15,

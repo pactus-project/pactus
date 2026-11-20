@@ -47,6 +47,7 @@ func testConfig() *Config {
 		MaxSessions:         4,
 		BlockPerMessage:     11,
 		BlockPerSession:     27,
+		MaxBlocksDataBytes:  DefaultConfig().MaxBlocksDataBytes,
 		PruneWindow:         13,
 		Firewall:            firewall.DefaultConfig(),
 		LatestSupportingVer: DefaultConfig().LatestSupportingVer,

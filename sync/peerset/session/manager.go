@@ -68,6 +68,16 @@ func (sm *Manager) HasOpenSession(pid peer.ID) bool {
 	return false
 }
 
+// HasOpenSessionFor reports whether sid is an open session owned by pid.
+// Any operation that acts on a session in response to a peer's message
+// must gate on this first: a session ID is just an integer picked by us, so
+// nothing otherwise stops another peer from naming one that isn't theirs.
+func (sm *Manager) HasOpenSessionFor(pid peer.ID, sid int) bool {
+	ssn := sm.sessions[sid]
+
+	return ssn != nil && ssn.PeerID == pid && ssn.Status == Open
+}
+
 func (sm *Manager) HasAnyOpenSession() bool {
 	for _, ssn := range sm.sessions {
 		if ssn.Status == Open {
