@@ -119,6 +119,24 @@ func AddressItems(infos []*pactus.AddressInfo, getAmount func(addr string) (amou
 	return items
 }
 
+// ListedBalance returns a getAmount function for AddressItems that reads the balances of the list:
+// the wallet lists the addresses with their balances, so they need no call to the node each.
+func ListedBalance(infos []*pactus.AddressInfo) func(addr string) (amount.Amount, error) {
+	balances := make(map[string]amount.Amount, len(infos))
+	for _, info := range infos {
+		balances[info.Address] = amount.Amount(info.Balance)
+	}
+
+	return func(addr string) (amount.Amount, error) {
+		balance, ok := balances[addr]
+		if !ok {
+			return 0, fmt.Errorf("address %s is not listed", addr)
+		}
+
+		return balance, nil
+	}
+}
+
 // AddressFromItem returns the address of an address list item. It accepts both
 // "address - amount" items and plain addresses typed by the user.
 func AddressFromItem(item string) string {

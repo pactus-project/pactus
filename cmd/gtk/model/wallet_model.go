@@ -152,7 +152,7 @@ func (model *WalletModel) Balance(addr string) (amount.Amount, error) {
 		return 0, err
 	}
 
-	return amount.Amount(res.Account.Balance), nil
+	return amount.Amount(res.GetAccount().GetBalance()), nil
 }
 
 func (model *WalletModel) Stake(addr string) (amount.Amount, error) {
