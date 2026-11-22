@@ -9,6 +9,13 @@ import (
 var (
 	ErrTooManyCommitters = errors.New("too many committers in certificate")
 	ErrTooManyAbsentees  = errors.New("too many absentees in certificate")
+
+	// ErrInvalidValidatorNumber is returned when a validator number is out of range.
+	ErrInvalidValidatorNumber = errors.New("invalid validator number in certificate")
+	// ErrTrailingBytes is returned when there are bytes after the encoded certificate.
+	ErrTrailingBytes = errors.New("trailing bytes after the certificate")
+	// ErrNoSignature is returned when the certificate has no signature.
+	ErrNoSignature = errors.New("certificate has no signature")
 )
 
 // BasicCheckError is returned when the basic check on the certificate fails.

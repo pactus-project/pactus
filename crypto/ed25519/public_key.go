@@ -83,6 +83,11 @@ func (pub *PublicKey) UnmarshalCBOR(bs []byte) error {
 		return err
 	}
 
+	// The encoding of a valid value has no byte to spare.
+	if len(data) != PublicKeySize {
+		return crypto.InvalidLengthError(len(data))
+	}
+
 	return pub.Decode(bytes.NewReader(data))
 }
 

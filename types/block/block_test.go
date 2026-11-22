@@ -1,6 +1,7 @@
 package block_test
 
 import (
+	"bytes"
 	"encoding/hex"
 	"testing"
 	"time"
@@ -438,5 +439,41 @@ func TestVersion5Header(t *testing.T) {
 		ts.RandHash(), ts.RandHash(), ts.RandSeed(), ts.RandValAddress())
 	require.ErrorIs(t, zero.BasicCheck(), block.BasicCheckError{
 		Reason: "invalid block version: 0",
+	})
+}
+
+func TestBlockStrictDecoding(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	blkA, _ := ts.GenerateTestBlock(ts.RandHeight())
+	blkB, _ := ts.GenerateTestBlock(ts.RandHeight())
+	dataA, err := blkA.Bytes()
+	require.NoError(t, err)
+
+	t.Run("bytes after the block are refused", func(t *testing.T) {
+		_, err := block.FromBytes(append(append([]byte{}, dataA...), 0))
+		require.ErrorIs(t, err, block.ErrTrailingBytes)
+
+		decoded, err := block.FromBytes(dataA)
+		require.NoError(t, err)
+		assert.Equal(t, blkA.Hash(), decoded.Hash())
+	})
+
+	t.Run("a failed decoding leaves the block untouched", func(t *testing.T) {
+		before := blkB.Hash()
+
+		require.Error(t, blkB.Decode(bytes.NewReader(dataA[:len(dataA)-3])))
+		assert.Equal(t, before, blkB.Hash())
+	})
+
+	t.Run("decoding into a block that was already used", func(t *testing.T) {
+		_ = blkB.Hash() // The hash is memorized.
+
+		require.NoError(t, blkB.Decode(bytes.NewReader(dataA)))
+		assert.Equal(t, blkA.Hash(), blkB.Hash(), "the hash of the new content")
+
+		data, err := blkB.Bytes()
+		require.NoError(t, err)
+		assert.Equal(t, dataA, data)
 	})
 }

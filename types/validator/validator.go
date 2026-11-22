@@ -73,6 +73,10 @@ func FromBytes(data []byte) (*Validator, error) {
 		return nil, err
 	}
 
+	if val.data.Number < 0 || val.data.Stake < 0 {
+		return nil, ErrInvalidData
+	}
+
 	// Optional delegation (PIP-49)
 	if reader.Len() > 0 {
 		if err := val.data.DelegateOwner.Decode(reader); err != nil {
@@ -81,6 +85,15 @@ func FromBytes(data []byte) (*Validator, error) {
 		if err := encoding.ReadElements(reader, &val.data.DelegateShare, &val.data.DelegateExpiry); err != nil {
 			return nil, err
 		}
+
+		// Without delegation, the section is not written: it can't be there.
+		if !val.IsDelegated() {
+			return nil, ErrInvalidData
+		}
+	}
+
+	if reader.Len() > 0 {
+		return nil, ErrInvalidData
 	}
 
 	return val, nil
@@ -136,7 +149,8 @@ func (val *Validator) DelegateShare() amount.Amount {
 	return val.data.DelegateShare
 }
 
-// DelegateExpiry returns the block height at which delegation expires (0 = no expiry).
+// DelegateExpiry returns the block height at which delegation expires.
+// A delegation with an expiry of 0 has already expired, see DelegateExpired.
 func (val *Validator) DelegateExpiry() types.Height {
 	return val.data.DelegateExpiry
 }
@@ -152,6 +166,11 @@ func (val *Validator) DelegateExpired(height types.Height) bool {
 
 // SetDelegation sets the delegation fields (PIP-49). Use zero owner to clear delegation.
 func (val *Validator) SetDelegation(owner crypto.Address, share amount.Amount, expiry types.Height) {
+	if owner == crypto.TreasuryAddress {
+		// No delegation: the share and the expiry are not stored, so they must not be kept in memory.
+		share, expiry = 0, 0
+	}
+
 	val.data.DelegateOwner = owner
 	val.data.DelegateShare = share
 	val.data.DelegateExpiry = expiry

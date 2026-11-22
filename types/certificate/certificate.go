@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"math"
 	"slices"
 
 	"github.com/fxamacker/cbor/v2"
@@ -139,11 +140,22 @@ func (cert *Certificate) UnmarshalCBOR(bs []byte) error {
 		return err
 	}
 	buf := bytes.NewBuffer(data)
+	if err := cert.Decode(buf); err != nil {
+		return err
+	}
 
-	return cert.Decode(buf)
+	if buf.Len() != 0 {
+		return ErrTrailingBytes
+	}
+
+	return nil
 }
 
 func (cert *Certificate) Encode(w io.Writer) error {
+	if cert.signature == nil {
+		return ErrNoSignature
+	}
+
 	if err := encoding.WriteElements(w, cert.height, cert.round); err != nil {
 		return err
 	}
@@ -168,7 +180,10 @@ func (cert *Certificate) Encode(w io.Writer) error {
 }
 
 func (cert *Certificate) Decode(r io.Reader) error {
-	err := encoding.ReadElements(r, &cert.height, &cert.round)
+	// The certificate is changed only if the whole data is decoded.
+	var height types.Height
+	var round types.Round
+	err := encoding.ReadElements(r, &height, &round)
 	if err != nil {
 		return err
 	}
@@ -190,6 +205,9 @@ func (cert *Certificate) Decode(r io.Reader) error {
 		if err != nil {
 			return err
 		}
+		if n > math.MaxInt32 {
+			return ErrInvalidValidatorNumber
+		}
 		committers[i] = int32(n)
 	}
 
@@ -209,6 +227,9 @@ func (cert *Certificate) Decode(r io.Reader) error {
 		if err != nil {
 			return err
 		}
+		if n > math.MaxInt32 {
+			return ErrInvalidValidatorNumber
+		}
 		absentees[i] = int32(n)
 	}
 
@@ -217,6 +238,8 @@ func (cert *Certificate) Decode(r io.Reader) error {
 		return err
 	}
 
+	cert.height = height
+	cert.round = round
 	cert.committers = committers
 	cert.absentees = absentees
 	cert.signature = sig
@@ -358,7 +381,10 @@ func (cert *Certificate) Clone() *Certificate {
 	// this can't fail; built through the public constructor rather than a
 	// struct copy, since Signature's lazy point cache (atomic.Pointer)
 	// must not be copied.
-	clonedSignature, _ := bls.SignatureFromBytes(cert.signature.Bytes())
+	var clonedSignature *bls.Signature
+	if cert.signature != nil {
+		clonedSignature, _ = bls.SignatureFromBytes(cert.signature.Bytes())
+	}
 
 	cloned := &Certificate{
 		height:     cert.height,
