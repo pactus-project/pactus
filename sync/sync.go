@@ -3,6 +3,7 @@ package sync
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
@@ -24,6 +25,7 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset/session"
 	"github.com/pactus-project/pactus/types"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/moniker"
 	"github.com/pactus-project/pactus/util/ntp"
 	"github.com/pactus-project/pactus/util/ratelimit"
 )
@@ -89,6 +91,7 @@ func NewSynchronizer(
 	sync.blocksRequestLimit = ratelimit.NewKeyedRateLimit[peer.ID](
 		conf.MaxSessions, conf.SessionTimeout(), maxBlocksRequestPeers)
 	sync.logger = logger.NewSubLogger(ctx, "_sync", sync)
+	sync.checkMoniker()
 	fw, err := firewall.NewFirewall(ctx, conf.Firewall, network, sync.peerSet, state)
 	if err != nil {
 		return nil, err
@@ -236,6 +239,31 @@ func (sync *synchronizer) SelfID() peer.ID {
 
 func (sync *synchronizer) Moniker() string {
 	return sync.config.Moniker
+}
+
+// checkMoniker warns the operator when some entries of a structured moniker
+// are not valid. The other nodes ignore these entries.
+func (sync *synchronizer) checkMoniker() {
+	ignored := ignoredMonikerEntries(sync.config.Moniker)
+	if ignored == 0 {
+		return
+	}
+
+	// The default level of the sync logger is "error", so the operator would
+	// not see a warning from it. The global logger is used instead.
+	logger.Warn("some entries of the moniker are not valid and are ignored",
+		"ignored", ignored, "display_name", moniker.Parse(sync.config.Moniker).DisplayName())
+}
+
+// ignoredMonikerEntries returns the number of entries of a moniker that the
+// other nodes ignore. It is zero for a plain name: a moniker without any '='
+// is not meant to be a structured one.
+func ignoredMonikerEntries(raw string) int {
+	if !strings.Contains(raw, "=") {
+		return 0
+	}
+
+	return moniker.Parse(raw).Ignored()
 }
 
 func (sync *synchronizer) PeerSet() *peerset.PeerSet {

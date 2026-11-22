@@ -18,6 +18,7 @@ import (
 	"github.com/pactus-project/gopkg/logger"
 	"github.com/pactus-project/gopkg/netutil"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/util/moniker"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
@@ -246,6 +247,20 @@ func (t *tableMaker) addRowTxID(key, val string) {
 
 func (t *tableMaker) addRowString(key, val string) {
 	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>", key, xhtml.EscapeString(val))
+}
+
+// addRowMoniker adds the moniker that a node declared about itself.
+// Nothing verifies a moniker, so its values are shown as text only:
+// the website of a structured moniker is never turned into a link.
+func (t *tableMaker) addRowMoniker(raw string) {
+	mon := moniker.Parse(raw)
+	name := mon.DisplayName()
+	t.addRowString("Moniker", name)
+
+	// Without a "name" field, the name is already the whole moniker.
+	if details := moniker.Sanitize(raw); mon.IsStructured() && details != name {
+		t.addRowString("Moniker Details", details)
+	}
 }
 
 func (t *tableMaker) addRowStrings(key string, val []string) {
