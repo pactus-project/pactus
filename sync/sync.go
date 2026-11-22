@@ -3,6 +3,7 @@ package sync
 import (
 	"context"
 	"fmt"
+	gosync "sync"
 	"time"
 
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
@@ -59,6 +60,23 @@ type synchronizer struct {
 	// A syncing node has at most MaxSessions sessions open and each ends
 	// within the session timeout, so it never needs more.
 	blocksRequestLimit *ratelimit.KeyedRateLimit[peer.ID]
+	streamMsgCh        chan *network.StreamMessage
+
+	// handlerLk serializes the handlers of the messages and of the network events.
+	// The stream messages are read on their own goroutine, but the handlers share
+	// the sessions, the cache and the state: they run one at a time, as they did
+	// when everything was processed by one loop.
+	handlerLk gosync.Mutex
+}
+
+// streamMsgChSize bounds how many stream messages can be queued for
+// streamMessageLoop while it is busy with a slow or silent peer.
+const streamMsgChSize = 64
+
+// newStreamMsgCh exists only because NewSynchronizer's own "network"
+// parameter shadows the network package name in its body.
+func newStreamMsgCh() chan *network.StreamMessage {
+	return make(chan *network.StreamMessage, streamMsgChSize)
 }
 
 //nolint:revive // arguments can't be reduced.
@@ -83,6 +101,7 @@ func NewSynchronizer(
 		broadcastPipe: broadcastPipe,
 		networkPipe:   networkPipe,
 		ntp:           ntp.NewNtpChecker(ctx),
+		streamMsgCh:   newStreamMsgCh(),
 	}
 
 	sync.peerSet = peerset.NewPeerSet(conf.SessionTimeout())
@@ -121,6 +140,8 @@ func NewSynchronizer(
 
 	sync.networkPipe.RegisterReceiver(sync.processNetworkEvent)
 	sync.broadcastPipe.RegisterReceiver(sync.broadcastMessage)
+
+	go sync.streamMessageLoop(ctx)
 
 	return sync, nil
 }
@@ -274,6 +295,9 @@ func (sync *synchronizer) broadcastMessage(msg message.Message) {
 }
 
 func (sync *synchronizer) processNetworkEvent(evt network.Event) {
+	sync.handlerLk.Lock()
+	defer sync.handlerLk.Unlock()
+
 	switch evt.Type() {
 	case network.EventTypeGossip:
 		ge := evt.(*network.GossipMessage)
@@ -281,7 +305,7 @@ func (sync *synchronizer) processNetworkEvent(evt network.Event) {
 
 	case network.EventTypeStream:
 		se := evt.(*network.StreamMessage)
-		sync.processStreamMessage(se)
+		sync.dispatchStreamMessage(se)
 
 	case network.EventTypeConnect:
 		ce := evt.(*network.ConnectEvent)
@@ -310,6 +334,41 @@ func (sync *synchronizer) processGossipMessage(msg *network.GossipMessage) {
 	sync.processIncomingBundle(bdl, msg.From)
 }
 
+// dispatchStreamMessage hands msg off to the dedicated stream-processing
+// goroutine (see streamMessageLoop) instead of decoding it inline.
+// msg.Reader may be a live network stream, and a hostile peer can keep it
+// open without ever sending a byte; processStreamMessage reads it
+// synchronously, and this function is called from processNetworkEvent, the
+// single consumer of every network event (gossip, connect/disconnect, other
+// streams), so decoding here would block that shared goroutine for up to the
+// stream's own deadline. streamMessageLoop processes its queue strictly in
+// order on its own goroutine, so a slow or silent peer only delays other
+// pending stream messages (handshake, block sync), never gossip, votes or
+// proposals. The queue is bounded: once full, the oldest-pending peer's
+// stream traffic is already backed up, so new stream messages are dropped
+// rather than risked blocking the shared loop.
+func (sync *synchronizer) dispatchStreamMessage(msg *network.StreamMessage) {
+	select {
+	case sync.streamMsgCh <- msg:
+	default:
+		sync.logger.Warn("stream message queue is full, dropping", "pid", msg.From)
+		_ = msg.Reader.Close()
+	}
+}
+
+// streamMessageLoop processes stream messages one at a time, in the order
+// they were received, on its own goroutine: see dispatchStreamMessage.
+func (sync *synchronizer) streamMessageLoop(ctx context.Context) {
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case msg := <-sync.streamMsgCh:
+			sync.processStreamMessage(msg)
+		}
+	}
+}
+
 func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
 	sync.logger.Debug("processing stream message", "pid", msg.From)
 
@@ -324,6 +383,11 @@ func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
 
 		return
 	}
+
+	// Reading the stream can take as long as its deadline, and it is done by now.
+	// Only the handler runs under the lock.
+	sync.handlerLk.Lock()
+	defer sync.handlerLk.Unlock()
 
 	sync.processIncomingBundle(bdl, msg.From)
 }
@@ -590,6 +654,14 @@ func (sync *synchronizer) tryCommitBlocks() {
 			}
 		}
 
+		// The block hash doesn't cover the signatures and public keys of the transactions,
+		// so a block received from a peer must be checked before being committed.
+		if err := blk.BasicCheck(); err != nil {
+			onError(height, err)
+
+			return
+		}
+
 		sync.logger.Trace("committing block", "height", height, "block", blk)
 		if err := sync.state.CommitBlock(blk, cert); err != nil {
 			onError(height, err)
@@ -614,6 +686,7 @@ func (sync *synchronizer) prepareBlocks(from types.Height, count uint32) [][]byt
 	}
 
 	blocks := make([][]byte, 0, count)
+	totalBytes := 0
 
 	for height := from; height < from+types.Height(count); height++ {
 		cBlk, err := sync.state.CommittedBlock(height)
@@ -623,7 +696,17 @@ func (sync *synchronizer) prepareBlocks(from types.Height, count uint32) [][]byt
 			return nil
 		}
 
+		// Stop before the response would exceed the stream's size limit;
+		// the requester resumes from this height on its next request.
+		// Always include at least one block so a single call never
+		// returns nothing (which would make the caller wrongly report
+		// this range as fully delivered).
+		if len(blocks) > 0 && totalBytes+len(cBlk.Data) > sync.config.MaxBlocksDataBytes {
+			break
+		}
+
 		blocks = append(blocks, cBlk.Data)
+		totalBytes += len(cBlk.Data)
 	}
 
 	return blocks

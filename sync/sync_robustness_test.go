@@ -589,6 +589,26 @@ func TestTryCommitBlocksFailures(t *testing.T) {
 		assert.Equal(t, height-1, td.state.LastBlockHeight(), "the block should not be committed")
 	})
 
+	t.Run("block with a forged transaction signature is not committed", func(t *testing.T) {
+		td := setup(t, nil)
+
+		// The block hash doesn't cover the signatures: the block and its certificate
+		// can be genuine, and a transaction signature replaced.
+		trx := td.GenerateTestTransferTx()
+		trx.SetSignature(td.RandEd25519Signature())
+		height := td.state.LastBlockHeight() + 1
+		txs := block.Txs{td.GenerateTestSubsidyTx(), trx}
+		blk, cert := td.GenerateTestBlock(height, testsuite.BlockWithTransactions(txs))
+		require.Error(t, blk.BasicCheck())
+
+		td.sync.cache.AddBlock(blk)
+		td.sync.cache.AddCertificate(cert)
+		td.sync.tryCommitBlocks()
+
+		assert.Equal(t, height-1, td.state.LastBlockHeight(), "the block should not be committed")
+		assert.False(t, td.sync.cache.HasBlockInCache(height))
+	})
+
 	t.Run("block without certificate stays in the cache", func(t *testing.T) {
 		td := setup(t, nil)
 
