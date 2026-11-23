@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/core/gioutil"
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/gdkpixbuf/v2"
@@ -273,26 +274,37 @@ const (
 	ColorGray
 )
 
-// getColorHex returns the hex color code for the given Color enum.
-func getColorHex(color Color) string {
-	switch color {
-	case ColorRed:
-		return "#FF0000"
-	case ColorGreen:
-		return "#00FF00"
-	case ColorBlue:
-		return "#0000FF"
-	case ColorYellow:
-		return "#FFFF00"
-	case ColorOrange:
-		return "#FFA500"
-	case ColorPurple:
-		return "#800080"
-	case ColorGray:
-		return "#808080"
-	default:
-		return "#000000" // Default to black
+// The status colors of the libadwaita palette, so the text stays readable on
+// both the light and the dark backgrounds.
+var (
+	lightColors = map[Color]string{
+		ColorRed:    "#c01c28",
+		ColorGreen:  "#1b8553",
+		ColorBlue:   "#1c71d8",
+		ColorYellow: "#9c6e03",
+		ColorOrange: "#c64600",
+		ColorPurple: "#813d9c",
+		ColorGray:   "#77767b",
 	}
+	darkColors = map[Color]string{
+		ColorRed:    "#ff7b63",
+		ColorGreen:  "#8ff0a4",
+		ColorBlue:   "#78aeed",
+		ColorYellow: "#f8e45c",
+		ColorOrange: "#ffa348",
+		ColorPurple: "#dc8add",
+		ColorGray:   "#9a9996",
+	}
+)
+
+// getColorHex returns the hex color code of the given color for the active theme.
+func getColorHex(color Color) string {
+	colors := lightColors
+	if adw.StyleManagerGetDefault().Dark() {
+		colors = darkColors
+	}
+
+	return colors[color]
 }
 
 func SetColoredText(label *gtk.Label, str string, color Color) {
