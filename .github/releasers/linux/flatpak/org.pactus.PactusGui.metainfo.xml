@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.pactus.PactusGui</id>
+  <name>Pactus GUI</name>
+  <summary>Pactus blockchain node and wallet</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <description>
+    <p>Run a Pactus node, manage wallets and validators, and send transactions from a desktop app.</p>
+  </description>
+  <launchable type="desktop-id">org.pactus.PactusGui.desktop</launchable>
+  <url type="homepage">https://pactus.org</url>
+  <developer id="org.pactus">
+    <name>Pactus</name>
+  </developer>
+  <content_rating type="oars-1.1"/>
+</component>

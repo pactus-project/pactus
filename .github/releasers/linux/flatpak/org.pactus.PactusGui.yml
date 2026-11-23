@@ -1,0 +1,40 @@
+# Flatpak of the Pactus GUI. It runs on the GNOME runtime, which brings its own GTK, libadwaita
+# and glibc, so the GUI also runs on Linux releases older than the one that builds the AppImage.
+app-id: org.pactus.PactusGui
+runtime: org.gnome.Platform
+runtime-version: '50'
+sdk: org.gnome.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.golang
+command: pactus-gui
+finish-args:
+  - --share=network
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri
+  # System tray (StatusNotifierItem over D-Bus).
+  - --talk-name=org.kde.StatusNotifierWatcher
+  - --own-name=org.kde.*
+  # The node keeps its data in ~/pactus by default.
+  - --filesystem=home
+build-options:
+  append-path: /usr/lib/sdk/golang/bin
+  build-args:
+    # Go modules are downloaded during the build.
+    - --share=network
+  env:
+    # The Go version of go.mod is downloaded if the SDK extension is older.
+    GOTOOLCHAIN: auto
+    CGO_ENABLED: '1'
+modules:
+  - name: pactus-gui
+    buildsystem: simple
+    build-commands:
+      - go build -tags gtk -trimpath -o /app/bin/pactus-gui ./cmd/gtk
+      - install -Dm644 .github/releasers/linux/flatpak/org.pactus.PactusGui.desktop /app/share/applications/org.pactus.PactusGui.desktop
+      - install -Dm644 .github/releasers/linux/flatpak/org.pactus.PactusGui.metainfo.xml /app/share/metainfo/org.pactus.PactusGui.metainfo.xml
+      - install -Dm644 .github/releasers/linux/pactus.png /app/share/icons/hicolor/256x256/apps/org.pactus.PactusGui.png
+    sources:
+      - type: dir
+        path: ../../../..
