@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Pactus GUI
+Comment=Pactus blockchain node and wallet
+Exec=pactus-gui
+Icon=org.pactus.PactusGui
+Type=Application
+Categories=Network;Finance;
+StartupWMClass=pactus-gui

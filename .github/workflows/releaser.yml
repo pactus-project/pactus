@@ -94,6 +94,43 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   ########################################
+  # The Flatpak runs on Linux releases older than the one that builds the AppImage.
+  build-gui-flatpak:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-50
+      options: --privileged
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set bundle name
+        run: echo "BUNDLE=pactus-gui_${GITHUB_REF_NAME#v}_linux_amd64.flatpak" >> "$GITHUB_ENV"
+
+      - name: Build Flatpak bundle
+        uses: flatpak/flatpak-github-actions/flatpak-builder@79327416609af08178ad73b352877e51450790b3 # v6.8
+        with:
+          bundle: ${{ env.BUNDLE }}
+          manifest-path: .github/releasers/linux/flatpak/org.pactus.PactusGui.yml
+          upload-artifact: false
+
+      - name: Calculate sha256sum
+        run: sha256sum ${{ env.BUNDLE }} > checksum-linux-flatpak.txt
+
+      - name: Upload checksum artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: checksum-linux-flatpak
+          path: checksum-linux-flatpak.txt
+
+      - name: Publish
+        uses: softprops/action-gh-release@v3
+        with:
+          files: ${{ env.BUNDLE }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  ########################################
   build-gui-macos:
     runs-on: ${{ matrix.runner }}
     strategy:
@@ -255,6 +292,7 @@ jobs:
       [
         build-cli,
         build-gui-linux,
+        build-gui-flatpak,
         build-gui-macos,
         build-gui-windows,
       ]
