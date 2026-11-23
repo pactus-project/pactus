@@ -280,13 +280,13 @@ func newTray(mwView *view.MainWindowView, gtkApp *gtk.Application,
 
 	// Windows switches between the light and dark icons to match the taskbar
 	// theme. Other platforms keep the white icon.
-	// On Linux, some panels (such as Cinnamon) show the pixmap of a tray icon at
-	// its own size, so the 24 px icon matches the other icons of the panel.
+	// On Linux, panels scale the tray pixmap to their own icon size, so the
+	// Linux icon leaves a margin around the logo, like the symbolic icons do.
 	switch runtime.GOOS {
 	case "windows":
 		trayIcon.SetIcon(assets.ImagePactusTrayLight32Data)
 	case "linux":
-		trayIcon.SetIcon(assets.ImagePactusTrayDark24Data)
+		trayIcon.SetIcon(assets.ImagePactusTrayLinuxData)
 	default:
 		trayIcon.SetIcon(assets.ImagePactusTrayDark32Data)
 	}
