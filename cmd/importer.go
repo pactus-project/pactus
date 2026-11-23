@@ -70,7 +70,7 @@ func NewImporter(chainType genesis.ChainType, snapshotURL, storeDir string) (*Im
 		return nil, fmt.Errorf("unsupported chain type: %s", chainType)
 	}
 
-	tempDir, err := util.MakeTempDir()
+	tempDir, err := makeImportTempDir()
 	if err != nil {
 		return nil, err
 	}
@@ -80,6 +80,21 @@ func NewImporter(chainType genesis.ChainType, snapshotURL, storeDir string) (*Im
 		tempDir:     tempDir,
 		storeDir:    storeDir,
 	}, nil
+}
+
+// makeImportTempDir creates the directory that holds the downloaded snapshot.
+// It is made in the user cache directory, because the temporary directory can
+// live in memory and be too small for a snapshot, as in a Flatpak sandbox.
+func makeImportTempDir() (string, error) {
+	cacheDir, err := os.UserCacheDir()
+	if err == nil {
+		err = os.MkdirAll(cacheDir, 0o750)
+	}
+	if err != nil {
+		return util.MakeTempDir()
+	}
+
+	return os.MkdirTemp(cacheDir, "pactus-snapshot-*")
 }
 
 // maxMetadataSize is the maximum size of the list of the snapshots.
