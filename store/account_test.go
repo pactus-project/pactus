@@ -144,3 +144,42 @@ func TestAccountDeepCopy(t *testing.T) {
 	accCache, _ := td.store.accountStore.accCache.Get(addr)
 	assert.NotEqual(t, acc2.Hash(), accCache.Hash())
 }
+
+// The accounts of the current batch are read from the batch, whatever the cache holds.
+func TestAccountOfCurrentBatch(t *testing.T) {
+	conf := testConfig()
+	conf.AccountCacheSize = 2
+	td := setup(t, conf)
+
+	addr, acc := td.GenerateTestAccount()
+	td.store.UpdateAccount(addr, acc)
+	require.NoError(t, td.store.WriteBatch())
+	total := td.store.TotalAccounts()
+
+	updated := acc.Clone()
+	updated.AddToBalance(1000)
+	td.store.UpdateAccount(addr, updated)
+
+	// A new account, updated twice in the same batch, is counted once.
+	newAddr, newAcc := td.GenerateTestAccount()
+	td.store.UpdateAccount(newAddr, newAcc)
+
+	// Other updates of the same batch.
+	for range 4 {
+		otherAddr, otherAcc := td.GenerateTestAccount()
+		td.store.UpdateAccount(otherAddr, otherAcc)
+	}
+	td.store.UpdateAccount(newAddr, newAcc)
+
+	got, err := td.store.Account(addr)
+	require.NoError(t, err)
+	assert.Equal(t, updated.Balance(), got.Balance(), "before the batch is written")
+
+	require.NoError(t, td.store.WriteBatch())
+	assert.Equal(t, total+5, td.store.TotalAccounts())
+
+	got, err = td.store.Account(addr)
+	require.NoError(t, err)
+	assert.Equal(t, updated.Balance(), got.Balance(), "after the batch is written")
+	assert.Empty(t, td.store.accountStore.pending)
+}
