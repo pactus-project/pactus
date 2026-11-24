@@ -27,6 +27,9 @@ var (
 	//go:embed images/pactus-tray-light-32.png
 	ImagePactusTrayLight32Data []byte
 
+	//go:embed images/pactus-tray-linux.png
+	ImagePactusTrayLinuxData []byte
+
 	//go:embed images/pactus.png
 	ImagePactusLogoData    []byte
 	ImagePactusLogoTexture *gdk.Texture

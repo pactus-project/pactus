@@ -9,10 +9,25 @@ import (
 )
 
 // entryPath returns the XDG autostart desktop entry of Pactus GUI.
+//
+// Inside a Flatpak, XDG_CONFIG_HOME points to the private config folder of the
+// application, which the desktop session never reads. The entry is then written
+// to the config folder of the user instead, which the sandbox can reach through
+// its access to the home folder.
 func entryPath() (string, error) {
-	dir, err := os.UserConfigDir()
-	if err != nil {
-		return "", err
+	var dir string
+	if os.Getenv("FLATPAK_ID") != "" {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			return "", err
+		}
+		dir = filepath.Join(home, ".config")
+	} else {
+		var err error
+		dir, err = os.UserConfigDir()
+		if err != nil {
+			return "", err
+		}
 	}
 
 	return filepath.Join(dir, "autostart", "pactus-gui.desktop"), nil
@@ -20,7 +35,13 @@ func entryPath() (string, error) {
 
 // executable returns the file to start. When running from an AppImage, the
 // binary lives in a temporary mount, so the AppImage file is used instead.
+// Inside a Flatpak, the binary path exists only in the sandbox, so the
+// application is started with "flatpak" (see enable).
 func executable() (string, error) {
+	if os.Getenv("FLATPAK_ID") != "" {
+		return "flatpak", nil
+	}
+
 	if appImage := os.Getenv("APPIMAGE"); appImage != "" {
 		return appImage, nil
 	}
@@ -36,6 +57,10 @@ func enable(exe string, args []string) error {
 
 	if err := os.MkdirAll(filepath.Dir(path), 0o750); err != nil {
 		return err
+	}
+
+	if id := os.Getenv("FLATPAK_ID"); id != "" {
+		args = append([]string{"run", id}, args...)
 	}
 
 	return os.WriteFile(path, []byte(desktopEntry(exe, args)), 0o600)
