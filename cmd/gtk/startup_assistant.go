@@ -316,9 +316,15 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 											gtkutil.Logf("downloaded, error: %v", err)
 
 											glib.IdleAdd(func() {
-												if err != nil {
+												// The downloaded files must not stay behind when the import fails.
+												showImportError := func(importErr error) {
+													_ = importer.Cleanup()
 													ssPBLabel.SetColoredText(assets.IconStatusErrorTexture,
-														fmt.Sprintf("Import failed: %v", err), gtkutil.ColorRed)
+														fmt.Sprintf("Import failed: %v", importErr), gtkutil.ColorRed)
+												}
+
+												if err != nil {
+													showImportError(err)
 
 													return
 												}
@@ -327,8 +333,7 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 												ssPBLabel.SetText(assets.IconFolderOpenTexture, "Extracting downloaded files...")
 												err = importer.ExtractAndStoreFiles()
 												if err != nil {
-													ssPBLabel.SetColoredText(assets.IconStatusErrorTexture,
-														fmt.Sprintf("Import failed: %v", err), gtkutil.ColorRed)
+													showImportError(err)
 
 													return
 												}
@@ -337,8 +342,7 @@ func startupAssistant(ctx context.Context, workingDir string, chain genesis.Chai
 												ssPBLabel.SetText(assets.IconPackageTexture, "Moving data...")
 												err = importer.MoveStore()
 												if err != nil {
-													ssPBLabel.SetColoredText(assets.IconStatusErrorTexture,
-														fmt.Sprintf("Import failed: %v", err), gtkutil.ColorRed)
+													showImportError(err)
 
 													return
 												}
